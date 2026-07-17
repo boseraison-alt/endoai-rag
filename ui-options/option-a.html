@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Endo AI — Option A: Claude-style Chat</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #212121;
+  color: #ececec;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 260px;
+  background: #171717;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  border-right: 1px solid #2a2a2a;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 20px;
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 15px; color: #fff;
+  flex-shrink: 0;
+}
+
+.logo-text { font-size: 15px; font-weight: 600; color: #ececec; }
+
+.new-chat-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: transparent;
+  color: #ececec;
+  font-size: 13px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 20px;
+  transition: background 0.15s;
+}
+.new-chat-btn:hover { background: #2a2a2a; }
+.new-chat-btn svg { opacity: 0.6; }
+
+.sidebar-section {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0 8px 8px;
+}
+
+.history-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #999;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background 0.12s, color 0.12s;
+}
+.history-item:hover { background: #2a2a2a; color: #ececec; }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #2a2a2a;
+  font-size: 11px;
+  color: #555;
+  padding-left: 8px;
+}
+
+/* ── Main ── */
+.main {
+  margin-left: 260px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Welcome state ── */
+.welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 160px;
+}
+
+.welcome-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ececec;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.welcome-sub {
+  font-size: 15px;
+  color: #777;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.mode-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.mode-pill {
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1.5px solid #333;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.mode-pill.active {
+  border-color: #4f8ef7;
+  color: #4f8ef7;
+  background: rgba(79,142,247,0.08);
+}
+
+.suggestion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 600px;
+  width: 100%;
+}
+
+.suggestion-card {
+  background: #2a2a2a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.suggestion-card:hover {
+  background: #303030;
+  border-color: #4f8ef7;
+}
+
+.suggestion-icon { font-size: 18px; margin-bottom: 6px; }
+
+.suggestion-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ececec;
+  line-height: 1.4;
+}
+
+.suggestion-sub {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* ── Input bar ── */
+.input-bar {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, #212121 80%, transparent);
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-wrap {
+  max-width: 680px;
+  width: 100%;
+  background: #2a2a2a;
+  border: 1.5px solid #3a3a3a;
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  transition: border-color 0.15s;
+}
+.input-wrap:focus-within {
+  border-color: #4f8ef7;
+  box-shadow: 0 0 0 3px rgba(79,142,247,0.1);
+}
+
+.input-wrap textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ececec;
+  font-size: 15px;
+  line-height: 1.5;
+  resize: none;
+  min-height: 24px;
+  max-height: 160px;
+  font-family: inherit;
+}
+.input-wrap textarea::placeholder { color: #555; }
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mode-toggle-sm {
+  display: flex;
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+.mode-toggle-sm button {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.mode-toggle-sm button.active {
+  background: #333;
+  color: #ececec;
+}
+
+.send-btn {
+  width: 34px; height: 34px;
+  background: #4f8ef7;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.send-btn:hover { background: #3b7ef0; }
+.send-btn svg { color: #fff; }
+
+.input-footer {
+  font-size: 11px;
+  color: #444;
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* ── Chat messages ── */
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: none;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 780px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.msg-user {
+  align-self: flex-end;
+  background: #2f2f2f;
+  border-radius: 16px 16px 4px 16px;
+  padding: 12px 16px;
+  max-width: 70%;
+  font-size: 14px;
+  color: #ececec;
+  line-height: 1.6;
+}
+
+.msg-mode-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.badge-review { background: rgba(79,142,247,0.15); color: #4f8ef7; }
+.badge-learn  { background: rgba(74,222,128,0.15); color: #4ade80; }
+
+.msg-ai {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.msg-ai-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ai-avatar {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, #4f8ef7, #7c3aed);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+}
+
+.ai-name { font-size: 13px; font-weight: 600; color: #ececec; }
+
+.msg-ai-body {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #ccc;
+  padding-left: 36px;
+}
+
+.msg-ai-body h2 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 20px 0 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.msg-ai-body h2:first-child { margin-top: 0; }
+.msg-ai-body p { margin-bottom: 10px; }
+.msg-ai-body strong { color: #ececec; }
+.msg-ai-body hr { border: none; border-top: 1px solid #2a2a2a; margin: 14px 0; }
+
+/* ── Demo state ── */
+.demo-label {
+  text-align: center;
+  font-size: 11px;
+  color: #555;
+  padding: 8px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+}
+</style>
+</head>
+<body>
+
+<div class="demo-label">Option A — Claude-style with sidebar &amp; chat history</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">E</div>
+    <div class="logo-text">Endo AI</div>
+  </div>
+
+  <button class="new-chat-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    New question
+  </button>
+
+  <div class="sidebar-section">Recent</div>
+  <div class="history-item">Success rate of pulp capping</div>
+  <div class="history-item">How do I perform a root canal?</div>
+  <div class="history-item">MTA vs calcium hydroxide outcomes</div>
+  <div class="history-item">Bioceramic vs epoxy resin sealers</div>
+  <div class="history-item">Rotary instrumentation curved canals</div>
+
+  <div class="sidebar-footer">
+    Endo AI · For educational use only
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <!-- Welcome -->
+  <div class="welcome" id="welcome">
+    <div class="welcome-title">What do you want to know?</div>
+    <div class="welcome-sub">Evidence-based endodontics powered by PubMed, Cochrane &amp; Claude</div>
+
+    <div class="mode-pills">
+      <button class="mode-pill active" onclick="setMode('review',this)">Literature Review</button>
+      <button class="mode-pill" onclick="setMode('learn',this)">Learn</button>
+    </div>
+
+    <div class="suggestion-grid" id="suggestionGrid">
+      <div class="suggestion-card" onclick="fillAndFocus(this)">
+        <div class="suggestion-icon">🔬</div>
+        <div class="suggestion-title">MTA vs calcium hydroxide in vital pulp therapy</div>
+        <div class="suggestion-sub">Compare clinical outcomes</div>
+      </div>
+      <div class="suggestion-card" onclick="fillAndFocus(this)">
+        <div class="suggestion-icon">📊</div>
+        <div class="suggestion-title">Single vs multi-visit RCT outcomes</div>
+        <div class="suggestion-sub">Evidence comparison</div>
+      </div>
+      <div class="suggestion-card" onclick="fillAndFocus(this)">
+        <div class="suggestion-icon">⚗️</div>
+        <div class="suggestion-title">Bioceramic vs epoxy resin sealers</div>
+        <div class="suggestion-sub">Sealing ability & biocompatibility</div>
+      </div>
+      <div class="suggestion-card" onclick="fillAndFocus(this)">
+        <div class="suggestion-icon">🔄</div>
+        <div class="suggestion-title">Rotary vs reciprocating instrumentation</div>
+        <div class="suggestion-sub">Curved canal performance</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <div class="input-wrap">
+      <textarea id="qInput" rows="1" placeholder="Ask a clinical question or what you want to learn..."></textarea>
+      <div class="input-actions">
+        <div class="mode-toggle-sm">
+          <button class="active" id="smReview" onclick="setModeSm('review')">Review</button>
+          <button id="smLearn" onclick="setModeSm('learn')">Learn</button>
+        </div>
+        <button class="send-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="input-footer">Endo AI searches PubMed &amp; Cochrane and synthesises evidence with Claude · Educational use only</div>
+  </div>
+</div>
+
+<script>
+var mode = 'review';
+
+var reviewSuggestions = [
+  { icon:'🔬', title:'MTA vs calcium hydroxide in vital pulp therapy', sub:'Compare clinical outcomes' },
+  { icon:'📊', title:'Single vs multi-visit RCT outcomes', sub:'Evidence comparison' },
+  { icon:'⚗️', title:'Bioceramic vs epoxy resin sealers', sub:'Sealing ability & biocompatibility' },
+  { icon:'🔄', title:'Rotary vs reciprocating instrumentation', sub:'Curved canal performance' },
+];
+var learnSuggestions = [
+  { icon:'🦷', title:'How do I perform a root canal treatment?', sub:'Step-by-step clinical guide' },
+  { icon:'💊', title:'How do I do a pulp capping procedure?', sub:'Indications & technique' },
+  { icon:'📐', title:'How do I determine working length?', sub:'EAL & radiographic methods' },
+  { icon:'🩺', title:'How do I manage a cracked tooth?', sub:'Diagnosis & treatment planning' },
+];
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.mode-pill').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('smReview').classList.toggle('active', m === 'review');
+  document.getElementById('smLearn').classList.toggle('active', m === 'learn');
+  renderSuggestions();
+}
+
+function setModeSm(m) {
+  mode = m;
+  document.getElementById('smReview').classList.toggle('active', m === 'review');
+  document.getElementById('smLearn').classList.toggle('active', m === 'learn');
+  document.querySelectorAll('.mode-pill').forEach(function(b) {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(m === 'review' ? 'literature' : 'learn'));
+  });
+  renderSuggestions();
+}
+
+function renderSuggestions() {
+  var grid = document.getElementById('suggestionGrid');
+  var list = mode === 'learn' ? learnSuggestions : reviewSuggestions;
+  grid.innerHTML = list.map(function(s) {
+    return '<div class="suggestion-card" onclick="fillAndFocus(this)">' +
+      '<div class="suggestion-icon">' + s.icon + '</div>' +
+      '<div class="suggestion-title">' + s.title + '</div>' +
+      '<div class="suggestion-sub">' + s.sub + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+function fillAndFocus(card) {
+  var title = card.querySelector('.suggestion-title').textContent;
+  document.getElementById('qInput').value = title;
+  document.getElementById('qInput').focus();
+}
+</script>
+</body>
+</html>

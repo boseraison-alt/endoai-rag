@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Endo AI — Option C: Two-mode Dashboard</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #111318;
+  color: #e2e8f0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-label {
+  text-align: center;
+  font-size: 11px;
+  color: #444;
+  padding: 6px;
+  background: #0c0e12;
+  border-bottom: 1px solid #1e2330;
+}
+
+/* ── Header ── */
+.header {
+  background: #111318;
+  border-bottom: 1px solid #1e2330;
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px; color: #fff;
+}
+
+.brand-name { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+.brand-tag  { font-size: 11px; color: #4a5568; margin-left: 4px; }
+
+.header-right {
+  font-size: 11px;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-right span {
+  background: #1a1f2e;
+  border: 1px solid #252d3d;
+  padding: 3px 10px;
+  border-radius: 10px;
+  color: #64748b;
+}
+
+/* ── Mode switcher (hero) ── */
+.mode-hero {
+  background: linear-gradient(180deg, #13161e 0%, #111318 100%);
+  border-bottom: 1px solid #1e2330;
+  padding: 32px 32px 0;
+  display: flex;
+  gap: 0;
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 18px 24px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.mode-tab:hover .mode-tab-title { color: #e2e8f0; }
+
+.mode-tab.active {
+  border-bottom-color: #3b82f6;
+}
+
+.mode-tab-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+.mode-tab-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 3px;
+  transition: color 0.15s;
+}
+.mode-tab.active .mode-tab-title { color: #e2e8f0; }
+
+.mode-tab-desc {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.4;
+}
+.mode-tab.active .mode-tab-desc { color: #4a5568; }
+
+/* ── Main content ── */
+.content {
+  flex: 1;
+  max-width: 880px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 32px 80px;
+}
+
+/* ── Input card ── */
+.input-card {
+  background: #161b27;
+  border: 1px solid #1e2736;
+  border-radius: 16px;
+  padding: 20px 20px 16px;
+  margin-bottom: 24px;
+}
+
+.input-context {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.context-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+.dot-review { background: #3b82f6; }
+.dot-learn  { background: #10b981; }
+
+.context-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-card textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e2e8f0;
+  font-size: 16px;
+  line-height: 1.6;
+  resize: none;
+  font-family: inherit;
+  min-height: 32px;
+  max-height: 160px;
+  margin-bottom: 14px;
+}
+.input-card textarea::placeholder { color: #2d3748; }
+
+.input-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.input-hint {
+  font-size: 11px;
+  color: #2d3748;
+}
+
+.ask-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 9px 22px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 0.15s;
+}
+.ask-btn:hover { background: #1d4ed8; }
+.ask-btn.learn-mode { background: #059669; }
+.ask-btn.learn-mode:hover { background: #047857; }
+
+/* ── Prompt cards ── */
+.prompts-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+
+.prompts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.prompt-card {
+  background: #13161e;
+  border: 1px solid #1a1f2e;
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.prompt-card:hover {
+  background: #161b27;
+  border-color: #2d3748;
+  transform: translateY(-1px);
+}
+
+.prompt-card-icon {
+  font-size: 16px;
+  margin-bottom: 7px;
+}
+
+.prompt-card-text {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* ── What you get section ── */
+.what-section {
+  margin-bottom: 28px;
+}
+
+.what-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+
+.what-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.what-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #13161e;
+  border: 1px solid #1a1f2e;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.what-bullet {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.bullet-blue { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.bullet-green { background: rgba(16,185,129,0.15); color: #10b981; }
+
+.what-text {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+.what-text strong { color: #94a3b8; display: block; margin-bottom: 1px; }
+
+/* ── Answer display ── */
+.answer-card {
+  background: #161b27;
+  border: 1px solid #1e2736;
+  border-radius: 16px;
+  overflow: hidden;
+  display: none;
+  margin-bottom: 24px;
+}
+
+.answer-card-header {
+  background: #13161e;
+  border-bottom: 1px solid #1e2330;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.answer-mode-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.icon-review { background: rgba(59,130,246,0.12); }
+.icon-learn  { background: rgba(16,185,129,0.12); }
+
+.answer-card-meta { flex: 1; }
+
+.answer-card-question {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.answer-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.atag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.atag-review { background: rgba(59,130,246,0.12); color: #60a5fa; }
+.atag-learn  { background: rgba(16,185,129,0.12); color: #34d399; }
+.atag-neutral { background: #1a1f2e; color: #4a5568; border: 1px solid #252d3d; }
+
+.answer-card-body {
+  padding: 22px 24px;
+}
+
+.answer-card-body h2 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 22px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1e2330;
+}
+.answer-card-body h2:first-child { margin-top: 0; }
+
+.answer-card-body p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+.answer-card-body strong { color: #e2e8f0; }
+.answer-card-body hr { border: none; border-top: 1px solid #1e2330; margin: 18px 0; }
+
+.answer-card-body ul {
+  padding-left: 18px;
+  margin-bottom: 12px;
+}
+.answer-card-body li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="demo-label">Option C — Two-mode dashboard with context-aware cards and structured onboarding</div>
+
+<!-- Header -->
+<header class="header">
+  <div class="brand">
+    <div class="brand-logo">E</div>
+    <span class="brand-name">Endo AI</span>
+    <span class="brand-tag">Evidence-Based Clinical Assistant</span>
+  </div>
+  <div class="header-right">
+    <span>PubMed</span>
+    <span>Cochrane</span>
+    <span>Claude</span>
+  </div>
+</header>
+
+<!-- Mode tabs -->
+<div style="background:#111318; border-bottom:1px solid #1e2330;">
+  <div class="mode-hero">
+    <div class="mode-tab active" id="tabReview" onclick="setMode('review')">
+      <div class="mode-tab-icon">🔬</div>
+      <div class="mode-tab-title">Literature Review</div>
+      <div class="mode-tab-desc">Evidence-based answers with graded references from systematic reviews, RCTs, and case series</div>
+    </div>
+    <div class="mode-tab" id="tabLearn" onclick="setMode('learn')">
+      <div class="mode-tab-icon">🎓</div>
+      <div class="mode-tab-title">Learn</div>
+      <div class="mode-tab-desc">Step-by-step clinical guidance, procedure walkthroughs, and concept explanations with supporting evidence</div>
+    </div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <!-- Input -->
+  <div class="input-card">
+    <div class="input-context">
+      <div class="context-dot dot-review" id="ctxDot"></div>
+      <div class="context-label" id="ctxLabel">Literature Review</div>
+    </div>
+    <textarea id="qInput" rows="2" placeholder="e.g. What is the evidence for MTA vs calcium hydroxide in vital pulp therapy?"></textarea>
+    <div class="input-card-footer">
+      <div class="input-hint">Enter to submit · Shift+Enter for new line</div>
+      <button class="ask-btn" id="askBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Search literature
+      </button>
+    </div>
+  </div>
+
+  <!-- Prompts -->
+  <div id="promptsSection">
+    <div class="prompts-header" id="promptsTitle">Common questions</div>
+    <div class="prompts-grid" id="promptsGrid">
+      <div class="prompt-card" onclick="fillQ(this)">
+        <div class="prompt-card-icon">⚖️</div>
+        <div class="prompt-card-text">MTA vs calcium hydroxide in vital pulp therapy</div>
+      </div>
+      <div class="prompt-card" onclick="fillQ(this)">
+        <div class="prompt-card-icon">📅</div>
+        <div class="prompt-card-text">Single vs multi-visit root canal treatment outcomes</div>
+      </div>
+      <div class="prompt-card" onclick="fillQ(this)">
+        <div class="prompt-card-icon">🧪</div>
+        <div class="prompt-card-text">Bioceramic vs epoxy resin sealers</div>
+      </div>
+      <div class="prompt-card" onclick="fillQ(this)">
+        <div class="prompt-card-icon">🔄</div>
+        <div class="prompt-card-text">Rotary vs reciprocating instrumentation in curved canals</div>
+      </div>
+      <div class="prompt-card" onclick="fillQ(this)">
+        <div class="prompt-card-icon">📐</div>
+        <div class="prompt-card-text">Apical patency during root canal treatment</div>
+      </div>
+      <div class="prompt-card" onclick="fillQ(this)">
+        <div class="prompt-card-icon">💊</div>
+        <div class="prompt-card-text">Antibiotics in endodontic infections — current evidence</div>
+      </div>
+    </div>
+
+    <!-- What you get -->
+    <div class="what-section" id="whatSection">
+      <div class="what-title">What you get</div>
+      <div class="what-grid" id="whatGrid">
+        <div class="what-item">
+          <div class="what-bullet bullet-blue">✦</div>
+          <div class="what-text"><strong>Clinical recommendation</strong>Concise, actionable bottom line based on best available evidence</div>
+        </div>
+        <div class="what-item">
+          <div class="what-bullet bullet-blue">≡</div>
+          <div class="what-text"><strong>Evidence summary</strong>Organised by study design: Cochrane → RCTs → Prospective → Case series</div>
+        </div>
+        <div class="what-item">
+          <div class="what-bullet bullet-blue">🔗</div>
+          <div class="what-text"><strong>Scored references</strong>Papers ranked 0–100 by design, sample size, recency, citations &amp; impact factor</div>
+        </div>
+        <div class="what-item">
+          <div class="what-bullet bullet-blue">⚡</div>
+          <div class="what-text"><strong>Instant on repeat</strong>Answers are cached — identical questions return in under 1 second</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var mode = 'review';
+
+var reviewPrompts = [
+  { icon:'⚖️', text:'MTA vs calcium hydroxide in vital pulp therapy' },
+  { icon:'📅', text:'Single vs multi-visit root canal treatment outcomes' },
+  { icon:'🧪', text:'Bioceramic vs epoxy resin sealers' },
+  { icon:'🔄', text:'Rotary vs reciprocating instrumentation in curved canals' },
+  { icon:'📐', text:'Apical patency during root canal treatment' },
+  { icon:'💊', text:'Antibiotics in endodontic infections — current evidence' },
+];
+
+var learnPrompts = [
+  { icon:'🦷', text:'How do I perform a root canal treatment?' },
+  { icon:'💊', text:'How do I do a direct pulp capping?' },
+  { icon:'📏', text:'How do I determine working length?' },
+  { icon:'🩺', text:'How do I manage a cracked tooth?' },
+  { icon:'🔧', text:'How do I create a glide path?' },
+  { icon:'🧲', text:'How do I obturate a root canal?' },
+];
+
+var learnWhat = [
+  { icon:'🎓', cls:'bullet-green', title:'Overview & background', text:'Anatomy, pathophysiology, and concepts you need to understand first' },
+  { icon:'📋', cls:'bullet-green', title:'Step-by-step procedure', text:'Numbered chairside instructions with checkpoints and pitfalls' },
+  { icon:'📚', cls:'bullet-green', title:'Evidence & best practices', text:'What the literature recommends for each step, with citations' },
+  { icon:'✅', cls:'bullet-green', title:'Key takeaways', text:'3–5 bullet summary of the most important clinical points' },
+];
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tabReview').classList.toggle('active', m === 'review');
+  document.getElementById('tabLearn').classList.toggle('active', m === 'learn');
+
+  var dot = document.getElementById('ctxDot');
+  var lbl = document.getElementById('ctxLabel');
+  var btn = document.getElementById('askBtn');
+  var inp = document.getElementById('qInput');
+
+  if (m === 'learn') {
+    dot.className = 'context-dot dot-learn';
+    lbl.textContent = 'Learn Mode';
+    btn.className = 'ask-btn learn-mode';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Start learning';
+    inp.placeholder = 'e.g. How do I perform a root canal treatment?';
+  } else {
+    dot.className = 'context-dot dot-review';
+    lbl.textContent = 'Literature Review';
+    btn.className = 'ask-btn';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Search literature';
+    inp.placeholder = 'e.g. What is the evidence for MTA vs calcium hydroxide in vital pulp therapy?';
+  }
+
+  renderPrompts();
+}
+
+function renderPrompts() {
+  var list = mode === 'learn' ? learnPrompts : reviewPrompts;
+  document.getElementById('promptsTitle').textContent = mode === 'learn' ? 'What do you want to learn?' : 'Common questions';
+  document.getElementById('promptsGrid').innerHTML = list.map(function(p) {
+    return '<div class="prompt-card" onclick="fillQ(this)">' +
+      '<div class="prompt-card-icon">' + p.icon + '</div>' +
+      '<div class="prompt-card-text">' + p.text + '</div>' +
+      '</div>';
+  }).join('');
+
+  var what = mode === 'learn' ? learnWhat : null;
+  if (what) {
+    document.getElementById('whatGrid').innerHTML = what.map(function(w) {
+      return '<div class="what-item">' +
+        '<div class="what-bullet ' + w.cls + '">' + w.icon + '</div>' +
+        '<div class="what-text"><strong>' + w.title + '</strong>' + w.text + '</div>' +
+        '</div>';
+    }).join('');
+  } else {
+    document.getElementById('whatGrid').innerHTML = [
+      { icon:'✦', cls:'bullet-blue', title:'Clinical recommendation', text:'Concise, actionable bottom line based on best available evidence' },
+      { icon:'≡', cls:'bullet-blue', title:'Evidence summary', text:'Organised by study design: Cochrane → RCTs → Prospective → Case series' },
+      { icon:'🔗', cls:'bullet-blue', title:'Scored references', text:'Papers ranked 0–100 by design, sample size, recency, citations & impact factor' },
+      { icon:'⚡', cls:'bullet-blue', title:'Instant on repeat', text:'Answers are cached — identical questions return in under 1 second' },
+    ].map(function(w) {
+      return '<div class="what-item">' +
+        '<div class="what-bullet ' + w.cls + '">' + w.icon + '</div>' +
+        '<div class="what-text"><strong>' + w.title + '</strong>' + w.text + '</div>' +
+        '</div>';
+    }).join('');
+  }
+}
+
+function fillQ(card) {
+  document.getElementById('qInput').value = card.querySelector('.prompt-card-text').textContent;
+  document.getElementById('qInput').focus();
+}
+</script>
+</body>
+</html>

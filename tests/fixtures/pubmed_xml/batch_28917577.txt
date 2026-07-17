@@ -1,0 +1,265 @@
+1. J Dent. 2025 Nov;162:106073. doi: 10.1016/j.jdent.2025.106073. Epub 2025 Aug
+29.
+
+Comparative clinical success of direct pulp capping materials: A network 
+meta-regression of randomized clinical trials.
+
+Hatipoğlu Ö(1), Varlı Tekingür E(2), Pertek Hatipoğlu F(3).
+
+Author information:
+(1)Department of Restorative Dentistry, Recep Tayyip Erdoğan University, Turkey. 
+Electronic address: omerhtp@gmail.com.
+(2)Department of Restorative Dentistry, Recep Tayyip Erdoğan University, Turkey. 
+Electronic address: elif.varli@erdogan.edu.tr.
+(3)Department of Endodontics, Recep Tayyip Erdoğan University, Turkey. 
+Electronic address: pertekk_165@hotmail.com.
+
+OBJECTIVES: This systematic review and network meta-regression (NMR) aimed to 
+evaluate and compare the clinical effectiveness of various direct pulp capping 
+(DPC) materials used in permanent teeth, incorporating follow-up duration as a 
+covariate.
+MATERIALS AND METHODS: A comprehensive literature search was conducted across 
+multiple databases, including PubMed, Cochrane Library, Scopus, and Web of 
+Science, without language restrictions. Only randomized clinical trials 
+comparing at least two DPC materials with a minimum follow-up of three months 
+were included. Bayesian NMR analyses were performed to integrate direct and 
+indirect evidence, providing odds ratios (OR) with 95 % credible intervals 
+(CrIs) and prediction intervals (PI) while accounting for the follow-up 
+duration.
+RESULTS: A total of 21 randomized controlled trials were included in the 
+systematic review, of which 19 were eligible for the network meta-regression 
+(NMR), comprising 1733 patients and six direct pulp capping materials. 
+Biodentine (OR: 4.41; 95 % CrI: 1.40-17.66) and MTA (OR: 3.02; 95 % CrI: 
+1.19-8.30) demonstrated significantly higher clinical success compared to 
+calcium hydroxide. SUCRA rankings placed Biodentine (83.1 %, 95 % CrI: 40-100) 
+and MTA (66.6 %, 95 % CrI: 20-100) at the top, while calcium hydroxide had the 
+lowest probability of success (18.2 %, 95 % CrI: 0-60).
+CONCLUSIONS: Biodentine and MTA showed higher clinical success rates than 
+calcium hydroxide in direct pulp capping of mature permanent teeth. However, due 
+to substantial heterogeneity, wide credible intervals, and low certainty of 
+evidence, no definitive conclusions can be drawn regarding the superiority of 
+any material.
+CLINICAL SIGNIFICANCE: Calcium silicate-based materials such as Biodentine and 
+MTA are associated with higher clinical success in direct pulp capping compared 
+to calcium hydroxide, suggesting they may offer more predictable outcomes in 
+vital pulp therapy. However, due to limitations in the current evidence, 
+including imprecision and study heterogeneity, clinicians should also consider 
+factors such as handling properties, setting time, and restoration quality when 
+selecting a pulp capping material. Long-term success may depend as much on 
+restorative integrity as on the biological properties of the capping agent.
+
+Copyright © 2025 Elsevier Ltd. All rights reserved.
+
+DOI: 10.1016/j.jdent.2025.106073
+PMID: 40886932 [Indexed for MEDLINE]
+
+Conflict of interest statement: Declaration of competing interest The authors 
+declare that they have no known competing financial interests or personal 
+relationships that could have appeared to influence the work reported in this 
+paper.
+
+
+2. Clin Oral Investig. 2022 Mar;26(3):3287-3297. doi: 10.1007/s00784-021-04310-y.
+ Epub 2021 Dec 2.
+
+Outcomes of root canal therapy or full pulpotomy using two endodontic 
+biomaterials in mature permanent teeth: a randomized controlled trial.
+
+Asgary S(1), Eghbal MJ(2), Shahravan A(3), Saberi E(4), Baghban AA(5), Parhizkar 
+A(2).
+
+Author information:
+(1)Iranian Center for Endodontic Research, Research Institute for Dental 
+Sciences, Shahid Beheshti University of Medical Sciences, 1983963113, Tehran, 
+Iran. saasgary@yahoo.com.
+(2)Iranian Center for Endodontic Research, Research Institute for Dental 
+Sciences, Shahid Beheshti University of Medical Sciences, 1983963113, Tehran, 
+Iran.
+(3)Endodontology Research Center, Endodontic Department, Dental School, Kerman 
+University of Medical Sciences, 7618751689, Kerman, Iran.
+(4)Endodontic Department, Oral and Dental Diseases Research Center, Dental 
+School, Zahedan University of Medical Sciences, 9816743463, Zahedan, Iran.
+(5)Proteomics Research Center, Department of Biostatistics, School of Allied 
+Medical Sciences, Shahid Beheshti University of Medical Sciences, 1971653313, 
+Tehran, Iran.
+
+OBJECTIVE: The concept of minimally invasive endodontics recommends 
+less-invasive vital pulp therapy (VPT) modalities over more aggressive 
+traditional endodontic approaches in mature permanent teeth with carious pulp 
+exposure, including irreversible pulpitis (IP) cases. Consequently, VPT needs to 
+be compared with root canal therapy (RCT) in terms of treatment outcomes. This 
+randomized clinical trial compares the results of full pulpotomy using two 
+calcium-silicate cements, i.e., mineral trioxide aggregate (MTA) and 
+calcium-enriched mixture (CEM) cement, with RCT in mature permanent teeth.
+MATERIALS AND METHODS: A total of 157 carious pulp exposure cases in two 
+academic centers with/without established IP were selected/included/randomly 
+appointed to three study arms; (i) RCT (n = 51) as the reference treatment, (ii) 
+pulpotomy with ProRoot MTA (PMTA; n = 55), and (iii) pulpotomy with CEM cement 
+(PCEM; n = 51) as two alternative VPT treatments. Two-year clinical/radiographic 
+results were the outcomes of interest. Data were statistically analyzed through 
+the analysis of variance, chi-square, Fisher exact test, and Kruskal-Wallis.
+RESULTS: At 2-year recall, 147 teeth were examined (6.4% dropout). All molars, 
+except for one, were clinically functional/symptom-free, and there was no 
+statistical difference between the three study arms (p = 0.653). The 
+radiographic success rates in RCT, PMTA, and PCEM arms were 98%, 100%, and 
+97.9%, respectively, without statistically significant differences (p = 0.544).
+CONCLUSION: In the management of mature permanent teeth with/without established 
+IP, all experimental groups exhibited equivalent/comparable results.
+CLINICAL RELEVANCE: Simple VPT using MTA/CEM can be suggested/recommended as a 
+viable advantageous alternative to RCT for the management of carious pulp 
+exposures with/without sign/symptoms of IP.
+
+© 2021. The Author(s), under exclusive licence to Springer-Verlag GmbH Germany, 
+part of Springer Nature.
+
+DOI: 10.1007/s00784-021-04310-y
+PMCID: PMC8636579
+PMID: 34854987 [Indexed for MEDLINE]
+
+Conflict of interest statement: Dr. Asgary is the inventor of CEM cement 
+(Endodontic Filling Material; USA, 7,942,961, 2011 May 17). All other authors 
+declare that there are no conflict of interest regarding the publication of this 
+paper.
+
+
+3. Odontology. 2023 Jul;111(3):573-579. doi: 10.1007/s10266-022-00764-y. Epub
+2022  Nov 21.
+
+Evaluation of efficacy of new chalcone-based endodontic irrigant against dual 
+biofilm Enterococcus faecalis and Candida albicans: a study in vitro.
+
+Graciani J(1), Rosalen PL(1), de Oliveira Chaves Dos Santos E(1), Rocha KAP(2), 
+Balen BRT(2), Garcia MAR(3), Lazarini JG(1), da Silva DR(4), Carvalho SG(5), 
+Regasini LO(3), Chorilli M(5), Orlandi Sardi JC(6)(7).
+
+Author information:
+(1)Department of Physiological Sciences, Piracicaba Dental School, University of 
+Campinas, Piracicaba, SP, Brazil.
+(2)PostGraduate Program On Integrated Dental Sciences, School of Dentistry of 
+the University of Cuiabá, Cuiabá, Brazil.
+(3)Department of Chemistry and Environmental Sciences, Júlio de Mesquita Filho 
+University, São Jose Do Rio Preto, Brazil.
+(4)Program on Integrated Dental Sciences, School of Dentistry of the University 
+of Cuiabá, Faculty of Dentistry, Cuiabá, Brazil.
+(5)School of Pharmaceutical Sciences, São Paulo State University (UNESP), 
+Araraquara, São Paulo, 14800-903, Brazil.
+(6)Program on Integrated Dental Sciences, School of Dentistry of the University 
+of Cuiabá, Faculty of Dentistry, Cuiabá, Brazil. janaina.sardi@kroton.com.br.
+(7)Department of Periodontology, Dental Research Division, Guarulhos University, 
+Guarulhos, São Paulo, Brazil. janaina.sardi@kroton.com.br.
+
+The aim of this research was to develop a chalcone-based endodontic irrigant for 
+cleaning and disinfecting the root canal. Minimal inhibitory concentration (MIC) 
+experiments in C. albicans and E. faecalis strains with different aminochalcones 
+(AM) were carried out, and the compound that presented the best activity against 
+both pathogens was chosen. The formulation of an endodontic irrigant was 
+elaborated, tested in mono and dual specie biofilms. Disks were sterilized and 
+then incubated with E. faecalis, C. albicans and E. faecalis and C. albicans 
+mixed for 72 h for biofilm maturation. After contamination, samples were divided 
+in 4 experimental groups and 2 positive control group as follows: Group1: 
+Irrigant; Group2: Irrigant + AM-38; Group3: Chlorhexidine 2% (positive control) 
+and, Group 4: 1.0% sodium hypochlorite (positive control). The samples were 
+analyzed by CFU/ml count. The sample was taken to sonicador to remove the cells 
+and then plated. The toxicity was determined in vitro with human gingival 
+fibroblast cells (HGF) and in vivo using the Galleria mellonella model. 
+Formulation showed antimicrobial activity, with MIC on C. albicans 15.6 and E. 
+faecalis 7.8 µg/ml. Treatment with formulation in concentration 156 µg/ml 
+significantly reduced mono or dual species biofilm formation and viability 
+(p < 0.05). The results were significant against C. albicans and E. faecalis and 
+did not show toxicity in cells and G. mellonella. In general, the formulation 
+showed effective antibiofilm activity, significantly reducing microorganisms, 
+opening paths in search of new endodontic irrigants.
+
+© 2022. The Author(s), under exclusive licence to The Society of The Nippon 
+Dental University.
+
+DOI: 10.1007/s10266-022-00764-y
+PMID: 36414881 [Indexed for MEDLINE]
+
+
+4. Eur Endod J. 2024 Aug 22;9(3):180-190. doi: 10.14744/eej.2023.30932.
+
+Normal Saline or Sodium Hypochlorite Irrigation for Vital Pulp Therapy? A 
+Non-Inferiority Randomized Controlled Trial.
+
+Machareonsap H(1), Chompu-Inwai P(1), Chaipattanawan N(1), Manmontri C(1), 
+Nirunsittirat A(2), Phinyo P(3).
+
+Author information:
+(1)Division of Pediatric Dentistry, Department of Orthodontics and Pediatric 
+Dentistry, Chiang Mai University, Faculty of Dentistry, Chiang Mai, Thailand.
+(2)Division of Community Dentistry, Department of Family and Community 
+Dentistry, Chiang Mai University, Faculty of Dentistry, Chiang Mai, Thailand.
+(3)Department of Family Medicine, Chiang Mai University, Faculty of Medicine, 
+Chiang Mai, Thailand; Center for Clinical Epidemiology and Clinical Statistics, 
+Chiang Mai University, Faculty of Medicine, Chiang Mai, Thailand; 
+Musculoskeletal Science and Translational Research (MSTR) Cluster, Chiang Mai 
+University, Chiang Mai, Thailand.
+
+criteria were randomized to each irrigant, 65 in the NaOCl and 60 in the NSS 
+groups. ProRoot® MTA was used as a pulp dressing material in both groups and 
+teeth were followed for 12 months. The primary outcome was the success of VPT; 
+requiring both clinical and radiographic success to be considered as success. 
+The hypothesis was that the absolute difference of VPT success in the NSS group 
+was not worse than that in the NaOCl group, by a margin of 5%. The secondary 
+outcome was discoloration; percentages of discolorations between both groups 
+were compared. Results: Using a per protocol analysis, the absolute difference 
+of VPT success between the NSS and NaOCl groups was 2.08% (95% CI: -1.95, 6.1). 
+Perceptible gray discolorations were 80% and 63% in NaOCl and NSS groups 
+(difference -17%; 95% CI: -40.0, 6.2; p=0.15). Conclusions: For MTA-VPT 
+procedure, irrigation with NSS was not worse than that with NaOCl. However, both 
+irrigants caused discoloration. (EEJ-2023-05-065).
+
+DOI: 10.14744/eej.2023.30932
+PMCID: PMC11413600
+PMID: 39119855 [Indexed for MEDLINE]
+
+Conflict of interest statement: All authors declared no conflict of interest. 
+This study received Research Fund for Postgraduate Students of the Faculty of 
+Dentistry, Chiang Mai University, Chiang Mai, Thailand.
+
+
+5. J Endod. 2017 Nov;43(11):1776-1780. doi: 10.1016/j.joen.2017.06.031. Epub 2017
+ Sep 14.
+
+Direct Pulp Capping with Calcium Hydroxide, Mineral Trioxide Aggregate, and 
+Biodentine in Permanent Young Teeth with Caries: A Randomized Clinical Trial.
+
+Brizuela C(1), Ormeño A(2), Cabrera C(2), Cabezas R(2), Silva CI(2), Ramírez 
+V(2), Mercade M(3).
+
+Author information:
+(1)Dental School, Universidad de Los Andes, Santiago, Chile. Electronic address: 
+clau@cibrizuela.com.
+(2)Dental School, Universidad de Los Andes, Santiago, Chile.
+(3)Dental School, Universitat de Barcelona, Barcelona, Spain.
+
+INTRODUCTION: Direct pulp capping treatment is intended to preserve pulp 
+vitality, to avoid or retard root canal treatment, and, in cases with an open 
+apex, to allow continued root development. Historically, calcium hydroxide (CH) 
+was the gold standard material, but nowadays calcium silicate materials (CSMs) 
+are displacing CH because of their high bioactivity, biocompatibility, sealing 
+ability, and mechanical properties. However, more randomized clinical trials are 
+needed to confirm the appropriateness of CSMs as replacement materials for CH in 
+direct pulp capping procedures.
+METHODS: A randomized clinical trial was conducted that included 169 patients 
+(mean age, 11.3 years) from the Maipo district (Chile). The inclusion criterion 
+was patients with 1 carious permanent tooth with pulpal exposure, a candidate 
+for a direct pulp capping procedure. The patients were randomly allocated to one 
+of the experimental groups (CH, Biodentine, or mineral trioxide aggregate 
+[MTA]). Clinical follow-up examinations were performed at 1 week, 3 months, 
+6 months, and 1 year. The Fisher exact test was performed.
+RESULTS: At the follow-up examination at 1 week, the patients showed 100% 
+clinical success. At 3 months, there was 1 failure in the CH group. At 6 months, 
+there were 4 new failures (1 in the CH group and 3 in the MTA group). At 1 year, 
+there was another failure in the CH group. There were no statistically 
+significant differences among the experimental groups.
+CONCLUSIONS: CSMs appear to be suitable materials to replace CH. Although no 
+significant differences were found among the materials studied, Biodentine and 
+MTA offered some advantages over CH.
+
+Copyright © 2017 American Association of Endodontists. Published by Elsevier 
+Inc. All rights reserved.
+
+DOI: 10.1016/j.joen.2017.06.031
+PMID: 28917577 [Indexed for MEDLINE]

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Endo AI — Option B: Minimal Centered</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #0d0d0d;
+  color: #e8e8e8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Top bar ── */
+.topbar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  border-bottom: 1px solid #1c1c1c;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.brand-dot {
+  width: 10px; height: 10px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 50%;
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #e8e8e8;
+  letter-spacing: -0.2px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topbar-pill {
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #242424;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.12s;
+}
+.topbar-pill.active {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: rgba(59,130,246,0.07);
+}
+.topbar-pill:hover:not(.active) {
+  border-color: #333;
+  color: #aaa;
+}
+
+/* ── Welcome / Hero ── */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 120px;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #3b82f6;
+  margin-bottom: 14px;
+}
+
+.hero-title {
+  font-size: 38px;
+  font-weight: 700;
+  color: #f0f0f0;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
+}
+
+.hero-title span {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: #555;
+  line-height: 1.6;
+  max-width: 440px;
+  margin-bottom: 40px;
+}
+
+/* ── Input ── */
+.search-box {
+  width: 100%;
+  max-width: 620px;
+  background: #161616;
+  border: 1.5px solid #262626;
+  border-radius: 20px;
+  padding: 16px 18px 12px;
+  margin-bottom: 16px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-box:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.08);
+}
+
+.search-box textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e8e8e8;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: none;
+  min-height: 26px;
+  max-height: 140px;
+  font-family: inherit;
+  margin-bottom: 10px;
+}
+.search-box textarea::placeholder { color: #3a3a3a; }
+
+.search-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-mode {
+  display: flex;
+  gap: 4px;
+}
+
+.mode-btn {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid #2a2a2a;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.mode-btn.active {
+  background: #1e2d4a;
+  border-color: #2d4a7a;
+  color: #60a5fa;
+}
+
+.send-btn {
+  width: 36px; height: 36px;
+  background: #3b82f6;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, opacity 0.15s;
+}
+.send-btn:hover { background: #2563eb; }
+
+/* ── Prompt chips ── */
+.prompt-section {
+  width: 100%;
+  max-width: 620px;
+}
+
+.prompt-label {
+  font-size: 11px;
+  color: #3a3a3a;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.prompt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-size: 12px;
+  color: #666;
+  background: #141414;
+  border: 1px solid #222;
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.12s;
+  line-height: 1.4;
+}
+.chip:hover {
+  background: #1a1a1a;
+  border-color: #3b82f6;
+  color: #60a5fa;
+}
+
+/* ── Answer state ── */
+.answer-view {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 160px;
+}
+
+.answer-question {
+  font-size: 22px;
+  font-weight: 700;
+  color: #f0f0f0;
+  letter-spacing: -0.4px;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.answer-meta {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.answer-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+.tag-review { background: rgba(59,130,246,0.12); color: #60a5fa; }
+.tag-learn  { background: rgba(74,222,128,0.12); color: #4ade80; }
+.tag-papers { background: #1a1a1a; color: #666; border: 1px solid #2a2a2a; }
+
+.answer-body h2 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 28px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1c1c1c;
+}
+.answer-body h2:first-child { margin-top: 0; }
+
+.answer-body p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #bbb;
+  margin-bottom: 12px;
+}
+
+.answer-body strong { color: #e8e8e8; }
+.answer-body hr { border: none; border-top: 1px solid #1c1c1c; margin: 20px 0; }
+
+.answer-body ul {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+.answer-body li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #bbb;
+  margin-bottom: 4px;
+}
+
+/* ── Sticky input ── */
+.sticky-input {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 24px 20px;
+  background: linear-gradient(to top, #0d0d0d 75%, transparent);
+  display: none;
+  justify-content: center;
+}
+
+.sticky-wrap {
+  width: 100%;
+  max-width: 620px;
+  background: #161616;
+  border: 1.5px solid #262626;
+  border-radius: 16px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sticky-wrap:focus-within { border-color: #3b82f6; }
+.sticky-wrap textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e8e8e8;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  font-family: inherit;
+  min-height: 22px;
+}
+.sticky-wrap textarea::placeholder { color: #3a3a3a; }
+
+.demo-label {
+  text-align: center;
+  font-size: 11px;
+  color: #333;
+  padding: 6px;
+  background: #0a0a0a;
+  border-bottom: 1px solid #1c1c1c;
+}
+</style>
+</head>
+<body>
+
+<div class="demo-label">Option B — Minimal centered, no sidebar, clean typography</div>
+
+<!-- Top bar -->
+<nav class="topbar">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div class="brand-name">Endo AI</div>
+  </div>
+  <div class="topbar-right">
+    <button class="topbar-pill active" onclick="setMode('review',this)">Literature Review</button>
+    <button class="topbar-pill" onclick="setMode('learn',this)">Learn</button>
+  </div>
+</nav>
+
+<!-- Hero / welcome -->
+<div class="hero" id="hero">
+  <div class="hero-eyebrow">PubMed · Cochrane · Claude</div>
+  <div class="hero-title">Evidence-based<br><span>endodontics</span></div>
+  <div class="hero-sub">Ask a clinical question or choose what you want to learn. Answers are grounded in peer-reviewed literature.</div>
+
+  <div class="search-box">
+    <textarea id="qInput" rows="1" placeholder="e.g. What is the success rate of MTA pulp capping?"></textarea>
+    <div class="search-footer">
+      <div class="search-mode">
+        <button class="mode-btn active" id="mbReview" onclick="setModeSm('review')">Literature Review</button>
+        <button class="mode-btn" id="mbLearn" onclick="setModeSm('learn')">Learn</button>
+      </div>
+      <button class="send-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-label" id="promptLabel">Try asking</div>
+    <div class="prompt-chips" id="promptChips">
+      <span class="chip" onclick="fillQ(this)">MTA vs calcium hydroxide outcomes</span>
+      <span class="chip" onclick="fillQ(this)">Single vs multi-visit root canal</span>
+      <span class="chip" onclick="fillQ(this)">Bioceramic sealers evidence</span>
+      <span class="chip" onclick="fillQ(this)">Rotary vs reciprocating NiTi</span>
+      <span class="chip" onclick="fillQ(this)">Apical patency research</span>
+      <span class="chip" onclick="fillQ(this)">Success rates apical periodontitis</span>
+    </div>
+  </div>
+</div>
+
+<!-- Answer view (shown after submit) -->
+<div class="answer-view" id="answerView">
+  <div class="answer-question">What is the success rate of pulp capping with MTA?</div>
+  <div class="answer-meta">
+    <span class="answer-tag tag-review">Literature Review</span>
+    <span class="answer-tag tag-papers">47 papers</span>
+    <span class="answer-tag tag-papers">Avg score 78/100</span>
+  </div>
+  <div class="answer-body">
+    <h2>Clinical Recommendation</h2>
+    <p><strong>MTA remains the gold standard for direct pulp capping</strong>, with pooled success rates of 87–93% at 2 years in randomised controlled trials. Bioceramic alternatives (Biodentine, TheraCal) demonstrate comparable short-term outcomes. Patient selection, bleeding control, and time to permanent restoration are the dominant prognostic factors.</p>
+    <hr>
+    <h2>Evidence Summary</h2>
+    <p><strong>Cochrane Reviews:</strong> The 2019 Cochrane review (Cushley et al., n=417, 24-month follow-up) found no statistically significant difference in pulp survival between MTA and calcium hydroxide when strict case selection criteria were applied, though MTA showed a trend toward higher success.</p>
+    <p><strong>Level I — RCTs and Systematic Reviews:</strong> Mente et al. (n=187, 36 months) reported 93.5% MTA success vs 80% calcium hydroxide. Kundzina et al. (n=128, 12 months) confirmed superiority of MTA in caries-exposed pulps. A recent network meta-analysis (Tuzuner et al., 2020) ranked MTA and Biodentine equivalently, both superior to calcium hydroxide.</p>
+    <hr>
+    <h2>References</h2>
+    <p>1. [<a href="#" style="color:#3b82f6">PMID: 31246264</a>] Cushley S et al. — Cochrane systematic review of vital pulp therapy. J Dent, 2019. n=417. (Score: 94/100)</p>
+    <p>2. [<a href="#" style="color:#3b82f6">PMID: 25016673</a>] Mente J et al. — MTA vs CaOH direct pulp capping RCT. J Endod, 2014. 36-month follow-up. n=187. (Score: 88/100)</p>
+  </div>
+</div>
+
+<!-- Sticky input (shown in answer view) -->
+<div class="sticky-input" id="stickyInput">
+  <div class="sticky-wrap">
+    <textarea rows="1" placeholder="Ask a follow-up question..."></textarea>
+    <button class="send-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+var mode = 'review';
+
+var reviewChips = ['MTA vs calcium hydroxide outcomes','Single vs multi-visit root canal','Bioceramic sealers evidence','Rotary vs reciprocating NiTi','Apical patency research','Success rates apical periodontitis'];
+var learnChips  = ['How do I perform a root canal?','How do I do pulp capping?','How do I determine working length?','How do I manage a cracked tooth?','What is the crown-down technique?','How do I use an apex locator?'];
+
+function setMode(m, btn) {
+  mode = m;
+  document.querySelectorAll('.topbar-pill').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  syncModeButtons();
+  updateChips();
+}
+
+function setModeSm(m) {
+  mode = m;
+  syncModeButtons();
+  updateChips();
+}
+
+function syncModeButtons() {
+  document.getElementById('mbReview').classList.toggle('active', mode === 'review');
+  document.getElementById('mbLearn').classList.toggle('active', mode === 'learn');
+  document.querySelectorAll('.topbar-pill').forEach(function(b) {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(mode === 'review' ? 'literature' : 'learn'));
+  });
+  document.getElementById('qInput').placeholder = mode === 'learn'
+    ? 'e.g. How do I perform a root canal treatment?'
+    : 'e.g. What is the success rate of MTA pulp capping?';
+}
+
+function updateChips() {
+  var list = mode === 'learn' ? learnChips : reviewChips;
+  document.getElementById('promptLabel').textContent = mode === 'learn' ? 'Learn about' : 'Try asking';
+  document.getElementById('promptChips').innerHTML = list.map(function(c) {
+    return '<span class="chip" onclick="fillQ(this)">' + c + '</span>';
+  }).join('');
+}
+
+function fillQ(el) {
+  document.getElementById('qInput').value = el.textContent;
+  document.getElementById('qInput').focus();
+}
+</script>
+</body>
+</html>

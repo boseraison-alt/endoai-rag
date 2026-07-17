@@ -1,0 +1,46 @@
+# ── Secrets (NEVER commit) ───────────────────────────────
+.env
+.env.*
+!.env.template
+provider_profile.json
+.gitconfig
+
+# ── Claude Code local files ──────────────────────────────
+.claude.json
+.claude.json.backup
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# ── Python ───────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# ── Generated media / large binaries (76 MB+) ────────────
+generated_media/
+media_index.json
+*.mp4
+*.mp3
+*.wav
+
+# ── Runtime logs & data dumps ────────────────────────────
+cost_log.jsonl
+_test_cost_log*.jsonl
+pubmed_audit.jsonl
+evidence_mapping.jsonl
+flask_err.txt
+flask_out.txt
+audit_logs/
+answers/
+learn_history/
+
+# ── Test artifacts ───────────────────────────────────────
+presentations/*.pptx
+presentations/test_*.pptx
+
+# ── OS noise ─────────────────────────────────────────────
+Thumbs.db
+desktop.ini
+.DS_Store
