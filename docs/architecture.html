@@ -106,7 +106,7 @@ Browser <b>pollStatus()</b> → <b>renderAnswer()</b> → [[PMID:N]] pills → /
 <p><span class="fn">create_job()</span> mints a <code>job_id</code>; a daemon <code>threading.Thread</code> runs <span class="fn">run_question()</span>; the API returns the id immediately. The browser's <span class="fn">pollStatus()</span> (<code>index.html:4108</code>) polls <code>GET /status/&lt;job_id&gt;</code> for <code>{progress, message, status}</code> ticks. Two safety details:</p>
 <ul>
 <li><b>Abort:</b> <code>POST /abort/&lt;job_id&gt;</code> sets a flag; every long phase checks <span class="fn">is_aborted()</span> and bails cleanly.</li>
-<li><b>Copyright firewall:</b> <span class="fn">_safe_papers()</span> (<code>app.py:266</code>) strips abstract text from every status payload — clients only ever see metadata (PMID, title, authors, year, journal, score). Raw abstracts stay server-side as Claude context.</li>
+<li><b>Bulk abstract text is not shipped to the client:</b> <span class="fn">_safe_papers()</span> (<code>app.py:266</code>) strips abstract text from the status payload, so a completed job returns metadata for ~100 papers (PMID, title, authors, year, journal, score, provenance) rather than 100 abstracts. Single abstracts <i>are</i> served on demand when the clinician clicks a citation (Step 13) — that is how every reference manager works, and it is what makes a claim checkable. This is a bulk-transfer boundary, not a prohibition.</li>
 </ul></div>
 
 <h3>Phase D — Cache &amp; intent triage</h3>
@@ -250,6 +250,19 @@ Browser <b>pollStatus()</b> → <b>renderAnswer()</b> → [[PMID:N]] pills → /
 <tr><td><code>structured_fast</code></td><td>claude-haiku-4-5 <span class="tag t-haiku">Haiku</span></td><td>Intent router, clarify questions, search-term generation, structured extraction</td><td>Sub-cent structured calls on every request path.</td></tr>
 <tr><td>Vision</td><td>Gemini (primary) / OpenAI (fallback)</td><td><code>/api/analyze-xray</code> radiograph reads → Assess form pre-fill</td><td>Redundant providers; consumer vision models, flagged as assistive only.</td></tr>
 </table>
+
+<h2>Known limitations</h2>
+<p class="lede">Stated plainly, because each one changes how much weight an answer can carry.</p>
+<div class="card guard">
+<ul>
+<li><b>Reasoning is abstract-only.</b> Neither the synthesis nor the claim-support check ever sees methods sections, results tables, or full text — only abstracts. Abstracts report headline numbers, so a success rate or confidence interval in an answer is the figure the authors chose to summarise, not one read from the results. Verify numerical claims against the source before acting on them.</li>
+<li><b>Two databases.</b> Cochrane and PubMed/MEDLINE only — no Embase, Scopus or Web of Science. The evidence base is therefore narrower than a formal systematic review, and the tool should not be described as PRISMA-compliant.</li>
+<li><b>Fail-open guardrails.</b> The clarify gate, intent router and claim-support check degrade to "not run" rather than blocking an answer. Every answer states which checks actually ran.</li>
+<li><b>Retrieval relevance is tuned, not proven.</b> The library-vs-live decision uses a similarity floor that has not yet been calibrated against a labelled question set.</li>
+<li><b>Single-process jobs.</b> Answers are generated on in-process daemon threads: a restart loses in-flight jobs, and the app does not scale past one worker as written.</li>
+<li><b>Admin routes are unauthenticated.</b> <code>/admin/costs</code>, <code>/cache/clear</code> and <code>DELETE /learn_history/&lt;file&gt;</code> assume a trusted single-user deployment.</li>
+</ul>
+</div>
 
 <div class="note"><b>Reading order for a new engineer:</b> Part 1 for the map → Phase D–F of Part 2 (cache → evidence → synthesis → validation) is the heart of the system → Part 4 explains why it can be trusted in a clinical setting.</div>
 

@@ -433,6 +433,7 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
     RAG_SIMILARITY_FLOOR = 0.45   # a hit must be this close to count
     MIN_RAG_RELEVANT  = 12        # ...and we need this many that clear it
     MAX_RAG_PAPERS_PER_TIER = 25  # mirrors the live path's per-tier cap
+    RAG_MAX_TOPIC_AGE_YEARS = 3   # library's newest paper on the topic; older -> go live
     evidence        = {}
     all_scored      = []
 
@@ -463,14 +464,25 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
         newest_year = max((int(r["year"]) for r in relevant
                            if str(r.get("year", "")).isdigit()), default=0)
 
+        # Staleness escape hatch. Write-back plus a library-first gate means a
+        # topic gets searched live once and is then served from that single
+        # search forever. If the freshest paper the library holds on this topic
+        # is older than the cutoff, go live regardless of coverage and let
+        # write-back refresh the topic.
+        from datetime import datetime as _dt
+        topic_age = _dt.now().year - newest_year if newest_year else 99
+        topic_is_stale = topic_age > RAG_MAX_TOPIC_AGE_YEARS
+
         library_covers_question = (
             len(rag_results) >= MIN_RAG_RESULTS
             and len(relevant) >= MIN_RAG_RELEVANT
             and has_high_tier
+            and not topic_is_stale
         )
         print(f"  [rag_gate] {len(rag_results)} hits, {len(relevant)} above "
               f"similarity {RAG_SIMILARITY_FLOOR}, high-tier={has_high_tier}, "
-              f"newest={newest_year} -> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
+              f"newest={newest_year} (age {topic_age}y, stale={topic_is_stale}) "
+              f"-> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
 
         if library_covers_question:
             update_job(job_id, message=f"Found {len(rag_results)} papers in library — building evidence...", progress=40)

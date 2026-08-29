@@ -18,7 +18,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import psycopg2.extras
-from endo_ai import score_paper, get_impact_factor, USE_IMPACT_FACTOR
+from endo_ai import (score_paper, get_impact_factor, USE_IMPACT_FACTOR,
+                     extract_sample_size, is_review_design)
 from rag import get_conn
 
 
@@ -54,7 +55,7 @@ def main() -> int:
         #  - is_curated rows carry hand-assigned authority scores (AAE/ESE
         #    position statements, guidelines) and are never recomputed
         cur.execute("""
-            SELECT pmid, year, citations, sample_size, followup_months,
+            SELECT pmid, year, citations, sample_size, followup_months, abstract,
                    journal, level_key, score,
                    COALESCE(coi_flag, FALSE)        AS coi_flag,
                    COALESCE(medline_indexed, TRUE)  AS medline_indexed,
@@ -70,15 +71,27 @@ def main() -> int:
               f"(unlabelled + curated entries are preserved)")
 
         updates, deltas, unchanged = [], [], 0
+        review_deltas, primary_deltas = [], []
         for r in rows:
             _, if_pts = get_impact_factor(r.get("journal") or "")
+            # Re-extract the sample size rather than trusting the stored value:
+            # rows written before the review fix hold a COUNT OF INCLUDED
+            # STUDIES ("n=12 trials") in this column, so reusing it would
+            # faithfully re-apply the misread on every rescore.
+            level_key = r.get("level_key") or ""
+            abstract  = r.get("abstract") or ""
+            reviewish = is_review_design(level_key, abstract)
+            new_n     = extract_sample_size(abstract, level_key) if abstract \
+                        else r.get("sample_size")
+
             new_score, _ = score_paper(
-                r.get("level_key") or "",
+                level_key,
                 r.get("year"),
                 r.get("citations") or 0,
-                r.get("sample_size"),
+                new_n,
                 r.get("followup_months"),
                 if_pts,
+                is_review=reviewish,
             )
             # Provenance adjustments are baked into the STORED score — this is
             # the single place they are applied. Because RAG ranks on
@@ -95,11 +108,15 @@ def main() -> int:
             if not r["medline_indexed"]:
                 new_score = round(new_score * 0.97, 1)
             old_score = round(float(r.get("score") or 0), 1)
-            if abs(new_score - old_score) < 0.05:
+            n_changed = new_n != r.get("sample_size")
+            if abs(new_score - old_score) < 0.05 and not n_changed:
                 unchanged += 1
                 continue
-            updates.append((new_score, r["pmid"]))
+            updates.append((new_score, new_n, r["pmid"]))
             deltas.append(new_score - old_score)
+            # Track reviews separately: the review fix should move THEM up and
+            # leave primary studies flat. A uniform shift means it didn't run.
+            (review_deltas if reviewish else primary_deltas).append(new_score - old_score)
 
         if deltas:
             deltas_sorted = sorted(deltas)
@@ -111,6 +128,21 @@ def main() -> int:
             # How many cross the quality floor of 50 in either direction?
             print(f"[rescore] papers moving up:   {sum(1 for d in deltas if d > 0)}")
             print(f"[rescore] papers moving down: {sum(1 for d in deltas if d < 0)}")
+
+            def _summarise(name, ds):
+                if not ds:
+                    print(f"[rescore] {name}: none changed")
+                    return
+                s = sorted(ds)
+                print(f"[rescore] {name}: n={len(ds)} "
+                      f"median {s[len(s)//2]:+.1f} mean {sum(ds)/len(ds):+.1f} "
+                      f"(up {sum(1 for d in ds if d > 0)} / down {sum(1 for d in ds if d < 0)})")
+
+            # Reviews should move UP (study counts no longer misread as n) while
+            # primary studies stay flat. A uniform shift across both means the
+            # review fix is not actually being applied.
+            _summarise("reviews (SR/MA/Cochrane)", review_deltas)
+            _summarise("primary studies        ", primary_deltas)
         else:
             print("[rescore] nothing to change")
 
@@ -121,7 +153,7 @@ def main() -> int:
         if updates:
             psycopg2.extras.execute_batch(
                 cur,
-                "UPDATE endo_papers_rag SET score = %s WHERE pmid = %s;",
+                "UPDATE endo_papers_rag SET score = %s, sample_size = %s WHERE pmid = %s;",
                 updates,
                 page_size=500,
             )
