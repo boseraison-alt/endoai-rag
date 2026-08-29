@@ -419,7 +419,7 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
         LEVEL_3A_TERMS, LEVEL_3B_TERMS,
         LEVEL_4_TERMS, LEVEL_5_TERMS,
         detect_outliers, apply_currency_tags,
-        build_synthesis_order, TIER_LABEL,
+        build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review,
     )
     from rag import search as rag_search, rag_results_to_scored, library_stats
@@ -474,7 +474,13 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
 
         if library_covers_question:
             update_job(job_id, message=f"Found {len(rag_results)} papers in library — building evidence...", progress=40)
-            all_rag = rag_results_to_scored(rag_results)
+            # Build the evidence from the RELEVANT hits only. Feeding all 100
+            # nearest neighbours put topically unrelated papers in front of
+            # Claude — a question about regenerative endodontics was answered
+            # citing papers on apex locators and sealer heat properties, which
+            # the claim-support check then correctly flagged. The similarity
+            # floor has to filter the evidence, not merely decide the gate.
+            all_rag = rag_results_to_scored(relevant)
 
             # Band by STUDY DESIGN (level_key), rank by score WITHIN each band.
             #

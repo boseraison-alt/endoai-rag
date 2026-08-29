@@ -236,11 +236,18 @@ class TestUnattributedClaims:
         assert r["failure_reason"].startswith("UNATTRIBUTED_CLAIMS")
 
     def test_claims_inside_exempt_section_are_ignored(self):
-        """Clinical Recommendation is prose-only by prompt design — no markers."""
+        """Exempt sections (Key Takeaways, References, ...) are closing prose and
+        are skipped by the unattributed-claim detector.
+
+        NOTE: Clinical Recommendation used to be on that list and no longer is —
+        it is the text a clinician acts on, so it is now the most-checked
+        section rather than the least. See
+        test_review_scoring_and_recommendation.py.
+        """
         ev = make_evidence(111)
         answer = (
             "## Findings\nA supported point [[PMID:111]] anchors this section.\n\n"
-            "## Clinical Recommendation\n"
+            "## Key Takeaways\n"
             "Success reached 92% at 24 months. "
             "Biodentine was superior to calcium hydroxide. "
             "The material set within 12 minutes. "
@@ -395,8 +402,6 @@ class TestSectionsAndExemption:
         assert secs == [("(intro)", "Just a blob of text with no markdown headings.")]
 
     @pytest.mark.parametrize("title", [
-        "Clinical Recommendation",
-        "clinical recommendation",
         "**References**",
         "Key Takeaways",
         "Assessment",
@@ -408,6 +413,9 @@ class TestSectionsAndExemption:
 
     @pytest.mark.parametrize("title", [
         "Findings", "Background", "Obturation", "Materials & Instrumentation",
+        # No longer exempt — it is the text acted on, so it is now validated
+        # for an evidence tier and at least one citation.
+        "Clinical Recommendation", "clinical recommendation",
     ])
     def test_non_exempt_titles(self, title):
         assert _is_exempt_section(title) is False
@@ -475,15 +483,23 @@ class TestClaimCitationPairs:
 
 class TestSupportWarnings:
 
-    def test_no_flags_returns_answer_unchanged(self):
-        assert _append_support_warnings("answer", {"flags": []}) == "answer"
-        assert _append_support_warnings("answer", {}) == "answer"
+    def test_clean_check_reports_verified_rather_than_staying_silent(self):
+        """Silence from a fail-open check reads as a pass, so every outcome is
+        stated explicitly — including 'this did not run'."""
+        out = _append_support_warnings("answer", {"status": "verified", "checked": 4, "flags": []})
+        assert out.startswith("answer")
+        assert "Citation support: verified" in out
+
+    def test_skipped_check_says_so(self):
+        out = _append_support_warnings("answer", {"flags": []})
+        assert "not available" in out
+        assert "was not verified" in out
 
     def test_flags_append_visible_block_with_pmids(self):
-        out = _append_support_warnings("answer", {"flags": [
+        out = _append_support_warnings("answer", {"status": "verified", "checked": 3, "flags": [
             {"pmid": "999", "claim": "Success was 92% at 24 months.", "verdict": "not_supported"},
         ]})
-        assert "CITATION-SUPPORT CHECK" in out
+        assert "Citation support" in out
         assert "[[PMID:999]]" in out
         assert "92%" in out
 

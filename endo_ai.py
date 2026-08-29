@@ -1302,9 +1302,48 @@ def fetch_metadata(ids):
     return metadata
 
 # ── EXTRACT SAMPLE SIZE ───────────────────────────────────
-def extract_sample_size(abstract_text):
+# Units that count STUDIES, not people. In a systematic review "we included 12
+# studies" and "n=12 trials" are counts of included papers; reading either as a
+# sample size scores a meta-analysis of 1,300 patients like a 12-person pilot.
+_STUDY_UNIT_RE = re.compile(
+    r"^\s*(?:included\s+|eligible\s+|relevant\s+|primary\s+|randomi[sz]ed\s+)?"
+    r"(?:stud(?:y|ies)|trials?|rcts?|articles?|publications?|papers?|reports?|"
+    r"investigations?|reviews?|databases?|records?|citations?|comparisons?|"
+    r"meta-analys[ie]s|abstracts?)\b",
+    re.IGNORECASE,
+)
+
+_REVIEW_DESIGN_RE = re.compile(
+    r"\b(?:systematic\s+review|meta-?analys[ie]s|scoping\s+review|"
+    r"umbrella\s+review|network\s+meta-?analysis|pooled\s+analysis)\b",
+    re.IGNORECASE,
+)
+
+
+def is_review_design(level_key: str = "", abstract_text: str = "") -> bool:
+    """Is this an evidence-synthesis paper rather than a primary study?
+
+    Cochrane entries always are. Level I mixes RCTs with SRs/meta-analyses, so
+    for those the abstract text decides.
+    """
+    if (level_key or "").strip() == "cochrane":
+        return True
+    if (level_key or "").strip() in ("level1", "classic"):
+        return bool(_REVIEW_DESIGN_RE.search(abstract_text or ""))
+    return False
+
+
+def extract_sample_size(abstract_text, level_key: str = ""):
+    """Participant count for this paper, or None when it cannot be read.
+
+    For reviews the count of INCLUDED STUDIES is rejected: only participant
+    counts qualify. Returning None for a review is deliberate — score_paper()
+    exempts reviews from the sample-size term rather than penalising them,
+    the same way classics are exempt from the recency term.
+    """
     if not abstract_text:
         return None
+    reviewish = is_review_design(level_key, abstract_text)
 
     # High-priority idiom: attrition/analysis cohorts, e.g. "Fourteen of 24
     # patients were available", "150 of 200 patients completed the trial".
@@ -1338,13 +1377,24 @@ def extract_sample_size(abstract_text):
 
     found_sizes = []
     for pattern in patterns:
-        matches = re.findall(pattern, abstract_text, re.IGNORECASE)
-        for m in matches:
-            n = _count_token_to_int(m)
-            if n is not None and 5 <= n <= 100000:
-                found_sizes.append(n)
+        for m in re.finditer(pattern, abstract_text, re.IGNORECASE):
+            n = _count_token_to_int(m.group(1))
+            if n is None or not (5 <= n <= 100000):
+                continue
+            # Reject counts of studies rather than of people. "n=12 studies",
+            # "included 12 trials", "12 RCTs" are review bookkeeping, not a
+            # sample size — and the max() below would otherwise happily take
+            # them when no participant count is stated.
+            if _STUDY_UNIT_RE.match(abstract_text[m.end():m.end() + 40]):
+                continue
+            found_sizes.append(n)
 
-    return max(found_sizes) if found_sizes else None
+    if found_sizes:
+        return max(found_sizes)
+
+    # A review with no stated participant count: report unknown rather than
+    # guessing. score_paper() exempts reviews from the sample-size term.
+    return None
 
 # ── SCORE A PAPER ────────────────────────────────────────
 CITATION_GRACE_PERIOD_YEARS = 2   # papers ≤ 2 yrs old get a flat baseline citation score
@@ -1398,7 +1448,7 @@ def score_citations_velocity(citations: int, year) -> float:
     else:                return 1.0
 
 def score_paper(level_key, year, citations, sample_size,
-                followup_months, if_score):
+                followup_months, if_score, is_review: bool = False):
     """
     Scores a paper 0-100:
       Study design       35%
@@ -1412,7 +1462,14 @@ def score_paper(level_key, year, citations, sample_size,
     design_score = LEVEL_SCORES.get(level_key, 10) * 0.35
 
     # Sample size (15 pts)
-    if sample_size is None:
+    if sample_size is None and is_review:
+        # A review with no stated participant count is exempt rather than
+        # penalised — same precedent as classics being exempt from recency.
+        # A synthesis pooling multiple trials is presumptively better powered
+        # than any single one of them, so the 5.0 "unknown" penalty is exactly
+        # backwards for this design.
+        sample_score = 12.0
+    elif sample_size is None:
         sample_score = 5.0
     elif sample_size >= 200:
         sample_score = 15.0
@@ -1666,7 +1723,8 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             # meta-analysis) and stamped it on every unrelated paper.
             _parts      = _per_pmid.get(pmid, {})
             paper_text  = _parts.get('abstract', '') or ''
-            sample_size     = extract_sample_size(paper_text)
+            paper_is_review = is_review_design(level_key, paper_text)
+            sample_size     = extract_sample_size(paper_text, level_key)
             followup        = extract_followup_period(paper_text)
             followup_months = followup[0] if followup else None
             journal_name    = meta.get("journal", "")
@@ -1678,7 +1736,8 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 meta["citations"],
                 sample_size,
                 followup_months,
-                if_pts
+                if_pts,
+                is_review=paper_is_review,
             )
 
             # COI (15% penalty) from the authors' own PubMed declaration, else
@@ -1722,6 +1781,11 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 
             scored_papers.append({
                 "pmid":            pmid,
+                # The tier this paper was retrieved under. Previously omitted,
+                # so write-back inserted live results with an empty level_key —
+                # they were then banded to the weakest tier on every later
+                # query, quietly burying good RCTs as Level V evidence.
+                "level_key":       level_key,
                 "year":            meta["year"],
                 "citations":       meta["citations"],
                 "authors":         meta.get("authors", ""),
@@ -1776,6 +1840,17 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 annotated_text += ab['title'] + "\n"
 
         print(f"  OK{label}: {len(ids)} papers -- top score {scored_papers[0]['score']}/100")
+
+        # Write good papers back into the library so it learns from the topics
+        # clinicians actually ask about, instead of staying frozen at its
+        # ingestion date while the coverage gate keeps preferring it.
+        if LIBRARY_WRITE_BACK:
+            try:
+                from rag import learn_from_live_results
+                learn_from_live_results(scored_papers, _per_pmid)
+            except Exception as _we:
+                print(f"    [learn] write-back skipped: {_we}")
+
         return annotated_text, ids, scored_papers
 
     except Exception as e:
@@ -1783,6 +1858,11 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         return "", [], []
 
 # ── DYNAMIC QUALITY THRESHOLD ─────────────────────────────
+# Live results above the quality floor are added to the local library, so the
+# corpus tracks what clinicians actually ask about. Disable with
+# LIBRARY_WRITE_BACK=false if the library must stay a curated, fixed set.
+LIBRARY_WRITE_BACK = os.getenv("LIBRARY_WRITE_BACK", "true").lower() in ("1", "true", "yes")
+
 QUALITY_FLOOR    = 50   # min score to count as "quality" evidence
 MIN_PAPERS_KEPT  = 3    # keep at least this many even if low-quality (avoid empty tier)
 MAX_PAPERS_KEPT  = 25   # default hard cap so one tier can't drown out others
@@ -2056,7 +2136,11 @@ _EVMAP_RETRY_LIMIT      = 1        # one retry max — don't burn context on inf
 # Sections that legitimately have no PMIDs (per existing prompt rules).
 # Matched case-insensitively against subsection headings.
 _EVMAP_EXEMPT_SECTIONS = {
-    "clinical recommendation",  # ask_clinical_question prompt forbids citations here
+    # NOTE: "clinical recommendation" is deliberately NOT exempt. It is the
+    # text a clinician acts on and was previously the least-verified part of
+    # the answer — no citations required, and skipped by the unattributed-claim
+    # detector. It now must name its evidence tier and carry a citation, and
+    # _check_recommendation() enforces that.
     "assessment",                # ask_case_question prompt: assessment is interpretation
     "key takeaways",             # stitcher closing
     "references",                # final reference list (uses single-bracket [PMID: N])
@@ -2194,6 +2278,45 @@ def _detect_gap_sections(answer: str) -> list:
     return gaps
 
 
+_TIER_CLAIM_RE = re.compile(
+    r"\b(?:cochrane|level\s*(?:I{1,3}|IV|V|[1-5])\b|systematic\s+review|"
+    r"meta-?analys[ie]s|randomi[sz]ed\s+controlled\s+trial|rct|"
+    r"case\s+(?:series|report)|expert\s+opinion|cohort|case-control)\b",
+    re.IGNORECASE,
+)
+
+
+def _check_recommendation(answer: str) -> dict:
+    """The Clinical Recommendation must be traceable.
+
+    It is the 2-4 sentences a clinician acts on, and it was previously the only
+    part of the answer nothing verified: citations were forbidden there by
+    prompt, and the unattributed-claim detector skipped the section entirely.
+    So the most consequential text was the least checked.
+
+    Returns {present, has_citation, names_tier, issues[]}.
+    """
+    out = {"present": False, "has_citation": False, "names_tier": False, "issues": []}
+    for title, body in _split_sections(answer or ""):
+        if not title.strip().lower().startswith("clinical recommendation"):
+            continue
+        out["present"] = True
+        out["has_citation"] = bool(_PMID_RE.search(body or ""))
+        out["names_tier"]   = bool(_TIER_CLAIM_RE.search(body or ""))
+        if not out["has_citation"]:
+            out["issues"].append(
+                "CLINICAL RECOMMENDATION has no [[PMID:N]] citation — the clinician "
+                "cannot trace the advice they are being asked to act on"
+            )
+        if not out["names_tier"]:
+            out["issues"].append(
+                "CLINICAL RECOMMENDATION does not state the strength of evidence it "
+                "rests on (e.g. \"Based on Level I evidence\")"
+            )
+        break
+    return out
+
+
 def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
     """Validate a synthesised answer against its evidence base.
 
@@ -2235,6 +2358,8 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
             total_cite_required += 1
     gap_ratio = (len(gaps) / total_cite_required) if total_cite_required else 0.0
 
+    rec = _check_recommendation(answer)
+
     # Decide pass/fail
     failure_reason = None
     if fabricated:
@@ -2243,12 +2368,15 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
         failure_reason = f"UNATTRIBUTED_CLAIMS: {len(unattributed)} clinical claim(s) lack [[PMID:N]] markers (limit {_EVMAP_MAX_UNATTRIBUTED})"
     elif gap_ratio > _EVMAP_MAX_GAP_RATIO and total_cite_required >= 2:
         failure_reason = f"GAP_SECTIONS: {len(gaps)}/{total_cite_required} sections have zero PMID attribution (limit {int(_EVMAP_MAX_GAP_RATIO*100)}%)"
+    elif rec["present"] and rec["issues"]:
+        failure_reason = "UNTRACEABLE_RECOMMENDATION: " + "; ".join(rec["issues"])
 
     # Score: fabrication is dominant penalty
     score = 100
     score -= 30 * len(fabricated)
     score -= 5  * max(0, len(unattributed) - 1)
     score -= 10 * len(gaps)
+    score -= 10 * len(rec["issues"])
     score = max(0, min(100, score))
 
     return {
@@ -2261,6 +2389,7 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
         "unattributed_claims":  unattributed,
         "gap_sections":         gaps,
         "total_cite_required":  total_cite_required,
+        "recommendation":       rec,
         "failure_reason":       failure_reason,
     }
 
@@ -2318,6 +2447,16 @@ def _build_corrective_message(result: dict) -> str:
             f"[[PMID:N]] marker. Add markers from the evidence base, OR rephrase the sentence so it does not "
             f"assert an evidence-derived fact (avoid percentages, success rates, comparative claims like "
             f"'superior to', or recommendations like 'is indicated' without attribution). Examples:\n   - {sample}"
+        )
+
+    rec = result.get("recommendation") or {}
+    if rec.get("issues"):
+        parts.append(
+            "\n**CLINICAL RECOMMENDATION NOT TRACEABLE** — " + "; ".join(rec["issues"]) +
+            ". This is the text the clinician acts on. Rewrite it to state the evidence "
+            "tier it rests on (e.g. \"Based on Level I evidence\") and to carry at least "
+            "one [[PMID:N]] marker on the load-bearing claim. Do not add citations you "
+            "cannot support from the evidence block."
         )
 
     if result.get("gap_sections"):
@@ -2384,12 +2523,20 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
     Fail-open by design: any error returns zero flags — this gate must never
     block an answer, only annotate it.
     """
-    out = {"flags": [], "checked": 0, "cost": 0.0}
-    if not CITATION_SUPPORT_CHECK or not answer:
+    # status is surfaced to the clinician: silence from a fail-open check must
+    # never be mistaken for a pass.
+    out = {"flags": [], "checked": 0, "cost": 0.0,
+           "status": "not_run", "detail": ""}
+    if not CITATION_SUPPORT_CHECK:
+        out["detail"] = "disabled by configuration"
+        return out
+    if not answer:
+        out["detail"] = "no answer text"
         return out
     try:
         pairs = _extract_claim_citation_pairs(answer)[:_SUPPORT_MAX_PAIRS]
         if not pairs:
+            out["detail"] = "no cited claims to check"
             return out
 
         from rag import get_cached_abstracts_bulk
@@ -2407,6 +2554,7 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
                 "abstract": ab[:_SUPPORT_ABSTRACT_CHARS],
             })
         if not items:
+            out["detail"] = "source abstracts unavailable"
             print(f"  [citation_support] no abstracts available for {len(pairs)} "
                   f"claim-citation pairs — check skipped")
             return out
@@ -2445,6 +2593,7 @@ Return ONLY a JSON array, no prose, no markdown fence:
 
         by_index = {it["i"]: it for it in items}
         out["checked"] = len(items)
+        out["status"]  = "verified"
         for i, verdict in verdicts.items():
             if verdict == "not_supported" and i in by_index:
                 out["flags"].append({
@@ -2476,24 +2625,47 @@ Return ONLY a JSON array, no prose, no markdown fence:
         return out
 
     except Exception as e:
+        out["status"] = "not_run"
+        out["detail"] = "check unavailable"
         print(f"  [citation_support] check skipped: {e}")
         return out
 
 
 def _append_support_warnings(answer: str, support: dict) -> str:
-    """Append a visible advisory block when citations were flagged."""
-    flags = (support or {}).get("flags") or []
-    if not flags:
-        return answer
-    lines = [
-        "\n\n---\n",
-        "> ⚠ **CITATION-SUPPORT CHECK** — an automated review of each cited abstract "
-        f"flagged {len(flags)} citation(s) whose source may not directly support the claim. "
-        "Verify before relying on these specific points:\n>",
-    ]
-    for f in flags[:5]:
-        lines.append(f"> - [[PMID:{f['pmid']}]] cited for: \"{f['claim'][:140]}\"")
-    return answer + "\n".join(lines)
+    """Append the citation-support outcome — including when it did NOT run.
+
+    A fail-open check that stays silent is indistinguishable from a check that
+    passed, so the clinician would read "no warning" as "verified". Every
+    outcome is stated explicitly.
+    """
+    support = support or {}
+    flags   = support.get("flags") or []
+    status  = support.get("status", "not_run")
+    checked = support.get("checked", 0)
+
+    if flags:
+        lines = [
+            "\n\n---\n",
+            f"> ⚠ **Citation support: {len(flags)} of {checked} flagged.** An automated "
+            "review of each cited abstract found these may not directly support the "
+            "claim they are attached to. Verify before relying on them:\n>",
+        ]
+        for f in flags[:5]:
+            lines.append(f"> - [[PMID:{f['pmid']}]] cited for: \"{f['claim'][:140]}\"")
+        return answer + "\n".join(lines)
+
+    if status == "verified":
+        return answer + (
+            f"\n\n---\n\n> ✓ **Citation support: verified.** Each of the {checked} cited "
+            "claims was checked against its source abstract."
+        )
+
+    detail = support.get("detail") or "check unavailable"
+    return answer + (
+        f"\n\n---\n\n> ○ **Citation support: not available** ({detail}). Citations were "
+        "confirmed to exist in the retrieved evidence, but whether each source supports "
+        "its claim was not verified for this answer."
+    )
 
 
 # ──────────────────────────────────────────────────────────
@@ -2632,7 +2804,12 @@ Structure every answer exactly like this:
 
 ## CLINICAL RECOMMENDATION
 
-2-4 concise, actionable sentences. No citations. Just the bottom line.
+2-4 concise, actionable sentences — the bottom line.
+
+This section is what the clinician acts on, so it MUST be traceable:
+- State the strength of evidence it rests on, using the literal tier name — e.g. "Based on Level I evidence," / "Cochrane-level evidence supports..." / "Only Level IV evidence addresses this, so treat as provisional:".
+- Carry at least one `[[PMID:N]]` marker on the load-bearing clinical claim. Keep it to the one or two papers the recommendation actually rests on; the full argument belongs in the EVIDENCE SUMMARY below.
+- If the evidence base cannot support a recommendation, say so plainly and name what is missing, still citing the closest available evidence.
 
 ---
 

@@ -244,6 +244,120 @@ def setup_table():
 
 # ── Store a paper ─────────────────────────────────────────
 
+def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
+                            min_score: float = 50.0) -> int:
+    """Add good papers found on the live PubMed path into the local library.
+
+    Without this the library is frozen at its ingestion date while the coverage
+    gate keeps preferring it — the evidence base ages while the system keeps
+    answering "I've got this". Scheduled re-ingest only refreshes topics someone
+    thought to schedule; writing back refreshes the topics clinicians actually
+    ask about.
+
+    Papers land with their provenance already known (level_key, COI, registry,
+    corrections) because the live path just computed all of it. Only papers at
+    or above the quality floor are kept, and only ones carrying an abstract —
+    a row without one is useless for both retrieval and the support check.
+
+    Returns the number of papers written. Never raises: a failure here must not
+    break the answer that is already being returned to the clinician.
+    """
+    per_pmid = per_pmid or {}
+    written = 0
+    try:
+        candidates = []
+        for p in scored_papers or []:
+            pmid = str(p.get("pmid") or "").strip()
+            if not pmid or float(p.get("score") or 0) < min_score:
+                continue
+            if p.get("has_retraction"):
+                continue                      # never seed a retracted paper
+            parts = per_pmid.get(pmid) or {}
+            if not (parts.get("abstract") or "").strip():
+                continue
+            candidates.append((pmid, p, parts))
+        if not candidates:
+            return 0
+
+        # Only embed papers the library does not already hold — embedding is
+        # the expensive step and this runs on the request path. Refreshing
+        # existing rows' citation counts and provenance is the nightly job's
+        # concern, not this one's.
+        conn = get_conn()
+        cur  = conn.cursor()
+        try:
+            cur.execute("SELECT pmid FROM endo_papers_rag WHERE pmid = ANY(%s);",
+                        ([c[0] for c in candidates],))
+            known = {r[0] for r in cur.fetchall()}
+        finally:
+            cur.close(); conn.close()
+
+        for pmid, p, parts in candidates:
+            if pmid in known:
+                continue
+            abstract = (parts.get("abstract") or "").strip()
+            title    = (parts.get("title") or "").strip()
+            try:
+                vec = embed(f"{title}\n{abstract}")
+            except Exception:
+                continue
+
+            conn = get_conn()
+            cur  = conn.cursor()
+            try:
+                cur.execute("""
+                    INSERT INTO endo_papers_rag
+                        (pmid, title, abstract, authors, year, journal,
+                         impact_factor, sample_size, followup_months,
+                         citations, level_key, score, embedding,
+                         medline_indexed, has_erratum, has_retraction,
+                         registry, coi_flag, coi_funder, coi_status)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                    ON CONFLICT (pmid) DO UPDATE SET
+                        citations       = EXCLUDED.citations,
+                        score           = EXCLUDED.score,
+                        level_key       = COALESCE(NULLIF(EXCLUDED.level_key,''),
+                                                   endo_papers_rag.level_key),
+                        medline_indexed = EXCLUDED.medline_indexed,
+                        has_erratum     = EXCLUDED.has_erratum,
+                        has_retraction  = EXCLUDED.has_retraction,
+                        registry        = EXCLUDED.registry,
+                        coi_flag        = EXCLUDED.coi_flag,
+                        coi_funder      = EXCLUDED.coi_funder,
+                        coi_status      = EXCLUDED.coi_status
+                    WHERE NOT COALESCE(endo_papers_rag.is_curated, FALSE);
+                """, (
+                    pmid, title, abstract, p.get("authors", ""),
+                    _safe_year(p.get("year")), p.get("journal", ""),
+                    p.get("impact_factor"), p.get("sample_size"),
+                    p.get("followup_months"), p.get("citations", 0),
+                    p.get("level_key", "") or "", float(p.get("score") or 0), vec,
+                    p.get("medline_indexed", True), bool(p.get("has_erratum")),
+                    bool(p.get("has_retraction")), p.get("registry", "") or "",
+                    bool(p.get("has_coi")), p.get("coi_funder", "") or "",
+                    p.get("coi_status", "no_statement") or "no_statement",
+                ))
+                conn.commit()
+                written += 1
+            except Exception as e:
+                conn.rollback()
+                print(f"  [learn] skip {pmid}: {e}")
+            finally:
+                cur.close(); conn.close()
+    except Exception as e:
+        print(f"  [learn] write-back aborted: {e}")
+    if written:
+        print(f"  [learn] library grew by {written} paper(s) from this search")
+    return written
+
+
+def _safe_year(v):
+    try:
+        return int(str(v)[:4])
+    except (TypeError, ValueError):
+        return None
+
+
 def upsert_paper(paper: dict, embedding: list[float]):
     """Insert or update a paper in the RAG library."""
     conn = get_conn()
