@@ -901,16 +901,24 @@ _CARDINAL_WORDS = {
 # Longest-first so 'fourteen' is tried before 'four' in the alternation.
 _NUM_WORD_ALT = '|'.join(sorted(_CARDINAL_WORDS, key=len, reverse=True))
 # A count token: a 1–6 digit number OR a spelled cardinal, as a whole word.
-_COUNT_TOKEN  = r'\b(\d{1,6}|' + _NUM_WORD_ALT + r')\b'
+# Comma-grouped thousands must be matched as ONE token. Without the first
+# alternative, "11,971 patients" matched as "11" (or, depending on the pattern,
+# as "971") — silently turning a 12,000-patient synthesis into an 11-patient
+# one. This affected primary studies as much as reviews.
+_COUNT_TOKEN  = r'\b(\d{1,3}(?:,\d{3})+|\d{1,6}|' + _NUM_WORD_ALT + r')\b'
 
 
 def _count_token_to_int(tok):
-    """Convert a digit string or a spelled cardinal ('fourteen') to int, else None."""
+    """Convert a digit string or a spelled cardinal ('fourteen') to int, else None.
+
+    Thousands separators are stripped first: "11,971" is one number, not two.
+    """
     if tok is None:
         return None
     tok = tok.strip().lower()
-    if tok.isdigit():
-        return int(tok)
+    bare = tok.replace(",", "")
+    if bare.isdigit():
+        return int(bare)
     return _CARDINAL_WORDS.get(tok)
 
 
@@ -1313,6 +1321,36 @@ _STUDY_UNIT_RE = re.compile(
     re.IGNORECASE,
 )
 
+# In a review abstract a bare number is usually NOT the pooled participant
+# count. It is a search yield ("a total of 2098 reports"), an eligibility
+# threshold ("articles including at least 10 patients"), or a subgroup
+# ("cerebral palsy (n = 5)"). For reviews we therefore accept a count only when
+# it is explicitly framed as the pooled total across included studies, and
+# exempt the paper otherwise — an exemption is honest about not knowing,
+# whereas a subgroup or threshold silently understates a synthesis.
+_REVIEW_TOTAL_RE = re.compile(
+    r"(?:total(?:ling|ing)?\s+(?:of\s+)?|pooled\s+|comprising\s+|combined\s+|"
+    r"cumulative\s+|overall\s+|involving\s+|encompass\w*\s+|across\s+)"
+    r"[^.;]{0,30}?\b(\d{1,3}(?:,\d{3})+|\d{2,6})\b[^.;]{0,20}?"
+    r"\b(?:patients?|participants?|subjects?|teeth|tooth|canals?|cases?|children|adults?)\b"
+    r"|\b(\d{1,3}(?:,\d{3})+|\d{2,6})\b\s+(?:patients?|participants?|subjects?|teeth|tooth|canals?)\s+"
+    r"(?:were\s+)?(?:included|analy[sz]ed|pooled|evaluated|assessed)\b"
+    # "29 trials (4341 patients) were included" — a study count immediately
+    # followed by a parenthesised participant total. Very common in review
+    # abstracts, and unambiguous: the parenthetical qualifies the study count.
+    r"|\b\d{1,4}\s+(?:trials?|studies|rcts?|articles?)\s*\(\s*"
+    r"(?:n\s*=\s*)?(\d{1,3}(?:,\d{3})+|\d{2,6})\s*"
+    r"(?:patients?|participants?|subjects?|teeth|tooth|canals?)\s*\)",
+    re.IGNORECASE,
+)
+
+# Eligibility thresholds and subgroup labels — never a pooled total.
+_THRESHOLD_RE = re.compile(
+    r"\b(?:at\s+least|minimum\s+of|fewer\s+than|less\s+than|more\s+than|"
+    r"greater\s+than|over|under|>=?|<=?)\s*$",
+    re.IGNORECASE,
+)
+
 _REVIEW_DESIGN_RE = re.compile(
     r"\b(?:systematic\s+review|meta-?analys[ie]s|scoping\s+review|"
     r"umbrella\s+review|network\s+meta-?analysis|pooled\s+analysis)\b",
@@ -1343,7 +1381,22 @@ def extract_sample_size(abstract_text, level_key: str = ""):
     """
     if not abstract_text:
         return None
-    reviewish = is_review_design(level_key, abstract_text)
+
+    # Reviews take a stricter path: only an explicitly-pooled total counts.
+    if is_review_design(level_key, abstract_text):
+        best = None
+        for m in _REVIEW_TOTAL_RE.finditer(abstract_text):
+            # Alternatives contribute different capture groups; take whichever
+            # one fired rather than hard-coding indices (a third alternative was
+            # added later and silently never read).
+            raw = next((g for g in m.groups() if g), None)
+            n = _count_token_to_int(raw) if raw else None
+            if n is None or not (5 <= n <= 1000000):
+                continue
+            if _THRESHOLD_RE.search(abstract_text[max(0, m.start() - 25):m.start()]):
+                continue                      # "at least 10 patients"
+            best = n if best is None else max(best, n)
+        return best
 
     # High-priority idiom: attrition/analysis cohorts, e.g. "Fourteen of 24
     # patients were available", "150 of 200 patients completed the trial".

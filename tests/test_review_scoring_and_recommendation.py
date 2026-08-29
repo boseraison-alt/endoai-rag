@@ -65,6 +65,58 @@ class TestReviewSampleSize:
         assert correct > old_bug
 
 
+class TestReviewMisreadShapes:
+    """Every fixture here is a shape taken from a REAL library abstract that the
+    extractor got wrong at some point. Reviews are read strictly — only an
+    explicitly pooled total counts — because a bare number in a review abstract
+    is usually a search yield, an eligibility threshold, or a subgroup."""
+
+    @pytest.mark.parametrize("text,label", [
+        ("From a total of 2,098 reports, 36 were considered for full-text review.",
+         "search yield in reports"),
+        ("A total of 3,118 publications were identified in the search.",
+         "search yield in publications"),
+        ("RESULTS: a total of 3021 articles, and nine of these were included.",
+         "search yield in articles"),
+        ("The inclusion criteria were articles including at least 10 patients.",
+         "eligibility threshold"),
+        ("They were categorized by condition: cerebral palsy (n = 5), autism (n = 8).",
+         "subgroup count"),
+        ("We included 12 studies identified through database search.",
+         "count of included studies"),
+    ])
+    def test_non_totals_are_not_read_as_sample_size(self, text, label):
+        assert extract_sample_size(text, "cochrane") is None, f"misread: {label}"
+
+    @pytest.mark.parametrize("text,expected", [
+        ("STUDY SELECTION: 29 trials (4341 patients) were included.", 4341),
+        ("We included 12 studies (n = 1,340 patients).", 1340),
+        ("A meta-analysis involving 1,340 patients was performed.", 1340),
+        ("Twenty-three studies met criteria, comprising a total of 11,971 patients.", 11971),
+        ("In total, 842 teeth were included across the 9 eligible studies.", 842),
+    ])
+    def test_real_pooled_totals_are_captured(self, text, expected):
+        assert extract_sample_size(text, "cochrane") == expected
+
+
+class TestThousandsSeparators:
+    """"11,971 patients" was matched as 11 (or 971, depending on the pattern),
+    turning a twelve-thousand-patient synthesis into an eleven-patient one.
+    The bug predated the review work and affected primary studies too."""
+
+    def test_review_comma_total(self):
+        assert extract_sample_size(
+            "Twenty-three studies, comprising a total of 11,971 patients.",
+            "cochrane") == 11971
+
+    def test_primary_study_comma_total(self):
+        assert extract_sample_size(
+            "A retrospective cohort of 2,500 patients was analysed.", "level2") == 2500
+
+    def test_uncommaed_numbers_still_work(self):
+        assert extract_sample_size("A trial of 150 patients.", "level1") == 150
+
+
 class TestIsReviewDesign:
 
     def test_cochrane_is_always_a_review(self):

@@ -1571,6 +1571,75 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   padding: 16px 24px 22px;
 }
 
+/* ── Clinical recommendation box (Review mode) ───────────── */
+.rec-box {
+  background: #ffffff;
+  border: 1px solid #ccd5e0;
+  border-top: 3px solid #1d4ed8;
+  border-radius: 10px;
+  padding: 15px 18px 13px;
+  margin: 0 0 20px;
+  box-shadow: 0 1px 4px rgba(19,27,44,.07);
+}
+.rec-box-head { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; flex-wrap: wrap; }
+.rec-box-label {
+  font-size: 10.5px; font-weight: 800; letter-spacing: .12em;
+  text-transform: uppercase; color: #536176;
+}
+.rec-tier {
+  font-size: 10px; font-weight: 800; letter-spacing: .05em;
+  padding: 2px 8px; border-radius: 99px; text-transform: uppercase;
+}
+.rec-tier.tier-a { background: #e3f5ec; color: #0b5f3d; }   /* Cochrane / L I  */
+.rec-tier.tier-b { background: #e5edff; color: #1e3a8a; }   /* L II / L III    */
+.rec-tier.tier-c { background: #faf0dc; color: #854d0e; }   /* L IV / L V      */
+.rec-divided {
+  background: #faf0dc; border: 1px solid #e6cf9a; color: #7a4a12;
+  border-radius: 8px; padding: 8px 11px; font-size: 12.5px;
+  font-weight: 600; margin-bottom: 10px;
+}
+.rec-box-body { font-size: 15px; line-height: 1.6; color: #1e2840; }
+.rec-box-body p { margin: 0 0 8px; }
+.rec-caveat {
+  margin-top: 9px; padding-left: 11px; border-left: 3px solid #d05252;
+  font-size: 12.5px; color: #7a2f2f;
+}
+.rec-note {
+  margin-top: 10px; font-size: 11px; color: #768292; font-style: italic;
+}
+
+/* ── Bibliography tiers + provenance badges ──────────────── */
+.biblio-tier { margin-bottom: 14px; }
+.biblio-tier-head {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: #1e3a8a;
+  padding: 5px 0 6px; border-bottom: 1px solid #dde3ea; margin-bottom: 6px;
+}
+.biblio-tier-count {
+  background: #e5edff; color: #1e3a8a; border-radius: 99px;
+  padding: 1px 7px; font-size: 10px;
+}
+.biblio-more {
+  background: none; border: 0; color: #1d4ed8; cursor: pointer;
+  font-size: 11.5px; font-weight: 700; padding: 3px 0; margin-top: 2px;
+}
+.biblio-more:hover { text-decoration: underline; }
+.pv {
+  display: inline-block; font-size: 9.5px; font-weight: 700;
+  padding: 1px 6px; border-radius: 99px; margin-left: 4px;
+  letter-spacing: .03em; vertical-align: 1px;
+}
+.pv-good  { background: #e3f5ec; color: #0b5f3d; }
+.pv-warn  { background: #faf0dc; color: #854d0e; }
+.pv-bad   { background: #fbe5e5; color: #a52a2a; }
+.pv-muted { background: #eceef6; color: #6a7186; }
+
+/* ── Header trust chips ──────────────────────────────────── */
+.atag-ok      { background: #e3f5ec; color: #0b5f3d; }
+.atag-warn    { background: #faf0dc; color: #854d0e; }
+.atag-bad     { background: #fbe5e5; color: #a52a2a; }
+
 .biblio-limitation {
   margin-top: 14px;
   padding: 10px 13px;
@@ -4183,24 +4252,69 @@ function showResult(question, job) {
   // Tags
   var papers   = job.papers || [];
   setCitationMeta(papers);   // author-style inline citations need the metadata map
-  var avgScore = papers.length
-    ? Math.round(papers.reduce(function(s,p){ return s + p.score; }, 0) / papers.length) : 0;
   var fromCache = (job.message || '').indexOf('cache') !== -1;
+  var answerText = job.answer || '';
+
+  // Evidence SHAPE, not an average score. "Avg 74/100" averaged across seven
+  // tiers tells a clinician nothing and invites "74 what?"; the mix of study
+  // designs tells them how much weight the recommendation can bear, and it
+  // surfaces the tier hierarchy instead of leaving it buried in prose.
+  var shapeOrder = ['cochrane','level1','classic','level2','level3a','level3','level3b','level4','level5'];
+  var counts = {};
+  papers.forEach(function(p) {
+    var k = p.level_key || 'level5';
+    if (!TIER_SHORT[k]) k = 'level5';
+    counts[k] = (counts[k] || 0) + 1;
+  });
+  var shape = shapeOrder.filter(function(k){ return counts[k]; })
+                        .map(function(k){ return counts[k] + ' ' + TIER_SHORT[k]; })
+                        .join(' · ');
+
+  // Trust signals belong in the header, not appended after the references
+  // where nobody looks — they are the product's whole thesis.
+  var supportChip = '';
+  var m = answerText.match(/Citation support:\s*(\d+)\s+of\s+(\d+)\s+flagged/i);
+  if (m) {
+    var flagged = +m[1], total = +m[2];
+    supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract">' +
+      '⚠ ' + (total - flagged) + '/' + total + ' citations consistent with source abstracts</span>';
+  } else if (/Citation support:\s*verified/i.test(answerText)) {
+    var vm = answerText.match(/the (\d+) cited claims/i);
+    // "verified" would over-claim what an abstract-level check can establish.
+    supportChip = '<span class="atag atag-ok" title="Each cited claim was compared with its source abstract">' +
+      '✓ checked against abstracts: ' + (vm ? vm[1] + '/' + vm[1] : 'all') + ' consistent</span>';
+  } else if (/Citation support:\s*not available/i.test(answerText)) {
+    supportChip = '<span class="atag atag-neutral" title="This check did not run for this answer">' +
+      '○ citation check unavailable</span>';
+  }
+  var validationChip = /VALIDATION WARNING/.test(answerText)
+    ? '<span class="atag atag-bad" title="Evidence-mapping checks did not fully pass">⚠ validation warning</span>'
+    : '';
 
   var tagsHtml =
     '<span class="atag ' + (mode === 'learn' ? 'atag-learn' : 'atag-review') + '">' +
       (mode === 'learn' ? 'Deep Learning' : 'Literature Review') +
     '</span>' +
-    '<span class="atag atag-neutral">' + papers.length + ' papers</span>' +
-    '<span class="atag atag-neutral">Avg score ' + avgScore + '/100</span>' +
+    validationChip +
+    supportChip +
+    '<span class="atag atag-neutral" title="Study designs behind this answer">' +
+      (shape || papers.length + ' papers') + '</span>' +
     (fromCache ? '<span class="atag atag-cache">Cached</span>' : '') +
-    (job.cost_usd != null
+    (SHOW_COST && job.cost_usd != null
       ? '<span class="atag atag-cost">$' + (fromCache ? '0.0000' : job.cost_usd.toFixed(4)) + '</span>'
       : '');
   document.getElementById('answerTags').innerHTML = tagsHtml;
 
-  // Answer body
-  document.getElementById('answerContent').innerHTML = renderAnswer(job.answer || '');
+  // Answer body — Review mode lifts the recommendation into a box above the
+  // synthesis. Deep Learning keeps its own structure (it ends with The Final
+  // Verdict, which already does this job).
+  window._lastJob = job; window._lastQuestion = question;
+  if (mode === 'learn') {
+    document.getElementById('answerContent').innerHTML = renderAnswer(answerText);
+  } else {
+    var parts = renderAnswerWithBox(answerText);
+    document.getElementById('answerContent').innerHTML = parts.box + parts.body;
+  }
 
   // Full bibliography — always shown, all papers, generated from data
   renderBibliography(papers);
@@ -4371,6 +4485,67 @@ function formatCite(pmid) {
   return [auth, journal ? journal + '.' : '', tail].filter(Boolean).join(', ').replace(/\.\,/g, '.,');
 }
 
+// Cost is compelling to investors and judges ("$0.45 for a seven-tier
+// literature review") and noise to a clinician mid-clinic. Toggleable rather
+// than removed; persisted per browser.
+var SHOW_COST = (function () {
+  try { return localStorage.getItem('endo_show_cost') !== 'false'; }
+  catch (e) { return true; }
+})();
+function toggleCostChip() {
+  SHOW_COST = !SHOW_COST;
+  try { localStorage.setItem('endo_show_cost', SHOW_COST ? 'true' : 'false'); } catch (e) {}
+  if (window._lastJob) showResult(window._lastQuestion || '', window._lastJob);
+}
+
+// Evidence tier named inside the recommendation, rendered as a badge. The
+// validator now requires the recommendation to state its tier, so this is
+// always present on a passing answer.
+function _recommendationTier(txt) {
+  if (/cochrane/i.test(txt))                                  return ['Cochrane', 'tier-a'];
+  if (/level\s*(?:I\b|1\b)|systematic review|meta-?analys|randomi[sz]ed controlled trial|\bRCT\b/i.test(txt))
+                                                              return ['Level I', 'tier-a'];
+  if (/level\s*(?:II\b|2\b)|prospective/i.test(txt))           return ['Level II', 'tier-b'];
+  if (/level\s*(?:III|3)|cohort|case-control/i.test(txt))      return ['Level III', 'tier-b'];
+  if (/level\s*(?:IV|4)|case series|case report/i.test(txt))   return ['Level IV', 'tier-c'];
+  if (/level\s*(?:V\b|5\b)|expert opinion/i.test(txt))         return ['Level V', 'tier-c'];
+  return ['', ''];
+}
+
+// Promote CLINICAL RECOMMENDATION out of the prose into a box at the top: it
+// is the part a clinician acts on, and burying it as the first paragraph of a
+// long answer wastes the one thing they came for.
+function renderAnswerWithBox(text) {
+  var m = text.match(/##\s*CLINICAL RECOMMENDATION\s*\n([\s\S]*?)(?=\n##\s|\n---\s*\n##|\s*$)/i);
+  if (!m) return { box: '', body: renderAnswer(text) };
+
+  var recRaw = m[1].replace(/^\s*---\s*$/gm, '').trim();
+  var rest   = text.replace(m[0], '');
+  var tier   = _recommendationTier(recRaw);
+  var divided = /literature is currently divided/i.test(text);
+
+  // "Does not apply when…" — surfaced separately when the model supplied it.
+  var caveat = '';
+  var cm = recRaw.match(/(?:does not apply|not applicable|except when|unless)\b([^.]*\.)/i);
+  if (cm) caveat = cm[0].trim();
+
+  var box =
+    '<div class="rec-box">' +
+      '<div class="rec-box-head">' +
+        '<span class="rec-box-label">Clinical recommendation</span>' +
+        (tier[0] ? '<span class="rec-tier ' + tier[1] + '">' + tier[0] + ' evidence</span>' : '') +
+      '</div>' +
+      (divided
+        ? '<div class="rec-divided">⚖ The literature is currently divided on this topic — ' +
+          'both positions are set out in the evidence summary below.</div>'
+        : '') +
+      '<div class="rec-box-body">' + renderAnswer(recRaw) + '</div>' +
+      (caveat ? '<div class="rec-caveat">' + _citeEsc(caveat) + '</div>' : '') +
+      '<div class="rec-note">Synthesized from abstracts, not full text.</div>' +
+    '</div>';
+  return { box: box, body: renderAnswer(rest) };
+}
+
 function renderAnswer(text) {
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -4418,29 +4593,112 @@ function renderPaperTable(papers) {
 }
 
 // ── Full bibliography ─────────────────────────────────
+// Evidence tiers, strongest first — must mirror endo_ai.TIER_ORDER. Ranking the
+// bibliography by score alone reintroduced in the DISPLAY the exact inversion
+// fixed in the engine: a case series scoring 91 sat above a Cochrane review at
+// 88. Papers are grouped by design and ranked by score within each group.
+var TIER_DISPLAY = [
+  ['cochrane', 'Cochrane Reviews'],
+  ['level1',   'Level I — RCTs & Systematic Reviews'],
+  ['classic',  'Landmark / Classic Papers'],
+  ['level2',   'Level II — Prospective Studies'],
+  ['level3a',  'Level IIIa — Retrospective Cohort'],
+  ['level3',   'Level III — Comparative Studies'],
+  ['level3b',  'Level IIIb — Case-Control'],
+  ['level4',   'Level IV — Case Series'],
+  ['level5',   'Level V — Expert Opinion / Reviews']
+];
+var TIER_SHORT = {
+  cochrane:'Cochrane', level1:'RCT/SR', classic:'Classic', level2:'Prospective',
+  level3a:'Cohort', level3:'Comparative', level3b:'Case-control',
+  level4:'Case series', level5:'Expert opinion'
+};
+var BIBLIO_VISIBLE_PER_TIER = 5;
+
+// Integrity badges the engine computes. If these only reach Claude's context
+// the clinician never sees the signals; they belong on the reference line.
+function provenanceBadges(p) {
+  var b = [];
+  if (p.has_retraction)  b.push('<span class="pv pv-bad">RETRACTED</span>');
+  if (p.has_erratum)     b.push('<span class="pv pv-warn">correction</span>');
+  if (p.has_coi)         b.push('<span class="pv pv-warn">industry COI' +
+                                (p.coi_funder ? ': ' + _citeEsc(p.coi_funder) : '') + '</span>');
+  if (p.is_registered)   b.push('<span class="pv pv-good">pre-registered</span>');
+  if (p.medline_indexed === false) b.push('<span class="pv pv-muted">not MEDLINE-indexed</span>');
+  return b.length ? ' ' + b.join(' ') : '';
+}
+
+function biblioLine(p, n) {
+  var scoreColor = p.score >= 70 ? '#12885a' : p.score >= 50 ? '#b45309' : '#d05252';
+  var ss  = p.sample_size     ? ', n=' + p.sample_size              : '';
+  var fu  = p.followup_months ? ', ' + p.followup_months + ' mo FU' : '';
+  // Impact factor is deliberately absent: it no longer contributes to scoring
+  // (PRISMA/Cochrane advise against screening by journal), so displaying it on
+  // every reference line would advertise a weighting that isn't applied. It
+  // remains available in the abstract popover as reference metadata.
+  var auth = (p.authors || 'Unknown').split(',')[0] +
+             (p.authors && p.authors.indexOf(',') > -1 ? ' et al.' : '');
+  return '<li class="biblio-item">' +
+    '<span class="biblio-num">' + n + '.</span>' +
+    '<span>' +
+      '<a class="pmid-link" href="https://pubmed.ncbi.nlm.nih.gov/' + p.pmid + '/" target="_blank">[PMID: ' + p.pmid + ']</a> ' +
+      _citeEsc(auth) + ' — ' + (p.year || '') + ss + fu +
+      provenanceBadges(p) +
+    '</span>' +
+    '<span class="biblio-score" style="color:' + scoreColor + '">' + p.score + '/100</span>' +
+  '</li>';
+}
+
+function toggleTier(key) {
+  var el = document.getElementById('tierRest-' + key);
+  var btn = document.getElementById('tierBtn-' + key);
+  if (!el) return;
+  var open = el.style.display === 'block';
+  el.style.display = open ? 'none' : 'block';
+  if (btn) btn.textContent = open ? btn.dataset.showLabel : 'show fewer';
+}
+
 function renderBibliography(papers) {
   if (!papers || !papers.length) {
     document.getElementById('biblioSection').style.display = 'none';
     return;
   }
   document.getElementById('biblioCount').textContent = papers.length + ' papers';
-  var sorted = papers.slice().sort(function(a, b) { return b.score - a.score; });
-  var list = document.getElementById('biblioList');
-  list.innerHTML = sorted.map(function(p, i) {
-    var scoreColor = p.score >= 70 ? '#12885a' : p.score >= 50 ? '#b45309' : '#d05252';
-    var ss  = p.sample_size    ? ', n=' + p.sample_size              : '';
-    var fu  = p.followup_months ? ', ' + p.followup_months + ' mo FU' : '';
-    var jif = p.impact_factor   ? ', IF=' + p.impact_factor           : '';
-    var auth = (p.authors || 'Unknown').split(',')[0] + (p.authors && p.authors.indexOf(',') > -1 ? ' et al.' : '');
-    return '<li class="biblio-item">' +
-      '<span class="biblio-num">' + (i + 1) + '.</span>' +
-      '<span>' +
-        '<a class="pmid-link" href="https://pubmed.ncbi.nlm.nih.gov/' + p.pmid + '/" target="_blank">[PMID: ' + p.pmid + ']</a> ' +
-        auth + ' — ' + (p.year || '') + jif + ss + fu +
-      '</span>' +
-      '<span class="biblio-score" style="color:' + scoreColor + '">' + p.score + '/100</span>' +
-    '</li>';
-  }).join('');
+
+  var byTier = {};
+  papers.forEach(function(p) {
+    var k = p.level_key || 'level5';
+    if (!TIER_SHORT[k]) k = 'level5';
+    (byTier[k] = byTier[k] || []).push(p);
+  });
+
+  var n = 0, html = '';
+  TIER_DISPLAY.forEach(function(t) {
+    var key = t[0], label = t[1], bucket = byTier[key];
+    if (!bucket || !bucket.length) return;
+    bucket.sort(function(a, b) { return b.score - a.score; });
+    var head = bucket.slice(0, BIBLIO_VISIBLE_PER_TIER);
+    var rest = bucket.slice(BIBLIO_VISIBLE_PER_TIER);
+
+    html += '<div class="biblio-tier">' +
+              '<div class="biblio-tier-head">' + label +
+                '<span class="biblio-tier-count">' + bucket.length + '</span>' +
+              '</div><ol class="biblio-list">';
+    head.forEach(function(p) { html += biblioLine(p, ++n); });
+    html += '</ol>';
+    if (rest.length) {
+      html += '<ol class="biblio-list" id="tierRest-' + key + '" style="display:none">';
+      rest.forEach(function(p) { html += biblioLine(p, ++n); });
+      html += '</ol>' +
+        '<button class="biblio-more" id="tierBtn-' + key + '" data-show-label="show ' +
+        rest.length + ' more" onclick="toggleTier(\'' + key + '\')">show ' +
+        rest.length + ' more</button>';
+    }
+    html += '</div>';
+  });
+
+  document.getElementById('biblioList').outerHTML =
+    '<div id="biblioList">' + html + '</div>';
   document.getElementById('biblioSection').style.display = 'block';
 }
 
