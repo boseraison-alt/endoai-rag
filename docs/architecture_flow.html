@@ -31,7 +31,7 @@
 </div>
 
 <div class="chart">
-<svg viewBox="0 0 980 1720" width="980">
+<svg viewBox="0 0 980 1840" width="980">
 <defs>
   <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
     <path d="M0,0 L10,5 L0,10 z" fill="#4c586c"/></marker>
@@ -84,7 +84,7 @@
 <text x="170" y="444" text-anchor="middle" class="s">→ write modules ×N  <tspan font-weight="700" fill="#1d4ed8">SONNET</tspan> 3.2K tok</text>
 <text x="170" y="460" text-anchor="middle" class="s">→ stitch (dynamic budget) · ~$0.50/run</text>
 <text x="170" y="477" text-anchor="middle" class="s">validation gate runs per module</text>
-<path d="M 170,488 L 170,1462 L 318,1462" fill="none" stroke="#8b96a5" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+<path d="M 170,488 L 170,1587 L 318,1587" fill="none" stroke="#8b96a5" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar)"/>
 
 <!-- 4 cache diamond -->
 <polygon points="490,374 625,444 490,514 355,444" fill="#e5edff" stroke="#1d4ed8" stroke-width="1.6"/>
@@ -142,8 +142,8 @@
 <text x="490" y="934" text-anchor="middle" class="t">Live PubMed — 7 tiers × N query angles</text>
 <text x="490" y="953" text-anchor="middle" class="s">multi-terms <tspan font-weight="700" fill="#0f7a4d">HAIKU</tspan> · esearch (retraction-filtered, audited)</text>
 <text x="490" y="969" text-anchor="middle" class="s">efetch + esummary → per-paper n / follow-up extraction</text>
-<text x="490" y="985" text-anchor="middle" class="s">COI blocklist −15% · score 0–100 (design 35 · n 15 · recency 15</text>
-<text x="490" y="1001" text-anchor="middle" class="s">cites/yr 15 · follow-up 10 · IF 10) · threshold: floor 50, cap 25</text>
+<text x="490" y="985" text-anchor="middle" class="s">score 0–100: design 39 · n 17 · recency 17 · cites/yr 16 · FU 11 (no IF)</text>
+<text x="490" y="1001" text-anchor="middle" class="s">provenance: COI −15% · pre-reg +5% · erratum −3% · floor 50, cap 25</text>
 
 <line x1="490" y1="1018" x2="490" y2="1040" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
 
@@ -189,25 +189,34 @@
 <line x1="490" y1="1400" x2="490" y2="1440" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
 <text x="500" y="1424" class="lbl yes">PASS</text>
 
-<!-- 11 persist -->
-<rect x="320" y="1442" width="340" height="66" rx="12" fill="#faf0dc" stroke="#a16207" stroke-width="1.6"/>
-<text x="490" y="1466" text-anchor="middle" class="t">Persist</text>
-<text x="490" y="1484" text-anchor="middle" class="s">save_answer · save_query_cache (future hits free)</text>
-<text x="490" y="1500" text-anchor="middle" class="s">write_citation_audit · learn_history (DL only)</text>
+<!-- 10b claim-support gate (v2) -->
+<rect x="300" y="1442" width="380" height="78" rx="12" fill="#fbe5e5" stroke="#c23f3f" stroke-width="1.8"/>
+<text x="490" y="1466" text-anchor="middle" class="t">verify_citation_support()  <tspan font-weight="700" fill="#0f7a4d">HAIKU</tspan></text>
+<text x="490" y="1484" text-anchor="middle" class="s">does each cited abstract actually SUPPORT the claim?</text>
+<text x="490" y="1500" text-anchor="middle" class="s">catches real-but-irrelevant citations · advisory, fail-open</text>
+<text x="490" y="1515" text-anchor="middle" class="s">unsupported → ⚠ CITATION-SUPPORT CHECK block</text>
 
-<line x1="490" y1="1508" x2="490" y2="1542" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+<line x1="490" y1="1520" x2="490" y2="1552" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 11 persist -->
+<rect x="320" y="1554" width="340" height="66" rx="12" fill="#faf0dc" stroke="#a16207" stroke-width="1.6"/>
+<text x="490" y="1578" text-anchor="middle" class="t">Persist</text>
+<text x="490" y="1596" text-anchor="middle" class="s">save_answer · save_query_cache (future hits free)</text>
+<text x="490" y="1612" text-anchor="middle" class="s">write_citation_audit · learn_history (DL only)</text>
+
+<line x1="490" y1="1620" x2="490" y2="1654" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
 
 <!-- 12 render -->
-<rect x="320" y="1544" width="340" height="70" rx="12" fill="#eef2fe" stroke="#1e3a8a" stroke-width="1.6"/>
-<text x="490" y="1568" text-anchor="middle" class="t">Browser — renderAnswer()</text>
-<text x="490" y="1586" text-anchor="middle" class="s">[[PMID:N]] → clickable pills · bibliography panel</text>
-<text x="490" y="1602" text-anchor="middle" class="s">abstract popovers via /api/abstract/&lt;pmid&gt;</text>
+<rect x="320" y="1656" width="340" height="70" rx="12" fill="#eef2fe" stroke="#1e3a8a" stroke-width="1.6"/>
+<text x="490" y="1680" text-anchor="middle" class="t">Browser — renderAnswer()</text>
+<text x="490" y="1698" text-anchor="middle" class="s">author-style citations · bibliography panel</text>
+<text x="490" y="1714" text-anchor="middle" class="s">abstract popovers via /api/abstract/&lt;pmid&gt;</text>
 
-<line x1="490" y1="1614" x2="490" y2="1648" stroke="#0f7a4d" stroke-width="1.8" marker-end="url(#arg)"/>
+<line x1="490" y1="1726" x2="490" y2="1760" stroke="#0f7a4d" stroke-width="1.8" marker-end="url(#arg)"/>
 
 <!-- END -->
-<rect x="360" y="1650" width="260" height="46" rx="23" fill="#e3f5ec" stroke="#0f7a4d" stroke-width="1.8"/>
-<text x="490" y="1678" text-anchor="middle" class="t">Verifiable answer delivered</text>
+<rect x="360" y="1762" width="260" height="46" rx="23" fill="#e3f5ec" stroke="#0f7a4d" stroke-width="1.8"/>
+<text x="490" y="1790" text-anchor="middle" class="t">Verifiable answer delivered</text>
 </svg>
 </div>
 </div></body></html>
