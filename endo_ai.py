@@ -350,12 +350,162 @@ COI_FUNDER_BLOCKLIST = [
 
 
 def check_coi_blocklist(text: str) -> tuple:
-    """Fast blocklist check for dental industry funders. Returns (has_coi, funder_found)."""
-    text_lower = text.lower()
+    """Raw blocklist scan: does this text mention an industry name anywhere?
+
+    NOTE: a bare mention is NOT a conflict of interest. In endodontics almost
+    every instrumentation / sealer / obturation study names its materials with
+    the manufacturer in parentheses ("ProTaper Next (Dentsply Sirona)"), and
+    systematic reviews list every product used by their included trials. Use
+    detect_coi() for scoring decisions; this helper only answers "is the name
+    present", and exists for that narrow purpose.
+    """
+    text_lower = (text or "").lower()
     for funder in COI_FUNDER_BLOCKLIST:
         if funder in text_lower:
             return True, funder.title()
     return False, ""
+
+
+# Cue phrases that mark a funding / disclosure statement. A manufacturer name
+# only counts as a conflict when it appears INSIDE such a sentence.
+_COI_CUE_RE = re.compile(
+    r"\b(?:"
+    r"fund(?:ed|ing|s)?|financ(?:ed|ial\s+support)|sponsor(?:ed|ship)?|"
+    r"support(?:ed)?\s+(?:by|in\s+part\s+by)|grant(?:s|ed)?\s+(?:from|by)|"
+    r"conflicts?\s+of\s+interest|competing\s+interests?|disclosur\w*|"
+    r"employe(?:e|d)\s+of|consultan\w*\s+(?:for|to)|honorari\w*|"
+    r"(?:materials?|instruments?|files?|sealers?|products?)\s+"
+    r"(?:were\s+)?(?:donated|provided|supplied|gifted)\s+by|"
+    r"in\s+kind|royalt\w*|stock\s+(?:options?|ownership)|patent\s+holder|"
+    r"receiv\w*\s+(?:fees|payments?|honorari\w*|grants?|funding|support|"
+    r"compensation|reimbursement|equipment|materials?)|"
+    r"lecture\s+fees|speaker\s+(?:fees|bureau)|advisory\s+board|"
+    r"paid\s+(?:by|consultant|speaker)|financial\s+(?:ties|relationships?)"
+    r")\b",
+    re.IGNORECASE,
+)
+
+# Negative declarations. These patterns were derived from a sample of 120 REAL
+# PubMed CoiStatement values in this library, not from imagination — 118 of the
+# 120 were denials, and the phrasings below are the ones that actually occur.
+# Getting these wrong is the expensive direction: a missed denial becomes a
+# false "industry conflict" badge on an independent study.
+_COI_NEGATION_RE = re.compile(
+    r"(?:"
+    # "declare/report/state (that they have) no ..." — the dominant form
+    r"\b(?:declar\w*|report\w*|state[sd]?|disclos\w*)\b[^.;]{0,50}?\bno\b"
+    # "...absence of any commercial or financial relationships..."
+    r"|\babsence\s+of\s+any\b"
+    # "deny any conflict", "denies any competing interest"
+    r"|\bden(?:y|ies|ied)\b[^.;]{0,30}?\b(?:conflict|competing|interest)"
+    # "nothing to disclose / declare"
+    r"|\bnothing\s+to\s+(?:disclose|declare|report)\b"
+    # "no conflict(s) of interest", "no competing interests", "no potential conflict"
+    r"|\bno\s+(?:potential\s+|known\s+|relevant\s+|perceived\s+)?"
+    r"(?:conflicts?|competing\s+interests?|financial\s+(?:interests?|relationships?|"
+    r"disclosures?)|commercial\s+(?:interests?|relationships?)|funding|disclosures?)\b"
+    # "have/has no ...", "there is no ..."
+    r"|\b(?:have|has|had|there\s+(?:is|are|was|were))\s+no\b"
+    # "received no specific grant from any funding agency" — extremely common
+    # boilerplate that the affirmative "received ... grant" pattern would
+    # otherwise read as a positive disclosure.
+    r"|\breceiv\w+\s+no\b"
+    r"|\bno\s+(?:\w+\s+){0,2}(?:grants?|funding|financial\s+support|support)\b"
+    # bare "None", "None declared", "Not applicable"
+    r"|^\s*(?:none|not\s+applicable|n/?a)\b"
+    r"|\bnone\s+(?:declared|to\s+declare|reported)\b"
+    r"|\bnot\s+applicable\b"
+    r")",
+    re.IGNORECASE,
+)
+
+# An AFFIRMATIVE disclosure: a party in a stated relationship with a commercial
+# entity. Deliberately narrow. The previous version treated any disclosure-ish
+# cue word as a conflict, which flagged 9 of every 10 papers whose statement was
+# actually a denial ("...absence of any commercial or financial relationships...").
+_COI_AFFIRMATIVE_RE = re.compile(
+    r"\b(?:is|are|was|were|has|have|had|serves?|served|acts?|acted|works?|worked)\b"
+    # Commercial relationships only. "Editorial board member" and similar
+    # academic roles are disclosures but not industry conflicts, so generic
+    # "board member" / "lecturer" are deliberately excluded.
+    r"[^.;]{0,40}?\b(?:paid\s+)?(?:consultant|employee|opinion\s+leader|advisor|"
+    r"adviser|advisory\s+board|speaker\s+bureau|shareholder|stockholder)\b"
+    r"|\breceiv\w+\b[^.;]{0,40}?\b(?:fees|honorari\w*|grants?|funding|payments?|"
+    r"royalt\w*|equipment|materials?|support|compensation)\b"
+    r"|\b(?:funded|sponsored|financed)\s+by\b"
+    r"|\b(?:materials?|instruments?|files?|sealers?|products?)\s+(?:were\s+)?"
+    r"(?:donated|provided|supplied|gifted)\s+by\b",
+    re.IGNORECASE,
+)
+
+
+# Tri-state COI outcomes. "No statement" is NOT "no conflict": PubMed only
+# carries <CoiStatement> for records indexed since ~2017 whose journal deposits
+# one, so treating its absence as a clean bill would silently exonerate every
+# older paper. Only DECLARED_CONFLICT is ever penalised.
+COI_DECLARED_CONFLICT = "declared_conflict"
+COI_DECLARED_NONE     = "declared_none"
+COI_NO_STATEMENT      = "no_statement"
+
+
+def _split_sentences(text: str) -> list:
+    """Sentence split that also treats ';' and newlines as boundaries — COI
+    statements are frequently semicolon-delimited lists of disclosures."""
+    parts = re.split(r"(?<=[.!?])\s+|\s*;\s*|\n+", text or "")
+    return [p.strip() for p in parts if p and p.strip()]
+
+
+def classify_coi(coi_statement: str = "", abstract_text: str = "") -> tuple:
+    """Classify a paper's conflict-of-interest position.
+
+    Returns (status, funder) where status is one of COI_DECLARED_CONFLICT,
+    COI_DECLARED_NONE, COI_NO_STATEMENT.
+
+    Negation is evaluated PER SENTENCE, not over the whole statement. Real
+    declarations routinely open with boilerplate and then disclose:
+        "The authors declare no conflict of interest. Dr. Smith has received
+         fees from Dentsply Sirona."
+    Testing the whole string for a denial would let sentence one mask sentence
+    two. A disclosing sentence therefore wins over any denial elsewhere.
+    """
+    stmt = (coi_statement or "").strip()
+
+    if stmt:
+        for sentence in _split_sentences(stmt):
+            if _COI_NEGATION_RE.search(sentence):
+                continue                      # this sentence is a denial
+            named, funder = check_coi_blocklist(sentence)
+            if named and _COI_AFFIRMATIVE_RE.search(sentence):
+                return COI_DECLARED_CONFLICT, funder
+        # A statement exists but names no commercial party in an affirmative
+        # disclosure. We deliberately do NOT flag "unnamed" disclosures: in
+        # practice those are public grants ("funded by the National Institute
+        # for Health Research") and academic roles ("Statistical Editor with
+        # Cochrane Oral Health"), which are not industry conflicts. Flagging
+        # them put a false INDUSTRY CONFLICT badge on independent Cochrane
+        # reviews — worse than missing a manufacturer absent from the
+        # blocklist, which is the recall cost we accept here.
+        return COI_DECLARED_NONE, ""
+
+    # No declaration on record — fall back to a declaration-scoped abstract
+    # scan. A hit here is a genuine disclosure; a miss is UNKNOWN, not clean.
+    for sentence in _split_sentences(abstract_text or ""):
+        if _COI_NEGATION_RE.search(sentence) or not _COI_AFFIRMATIVE_RE.search(sentence):
+            continue
+        named, funder = check_coi_blocklist(sentence)
+        if named:
+            return COI_DECLARED_CONFLICT, funder
+    return COI_NO_STATEMENT, ""
+
+
+def detect_coi(coi_statement: str = "", abstract_text: str = "") -> tuple:
+    """Boolean view of classify_coi() for scoring. Returns (has_coi, funder).
+
+    Only a DECLARED conflict is penalised — an absent statement is unknown and
+    must not be treated as either clean or conflicted.
+    """
+    status, funder = classify_coi(coi_statement, abstract_text)
+    return status == COI_DECLARED_CONFLICT, funder
 
 
 # ── CURRENCY FILTER ───────────────────────────────────────
@@ -871,6 +1021,175 @@ PubMed search string:"""
     return search_string
 
 # ── FETCH METADATA FOR PMIDs ─────────────────────────────
+# PROSPERO is a systematic-review registry and is NOT a PubMed DataBank, so it
+# only ever appears as free text. Trial registries (ClinicalTrials.gov, ISRCTN,
+# IRCT, ...) come from DataBankList instead, which is structured and reliable.
+_PROSPERO_RE = re.compile(r"\bPROSPERO\b[^.\n]{0,40}?\bCRD\s*\d{6,}", re.IGNORECASE)
+
+# Designs where pre-registration is a meaningful quality marker. Registration is
+# expected for trials and prospective SRs; it is not a norm for case series,
+# narrative reviews, or lab work, so absence there must not be penalised.
+_REGISTRABLE_LEVELS = {"cochrane", "level1", "level2"}
+
+# PubMed's DataBankList also carries molecular-sequence accessions (GenBank,
+# RefSeq, dbSNP, GEO...). Those say nothing about prospective registration, so
+# only recognised CLINICAL TRIAL registries count.
+_TRIAL_REGISTRIES = {
+    "clinicaltrials.gov", "isrctn", "irct", "chictr", "anzctr", "ctri", "drks",
+    "eudract", "jprn", "umin-ctr", "ntr", "pactr", "rebec", "rpcec", "slctr",
+    "tctr", "cris", "lbctr", "tfda", "who ictrp", "actrn", "nct",
+}
+
+
+def detect_preregistration(level_key: str, registry_ids: list, abstract_text: str) -> tuple:
+    """Return (is_registered, source) for THIS paper's own registration.
+
+    Two independent signals, both design-gated:
+      1. DataBankList accessions from PubMed (trials) — structured, and populated
+         only from the article's own registration, so a review citing other
+         trials' NCT numbers cannot trip it.
+      2. A PROSPERO CRD number in the abstract (systematic reviews) — free text,
+         but the PROSPERO+CRD pairing is specific to the review's own record.
+
+    A bare NCT number in free text is deliberately NOT accepted: reviews and
+    meta-analyses routinely quote the registry IDs of their included trials.
+    """
+    if (level_key or "") not in _REGISTRABLE_LEVELS:
+        return False, ""
+    for rid in (registry_ids or []):
+        name = str(rid).split(":")[0].strip()
+        if name.lower() in _TRIAL_REGISTRIES:
+            return True, name
+    if abstract_text and _PROSPERO_RE.search(abstract_text):
+        return True, "PROSPERO"
+    return False, ""
+
+
+def format_provenance_badges(paper: dict) -> str:
+    """Render a paper's integrity badges for Claude's evidence context.
+
+    SINGLE source of truth for both retrieval paths — live PubMed
+    (fetch_papers) and the stored-column library path (_scored_to_text). Both
+    read the same field names, so the two cannot drift apart. Badges are only
+    emitted when notable, so their presence carries meaning.
+    """
+    badges = []
+    if paper.get("is_registered"):
+        badges.append(f"PRE-REGISTERED ({paper.get('registry') or 'registry'})")
+    if paper.get("has_erratum"):
+        badges.append("CORRECTION PUBLISHED")
+    if paper.get("has_retraction"):
+        badges.append("RETRACTION NOTICE — treat with extreme caution")
+    if paper.get("medline_indexed") is False:
+        badges.append("not MEDLINE-indexed")
+
+    status = paper.get("coi_status")
+    if paper.get("has_coi") or status == COI_DECLARED_CONFLICT:
+        funder = paper.get("coi_funder") or "undisclosed party"
+        badges.append(f"INDUSTRY CONFLICT DECLARED ({funder})")
+    elif status == COI_DECLARED_NONE:
+        badges.append("authors declared no conflict")
+    # COI_NO_STATEMENT is deliberately silent: absence of a declaration is
+    # unknown, not clean, and a badge saying so on every pre-2017 paper would
+    # be noise rather than signal.
+    return (" | " + " | ".join(badges)) if badges else ""
+
+
+def format_paper_context_line(paper: dict) -> str:
+    """One paper's metadata header line for Claude's evidence block.
+
+    Shared by both retrieval paths so the context Claude sees is identical
+    whether the evidence came from PubMed or the local library.
+    """
+    ss   = f"n={paper['sample_size']}" if paper.get("sample_size") else "n=unknown"
+    fu   = (f"{paper['followup_months']}mo follow-up"
+            if paper.get("followup_months") else "follow-up unknown")
+    jif  = f"IF={paper['impact_factor']}" if paper.get("impact_factor") else "IF=unknown"
+    auth = paper.get("authors", "") or "Unknown author"
+    return (
+        f"\nPMID: {paper['pmid']} | Authors: {auth} | Year: {paper.get('year')} | "
+        f"Citations: {paper.get('citations', 0)} | {ss} | {fu} | {jif} | "
+        f"Evidence Score: {paper.get('score')}/100{format_provenance_badges(paper)}\n"
+    )
+
+
+def _merge_corrections_and_registries(ids: list, metadata: dict) -> None:
+    """Populate has_erratum / has_retraction / registry_ids from efetch XML.
+
+    Parsed with defusedxml (XML from a remote source). Mutates `metadata`
+    in place; silently leaves defaults on any per-record parse problem.
+    """
+    if not ids:
+        return
+    from defusedxml import ElementTree as DET
+
+    fetch_params = _ncbi_params({"db": "pubmed", "id": ",".join(ids), "retmode": "xml"})
+    resp = requests.get(f"{NCBI_EUTILS_BASE}/efetch.fcgi", params=fetch_params, timeout=25)
+    if resp.status_code != 200:
+        return
+    root = DET.fromstring(resp.text)
+
+    n_err = n_reg = 0
+    for article in root.iter("PubmedArticle"):
+        pmid_el = article.find(".//MedlineCitation/PMID")
+        if pmid_el is None or not pmid_el.text:
+            continue
+        pmid = pmid_el.text.strip()
+        entry = metadata.get(pmid)
+        if entry is None:
+            continue
+
+        # Corrections / retractions attached to THIS article.
+        # "ErratumIn"/"CorrectedandRepublishedIn" => this paper was corrected.
+        # "ErratumFor" means this paper IS the correction notice — not a defect.
+        # An expression of concern is an unresolved integrity signal and is
+        # treated as a correction, not a retraction.
+        for cc in article.iter("CommentsCorrections"):
+            ref = (cc.get("RefType") or "").lower()
+            if ref in ("erratumin", "correctedandrepublishedin", "expressionofconcernin"):
+                entry["has_erratum"] = True
+            elif ref in ("retractionin", "retractedandrepublishedin"):
+                entry["has_retraction"] = True
+
+        # Publication types — feeds the level_key backfill from the same pass.
+        ptypes = [(pt.text or "").strip() for pt in article.iter("PublicationType")]
+        if ptypes:
+            entry["pubtypes"] = [p for p in ptypes if p]
+
+        # Indexing status lives on MedlineCitation.
+        mc = article.find(".//MedlineCitation")
+        if mc is not None and mc.get("Status"):
+            entry["medline_indexed"] = mc.get("Status").upper() == "MEDLINE"
+
+        # Authors' own conflict-of-interest declaration (PubMed <CoiStatement>,
+        # populated for most records since ~2017). This is the authoritative
+        # signal — far better than scanning an abstract for company names,
+        # which in endodontics mostly detects product mentions in the methods.
+        coi_el = article.find(".//CoiStatement")
+        if coi_el is not None and (coi_el.text or "").strip():
+            entry["coi_statement"] = " ".join((coi_el.text or "").split())[:1000]
+
+        # Trial / review registry accessions (the article's own registration)
+        regs = []
+        for db in article.iter("DataBank"):
+            name_el = db.find("DataBankName")
+            name = (name_el.text or "").strip() if name_el is not None else ""
+            for acc in db.iter("AccessionNumber"):
+                if acc.text and acc.text.strip():
+                    regs.append(f"{name}:{acc.text.strip()}" if name else acc.text.strip())
+        if regs:
+            entry["registry_ids"] = regs
+
+        if entry["has_erratum"] or entry["has_retraction"]:
+            n_err += 1
+        if entry["registry_ids"]:
+            n_reg += 1
+
+    if n_err or n_reg:
+        print(f"    [pubmed_xml] {n_err} paper(s) with corrections, "
+              f"{n_reg} with registry entries")
+
+
 def fetch_metadata(ids):
     if not ids:
         return {}
@@ -906,13 +1225,44 @@ def fetch_metadata(ids):
                 "year":     year,
                 "citations": 0,
                 "journal":  journal,
+                # Short journal abbreviation (e.g. "J Endod") for compact citations
+                "journal_abbrev": entry.get("source", "") or journal,
                 "authors":  authors_str,
+                "volume":   entry.get("volume", "") or "",
+                "issue":    entry.get("issue", "") or "",
+                "pages":    entry.get("pages", "") or "",
+                # Indexing status — "PubMed - indexed for MEDLINE" means the
+                # record passed NLM's journal-selection review. Non-indexed
+                # records (ahead-of-print, PMC-only deposits) are weaker.
+                "medline_indexed": "medline" in (entry.get("recordstatus", "") or "").lower(),
+                "pubtypes":  entry.get("pubtype", []) or [],
+                # Filled in by the efetch-XML pass below
+                "has_erratum":  False,
+                "has_retraction": False,
+                "registry_ids": [],
+                "coi_statement": "",
             }
 
     except Exception as e:
         print(f"    Metadata fetch error: {e}")
         for pmid in ids:
-            metadata[pmid] = {"year": "Unknown", "citations": 0, "journal": ""}
+            metadata[pmid] = {"year": "Unknown", "citations": 0, "journal": "",
+                              "journal_abbrev": "", "authors": "",
+                              "volume": "", "issue": "", "pages": "",
+                              "medline_indexed": True, "pubtypes": [],
+                              "has_erratum": False, "has_retraction": False,
+                              "registry_ids": [], "coi_statement": ""}
+
+    # ── Corrections + trial-registry pass (efetch XML) ────────────────────
+    # esummary carries neither CommentsCorrections nor DataBankList, so one XML
+    # call per batch supplies both. DataBankList is the AUTHORITATIVE
+    # pre-registration signal: PubMed populates it from the article's OWN
+    # registration, so a systematic review that merely cites other trials'
+    # NCT numbers cannot be mistaken for a registered study.
+    try:
+        _merge_corrections_and_registries(ids, metadata)
+    except Exception as e:
+        print(f"    Corrections/registry fetch error (non-critical): {e}")
 
     try:
         elink_url = f"{NCBI_EUTILS_BASE}/elink.fcgi"
@@ -990,6 +1340,30 @@ def extract_sample_size(abstract_text):
 # ── SCORE A PAPER ────────────────────────────────────────
 CITATION_GRACE_PERIOD_YEARS = 2   # papers ≤ 2 yrs old get a flat baseline citation score
 
+# ── IMPACT-FACTOR TOGGLE ──────────────────────────────────
+# When off (default), journal impact factor is EXCLUDED from paper scoring and
+# the remaining five factors are renormalised so scores stay on the 0-100
+# scale. The IF value is still looked up and displayed as reference metadata.
+# Re-enable with USE_IMPACT_FACTOR=true in the environment.
+USE_IMPACT_FACTOR = os.getenv("USE_IMPACT_FACTOR", "false").lower() in ("1", "true", "yes")
+
+_SCORE_WEIGHTS_DESC = (
+    """- Study design (35%)
+- Sample size (15%)
+- Recency (15%)
+- Citation velocity / citations per year (15%) — papers ≤2 years old receive a baseline score and are NOT penalised for being new
+- Follow-up period (10%)
+- Journal impact factor (10%)"""
+    if USE_IMPACT_FACTOR else
+    """- Study design (39%)
+- Sample size (17%)
+- Recency (17%)
+- Citation velocity / citations per year (16%) — papers ≤2 years old receive a baseline score and are NOT penalised for being new
+- Follow-up period (11%)
+(Journal impact factor is shown for reference only — it is EXCLUDED from the score.)"""
+)
+
+
 def score_citations_velocity(citations: int, year) -> float:
     """
     Citation velocity = citations per year since publication.
@@ -1023,7 +1397,8 @@ def score_paper(level_key, year, citations, sample_size,
       Recency            15%
       Citation velocity  15%  ← citations/year, 2-yr grace period
       Follow-up          10%
-      Impact factor      10%
+      Impact factor      10%  ← only when USE_IMPACT_FACTOR=true; otherwise
+                                excluded and the other five renormalised to 100
     """
     design_score = LEVEL_SCORES.get(level_key, 10) * 0.35
 
@@ -1074,10 +1449,16 @@ def score_paper(level_key, year, citations, sample_size,
     # Follow-up (10 pts) — scale from 15-pt score
     fu_score = score_followup(followup_months) * (10.0 / 15.0)
 
-    # Impact factor (10 pts) — scale from 15-pt score
-    if_pts = if_score * (10.0 / 15.0)
-
-    total = design_score + sample_score + recency_score + citation_score + fu_score + if_pts
+    # Impact factor (10 pts) — scale from 15-pt score.
+    # With USE_IMPACT_FACTOR off, IF contributes nothing and the other five
+    # factors (max 90 pts) are renormalised back onto the 0-100 scale, so the
+    # quality floor (50) and RAG score bands keep their meaning.
+    if USE_IMPACT_FACTOR:
+        if_pts = if_score * (10.0 / 15.0)
+        total  = design_score + sample_score + recency_score + citation_score + fu_score + if_pts
+    else:
+        if_pts = 0.0
+        total  = (design_score + sample_score + recency_score + citation_score + fu_score) / 0.90
 
     return round(total, 1), {
         "design":        round(design_score, 1),
@@ -1257,11 +1638,15 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         except Exception as _ce:
             print(f"    [abstract_cache] write skipped: {_ce}")
 
-        # COI check on the combined abstract text for this batch
-        has_coi_in_batch, coi_funder = check_coi_blocklist(abstract_text)
-        if has_coi_in_batch:
-            print(f"    [COI] detected in {label}: '{coi_funder}' mentioned")
+        # COI is evaluated PER PAPER below (title + its own abstract). A batch-wide
+        # scan is only used for the tier log line, never for scoring: one paper
+        # naming an industry funder must not penalise the other 49 in the batch.
+        _batch_has_coi, _batch_funder = check_coi_blocklist(abstract_text)
+        if _batch_has_coi:
+            print(f"    [COI] '{_batch_funder}' mentioned somewhere in {label} — "
+                  f"evaluating per paper")
 
+        n_coi_papers = n_registered = n_corrected = 0
         scored_papers = []
         for pmid in ids:
             meta    = metadata.get(pmid, {"year": "Unknown", "citations": 0, "journal": "", "authors": ""})
@@ -1270,7 +1655,8 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             # batch text. The old code passed abstract_text (all 50 papers) to both
             # functions, so the regex found the largest n= in the batch (typically a
             # meta-analysis) and stamped it on every unrelated paper.
-            paper_text  = _per_pmid.get(pmid, {}).get('abstract', '') or ''
+            _parts      = _per_pmid.get(pmid, {})
+            paper_text  = _parts.get('abstract', '') or ''
             sample_size     = extract_sample_size(paper_text)
             followup        = extract_followup_period(paper_text)
             followup_months = followup[0] if followup else None
@@ -1286,9 +1672,38 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 if_pts
             )
 
-            # Apply COI score penalty (15%) if batch flagged for industry funding
-            if has_coi_in_batch:
+            # COI (15% penalty) from the authors' own PubMed declaration, else
+            # a declaration-scoped abstract scan. Deliberately NOT a bare
+            # company-name match: endodontic papers name their materials'
+            # manufacturers in the methods, which is a product mention, not a
+            # conflict. Also per-paper, not per-batch (an earlier version
+            # penalised every paper in a tier when any one named a funder).
+            coi_status, coi_funder = classify_coi(
+                meta.get("coi_statement", "") or "", paper_text
+            )
+            has_coi = coi_status == COI_DECLARED_CONFLICT
+            if has_coi:
                 score = round(score * 0.85, 1)
+                n_coi_papers += 1
+
+            # ── Provenance-quality adjustments ──
+            # Deliberately modest: these are integrity signals, not design
+            # quality, and none should outweigh study design (39%). Each is
+            # also surfaced as a badge so the clinician sees the reason.
+            is_registered, reg_source = detect_preregistration(
+                level_key, meta.get("registry_ids") or [], paper_text
+            )
+            if is_registered:
+                score = round(min(score * 1.05, 100.0), 1)   # pre-registered trial/SR
+                n_registered += 1
+            if meta.get("has_erratum"):
+                score = round(score * 0.97, 1)               # corrected post-publication
+                n_corrected += 1
+            if meta.get("has_retraction"):
+                score = round(score * 0.50, 1)               # slipped past the [pt] filter
+                n_corrected += 1
+            if meta.get("medline_indexed") is False:
+                score = round(score * 0.97, 1)               # not NLM-indexed
 
             # Currency tagging
             try:
@@ -1304,15 +1719,32 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 "sample_size":     sample_size,
                 "followup_months": followup_months,
                 "journal":         journal_name,
+                "journal_abbrev":  meta.get("journal_abbrev", "") or journal_name,
+                "volume":          meta.get("volume", ""),
+                "issue":           meta.get("issue", ""),
+                "pages":           meta.get("pages", ""),
                 "impact_factor":   if_val,
                 "score":           score,
                 "breakdown":       breakdown,
-                "has_coi":         has_coi_in_batch,
-                "coi_funder":      coi_funder if has_coi_in_batch else "",
+                "has_coi":         has_coi,
+                "coi_funder":      coi_funder if has_coi else "",
+                "coi_status":      coi_status,
+                "is_registered":   is_registered,
+                "registry":        reg_source,
+                "has_erratum":     bool(meta.get("has_erratum")),
+                "has_retraction":  bool(meta.get("has_retraction")),
+                "medline_indexed": meta.get("medline_indexed", True),
                 "is_old":          age > CURRENCY_THRESHOLD_YEARS,
                 "age_years":       age,
                 "is_outlier":      False,  # set later by detect_outliers()
             })
+
+        if n_coi_papers:
+            print(f"    [COI] {n_coi_papers} of {len(ids)} papers carry an industry-funder "
+                  f"mention — 15% penalty applied to those only")
+        if n_registered or n_corrected:
+            print(f"    [provenance] {n_registered} pre-registered, "
+                  f"{n_corrected} with corrections/retractions")
 
         scored_papers.sort(key=lambda x: x["score"], reverse=True)
 
@@ -1327,16 +1759,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         # Reuses _per_pmid parsed above; no second call to _parse_efetch_batch.
         annotated_text = f"\n[{label}]\n"
         for p in scored_papers:
-            ss_str = f"n={p['sample_size']}" if p['sample_size'] else "n=unknown"
-            fu_str = f"{p['followup_months']}mo follow-up" if p['followup_months'] else "follow-up unknown"
-            if_str = f"IF={p['impact_factor']}" if p['impact_factor'] else "IF=unknown"
-            auth_str = p.get("authors", "") or "Unknown author"
-            annotated_text += (
-                f"\nPMID: {p['pmid']} | Authors: {auth_str} | Year: {p['year']} | "
-                f"Citations: {p['citations']} | {ss_str} | "
-                f"{fu_str} | {if_str} | "
-                f"Evidence Score: {p['score']}/100\n"
-            )
+            annotated_text += format_paper_context_line(p)
             ab = _per_pmid.get(p['pmid'], {})
             if ab.get('abstract'):
                 annotated_text += ab['abstract'] + "\n"
@@ -1776,6 +2199,21 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
     fabricated     = sorted(p for p in cited_set if p not in evidence_pmids)
     valid          = sorted(p for p in cited_set if p in evidence_pmids)
 
+    # Non-numeric markers, e.g. "[[PMID:AAE-PS-obturation]]". The numeric
+    # _PMID_RE cannot see these, so they bypass the check above. They are NOT
+    # automatically fabrications: hand-ingested authority documents (the AAE
+    # position statements) legitimately carry synthetic identifiers. The test
+    # is the same as for any citation — is it in the evidence base?
+    non_numeric = {m.group(1).strip()
+                   for m in re.finditer(r"\[\[PMID:\s*([^\]]+?)\s*\]\]", answer or "")
+                   if not m.group(1).strip().isdigit()}
+    if non_numeric:
+        cited_set |= non_numeric
+        invented = {p for p in non_numeric if p not in evidence_pmids}
+        if invented:
+            fabricated = sorted(set(fabricated) | invented)
+        valid = sorted(set(valid) | (non_numeric - invented))
+
     unattributed = _detect_unattributed_claims(answer)
     gaps         = _detect_gap_sections(answer)
 
@@ -1890,6 +2328,166 @@ def _build_corrective_message(result: dict) -> str:
 
 
 # ──────────────────────────────────────────────────────────
+# CITATION-SUPPORT VERIFIER (v2 guardrail)
+#
+# validate_evidence_mapping() guarantees every cited PMID is REAL (it was
+# actually retrieved from PubMed this run). This second gate goes further:
+# for each claim sentence, does the cited paper's abstract actually SUPPORT
+# the claim? Catches real-but-irrelevant citations that the set-difference
+# check cannot see.
+# ──────────────────────────────────────────────────────────
+
+CITATION_SUPPORT_CHECK = os.getenv("CITATION_SUPPORT_CHECK", "true").lower() in ("1", "true", "yes")
+_SUPPORT_MAX_PAIRS     = 30     # cap Haiku payload size
+_SUPPORT_ABSTRACT_CHARS = 1200  # abstract excerpt length per pair
+
+
+def _extract_claim_citation_pairs(answer: str) -> list:
+    """Return [(claim_sentence_without_markers, pmid), ...] in document order.
+
+    A sentence citing two papers yields two pairs (each pmid is checked against
+    the claim independently). Exempt sections (References, Clinical
+    Recommendation, ...) are skipped — same exemption set as the validator.
+    """
+    pairs = []
+    for title, body in _split_sections(answer or ""):
+        if _is_exempt_section(title):
+            continue
+        cleaned = re.sub(r"^\s*[-*•]\s+", "", body or "", flags=re.MULTILINE)
+        for sent in _SENTENCE_SPLIT_RE.split(cleaned):
+            s = sent.strip()
+            if len(s) < 20:
+                continue
+            pmids = [m.group(1) for m in _PMID_RE.finditer(s)]
+            if not pmids:
+                continue
+            claim = _PMID_RE.sub("", s).strip()
+            claim = re.sub(r"\s{2,}", " ", claim)
+            for pid in pmids:
+                pairs.append((claim, pid))
+    return pairs
+
+
+def verify_citation_support(answer: str, evidence: dict) -> dict:
+    """Check each (claim, cited paper) pair against the paper's cached abstract.
+
+    Returns {"flags": [{pmid, claim, verdict}], "checked": int, "cost": float}.
+    Fail-open by design: any error returns zero flags — this gate must never
+    block an answer, only annotate it.
+    """
+    out = {"flags": [], "checked": 0, "cost": 0.0}
+    if not CITATION_SUPPORT_CHECK or not answer:
+        return out
+    try:
+        pairs = _extract_claim_citation_pairs(answer)[:_SUPPORT_MAX_PAIRS]
+        if not pairs:
+            return out
+
+        from rag import get_cached_abstracts_bulk
+        abstracts = get_cached_abstracts_bulk(sorted({p for _, p in pairs}))
+
+        items = []
+        for i, (claim, pmid) in enumerate(pairs):
+            ab = (abstracts.get(pmid) or {}).get("abstract") or ""
+            if not ab.strip():
+                continue   # nothing cached to judge against — cannot assess
+            items.append({
+                "i":        i,
+                "pmid":     pmid,
+                "claim":    claim[:400],
+                "abstract": ab[:_SUPPORT_ABSTRACT_CHARS],
+            })
+        if not items:
+            print(f"  [citation_support] no abstracts available for {len(pairs)} "
+                  f"claim-citation pairs — check skipped")
+            return out
+
+        client = anthropic.Anthropic(api_key=_get_api_key())
+        payload = json.dumps([{k: it[k] for k in ("i", "claim", "abstract")} for it in items],
+                             ensure_ascii=False)
+        resp = _invoke_claude(client, function_name="verify_citation_support",
+            model      = MODELS["structured_fast"],
+            max_tokens = 1000,
+            messages   = [{"role": "user", "content":
+                f"""You are auditing citations in a clinical document. For each item, decide whether the
+ABSTRACT supports the CLAIM made in the sentence that cites it.
+
+Verdicts:
+- "supports"      — the abstract states or directly implies the claim
+- "partial"       — related and consistent, but the claim goes beyond what the abstract states
+  (different numbers, stronger wording, different population)
+- "not_supported" — the abstract is about something else, or contradicts the claim
+
+Be conservative: only use "not_supported" when the abstract clearly does not back the claim.
+Statistical values need not match verbatim — same finding in different words is "supports".
+
+ITEMS (JSON):
+{payload}
+
+Return ONLY a JSON array, no prose, no markdown fence:
+[{{"i": 0, "verdict": "supports"}}, ...]"""
+            }]
+        )
+        out["cost"] = log_llm_call("verify_citation_support", MODELS["structured_fast"],
+                                   resp.usage, mode="guardrail")
+        raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
+        verdicts = {int(v["i"]): str(v.get("verdict", "")).strip().lower()
+                    for v in json.loads(raw) if "i" in v}
+
+        by_index = {it["i"]: it for it in items}
+        out["checked"] = len(items)
+        for i, verdict in verdicts.items():
+            if verdict == "not_supported" and i in by_index:
+                out["flags"].append({
+                    "pmid":    by_index[i]["pmid"],
+                    "claim":   by_index[i]["claim"],
+                    "verdict": verdict,
+                })
+
+        # Audit trail — same JSONL stream as the fabrication validator
+        try:
+            record = {
+                "ts":        datetime.now().isoformat(),
+                "function":  "verify_citation_support",
+                "checked":   out["checked"],
+                "n_flagged": len(out["flags"]),
+                "flags":     [{"pmid": f["pmid"], "claim": f["claim"][:160]} for f in out["flags"]],
+            }
+            with _EVMAP_LOG_LOCK:
+                with open(_EVMAP_LOG_PATH, "a", encoding="utf-8") as fh:
+                    fh.write(json.dumps(record) + "\n")
+        except Exception:
+            pass
+
+        if out["flags"]:
+            print(f"  [citation_support] {len(out['flags'])} of {out['checked']} "
+                  f"claim-citation pairs flagged as not supported")
+        else:
+            print(f"  [citation_support] all {out['checked']} claim-citation pairs OK")
+        return out
+
+    except Exception as e:
+        print(f"  [citation_support] check skipped: {e}")
+        return out
+
+
+def _append_support_warnings(answer: str, support: dict) -> str:
+    """Append a visible advisory block when citations were flagged."""
+    flags = (support or {}).get("flags") or []
+    if not flags:
+        return answer
+    lines = [
+        "\n\n---\n",
+        "> ⚠ **CITATION-SUPPORT CHECK** — an automated review of each cited abstract "
+        f"flagged {len(flags)} citation(s) whose source may not directly support the claim. "
+        "Verify before relying on these specific points:\n>",
+    ]
+    for f in flags[:5]:
+        lines.append(f"> - [[PMID:{f['pmid']}]] cited for: \"{f['claim'][:140]}\"")
+    return answer + "\n".join(lines)
+
+
+# ──────────────────────────────────────────────────────────
 # INTENT ROUTER (Haiku)
 # ──────────────────────────────────────────────────────────
 
@@ -2000,12 +2598,7 @@ EXCEPTION (and ONLY this exception): the final numbered REFERENCES list at the b
 You are a world-class endodontist and clinical researcher with deep expertise in evidence-based dentistry.
 
 Each paper has been pre-scored 0-100 based on:
-- Study design (35%)
-- Sample size (15%)
-- Recency (15%)
-- Citation velocity / citations per year (15%) — papers ≤2 years old receive a baseline score and are NOT penalised for being new
-- Follow-up period (10%)
-- Journal impact factor (10%)
+__SCORE_WEIGHTS__
 
 CRITICAL — STRICT TIER HIERARCHY (read this carefully):
 Synthesise the evidence in tier order: Cochrane → Level I → Level II → Level IIIa (retrospective cohort) → Level IIIb (case-control) → Level IV → Level V.
@@ -2063,6 +2656,9 @@ Rules:
 - Note when evidence base is weak overall
 - Keep recommendation concise
 - NEVER end your response with a question. NEVER ask the clinician for more information. If key clinical details are missing, state what information would change the recommendation — but do not pose questions."""
+
+    # Splice in the active scoring-weight description (impact factor on/off)
+    system_prompt = system_prompt.replace("__SCORE_WEIGHTS__", _SCORE_WEIGHTS_DESC)
 
     # Build context — feed papers in strict tier order (Cochrane → L5),
     # not cross-tier sorted by score
@@ -2132,6 +2728,13 @@ Clinical Question: {question}"""
                 f"the linked PMIDs before acting on this recommendation.\n\n"
             )
             answer = warning + answer
+
+    # v2 guardrail — do the cited abstracts actually SUPPORT the claims?
+    # (Fabrication is already impossible past validate_evidence_mapping; this
+    # catches real-but-irrelevant citations. Fail-open, advisory only.)
+    support = verify_citation_support(answer, evidence)
+    cost += support.get("cost", 0.0)
+    answer = _append_support_warnings(answer, support)
 
     return answer, cost
 

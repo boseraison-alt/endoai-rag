@@ -269,8 +269,12 @@ def _safe_papers(papers: list) -> list:
     Abstract text stays server-side as Claude context only — never exposed to clients.
     """
     ALLOWED = {"pmid", "title", "authors", "year", "journal",
+               "journal_abbrev", "volume", "issue", "pages",
                "impact_factor", "sample_size", "followup_months",
-               "citations", "level_key", "score"}
+               "citations", "level_key", "score",
+               # Provenance badges — metadata only, no abstract text
+               "has_coi", "coi_funder", "coi_status", "is_registered", "registry",
+               "has_erratum", "has_retraction", "medline_indexed"}
     return [{k: v for k, v in p.items() if k in ALLOWED} for p in (papers or [])]
 
 
@@ -541,18 +545,18 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
 
 
 def _scored_to_text(scored_papers: list, label: str) -> str:
-    """Convert scored paper dicts back to annotated text for Claude context."""
+    """Convert scored paper dicts back to annotated text for Claude context.
+
+    Uses the SAME renderer as the live-PubMed path so provenance badges (COI,
+    pre-registration, corrections, indexing) appear identically regardless of
+    which retrieval path answered. Previously this built its own line and
+    emitted no badges at all, so library-served evidence reached Claude
+    stripped of every integrity signal.
+    """
+    from endo_ai import format_paper_context_line
     text = f"\n[{label}]\n"
     for p in scored_papers:
-        ss  = f"n={p['sample_size']}" if p.get("sample_size") else "n=unknown"
-        fu  = f"{p['followup_months']}mo follow-up" if p.get("followup_months") else "follow-up unknown"
-        jif = f"IF={p['impact_factor']}" if p.get("impact_factor") else "IF=unknown"
-        auth = p.get("authors", "") or "Unknown"
-        text += (
-            f"\nPMID: {p['pmid']} | Authors: {auth} | Year: {p['year']} | "
-            f"Citations: {p['citations']} | {ss} | {fu} | {jif} | "
-            f"Evidence Score: {p['score']}/100\n"
-        )
+        text += format_paper_context_line(p)
     return text
 
 
@@ -588,6 +592,9 @@ def save_learn_output(question: str, answer: str, evidence: dict, cost: float) -
             "total_papers":      summary.get("total_scored", 0),
             "avg_paper_score":   summary.get("avg_score", 0),
             "top_pmids":         [p.get("pmid", "") for p in (summary.get("all_scored") or [])[:10]],
+            # Paper metadata (no abstracts) so archived reports can render
+            # author-style citations instead of bare PMIDs.
+            "papers":            _safe_papers(summary.get("all_scored") or []),
         }
         with open(path, "w", encoding="utf-8") as fh:
             _audit_json.dump(payload, fh, ensure_ascii=False, indent=2)

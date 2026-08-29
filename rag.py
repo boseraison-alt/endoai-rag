@@ -11,6 +11,8 @@ import hashlib
 import threading
 import psycopg2
 import psycopg2.extras
+import psycopg2.extensions
+import psycopg2.pool
 from datetime import datetime
 from dotenv import load_dotenv
 
@@ -37,16 +39,134 @@ def get_model():
 
 
 def embed(text: str) -> list[float]:
-    """Embed a string into a 384-dim vector."""
+    """Embed a string into a 384-dim vector.
+
+    all-MiniLM-L6-v2 works on TOKENS and truncates internally at its
+    max_seq_length (256 word-piece tokens ≈ 1,500-2,000 characters). The old
+    code pre-sliced text[:512] CHARACTERS — only ~120 tokens — silently
+    discarding the back half of most abstracts before they ever reached the
+    tokenizer, so retrieval was scoring on roughly half of each paper. We now
+    pass enough characters to fill the model's real token window and let the
+    tokenizer do the truncation at its true 256-token limit.
+    """
     model  = get_model()
-    vector = model.encode(text[:512], normalize_embeddings=True)
+    vector = model.encode(text[:2000], normalize_embeddings=True)
     return vector.tolist()
 
 
 # ── Database ──────────────────────────────────────────────
+#
+# A single ThreadedConnectionPool is shared process-wide. Every request used to
+# open a brand-new TCP+TLS connection to Neon and tear it down again — under the
+# Deep-Learning pipeline (dozens of queries per run) and concurrent Flask
+# workers that is both slow and a good way to exhaust Neon's connection cap.
+#
+# The pool is transparent to callers: get_conn() hands back a proxy whose
+# .close() RETURNS the connection to the pool instead of closing the socket, so
+# the existing `conn = get_conn() ... conn.close()` contract works unchanged
+# across rag.py, app.py, and the one-shot ingest scripts.
+
+_pool      = None
+_pool_lock = threading.Lock()
+
+
+def _init_pool():
+    """Lazily build the shared connection pool (thread-safe, double-checked)."""
+    global _pool
+    if _pool is None:
+        with _pool_lock:
+            if _pool is None:
+                minc = int(os.getenv("DB_POOL_MIN", "1"))
+                maxc = int(os.getenv("DB_POOL_MAX", "10"))
+                _pool = psycopg2.pool.ThreadedConnectionPool(
+                    minc, maxc, dsn=DATABASE_URL,
+                    # Survive Neon dropping idle connections between borrows.
+                    keepalives=1, keepalives_idle=30,
+                    keepalives_interval=10, keepalives_count=5,
+                )
+    return _pool
+
+
+class _PooledConnection:
+    """Transparent proxy over a pooled psycopg2 connection.
+
+    Callers keep the old contract — `conn = get_conn(); ...; conn.close()` — but
+    .close() returns the connection to the pool rather than tearing down the
+    session. Every other attribute/method delegates to the real connection, and
+    `with conn:` still gives psycopg2 transaction semantics (commit/rollback,
+    NOT close).
+    """
+    __slots__ = ("_conn", "_pool", "_returned")
+
+    def __init__(self, conn, pool):
+        object.__setattr__(self, "_conn", conn)
+        object.__setattr__(self, "_pool", pool)
+        object.__setattr__(self, "_returned", False)
+
+    def close(self):
+        if object.__getattribute__(self, "_returned"):
+            return
+        object.__setattr__(self, "_returned", True)
+        conn = object.__getattribute__(self, "_conn")
+        pool = object.__getattribute__(self, "_pool")
+        try:
+            # Never hand the next borrower an open or aborted transaction.
+            if conn.get_transaction_status() != psycopg2.extensions.TRANSACTION_STATUS_IDLE:
+                conn.rollback()
+        except Exception:
+            pass
+        try:
+            pool.putconn(conn, close=bool(conn.closed))
+        except Exception:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+    def __enter__(self):
+        object.__getattribute__(self, "_conn").__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        return object.__getattribute__(self, "_conn").__exit__(exc_type, exc, tb)
+
+    def __getattr__(self, name):
+        return getattr(object.__getattribute__(self, "_conn"), name)
+
+    def __setattr__(self, name, value):
+        setattr(object.__getattribute__(self, "_conn"), name, value)
+
 
 def get_conn():
-    return psycopg2.connect(DATABASE_URL)
+    """Borrow a connection from the shared pool.
+
+    Returns a proxy whose .close() returns the connection to the pool, so every
+    existing caller gets pooling with no code change. Stale connections (Neon
+    dropped them while idle) are discarded and replaced.
+    """
+    pool = _init_pool()
+    for _ in range(2):
+        conn = pool.getconn()
+        if conn.closed:
+            try:
+                pool.putconn(conn, close=True)
+            except Exception:
+                pass
+            continue
+        return _PooledConnection(conn, pool)
+    # Last resort — never leave the caller empty-handed.
+    return _PooledConnection(psycopg2.connect(DATABASE_URL), pool)
+
+
+def close_pool():
+    """Close every pooled connection. Call on graceful shutdown if desired."""
+    global _pool
+    with _pool_lock:
+        if _pool is not None:
+            try:
+                _pool.closeall()
+            finally:
+                _pool = None
 
 
 def setup_table():
@@ -70,10 +190,42 @@ def setup_table():
                 citations     INTEGER DEFAULT 0,
                 level_key     TEXT,
                 score         REAL DEFAULT 0,
+                is_curated    BOOLEAN DEFAULT FALSE,
                 embedding     vector(384),
                 added_at      TIMESTAMP DEFAULT NOW()
             );
         """)
+        # Migration for libraries created before is_curated existed. Papers with
+        # this flag carry a hand-assigned authority score (AAE/ESE position
+        # statements, guidelines) and must never be overwritten by the formula-
+        # based rescorer.
+        cur.execute("""
+            ALTER TABLE endo_papers_rag
+            ADD COLUMN IF NOT EXISTS is_curated BOOLEAN DEFAULT FALSE;
+        """)
+        # Provenance-quality signals, backfilled from PubMed by
+        # scripts/backfill_provenance.py. has_retraction matters most: the live
+        # search filters retractions at query time, but library-served papers
+        # bypass that filter, so a paper retracted AFTER ingestion would
+        # otherwise still reach the clinician.
+        for _col, _type in (
+            ("medline_indexed", "BOOLEAN DEFAULT TRUE"),
+            ("has_erratum",     "BOOLEAN DEFAULT FALSE"),
+            ("has_retraction",  "BOOLEAN DEFAULT FALSE"),
+            ("registry",        "TEXT DEFAULT ''"),
+            # COI is decided ONCE at ingest/backfill time and stored here; the
+            # stored `score` already carries the penalty. The read path only
+            # displays these — never re-scans abstracts, never re-penalises.
+            ("coi_flag",        "BOOLEAN DEFAULT FALSE"),
+            ("coi_funder",      "TEXT DEFAULT ''"),
+            # Tri-state: 'declared_conflict' | 'declared_none' | 'no_statement'.
+            # PubMed only carries <CoiStatement> for records indexed since ~2017
+            # whose journal deposits one, so "no statement" must stay distinct
+            # from "declared none" — otherwise every older paper gets an
+            # implicit clean bill it never earned.
+            ("coi_status",      "TEXT DEFAULT 'no_statement'"),
+        ):
+            cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""
             CREATE INDEX IF NOT EXISTS endo_papers_rag_emb_idx
             ON endo_papers_rag
@@ -164,10 +316,13 @@ def search(
                 SELECT
                     pmid, title, abstract, authors, year, journal,
                     impact_factor, sample_size, followup_months,
-                    citations, level_key, score,
+                    citations, level_key, score, is_curated,
+                    medline_indexed, has_erratum, has_retraction, registry,
+                    coi_flag, coi_funder, coi_status,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE level_key = %s
+                  AND NOT COALESCE(has_retraction, FALSE)
                   AND 1 - (embedding <=> %s::vector) >= %s
                 ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
                 LIMIT %s;
@@ -177,10 +332,13 @@ def search(
                 SELECT
                     pmid, title, abstract, authors, year, journal,
                     impact_factor, sample_size, followup_months,
-                    citations, level_key, score,
+                    citations, level_key, score, is_curated,
+                    medline_indexed, has_erratum, has_retraction, registry,
+                    coi_flag, coi_funder, coi_status,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
-                WHERE 1 - (embedding <=> %s::vector) >= %s
+                WHERE NOT COALESCE(has_retraction, FALSE)
+                  AND 1 - (embedding <=> %s::vector) >= %s
                 ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
                 LIMIT %s;
             """, (query_vec, query_vec, similarity_threshold, query_vec, limit))
@@ -209,10 +367,25 @@ def has_enough_results(
 # ── Convert RAG results to scored_papers format ───────────
 
 def rag_results_to_scored(rows: list[dict]) -> list[dict]:
-    """Convert RAG DB rows to the same dict format as endo_ai.score_paper output."""
+    """Convert RAG DB rows to the same dict format as endo_ai.score_paper output.
+
+    Provenance signals (COI, corrections, registry, indexing) are READ from
+    stored columns — they are decided once at ingest/backfill time by
+    scripts/backfill_provenance.py, and the stored `score` already carries any
+    COI penalty. Nothing is re-derived per query here: re-scanning abstracts at
+    read time both double-counted the penalty and, because RAG ranks on the
+    stored score, left the penalty unable to influence retrieval order.
+    """
     papers = []
     for r in rows:
+        has_coi    = bool(r.get("coi_flag"))
+        coi_funder = r.get("coi_funder") or ""
+
         papers.append({
+            "has_coi":         has_coi,
+            "coi_funder":      coi_funder if has_coi else "",
+            "coi_status":      r.get("coi_status") or "no_statement",
+            "level_key":       r.get("level_key", "") or "",
             "pmid":            r.get("pmid", ""),
             "year":            str(r.get("year", "Unknown")),
             "citations":       r.get("citations", 0),
@@ -220,8 +393,19 @@ def rag_results_to_scored(rows: list[dict]) -> list[dict]:
             "sample_size":     r.get("sample_size"),
             "followup_months": r.get("followup_months"),
             "journal":         r.get("journal", ""),
+            "journal_abbrev":  r.get("journal", ""),
+            "volume":          "",
+            "issue":           "",
+            "pages":           "",
             "impact_factor":   r.get("impact_factor"),
+            # Stored score already includes every provenance adjustment.
             "score":           round(float(r.get("score", 0)), 1),
+            "is_registered":   bool(r.get("registry")),
+            "registry":        r.get("registry") or "",
+            "has_erratum":     bool(r.get("has_erratum")),
+            "has_retraction":  bool(r.get("has_retraction")),
+            "medline_indexed": r.get("medline_indexed", True),
+            "is_curated":      bool(r.get("is_curated")),
             "breakdown":       {},
             "similarity":      round(float(r.get("similarity", 0)), 3),
         })
@@ -388,6 +572,45 @@ def get_cached_abstract(pmid: str) -> dict | None:
     except Exception as e:
         print(f"  Abstract cache lookup error: {e}")
         return None
+    finally:
+        cur.close()
+        conn.close()
+
+
+def get_cached_abstracts_bulk(pmids: list) -> dict:
+    """Return {pmid: {title, abstract, ...}} for every requested PMID found in
+    the abstract cache. One query, no hit-count updates — used by the
+    citation-support verifier, which reads many abstracts at once."""
+    pmids = [str(p) for p in (pmids or []) if p]
+    if not DATABASE_URL or not pmids:
+        return {}
+    conn = get_conn()
+    cur  = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("""
+            SELECT pmid, title, abstract, journal, year, authors
+            FROM abstract_cache
+            WHERE pmid = ANY(%s);
+        """, (pmids,))
+        found = {row["pmid"]: dict(row) for row in cur.fetchall()}
+
+        # Fall back to the curated RAG library for PMIDs the abstract cache
+        # doesn't have — library papers were ingested offline and never pass
+        # through the live-fetch cache, but their abstracts are just as usable
+        # for the citation-support check.
+        missing = [p for p in pmids if p not in found]
+        if missing:
+            cur.execute("""
+                SELECT pmid, title, abstract, journal, year::text AS year, authors
+                FROM endo_papers_rag
+                WHERE pmid = ANY(%s);
+            """, (missing,))
+            for row in cur.fetchall():
+                found.setdefault(row["pmid"], dict(row))
+        return found
+    except Exception as e:
+        print(f"  Abstract cache bulk lookup error: {e}")
+        return {}
     finally:
         cur.close()
         conn.close()

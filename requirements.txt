@@ -1,6 +1,52 @@
-flask>=3.0.0
-anthropic>=0.25.0
-requests>=2.31.0
-python-dotenv>=1.0.0
-sentence-transformers>=3.0.0
-psycopg2-binary>=2.9.9
+# Endo AI RAG — frozen dependencies
+# Pinned to the versions actually in use (pip freeze, 2026-05). Pin exactly so
+# a fresh install can never silently pull an incompatible major (e.g. a new
+# torch/transformers that breaks sentence-transformers embeddings).
+#
+# Regenerate after an intentional upgrade:
+#   pip install -U <pkg> && pip freeze > requirements.frozen.txt   # then reconcile
+
+# ── Web layer ────────────────────────────────────────────
+Flask==3.1.3
+Werkzeug==3.1.8
+Jinja2==3.1.6
+
+# ── LLM / generative ─────────────────────────────────────
+anthropic==0.92.0
+openai==2.32.0
+google-genai==1.73.1
+
+# ── RAG: embeddings + vector store ───────────────────────
+sentence-transformers==5.4.1
+torch==2.11.0
+transformers==5.6.2
+tokenizers==0.22.2
+safetensors==0.7.0
+huggingface-hub>=0.30,<1.0
+numpy==2.4.4
+scipy==1.17.1
+psycopg2-binary==2.9.12
+
+# ── PubMed / HTTP / parsing ──────────────────────────────
+requests==2.33.1
+lxml==6.1.0
+# defusedxml parses PubMed efetch XML (remote input) — hardened against the
+# entity-expansion attacks stdlib ElementTree is vulnerable to.
+defusedxml==0.7.1
+pypdf==6.10.2
+
+# ── Media generation (slides / audio / video) ────────────
+python-pptx==1.0.2
+pillow==11.3.0
+gTTS==2.5.4
+moviepy==2.2.1
+imageio==2.37.3
+imageio-ffmpeg==0.6.0
+proglog==0.1.12
+
+# ── Config / utilities ───────────────────────────────────
+python-dotenv==1.2.2
+tenacity==9.1.4
+
+# ── Testing ──────────────────────────────────────────────
+pytest==9.0.3
