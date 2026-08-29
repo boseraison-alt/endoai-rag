@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Endo AI — Espresso theme preview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Palette sampled from the Amperos reference ───────────── */
+  :root{
+    --esp-900:#241610; --esp-800:#2E1E16; --esp-700:#3D2A20; --esp-600:#4A3328;
+    --esp-500:#6B4E3D; --taupe-400:#8A6D5C; --taupe-300:#A9887A;
+    --tan-300:#B08D75; --tan-200:#C9A68F; --sand-100:#E4D5C7;
+    --cream:#F5EDE4; --cream-2:#FAF5EF;
+    --terra:#B85C38; --terra-soft:#D98A66; --terra-tint:#F2DCD1;
+    --sage:#6E7F5C; --amber:#A8762E;
+    --serif:"Instrument Serif",Georgia,'Times New Roman',serif;
+    --sans:"Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:#EFE8E0;color:var(--esp-800);
+       padding:32px 3vw 70px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto}
+  h1.page{font-family:var(--serif);font-size:clamp(30px,5vw,46px);line-height:1.05;
+          font-weight:400;margin-bottom:8px;letter-spacing:-.01em}
+  p.page-sub{color:var(--esp-500);max-width:74ch;font-size:15px;margin-bottom:26px;line-height:1.6}
+  h2.sec{font-family:var(--serif);font-weight:400;font-size:26px;margin:38px 0 6px}
+  p.sec-note{color:var(--esp-500);font-size:13.5px;margin-bottom:14px;max-width:78ch;line-height:1.6}
+
+  /* palette strip */
+  .sw-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .sw{width:74px;height:74px;border-radius:12px;display:flex;align-items:flex-end;
+      justify-content:center;padding-bottom:6px;font-size:9px;font-weight:600;
+      letter-spacing:.02em;border:1px solid rgba(0,0,0,.06)}
+
+  /* type specimen */
+  .spec{background:var(--cream-2);border:1px solid var(--sand-100);border-radius:14px;padding:22px 24px}
+  .spec .big{font-family:var(--serif);font-size:44px;line-height:1.08;font-weight:400;
+             color:var(--esp-800);letter-spacing:-.015em}
+  .spec .lede{font-size:15px;color:var(--esp-500);margin-top:10px;max-width:62ch;line-height:1.65}
+  .spec .meta{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+              color:var(--taupe-400);font-weight:600;margin-bottom:10px}
+
+  /* ── shared app mock ─────────────────────────────────────── */
+  .variants{display:grid;grid-template-columns:1fr;gap:26px}
+  .app{border-radius:16px;overflow:hidden;border:1px solid rgba(0,0,0,.10);
+       box-shadow:0 2px 20px rgba(36,22,16,.10)}
+  .app-top{display:flex;align-items:center;justify-content:space-between;
+           padding:13px 20px;font-size:13px}
+  .brand{font-family:var(--serif);font-size:19px;letter-spacing:.01em}
+  .tabs{display:flex;gap:7px;padding:0 20px 14px;flex-wrap:wrap}
+  .tab{padding:5px 13px;border-radius:99px;font-size:11.5px;font-weight:600}
+  .askbar{margin:0 20px 16px;border-radius:11px;padding:12px 14px;
+          display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12.5px}
+  .askbtn{padding:7px 17px;border-radius:8px;font-weight:700;font-size:11.5px;white-space:nowrap}
+  .card{margin:0 20px 20px;border-radius:13px;padding:18px 20px}
+  .q{font-family:var(--serif);font-size:21px;line-height:1.25;margin-bottom:11px}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}
+  .chip{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:99px;letter-spacing:.01em}
+
+  /* recommendation box */
+  .rec{border-radius:11px;padding:15px 17px;margin-bottom:16px}
+  .rec-head{display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap}
+  .rec-label{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+  .rec-tier{font-size:9.5px;font-weight:800;letter-spacing:.05em;padding:2px 9px;
+            border-radius:99px;text-transform:uppercase}
+  .rec-body{font-size:15px;line-height:1.6}
+  .rec-note{margin-top:10px;font-size:10.5px;font-style:italic}
+  .banner{border-radius:8px;padding:8px 11px;font-size:12px;font-weight:600;margin-bottom:10px}
+
+  .prose{font-size:13.5px;line-height:1.72;max-width:74ch}
+  .prose h4{font-family:var(--serif);font-weight:400;font-size:17px;margin:14px 0 5px}
+  .cite{font-size:9.5px;font-weight:600;padding:1px 6px;border-radius:5px;
+        vertical-align:2px;cursor:pointer;white-space:nowrap}
+
+  .bib-tier{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+            padding:6px 0 5px;margin-top:12px;display:flex;gap:8px;align-items:center}
+  .bib-n{border-radius:99px;padding:1px 7px;font-size:9.5px}
+  .bib-item{display:flex;justify-content:space-between;gap:12px;font-size:11.5px;
+            padding:4px 0;line-height:1.5}
+  .pv{font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px;margin-left:4px}
+
+  /* ── VARIANT A · dark espresso ───────────────────────────── */
+  .dark{background:var(--esp-800);color:var(--sand-100)}
+  .dark .app-top{color:var(--tan-200);border-bottom:1px solid rgba(255,255,255,.07)}
+  .dark .brand{color:var(--cream)}
+  .dark .tab{background:rgba(255,255,255,.06);color:var(--tan-200)}
+  .dark .tab.on{background:var(--terra);color:#fff}
+  .dark .askbar{background:var(--esp-700);border:1px solid rgba(255,255,255,.08);color:var(--taupe-400)}
+  .dark .askbtn{background:var(--terra);color:#fff}
+  .dark .card{background:var(--esp-700);border:1px solid rgba(255,255,255,.07)}
+  .dark .q{color:var(--cream)}
+  .dark .chip{background:rgba(255,255,255,.07);color:var(--tan-200)}
+  .dark .chip.ok{background:rgba(110,127,92,.28);color:#BFD2A8}
+  .dark .chip.cost{background:rgba(184,92,56,.22);color:var(--terra-soft)}
+  .dark .rec{background:var(--esp-600);border:1px solid rgba(255,255,255,.09);border-top:3px solid var(--terra)}
+  .dark .rec-label{color:var(--taupe-400)}
+  .dark .rec-tier{background:rgba(110,127,92,.3);color:#C6D6B2}
+  .dark .rec-body{color:var(--cream)}
+  .dark .rec-note{color:var(--taupe-400)}
+  .dark .banner{background:rgba(168,118,46,.22);color:#E0BE84;border:1px solid rgba(168,118,46,.4)}
+  .dark .prose{color:var(--sand-100)}
+  .dark .prose h4{color:var(--cream)}
+  .dark .cite{background:rgba(184,92,56,.24);color:var(--terra-soft)}
+  .dark .bib-tier{color:var(--terra-soft);border-bottom:1px solid rgba(255,255,255,.08)}
+  .dark .bib-n{background:rgba(184,92,56,.2);color:var(--terra-soft)}
+  .dark .bib-item{color:var(--tan-200)}
+  .dark .bib-item b{color:var(--cream);font-weight:600}
+  .dark .pv.good{background:rgba(110,127,92,.3);color:#C6D6B2}
+  .dark .pv.warn{background:rgba(168,118,46,.25);color:#E0BE84}
+  .dark .score{color:#BFD2A8;font-weight:700}
+
+  /* ── VARIANT B · warm light ──────────────────────────────── */
+  .light{background:#EDE4DA}
+  .light .app-top{color:var(--esp-500);border-bottom:1px solid var(--sand-100);background:var(--cream-2)}
+  .light .brand{color:var(--esp-800)}
+  .light .tabs{background:var(--cream-2)}
+  .light .tab{background:#E4D8CB;color:var(--esp-500)}
+  .light .tab.on{background:var(--esp-800);color:var(--cream)}
+  .light .askbar{background:#fff;border:1px solid var(--sand-100);color:var(--taupe-400)}
+  .light .askbtn{background:var(--terra);color:#fff}
+  .light .card{background:var(--cream-2);border:1px solid var(--sand-100)}
+  .light .q{color:var(--esp-900)}
+  .light .chip{background:#E7DCD0;color:var(--esp-500)}
+  .light .chip.ok{background:#E2E9D8;color:#4C5B3C}
+  .light .chip.cost{background:var(--terra-tint);color:#8E4526}
+  .light .rec{background:#fff;border:1px solid var(--sand-100);border-top:3px solid var(--terra)}
+  .light .rec-label{color:var(--taupe-400)}
+  .light .rec-tier{background:#E2E9D8;color:#4C5B3C}
+  .light .rec-body{color:var(--esp-900)}
+  .light .rec-note{color:var(--taupe-400)}
+  .light .banner{background:#F6E7CC;border:1px solid #E0C79A;color:#7A5312}
+  .light .prose{color:#463228}
+  .light .prose h4{color:var(--esp-900)}
+  .light .cite{background:var(--terra-tint);color:#8E4526}
+  .light .bib-tier{color:#8E4526;border-bottom:1px solid var(--sand-100)}
+  .light .bib-n{background:var(--terra-tint);color:#8E4526}
+  .light .bib-item{color:var(--esp-500)}
+  .light .bib-item b{color:var(--esp-900);font-weight:600}
+  .light .pv.good{background:#E2E9D8;color:#4C5B3C}
+  .light .pv.warn{background:#F6E7CC;color:#7A5312}
+  .light .score{color:#4C5B3C;font-weight:700}
+
+  .verdict{background:var(--esp-800);color:var(--sand-100);border-radius:14px;
+           padding:22px 24px;margin-top:14px}
+  .verdict h3{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--cream);margin-bottom:12px}
+  .verdict .rule{background:var(--esp-700);border-left:3px solid var(--terra);
+                 border-radius:0 9px 9px 0;padding:11px 14px;font-size:13px;
+                 line-height:1.6;margin-bottom:9px}
+  .verdict .anchor{color:var(--terra-soft);font-weight:700}
+  .note{background:var(--cream-2);border:1px solid var(--sand-100);border-radius:12px;
+        padding:14px 17px;font-size:13.5px;color:var(--esp-500);line-height:1.65;margin-top:14px}
+  .note b{color:var(--esp-800)}
+  @media(min-width:1000px){.variants{grid-template-columns:1fr 1fr}}
+</style></head><body><div class="wrap">
+
+<h1 class="page">Espresso &amp; terracotta — applied to Endo AI</h1>
+<p class="page-sub">The Amperos palette and an editorial serif, shown on the real answer layout: trust chips, the boxed
+recommendation with its evidence-tier badge, author-style citations, and the tier-grouped bibliography with provenance
+badges. Two variants, because the reference is a marketing site (short text, big imagery) and this is a reading tool.</p>
+
+<h2 class="sec">Palette</h2>
+<p class="sec-note">Deep espresso through warm taupe to cream, with a single terracotta accent carrying every action and
+citation. Sage green and amber are added for evidence-tier and warning states — the reference had no need for them.</p>
+<div class="sw-row">
+  <div class="sw" style="background:#241610;color:#C9A68F">241610</div>
+  <div class="sw" style="background:#2E1E16;color:#C9A68F">2E1E16</div>
+  <div class="sw" style="background:#3D2A20;color:#C9A68F">3D2A20</div>
+  <div class="sw" style="background:#4A3328;color:#C9A68F">4A3328</div>
+  <div class="sw" style="background:#6B4E3D;color:#E4D5C7">6B4E3D</div>
+  <div class="sw" style="background:#8A6D5C;color:#2E1E16">8A6D5C</div>
+  <div class="sw" style="background:#B08D75;color:#2E1E16">B08D75</div>
+  <div class="sw" style="background:#C9A68F;color:#2E1E16">C9A68F</div>
+  <div class="sw" style="background:#E4D5C7;color:#2E1E16">E4D5C7</div>
+  <div class="sw" style="background:#F5EDE4;color:#2E1E16">F5EDE4</div>
+  <div class="sw" style="background:#B85C38;color:#fff">B85C38</div>
+  <div class="sw" style="background:#6E7F5C;color:#fff">6E7F5C</div>
+</div>
+
+<h2 class="sec">Type</h2>
+<p class="sec-note">Instrument Serif for headlines — the closest free face to the reference's high-contrast display serif —
+paired with Inter for body and data. The serif is what makes it read premium instead of generic-SaaS; used only at
+headline sizes, never for clinical prose.</p>
+<div class="spec">
+  <div class="meta">Instrument Serif · headlines</div>
+  <div class="big">Evidence you can check, at the chair</div>
+  <div class="lede" style="font-family:var(--sans)"><b>Inter · body.</b> Vital pulp therapy in the mature permanent tooth
+  has shifted substantially since 2016; calcium-silicate cements now outperform calcium hydroxide across pooled analyses,
+  and the coronal seal matters as much as the capping material.</div>
+</div>
+
+<h2 class="sec">Variant A — dark espresso &nbsp;·&nbsp; Variant B — warm light</h2>
+<p class="sec-note">Same palette, same type. A is faithful to the reference. B keeps the warmth but puts long clinical
+prose on a light field. Read the Evidence Summary paragraph in both — that is the honest test, since a clinician reads
+several hundred words of it per answer.</p>
+
+<div class="variants">
+
+  <!-- ══ VARIANT A ══ -->
+  <div class="app dark">
+    <div class="app-top"><span class="brand">Endo AI</span><span>Profile</span></div>
+    <div class="tabs">
+      <span class="tab on">Review</span><span class="tab">Deep Learning</span>
+      <span class="tab">Case</span><span class="tab">Assess</span>
+    </div>
+    <div class="askbar"><span>Ask a clinical question…</span><span class="askbtn">Ask</span></div>
+    <div class="card">
+      <div class="q">Is single-visit or multi-visit treatment better for postoperative pain?</div>
+      <div class="chips">
+        <span class="chip">Literature Review</span>
+        <span class="chip ok">✓ checked against abstracts: 12/12 consistent</span>
+        <span class="chip">13 Cochrane · 25 RCT/SR · 3 Classic</span>
+        <span class="chip cost">$0.31</span>
+      </div>
+      <div class="rec">
+        <div class="rec-head"><span class="rec-label">Clinical recommendation</span>
+          <span class="rec-tier">Cochrane evidence</span></div>
+        <div class="banner">⚖ The literature is currently divided on this topic — both positions are set out below.</div>
+        <div class="rec-body">Based on Cochrane-level evidence, single-visit and multiple-visit protocols show no
+        clinically meaningful difference in healing <span class="cite">Manfredi M et al., Cochrane. 2016</span>.</div>
+        <div class="rec-note">Synthesized from abstracts, not full text.</div>
+      </div>
+      <div class="prose">
+        <h4>Evidence Summary</h4>
+        Pooled analysis of 29 trials (4,341 patients) found no significant difference in long-term healing between
+        protocols <span class="cite">Manfredi M et al., Cochrane. 2016</span>. Postoperative pain at 24 hours was
+        modestly higher in single-visit treatment, though the effect did not persist to one week
+        <span class="cite">Schwendicke F et al., J Endod. 2019</span>.
+      </div>
+      <div class="bib-tier">Cochrane Reviews <span class="bib-n">13</span></div>
+      <div class="bib-item"><span><b>[PMID: 28148534]</b> Manfredi M et al. — 2016, n=4,341
+        <span class="pv good">pre-registered</span></span><span class="score">88.4</span></div>
+      <div class="bib-item"><span><b>[PMID: 34647617]</b> Li H et al. — 2021, n=1,340
+        <span class="pv warn">correction</span></span><span class="score">84.1</span></div>
+      <div class="bib-tier">Level I — RCTs &amp; SRs <span class="bib-n">25</span></div>
+      <div class="bib-item"><span><b>[PMID: 34854987]</b> Asgary S et al. — 2022, n=157, 24 mo FU</span>
+        <span class="score">79.6</span></div>
+    </div>
+  </div>
+
+  <!-- ══ VARIANT B ══ -->
+  <div class="app light">
+    <div class="app-top"><span class="brand">Endo AI</span><span>Profile</span></div>
+    <div class="tabs">
+      <span class="tab on">Review</span><span class="tab">Deep Learning</span>
+      <span class="tab">Case</span><span class="tab">Assess</span>
+    </div>
+    <div class="askbar"><span>Ask a clinical question…</span><span class="askbtn">Ask</span></div>
+    <div class="card">
+      <div class="q">Is single-visit or multi-visit treatment better for postoperative pain?</div>
+      <div class="chips">
+        <span class="chip">Literature Review</span>
+        <span class="chip ok">✓ checked against abstracts: 12/12 consistent</span>
+        <span class="chip">13 Cochrane · 25 RCT/SR · 3 Classic</span>
+        <span class="chip cost">$0.31</span>
+      </div>
+      <div class="rec">
+        <div class="rec-head"><span class="rec-label">Clinical recommendation</span>
+          <span class="rec-tier">Cochrane evidence</span></div>
+        <div class="banner">⚖ The literature is currently divided on this topic — both positions are set out below.</div>
+        <div class="rec-body">Based on Cochrane-level evidence, single-visit and multiple-visit protocols show no
+        clinically meaningful difference in healing <span class="cite">Manfredi M et al., Cochrane. 2016</span>.</div>
+        <div class="rec-note">Synthesized from abstracts, not full text.</div>
+      </div>
+      <div class="prose">
+        <h4>Evidence Summary</h4>
+        Pooled analysis of 29 trials (4,341 patients) found no significant difference in long-term healing between
+        protocols <span class="cite">Manfredi M et al., Cochrane. 2016</span>. Postoperative pain at 24 hours was
+        modestly higher in single-visit treatment, though the effect did not persist to one week
+        <span class="cite">Schwendicke F et al., J Endod. 2019</span>.
+      </div>
+      <div class="bib-tier">Cochrane Reviews <span class="bib-n">13</span></div>
+      <div class="bib-item"><span><b>[PMID: 28148534]</b> Manfredi M et al. — 2016, n=4,341
+        <span class="pv good">pre-registered</span></span><span class="score">88.4</span></div>
+      <div class="bib-item"><span><b>[PMID: 34647617]</b> Li H et al. — 2021, n=1,340
+        <span class="pv warn">correction</span></span><span class="score">84.1</span></div>
+      <div class="bib-tier">Level I — RCTs &amp; SRs <span class="bib-n">25</span></div>
+      <div class="bib-item"><span><b>[PMID: 34854987]</b> Asgary S et al. — 2022, n=157, 24 mo FU</span>
+        <span class="score">79.6</span></div>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec">Where the dark field earns its keep</h2>
+<p class="sec-note">Deep Learning's Final Verdict is short, declarative and re-read at the chair — exactly the kind of
+content the reference site's dark treatment suits. A hybrid is available: light for reading, espresso for the verdict
+and for the pitch deck.</p>
+<div class="verdict">
+  <h3>The Final Verdict</h3>
+  <div class="rule"><b>Decision rule.</b> If the tooth is a mature permanent molar with carious exposure and haemostasis
+  is achieved within 5–10 minutes → full pulpotomy with a calcium-silicate cement, restored the same visit.</div>
+  <div class="rule"><span class="anchor">Anchored in:</span> Level I network meta-regression of 21 RCTs (n=1,733)
+  <span class="cite" style="background:rgba(184,92,56,.24);color:#D98A66">Gomez-Sosa E et al., J Dent. 2025</span></div>
+  <div class="rule"><b>Does not apply when</b> a periapical radiolucency is present → treat as irreversible and proceed
+  to root canal treatment.</div>
+</div>
+
+<div class="note">
+  <b>My read.</b> Variant B is the one I'd ship for the app. The palette is what gives Amperos its character — the dark
+  field is a marketing choice that works because the page is mostly photography and headlines. Endo AI asks a clinician
+  to read several hundred words of evidence prose per answer, and long-form reading on espresso is measurably harder and
+  fatiguing under clinic lighting. B keeps the warmth, the serif and the terracotta while staying readable.
+  <br><br>
+  <b>Where A wins outright:</b> the pitch deck, and the Final Verdict block above. Espresso plus that serif looks far more
+  premium than the current plum-and-gold deck, and it would make product and pitch look like one company.
+</div>
+
+</div></body></html>

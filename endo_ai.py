@@ -695,8 +695,10 @@ LEVEL_1_TERMS = [
 ]
 
 LEVEL_2_TERMS = [
-    "randomized controlled trial[pt] less quality",
-    "prospective study[pt]",
+    # "randomized controlled trial[pt] less quality" was a stray annotation that
+    # PubMed parsed as `... AND less AND quality`, silently gutting this tier.
+    "controlled clinical trial[pt]",
+    "prospective studies[mh]",
     "comparative study[pt]"
 ]
 
@@ -1020,15 +1022,27 @@ def generate_search_terms(question):
         max_tokens=200,
         messages=[{
             "role": "user",
-            "content": f"""Convert this clinical endodontic question into the best PubMed search string.
-Return ONLY the search string — no explanation, no quotes, no extra text.
-Use MeSH terms where appropriate.
-Keep it under 10 words.
-Focus on the core clinical comparison or topic.
+            "content": f"""Convert this clinical endodontic question into a PubMed BOOLEAN query.
+Return ONLY the query — no explanation, no surrounding quotes, no extra text.
+
+PubMed ANDs bare words together, so a string like "laser irradiation power
+settings endodontic disinfection" demands all six words in one record and
+returns almost nothing. Write 2-3 concept groups instead, each an OR-list of the
+synonyms, abbreviations, device and brand names the field actually uses, joined
+by AND. Example for laser disinfection:
+
+  (laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic* OR intracanal) AND (disinfect* OR antibacterial OR biofilm OR "E. faecalis")
+
+Rules:
+- `*` truncation on stems (disinfect*, endodontic*, irrigat*)
+- quote multi-word phrases
+- include BOTH abbreviation and expansion for any technique or material
+- do NOT add [pt] publication-type filters or endodontics domain terms; both are
+  appended automatically and duplicating them only narrows the result set
 
 Question: {question}
 
-PubMed search string:"""
+PubMed boolean query:"""
         }]
     )
     log_llm_call("generate_search_terms", MODELS["structured_fast"],
@@ -3155,8 +3169,24 @@ Break the topic into exactly {n_modules} sequential learning modules that togeth
 
 For EACH module, return:
 - "title":        a short module heading (5-8 words)
-- "search_query": a focused PubMed-friendly search string for THIS module only
-                   (3-7 words; will be combined with endodontics filters at search time)
+- "search_query": a PubMed BOOLEAN query for THIS module. It is combined with a
+                   study-design filter and an endodontics domain filter at search time,
+                   so query the CONCEPT broadly here.
+
+CRITICAL — the query must be OR-expanded, not a list of words. PubMed ANDs bare
+words together, so "laser irradiation power settings endodontic disinfection"
+requires all six words in one record and returns almost nothing. Write 2-3
+concept groups, each an OR-list of the synonyms, abbreviations, brand and device
+names the field actually uses, joined by AND:
+
+  (laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR "laser-activated irrigation" OR Er:YAG OR Nd:YAG OR diode)
+  AND ("root canal" OR endodontic* OR intracanal)
+  AND (disinfect* OR antibacterial OR antimicrobial OR biofilm OR "E. faecalis")
+
+Rules: use `*` truncation on word stems; quote multi-word phrases; include
+abbreviations AND expansions for any technique; never write a bare multi-word
+string. Do NOT add [pt] design filters or endodontic domain terms — those are
+appended automatically, and duplicating them narrows the search.
 
 Return ONLY a JSON array of {n_modules} objects. No prose, no markdown, no ```json fence."""
             }]
@@ -3188,6 +3218,66 @@ Return ONLY a JSON array of {n_modules} objects. No prose, no markdown, no ```js
         {"title": "Prognosis & Outcomes",          "search_query": f"{question} outcomes prognosis"},
     ]
     return fallback, 0.0
+
+
+# A module with no retrieved evidence must not produce a protocol. The failure
+# this guards: a laser-disinfection module retrieved ZERO papers and still
+# emitted "Er:YAG 20 mJ, 15 Hz", "5.25% NaOCl, 2 mL, 60 s", "ISO #30/.04" — a
+# fully specified numeric clinical protocol invented from nothing and shipped
+# behind a disclaimer. A disclaimer does not make invented parameters safe.
+MIN_MODULE_PAPERS = 2
+
+_NUMERIC_PARAM_RE = re.compile(
+    r"\b\d+(?:\.\d+)?\s*(?:%|mm|mJ|Hz|W|mW|J/cm|mL|ml|µm|um|sec|s\b|seconds?|min\b|"
+    r"minutes?|mo\b|months?|ISO|#\d|N·?cm|Ncm|rpm|°C)"
+    r"|\bISO\s*#?\d+"
+    r"|\b#\d{2}/\.?\d{2}\b",
+    re.IGNORECASE,
+)
+
+
+def module_has_usable_evidence(evidence: dict) -> tuple:
+    """(ok, n_papers) — is there enough retrieved evidence to write a module?"""
+    summary = (evidence or {}).get("_summary", {}) or {}
+    n = len(summary.get("all_scored") or [])
+    return n >= MIN_MODULE_PAPERS, n
+
+
+def _module_not_generated_block(title: str, n_papers: int, query: str = "") -> str:
+    """Rendered in place of a module when retrieval came back empty."""
+    return (
+        f"## Module — {title}\n\n"
+        f"> **Module not generated — insufficient evidence retrieved.**\n>\n"
+        f"> A literature search for this module returned "
+        f"{'no papers' if not n_papers else f'only {n_papers} paper(s)'}, which is "
+        f"below the minimum required to write evidence-based clinical content.\n>\n"
+        f"> No protocol, parameters or decision rules are given here. Any numeric "
+        f"values presented for this topic would be unsourced.\n>\n"
+        f"> This usually means the topic is genuinely sparse in the indexed "
+        f"literature, or that it is described using terminology the search did not "
+        f"cover. Consider narrowing the parent question or consulting a specialist "
+        f"review directly.\n"
+        + (f">\n> *Search used:* `{query[:220]}`\n" if query else "")
+    )
+
+
+def validate_module_output(text: str, evidence: dict) -> dict:
+    """Reject a module that states numeric clinical parameters with no citations.
+
+    Returns {"ok": bool, "reason": str}. This is the last line of defence: even
+    with evidence present, a module that specifies irrigant concentrations or
+    laser settings while citing nothing is asserting parameters it cannot
+    support.
+    """
+    cited = _extract_cited_pmids(text or "")
+    if cited:
+        return {"ok": True, "reason": ""}
+    params = _NUMERIC_PARAM_RE.findall(text or "")
+    if params:
+        return {"ok": False,
+                "reason": (f"module states {len(params)} numeric clinical parameter(s) "
+                           f"with zero [[PMID:N]] citations")}
+    return {"ok": True, "reason": ""}
 
 
 def write_curriculum_module(module: dict, evidence: dict, parent_question: str,
@@ -3594,8 +3684,54 @@ def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
     for i, (mod, ev) in enumerate(zip(syllabus, per_module_evidence)):
         pct = writing_base + int((i / max(n, 1)) * writing_span)
         _tick(pct, f"Writing module {i+1}/{n}: {mod['title']}")
+        ok, n_papers = module_has_usable_evidence(ev)
+
+        # Retrieval came back empty or near-empty. Broaden the query once before
+        # giving up — a narrow or over-specified query is the usual cause.
+        if not ok:
+            print(f"  [module {i+1}] only {n_papers} paper(s) — broadening and retrying")
+            try:
+                broadened = generate_search_terms(
+                    f"{mod['title']} (broad concept search; use OR-groups of "
+                    f"synonyms, abbreviations and device names)"
+                )
+                ev_retry = build_evidence_base(broadened, mode="learn")
+                ok_retry, n_retry = module_has_usable_evidence(ev_retry)
+                if n_retry > n_papers:
+                    ev, ok, n_papers = ev_retry, ok_retry, n_retry
+                    print(f"  [module {i+1}] broadened search found {n_retry} paper(s)")
+            except Exception as e:
+                print(f"  [module {i+1}] broadened retry failed: {e}")
+
+        if not ok:
+            # Still nothing. Emit an explicit gap rather than a module: a
+            # numeric protocol written from no sources is the worst output
+            # this system can produce, and a disclaimer does not redeem it.
+            print(f"  [module {i+1}] SKIPPED — {n_papers} paper(s), below minimum "
+                  f"{MIN_MODULE_PAPERS}")
+            modules_with_scripts.append({
+                **mod,
+                "script": _module_not_generated_block(
+                    mod.get("title", f"Module {i+1}"), n_papers,
+                    mod.get("search_query", "")),
+                "not_generated": True,
+            })
+            continue
+
         script, c = write_curriculum_module(mod, ev, question, idx=i+1, total=n)
         total_cost += c
+
+        # Even with evidence present, refuse a module that specifies clinical
+        # parameters while citing nothing.
+        verdict = validate_module_output(script, ev)
+        if not verdict["ok"]:
+            print(f"  [module {i+1}] REJECTED — {verdict['reason']}")
+            script = _module_not_generated_block(
+                mod.get("title", f"Module {i+1}"), n_papers,
+                mod.get("search_query", ""))
+            modules_with_scripts.append({**mod, "script": script, "not_generated": True})
+            continue
+
         modules_with_scripts.append({**mod, "script": script})
 
     # Step D — Stitch

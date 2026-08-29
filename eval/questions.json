@@ -1,0 +1,78 @@
+{
+  "_README": [
+    "Regression set for retrieval and answer quality. Run after any change to",
+    "search-term generation, tier filters, the quality floor, scoring, or the",
+    "library/live routing gate.",
+    "",
+    "Every number the project currently quotes about its own behaviour is a",
+    "single live observation. This file exists so those become tracked metrics.",
+    "",
+    "Fields per case:",
+    "  id                 stable slug",
+    "  question           exactly as a clinician would type it",
+    "  mode               review | learn",
+    "  expect.route       library | live   (which retrieval path should win)",
+    "  expect.min_papers  floor on evidence-base size",
+    "  expect.min_sr      minimum Cochrane + Level I papers",
+    "  expect.min_rct     minimum Level I papers",
+    "  expect.modules_non_empty   learn mode: every module must be generated",
+    "  expect.max_unsourced_numeric_modules  modules with numeric params and 0 citations",
+    "  why                what this case is guarding against",
+    "",
+    "TO FILL IN: cases 2-20. Half should be topics the library covers well",
+    "(expect route=library) and half genuinely thin (expect route=live). That",
+    "split is a clinical judgement call — it needs RB, not the model, or the",
+    "baseline measures assumptions rather than reality."
+  ],
+
+  "cases": [
+    {
+      "id": "laser-root-canal-disinfection",
+      "question": "Use of lasers in root canal disinfection",
+      "mode": "learn",
+      "expect": {
+        "route": "live",
+        "min_papers": 30,
+        "min_sr": 1,
+        "min_rct": 1,
+        "modules_non_empty": true,
+        "max_unsourced_numeric_modules": 0
+      },
+      "why": [
+        "Retrieval regression, 2026-08-29. esearch returned 5 PMIDs across 28",
+        "queries because module search strings were bags of words that PubMed",
+        "ANDs together ('laser irradiation power settings endodontic",
+        "disinfection' matches 1 record in all of PubMed). Module 4 retrieved",
+        "zero papers and still emitted a numeric protocol - Er:YAG 20 mJ/15 Hz,",
+        "5.25% NaOCl 2 mL/60 s, ISO #30/.04 - invented and shipped behind a",
+        "disclaimer.",
+        "",
+        "This topic is also a vocabulary trap: the literature lives under aPDT,",
+        "PIPS, SWEEPS, photodynamic therapy and Er:YAG, so any query that does",
+        "not OR-expand synonyms will miss it while appearing to succeed.",
+        "",
+        "Baseline after fix (2026-08-29): 51 papers, 10 Cochrane, 9 Level I,",
+        "4/4 modules generated, 0 unsourced numeric modules, ~909 esearch PMIDs."
+      ],
+      "baseline": {
+        "recorded": "2026-08-29",
+        "papers": 51,
+        "cochrane": 10,
+        "level1": 9,
+        "modules_generated": 4,
+        "unsourced_numeric_modules": 0,
+        "esearch_pmids": 909,
+        "cost_usd": 1.18
+      },
+      "regression_reference": {
+        "note": "The failing run, kept so the diff stays legible.",
+        "papers": 5,
+        "cochrane": 0,
+        "level1": 0,
+        "modules_generated": 4,
+        "unsourced_numeric_modules": 1,
+        "esearch_pmids": 5
+      }
+    }
+  ]
+}

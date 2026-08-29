@@ -145,16 +145,29 @@ def get_conn():
     dropped them while idle) are discarded and replaced.
     """
     pool = _init_pool()
-    for _ in range(2):
+    for _ in range(3):
         conn = pool.getconn()
-        if conn.closed:
+        # `conn.closed` only reports what THIS process did. When the server
+        # drops an idle connection — routine on Neon, and certain during a
+        # 20-minute Deep Learning run — the socket looks open until a query
+        # fails with "connection already closed". Validate before handing it
+        # out, so that failure lands here (recoverable) rather than mid-write.
+        try:
+            if conn.closed:
+                raise psycopg2.InterfaceError("connection closed")
+            with conn.cursor() as probe:
+                probe.execute("SELECT 1;")
+            if conn.get_transaction_status() != psycopg2.extensions.TRANSACTION_STATUS_IDLE:
+                conn.rollback()
+            return _PooledConnection(conn, pool)
+        except Exception:
             try:
-                pool.putconn(conn, close=True)
+                pool.putconn(conn, close=True)   # discard, don't recycle
             except Exception:
                 pass
             continue
-        return _PooledConnection(conn, pool)
-    # Last resort — never leave the caller empty-handed.
+    # Pool exhausted of usable connections — open a direct one rather than
+    # leaving the caller empty-handed.
     return _PooledConnection(psycopg2.connect(DATABASE_URL), pool)
 
 
