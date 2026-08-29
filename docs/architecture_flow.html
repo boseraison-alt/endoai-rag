@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Endo AI RAG — Question Lifecycle Flowchart</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body{font-family:"Segoe UI",system-ui,sans-serif;background:#e8ecf2;color:#2f394e;margin:0;padding:34px 3vw 60px}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:clamp(22px,3.6vw,32px);color:#131b2c;letter-spacing:-.02em;margin:0 0 4px}
+  p.sub{color:#4c586c;font-size:14.5px;margin:0 0 14px;max-width:80ch}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0 0 18px;font-size:12px;color:#4c586c}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:14px;height:14px;border-radius:4px;display:inline-block;border:1.5px solid}
+  .chart{background:#ffffff;border:1px solid #ccd5e0;border-radius:14px;padding:10px;overflow-x:auto;box-shadow:0 1px 4px rgba(19,27,44,.06)}
+  svg{display:block;margin:0 auto;min-width:760px}
+  svg text{font-family:"Segoe UI",system-ui,sans-serif}
+  .t{font-size:13px;font-weight:700;fill:#131b2c}
+  .s{font-size:11px;fill:#4c586c}
+  .lbl{font-size:10.5px;font-weight:700;fill:#4c586c;letter-spacing:.04em}
+  .yes{fill:#0f7a4d}.no{fill:#c23f3f}
+</style></head><body><div class="wrap">
+<h1>Life of one question — flowchart</h1>
+<p class="sub">The behavioral view of the architecture: every box is a real function in the codebase (see <b>architecture.html</b> for the file:line detail). Solid path = Review mode; dashed = Deep-Learning branch.</p>
+<div class="legend">
+  <span><i class="sw" style="border-color:#1e3a8a;background:#eef2fe"></i>Browser</span>
+  <span><i class="sw" style="border-color:#1d4ed8;background:#fff"></i>Engine step</span>
+  <span><i class="sw" style="border-color:#1d4ed8;background:#e5edff"></i>Decision</span>
+  <span><i class="sw" style="border-color:#0f7a4d;background:#e3f5ec"></i>Terminal / success</span>
+  <span><i class="sw" style="border-color:#c23f3f;background:#fbe5e5"></i>Guardrail</span>
+  <span><i class="sw" style="border-color:#a16207;background:#faf0dc"></i>Data store</span>
+  <span style="color:#768292">Model tags: <b style="color:#c23f3f">OPUS</b> · <b style="color:#1d4ed8">SONNET</b> · <b style="color:#0f7a4d">HAIKU</b></span>
+</div>
+
+<div class="chart">
+<svg viewBox="0 0 980 1720" width="980">
+<defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#4c586c"/></marker>
+  <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#0f7a4d"/></marker>
+  <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#c23f3f"/></marker>
+</defs>
+
+<!-- 1 START: browser -->
+<rect x="330" y="24" width="320" height="60" rx="12" fill="#eef2fe" stroke="#1e3a8a" stroke-width="1.6"/>
+<text x="490" y="49" text-anchor="middle" class="t">Browser — submitQuestion()</text>
+<text x="490" y="68" text-anchor="middle" class="s">POST /ask  {question, mode, context}</text>
+
+<line x1="490" y1="84" x2="490" y2="118" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 2 clarify diamond -->
+<polygon points="490,120 610,178 490,236 370,178" fill="#e5edff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="172" text-anchor="middle" class="t">Needs clarification?</text>
+<text x="490" y="190" text-anchor="middle" class="s">generate_clarifying_questions  <tspan font-weight="700" fill="#0f7a4d">HAIKU</tspan></text>
+
+<!-- yes → clarify modal loop -->
+<line x1="610" y1="178" x2="668" y2="178" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+<text x="632" y="168" class="lbl yes">YES</text>
+<rect x="670" y="142" width="286" height="72" rx="12" fill="#eef2fe" stroke="#1e3a8a" stroke-width="1.6"/>
+<text x="813" y="168" text-anchor="middle" class="t">Clarify modal — user answers</text>
+<text x="813" y="186" text-anchor="middle" class="s">2–3 targeted questions (tooth, vitality…)</text>
+<text x="813" y="201" text-anchor="middle" class="s">re-submit with enriched context</text>
+<path d="M 813,142 L 813,54 L 654,54" fill="none" stroke="#4c586c" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+<text x="850" y="100" class="lbl">loop</text>
+
+<!-- no ↓ -->
+<line x1="490" y1="236" x2="490" y2="270" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+<text x="500" y="258" class="lbl no">NO</text>
+
+<!-- 3 job -->
+<rect x="320" y="272" width="340" height="66" rx="12" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="297" text-anchor="middle" class="t">create_job → background thread</text>
+<text x="490" y="315" text-anchor="middle" class="s">run_question() · browser polls /status/&lt;job_id&gt;</text>
+<text x="490" y="330" text-anchor="middle" class="s">abort flag checked at every phase</text>
+
+<line x1="490" y1="338" x2="490" y2="372" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- DL branch (dashed, left) -->
+<path d="M 320,305 L 170,305 L 170,368" fill="none" stroke="#8b96a5" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+<rect x="40" y="370" width="260" height="118" rx="12" fill="#ffffff" stroke="#8b96a5" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="170" y="393" text-anchor="middle" class="t">mode = "learn" branch</text>
+<text x="170" y="412" text-anchor="middle" class="s">syllabus  <tspan font-weight="700" fill="#1d4ed8">SONNET</tspan></text>
+<text x="170" y="428" text-anchor="middle" class="s">→ retrieval ×N modules (learn mode)</text>
+<text x="170" y="444" text-anchor="middle" class="s">→ write modules ×N  <tspan font-weight="700" fill="#1d4ed8">SONNET</tspan> 3.2K tok</text>
+<text x="170" y="460" text-anchor="middle" class="s">→ stitch (dynamic budget) · ~$0.50/run</text>
+<text x="170" y="477" text-anchor="middle" class="s">validation gate runs per module</text>
+<path d="M 170,488 L 170,1462 L 318,1462" fill="none" stroke="#8b96a5" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#ar)"/>
+
+<!-- 4 cache diamond -->
+<polygon points="490,374 625,444 490,514 355,444" fill="#e5edff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="430" text-anchor="middle" class="t">Semantic cache hit?</text>
+<text x="490" y="448" text-anchor="middle" class="s">MiniLM embed → pgvector cosine ≥ 0.92</text>
+<text x="490" y="464" text-anchor="middle" class="s">(learn: also ≤ 7 days old)</text>
+
+<!-- yes → terminal -->
+<line x1="625" y1="444" x2="688" y2="444" stroke="#0f7a4d" stroke-width="1.8" marker-end="url(#arg)"/>
+<text x="646" y="434" class="lbl yes">HIT</text>
+<rect x="690" y="412" width="256" height="64" rx="12" fill="#e3f5ec" stroke="#0f7a4d" stroke-width="1.8"/>
+<text x="818" y="438" text-anchor="middle" class="t">Instant answer — $0.00</text>
+<text x="818" y="457" text-anchor="middle" class="s">cached answer + papers returned · done</text>
+
+<!-- no ↓ -->
+<line x1="490" y1="514" x2="490" y2="548" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+<text x="500" y="536" class="lbl no">MISS</text>
+
+<!-- 5 intent router -->
+<rect x="320" y="550" width="340" height="58" rx="12" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="573" text-anchor="middle" class="t">Intent router  <tspan font-weight="700" fill="#0f7a4d">HAIKU</tspan></text>
+<text x="490" y="591" text-anchor="middle" class="s">simple / standard / complex · local / pubmed / both</text>
+
+<line x1="490" y1="608" x2="490" y2="642" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- smart terms -->
+<rect x="320" y="644" width="340" height="52" rx="12" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="666" text-anchor="middle" class="t">generate_search_terms()  <tspan font-weight="700" fill="#0f7a4d">HAIKU</tspan></text>
+<text x="490" y="684" text-anchor="middle" class="s">question → tight PubMed topic string</text>
+
+<line x1="490" y1="696" x2="490" y2="730" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 6 RAG diamond -->
+<polygon points="490,732 635,804 490,876 345,804" fill="#e5edff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="788" text-anchor="middle" class="t">Local library answers it?</text>
+<text x="490" y="806" text-anchor="middle" class="s">library ≥ 50 papers AND</text>
+<text x="490" y="822" text-anchor="middle" class="s">rag_search(topic, limit=100) ≥ 20 hits</text>
+
+<!-- yes → RAG path -->
+<line x1="635" y1="804" x2="688" y2="804" stroke="#0f7a4d" stroke-width="1.8" marker-end="url(#arg)"/>
+<text x="650" y="794" class="lbl yes">YES</text>
+<rect x="690" y="762" width="266" height="86" rx="12" fill="#ffffff" stroke="#0f7a4d" stroke-width="1.6"/>
+<text x="823" y="786" text-anchor="middle" class="t">RAG path — no network</text>
+<text x="823" y="804" text-anchor="middle" class="s">rag_results_to_scored()</text>
+<text x="823" y="820" text-anchor="middle" class="s">band into tiers by score</text>
+<text x="823" y="836" text-anchor="middle" class="s">≥70 top · 50–70 mid · &lt;50 lower</text>
+<path d="M 823,848 L 823,1042 L 664,1042" fill="none" stroke="#0f7a4d" stroke-width="1.8" marker-end="url(#arg)"/>
+
+<!-- no ↓ pubmed -->
+<line x1="490" y1="876" x2="490" y2="910" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+<text x="500" y="898" class="lbl no">NO</text>
+
+<!-- 7 pubmed loop -->
+<rect x="300" y="912" width="380" height="106" rx="12" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="934" text-anchor="middle" class="t">Live PubMed — 7 tiers × N query angles</text>
+<text x="490" y="953" text-anchor="middle" class="s">multi-terms <tspan font-weight="700" fill="#0f7a4d">HAIKU</tspan> · esearch (retraction-filtered, audited)</text>
+<text x="490" y="969" text-anchor="middle" class="s">efetch + esummary → per-paper n / follow-up extraction</text>
+<text x="490" y="985" text-anchor="middle" class="s">COI blocklist −15% · score 0–100 (design 35 · n 15 · recency 15</text>
+<text x="490" y="1001" text-anchor="middle" class="s">cites/yr 15 · follow-up 10 · IF 10) · threshold: floor 50, cap 25</text>
+
+<line x1="490" y1="1018" x2="490" y2="1040" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 8 post-process -->
+<rect x="320" y="1042" width="340" height="70" rx="12" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.6"/>
+<text x="490" y="1066" text-anchor="middle" class="t">Evidence post-processing</text>
+<text x="490" y="1084" text-anchor="middle" class="s">currency tags · outlier flags · PRISMA dedup</text>
+<text x="490" y="1100" text-anchor="middle" class="s">strict tier order → evidence["_summary"]</text>
+
+<line x1="490" y1="1112" x2="490" y2="1146" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 9 synthesis -->
+<rect x="320" y="1148" width="340" height="76" rx="12" fill="#ffffff" stroke="#c23f3f" stroke-width="1.8"/>
+<text x="490" y="1171" text-anchor="middle" class="t">ask_clinical_question()  <tspan font-weight="800" fill="#c23f3f">OPUS · 8K tok</tspan></text>
+<text x="490" y="1190" text-anchor="middle" class="s">[[PMID:N]] citation law · strict tier hierarchy</text>
+<text x="490" y="1206" text-anchor="middle" class="s">contradiction surfacing · fixed 3-section structure</text>
+
+<line x1="490" y1="1224" x2="490" y2="1258" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 10 validation diamond -->
+<polygon points="490,1260 640,1330 490,1400 340,1330" fill="#fbe5e5" stroke="#c23f3f" stroke-width="1.8"/>
+<text x="490" y="1316" text-anchor="middle" class="t">validate_evidence_mapping()</text>
+<text x="490" y="1334" text-anchor="middle" class="s">0 fabricated PMIDs? ≤3 unattributed claims?</text>
+<text x="490" y="1350" text-anchor="middle" class="s">≤50% citation-free sections?</text>
+
+<!-- fail → retry -->
+<line x1="640" y1="1330" x2="692" y2="1330" stroke="#c23f3f" stroke-width="1.8" marker-end="url(#arr)"/>
+<text x="652" y="1320" class="lbl no">FAIL</text>
+<rect x="694" y="1290" width="262" height="80" rx="12" fill="#fbe5e5" stroke="#c23f3f" stroke-width="1.6"/>
+<text x="825" y="1314" text-anchor="middle" class="t">Corrective retry ×1  <tspan font-weight="800" fill="#c23f3f">OPUS</tspan></text>
+<text x="825" y="1332" text-anchor="middle" class="s">names exact fabricated PMIDs &amp;</text>
+<text x="825" y="1348" text-anchor="middle" class="s">unattributed sentences · best attempt wins</text>
+<path d="M 825,1290 L 825,1240 L 600,1240 L 566,1296" fill="none" stroke="#c23f3f" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#arr)"/>
+<text x="700" y="1232" class="lbl">re-validate</text>
+<path d="M 825,1370 L 825,1404" fill="none" stroke="#c23f3f" stroke-width="1.6" marker-end="url(#arr)"/>
+<text x="835" y="1392" class="lbl no">still fails</text>
+<rect x="694" y="1406" width="262" height="52" rx="12" fill="#fbe5e5" stroke="#c23f3f" stroke-width="1.6"/>
+<text x="825" y="1428" text-anchor="middle" class="t">⚠ VALIDATION WARNING banner</text>
+<text x="825" y="1446" text-anchor="middle" class="s">prepended — clinician told to verify</text>
+<path d="M 694,1432 L 490,1432 L 490,1440" fill="none" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- pass ↓ -->
+<line x1="490" y1="1400" x2="490" y2="1440" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+<text x="500" y="1424" class="lbl yes">PASS</text>
+
+<!-- 11 persist -->
+<rect x="320" y="1442" width="340" height="66" rx="12" fill="#faf0dc" stroke="#a16207" stroke-width="1.6"/>
+<text x="490" y="1466" text-anchor="middle" class="t">Persist</text>
+<text x="490" y="1484" text-anchor="middle" class="s">save_answer · save_query_cache (future hits free)</text>
+<text x="490" y="1500" text-anchor="middle" class="s">write_citation_audit · learn_history (DL only)</text>
+
+<line x1="490" y1="1508" x2="490" y2="1542" stroke="#4c586c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+<!-- 12 render -->
+<rect x="320" y="1544" width="340" height="70" rx="12" fill="#eef2fe" stroke="#1e3a8a" stroke-width="1.6"/>
+<text x="490" y="1568" text-anchor="middle" class="t">Browser — renderAnswer()</text>
+<text x="490" y="1586" text-anchor="middle" class="s">[[PMID:N]] → clickable pills · bibliography panel</text>
+<text x="490" y="1602" text-anchor="middle" class="s">abstract popovers via /api/abstract/&lt;pmid&gt;</text>
+
+<line x1="490" y1="1614" x2="490" y2="1648" stroke="#0f7a4d" stroke-width="1.8" marker-end="url(#arg)"/>
+
+<!-- END -->
+<rect x="360" y="1650" width="260" height="46" rx="23" fill="#e3f5ec" stroke="#0f7a4d" stroke-width="1.8"/>
+<text x="490" y="1678" text-anchor="middle" class="t">Verifiable answer delivered</text>
+</svg>
+</div>
+</div></body></html>

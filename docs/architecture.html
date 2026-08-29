@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Endo AI RAG — Deep Architecture &amp; Question Lifecycle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#e8ecf2; --surface:#ffffff; --surface2:#f4f6f9; --line:#ccd5e0;
+    --ink:#131b2c; --ink2:#2f394e; --ink3:#4c586c; --faint:#768292;
+    --blue:#1d4ed8; --blue2:#2563eb; --bluesoft:#e5edff; --navy:#1e3a8a;
+    --green:#0f7a4d; --greensoft:#e3f5ec; --red:#c23f3f; --redsoft:#fbe5e5;
+    --amber:#a16207; --ambersoft:#faf0dc; --violet:#6d28d9;
+    --mono:"Cascadia Code",ui-monospace,Consolas,monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink2);line-height:1.55;padding:40px 4vw 80px}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:clamp(26px,4.5vw,40px);color:var(--ink);letter-spacing:-.02em;line-height:1.05;margin-bottom:10px}
+  h2{font-size:22px;color:var(--ink);margin:46px 0 6px;letter-spacing:-.01em;padding-top:18px;border-top:2px solid var(--line)}
+  h3{font-size:16px;color:var(--ink);margin:22px 0 6px}
+  p.lede{font-size:16.5px;color:var(--ink3);max-width:75ch;margin-bottom:6px}
+  p{margin-bottom:10px;max-width:80ch}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:10px}
+  code,.fn{font-family:var(--mono);font-size:.86em;background:var(--surface2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--ink)}
+  .fn{color:var(--blue);font-weight:600}
+  .tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px;vertical-align:2px;margin-left:6px}
+  .t-opus{background:var(--redsoft);color:var(--red)} .t-sonnet{background:var(--bluesoft);color:var(--blue)}
+  .t-haiku{background:var(--greensoft);color:var(--green)} .t-db{background:var(--ambersoft);color:var(--amber)}
+  .t-ext{background:#ede9fe;color:var(--violet)} .t-guard{background:#fde8e8;color:#b91c1c}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:14px 0;box-shadow:0 1px 3px rgba(19,27,44,.05)}
+  .card.step{border-left:4px solid var(--blue)}
+  .card.guard{border-left:4px solid #b91c1c}
+  .card.store{border-left:4px solid var(--amber)}
+  .stepnum{font-family:var(--mono);font-weight:800;color:var(--blue);font-size:13px;letter-spacing:.05em}
+  table{border-collapse:collapse;width:100%;margin:12px 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13.5px}
+  th{background:var(--surface2);text-align:left;padding:8px 12px;color:var(--ink);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+  td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top}
+  td:first-child{white-space:nowrap}
+  .flow{font-family:var(--mono);font-size:12.5px;background:var(--ink);color:#dbe4f5;border-radius:10px;padding:16px 20px;overflow-x:auto;line-height:1.9;margin:14px 0}
+  .flow b{color:#7fb2fb} .flow i{color:#8fd6a8;font-style:normal} .flow em{color:#f0b184;font-style:normal}
+  ul{margin:6px 0 12px 20px} li{margin-bottom:5px;max-width:78ch}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.cols2{grid-template-columns:1fr}}
+  .note{background:var(--bluesoft);border:1px solid #c7d8fb;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:14px;color:var(--navy)}
+</style></head><body><div class="wrap">
+
+<div class="kicker">Endo AI RAG · engineering deep-dive · generated from code, Aug 2026</div>
+<h1>The architecture — and the exact life of one question</h1>
+<p class="lede">Two views make up "the architecture": the <b>structural view</b> (what the components are and how they connect) and the <b>behavioral view</b> (what actually happens, function by function, when a clinician asks a question). Part 1 is the structure; Part 2 traces one Review-mode question end-to-end with file/line references; Part 3 covers the Deep-Learning branch; Parts 4–6 catalog the guardrails, data stores, and model routing.</p>
+
+<!-- ══════════════════════ PART 1 ══════════════════════ -->
+<h2>Part 1 · Structural view — the components</h2>
+
+<table>
+<tr><th>Layer</th><th>File(s)</th><th>Responsibility</th></tr>
+<tr><td><b>Client (SPA)</b></td><td><code>templates/index.html</code> (~255&nbsp;KB, all CSS/JS inline)</td><td>5 mode tabs (Review · Deep Learning · Case · Assess · Profile), ask bar, progress polling, answer rendering with clickable <code>[[PMID:N]]</code> citation pills, bibliography, abstract popovers, export bar (slides/audio/video/PDF), history sidebar, tasks widget.</td></tr>
+<tr><td><b>Web API</b></td><td><code>app.py</code> (~30 Flask routes)</td><td>HTTP surface + background-job runner. Key routes: <code>/clarify</code>, <code>/ask</code>, <code>/status/&lt;job&gt;</code>, <code>/abort/&lt;job&gt;</code>, <code>/history</code>, <code>/learn_history</code> (GET/DELETE), <code>/api/abstract/&lt;pmid&gt;</code>, <code>/generate_slides|audio|video</code>, <code>/case_chat</code>, <code>/api/analyze-xray</code>, <code>/api/assess</code>, <code>/admin/costs</code>, <code>/admin/evidence-mapping</code>.</td></tr>
+<tr><td><b>Reasoning engine</b></td><td><code>endo_ai.py</code> (~4,600 lines)</td><td>Everything intelligent: search-term generation, PubMed retrieval, paper scoring, evidence assembly, Claude synthesis, citation validation, curriculum builder, case scoring, X-ray vision, media content generation, cost telemetry.</td></tr>
+<tr><td><b>RAG store</b></td><td><code>rag.py</code> + Neon Postgres (pgvector)</td><td>1,886-paper curated library with 384-dim MiniLM embeddings (ivfflat cosine index), semantic query cache, PMID abstract cache. Pooled connections (<code>ThreadedConnectionPool</code> behind a transparent proxy).</td></tr>
+<tr><td><b>External services</b></td><td>—</td><td>NCBI E-utilities (esearch/efetch/esummary) <span class="tag t-ext">ext</span> · Anthropic Claude (Opus/Sonnet/Haiku) · Google Gemini + OpenAI (radiograph vision) · gTTS/MoviePy/python-pptx (media).</td></tr>
+<tr><td><b>Offline ingestion</b></td><td><code>build_library.py</code>, <code>fetch_pmc_corpus.py</code>, <code>ingest_aae_guidelines.py</code>, <code>ingest_classics.py</code>, <code>repair_abstracts.py</code>, <code>verify_pubmed_live.py</code></td><td>Batch scripts that seed/heal the pgvector library and audit the live path for fabricated PMIDs. Run outside request time.</td></tr>
+<tr><td><b>Presentations</b></td><td><code>presentations/</code></td><td>Design tokens, SVG icon system, 10 slide-layout patterns, <code>build_deck_from_specs()</code> → python-pptx decks with speaker notes.</td></tr>
+</table>
+
+<!-- ══════════════════════ PART 2 ══════════════════════ -->
+<h2>Part 2 · Behavioral view — the life of one Review question</h2>
+<p class="lede">Everything below is traced from the current code. The bird's-eye route:</p>
+
+<div class="flow">
+Browser <b>submitQuestion()</b> ─POST /ask→ <b>clarify gate</b> ─(job)→ <b>run_question()</b> thread<br>
+&nbsp;&nbsp;→ <i>semantic cache?</i> hit → done ($0) &nbsp;|&nbsp; miss ↓<br>
+&nbsp;&nbsp;→ <em>intent router (Haiku)</em> → <b>build_evidence_base_with_progress()</b><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ <i>local pgvector RAG</i> (≥20 hits → skip network) &nbsp;|&nbsp; else <em>live PubMed, 7 tiers × N terms</em><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ score · COI penalty · quality threshold · PRISMA dedup · outliers · currency<br>
+&nbsp;&nbsp;→ <b>ask_clinical_question()</b> <em>(Opus, 8K tokens)</em> → <b>validate_evidence_mapping()</b> ─fail→ 1 retry<br>
+&nbsp;&nbsp;→ persist (history · query_cache · citation audit) → job complete<br>
+Browser <b>pollStatus()</b> → <b>renderAnswer()</b> → [[PMID:N]] pills → /api/abstract/&lt;pmid&gt; popovers
+</div>
+
+<h3>Phase A — In the browser</h3>
+<div class="card step"><span class="stepnum">STEP 1 · submit</span>
+<p><span class="fn">submitQuestion()</span> (<code>index.html:3965</code>) reads the question and active mode and <code>POST</code>s JSON to <code>/ask</code>: <code>{question, mode, context, skip_clarify}</code>. <code>context</code> is empty on first submission.</p></div>
+
+<h3>Phase B — Clarify gate <span class="tag t-haiku">Haiku</span></h3>
+<div class="card step"><span class="stepnum">STEP 2 · /ask handler</span>
+<p>(<code>app.py:187</code>) If no context was provided, <span class="fn">generate_clarifying_questions()</span> (<code>endo_ai.py:469</code>, model <code>structured_fast</code> = Haiku) decides whether key clinical facts are missing (tooth, vitality, age…). If it returns questions, the API responds <code>{needs_clarification, questions}</code> — no job is started. The UI shows the clarify modal; the user's answers are appended as "<i>Additional clinical context provided by the clinician:</i>" and re-POSTed with <code>skip_clarify=true</code>. Any router error fails open — the pipeline proceeds.</p></div>
+
+<h3>Phase C — Job creation &amp; polling</h3>
+<div class="card step"><span class="stepnum">STEP 3 · async job</span>
+<p><span class="fn">create_job()</span> mints a <code>job_id</code>; a daemon <code>threading.Thread</code> runs <span class="fn">run_question()</span>; the API returns the id immediately. The browser's <span class="fn">pollStatus()</span> (<code>index.html:4108</code>) polls <code>GET /status/&lt;job_id&gt;</code> for <code>{progress, message, status}</code> ticks. Two safety details:</p>
+<ul>
+<li><b>Abort:</b> <code>POST /abort/&lt;job_id&gt;</code> sets a flag; every long phase checks <span class="fn">is_aborted()</span> and bails cleanly.</li>
+<li><b>Copyright firewall:</b> <span class="fn">_safe_papers()</span> (<code>app.py:266</code>) strips abstract text from every status payload — clients only ever see metadata (PMID, title, authors, year, journal, score). Raw abstracts stay server-side as Claude context.</li>
+</ul></div>
+
+<h3>Phase D — Cache &amp; intent triage</h3>
+<div class="card step"><span class="stepnum">STEP 4 · semantic cache</span> <span class="tag t-db">pgvector</span>
+<p>(<code>app.py:296</code>) The cache key is <code>"[mode] question"</code>. <span class="fn">get_cached_answer()</span> (<code>rag.py:385</code>) embeds the key with MiniLM (384-dim; input window now 2,000 chars after the truncation fix) and runs a cosine search over the <code>query_cache</code> table. A hit needs <b>similarity ≥ 0.92</b>; Deep-Learning entries also must be <b>≤ 7 days old</b> (curricula go stale), Review entries have no TTL. On a hit the job completes instantly with the stored answer + papers at <b>$0.00</b>.</p></div>
+<div class="card step"><span class="stepnum">STEP 5 · intent router</span> <span class="tag t-haiku">Haiku</span>
+<p><span class="fn">classify_question_intent()</span> (<code>endo_ai.py:1900</code>, ~200 output tokens) triages the question into <code>kind</code> (simple / standard / complex), <code>retrieval</code> (local / pubmed / both) and <code>needs_clarify</code>, and its one-line reason is surfaced in the progress bar ("Routing as clinical question…"). It fails open to the full pipeline.</p></div>
+
+<h3>Phase E — Building the evidence base</h3>
+<div class="card step"><span class="stepnum">STEP 6 · smart search terms</span> <span class="tag t-haiku">Haiku</span>
+<p>(<code>app.py:400</code> <span class="fn">build_evidence_base_with_progress()</span>) First <span class="fn">generate_search_terms()</span> (<code>endo_ai.py:847</code>) distills the clinical question into a tight PubMed-style topic string (e.g. "vital pulp therapy MTA Biodentine permanent teeth outcomes").</p></div>
+
+<div class="card step"><span class="stepnum">STEP 7 · RAG-first: the local library</span> <span class="tag t-db">pgvector</span>
+<p>If <span class="fn">library_stats()</span> shows ≥ 50 papers, <span class="fn">rag_search(smart_topic, limit=100)</span> embeds the topic and runs cosine KNN over the <b>1,886-paper</b> <code>endo_papers_rag</code> table (ivfflat index). If <b>≥ 20 papers</b> come back:</p>
+<ul>
+<li><span class="fn">rag_results_to_scored()</span> converts rows to scored-paper dicts;</li>
+<li>papers are banded into evidence tiers by score (≥70 → cochrane/level1 buckets, 50–70 → level2/level3, &lt;50 → level4/level5);</li>
+<li><span class="fn">apply_currency_tags()</span> → <span class="fn">detect_outliers()</span> → <span class="fn">flag_superseded_by_review()</span> run, the <code>_summary</code> block is built, and the pipeline <b>skips the network entirely</b>. Typical progress jumps 15% → 75% here.</li>
+</ul></div>
+
+<div class="card step"><span class="stepnum">STEP 8 · live PubMed fallback — 7 tiers × N query angles</span> <span class="tag t-ext">NCBI</span>
+<p>If the library is thin, <span class="fn">generate_multi_search_terms()</span> (<code>endo_ai.py:511</code>, Haiku) produces several complementary query phrasings, then the engine walks the tier ladder — Cochrane (via <span class="fn">fetch_cochrane()</span>, PubMed fallback), then Level I → V — calling <span class="fn">fetch_papers()</span> (<code>endo_ai.py:1163</code>) per tier per term with cross-tier PMID dedup. Inside <b>each</b> <span class="fn">fetch_papers()</span> call:</p>
+<ul>
+<li><b>esearch</b> — query = <code>(topic) AND (tier filter) AND endo-domain filter NOT "Retracted Publication"</code>, <code>retmax=50</code>, sorted by relevance, 20-s timeout. Malformed PMIDs are regex-rejected, and <b>every call is written to <code>pubmed_audit.jsonl</code></b> (query, ids, HTTP status, latency) — provable provenance that every PMID Claude sees came from a real NCBI response at a known timestamp.</li>
+<li><b>efetch + esummary</b> — full abstract text plus metadata (year, citation count, journal, authors).</li>
+<li><span class="fn">_parse_efetch_batch()</span> splits the batch into per-PMID <code>{title, abstract}</code>, used three ways: (1) <span class="fn">bulk_cache_abstracts()</span> persists them to the Postgres <code>abstract_cache</code>; (2) <b>per-paper</b> <span class="fn">extract_sample_size()</span> / <span class="fn">extract_followup_period()</span> regex extraction (the fixed metadata-broadcast bug — each paper is parsed against its <i>own</i> abstract only); (3) building Claude's context from kept papers only.</li>
+<li><span class="fn">check_coi_blocklist()</span> — industry-funder mentions (e.g. a manufacturer) flag the batch; flagged papers take a <b>15% score penalty</b> and carry a COI badge.</li>
+<li><span class="fn">score_paper()</span> (<code>endo_ai.py:1017</code>) grades each paper <b>0–100</b>: study design 35% · sample size 15% (n≥200→15 … n&lt;20→3) · recency 15% (≤3 yr→15 … &gt;20 yr→1; classics exempt) · citation velocity 15% (citations/yr with a 2-yr grace period) · follow-up 10% · journal impact factor 10%.</li>
+<li><span class="fn">_apply_quality_threshold()</span> — floor 50, keep ≥3, cap 25 per tier, mode-aware (Review biases Tiers I–III; Learn admits more Tier V).</li>
+<li>The tier's <b>annotated context block</b> is assembled: one metadata header line per kept paper (PMID, authors, year, citations, n, follow-up, IF, score) followed by its own abstract.</li>
+</ul></div>
+
+<div class="card step"><span class="stepnum">STEP 9 · evidence post-processing</span>
+<ul>
+<li><span class="fn">apply_currency_tags()</span> — papers older than the currency threshold get <code>is_old</code>.</li>
+<li><span class="fn">detect_outliers()</span> — statistical outliers among scores are flagged, not deleted.</li>
+<li><span class="fn">flag_superseded_by_review()</span> — PRISMA-style dedup: primary studies published before the newest systematic review's search-cutoff are flagged as already-synthesised so the model cites the SR, not the primaries.</li>
+<li><code>evidence["_summary"]</code> is built: total scored, average score, <code>all_scored</code> (sorted), and <span class="fn">build_synthesis_order()</span> — the strict tier order the writer must follow.</li>
+</ul></div>
+
+<h3>Phase F — Synthesis &amp; the anti-hallucination gate</h3>
+<div class="card step"><span class="stepnum">STEP 10 · Opus writes the answer</span> <span class="tag t-opus">Opus · 8K tokens</span>
+<p><span class="fn">ask_clinical_question()</span> (<code>endo_ai.py:1983</code>) builds the context via <span class="fn">_build_evidence_context()</span> (tiers in strict Cochrane→L5 order, per-tier key-paper panel, COI warning banner) and calls <code>claude-opus-4-7</code> (<code>reasoning_heavy</code> — deliberately the strongest model; this is the most user-visible quality path). The system prompt enforces:</p>
+<ul>
+<li><b>Citation format law</b> — every inline claim marker must be exactly <code>[[PMID:12345678]]</code>; the REFERENCES list alone uses <code>[PMID: N]</code>. Anything else fails to render as a verifiable pill.</li>
+<li><b>Strict tier hierarchy</b> — a high-scoring lower-tier paper can never override higher-tier findings; scores only rank <i>within</i> a tier.</li>
+<li><b>Contradiction surfacing</b> — if top SRs/RCTs disagree, the answer must open with "<b>The literature is currently divided on this topic.</b>"</li>
+<li><b>Fixed output structure</b> — <code>## CLINICAL RECOMMENDATION</code> (2–4 sentences, no citations) → <code>## EVIDENCE SUMMARY</code> (paragraphs per level, authors inline) → <code>## REFERENCES</code> (numbered, with journal/IF/n/follow-up/score).</li>
+<li>Never fabricate PMIDs; flag conflicts, short follow-up, underpowered samples; never end with a question.</li>
+</ul></div>
+
+<div class="card guard"><span class="stepnum">STEP 11 · validate → retry → warn</span> <span class="tag t-guard">guardrail</span>
+<p><span class="fn">validate_evidence_mapping()</span> (<code>endo_ai.py:1765</code>) — the product's thesis, now locked by a 51-test suite:</p>
+<ul>
+<li><b>Fabrication check</b> — every cited <code>[[PMID:N]]</code> must exist in the evidence base (union of tier ids, tier scored lists, and <code>_summary.all_scored</code>). One invented PMID = automatic fail (−30 pts each).</li>
+<li><b>Unattributed-claim detection</b> — regex claim patterns (percentages, p-values, n=, dosages/concentrations, "superior to", "is recommended"…) find clinical claims lacking markers; more than 3 = fail. Exempt sections: Clinical Recommendation, Assessment, Key Takeaways, References, Summary.</li>
+<li><b>Gap sections</b> — a substantive section (≥80 chars) with zero markers; &gt;50% of sections = fail.</li>
+</ul>
+<p>On failure, <span class="fn">_build_corrective_message()</span> names the exact offending PMIDs/sentences and demands a rewrite — <b>one retry</b> (Opus again), then the better of the two attempts wins. If neither passes, a visible <b>⚠ VALIDATION WARNING</b> banner is prepended telling the clinician to verify before acting. Every attempt is logged to <code>evidence_mapping.jsonl</code>; every model call's token usage and dollar cost goes to the cost log via <span class="fn">log_llm_call()</span> (surfaced at <code>/admin/costs</code>).</p></div>
+
+<h3>Phase G — Persistence</h3>
+<div class="card step"><span class="stepnum">STEP 12 · save everything</span>
+<ul>
+<li><span class="fn">save_answer()</span> → history (sidebar + Profile).</li>
+<li><span class="fn">save_query_cache()</span> → embedding + answer + papers into <code>query_cache</code> (future ≥0.92 hits are free).</li>
+<li><span class="fn">write_citation_audit()</span> → JSONL audit of every cited PMID for the run.</li>
+<li>The job flips to <code>complete</code> with <code>{answer, papers, cost_usd}</code> (intent-router cost included).</li>
+</ul></div>
+
+<h3>Phase H — Rendering in the browser</h3>
+<div class="card step"><span class="stepnum">STEP 13 · verifiable answer UI</span>
+<p><span class="fn">pollStatus()</span> sees <code>complete</code> and hands the markdown to <span class="fn">renderAnswer()</span> (<code>index.html:4316</code>): headings/lists/tables are converted to HTML, and every <code>[[PMID:N]]</code> becomes a <b>clickable citation pill</b>. Clicking a pill calls <code>/api/abstract/&lt;pmid&gt;</code> — served from the Postgres <code>abstract_cache</code> populated during retrieval, falling back to a live efetch — so the clinician can read the actual abstract behind any claim without leaving the answer. The bibliography panel lists the scored papers (metadata only), and the export bar can turn the answer into slides, audio, or video.</p></div>
+
+<!-- ══════════════════════ PART 3 ══════════════════════ -->
+<h2>Part 3 · The Deep-Learning branch (mode="learn")</h2>
+<p>Same Phases A–D, then <span class="fn">build_deep_learning_module()</span> replaces Steps 6–11 with a four-step agentic pipeline:</p>
+<table>
+<tr><th>Step</th><th>Function</th><th>Model</th><th>What happens</th></tr>
+<tr><td>1 · Syllabus</td><td><span class="fn">generate_curriculum_syllabus()</span></td><td>Sonnet</td><td>Topic → N module titles + per-module PubMed search queries.</td></tr>
+<tr><td>2 · Retrieval ×N</td><td><span class="fn">build_evidence_base(mode="learn")</span></td><td>—</td><td>Full Phase-E pipeline per module; learn mode admits more Tier-V papers.</td></tr>
+<tr><td>3 · Writing ×N</td><td><span class="fn">write_curriculum_module()</span></td><td>Sonnet · 3,200 tok</td><td>Dense cited module + mandatory <b>Clinical Application</b> section (4a Procedural Protocol · 4b IF/THEN/BECAUSE Decision Tree · 4c Materials &amp; Instrumentation) + Clinical Protocol Summary table. Same validate-and-retry gate per module.</td></tr>
+<tr><td>4 · Stitch</td><td><span class="fn">stitch_curriculum()</span></td><td>Sonnet · dynamic budget</td><td>Modules merged verbatim + TOC + transitions + compiled references; token budget scales with module count (<code>min((n×1800+2500)×1.2, 32000)</code>).</td></tr>
+</table>
+<p>Results are additionally archived as JSON under <code>learn_history/</code> (browsable/deletable in the DL tab and Profile), and the 7-day cache TTL forces regeneration once literature may have moved. Cost per full run: <b>~$0.50</b> (down from $6.60 — 13× — via per-PMID context filtering and Sonnet routing).</p>
+
+<!-- ══════════════════════ PART 4 ══════════════════════ -->
+<h2>Part 4 · Guardrail inventory (cross-cutting)</h2>
+<table>
+<tr><th>Guardrail</th><th>Mechanism</th><th>Where</th></tr>
+<tr><td>Citation validation</td><td>Fabricated-PMID rejection + unattributed-claim + gap-section detection, retry loop, visible warning banner; 51-test suite</td><td><code>endo_ai.py:1765</code>, <code>tests/test_citation_validation.py</code></td></tr>
+<tr><td>Live-fetch provenance</td><td>Every NCBI call logged (query, PMIDs, HTTP, latency) to <code>pubmed_audit.jsonl</code>; PMID format guard; <code>verify_pubmed_live.py</code> re-audits</td><td><code>endo_ai.py:1163</code></td></tr>
+<tr><td>Evidence hierarchy</td><td>Strict Cochrane→L5 synthesis order; scores never promote tiers</td><td>system prompts + <span class="fn">build_synthesis_order()</span></td></tr>
+<tr><td>COI handling</td><td>Funder blocklist → 15% score penalty + badge + context warning</td><td><span class="fn">check_coi_blocklist()</span></td></tr>
+<tr><td>PRISMA dedup</td><td>Primaries older than newest SR's cutoff flagged "already synthesised"</td><td><span class="fn">flag_superseded_by_review()</span></td></tr>
+<tr><td>Currency & outliers</td><td>Age tags; statistical outlier flags</td><td><span class="fn">apply_currency_tags()</span>, <span class="fn">detect_outliers()</span></td></tr>
+<tr><td>Retraction filter</td><td><code>NOT "Retracted Publication"[pt]</code> in every search</td><td>esearch query</td></tr>
+<tr><td>Copyright firewall</td><td>Abstracts never sent to the browser; metadata only</td><td><span class="fn">_safe_papers()</span> <code>app.py:266</code></td></tr>
+<tr><td>Cost telemetry</td><td>Every model call logged with tokens + USD; dashboards</td><td><span class="fn">log_llm_call()</span> → <code>/admin/costs</code></td></tr>
+</table>
+
+<!-- ══════════════════════ PART 5 ══════════════════════ -->
+<h2>Part 5 · Data stores &amp; caches</h2>
+<div class="cols2">
+<div class="card store"><h3>Neon Postgres (pgvector)</h3>
+<ul>
+<li><code>endo_papers_rag</code> — 1,886 papers · <code>vector(384)</code> MiniLM embeddings · ivfflat cosine index · metadata (year, journal, IF, n, follow-up, level, score).</li>
+<li><code>query_cache</code> — semantic answer cache · hit at cosine ≥ 0.92 · 7-day TTL for learn mode · precision-deletable via <code>/cache/clear</code> (≥0.99).</li>
+<li><code>abstract_cache</code> — PMID-keyed abstracts, populated as a side-effect of every live fetch; powers the citation-pill popovers.</li>
+<li>Access via a shared <code>ThreadedConnectionPool</code> (transparent proxy; keepalives for Neon).</li>
+</ul></div>
+<div class="card store"><h3>Filesystem</h3>
+<ul>
+<li><code>learn_history/*.json</code> — durable Deep-Learning archives.</li>
+<li><code>pubmed_audit.jsonl</code> — every NCBI call, timestamped.</li>
+<li><code>evidence_mapping.jsonl</code> — every validation attempt.</li>
+<li>Cost log JSONL — every model call (tokens, USD, mode).</li>
+<li><code>templates/index.dark-theme.bak.html</code> — original theme backup.</li>
+</ul></div>
+</div>
+
+<!-- ══════════════════════ PART 6 ══════════════════════ -->
+<h2>Part 6 · Model routing (cost-aware by design)</h2>
+<table>
+<tr><th>Role key</th><th>Model</th><th>Used for</th><th>Why</th></tr>
+<tr><td><code>reasoning_heavy</code></td><td>claude-opus-4-7 <span class="tag t-opus">Opus</span></td><td><span class="fn">ask_clinical_question()</span> (+1 retry)</td><td>The most user-visible quality path — 7-tier synthesis, deliberately the strongest model.</td></tr>
+<tr><td><code>reasoning_standard</code></td><td>claude-sonnet-4-6 <span class="tag t-sonnet">Sonnet</span></td><td>Curriculum syllabus, module writing (3.2K tok), stitching, slides</td><td>5× cheaper than Opus; validation+retry provides the quality net. Core of the 13× cost cut.</td></tr>
+<tr><td><code>structured_fast</code></td><td>claude-haiku-4-5 <span class="tag t-haiku">Haiku</span></td><td>Intent router, clarify questions, search-term generation, structured extraction</td><td>Sub-cent structured calls on every request path.</td></tr>
+<tr><td>Vision</td><td>Gemini (primary) / OpenAI (fallback)</td><td><code>/api/analyze-xray</code> radiograph reads → Assess form pre-fill</td><td>Redundant providers; consumer vision models, flagged as assistive only.</td></tr>
+</table>
+
+<div class="note"><b>Reading order for a new engineer:</b> Part 1 for the map → Phase D–F of Part 2 (cache → evidence → synthesis → validation) is the heart of the system → Part 4 explains why it can be trusted in a clinical setting.</div>
+
+</div></body></html>

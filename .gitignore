@@ -44,3 +44,14 @@ presentations/test_*.pptx
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# ── Pitch / business material (not code) ─────────────────
+# Curo_Deck.pptx is a ~3MB binary regenerated wholesale on every revision;
+# versioning it would bloat history for no diffable benefit. The generated
+# HTML pitch draft is superseded by it. System documentation lives in docs/.
+*.pptx
+pitch_deck.html
+
+# ── Theme backup ─────────────────────────────────────────
+# Redundant with git history — the original dark theme is in the initial commit.
+templates/index.dark-theme.bak.html
