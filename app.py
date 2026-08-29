@@ -301,7 +301,12 @@ def run_question(job_id: str, question: str, mode: str = "review"):
         # Deep Learning: 7-day TTL (curricula go stale as literature evolves).
         # Other modes: no age limit on cache hits.
         update_job(job_id, message="Checking answer cache...", progress=3)
-        ttl = LEARN_HISTORY_TTL_DAYS if mode == "learn" else None
+        # Review answers expire too. They previously had NO ttl, so a cached
+        # clinical recommendation could be served at $0 indefinitely, never
+        # re-validated against newer literature — the opposite of the intended
+        # ordering, since a point-of-care recommendation is exactly the thing
+        # that should go stale.
+        ttl = LEARN_HISTORY_TTL_DAYS if mode == "learn" else REVIEW_CACHE_TTL_DAYS
         cached = get_cached_answer(cache_key, max_age_days=ttl)
         if cached:
             age_days = cached.get("age_days")
@@ -419,7 +424,15 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
     )
     from rag import search as rag_search, rag_results_to_scored, library_stats
 
-    MIN_RAG_RESULTS = 20
+    # Cosine KNN always returns its nearest neighbours, relevant or not, so a
+    # bare count gate ("did we get 20 hits?") is really asking "does the
+    # library exist?" — it passes for every question against a 1,886-paper
+    # library and the network is then almost never consulted. These thresholds
+    # make the gate ask whether the library actually COVERS the question.
+    MIN_RAG_RESULTS   = 20
+    RAG_SIMILARITY_FLOOR = 0.45   # a hit must be this close to count
+    MIN_RAG_RELEVANT  = 12        # ...and we need this many that clear it
+    MAX_RAG_PAPERS_PER_TIER = 25  # mirrors the live path's per-tier cap
     evidence        = {}
     all_scored      = []
 
@@ -439,33 +452,67 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
         # Search without level_key filter — library stores all levels together
         rag_results = rag_search(smart_topic, level_key=None, limit=100)
 
-        if len(rag_results) >= MIN_RAG_RESULTS:
+        # Coverage test, not just a count: enough genuinely-similar papers, and
+        # at least one high-tier design among them. A library that answers with
+        # only case reports and narrative reviews should defer to live PubMed
+        # even when it returns plenty of near neighbours.
+        relevant = [r for r in rag_results
+                    if float(r.get("similarity") or 0) >= RAG_SIMILARITY_FLOOR]
+        has_high_tier = any((r.get("level_key") or "") in ("cochrane", "level1")
+                            for r in relevant)
+        newest_year = max((int(r["year"]) for r in relevant
+                           if str(r.get("year", "")).isdigit()), default=0)
+
+        library_covers_question = (
+            len(rag_results) >= MIN_RAG_RESULTS
+            and len(relevant) >= MIN_RAG_RELEVANT
+            and has_high_tier
+        )
+        print(f"  [rag_gate] {len(rag_results)} hits, {len(relevant)} above "
+              f"similarity {RAG_SIMILARITY_FLOOR}, high-tier={has_high_tier}, "
+              f"newest={newest_year} -> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
+
+        if library_covers_question:
             update_job(job_id, message=f"Found {len(rag_results)} papers in library — building evidence...", progress=40)
             all_rag = rag_results_to_scored(rag_results)
 
-            # Distribute into evidence levels by score bands
-            top      = [p for p in all_rag if p["score"] >= 70]
-            mid      = [p for p in all_rag if 50 <= p["score"] < 70]
-            lower    = [p for p in all_rag if p["score"] < 50]
+            # Band by STUDY DESIGN (level_key), rank by score WITHIN each band.
+            #
+            # This previously banded by score alone (>=70 -> cochrane/level1,
+            # 50-70 -> level2/3, <50 -> level4/5), which inverted the product's
+            # central guarantee: a well-cited recent case series scoring 72 was
+            # handed to Claude labelled "Level I — RCTs and Systematic Reviews",
+            # while a smaller Cochrane review scoring 58 was demoted to Level
+            # II/III — and the system prompt instructs Claude to trust the tier
+            # label absolutely. Score must rank papers within a tier and never
+            # promote one across tiers.
+            #
+            # The score-banding was a workaround for 37% of the library having
+            # no level_key; that has since been backfilled from PubMed
+            # publication types, leaving 2 unlabelled rows.
+            by_tier = {}
+            for p in all_rag:
+                tier = (p.get("level_key") or "").strip()
+                # An unlabelled paper has an UNKNOWN design. Placing it in the
+                # weakest tier is the safe direction: it can still inform the
+                # answer but can never masquerade as high-tier evidence.
+                if tier not in TIER_ORDER:
+                    tier = "level5"
+                by_tier.setdefault(tier, []).append(p)
 
-            # Library entries are tagged with the legacy "level3" key; keep that bucket
-            # so cached RAG data still flows through correctly.
-            for level_key, bucket, label in [
-                ("cochrane", top[:5],    "Cochrane / Level 1 — High quality"),
-                ("level1",   top[5:],    TIER_LABEL["level1"]),
-                ("level2",   mid[:20],   TIER_LABEL["level2"]),
-                ("level3",   mid[20:],   TIER_LABEL["level3"]),
-                ("level4",   lower[:15], TIER_LABEL["level4"]),
-                ("level5",   lower[15:], TIER_LABEL["level5"]),
-            ]:
-                if bucket:
-                    evidence[level_key] = {
-                        "text":   _scored_to_text(bucket, label),
-                        "ids":    [p["pmid"] for p in bucket],
-                        "scored": bucket,
-                        "source": "rag",
-                    }
-                    all_scored.extend(bucket)
+            for tier in TIER_ORDER:
+                bucket = by_tier.get(tier)
+                if not bucket:
+                    continue
+                bucket.sort(key=lambda x: x["score"], reverse=True)
+                bucket = bucket[:MAX_RAG_PAPERS_PER_TIER]
+                evidence[tier] = {
+                    "text":   _scored_to_text(bucket, TIER_LABEL.get(tier, tier.upper())),
+                    "ids":    [p["pmid"] for p in bucket],
+                    "scored": bucket,
+                    "source": "rag",
+                }
+                all_scored.extend(bucket)
 
             update_job(job_id, message="Library search complete — asking Claude...", progress=75)
             # Apply outlier detection and currency tags to RAG results
@@ -570,6 +617,7 @@ import re as _learn_re
 _LEARN_HISTORY_DIR        = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                           "learn_history")
 LEARN_HISTORY_TTL_DAYS    = 7   # cache window for auto re-use
+REVIEW_CACHE_TTL_DAYS     = 30  # clinical answers must be re-derived periodically
 
 def save_learn_output(question: str, answer: str, evidence: dict, cost: float) -> str:
     """Persist one completed Deep Learning curriculum to learn_history/.

@@ -446,6 +446,50 @@ def setup_query_cache():
         conn.close()
 
 
+# Above this cosine the two questions are effectively the same string and the
+# equivalence check is skipped. Between the match threshold and this, a cheap
+# model confirms they are the same CLINICAL question before the cached answer
+# is served.
+CACHE_EXACT_THRESHOLD    = 0.985
+CACHE_EQUIVALENCE_CHECK  = os.getenv("CACHE_EQUIVALENCE_CHECK", "true").lower() in ("1", "true", "yes")
+
+
+def _same_clinical_question(a: str, b: str) -> bool:
+    """Would these two questions have the same evidence-based answer?
+
+    Fails CLOSED: any error returns False, which degrades to a cache miss and a
+    freshly generated answer. Serving a stale-but-wrong clinical answer is far
+    worse than paying to regenerate one.
+    """
+    if not a or not b:
+        return False
+    a_s, b_s = a.strip(), b.strip()
+    if a_s.lower() == b_s.lower():
+        return True
+    try:
+        from endo_ai import _invoke_claude, MODELS, log_llm_call, _get_api_key
+        import anthropic, re as _re
+        client = anthropic.Anthropic(api_key=_get_api_key())
+        resp = _invoke_claude(client, function_name="cache_equivalence_check",
+            model=MODELS["structured_fast"], max_tokens=10,
+            messages=[{"role": "user", "content":
+                f"""Two clinical questions from an endodontics tool. Would the SAME
+evidence-based answer serve both? Differences in tooth type (primary vs permanent),
+pulp status (vital vs necrotic), presence of periapical pathology, patient age group,
+or the specific material/technique compared mean they are DIFFERENT questions.
+
+A: {a_s[:400]}
+B: {b_s[:400]}
+
+Answer with exactly one word: SAME or DIFFERENT."""}])
+        log_llm_call("cache_equivalence_check", MODELS["structured_fast"],
+                     resp.usage, mode="cache")
+        return "same" in resp.content[0].text.strip().lower()[:10]
+    except Exception as e:
+        print(f"  [cache] equivalence check unavailable ({e}) — treating as MISS")
+        return False
+
+
 def get_cached_answer(question: str, threshold: float = 0.92,
                        max_age_days: int = None) -> dict | None:
     """
@@ -474,7 +518,7 @@ def get_cached_answer(question: str, threshold: float = 0.92,
             params.append(int(max_age_days))
 
         cur.execute(f"""
-            SELECT id, answer, papers, created_at,
+            SELECT id, question, answer, papers, created_at,
                    1 - (question_embedding <=> %s::vector) AS similarity
             FROM query_cache
             WHERE 1 - (question_embedding <=> %s::vector) >= %s{age_filter}
@@ -482,6 +526,19 @@ def get_cached_answer(question: str, threshold: float = 0.92,
             LIMIT 1;
         """, tuple(params))
         row = cur.fetchone()
+
+        # Clinical-equivalence gate. MiniLM cosine is a lexical proxy: "MTA
+        # pulpotomy in PRIMARY molars" vs "...in PERMANENT molars", or vital vs
+        # necrotic, or with vs without a periapical lesion, can all clear 0.92
+        # while being different clinical questions with different answers.
+        # Serving the wrong cached answer costs nothing to detect and is the
+        # worst failure this system can have, so confirm before serving.
+        if row and CACHE_EQUIVALENCE_CHECK and row["similarity"] < CACHE_EXACT_THRESHOLD:
+            if not _same_clinical_question(question, row.get("question") or ""):
+                print(f"  [cache] similar ({row['similarity']:.3f}) but clinically "
+                      f"different — treating as MISS")
+                return None
+
         if row:
             # Increment hit counter
             cur.execute("UPDATE query_cache SET hit_count = hit_count + 1 WHERE id = %s;", (row["id"],))

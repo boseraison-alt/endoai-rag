@@ -17,6 +17,28 @@
   .s{font-size:11px;fill:#4c586c}
   .lbl{font-size:10.5px;font-weight:700;fill:#4c586c;letter-spacing:.04em}
   .yes{fill:#0f7a4d}.no{fill:#c23f3f}
+
+  /* Print / PDF. The SVG is 980x1840 — taller than any page — so printing it
+     at screen size split it across pages, blanking page 2 and truncating the
+     flow mid-diagram on page 3. Landscape plus a height-constrained, aspect-
+     preserving SVG keeps the whole chart on one page. */
+  /* The chart is tall and narrow (980 x 1840, aspect 0.53), so PORTRAIT gives
+     it far more room than landscape: capped at 240mm tall it renders ~128mm
+     wide, versus ~92mm if the page were landscape. */
+  @page { size: A4 portrait; margin: 10mm; }
+  @media print {
+    body { background:#fff; padding:0; }
+    .wrap { max-width:none; }
+    h1 { font-size:15pt; margin-bottom:2px; }
+    p.sub { font-size:8pt; margin-bottom:6px; }
+    .legend { font-size:7.5pt; gap:4px 10px; margin-bottom:6px;
+              page-break-after:avoid; }
+    .chart { border:0; box-shadow:none; padding:0; overflow:visible;
+             page-break-inside:avoid; break-inside:avoid; }
+    svg { display:block; margin:0 auto; width:auto; height:auto;
+          max-width:100%; max-height:240mm; min-width:0;
+          page-break-inside:avoid; break-inside:avoid; }
+  }
 </style></head><body><div class="wrap">
 <h1>Life of one question — flowchart</h1>
 <p class="sub">The behavioral view of the architecture: every box is a real function in the codebase (see <b>architecture.html</b> for the file:line detail). Solid path = Review mode; dashed = Deep-Learning branch.</p>

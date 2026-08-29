@@ -752,7 +752,16 @@ LEVEL_SCORES = {
 # Strict tier hierarchy — used to enforce within-tier synthesis.
 # Lower index = higher evidentiary weight. Never let a lower tier override
 # a finding that a higher tier already addresses.
-TIER_ORDER = ["cochrane", "level1", "level2", "level3a", "level3b", "level3", "level4", "level5"]
+# Strict synthesis hierarchy. Anything NOT listed here is invisible to
+# _build_evidence_context(), so a tier missing from this list never reaches
+# Claude. "classic" sits just below Level I: the San Antonio / College of
+# Diplomates landmark papers are foundational but heterogeneous in design
+# (LEVEL_SCORES puts them at 75 against Level I's 80).
+# Ordered strongest-first by LEVEL_SCORES design weight. The legacy "level3"
+# bucket (45) previously sat AFTER "level3b" (35), presenting case-control
+# studies as the stronger of the two — guarded now by test_tier_banding.py.
+TIER_ORDER = ["cochrane", "level1", "classic", "level2", "level3a", "level3",
+              "level3b", "level4", "level5"]
 TIER_LABEL = {
     "cochrane": "Cochrane Reviews",
     "level1":   "Level I — RCTs and Systematic Reviews",

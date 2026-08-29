@@ -127,6 +127,14 @@ def main() -> int:
             )
             conn.commit()
             print(f"[rescore] APPLIED — {len(updates)} scores updated.")
+
+            # Cached answers were derived from the OLD scores and tier order,
+            # so they no longer reflect the evidence base. Leaving them would
+            # serve pre-rescore reasoning at $0 until their TTL expired.
+            cur.execute("DELETE FROM query_cache;")
+            print(f"[rescore] invalidated {cur.rowcount} cached answer(s) — "
+                  f"they were derived from the previous scores.")
+            conn.commit()
         return 0
 
     except Exception as e:
