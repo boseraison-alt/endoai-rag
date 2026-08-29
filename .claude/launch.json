@@ -6,6 +6,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "http.server", "5001", "--directory", "ui-options"],
       "port": 5001
+    },
+    {
+      "name": "endo-ai",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["app.py"],
+      "port": 5000
     }
   ]
 }
