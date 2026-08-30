@@ -84,8 +84,18 @@ def _esearch_hits_since(offset):
 
 def run_case(case):
     """Execute one case's retrieval and return (measured, failures)."""
+    import endo_ai
     from app import build_evidence_base_with_progress, jobs
     from endo_ai import TIER_ORDER
+
+    # An eval run must not mutate the thing it measures. With write-back on,
+    # the live cases deposit their results into the library, so case N+1 and
+    # every later RUN see a different library than case N did — baselines
+    # stop being reproducible and a "range over three runs" measures the
+    # write-back, not the variance. It is also the dominant cost: embedding
+    # several hundred new papers on CPU took longer than all the PubMed
+    # traffic combined. Same reasoning as force_route, one layer down.
+    endo_ai.LIBRARY_WRITE_BACK = False
 
     job_id = f"eval-{case['id']}"
     jobs[job_id] = {"status": "running", "steps": [], "progress": 0}

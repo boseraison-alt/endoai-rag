@@ -448,6 +448,30 @@ def run_question(job_id: str, question: str, mode: str = "review"):
         update_job(job_id, status="error", progress=100, error=str(e), message=str(e))
 
 
+# ── Library relevance gate ───────────────────────────────
+# The floor and the count that interprets it are ONE setting, kept together
+# deliberately. See HANDOVER.md "The similarity floor asks a different question
+# than you think" for the measurement behind these numbers.
+#
+# similarity_floor 0.45 -> 0.55 on 2026-08-30. all-MiniLM-L6-v2 scores any two
+# endodontic texts around 0.45 on shared domain vocabulary alone, so at 0.45
+# "how many hits clear the floor" answers "is this endodontics?" rather than
+# "is this the question?". Measured across the 20 eval questions, 0.45 routed
+# 18/20 to the library — including "root canal treatment in pregnancy", 63
+# hits above the floor and not one on-topic paper.
+#
+# Raising the floor without re-reading min_relevant would have been the same
+# mistake in the other direction: 12 papers above 0.55 is a much stronger
+# claim than 12 above 0.45, and the pair has to be tuned as a pair.
+RELEVANCE_GATE = {
+    "similarity_floor": 0.55,   # cosine; below this a hit is same-specialty noise
+    "min_relevant":     12,     # hits that must clear the floor to serve locally
+    "min_hits":         20,     # raw KNN hits before relevance is even considered
+    "max_topic_age_yr":  3,     # newest on-topic paper older than this -> go live
+    "max_per_tier":     25,     # cap per tier, mirrors the live path
+}
+
+
 def build_evidence_base_with_progress(job_id: str, question: str,
                                       force_route: str = None) -> dict:
     """
@@ -483,27 +507,13 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     # library exist?" — it passes for every question against a 1,886-paper
     # library and the network is then almost never consulted. These thresholds
     # make the gate ask whether the library actually COVERS the question.
-    MIN_RAG_RESULTS   = 20
-    # 0.45 -> 0.55 (2026-08-30). Measured across the 20 eval questions: at
-    # 0.45 the gate routed 18/20 to the library, including "root canal
-    # treatment in pregnancy" (63 hits above the floor, top similarity 0.553)
-    # whose entire "relevant" set was generic AAE position statements and
-    # unrelated outcome papers — not one on-topic result. all-MiniLM-L6-v2
-    # puts any two endodontic texts around 0.45 simply because they share the
-    # domain vocabulary, so a 0.45 floor asks "is this endodontics?" rather
-    # than "is this the question?".
-    #
-    # 0.55 separates cleanly: genuinely covered topics keep 14-56 hits, the
-    # thin ones collapse to 1-8 (pregnancy 1, SDF 1, bisphosphonates 3).
-    # The errors are asymmetric — routing live when the library would have
-    # done costs a PubMed search, routing to the library when it lacks the
-    # topic answers a clinical question from papers about something else — so
-    # the floor is set where the thin topics fall out, not where coverage is
-    # maximised.
-    RAG_SIMILARITY_FLOOR = 0.55   # a hit must be this close to count
-    MIN_RAG_RELEVANT  = 12        # ...and we need this many that clear it
-    MAX_RAG_PAPERS_PER_TIER = 25  # mirrors the live path's per-tier cap
-    RAG_MAX_TOPIC_AGE_YEARS = 3   # library's newest paper on the topic; older -> go live
+    # All five read from RELEVANCE_GATE at module level — see the note there
+    # on why the floor and the count that interprets it must move together.
+    MIN_RAG_RESULTS         = RELEVANCE_GATE["min_hits"]
+    RAG_SIMILARITY_FLOOR    = RELEVANCE_GATE["similarity_floor"]
+    MIN_RAG_RELEVANT        = RELEVANCE_GATE["min_relevant"]
+    MAX_RAG_PAPERS_PER_TIER = RELEVANCE_GATE["max_per_tier"]
+    RAG_MAX_TOPIC_AGE_YEARS = RELEVANCE_GATE["max_topic_age_yr"]
     evidence        = {}
     all_scored      = []
 
