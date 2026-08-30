@@ -1620,6 +1620,14 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   background: #e5edff; color: #1e3a8a; border-radius: 99px;
   padding: 1px 7px; font-size: 10px;
 }
+.biblio-tier-head { cursor: pointer; user-select: none; }
+.biblio-tier-head:hover { color: #1d4ed8; }
+.biblio-tier-chevron {
+  display: inline-block; font-size: 10px; color: #768292;
+  transition: transform .15s ease;
+}
+.biblio-tier.collapsed .biblio-tier-chevron { transform: rotate(-90deg); }
+.biblio-tier.collapsed .biblio-tier-body { display: none; }
 .biblio-more {
   background: none; border: 0; color: #1d4ed8; cursor: pointer;
   font-size: 11.5px; font-weight: 700; padding: 3px 0; margin-top: 2px;
@@ -1630,6 +1638,8 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   padding: 1px 6px; border-radius: 99px; margin-left: 4px;
   letter-spacing: .03em; vertical-align: 1px;
 }
+.prov-badges { margin: 6px 0 2px; }
+.prov-badges .pv { margin-left: 0; margin-right: 4px; font-size: 10.5px; }
 .pv-good  { background: #e3f5ec; color: #0b5f3d; }
 .pv-warn  { background: #faf0dc; color: #854d0e; }
 .pv-bad   { background: #fbe5e5; color: #a52a2a; }
@@ -4424,6 +4434,13 @@ function openProvenancePanel(pmid) {
       if (d.authors) meta.push(_provEscape(d.authors));
       if (d.journal) meta.push(_provEscape(d.journal));
       if (d.year)    meta.push(_provEscape(d.year));
+      // Impact factor lives HERE and only here (§5 decision: excluded from
+      // scoring, shown as reference metadata in the popover, never on
+      // reference lines). Comes from the answer's paper payload, not the
+      // abstract endpoint.
+      var pm = pmidMeta[String(pmid)];
+      if (pm && pm.impact_factor) meta.push('IF ' + _provEscape(pm.impact_factor));
+      var badges = pm ? provenanceBadges(pm) : '';
       var html =
         '<h4>' + _provEscape(d.title || 'Untitled') + '</h4>' +
         '<div class="prov-meta">' +
@@ -4431,6 +4448,7 @@ function openProvenancePanel(pmid) {
           ' · <a href="' + _provEscape(d.url || ('https://pubmed.ncbi.nlm.nih.gov/' + pmid + '/')) +
           '" target="_blank" rel="noopener">View on PubMed ↗</a>' +
         '</div>' +
+        (badges ? '<div class="prov-badges">' + badges + '</div>' : '') +
         '<div class="prov-abstract">' + _provEscape(d.abstract || 'Abstract unavailable.') + '</div>';
       body.innerHTML = html;
       body.dataset.loaded = 'true';
@@ -4714,6 +4732,13 @@ function biblioLine(p, n) {
   '</li>';
 }
 
+// Whole-section collapse (header click). Distinct from toggleTier, which
+// reveals the rows beyond the top 3 inside an expanded section.
+function toggleTierSection(key) {
+  var sec = document.getElementById('tierSec-' + key);
+  if (sec) sec.classList.toggle('collapsed');
+}
+
 function toggleTier(key) {
   var el = document.getElementById('tierRest-' + key);
   var btn = document.getElementById('tierBtn-' + key);
@@ -4730,25 +4755,34 @@ function renderBibliography(papers) {
   }
   document.getElementById('biblioCount').textContent = papers.length + ' papers';
 
+  // Group by RAW tier key (same rule as the evidence-shape chip). Known tiers
+  // render in TIER_DISPLAY order; unknown keys get a generic section at the
+  // end so a new engine tier is never silently misfiled or dropped.
   var byTier = {};
   papers.forEach(function(p) {
     var k = p.level_key || 'level5';
-    if (!TIER_SHORT[k]) k = 'level5';
     (byTier[k] = byTier[k] || []).push(p);
+  });
+  var orderedKeys = TIER_DISPLAY.map(function(t){ return t[0]; });
+  Object.keys(byTier).forEach(function(k){
+    if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k);
   });
 
   var n = 0, html = '';
-  TIER_DISPLAY.forEach(function(t) {
-    var key = t[0], label = t[1], bucket = byTier[key];
+  orderedKeys.forEach(function(key) {
+    var label = tierSectionLabel(key), bucket = byTier[key];
     if (!bucket || !bucket.length) return;
     bucket.sort(function(a, b) { return b.score - a.score; });
     var head = bucket.slice(0, BIBLIO_VISIBLE_PER_TIER);
     var rest = bucket.slice(BIBLIO_VISIBLE_PER_TIER);
 
-    html += '<div class="biblio-tier">' +
-              '<div class="biblio-tier-head">' + label +
+    html += '<div class="biblio-tier" data-tier="' + _citeEsc(key) + '" id="tierSec-' + _citeEsc(key) + '">' +
+              '<div class="biblio-tier-head" onclick="toggleTierSection(\'' + _citeEsc(key) + '\')" ' +
+                   'title="Collapse / expand this tier">' +
+                '<span class="biblio-tier-chevron">▾</span>' + label +
                 '<span class="biblio-tier-count">' + bucket.length + '</span>' +
-              '</div><ol class="biblio-list">';
+              '</div>' +
+              '<div class="biblio-tier-body"><ol class="biblio-list">';
     head.forEach(function(p) { html += biblioLine(p, ++n); });
     html += '</ol>';
     if (rest.length) {
@@ -4759,7 +4793,7 @@ function renderBibliography(papers) {
         rest.length + ' more" onclick="toggleTier(\'' + key + '\')">show ' +
         rest.length + ' more</button>';
     }
-    html += '</div>';
+    html += '</div></div>';
   });
 
   document.getElementById('biblioList').outerHTML =
