@@ -1,18 +1,15 @@
 {
   "_README": [
-    "Eval baselines, folded over 3 run(s): run1-2026-08-30T03:14, run2, run3.",
+    "Baseline: pre-1.4: no in vitro tier, flat quality floor 50",
+    "Folded from 3 run log(s): baseline_run1.log, baseline_run2.log, baseline_run3.log.",
     "",
-    "Ranges over multiple runs. Assertions in questions.json are FLOORS; these ranges are for spotting drift, not for gating.",
+    "Retrieval-only \u2014 no answers were generated, so must_contain, banner, modules_non_empty and max_unsourced_numeric_modules were NOT evaluated. A green run here is not evidence that they hold.",
     "",
-    "Every number is retrieval-only unless a run was made with --synthesis-subset. Search terms are LLM-generated, so counts move between runs; compare the shape, not the digits.",
-    "",
-    "Regenerate: python eval/run_eval.py --update-baseline && python eval/snapshot_baseline.py --add"
+    "Search terms are LLM-generated: live-route counts move up to 3x between runs on the same question. Compare shape, not digits."
   ],
-  "runs": [
-    "run1-2026-08-30T03:14",
-    "run2",
-    "run3"
-  ],
+  "label": "pre-1.4: no in vitro tier, flat quality floor 50",
+  "n_runs": 3,
+  "provisional": false,
   "cases": {
     "laser-root-canal-disinfection-live": {
       "force_route": "live",
@@ -20,13 +17,58 @@
         "live"
       ],
       "papers": {
-        "min": 104,
-        "max": 132,
         "runs": [
           132,
           104,
           116
-        ]
+        ],
+        "min": 104,
+        "max": 132
+      },
+      "esearch_hits": {
+        "runs": [
+          815,
+          1198,
+          496
+        ],
+        "min": 496,
+        "max": 1198
+      },
+      "esearch_queries": {
+        "runs": [
+          43,
+          57,
+          43
+        ],
+        "min": 43,
+        "max": 57
+      },
+      "esearch_empty": {
+        "runs": [
+          7,
+          11,
+          6
+        ],
+        "min": 6,
+        "max": 11
+      },
+      "hits_per_query": {
+        "runs": [
+          19.0,
+          21.0,
+          11.5
+        ],
+        "min": 11.5,
+        "max": 21.0
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          9,
+          7
+        ],
+        "min": 7,
+        "max": 9
       },
       "per_tier_runs": [
         {
@@ -64,13 +106,13 @@
         "library"
       ],
       "papers": {
-        "min": 17,
-        "max": 27,
         "runs": [
           27,
           20,
           17
-        ]
+        ],
+        "min": 17,
+        "max": 27
       },
       "per_tier_runs": [
         {
@@ -93,13 +135,13 @@
         "library"
       ],
       "papers": {
-        "min": 10,
-        "max": 10,
         "runs": [
           10,
           10,
           10
-        ]
+        ],
+        "min": 10,
+        "max": 10
       },
       "per_tier_runs": [
         {
@@ -122,13 +164,13 @@
         "library"
       ],
       "papers": {
-        "min": 29,
-        "max": 30,
         "runs": [
           29,
           29,
           30
-        ]
+        ],
+        "min": 29,
+        "max": 30
       },
       "per_tier_runs": [
         {
@@ -157,13 +199,13 @@
         "library"
       ],
       "papers": {
-        "min": 14,
-        "max": 20,
         "runs": [
           20,
           14,
           19
-        ]
+        ],
+        "min": 14,
+        "max": 20
       },
       "per_tier_runs": [
         {
@@ -187,13 +229,13 @@
         "library"
       ],
       "papers": {
-        "min": 17,
-        "max": 17,
         "runs": [
           17,
           17,
           17
-        ]
+        ],
+        "min": 17,
+        "max": 17
       },
       "per_tier_runs": [
         {
@@ -225,13 +267,13 @@
         "library"
       ],
       "papers": {
-        "min": 29,
-        "max": 32,
         "runs": [
           29,
           29,
           32
-        ]
+        ],
+        "min": 29,
+        "max": 32
       },
       "per_tier_runs": [
         {
@@ -259,13 +301,58 @@
         "live"
       ],
       "papers": {
-        "min": 11,
-        "max": 77,
         "runs": [
           18,
           11,
           77
-        ]
+        ],
+        "min": 11,
+        "max": 77
+      },
+      "esearch_hits": {
+        "runs": [
+          278,
+          17,
+          314
+        ],
+        "min": 17,
+        "max": 314
+      },
+      "esearch_queries": {
+        "runs": [
+          49,
+          43,
+          43
+        ],
+        "min": 43,
+        "max": 49
+      },
+      "esearch_empty": {
+        "runs": [
+          29,
+          35,
+          11
+        ],
+        "min": 11,
+        "max": 35
+      },
+      "hits_per_query": {
+        "runs": [
+          5.7,
+          0.4,
+          7.3
+        ],
+        "min": 0.4,
+        "max": 7.3
+      },
+      "search_terms": {
+        "runs": [
+          8,
+          7,
+          7
+        ],
+        "min": 7,
+        "max": 8
       },
       "per_tier_runs": [
         {
@@ -297,13 +384,13 @@
         "library"
       ],
       "papers": {
-        "min": 27,
-        "max": 30,
         "runs": [
           27,
           29,
           30
-        ]
+        ],
+        "min": 27,
+        "max": 30
       },
       "per_tier_runs": [
         {
@@ -323,7 +410,42 @@
           "level3a": 2,
           "level3b": 2
         }
-      ]
+      ],
+      "esearch_hits": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "esearch_queries": {
+        "runs": [
+          1
+        ],
+        "min": 1,
+        "max": 1
+      },
+      "esearch_empty": {
+        "runs": [
+          1
+        ],
+        "min": 1,
+        "max": 1
+      },
+      "hits_per_query": {
+        "runs": [
+          0.0
+        ],
+        "min": 0.0,
+        "max": 0.0
+      },
+      "search_terms": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      }
     },
     "preemptive-nsaid": {
       "force_route": "library",
@@ -331,13 +453,53 @@
         "library"
       ],
       "papers": {
-        "min": 34,
-        "max": 35,
         "runs": [
           35,
           34,
           35
-        ]
+        ],
+        "min": 34,
+        "max": 35
+      },
+      "esearch_hits": {
+        "runs": [
+          50,
+          50
+        ],
+        "min": 50,
+        "max": 50
+      },
+      "esearch_queries": {
+        "runs": [
+          1,
+          1
+        ],
+        "min": 1,
+        "max": 1
+      },
+      "esearch_empty": {
+        "runs": [
+          0,
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "hits_per_query": {
+        "runs": [
+          50.0,
+          50.0
+        ],
+        "min": 50.0,
+        "max": 50.0
+      },
+      "search_terms": {
+        "runs": [
+          0,
+          1
+        ],
+        "min": 0,
+        "max": 1
       },
       "per_tier_runs": [
         {
@@ -369,13 +531,13 @@
         "library"
       ],
       "papers": {
-        "min": 19,
-        "max": 29,
         "runs": [
           19,
           28,
           29
-        ]
+        ],
+        "min": 19,
+        "max": 29
       },
       "per_tier_runs": [
         {
@@ -403,13 +565,58 @@
         "live"
       ],
       "papers": {
-        "min": 57,
-        "max": 150,
         "runs": [
           57,
           143,
           150
-        ]
+        ],
+        "min": 57,
+        "max": 150
+      },
+      "esearch_hits": {
+        "runs": [
+          207,
+          1239,
+          1084
+        ],
+        "min": 207,
+        "max": 1239
+      },
+      "esearch_queries": {
+        "runs": [
+          23,
+          52,
+          43
+        ],
+        "min": 23,
+        "max": 52
+      },
+      "esearch_empty": {
+        "runs": [
+          2,
+          3,
+          5
+        ],
+        "min": 2,
+        "max": 5
+      },
+      "hits_per_query": {
+        "runs": [
+          9.0,
+          23.8,
+          25.2
+        ],
+        "min": 9.0,
+        "max": 25.2
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          8,
+          7
+        ],
+        "min": 7,
+        "max": 8
       },
       "per_tier_runs": [
         {
@@ -443,13 +650,58 @@
         "live"
       ],
       "papers": {
-        "min": 2,
-        "max": 11,
         "runs": [
           2,
           5,
           11
-        ]
+        ],
+        "min": 2,
+        "max": 11
+      },
+      "esearch_hits": {
+        "runs": [
+          2,
+          158,
+          23
+        ],
+        "min": 2,
+        "max": 158
+      },
+      "esearch_queries": {
+        "runs": [
+          2,
+          46,
+          43
+        ],
+        "min": 2,
+        "max": 46
+      },
+      "esearch_empty": {
+        "runs": [
+          1,
+          37,
+          32
+        ],
+        "min": 1,
+        "max": 37
+      },
+      "hits_per_query": {
+        "runs": [
+          1.0,
+          3.4,
+          0.5
+        ],
+        "min": 0.5,
+        "max": 3.4
+      },
+      "search_terms": {
+        "runs": [
+          1,
+          7,
+          7
+        ],
+        "min": 1,
+        "max": 7
       },
       "per_tier_runs": [
         {
@@ -474,13 +726,58 @@
         "live"
       ],
       "papers": {
-        "min": 41,
-        "max": 64,
         "runs": [
           41,
           44,
           64
-        ]
+        ],
+        "min": 41,
+        "max": 64
+      },
+      "esearch_hits": {
+        "runs": [
+          217,
+          393,
+          264
+        ],
+        "min": 217,
+        "max": 393
+      },
+      "esearch_queries": {
+        "runs": [
+          43,
+          45,
+          43
+        ],
+        "min": 43,
+        "max": 45
+      },
+      "esearch_empty": {
+        "runs": [
+          27,
+          13,
+          8
+        ],
+        "min": 8,
+        "max": 27
+      },
+      "hits_per_query": {
+        "runs": [
+          5.0,
+          8.7,
+          6.1
+        ],
+        "min": 5.0,
+        "max": 8.7
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          8,
+          7
+        ],
+        "min": 7,
+        "max": 8
       },
       "per_tier_runs": [
         {
@@ -515,13 +812,58 @@
         "live"
       ],
       "papers": {
-        "min": 2,
-        "max": 6,
         "runs": [
           3,
           2,
           6
-        ]
+        ],
+        "min": 2,
+        "max": 6
+      },
+      "esearch_hits": {
+        "runs": [
+          4,
+          153,
+          9
+        ],
+        "min": 4,
+        "max": 153
+      },
+      "esearch_queries": {
+        "runs": [
+          43,
+          46,
+          43
+        ],
+        "min": 43,
+        "max": 46
+      },
+      "esearch_empty": {
+        "runs": [
+          39,
+          40,
+          36
+        ],
+        "min": 36,
+        "max": 40
+      },
+      "hits_per_query": {
+        "runs": [
+          0.1,
+          3.3,
+          0.2
+        ],
+        "min": 0.1,
+        "max": 3.3
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          7,
+          7
+        ],
+        "min": 7,
+        "max": 7
       },
       "per_tier_runs": [
         {
@@ -544,13 +886,13 @@
         "library"
       ],
       "papers": {
-        "min": 3,
-        "max": 29,
         "runs": [
           3,
           29,
           28
-        ]
+        ],
+        "min": 3,
+        "max": 29
       },
       "per_tier_runs": [
         {
@@ -568,7 +910,42 @@
           "level2": 1,
           "level3a": 1
         }
-      ]
+      ],
+      "esearch_hits": {
+        "runs": [
+          50
+        ],
+        "min": 50,
+        "max": 50
+      },
+      "esearch_queries": {
+        "runs": [
+          1
+        ],
+        "min": 1,
+        "max": 1
+      },
+      "esearch_empty": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "hits_per_query": {
+        "runs": [
+          50.0
+        ],
+        "min": 50.0,
+        "max": 50.0
+      },
+      "search_terms": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      }
     },
     "intentional-replantation": {
       "force_route": "live",
@@ -576,13 +953,58 @@
         "live"
       ],
       "papers": {
-        "min": 24,
-        "max": 50,
         "runs": [
           36,
           50,
           24
-        ]
+        ],
+        "min": 24,
+        "max": 50
+      },
+      "esearch_hits": {
+        "runs": [
+          210,
+          352,
+          91
+        ],
+        "min": 91,
+        "max": 352
+      },
+      "esearch_queries": {
+        "runs": [
+          43,
+          21,
+          43
+        ],
+        "min": 21,
+        "max": 43
+      },
+      "esearch_empty": {
+        "runs": [
+          26,
+          7,
+          29
+        ],
+        "min": 7,
+        "max": 29
+      },
+      "hits_per_query": {
+        "runs": [
+          4.9,
+          16.8,
+          2.1
+        ],
+        "min": 2.1,
+        "max": 16.8
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          7,
+          7
+        ],
+        "min": 7,
+        "max": 7
       },
       "per_tier_runs": [
         {
@@ -613,13 +1035,58 @@
         "live"
       ],
       "papers": {
-        "min": 2,
-        "max": 14,
         "runs": [
           2,
           14,
           7
-        ]
+        ],
+        "min": 2,
+        "max": 14
+      },
+      "esearch_hits": {
+        "runs": [
+          2,
+          36,
+          12
+        ],
+        "min": 2,
+        "max": 36
+      },
+      "esearch_queries": {
+        "runs": [
+          43,
+          43,
+          43
+        ],
+        "min": 43,
+        "max": 43
+      },
+      "esearch_empty": {
+        "runs": [
+          42,
+          27,
+          36
+        ],
+        "min": 27,
+        "max": 42
+      },
+      "hits_per_query": {
+        "runs": [
+          0.0,
+          0.8,
+          0.3
+        ],
+        "min": 0.0,
+        "max": 0.8
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          7,
+          7
+        ],
+        "min": 7,
+        "max": 7
       },
       "per_tier_runs": [
         {
@@ -645,13 +1112,13 @@
         "library"
       ],
       "papers": {
-        "min": 0,
-        "max": 19,
         "runs": [
           12,
           0,
           19
-        ]
+        ],
+        "min": 0,
+        "max": 19
       },
       "per_tier_runs": [
         {
@@ -672,13 +1139,58 @@
         "live"
       ],
       "papers": {
-        "min": 42,
-        "max": 120,
         "runs": [
           113,
           120,
           42
-        ]
+        ],
+        "min": 42,
+        "max": 120
+      },
+      "esearch_hits": {
+        "runs": [
+          1252,
+          1036,
+          362
+        ],
+        "min": 362,
+        "max": 1252
+      },
+      "esearch_queries": {
+        "runs": [
+          57,
+          43,
+          43
+        ],
+        "min": 43,
+        "max": 57
+      },
+      "esearch_empty": {
+        "runs": [
+          7,
+          7,
+          17
+        ],
+        "min": 7,
+        "max": 17
+      },
+      "hits_per_query": {
+        "runs": [
+          22.0,
+          24.1,
+          8.4
+        ],
+        "min": 8.4,
+        "max": 24.1
+      },
+      "search_terms": {
+        "runs": [
+          9,
+          7,
+          7
+        ],
+        "min": 7,
+        "max": 9
       },
       "per_tier_runs": [
         {
@@ -712,13 +1224,13 @@
         "library"
       ],
       "papers": {
-        "min": 29,
-        "max": 29,
         "runs": [
           29,
           29,
           29
-        ]
+        ],
+        "min": 29,
+        "max": 29
       },
       "per_tier_runs": [
         {
@@ -741,6 +1253,5 @@
         }
       ]
     }
-  },
-  "provisional": false
+  }
 }
