@@ -131,6 +131,42 @@ class TestNumericParamRegex:
         assert bool(run_eval.NUMERIC_PARAM_RE.search(text)) is hit
 
 
+class TestNetworkFailuresAreNotMisreadAsBadQueries:
+    """A real DNS outage mid-baseline made 62 esearch calls fail. Because
+    failures were not logged, the harness saw only the handful that got
+    through and reported "1.0 hits/query — the laser regression's real
+    signature" for queries that were never sent. A wrong diagnosis is worse
+    than no diagnosis: it points the next engineer at the query generator."""
+
+    def _log(self, tmp_path, monkeypatch, records):
+        import json as _json
+        f = tmp_path / "audit.jsonl"
+        f.write_text("".join(_json.dumps(r) + "\n" for r in records), encoding="utf-8")
+        monkeypatch.setattr(run_eval, "AUDIT_LOG", f)
+        return run_eval._esearch_hits_since(0)
+
+    def test_failed_calls_are_excluded_from_query_counts(self, tmp_path, monkeypatch):
+        recs = ([{"http_status": 0, "n_returned": 0, "level_key": "level1"}] * 8 +
+                [{"http_status": 200, "n_returned": 50, "level_key": "level1"}] * 2)
+        total, n, empty, terms, failed = self._log(tmp_path, monkeypatch, recs)
+        assert failed == 8
+        assert n == 2, "never-sent calls must not count as queries"
+        assert empty == 0, "a call that never left the machine did not 'return nothing'"
+        assert total == 100
+
+    def test_hits_per_query_reflects_only_real_responses(self, tmp_path, monkeypatch):
+        recs = ([{"http_status": 0, "n_returned": 0, "level_key": "level1"}] * 9 +
+                [{"http_status": 200, "n_returned": 40, "level_key": "level1"}])
+        total, n, _e, _t, failed = self._log(tmp_path, monkeypatch, recs)
+        assert total / n == 40.0, "outage must not drag the per-query average down"
+        assert failed == 9
+
+    def test_healthy_log_reports_no_failures(self, tmp_path, monkeypatch):
+        recs = [{"http_status": 200, "n_returned": 30, "level_key": "level1"}] * 5
+        _t, n, _e, terms, failed = self._log(tmp_path, monkeypatch, recs)
+        assert (failed, n, terms) == (0, 5, 5)
+
+
 class TestSynthesisModeIsActuallyWired:
     """Testing the assertion functions directly is not enough: the first
     version of --synthesis-subset only FILTERED the case list and still called

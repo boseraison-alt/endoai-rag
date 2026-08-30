@@ -2235,6 +2235,18 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 
     except Exception as e:
         print(f"  XX{label}: Could not fetch ({e})")
+        # Record the failure in the audit log too. It is the proof-of-fetch
+        # trail, and a fetch that never happened is exactly what it should be
+        # able to prove. Without this, a network outage is indistinguishable
+        # downstream from a query that legitimately matched nothing — during a
+        # DNS drop the eval harness reported "1.0 hits/query, the laser
+        # regression's real signature" for 62 calls that were never sent.
+        # http_status 0 means "no HTTP response at all".
+        try:
+            _pubmed_audit_log(label, level_key, locals().get("search_term", ""),
+                              [], 0, 0)
+        except Exception:
+            pass
         return "", [], []
 
 # ── DYNAMIC QUALITY THRESHOLD ─────────────────────────────

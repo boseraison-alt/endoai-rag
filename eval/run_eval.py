@@ -58,8 +58,8 @@ def _esearch_hits_since(offset):
     Returns (total_returned, n_queries, n_empty_queries).
     """
     if not AUDIT_LOG.exists():
-        return None, 0, 0, 0
-    total = n = empty = terms = 0
+        return None, 0, 0, 0, 0
+    total = n = empty = terms = failed = 0
     with AUDIT_LOG.open("r", encoding="utf-8") as fh:
         fh.seek(offset)
         for line in fh:
@@ -69,6 +69,13 @@ def _esearch_hits_since(offset):
             try:
                 rec = json.loads(line)
             except json.JSONDecodeError:
+                continue
+            # http_status 0 = the request never got a response (DNS/network).
+            # These are NOT empty results and must not be counted as queries:
+            # a network outage would otherwise read as "every query matched
+            # nothing", which is the malformed-query signature.
+            if int(rec.get("http_status") or 0) == 0:
+                failed += 1
                 continue
             got = int(rec.get("n_returned") or 0)
             total += got
@@ -81,7 +88,7 @@ def _esearch_hits_since(offset):
             # ±50% noise source) without needing a new field in the pipeline.
             if rec.get("level_key") == "level1":
                 terms += 1
-    return total, n, empty, terms
+    return total, n, empty, terms, failed
 
 
 DIVIDED_MARKER = "The literature is currently divided on this topic"
@@ -200,7 +207,7 @@ def run_case(case):
     offset = _audit_offset()
     evidence = build_evidence_base_with_progress(
         job_id, case["question"], force_route=case.get("force_route")) or {}
-    esearch_total, n_queries, n_empty, n_terms = _esearch_hits_since(offset)
+    esearch_total, n_queries, n_empty, n_terms, n_failed = _esearch_hits_since(offset)
 
     per_tier, papers = {}, []
     for tier in TIER_ORDER:
@@ -232,6 +239,7 @@ def run_case(case):
         # 0.2 hits/query, healthy runs 29-41.
         "esearch_hits_per_query": (esearch_total / n_queries) if n_queries else None,
         "search_terms_used": n_terms,
+        "esearch_failed": n_failed,
     }
 
     # Contamination guard: audit records carry no run identity, so any OTHER
@@ -240,8 +248,17 @@ def run_case(case):
     # terms, so >10 level1 records can only mean interleaved runs — in which
     # case every esearch-derived number here is untrustworthy and asserting on
     # it would fail the case for someone else's queries.
-    contaminated = n_terms > 10
-    if contaminated:
+    # A run where most requests never reached NCBI cannot be judged on its
+    # retrieval numbers at all — they describe the network, not the queries.
+    attempted = n_queries + n_failed
+    network_broken = attempted > 0 and n_failed / attempted > 0.25
+    if network_broken:
+        print(f"  WARNING: {n_failed}/{attempted} esearch calls never reached NCBI "
+              f"(network/DNS). Skipping esearch-based assertions — this run's "
+              f"retrieval numbers are not meaningful. Re-run when the network is up.")
+
+    contaminated = n_terms > 10 or network_broken
+    if n_terms > 10:
         print(f"  WARNING: {n_terms} search terms in the audit window — a "
               f"concurrent retrieval is interleaved; skipping esearch-based "
               f"assertions for this run. Re-run when the app is idle.")
@@ -377,7 +394,9 @@ def main():
                   f"{measured['esearch_queries']} queries = "
                   f"{measured['esearch_hits_per_query']:.1f}/query "
                   f"({measured['esearch_empty']} returned nothing, "
-                  f"{measured['search_terms_used']} search terms)")
+                  f"{measured['search_terms_used']} search terms"
+                  + (f", {measured['esearch_failed']} NEVER SENT — network"
+                     if measured.get("esearch_failed") else "") + ")")
 
         base = case.get("baseline") or {}
         if base.get("papers") is not None:
