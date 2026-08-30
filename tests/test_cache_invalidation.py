@@ -185,6 +185,41 @@ class TestWriteBackTriggersInvalidation:
         assert len(calls) == 1
 
 
+class TestTheLiveCallSiteActuallyThreadsTheQuery:
+    """Three live bugs have shipped in this codebase with a green suite because
+    the unit tests imported the symbol directly and nothing exercised the real
+    call path (HANDOVER: "green unit tests over a path nothing exercises end to
+    end"). Every test above calls learn_from_live_results() itself, so all of
+    them stay green if fetch_papers() simply never passes a query.
+
+    Driving fetch_papers() for real means two live NCBI round-trips, so this
+    reads the call site out of the AST instead. It is a weaker test than an
+    end-to-end run and is not a substitute for one — but it is the only thing
+    here that fails when the write-back call site stops threading the query."""
+
+    def _write_back_call(self):
+        import ast, inspect
+        import endo_ai
+        tree = ast.parse(inspect.getsource(endo_ai.fetch_papers))
+        for node in ast.walk(tree):
+            if (isinstance(node, ast.Call)
+                    and isinstance(node.func, ast.Name)
+                    and node.func.id == "learn_from_live_results"):
+                return node
+        return None
+
+    def test_fetch_papers_calls_write_back(self):
+        assert self._write_back_call() is not None, \
+            "fetch_papers() no longer calls learn_from_live_results()"
+
+    def test_fetch_papers_passes_a_query_to_write_back(self):
+        call = self._write_back_call()
+        kwargs = {k.arg for k in call.keywords}
+        assert "query_text" in kwargs, (
+            "fetch_papers() writes papers back without telling the cache which "
+            "query they came from — invalidation can never fire")
+
+
 class TestWriteBackStaysSafe:
     """`learn_from_live_results` documents that it never raises: a failure
     here must not break the answer already being returned to the clinician.
