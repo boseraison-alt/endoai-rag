@@ -4259,15 +4259,16 @@ function showResult(question, job) {
   // tiers tells a clinician nothing and invites "74 what?"; the mix of study
   // designs tells them how much weight the recommendation can bear, and it
   // surfaces the tier hierarchy instead of leaving it buried in prose.
-  var shapeOrder = ['cochrane','level1','classic','level2','level3a','level3','level3b','level4','level5'];
-  var counts = {};
-  papers.forEach(function(p) {
-    var k = p.level_key || 'level5';
-    if (!TIER_SHORT[k]) k = 'level5';
-    counts[k] = (counts[k] || 0) + 1;
+  // Group by the RAW tier key — an unknown key (e.g. a newly added tier like
+  // "invitro") renders generically instead of being silently folded into
+  // level5, so new engine tiers appear here with zero UI changes.
+  var counts = _tierCounts(papers);
+  var shapeOrder = TIER_DISPLAY.map(function(t){ return t[0]; });
+  Object.keys(counts).forEach(function(k){
+    if (shapeOrder.indexOf(k) === -1) shapeOrder.push(k);
   });
   var shape = shapeOrder.filter(function(k){ return counts[k]; })
-                        .map(function(k){ return counts[k] + ' ' + TIER_SHORT[k]; })
+                        .map(function(k){ return counts[k] + ' ' + tierShortLabel(k); })
                         .join(' · ');
 
   // Trust signals belong in the header, not appended after the references
@@ -4276,17 +4277,27 @@ function showResult(question, job) {
   var m = answerText.match(/Citation support:\s*(\d+)\s+of\s+(\d+)\s+flagged/i);
   if (m) {
     var flagged = +m[1], total = +m[2];
-    supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract">' +
-      '⚠ ' + (total - flagged) + '/' + total + ' citations consistent with source abstracts</span>';
+    supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract; flagged claims are listed at the end of the answer">' +
+      '⚠ Checked against abstracts: ' + (total - flagged) + '/' + total + ' consistent</span>';
   } else if (/Citation support:\s*verified/i.test(answerText)) {
     var vm = answerText.match(/the (\d+) cited claims/i);
     // "verified" would over-claim what an abstract-level check can establish.
     supportChip = '<span class="atag atag-ok" title="Each cited claim was compared with its source abstract">' +
-      '✓ checked against abstracts: ' + (vm ? vm[1] + '/' + vm[1] : 'all') + ' consistent</span>';
-  } else if (/Citation support:\s*not available/i.test(answerText)) {
-    supportChip = '<span class="atag atag-neutral" title="This check did not run for this answer">' +
-      '○ citation check unavailable</span>';
+      '✓ Checked against abstracts: ' + (vm ? vm[1] + '/' + vm[1] : 'all') + ' consistent</span>';
+  } else {
+    // Bug class (d): a check that fails open and shows nothing. Anything
+    // without an explicit pass/fail marker — "not available" answers, older
+    // cached answers, Deep Learning reports — must say the check didn't run
+    // rather than silently rendering no chip.
+    supportChip = '<span class="atag atag-neutral" title="Whether each cited source supports its claim was not verified for this answer">' +
+      '○ Citation check: not available</span>';
   }
+  // The verified / not-available blockquote now lives in the header chip —
+  // moved, not copied, so strip it from the body. The FLAGGED block stays in
+  // the body: it names the specific suspect claim-citation pairs, which the
+  // chip cannot carry.
+  var bodyText = answerText.replace(
+    /\n*-{3,}\s*\n+>\s*[✓○]\s*\*\*Citation support:\s*(?:verified|not available)[\s\S]*$/i, '');
   var validationChip = /VALIDATION WARNING/.test(answerText)
     ? '<span class="atag atag-bad" title="Evidence-mapping checks did not fully pass">⚠ validation warning</span>'
     : '';
@@ -4310,14 +4321,19 @@ function showResult(question, job) {
   // Verdict, which already does this job).
   window._lastJob = job; window._lastQuestion = question;
   if (mode === 'learn') {
-    document.getElementById('answerContent').innerHTML = renderAnswer(answerText);
+    document.getElementById('answerContent').innerHTML = renderAnswer(bodyText);
   } else {
-    var parts = renderAnswerWithBox(answerText);
+    var parts = renderAnswerWithBox(bodyText);
     document.getElementById('answerContent').innerHTML = parts.box + parts.body;
   }
 
   // Full bibliography — always shown, all papers, generated from data
   renderBibliography(papers);
+
+  // Drift guard: the evidence-shape chip and the bibliography must agree.
+  // Compares the chip's per-tier counts against the rows actually rendered
+  // in the DOM, so any divergence in grouping logic is loudly visible.
+  _assertShapeMatchesBiblio(counts);
 
   // Export bar (Deep Learning mode only, sits above report)
   if (mode === 'learn') {
@@ -4606,25 +4622,74 @@ var TIER_DISPLAY = [
   ['level3',   'Level III — Comparative Studies'],
   ['level3b',  'Level IIIb — Case-Control'],
   ['level4',   'Level IV — Case Series'],
+  ['invitro',  'In Vitro / Ex Vivo — Bench Studies'],
   ['level5',   'Level V — Expert Opinion / Reviews']
 ];
 var TIER_SHORT = {
   cochrane:'Cochrane', level1:'RCT/SR', classic:'Classic', level2:'Prospective',
   level3a:'Cohort', level3:'Comparative', level3b:'Case-control',
-  level4:'Case series', level5:'Expert opinion'
+  level4:'Case series', invitro:'In vitro', level5:'Expert opinion'
 };
-var BIBLIO_VISIBLE_PER_TIER = 5;
+var BIBLIO_VISIBLE_PER_TIER = 3;
+
+// A tier key the UI has never heard of must still render — generically, under
+// its raw key — rather than being folded into level5 or dropped. New engine
+// tiers then appear in the chip and the bibliography with zero UI edits.
+function tierShortLabel(k) {
+  return TIER_SHORT[k] || String(k).replace(/[_-]+/g, ' ');
+}
+function tierSectionLabel(k) {
+  var known = TIER_DISPLAY.filter(function(t){ return t[0] === k; })[0];
+  return known ? known[1] : 'Other — ' + tierShortLabel(k);
+}
+// One grouping function feeds BOTH the evidence-shape chip and the
+// bibliography, so their counts cannot diverge by construction; the DOM
+// assertion below catches any renderer-level drift on top.
+function _tierCounts(papers) {
+  var counts = {};
+  (papers || []).forEach(function(p) {
+    var k = p.level_key || 'level5';
+    counts[k] = (counts[k] || 0) + 1;
+  });
+  return counts;
+}
+function _assertShapeMatchesBiblio(chipCounts) {
+  var root = document.getElementById('biblioList');
+  if (!root) return;
+  var domCounts = {};
+  root.querySelectorAll('.biblio-tier').forEach(function(sec) {
+    var k = sec.getAttribute('data-tier');
+    domCounts[k] = sec.querySelectorAll('.biblio-item').length;
+  });
+  var seen = {};
+  Object.keys(chipCounts).concat(Object.keys(domCounts)).forEach(function(k) {
+    if (seen[k]) return;
+    seen[k] = true;
+    if ((chipCounts[k] || 0) !== (domCounts[k] || 0)) {
+      console.error('[evidence-shape] chip/bibliography count mismatch for tier "' +
+        k + '": chip=' + (chipCounts[k] || 0) + ' bibliography=' + (domCounts[k] || 0));
+    }
+  });
+}
 
 // Integrity badges the engine computes. If these only reach Claude's context
 // the clinician never sees the signals; they belong on the reference line.
 function provenanceBadges(p) {
   var b = [];
   if (p.has_retraction)  b.push('<span class="pv pv-bad">RETRACTED</span>');
+  if (p.superseded_by)   b.push('<span class="pv pv-warn" title="A newer version of this review exists">' +
+                                'superseded — see PMID ' + _citeEsc(p.superseded_by) + '</span>');
   if (p.has_erratum)     b.push('<span class="pv pv-warn">correction</span>');
   if (p.has_coi)         b.push('<span class="pv pv-warn">industry COI' +
                                 (p.coi_funder ? ': ' + _citeEsc(p.coi_funder) : '') + '</span>');
   if (p.is_registered)   b.push('<span class="pv pv-good">pre-registered</span>');
   if (p.medline_indexed === false) b.push('<span class="pv pv-muted">not MEDLINE-indexed</span>');
+  // Book chapters (StatPearls / NCBI Bookshelf) are narrative reference texts,
+  // not studies. Field lands with worklist item 1.3; the NBK-id fallback keeps
+  // the badge honest until every payload carries is_book.
+  if (p.is_book || /^NBK/i.test(String(p.pmid || ''))) {
+    b.push('<span class="pv pv-muted">reference text</span>');
+  }
   return b.length ? ' ' + b.join(' ') : '';
 }
 
