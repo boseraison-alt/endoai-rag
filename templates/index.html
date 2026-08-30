@@ -3100,6 +3100,12 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
           <button class="settings-opt" data-val="alloy" onclick="settingsPick('voice','alloy')">Alloy (neutral)</button>
         </div>
 
+        <div class="settings-section-label">Answer cost chip</div>
+        <div class="settings-opts" id="settingsCostOpts">
+          <button class="settings-opt" data-val="show" onclick="setCostChip(true)">Shown</button>
+          <button class="settings-opt" data-val="hide" onclick="setCostChip(false)">Hidden</button>
+        </div>
+
         <button class="settings-save-btn" onclick="saveSettings()">Save Settings</button>
       </div>
     </div>
@@ -4527,11 +4533,21 @@ var SHOW_COST = (function () {
   try { return localStorage.getItem('endo_show_cost') !== 'false'; }
   catch (e) { return true; }
 })();
-function toggleCostChip() {
-  SHOW_COST = !SHOW_COST;
+function toggleCostChip() { setCostChip(!SHOW_COST); }
+function setCostChip(on) {
+  SHOW_COST = !!on;
   try { localStorage.setItem('endo_show_cost', SHOW_COST ? 'true' : 'false'); } catch (e) {}
+  _syncCostChipOpts();
   if (window._lastJob) showResult(window._lastQuestion || '', window._lastJob);
 }
+function _syncCostChipOpts() {
+  var wrap = document.getElementById('settingsCostOpts');
+  if (!wrap) return;
+  wrap.querySelectorAll('.settings-opt').forEach(function(b) {
+    b.classList.toggle('sel', (b.dataset.val === 'show') === SHOW_COST);
+  });
+}
+_syncCostChipOpts();
 
 // Evidence tier named inside the recommendation, rendered as a badge. The
 // validator now requires the recommendation to state its tier, so this is
