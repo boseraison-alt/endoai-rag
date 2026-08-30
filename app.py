@@ -3417,9 +3417,62 @@ def save_settings():
     return jsonify({"success": True})
 
 
+# ── X-ray gating (PHI) ───────────────────────────────────
+# Patient radiographs are PHI. The vision path ships DISABLED and is enabled
+# per-deployment via ENABLE_XRAY=true — a decision recorded in WORKLIST §5:
+# enabling it in production requires a BAA with the vision provider
+# (Gemini / OpenAI). See HANDOVER.md.
+
+def _xray_enabled() -> bool:
+    """Read ENABLE_XRAY at request time so tests/deploys can toggle it."""
+    return (os.getenv("ENABLE_XRAY") or "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _sanitize_tooth_hint(raw: str) -> str:
+    """Reduce the tooth hint to a bare tooth designation (e.g. '14', '#30',
+    'B', '4.6'). Anything longer or containing free text is dropped entirely,
+    so patient case narrative can never ride along with the image to the
+    vision provider."""
+    hint = (raw or "").strip()
+    if _audit_re.fullmatch(r"#?[A-Ta-t0-9][0-9.]{0,3}", hint):
+        return hint.lstrip("#")
+    return ""
+
+
+def _strip_image_metadata(image_bytes: bytes, ext: str) -> bytes:
+    """Re-encode the uploaded image with Pillow, dropping ALL ancillary
+    metadata: EXIF/GPS/IPTC/XMP on JPEG, tEXt/iTXt/zTXt chunks on PNG.
+    Radiograph exports routinely embed patient name/DOB in these fields.
+    Raises on any decode failure — the caller fails CLOSED (rejects the
+    upload) rather than forwarding un-stripped bytes."""
+    from PIL import Image
+    import io as _io
+    img = Image.open(_io.BytesIO(image_bytes))
+    out = _io.BytesIO()
+    if ext in ("jpg", "jpeg"):
+        img.convert("RGB").save(out, format="JPEG", quality=95)
+    else:
+        # Pillow drops text chunks unless an explicit pnginfo is passed.
+        img.save(out, format="PNG")
+    return out.getvalue()
+
+
 @app.route("/api/analyze-xray", methods=["POST"])
 def analyze_xray():
-    """Upload a PA radiograph; Claude Vision pre-fills the assessment form."""
+    """Upload a PA radiograph; a vision model pre-fills the assessment form.
+
+    Disabled by default (ENABLE_XRAY unset/false -> 403): radiographs are PHI
+    and sending them to a third-party vision API requires a BAA. When enabled,
+    the image is re-encoded to strip EXIF/PNG metadata, and only a sanitized
+    tooth number — never case text — accompanies it."""
+    if not _xray_enabled():
+        return jsonify({
+            "error": "X-ray analysis is disabled on this deployment. "
+                     "Patient radiographs are PHI; enabling the vision path "
+                     "requires a BAA with the vision provider. Set "
+                     "ENABLE_XRAY=true only once that is in place.",
+            "feature": "xray", "enabled": False,
+        }), 403
     if "image" not in request.files:
         return jsonify({"error": "No image provided"}), 400
     file = request.files["image"]
@@ -3430,7 +3483,15 @@ def analyze_xray():
     image_bytes = file.read()
     if len(image_bytes) > 12 * 1024 * 1024:
         return jsonify({"error": "Image too large (max 12 MB)"}), 400
-    tooth_hint = (request.form.get("tooth_hint") or "").strip()
+    # Strip embedded metadata (EXIF, GPS, PNG text chunks) before the bytes
+    # leave this server. Fail closed: an image Pillow cannot decode is
+    # rejected, never forwarded raw.
+    try:
+        image_bytes = _strip_image_metadata(image_bytes, ext)
+    except Exception:
+        return jsonify({"error": "Could not process image (metadata "
+                                 "stripping failed) — upload not sent."}), 400
+    tooth_hint = _sanitize_tooth_hint(request.form.get("tooth_hint"))
     provider   = (request.form.get("provider")   or "auto").strip()
     if provider not in ("gemini", "openai"):
         provider = "auto"
