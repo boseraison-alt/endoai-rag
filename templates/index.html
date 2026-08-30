@@ -7311,6 +7311,12 @@ function _showLearnReportGone(el) {
          escHtml(q) + '">Regenerate</button>' : '') +
     '</div>';
   document.getElementById('exportBar').style.display = 'none';
+  // A previously viewed answer's bibliography/table must not linger under the
+  // banner as if it belonged to this report.
+  var bs = document.getElementById('biblioSection');
+  if (bs) bs.style.display = 'none';
+  var ps = document.getElementById('papersSection');
+  if (ps) ps.style.display = 'none';
   // Drop the dangling entry: the list rebuilds from the archive directory.
   loadLearnModeHistory();
 }
