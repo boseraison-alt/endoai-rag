@@ -805,8 +805,14 @@ def get_cached_answer(question: str, threshold: float = 0.92,
             age_filter = " AND created_at >= NOW() - INTERVAL '%s days'"
             params.append(int(max_age_days))
 
+        # `question_text` is the column; this selected `question` and so raised
+        # on EVERY lookup, was swallowed by the except below, and returned None.
+        # The answer cache had therefore never served a single hit since the
+        # table was created — silently, because a permanent miss is
+        # indistinguishable from a cold cache. The alias keeps the row key the
+        # equivalence gate and the return block already use.
         cur.execute(f"""
-            SELECT id, question, answer, papers, created_at,
+            SELECT id, question_text AS question, answer, papers, created_at,
                    1 - (question_embedding <=> %s::vector) AS similarity
             FROM query_cache
             WHERE 1 - (question_embedding <=> %s::vector) >= %s{age_filter}

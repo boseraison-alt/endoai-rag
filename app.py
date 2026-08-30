@@ -663,7 +663,9 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         evidence["cochrane"] = {"text": cochrane_direct, "ids": [], "scored": [],
                                 "source": "pubmed"}
     else:
-        text, ids, scored = fetch_papers(smart_topic, COCHRANE_TERM, "Cochrane Reviews (PubMed)", "cochrane")
+        text, ids, scored = fetch_papers(smart_topic, COCHRANE_TERM,
+                                         "Cochrane Reviews (PubMed)", "cochrane",
+                                         question=question)
         evidence["cochrane"] = {"text": text, "ids": ids, "scored": scored,
                                 "source": "pubmed"}
         all_scored.extend(scored)
@@ -690,7 +692,8 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         for term in search_terms:
             if is_aborted(job_id):
                 break
-            text, ids, scored = fetch_papers(term, " OR ".join(terms), label, level_key)
+            text, ids, scored = fetch_papers(term, " OR ".join(terms), label,
+                                             level_key, question=question)
             new_scored = [p for p in scored if p["pmid"] not in seen_pmids]
             new_ids    = [i for i in ids    if i not in seen_pmids]
             for p in new_scored:

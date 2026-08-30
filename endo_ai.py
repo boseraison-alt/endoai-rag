@@ -1955,7 +1955,8 @@ def _pubmed_audit_log(label: str, level_key: str, search_term: str,
         print(f"    [pubmed_audit] write failed: {e}")
 
 
-def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="review"):
+def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="review",
+                 question=None):
     # Exclude retracted papers at the search level — free, no extra API call
     search_term = (
         f"({topic}) AND ({filter_term}) AND {ENDO_DOMAIN_FILTER} "
@@ -2235,11 +2236,14 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 # question is not threaded past build_evidence_base(). Measured
                 # against real cached questions, a boolean topic string scores
                 # 0.42-0.45 cosine where the question itself scores 0.87-1.00,
-                # so invalidation stays inert until the question reaches here.
-                # Fix is a `question=None` kwarg on fetch_papers passed through
-                # from build_evidence_base; owned by whoever owns this file.
+                # The CLINICIAN'S question, not `topic`. topic is the
+                # generated PubMed boolean string; measured against real
+                # cached questions it scores 0.42-0.45, so a 0.85 invalidation
+                # threshold could never be reached from it and the feature was
+                # inert. Falls back to topic when a caller has no question to
+                # give, which is no worse than before.
                 learn_from_live_results(scored_papers, _per_pmid,
-                                        query_text=topic)
+                                        query_text=question or topic)
             except Exception as _we:
                 print(f"    [learn] write-back skipped: {_we}")
 
@@ -2362,7 +2366,7 @@ def build_evidence_base(topic, mode: str = "review"):
     else:
         text, ids, scored = fetch_papers(smart_topic, COCHRANE_TERM,
                                          "Cochrane Reviews (PubMed)", "cochrane",
-                                         mode=mode)
+                                         mode=mode, question=topic)
         evidence["cochrane"] = {"text": text, "ids": ids, "scored": scored}
         all_scored.extend(scored)
 
@@ -2378,7 +2382,8 @@ def build_evidence_base(topic, mode: str = "review"):
 
     for level_key, terms, label in levels:
         text, ids, scored = fetch_papers(
-            smart_topic, " OR ".join(terms), label, level_key, mode=mode
+            smart_topic, " OR ".join(terms), label, level_key, mode=mode,
+            question=topic
         )
         evidence[level_key] = {"text": text, "ids": ids, "scored": scored}
         all_scored.extend(scored)
