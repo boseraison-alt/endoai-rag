@@ -55,3 +55,4 @@ pitch_deck.html
 # ── Theme backup ─────────────────────────────────────────
 # Redundant with git history — the original dark theme is in the initial commit.
 templates/index.dark-theme.bak.html
+static/curo-logo-full.png
