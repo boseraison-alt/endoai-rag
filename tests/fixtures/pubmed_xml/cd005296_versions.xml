@@ -1,0 +1,209 @@
+<?xml version="1.0" ?>
+<PubmedArticleSet>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM" IndexingMethod="Manual">
+      <PMID Version="1">17943848</PMID>
+      <DateCompleted>
+        <Year>2008</Year>
+        <Month>01</Month>
+        <Day>17</Day>
+      </DateCompleted>
+      <DateRevised>
+        <Year>2025</Year>
+        <Month>06</Month>
+        <Day>23</Day>
+      </DateRevised>
+      <Article PubModel="Electronic">
+        <Journal>
+          <ISSN IssnType="Electronic">1469-493X</ISSN>
+          <JournalIssue CitedMedium="Internet">
+            <Issue>4</Issue>
+            <PubDate>
+              <Year>2007</Year>
+              <Month>Oct</Month>
+              <Day>17</Day>
+            </PubDate>
+          </JournalIssue>
+          <Title>The Cochrane database of systematic reviews</Title>
+          <ISOAbbreviation>Cochrane Database Syst Rev</ISOAbbreviation>
+        </Journal>
+        <ArticleTitle>Single versus multiple visits for endodontic treatment of permanent teeth.</ArticleTitle>
+        <Pagination>
+          <StartPage>CD005296</StartPage>
+          <MedlinePgn>CD005296</MedlinePgn>
+        </Pagination>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D017418">Meta-Analysis</PublicationType>
+          <PublicationType UI="D000078182">Systematic Review</PublicationType>
+        </PublicationTypeList>
+        <ArticleDate DateType="Electronic">
+          <Year>2007</Year>
+          <Month>10</Month>
+          <Day>17</Day>
+        </ArticleDate>
+      </Article>
+      <MedlineJournalInfo>
+        <Country>England</Country>
+        <MedlineTA>Cochrane Database Syst Rev</MedlineTA>
+        <NlmUniqueID>100909747</NlmUniqueID>
+        <ISSNLinking>1361-6137</ISSNLinking>
+      </MedlineJournalInfo>
+      <CitationSubset>IM</CitationSubset>
+      <CommentsCorrectionsList>
+        <CommentsCorrections RefType="CommentIn">
+          <RefSource>Evid Based Dent. 2008;9(1):24. doi: 10.1038/sj.ebd.6400570.</RefSource>
+          <PMID Version="1">18364693</PMID>
+        </CommentsCorrections>
+        <CommentsCorrections RefType="UpdateIn">
+          <RefSource>Cochrane Database Syst Rev. 2016 Dec 01;12:CD005296. doi: 10.1002/14651858.CD005296.pub3.</RefSource>
+          <PMID Version="1">27905673</PMID>
+        </CommentsCorrections>
+      </CommentsCorrectionsList>
+      <NumberOfReferences>71</NumberOfReferences>
+    </MedlineCitation>
+    <PubmedData>
+      <PublicationStatus>epublish</PublicationStatus>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM" IndexingMethod="Manual">
+      <PMID Version="1">27905673</PMID>
+      <DateCompleted>
+        <Year>2017</Year>
+        <Month>01</Month>
+        <Day>30</Day>
+      </DateCompleted>
+      <DateRevised>
+        <Year>2026</Year>
+        <Month>01</Month>
+        <Day>27</Day>
+      </DateRevised>
+      <Article PubModel="Electronic">
+        <Journal>
+          <ISSN IssnType="Electronic">1469-493X</ISSN>
+          <JournalIssue CitedMedium="Internet">
+            <Volume>12</Volume>
+            <Issue>12</Issue>
+            <PubDate>
+              <Year>2016</Year>
+              <Month>Dec</Month>
+              <Day>01</Day>
+            </PubDate>
+          </JournalIssue>
+          <Title>The Cochrane database of systematic reviews</Title>
+          <ISOAbbreviation>Cochrane Database Syst Rev</ISOAbbreviation>
+        </Journal>
+        <ArticleTitle>Single versus multiple visits for endodontic treatment of permanent teeth.</ArticleTitle>
+        <Pagination>
+          <StartPage>CD005296</StartPage>
+          <MedlinePgn>CD005296</MedlinePgn>
+        </Pagination>
+        <ELocationID EIdType="pii" ValidYN="Y">CD005296</ELocationID>
+        <ELocationID EIdType="doi" ValidYN="Y">10.1002/14651858.CD005296.pub3</ELocationID>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D017418">Meta-Analysis</PublicationType>
+          <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+          <PublicationType UI="D000078182">Systematic Review</PublicationType>
+        </PublicationTypeList>
+        <ArticleDate DateType="Electronic">
+          <Year>2016</Year>
+          <Month>12</Month>
+          <Day>01</Day>
+        </ArticleDate>
+      </Article>
+      <MedlineJournalInfo>
+        <Country>England</Country>
+        <MedlineTA>Cochrane Database Syst Rev</MedlineTA>
+        <NlmUniqueID>100909747</NlmUniqueID>
+        <ISSNLinking>1361-6137</ISSNLinking>
+      </MedlineJournalInfo>
+      <CitationSubset>IM</CitationSubset>
+      <CommentsCorrectionsList>
+        <CommentsCorrections RefType="UpdateOf">
+          <RefSource>Cochrane Database Syst Rev. 2007 Oct 17;(4):CD005296. doi: 10.1002/14651858.CD005296.pub2.</RefSource>
+          <PMID Version="1">17943848</PMID>
+        </CommentsCorrections>
+        <CommentsCorrections RefType="UpdateIn">
+          <RefSource>Cochrane Database Syst Rev. 2022 Dec 13;12:CD005296. doi: 10.1002/14651858.CD005296.pub4.</RefSource>
+          <PMID Version="1">36512807</PMID>
+        </CommentsCorrections>
+      </CommentsCorrectionsList>
+    </MedlineCitation>
+    <PubmedData>
+      <PublicationStatus>epublish</PublicationStatus>
+    </PubmedData>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM" IndexingMethod="Automated">
+      <PMID Version="1">36512807</PMID>
+      <DateCompleted>
+        <Year>2022</Year>
+        <Month>12</Month>
+        <Day>15</Day>
+      </DateCompleted>
+      <DateRevised>
+        <Year>2025</Year>
+        <Month>06</Month>
+        <Day>23</Day>
+      </DateRevised>
+      <Article PubModel="Electronic">
+        <Journal>
+          <ISSN IssnType="Electronic">1469-493X</ISSN>
+          <JournalIssue CitedMedium="Internet">
+            <Volume>12</Volume>
+            <Issue>12</Issue>
+            <PubDate>
+              <Year>2022</Year>
+              <Month>Dec</Month>
+              <Day>13</Day>
+            </PubDate>
+          </JournalIssue>
+          <Title>The Cochrane database of systematic reviews</Title>
+          <ISOAbbreviation>Cochrane Database Syst Rev</ISOAbbreviation>
+        </Journal>
+        <ArticleTitle>Single versus multiple visits for endodontic treatment of permanent teeth.</ArticleTitle>
+        <Pagination>
+          <StartPage>CD005296</StartPage>
+          <MedlinePgn>CD005296</MedlinePgn>
+        </Pagination>
+        <ELocationID EIdType="pii" ValidYN="Y">CD005296</ELocationID>
+        <ELocationID EIdType="doi" ValidYN="Y">10.1002/14651858.CD005296.pub4</ELocationID>
+        <Language>eng</Language>
+        <PublicationTypeList>
+          <PublicationType UI="D016428">Journal Article</PublicationType>
+          <PublicationType UI="D013485">Research Support, Non-U.S. Gov't</PublicationType>
+          <PublicationType UI="D000078182">Systematic Review</PublicationType>
+        </PublicationTypeList>
+        <ArticleDate DateType="Electronic">
+          <Year>2022</Year>
+          <Month>12</Month>
+          <Day>13</Day>
+        </ArticleDate>
+      </Article>
+      <MedlineJournalInfo>
+        <Country>England</Country>
+        <MedlineTA>Cochrane Database Syst Rev</MedlineTA>
+        <NlmUniqueID>100909747</NlmUniqueID>
+        <ISSNLinking>1361-6137</ISSNLinking>
+      </MedlineJournalInfo>
+      <CitationSubset>IM</CitationSubset>
+      <CommentsCorrectionsList>
+        <CommentsCorrections RefType="UpdateOf">
+          <RefSource>Cochrane Database Syst Rev. 2016 Dec 01;12:CD005296. doi: 10.1002/14651858.CD005296.pub3.</RefSource>
+          <PMID Version="1">27905673</PMID>
+        </CommentsCorrections>
+        <CommentsCorrections RefType="CommentIn">
+          <RefSource>Evid Based Dent. 2023 Jun;24(2):71-72. doi: 10.1038/s41432-023-00888-2.</RefSource>
+          <PMID Version="1">37188920</PMID>
+        </CommentsCorrections>
+      </CommentsCorrectionsList>
+    </MedlineCitation>
+    <PubmedData>
+      <PublicationStatus>epublish</PublicationStatus>
+    </PubmedData>
+  </PubmedArticle>
+</PubmedArticleSet>

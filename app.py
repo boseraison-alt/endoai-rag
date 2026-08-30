@@ -274,7 +274,13 @@ def _safe_papers(papers: list) -> list:
                "citations", "level_key", "score",
                # Provenance badges — metadata only, no abstract text
                "has_coi", "coi_funder", "coi_status", "is_registered", "registry",
-               "has_erratum", "has_retraction", "medline_indexed"}
+               "has_erratum", "has_retraction", "medline_indexed",
+               # Superseded rows are filtered out of search, so this is empty in
+               # practice today. It carries the PMID of the current version, so
+               # the UI can point a clinician at it rather than just hiding the
+               # stale one — and the whitelist has silently dropped provenance
+               # fields twice before.
+               "superseded_by"}
     return [{k: v for k, v in p.items() if k in ALLOWED} for p in (papers or [])]
 
 
@@ -406,11 +412,23 @@ def run_question(job_id: str, question: str, mode: str = "review"):
         update_job(job_id, status="error", progress=100, error=str(e), message=str(e))
 
 
-def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
+def build_evidence_base_with_progress(job_id: str, question: str,
+                                      force_route: str = None) -> dict:
     """
     RAG-first evidence pipeline.
     Searches the full library without level_key filter (level_key is empty
     in the current library build). Falls back to PubMed if < MIN_RAG_RESULTS.
+
+    force_route pins retrieval for evaluation runs: "live" skips the library
+    gate entirely, "library" refuses to fall back to PubMed. Production always
+    passes None and lets the gate decide.
+
+    This exists because write-back makes the eval set decay silently. The laser
+    regression was a failure of live search-term generation; once that run wrote
+    196 papers back, the same question began serving from the library, and the
+    eval case stopped exercising the generator that broke. A future "3-7 word"
+    regression would have passed. Route has to be pinned by the harness, not
+    left to whatever the library happens to hold on the day.
     """
     from endo_ai import (
         generate_search_terms, generate_multi_search_terms,
@@ -437,12 +455,19 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
     evidence        = {}
     all_scored      = []
 
+    if force_route not in (None, "live", "library"):
+        raise ValueError(f"force_route must be None, 'live' or 'library', got {force_route!r}")
+
     # Check if library is populated
     try:
         stats      = library_stats()
         library_ok = stats["total"] >= 50
     except Exception:
         library_ok = False
+
+    if force_route == "live":
+        library_ok = False
+        print("  [rag_gate] force_route=live — library skipped")
 
     update_job(job_id, message="Generating smart search terms...", progress=8)
     smart_topic = generate_search_terms(question)
@@ -478,7 +503,10 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
             and len(relevant) >= MIN_RAG_RELEVANT
             and has_high_tier
             and not topic_is_stale
-        )
+        ) if force_route != "library" else True
+        # force_route="library" holds the library path even when coverage is
+        # thin, so a library-mode eval case measures what the library actually
+        # returns instead of quietly becoming a live-path case.
         print(f"  [rag_gate] {len(rag_results)} hits, {len(relevant)} above "
               f"similarity {RAG_SIMILARITY_FLOOR}, high-tier={has_high_tier}, "
               f"newest={newest_year} (age {topic_age}y, stale={topic_is_stale}) "
@@ -507,7 +535,10 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
             #
             # The score-banding was a workaround for 37% of the library having
             # no level_key; that has since been backfilled from PubMed
-            # publication types, leaving 2 unlabelled rows.
+            # publication types. The backfill left 2 rows unlabelled, but this
+            # is not a closed problem — live write-back keeps producing them
+            # (14 as of 2026-08-29), so the fallback below is load-bearing
+            # rather than a leftover. test_end_to_end.py pins it.
             by_tier = {}
             for p in all_rag:
                 tier = (p.get("level_key") or "").strip()
@@ -554,10 +585,12 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
     update_job(job_id, message="Searching Cochrane Reviews...", progress=15)
     cochrane_direct = fetch_cochrane(smart_topic)
     if cochrane_direct:
-        evidence["cochrane"] = {"text": cochrane_direct, "ids": [], "scored": []}
+        evidence["cochrane"] = {"text": cochrane_direct, "ids": [], "scored": [],
+                                "source": "pubmed"}
     else:
         text, ids, scored = fetch_papers(smart_topic, COCHRANE_TERM, "Cochrane Reviews (PubMed)", "cochrane")
-        evidence["cochrane"] = {"text": text, "ids": ids, "scored": scored}
+        evidence["cochrane"] = {"text": text, "ids": ids, "scored": scored,
+                                "source": "pubmed"}
         all_scored.extend(scored)
 
     levels = [
@@ -593,7 +626,8 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
                 level_text = text  # use text from first successful term
 
         level_scored.sort(key=lambda x: x["score"], reverse=True)
-        evidence[level_key] = {"text": level_text, "ids": level_ids, "scored": level_scored}
+        evidence[level_key] = {"text": level_text, "ids": level_ids,
+                               "scored": level_scored, "source": "pubmed"}
         all_scored.extend(level_scored)
 
     # Apply outlier detection and currency tags to PubMed results
@@ -605,6 +639,12 @@ def build_evidence_base_with_progress(job_id: str, question: str) -> dict:
         "avg_score":       round(avg_score, 1),
         "all_scored":      sorted(all_scored, key=lambda x: x["score"], reverse=True),
         "synthesis_order": build_synthesis_order(evidence),
+        # Distinct PMIDs that came back from PubMed across every term and tier,
+        # before the per-tier cap. This is the number that actually collapsed in
+        # the laser regression (5 across 28 queries), and it moves independently
+        # of the final paper count, so the eval can tell a broken query apart
+        # from a genuinely thin topic.
+        "distinct_pmids_retrieved": len(seen_pmids),
     }
     return evidence
 

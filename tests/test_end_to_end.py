@@ -63,6 +63,20 @@ LIBRARY_ROWS = [
      "is_curated": False, "coi_flag": False, "coi_funder": "",
      "coi_status": "no_statement", "registry": "",
      "has_erratum": False, "has_retraction": False, "medline_indexed": True},
+    # No level_key, and a score high enough to outrank every labelled paper
+    # here. Live write-back keeps producing rows like this, so the banding rule
+    # "an unknown design bands to the weakest tier" needs a standing assertion
+    # rather than a comment. TIER_ORDER has no unknown bucket, so the mapping
+    # lives in app.py's banding loop and nothing else pins it.
+    {"pmid": "1004", "title": "An unlabelled study of uncertain design",
+     "abstract": "SUMMARY: " + "The design of this work is not stated. " * 12 +
+                 "Outcomes were assessed at review.",
+     "authors": "Author D", "year": 2025, "journal": "Aust Endod J",
+     "impact_factor": 2.0, "sample_size": 60, "followup_months": 12,
+     "citations": 70, "level_key": "", "score": 95.0, "similarity": 0.70,
+     "is_curated": False, "coi_flag": False, "coi_funder": "",
+     "coi_status": "no_statement", "registry": "",
+     "has_erratum": False, "has_retraction": False, "medline_indexed": True},
 ]
 
 ANSWER_MD = """## CLINICAL RECOMMENDATION
@@ -213,6 +227,110 @@ class TestTierHierarchyHoldsEndToEnd:
     def test_all_three_designs_survive_retrieval(self, client):
         job = _run(client)
         assert {"1001", "1002", "1003"} <= {p["pmid"] for p in job["papers"]}
+
+    def test_unlabelled_paper_bands_to_the_weakest_tier(self, client):
+        """PMID 1004 has no level_key and scores 95 — the highest in the set.
+
+        An unknown design must never be presentable as a strong one, because
+        the system prompt instructs Claude to trust the tier label absolutely.
+        Banding it to the weakest tier keeps it available as evidence without
+        letting score promote it across tiers.
+        """
+        job = _run(client)
+        served = {p["pmid"]: p for p in job["papers"]}
+        assert "1004" in served, "unlabelled paper was dropped instead of banded"
+        assert served["1004"]["level_key"] in ("", "level5"), \
+            f"unlabelled paper was promoted to {served['1004']['level_key']!r}"
+
+    def test_unlabelled_paper_lands_in_the_weakest_evidence_block(self, client):
+        """Assert against the evidence dict itself, not the /status payload.
+
+        The tier blocks are what get rendered into the prompt, each stamped
+        with its TIER_LABEL, so a paper in the wrong block is described to
+        Claude as the wrong strength no matter what the JSON says.
+        """
+        from app import build_evidence_base_with_progress, jobs
+        from endo_ai import TIER_ORDER
+
+        jobs["banding-probe"] = {"status": "running", "steps": [], "progress": 0}
+        evidence = build_evidence_base_with_progress(
+            "banding-probe", "Single visit versus multiple visit endodontic treatment?")
+
+        placed = [t for t in TIER_ORDER
+                  if "1004" in ((evidence.get(t) or {}).get("ids") or [])]
+        assert placed == ["level5"], \
+            f"unlabelled paper banded into {placed or 'no tier at all'}, expected ['level5']"
+
+        # And it must not have been silently dropped on the way in.
+        every_id = {i for t in TIER_ORDER for i in ((evidence.get(t) or {}).get("ids") or [])}
+        assert "1001" in every_id and "1004" in every_id
+
+
+class TestEvalRoutePinning:
+    """force_route exists so the eval set keeps measuring the path each case was
+    written for. Write-back silently moved the laser case from the live path
+    (where its bug lived) to the library path, and it would have passed the next
+    identical regression. If these break, the eval set is lying again."""
+
+    def test_rejects_an_unknown_route(self, client):
+        from app import build_evidence_base_with_progress
+        with pytest.raises(ValueError):
+            build_evidence_base_with_progress("bad-route", "anything",
+                                              force_route="pubmed")
+
+    def test_library_pin_holds_when_coverage_is_thin(self, client, monkeypatch):
+        """Without the pin, a library that lost coverage falls through to live
+        PubMed and the case passes by measuring the wrong path."""
+        import rag
+        from app import build_evidence_base_with_progress, jobs
+        from endo_ai import TIER_ORDER
+
+        import endo_ai
+
+        # Two rows: far below MIN_RAG_RESULTS, so the gate would normally hand
+        # this to PubMed.
+        monkeypatch.setattr(rag, "search",
+                            lambda *a, **k: [dict(LIBRARY_ROWS[0]), dict(LIBRARY_ROWS[1])])
+
+        def _no_network(*a, **k):
+            raise AssertionError("fell through to PubMed despite force_route='library'")
+        monkeypatch.setattr(endo_ai, "generate_multi_search_terms", _no_network)
+
+        jobs["pin-lib"] = {"status": "running", "steps": [], "progress": 0}
+        evidence = build_evidence_base_with_progress(
+            "pin-lib", "Single visit versus multiple visit endodontic treatment?",
+            force_route="library")
+
+        sources = {(evidence.get(t) or {}).get("source")
+                   for t in TIER_ORDER if evidence.get(t)}
+        assert sources == {"rag"}, f"expected library-only, got sources {sources}"
+
+    def test_live_pin_skips_the_library_entirely(self, client, monkeypatch):
+        """The laser bug was in live search-term generation. If the pin does not
+        bypass the library, that generator never runs."""
+        import rag
+        from app import build_evidence_base_with_progress, jobs
+
+        def _boom(*a, **k):
+            raise AssertionError("library was searched despite force_route='live'")
+        monkeypatch.setattr(rag, "search", _boom)
+
+        # Stop before any real PubMed traffic — reaching the term generator is
+        # the whole assertion.
+        import endo_ai
+        reached = {}
+
+        def _stop(question, *a, **k):
+            reached["yes"] = True
+            raise RuntimeError("stop-here")
+        monkeypatch.setattr(endo_ai, "generate_multi_search_terms", _stop)
+
+        jobs["pin-live"] = {"status": "running", "steps": [], "progress": 0}
+        with pytest.raises(RuntimeError, match="stop-here"):
+            build_evidence_base_with_progress(
+                "pin-live", "Single visit versus multiple visit endodontic treatment?",
+                force_route="live")
+        assert reached.get("yes"), "live path never reached the search-term generator"
 
 
 class TestGuardrailsRunOnTheRealPath:

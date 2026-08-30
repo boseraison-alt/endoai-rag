@@ -237,6 +237,15 @@ def setup_table():
             # from "declared none" — otherwise every older paper gets an
             # implicit clean bill it never earned.
             ("coi_status",      "TEXT DEFAULT 'no_statement'"),
+            # PMID of the newer version that replaces this record, or '' when
+            # this record is current. Cochrane reviews are VERSIONED: every
+            # update is a new PubMed record and the older ones stay indexed, so
+            # a library ingested once can hold three versions of the same review
+            # and cite the 2007 one as current. PubMed links them through
+            # CommentsCorrectionsList RefType="UpdateIn" on the OLDER record.
+            # Stored as the successor's PMID rather than a bare boolean so the
+            # answer can name the version the clinician should read instead.
+            ("superseded_by",   "TEXT DEFAULT ''"),
         ):
             cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""
@@ -285,6 +294,8 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                 continue
             if p.get("has_retraction"):
                 continue                      # never seed a retracted paper
+            if (p.get("superseded_by") or "").strip():
+                continue                      # nor an outdated review version
             parts = per_pmid.get(pmid) or {}
             if not (parts.get("abstract") or "").strip():
                 continue
@@ -324,8 +335,9 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                          impact_factor, sample_size, followup_months,
                          citations, level_key, score, embedding,
                          medline_indexed, has_erratum, has_retraction,
-                         registry, coi_flag, coi_funder, coi_status)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                         registry, coi_flag, coi_funder, coi_status,
+                         superseded_by)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     ON CONFLICT (pmid) DO UPDATE SET
                         citations       = EXCLUDED.citations,
                         score           = EXCLUDED.score,
@@ -337,7 +349,13 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                         registry        = EXCLUDED.registry,
                         coi_flag        = EXCLUDED.coi_flag,
                         coi_funder      = EXCLUDED.coi_funder,
-                        coi_status      = EXCLUDED.coi_status
+                        coi_status      = EXCLUDED.coi_status,
+                        -- Never CLEAR a supersession the backfill established.
+                        -- The live PubMed path does not parse UpdateIn, so it
+                        -- always arrives empty; overwriting blindly would
+                        -- un-flag a stale review on every re-ingest.
+                        superseded_by   = COALESCE(NULLIF(EXCLUDED.superseded_by, ''),
+                                                   endo_papers_rag.superseded_by)
                     WHERE NOT COALESCE(endo_papers_rag.is_curated, FALSE);
                 """, (
                     pmid, title, abstract, p.get("authors", ""),
@@ -349,6 +367,7 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                     bool(p.get("has_retraction")), p.get("registry", "") or "",
                     bool(p.get("has_coi")), p.get("coi_funder", "") or "",
                     p.get("coi_status", "no_statement") or "no_statement",
+                    p.get("superseded_by", "") or "",
                 ))
                 conn.commit()
                 written += 1
@@ -445,12 +464,16 @@ def search(
                     impact_factor, sample_size, followup_months,
                     citations, level_key, score, is_curated,
                     medline_indexed, has_erratum, has_retraction, registry,
-                    coi_flag, coi_funder, coi_status,
+                    coi_flag, coi_funder, coi_status, superseded_by,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE level_key = %s
                   AND NOT COALESCE(has_retraction, FALSE)
                   AND title NOT ILIKE 'WITHDRAWN:%%'
+                  -- Superseded: a newer version of this same review exists.
+                  -- (Same reasoning as the unfiltered branch below — keep both
+                  -- in step.)
+                  AND COALESCE(superseded_by, '') = ''
                   AND 1 - (embedding <=> %s::vector) >= %s
                 ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
                 LIMIT %s;
@@ -462,7 +485,7 @@ def search(
                     impact_factor, sample_size, followup_months,
                     citations, level_key, score, is_curated,
                     medline_indexed, has_erratum, has_retraction, registry,
-                    coi_flag, coi_funder, coi_status,
+                    coi_flag, coi_funder, coi_status, superseded_by,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE NOT COALESCE(has_retraction, FALSE)
@@ -472,6 +495,15 @@ def search(
                   -- and they sit in the cochrane tier at ~70 score. The
                   -- withdrawal notice replaces the title verbatim.
                   AND title NOT ILIKE 'WITHDRAWN:%%'
+                  -- Cochrane reviews are versioned: each update is a NEW PubMed
+                  -- record and the older versions stay indexed, so the library
+                  -- can hold a 2007, a 2016 and a 2022 edition of the same
+                  -- review side by side. Nothing in the older record's title,
+                  -- level or score says it is out of date — only PubMed's
+                  -- CommentsCorrections RefType="UpdateIn" does — so without
+                  -- this filter the ranker can hand a clinician a decade-old
+                  -- conclusion the authors have since revised.
+                  AND COALESCE(superseded_by, '') = ''
                   AND 1 - (embedding <=> %s::vector) >= %s
                 ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
                 LIMIT %s;
@@ -538,6 +570,12 @@ def rag_results_to_scored(rows: list[dict]) -> list[dict]:
             "registry":        r.get("registry") or "",
             "has_erratum":     bool(r.get("has_erratum")),
             "has_retraction":  bool(r.get("has_retraction")),
+            # PMID of the newer version of this review, '' when current.
+            # search() already filters these out, so a non-empty value reaching
+            # here means the caller bypassed search — carry it so the row can
+            # still round-trip through learn_from_live_results() without the
+            # flag being silently dropped.
+            "superseded_by":   r.get("superseded_by") or "",
             "medline_indexed": r.get("medline_indexed", True),
             "is_curated":      bool(r.get("is_curated")),
             "breakdown":       {},
