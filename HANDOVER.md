@@ -12,9 +12,41 @@ why the tests are shaped the way they are.
 
 ---
 
-## The three bug classes that keep recurring
+## The four recurring bug classes
 
-### 1. PubMed query strings that are syntactically fine and semantically wrong
+Every serious bug this codebase has shipped is an instance of one of these
+four. Each entry gives a one-line detector — the question to ask of any diff —
+and the test file that guards it.
+
+### (a) A tier label trusted from a stored column
+
+**Detector: any read path that uses `level_key` without asking where it was
+written.**
+**Guard: `tests/test_end_to_end.py` (banding assertions, unlabelled-row
+fixture) plus the audit scripts (`scripts/audit_laser_run.py`,
+`scripts/reclassify_by_pubtype.py`, `scripts/rescore_library.py`).**
+
+`level_key` is written into the library at ingest and read back verbatim, and
+it drives the design axis at 39% weight — so every writer's bug becomes every
+reader's bug, silently. A retrieval-time fix protects new rows only; existing
+rows keep the wrong tier forever. The Cochrane fix needed a code change *and*
+a 109-row migration (`scripts/fix_cochrane_tier.py`) *and* a rescore. The
+score-banding workaround in `app.py` was the same class from the other side:
+it promoted papers across tiers by score because 37% of rows had no
+`level_key` to trust.
+
+**Any change to how a tier is assigned needs a matching migration. Take a
+backup table first — the first Cochrane migration did not, and the identity of
+the 109 affected rows is now unrecoverable.**
+
+### (b) Untagged or annotated terms in PubMed queries
+
+**Detector: any query term without a field tag (`[pt]`, `[tiab]`, …) or with
+trailing text after the tag.**
+**Guard: `tests/test_tier_filter_syntax.py` (offline half rejects untagged
+terms, trailing commentary and unbalanced quoting; network half sends each
+filter to esearch under `RUN_NETWORK_TESTS=1` and fails on anything landing
+in `[All Fields]`).**
 
 PubMed does not reject a malformed query. It guesses, and it tells you what it
 guessed only if you ask for `querytranslation`. Four instances so far:
@@ -26,36 +58,57 @@ guessed only if you ask for `querytranslation`. Four instances so far:
 | `expert opinion` (untagged) | All-Fields match, ORing in any paper containing the phrase |
 | bag-of-words module topics | six words ANDed together — 1 hit in all of PubMed |
 
-All four looked correct in code review. `tests/test_tier_filter_syntax.py`
-catches them: the offline half rejects untagged terms, trailing commentary and
-unbalanced quoting; the network half (`RUN_NETWORK_TESTS=1`) sends each filter
-to esearch and fails on anything landing in `[All Fields]`. It found the
-`expert opinion` bug on its first run, before anyone knew it existed — which is
-the argument for the whole category of test that asks an external system what
-it understood rather than asserting on the string you sent.
+All four looked correct in code review. The network half found the `expert
+opinion` bug on its first run, before anyone knew it existed — which is the
+argument for the whole category of test that asks an external system what it
+understood rather than asserting on the string you sent.
 
 **If you add or edit a tier filter, run the network tests.**
 
-### 2. Fixing the code without fixing the stored data
+### (c) Metadata computed on a batch, applied per paper
 
-`level_key` is written into the library at ingest and read back verbatim. A
-retrieval-time fix protects new rows only; existing rows keep the wrong tier
-forever. The Cochrane fix needed a code change *and* a 109-row migration
-(`scripts/fix_cochrane_tier.py`) *and* a rescore, because `level_key` drives the
-design axis at 39% weight.
+**Detector: any classifier called once per efetch batch whose result lands on
+individual papers.**
+**Guard: `tests/test_coi_scoping.py` (and the batch-shaped fixtures in
+`tests/conftest.py`, which always test extraction inside a batch of
+different-shaped papers, never on a single paper alone).**
 
-**Any change to how a tier is assigned needs a matching migration. Take a
-backup table first — the first Cochrane migration did not, and the identity of
-the 109 affected rows is now unrecoverable.**
+efetch returns many `PubmedArticle` records in one XML document. Anything that
+runs on "the response" instead of "the record" — a COI classifier, a pubtype
+extractor, a MEDLINE-status check — stamps one paper's answer onto the whole
+batch. The COI detector shipped exactly this way: it passed its unit tests
+(single-paper fixtures) while 9 of 10 flagged papers in production were false
+positives; only a hand spot-check of real `CoiStatement` values caught it.
 
-### 3. Trusting a PubMed field that is only populated for some records
+For anything that classifies text, build fixtures from production data before
+trusting the suite.
 
-`PublicationTypeList` is assigned by NLM indexers at MEDLINE indexing time.
-Publisher-supplied records — most MDPI and Frontiers titles, and nearly
-everything from the last ~18 months — carry only `["Journal Article", "Review"]`
-no matter what the paper actually is. A reclassification keyed on publication
-type alone would have demoted 45 genuine systematic reviews to Level V,
-including papers with "A Systematic Review" in the title.
+### (d) A check that fails open and shows nothing
+
+**Detector: any guard whose failure branch produces no user-visible output.**
+**Guard: the citation-support-status test in `tests/test_end_to_end.py`
+(`test_citation_support_status_is_stated` — the answer must state the check's
+outcome, including "not available", never silence).**
+
+A validation that catches nothing and says nothing is indistinguishable from a
+validation that ran clean. Instances: the clarify gate swallowing exceptions
+and proceeding, the citation-support check whose absence looked identical to a
+pass, and — before this pass — an admin-auth design where an unset token would
+have meant "no auth" instead of "no access". The rule now enforced in
+`app.py`: a disabled or failed check must return an explicit refusal (admin
+routes 403 when `ADMIN_TOKEN` is unset; X-ray uploads are rejected when
+metadata stripping fails) or an explicit "not available" in the output.
+
+### Related lesson: trusting a PubMed field that is only populated for some records
+
+Not one of the four, but it burned a migration and shapes
+`scripts/reclassify_by_pubtype.py`. `PublicationTypeList` is assigned by NLM
+indexers at MEDLINE indexing time. Publisher-supplied records — most MDPI and
+Frontiers titles, and nearly everything from the last ~18 months — carry only
+`["Journal Article", "Review"]` no matter what the paper actually is. A
+reclassification keyed on publication type alone would have demoted 45 genuine
+systematic reviews to Level V, including papers with "A Systematic Review" in
+the title.
 
 `scripts/reclassify_by_pubtype.py` therefore trusts pubtypes **only when
 `MedlineCitation Status == "MEDLINE"`**, identifies Cochrane by journal before
@@ -66,18 +119,14 @@ The general lesson: before keying a migration on a metadata field, check what
 fraction of your rows actually have it populated, and whether that fraction
 correlates with anything (here: recency and publisher).
 
-### 4. Green unit tests over a path nothing exercises end to end
+### Related lesson: green unit tests over a path nothing exercises end to end
 
 Three live bugs shipped with a passing suite: `TIER_ORDER` unimported in
-`app.py` (NameError on every question), write-back inserting empty `level_key`,
-and the similarity floor gating the routing decision but not the evidence.
+`app.py` (NameError on every question), write-back inserting empty `level_key`
+(class (a)), and the similarity floor gating the routing decision but not the
+evidence (class (d) in spirit — the check ran and changed nothing visible).
 Unit tests imported the symbols directly and passed. `tests/test_end_to_end.py`
 exists for this and should be extended rather than worked around.
-
-Related: for anything that classifies text, build fixtures from production data
-before trusting the suite. The COI detector passed its tests while 9 of 10
-flagged papers were false positives; only a hand spot-check of real
-`CoiStatement` values caught it.
 
 ---
 
@@ -108,6 +157,25 @@ anything. Cost per run is not a quality metric and should never be optimised on
 its own.
 
 ---
+
+## X-ray / vision path — OFF by default, BAA required to enable
+
+`POST /api/analyze-xray` sends a patient radiograph to a third-party vision
+API (Gemini 2.5 Pro, GPT-4o fallback). Patient imagery is PHI. The route ships
+disabled and returns 403 until `ENABLE_XRAY=true` is set — and **setting it in
+any production deployment requires a Business Associate Agreement (BAA) with
+the vision provider first**. This is a decision already taken (WORKLIST §5);
+do not re-litigate it in code.
+
+When enabled, `app.py` re-encodes every upload to strip EXIF/GPS/PNG-text
+metadata (DICOM-to-JPEG exporters routinely embed patient name/DOB there;
+stripping failure rejects the upload rather than forwarding raw bytes), and
+the `tooth_hint` field is sanitized to a bare tooth designation so free-text
+case narrative never travels with the image. `tests/test_xray_gating.py` pins
+all three properties. Note the app accepts PNG/JPG only — raw DICOM uploads
+are rejected by extension, so DICOM tag stripping is deliberately out of
+scope until someone adds a DICOM ingest path (which would need its own
+de-identification pass, not just this one).
 
 ## Things deliberately not done
 
