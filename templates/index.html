@@ -6,7 +6,7 @@
 <!-- The admin token is deliberately NOT in this page (WORKLIST C4): admin
      actions authenticate via POST /admin/login, which sets a signed HttpOnly
      session cookie. Page source stays secret-free. -->
-<title>Endo AI — Evidence-Based Clinical Assistant</title>
+<title>Curo — Evidence-Based Clinical Assistant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -367,7 +367,17 @@ video.media-video {
   display: flex; align-items: center; justify-content: center;
   font-weight: 800; font-size: 15px; color: #ffffff;
 }
-.brand-name { font-family: var(--font-serif); font-size: 22px; font-weight: 400; letter-spacing: 0.01em; }
+.brand-name {
+  font-family: var(--font-serif);
+  font-size: 27px;
+  /* Instrument Serif ships only in weight 400; font-weight:700 would make the
+     browser synthesize a smeared faux-bold. A hairline stroke in the text's
+     own color thickens every stem evenly instead - real-looking weight at
+     display size without changing the face. */
+  font-weight: 400;
+  -webkit-text-stroke: 0.6px currentColor;
+  letter-spacing: 0.01em;
+}
 .brand-tag  { font-size: 12px; color: #4c586c; }
 
 /* ── Mode tabs ── */
@@ -2880,7 +2890,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle history">☰</button>
   <div class="brand">
     <div class="brand-logo">E</div>
-    <span class="brand-name">Endo AI</span>
+    <span class="brand-name">Curo</span>
     <span class="brand-tag">Evidence-Based Clinical Assistant</span>
   </div>
 </header>
@@ -3906,7 +3916,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   text-align:center;
   flex-shrink:0;
 ">
-  &copy; 2026 Endo AI &mdash;
+  &copy; 2026 Curo &mdash;
   <a href="/tos" target="_blank" style="color:#2563eb;text-decoration:none;">Terms of Service</a>
   &nbsp;&middot;&nbsp;
   Answers are AI-synthesized from published literature. Not a substitute for professional clinical judgment.
