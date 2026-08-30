@@ -1,15 +1,17 @@
 {
   "_README": [
-    "Baseline: post-1.4 in vitro tier, pre-1.5 (flat quality floor still 50)",
-    "Folded from 1 run log(s): v2_run1.log.",
+    "Eval baselines, folded over 2 run(s): v2-run1, v2-run2.",
     "",
-    "Retrieval-only \u2014 no answers were generated, so must_contain, banner, modules_non_empty and max_unsourced_numeric_modules were NOT evaluated. A green run here is not evidence that they hold.",
+    "Ranges over multiple runs. Assertions in questions.json are FLOORS; these ranges are for spotting drift, not for gating.",
     "",
-    "Search terms are LLM-generated: live-route counts move up to 3x between runs on the same question. Compare shape, not digits."
+    "Every number is retrieval-only unless a run was made with --synthesis-subset. Search terms are LLM-generated, so counts move between runs; compare the shape, not the digits.",
+    "",
+    "Regenerate: python eval/run_eval.py --update-baseline && python eval/snapshot_baseline.py --add"
   ],
-  "label": "post-1.4 in vitro tier, pre-1.5 (flat quality floor still 50)",
-  "n_runs": 1,
-  "provisional": true,
+  "runs": [
+    "v2-run1",
+    "v2-run2"
+  ],
   "cases": {
     "laser-root-canal-disinfection-live": {
       "force_route": "live",
@@ -17,46 +19,12 @@
         "live"
       ],
       "papers": {
-        "runs": [
-          97
-        ],
         "min": 97,
-        "max": 97
-      },
-      "esearch_hits": {
+        "max": 103,
         "runs": [
-          398
-        ],
-        "min": 398,
-        "max": 398
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          12
-        ],
-        "min": 12,
-        "max": 12
-      },
-      "hits_per_query": {
-        "runs": [
-          9.3
-        ],
-        "min": 9.3,
-        "max": 9.3
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          97,
+          103
+        ]
       },
       "per_tier_runs": [
         {
@@ -67,6 +35,15 @@
           "level3b": 1,
           "level4": 8,
           "level5": 10
+        },
+        {
+          "cochrane": 1,
+          "level1": 50,
+          "level2": 25,
+          "level3a": 9,
+          "level3b": 2,
+          "level4": 6,
+          "level5": 10
         }
       ]
     },
@@ -76,16 +53,21 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          20
-        ],
         "min": 20,
-        "max": 20
+        "max": 26,
+        "runs": [
+          20,
+          26
+        ]
       },
       "per_tier_runs": [
         {
           "cochrane": 1,
           "level1": 19
+        },
+        {
+          "level1": 25,
+          "level2": 1
         }
       ]
     },
@@ -95,16 +77,21 @@
         "library"
       ],
       "papers": {
+        "min": 10,
+        "max": 11,
         "runs": [
-          11
-        ],
-        "min": 11,
-        "max": 11
+          11,
+          10
+        ]
       },
       "per_tier_runs": [
         {
           "cochrane": 1,
           "level1": 10
+        },
+        {
+          "cochrane": 1,
+          "level1": 9
         }
       ]
     },
@@ -114,17 +101,24 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          30
-        ],
         "min": 30,
-        "max": 30
+        "max": 30,
+        "runs": [
+          30,
+          30
+        ]
       },
       "per_tier_runs": [
         {
           "cochrane": 1,
           "level1": 25,
           "level2": 1,
+          "level3a": 2,
+          "level3b": 1
+        },
+        {
+          "level1": 25,
+          "level2": 2,
           "level3a": 2,
           "level3b": 1
         }
@@ -136,15 +130,21 @@
         "library"
       ],
       "papers": {
+        "min": 21,
+        "max": 23,
         "runs": [
-          23
-        ],
-        "min": 23,
-        "max": 23
+          23,
+          21
+        ]
       },
       "per_tier_runs": [
         {
           "level1": 17,
+          "classic": 5,
+          "level3a": 1
+        },
+        {
+          "level1": 15,
           "classic": 5,
           "level3a": 1
         }
@@ -156,16 +156,24 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          16
-        ],
         "min": 16,
-        "max": 16
+        "max": 17,
+        "runs": [
+          16,
+          17
+        ]
       },
       "per_tier_runs": [
         {
           "level1": 11,
           "level2": 1,
+          "level3": 2,
+          "level3b": 2
+        },
+        {
+          "level1": 11,
+          "level2": 1,
+          "level3a": 1,
           "level3": 2,
           "level3b": 2
         }
@@ -177,16 +185,23 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          30
-        ],
         "min": 30,
-        "max": 30
+        "max": 32,
+        "runs": [
+          30,
+          32
+        ]
       },
       "per_tier_runs": [
         {
           "cochrane": 1,
           "level1": 25,
+          "level2": 4
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
           "level2": 4
         }
       ]
@@ -197,46 +212,12 @@
         "live"
       ],
       "papers": {
-        "runs": [
-          21
-        ],
         "min": 21,
-        "max": 21
-      },
-      "esearch_hits": {
+        "max": 58,
         "runs": [
-          33
-        ],
-        "min": 33,
-        "max": 33
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          28
-        ],
-        "min": 28,
-        "max": 28
-      },
-      "hits_per_query": {
-        "runs": [
-          0.8
-        ],
-        "min": 0.8,
-        "max": 0.8
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          21,
+          58
+        ]
       },
       "per_tier_runs": [
         {
@@ -245,6 +226,14 @@
           "level3a": 5,
           "level4": 7,
           "level5": 4
+        },
+        {
+          "level1": 21,
+          "level2": 12,
+          "level3a": 9,
+          "level3b": 2,
+          "level4": 11,
+          "level5": 3
         }
       ]
     },
@@ -254,11 +243,12 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          28
-        ],
         "min": 28,
-        "max": 28
+        "max": 30,
+        "runs": [
+          28,
+          30
+        ]
       },
       "per_tier_runs": [
         {
@@ -266,6 +256,12 @@
           "level1": 25,
           "level3a": 1,
           "level3b": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "level3a": 2,
+          "level3b": 2
         }
       ]
     },
@@ -275,11 +271,12 @@
         "library"
       ],
       "papers": {
+        "min": 33,
+        "max": 36,
         "runs": [
-          36
-        ],
-        "min": 36,
-        "max": 36
+          36,
+          33
+        ]
       },
       "per_tier_runs": [
         {
@@ -288,6 +285,12 @@
           "classic": 3,
           "level2": 4,
           "level3a": 1
+        },
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "classic": 3,
+          "level2": 3
         }
       ]
     },
@@ -297,16 +300,23 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          15
-        ],
         "min": 15,
-        "max": 15
+        "max": 28,
+        "runs": [
+          15,
+          28
+        ]
       },
       "per_tier_runs": [
         {
           "level1": 12,
           "level2": 2,
+          "level3a": 1
+        },
+        {
+          "level1": 25,
+          "classic": 1,
+          "level2": 1,
           "level3a": 1
         }
       ]
@@ -317,46 +327,12 @@
         "live"
       ],
       "papers": {
+        "min": 83,
+        "max": 102,
         "runs": [
-          102
-        ],
-        "min": 102,
-        "max": 102
-      },
-      "esearch_hits": {
-        "runs": [
-          823
-        ],
-        "min": 823,
-        "max": 823
-      },
-      "esearch_queries": {
-        "runs": [
-          50
-        ],
-        "min": 50,
-        "max": 50
-      },
-      "esearch_empty": {
-        "runs": [
-          6
-        ],
-        "min": 6,
-        "max": 6
-      },
-      "hits_per_query": {
-        "runs": [
-          16.5
-        ],
-        "min": 16.5,
-        "max": 16.5
-      },
-      "search_terms": {
-        "runs": [
-          8
-        ],
-        "min": 8,
-        "max": 8
+          102,
+          83
+        ]
       },
       "per_tier_runs": [
         {
@@ -367,6 +343,15 @@
           "level3b": 3,
           "level4": 17,
           "level5": 9
+        },
+        {
+          "cochrane": 1,
+          "level1": 18,
+          "level2": 22,
+          "level3a": 20,
+          "level3b": 1,
+          "level4": 14,
+          "level5": 7
         }
       ]
     },
@@ -376,52 +361,24 @@
         "live"
       ],
       "papers": {
-        "runs": [
-          10
-        ],
         "min": 10,
-        "max": 10
-      },
-      "esearch_hits": {
+        "max": 11,
         "runs": [
-          22
-        ],
-        "min": 22,
-        "max": 22
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          33
-        ],
-        "min": 33,
-        "max": 33
-      },
-      "hits_per_query": {
-        "runs": [
-          0.5
-        ],
-        "min": 0.5,
-        "max": 0.5
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          10,
+          11
+        ]
       },
       "per_tier_runs": [
         {
           "level1": 6,
           "level2": 1,
           "level4": 1,
+          "level5": 2
+        },
+        {
+          "level1": 6,
+          "level3b": 1,
+          "level4": 2,
           "level5": 2
         }
       ]
@@ -432,46 +389,12 @@
         "live"
       ],
       "papers": {
-        "runs": [
-          41
-        ],
         "min": 41,
-        "max": 41
-      },
-      "esearch_hits": {
+        "max": 47,
         "runs": [
-          234
-        ],
-        "min": 234,
-        "max": 234
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          17
-        ],
-        "min": 17,
-        "max": 17
-      },
-      "hits_per_query": {
-        "runs": [
-          5.4
-        ],
-        "min": 5.4,
-        "max": 5.4
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          41,
+          47
+        ]
       },
       "per_tier_runs": [
         {
@@ -481,6 +404,14 @@
           "level3b": 2,
           "level4": 6,
           "level5": 5
+        },
+        {
+          "level1": 7,
+          "level2": 6,
+          "level3a": 15,
+          "level3b": 1,
+          "level4": 12,
+          "level5": 6
         }
       ]
     },
@@ -490,50 +421,19 @@
         "live"
       ],
       "papers": {
+        "min": 3,
+        "max": 4,
         "runs": [
-          4
-        ],
-        "min": 4,
-        "max": 4
-      },
-      "esearch_hits": {
-        "runs": [
-          5
-        ],
-        "min": 5,
-        "max": 5
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          40
-        ],
-        "min": 40,
-        "max": 40
-      },
-      "hits_per_query": {
-        "runs": [
-          0.1
-        ],
-        "min": 0.1,
-        "max": 0.1
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          4,
+          3
+        ]
       },
       "per_tier_runs": [
         {
           "level2": 1,
+          "level5": 3
+        },
+        {
           "level5": 3
         }
       ]
@@ -544,11 +444,12 @@
         "library"
       ],
       "papers": {
+        "min": 26,
+        "max": 29,
         "runs": [
-          29
-        ],
-        "min": 29,
-        "max": 29
+          29,
+          26
+        ]
       },
       "per_tier_runs": [
         {
@@ -556,6 +457,12 @@
           "level1": 25,
           "classic": 1,
           "level2": 1,
+          "level3a": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 23,
+          "classic": 1,
           "level3a": 1
         }
       ]
@@ -566,46 +473,12 @@
         "live"
       ],
       "papers": {
-        "runs": [
-          46
-        ],
         "min": 46,
-        "max": 46
-      },
-      "esearch_hits": {
+        "max": 59,
         "runs": [
-          231
-        ],
-        "min": 231,
-        "max": 231
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          17
-        ],
-        "min": 17,
-        "max": 17
-      },
-      "hits_per_query": {
-        "runs": [
-          5.4
-        ],
-        "min": 5.4,
-        "max": 5.4
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          46,
+          59
+        ]
       },
       "per_tier_runs": [
         {
@@ -614,6 +487,14 @@
           "level3a": 18,
           "level4": 10,
           "level5": 8
+        },
+        {
+          "cochrane": 1,
+          "level1": 7,
+          "level2": 9,
+          "level3a": 18,
+          "level4": 17,
+          "level5": 7
         }
       ]
     },
@@ -623,52 +504,24 @@
         "live"
       ],
       "papers": {
+        "min": 6,
+        "max": 11,
         "runs": [
-          11
-        ],
-        "min": 11,
-        "max": 11
-      },
-      "esearch_hits": {
-        "runs": [
-          29
-        ],
-        "min": 29,
-        "max": 29
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          28
-        ],
-        "min": 28,
-        "max": 28
-      },
-      "hits_per_query": {
-        "runs": [
-          0.7
-        ],
-        "min": 0.7,
-        "max": 0.7
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          11,
+          6
+        ]
       },
       "per_tier_runs": [
         {
           "level1": 5,
           "level4": 1,
           "level5": 5
+        },
+        {
+          "level1": 2,
+          "level3a": 1,
+          "level4": 1,
+          "level5": 2
         }
       ]
     },
@@ -678,17 +531,23 @@
         "library"
       ],
       "papers": {
-        "runs": [
-          12
-        ],
         "min": 12,
-        "max": 12
+        "max": 13,
+        "runs": [
+          12,
+          13
+        ]
       },
       "per_tier_runs": [
         {
           "level1": 8,
           "classic": 3,
           "level2": 1
+        },
+        {
+          "level1": 8,
+          "classic": 3,
+          "level2": 2
         }
       ]
     },
@@ -698,46 +557,12 @@
         "live"
       ],
       "papers": {
-        "runs": [
-          38
-        ],
         "min": 38,
-        "max": 38
-      },
-      "esearch_hits": {
+        "max": 74,
         "runs": [
-          452
-        ],
-        "min": 452,
-        "max": 452
-      },
-      "esearch_queries": {
-        "runs": [
-          43
-        ],
-        "min": 43,
-        "max": 43
-      },
-      "esearch_empty": {
-        "runs": [
-          11
-        ],
-        "min": 11,
-        "max": 11
-      },
-      "hits_per_query": {
-        "runs": [
-          10.5
-        ],
-        "min": 10.5,
-        "max": 10.5
-      },
-      "search_terms": {
-        "runs": [
-          7
-        ],
-        "min": 7,
-        "max": 7
+          38,
+          74
+        ]
       },
       "per_tier_runs": [
         {
@@ -747,6 +572,14 @@
           "level3b": 1,
           "level4": 10,
           "level5": 10
+        },
+        {
+          "level1": 19,
+          "level2": 7,
+          "level3a": 22,
+          "level3b": 1,
+          "level4": 16,
+          "level5": 9
         }
       ]
     },
@@ -756,11 +589,12 @@
         "library"
       ],
       "papers": {
+        "min": 16,
+        "max": 30,
         "runs": [
-          30
-        ],
-        "min": 30,
-        "max": 30
+          30,
+          16
+        ]
       },
       "per_tier_runs": [
         {
@@ -768,8 +602,13 @@
           "level1": 25,
           "classic": 2,
           "level3a": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 15
         }
       ]
     }
-  }
+  },
+  "provisional": false
 }
