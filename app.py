@@ -316,7 +316,7 @@ def _safe_papers(papers: list) -> list:
                # the UI can point a clinician at it rather than just hiding the
                # stale one — and the whitelist has silently dropped provenance
                # fields twice before.
-               "superseded_by"}
+               "superseded_by", "is_reference_text"}
     return [{k: v for k, v in p.items() if k in ALLOWED} for p in (papers or [])]
 
 
@@ -578,6 +578,11 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             by_tier = {}
             for p in all_rag:
                 tier = (p.get("level_key") or "").strip()
+                # Retracted rows are excluded by search() already; this is the
+                # second lock. Without it the unlabelled-fallback below would
+                # re-band a 'retracted' tier to level5 and hand it to Claude.
+                if tier == "retracted" or p.get("has_retraction"):
+                    continue
                 # An unlabelled paper has an UNKNOWN design. Placing it in the
                 # weakest tier is the safe direction: it can still inform the
                 # answer but can never masquerade as high-tier evidence.

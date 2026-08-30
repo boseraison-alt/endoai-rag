@@ -883,6 +883,12 @@ LEVEL_SCORES = {
     # for anatomy / microbiology / pulp-biology questions instead of being
     # buried by 30+ year recency penalties they can never overcome.
     "classic":  75,
+    # Terminal tier for rows PubMed marks Retracted Publication. Deliberately
+    # NOT in TIER_ORDER: absence from that list is this codebase's mechanism
+    # for "never rendered to Claude" (_build_evidence_context iterates it), so
+    # a retracted row is invisible to synthesis by construction while admin
+    # and bibliography views can still label it honestly.
+    "retracted": 0,
 }
 
 # Strict tier hierarchy — used to enforce within-tier synthesis.
@@ -908,6 +914,7 @@ TIER_LABEL = {
     "level4":   "Level IV — Case Series",
     "level5":   "Level V — Expert Opinion / Reviews",
     "classic":  "Classic / Foundational (San Antonio Guide)",
+    "retracted": "Retracted — excluded from evidence",
 }
 
 # ── JOURNAL IMPACT FACTORS ───────────────────────────────
@@ -1340,6 +1347,12 @@ def format_provenance_badges(paper: dict) -> str:
     if paper.get("superseded_by"):
         badges.append(f"SUPERSEDED — a newer version exists, see PMID "
                       f"{paper['superseded_by']}")
+    # Library rows predating the is_reference_text field have journal
+    # backfilled to the book title by the migration, so the journal match
+    # covers them without a schema change.
+    if paper.get("is_reference_text") or \
+            "statpearls" in (paper.get("journal") or "").lower():
+        badges.append("REFERENCE TEXT — textbook chapter, not primary research")
     if paper.get("medline_indexed") is False:
         badges.append("not MEDLINE-indexed")
 
@@ -1455,6 +1468,32 @@ def _merge_corrections_and_registries(ids: list, metadata: dict) -> None:
             n_err += 1
         if entry["registry_ids"]:
             n_reg += 1
+
+    # Book records (StatPearls chapters, NBK ids) come back as
+    # PubmedBookArticle, which the loop above never sees — so they used to get
+    # NO provenance at all (no pubtypes, no MEDLINE status, no COI, no
+    # corrections) and sailed through at whatever tier the search ran under;
+    # three sat at Level I scoring 67. Their PMID lives at BookDocument/PMID,
+    # not MedlineCitation/PMID.
+    for book in root.iter("PubmedBookArticle"):
+        pmid_el = book.find(".//BookDocument/PMID")
+        if pmid_el is None or not pmid_el.text:
+            continue
+        entry = metadata.get(pmid_el.text.strip())
+        if entry is None:
+            continue
+        entry["is_book"] = True
+        title_el = book.find(".//BookDocument/Book/BookTitle")
+        if title_el is not None and (title_el.text or "").strip():
+            entry["book_title"] = title_el.text.strip()
+        ptypes = [(pt.text or "").strip() for pt in book.iter("PublicationType")]
+        if ptypes:
+            entry["pubtypes"] = [p for p in ptypes if p]
+        # Books are not MEDLINE-indexed journal articles.
+        entry["medline_indexed"] = False
+        coi_el = book.find(".//CoiStatement")
+        if coi_el is not None and (coi_el.text or "").strip():
+            entry["coi_statement"] = " ".join((coi_el.text or "").split())[:1000]
 
     if n_err or n_reg:
         print(f"    [pubmed_xml] {n_err} paper(s) with corrections, "
@@ -2032,15 +2071,25 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             # meta-analysis) and stamped it on every unrelated paper.
             _parts      = _per_pmid.get(pmid, {})
             paper_text  = _parts.get('abstract', '') or ''
-            paper_is_review = is_review_design(level_key, paper_text)
-            sample_size     = extract_sample_size(paper_text, level_key)
+
+            # Reference-text chapters (StatPearls etc., PubmedBookArticle
+            # records) are narrative summaries, not studies of the design this
+            # tier searched for. The tier override has to happen BEFORE
+            # scoring, or the book keeps the design premium of the tier it was
+            # retrieved under — which is exactly how three textbook chapters
+            # ended up at Level I scoring 67.
+            is_book   = bool(meta.get("is_book"))
+            eff_level = "level5" if is_book else level_key
+
+            paper_is_review = is_review_design(eff_level, paper_text)
+            sample_size     = extract_sample_size(paper_text, eff_level)
             followup        = extract_followup_period(paper_text)
             followup_months = followup[0] if followup else None
-            journal_name    = meta.get("journal", "")
+            journal_name    = meta.get("journal", "") or meta.get("book_title", "")
             if_val, if_pts  = get_impact_factor(journal_name)
 
             score, breakdown = score_paper(
-                level_key,
+                eff_level,
                 meta["year"],
                 meta["citations"],
                 sample_size,
@@ -2068,7 +2117,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             # quality, and none should outweigh study design (39%). Each is
             # also surfaced as a badge so the clinician sees the reason.
             is_registered, reg_source = detect_preregistration(
-                level_key, meta.get("registry_ids") or [], paper_text
+                eff_level, meta.get("registry_ids") or [], paper_text
             )
             if is_registered:
                 score = round(min(score * 1.05, 100.0), 1)   # pre-registered trial/SR
@@ -2094,7 +2143,10 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 # so write-back inserted live results with an empty level_key —
                 # they were then banded to the weakest tier on every later
                 # query, quietly burying good RCTs as Level V evidence.
-                "level_key":       level_key,
+                # (eff_level, not level_key: book records are overridden to
+                # level5 regardless of the tier the search ran under.)
+                "level_key":       eff_level,
+                "is_reference_text": is_book,
                 "year":            meta["year"],
                 "citations":       meta["citations"],
                 "authors":         meta.get("authors", ""),
