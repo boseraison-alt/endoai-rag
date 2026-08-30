@@ -78,7 +78,13 @@ def _init_pool():
         with _pool_lock:
             if _pool is None:
                 minc = int(os.getenv("DB_POOL_MIN", "1"))
-                maxc = int(os.getenv("DB_POOL_MAX", "10"))
+                # Default raised 10 -> 32 (2026-08-30). Three parallelism features landed in
+                # one batch: 6 tier-fetch workers, 4 curriculum workers, and streaming.
+                # 4 modules x 6 workers = 24 potential concurrent borrowers, and
+                # ThreadedConnectionPool RAISES on exhaustion rather than blocking, so the
+                # only combination that could hard-fail is priced out here. Neon's
+                # connection cap is far above 32; idle pooled connections cost nothing.
+                maxc = int(os.getenv("DB_POOL_MAX", "32"))
                 _pool = psycopg2.pool.ThreadedConnectionPool(
                     minc, maxc, dsn=DATABASE_URL,
                     # Survive Neon dropping idle connections between borrows.
