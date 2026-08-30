@@ -83,6 +83,20 @@ class TestRateLimiter:
             endo_ai._ncbi_rate_limit()
         assert time.perf_counter() - t0 >= 1 / endo_ai.NCBI_RATE_WITHOUT_KEY - 0.02
 
+    def test_ncbi_get_itself_actually_paces(self, monkeypatch):
+        """Testing _ncbi_rate_limit alone is not enough: a mutation that makes
+        ncbi_get skip the limiter passes every test that calls the limiter
+        directly. Drive the wrapper and time it."""
+        monkeypatch.setenv("NCBI_API_KEY", "k")
+        monkeypatch.setattr(endo_ai.requests, "get",
+                            lambda url, **kw: type("R", (), {"status_code": 200})())
+        endo_ai._ncbi_last_call[0] = 0.0
+        t0 = time.perf_counter()
+        for _ in range(3):
+            endo_ai.ncbi_get("https://eutils.example/esearch.fcgi")
+        assert time.perf_counter() - t0 >= 2 / endo_ai.NCBI_RATE_WITH_KEY - 0.02, \
+            "ncbi_get is not applying the rate limiter"
+
     def test_every_ncbi_endpoint_goes_through_the_limiter(self):
         """A bare requests.get to eutils bypasses pacing silently."""
         src = Path(endo_ai.__file__).read_text(encoding="utf-8")
