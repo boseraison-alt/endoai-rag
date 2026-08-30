@@ -7,11 +7,24 @@
      actions authenticate via POST /admin/login, which sets a signed HttpOnly
      session cookie. Page source stays secret-free. -->
 <title>Endo AI — Evidence-Based Clinical Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Typography from the espresso preview the user picked (2026-08-31):
+   Inter for UI/body, Instrument Serif for the editorial voice — brand,
+   the asked question, and answer headings. Instrument Serif ships in
+   weight 400 only, so serif elements set font-weight 400 explicitly;
+   a bold weight would be faux-bolded by the browser and look smeared. */
+:root {
+  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
   background: #e8ecf2;
   color: #1e2840;
   height: 100vh;
@@ -354,7 +367,7 @@ video.media-video {
   display: flex; align-items: center; justify-content: center;
   font-weight: 800; font-size: 15px; color: #ffffff;
 }
-.brand-name { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
+.brand-name { font-family: var(--font-serif); font-size: 22px; font-weight: 400; letter-spacing: 0.01em; }
 .brand-tag  { font-size: 12px; color: #4c586c; }
 
 /* ── Mode tabs ── */
@@ -1508,11 +1521,12 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 .answer-card-meta { flex: 1; }
 
 .answer-card-question {
-  font-size: 15px;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 400;
   color: #1e2840;
   margin-bottom: 7px;
-  line-height: 1.4;
+  line-height: 1.25;
 }
 
 .answer-tags {
@@ -1541,21 +1555,25 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 
 /* ── Answer markdown ── */
 .answer-content h2 {
-  font-size: 11px;
-  font-weight: 700;
-  color: #4c586c;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin: 22px 0 10px;
+  /* Was an 11px uppercase micro-label; the espresso preview renders section
+     heads as quiet serif headlines (h2.sec) instead. */
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: #1e2840;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  margin: 24px 0 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid #fcfcfd;
 }
 .answer-content h2:first-child { margin-top: 0; }
 
 .answer-content h3 {
-  font-size: 13px;
-  font-weight: 700;
-  color: #4c586c;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 400;
+  color: #2f394e;
   margin: 16px 0 6px;
 }
 
@@ -2311,7 +2329,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   color: #2f394e;
   line-height: 1.7;
   white-space: pre-wrap;
-  font-family: Georgia, serif;
+  font-family: var(--font-serif);
   margin-top: 12px;
   max-height: 320px;
   overflow-y: auto;
@@ -4799,6 +4817,18 @@ function renderAnswerWithBox(text, isPartial) {
   return { box: box, body: renderAnswer(rest) };
 }
 
+// The engine emits section headings in ALL-CAPS ("## EVIDENCE SUMMARY").
+// That was fine when h2 was an 11px uppercase micro-label; in the Instrument
+// Serif headline style they read as shouting. Sentence-case a heading only
+// when it is entirely upper-case — mixed-case headings (drug names, "MTA vs
+// Biodentine") pass through untouched, and CSS text-transform can't do this
+// because the source text itself is upper-case.
+function deShout(t) {
+  var letters = t.replace(/[^A-Za-z]/g, '');
+  if (!letters || letters !== letters.toUpperCase()) return t;
+  return t.charAt(0) + t.slice(1).toLowerCase();
+}
+
 function renderAnswer(text) {
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -4806,9 +4836,9 @@ function renderAnswer(text) {
     // validation blocks) would otherwise render as literal "&gt;" scruff.
     .replace(/^&gt;\s?/gm, '')
     .replace(/^---$/gm, '<hr>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^### (.+)$/gm, function(_, t) { return '<h3>' + deShout(t) + '</h3>'; })
+    .replace(/^## (.+)$/gm,  function(_, t) { return '<h2>' + deShout(t) + '</h2>'; })
+    .replace(/^# (.+)$/gm,   function(_, t) { return '<h2>' + deShout(t) + '</h2>'; })
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     // Inline provenance markers [[PMID:N]] → clickable author-style citation
     // that opens the abstract side panel. Must run BEFORE the single-bracket
