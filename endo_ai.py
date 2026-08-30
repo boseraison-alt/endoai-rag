@@ -226,43 +226,7 @@ import random as _random
 _RETRYABLE_STATUS  = {502, 503, 504, 529}
 _RETRY_BACKOFF_SEC = [2, 5, 12, 30]   # 4 retries → 5 attempts total
 
-def _invoke_claude(client, *, function_name: str = "claude", **kwargs):
-    """Wrap client.messages.create with retry-on-transient-error.
-
-    Pass through kwargs identically to client.messages.create. On 529 / 503 /
-    504 / 429 / connection error, sleep with exponential backoff + jitter and
-    retry. Re-raises the original error after all attempts exhausted.
-    """
-    last_exc = None
-    for attempt in range(len(_RETRY_BACKOFF_SEC) + 1):
-        try:
-            return client.messages.create(**kwargs)
-        except anthropic.RateLimitError as e:
-            last_exc = e
-            reason = "rate_limit (429)"
-        except anthropic.APIStatusError as e:
-            last_exc = e
-            status = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
-            if status not in _RETRYABLE_STATUS:
-                # 4xx caller error — no point retrying
-                raise
-            reason = f"status {status}"
-        except anthropic.APIConnectionError as e:
-            last_exc = e
-            reason = f"connection error ({type(e).__name__})"
-
-        if attempt >= len(_RETRY_BACKOFF_SEC):
-            print(f"  [{function_name}] giving up after {attempt+1} attempts ({reason})")
-            raise last_exc
-
-        sleep_s = _RETRY_BACKOFF_SEC[attempt] + _random.uniform(0, 1.5)
-        print(f"  [{function_name}] {reason} — retry {attempt+1}/{len(_RETRY_BACKOFF_SEC)} in {sleep_s:.1f}s")
-        _time.sleep(sleep_s)
-
-    raise last_exc  # unreachable, satisfies linters
-
-
-# ── Streaming synthesis ───────────────────────────────────
+# ── Streaming ─────────────────────────────────────────────
 # Publish cadence for partial answers. The browser polls /status, and one job
 # write per token would both hammer that endpoint and take the jobs lock a few
 # thousand times per answer. Publish when EITHER threshold trips, whichever
@@ -283,9 +247,8 @@ class StreamAborted(RuntimeError):
         super().__init__(message)
 
 
-def _invoke_claude_streaming(client, *, function_name: str = "claude",
-                             on_partial=None, abort_cb=None, **kwargs):
-    """Streaming twin of `_invoke_claude`.
+def _stream_once(client, *, on_partial=None, abort_cb=None, **kwargs):
+    """One streamed attempt. Reached only via `_invoke_claude(stream=True)`.
 
     Returns the same final `Message` object `client.messages.create()` would
     have returned, so every downstream consumer (cost log, validators, cache,
@@ -300,43 +263,68 @@ def _invoke_claude_streaming(client, *, function_name: str = "claude",
     `abort_cb()` is polled once per stream event; a true result raises
     StreamAborted, which closes the HTTP stream via the context manager.
     """
+    chunks = []
+    since_publish = 0
+    with client.messages.stream(**kwargs) as stream:
+        last_publish = _time.monotonic()
+        for event in stream:
+            if abort_cb is not None and abort_cb():
+                raise StreamAborted()
+            if getattr(event, "type", None) != "content_block_delta":
+                continue
+            delta = getattr(event, "delta", None)
+            if getattr(delta, "type", None) != "text_delta":
+                continue
+            text = getattr(delta, "text", "") or ""
+            if not text:
+                continue
+            chunks.append(text)
+            since_publish += 1
+            now = _time.monotonic()
+            if on_partial is not None and (
+                since_publish >= STREAM_PARTIAL_MIN_DELTAS
+                or (now - last_publish) >= STREAM_PARTIAL_MIN_INTERVAL
+            ):
+                on_partial("".join(chunks))
+                since_publish = 0
+                last_publish  = now
+        message = stream.get_final_message()
+
+    # Flush the tail so the displayed partial matches what the model actually
+    # said before the guardrails start running.
+    if on_partial is not None and chunks and since_publish:
+        on_partial("".join(chunks))
+    return message
+
+
+def _invoke_claude(client, *, function_name: str = "claude", stream: bool = False,
+                   on_partial=None, abort_cb=None, **kwargs):
+    """Wrap client.messages.create with retry-on-transient-error.
+
+    Pass through kwargs identically to client.messages.create. On 529 / 503 /
+    504 / 429 / connection error, sleep with exponential backoff + jitter and
+    retry. Re-raises the original error after all attempts exhausted.
+
+    THIS IS THE ONLY SEAM. Every Claude call in this module goes through this
+    one function, streaming included, so a test that stubs `_invoke_claude`
+    stubs the whole module offline. Do not call `client.messages.create` or
+    `client.messages.stream` anywhere else — `tests/test_streaming.py`
+    ::test_no_network_escapes_when_the_seam_is_stubbed pins that.
+
+    `stream=True` switches to `client.messages.stream()`. It returns the same
+    final Message object either way, so callers and everything downstream of
+    them are identical between the two modes. See `_stream_once` for the
+    partial-publishing contract.
+    """
     last_exc = None
     for attempt in range(len(_RETRY_BACKOFF_SEC) + 1):
-        chunks = []
         try:
-            with client.messages.stream(**kwargs) as stream:
-                since_publish = 0
-                last_publish  = _time.monotonic()
-                for event in stream:
-                    if abort_cb is not None and abort_cb():
-                        raise StreamAborted()
-                    if getattr(event, "type", None) != "content_block_delta":
-                        continue
-                    delta = getattr(event, "delta", None)
-                    if getattr(delta, "type", None) != "text_delta":
-                        continue
-                    text = getattr(delta, "text", "") or ""
-                    if not text:
-                        continue
-                    chunks.append(text)
-                    since_publish += 1
-                    now = _time.monotonic()
-                    if on_partial is not None and (
-                        since_publish >= STREAM_PARTIAL_MIN_DELTAS
-                        or (now - last_publish) >= STREAM_PARTIAL_MIN_INTERVAL
-                    ):
-                        on_partial("".join(chunks))
-                        since_publish = 0
-                        last_publish  = now
-                message = stream.get_final_message()
-
-            # Flush the tail so the displayed partial matches what the model
-            # actually said before the guardrails start running.
-            if on_partial is not None and chunks and since_publish:
-                on_partial("".join(chunks))
-            return message
-
+            if stream:
+                return _stream_once(client, on_partial=on_partial,
+                                    abort_cb=abort_cb, **kwargs)
+            return client.messages.create(**kwargs)
         except StreamAborted:
+            # A user cancellation is not a transient error.
             raise
         except anthropic.RateLimitError as e:
             last_exc = e
@@ -345,6 +333,7 @@ def _invoke_claude_streaming(client, *, function_name: str = "claude",
             last_exc = e
             status = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
             if status not in _RETRYABLE_STATUS:
+                # 4xx caller error — no point retrying
                 raise
             reason = f"status {status}"
         except anthropic.APIConnectionError as e:
@@ -3732,7 +3721,8 @@ Clinical Question: {question}"""
         except Exception as e:      # pragma: no cover — defensive
             print(f"  [stream] partial publish failed: {type(e).__name__}: {e}")
 
-    message = _invoke_claude_streaming(client, function_name="ask_clinical_question",
+    message = _invoke_claude(client, function_name="ask_clinical_question",
+        stream=True,
         on_partial=(_publish_partial if stream_cb is not None else None),
         abort_cb=abort_cb,
         model=MODELS["reasoning_heavy"],
@@ -4639,8 +4629,26 @@ class _CurriculumProgress:
 
 
 def _run_curriculum_module(idx: int, mod: dict, question: str, total: int,
-                           progress: "_CurriculumProgress",
-                           abort_evt) -> dict:
+                           progress: "_CurriculumProgress", abort_evt) -> dict:
+    """Thread entry point for one module. See _curriculum_module_body.
+
+    The only thing this adds is raising the abort flag on the way out of a
+    failure. It has to happen here, not in the orchestrator: with fewer workers
+    than modules, the worker thread picks up the next module the instant this
+    one's future settles — before the main thread has woken from as_completed —
+    and a run that has already lost a module should not pay for four more.
+    """
+    try:
+        return _curriculum_module_body(idx, mod, question, total,
+                                       progress, abort_evt)
+    except BaseException:
+        abort_evt.set()
+        raise
+
+
+def _curriculum_module_body(idx: int, mod: dict, question: str, total: int,
+                            progress: "_CurriculumProgress",
+                            abort_evt) -> dict:
     """Steps B + C for ONE module: retrieval, evidence gate, writing, validation.
 
     Runs on a worker thread. Returns
