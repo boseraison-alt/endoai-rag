@@ -34,6 +34,61 @@ NUM_PAPERS = 20
 
 NCBI_EUTILS_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 
+# ── NCBI RATE LIMITER ────────────────────────────────────
+# NCBI allows 3 requests/second without an API key and 10 with one. There was
+# no limiter at all: ten call sites fired as fast as the code reached them,
+# which was survivable only because everything ran sequentially. B2 parallelises
+# the tier fetches, so a shared limiter is the prerequisite — without it,
+# parallelism turns a working pipeline into a 429 generator.
+#
+# Deliberately set one below each documented ceiling. The published limit is
+# enforced per-second server-side with its own clock; running exactly at it
+# means a burst that straddles a second boundary gets throttled, and NCBI
+# answers a violation with a 429 that costs far more than the request saved.
+NCBI_RATE_WITH_KEY    = 9.0
+NCBI_RATE_WITHOUT_KEY = 3.0
+
+import threading as _ncbi_thread   # this block sits above the main
+import time as _ncbi_time          # threading/time imports below
+_ncbi_rate_lock = _ncbi_thread.Lock()
+_ncbi_last_call = [0.0]
+
+
+def _ncbi_rate_limit() -> None:
+    """Block until the next NCBI request is allowed. Thread-safe.
+
+    Serialises only the SPACING decision, not the request: the lock is released
+    before the caller performs its HTTP call, so N threads still overlap their
+    network waits while their departures stay correctly spaced.
+    """
+    rate = (NCBI_RATE_WITH_KEY if (os.getenv("NCBI_API_KEY") or "").strip()
+            else NCBI_RATE_WITHOUT_KEY)
+    min_gap = 1.0 / rate
+    with _ncbi_rate_lock:
+        wait = _ncbi_last_call[0] + min_gap - _ncbi_time.perf_counter()
+        if wait > 0:
+            _ncbi_time.sleep(wait)
+        _ncbi_last_call[0] = _ncbi_time.perf_counter()
+
+
+def ncbi_get(url: str, **kwargs):
+    """requests.get for NCBI endpoints, rate-limited. Use this, never
+    requests.get directly, or the limiter can be bypassed silently."""
+    _ncbi_rate_limit()
+    return requests.get(url, **kwargs)
+
+
+def _warn_if_no_ncbi_key() -> None:
+    """One line at startup. An absent key is not an error — it is a 3x
+    slowdown, and the only way to know is to be told."""
+    if not (os.getenv("NCBI_API_KEY") or "").strip():
+        print("  [ncbi] No NCBI_API_KEY set — limited to "
+              f"{NCBI_RATE_WITHOUT_KEY:.0f} req/sec instead of "
+              f"{NCBI_RATE_WITH_KEY:.0f}. Register a free key at "
+              "https://www.ncbi.nlm.nih.gov/account/settings/ and add "
+              "NCBI_API_KEY=... to .env")
+
+
 def _ncbi_params(extra: dict = None) -> dict:
     """Merge caller params with NCBI tool/email identifiers and api_key (if set)."""
     p = {
@@ -190,6 +245,106 @@ def _invoke_claude(client, *, function_name: str = "claude", **kwargs):
             status = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
             if status not in _RETRYABLE_STATUS:
                 # 4xx caller error — no point retrying
+                raise
+            reason = f"status {status}"
+        except anthropic.APIConnectionError as e:
+            last_exc = e
+            reason = f"connection error ({type(e).__name__})"
+
+        if attempt >= len(_RETRY_BACKOFF_SEC):
+            print(f"  [{function_name}] giving up after {attempt+1} attempts ({reason})")
+            raise last_exc
+
+        sleep_s = _RETRY_BACKOFF_SEC[attempt] + _random.uniform(0, 1.5)
+        print(f"  [{function_name}] {reason} — retry {attempt+1}/{len(_RETRY_BACKOFF_SEC)} in {sleep_s:.1f}s")
+        _time.sleep(sleep_s)
+
+    raise last_exc  # unreachable, satisfies linters
+
+
+# ── Streaming synthesis ───────────────────────────────────
+# Publish cadence for partial answers. The browser polls /status, and one job
+# write per token would both hammer that endpoint and take the jobs lock a few
+# thousand times per answer. Publish when EITHER threshold trips, whichever
+# comes first — the delta count paces a fast stream, the interval guarantees
+# the first words appear quickly even when the model is slow to start.
+STREAM_PARTIAL_MIN_DELTAS   = 40     # ~40 text deltas
+STREAM_PARTIAL_MIN_INTERVAL = 0.5    # ...or 500 ms
+
+
+class StreamAborted(RuntimeError):
+    """abort_cb() went true mid-stream.
+
+    Subclasses RuntimeError and carries 'Cancelled' in its message so the
+    existing `except RuntimeError: if "Cancelled" in str(e)` handlers keep
+    working unchanged.
+    """
+    def __init__(self, message: str = "Cancelled by user"):
+        super().__init__(message)
+
+
+def _invoke_claude_streaming(client, *, function_name: str = "claude",
+                             on_partial=None, abort_cb=None, **kwargs):
+    """Streaming twin of `_invoke_claude`.
+
+    Returns the same final `Message` object `client.messages.create()` would
+    have returned, so every downstream consumer (cost log, validators, cache,
+    audit) is unchanged and always sees the COMPLETE text.
+
+    `on_partial(text_so_far)` receives the accumulated RAW model text at the
+    cadence above — never per token, and never anything a guardrail has
+    touched. Guardrail output is appended by the caller after this function
+    has returned, which is what keeps a half-written citation from ever
+    reaching `validate_evidence_mapping` / `verify_citation_support`.
+
+    `abort_cb()` is polled once per stream event; a true result raises
+    StreamAborted, which closes the HTTP stream via the context manager.
+    """
+    last_exc = None
+    for attempt in range(len(_RETRY_BACKOFF_SEC) + 1):
+        chunks = []
+        try:
+            with client.messages.stream(**kwargs) as stream:
+                since_publish = 0
+                last_publish  = _time.monotonic()
+                for event in stream:
+                    if abort_cb is not None and abort_cb():
+                        raise StreamAborted()
+                    if getattr(event, "type", None) != "content_block_delta":
+                        continue
+                    delta = getattr(event, "delta", None)
+                    if getattr(delta, "type", None) != "text_delta":
+                        continue
+                    text = getattr(delta, "text", "") or ""
+                    if not text:
+                        continue
+                    chunks.append(text)
+                    since_publish += 1
+                    now = _time.monotonic()
+                    if on_partial is not None and (
+                        since_publish >= STREAM_PARTIAL_MIN_DELTAS
+                        or (now - last_publish) >= STREAM_PARTIAL_MIN_INTERVAL
+                    ):
+                        on_partial("".join(chunks))
+                        since_publish = 0
+                        last_publish  = now
+                message = stream.get_final_message()
+
+            # Flush the tail so the displayed partial matches what the model
+            # actually said before the guardrails start running.
+            if on_partial is not None and chunks and since_publish:
+                on_partial("".join(chunks))
+            return message
+
+        except StreamAborted:
+            raise
+        except anthropic.RateLimitError as e:
+            last_exc = e
+            reason = "rate_limit (429)"
+        except anthropic.APIStatusError as e:
+            last_exc = e
+            status = getattr(e, "status_code", None) or getattr(getattr(e, "response", None), "status_code", None)
+            if status not in _RETRYABLE_STATUS:
                 raise
             reason = f"status {status}"
         except anthropic.APIConnectionError as e:
@@ -1597,7 +1752,7 @@ def _merge_corrections_and_registries(ids: list, metadata: dict) -> None:
     from defusedxml import ElementTree as DET
 
     fetch_params = _ncbi_params({"db": "pubmed", "id": ",".join(ids), "retmode": "xml"})
-    resp = requests.get(f"{NCBI_EUTILS_BASE}/efetch.fcgi", params=fetch_params, timeout=25)
+    resp = ncbi_get(f"{NCBI_EUTILS_BASE}/efetch.fcgi", params=fetch_params, timeout=25)
     if resp.status_code != 200:
         return
     root = DET.fromstring(resp.text)
@@ -1713,7 +1868,7 @@ def fetch_metadata(ids):
             "id":      ",".join(ids),
             "retmode": "json",
         })
-        r    = requests.get(summary_url, params=summary_params, timeout=10)
+        r    = ncbi_get(summary_url, params=summary_params, timeout=10)
         data = r.json().get("result", {})
 
         for pmid in ids:
@@ -1785,7 +1940,7 @@ def fetch_metadata(ids):
             "linkname": "pubmed_pubmed_citedin",
             "retmode":  "json",
         })
-        r         = requests.get(elink_url, params=elink_params, timeout=10)
+        r         = ncbi_get(elink_url, params=elink_params, timeout=10)
         link_data = r.json()
 
         linksets = link_data.get("linksets", [])
@@ -2130,12 +2285,23 @@ ENDO_DOMAIN_FILTER = (
 _PMID_FORMAT_RE = re.compile(r"^\d{1,9}$")
 
 
+# cost_log.jsonl has had _COST_LOG_LOCK and evidence_mapping.jsonl _EVMAP_LOG_LOCK
+# since they were written; this log had neither, which was invisible while every
+# esearch came from one thread. The curriculum builder now retrieves four modules
+# concurrently, so two threads can be inside the append at once — and a torn line
+# in the proof-of-fetch log destroys exactly the record that proves a PMID came
+# from NCBI rather than from a model.
+_PUBMED_AUDIT_LOCK = _cost_thread.Lock()
+
+
 def _pubmed_audit_log(label: str, level_key: str, search_term: str,
                        returned_pmids: list, http_status: int, ms: int) -> None:
     """Append-only proof-of-fetch log: every esearch call we make against NCBI
     is recorded with the exact search term, returned PMIDs, HTTP status, and
     latency. This is the audit trail showing PMIDs came from a live NCBI
-    response — not synthesised. Stored in pubmed_audit.jsonl."""
+    response — not synthesised. Stored in pubmed_audit.jsonl.
+
+    Thread-safe: serialised on _PUBMED_AUDIT_LOCK."""
     rec = {
         "ts":           datetime.now().isoformat(),
         "label":        label,
@@ -2149,8 +2315,10 @@ def _pubmed_audit_log(label: str, level_key: str, search_term: str,
     try:
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             "pubmed_audit.jsonl")
-        with open(path, "a", encoding="utf-8") as fh:
-            fh.write(json.dumps(rec) + "\n")
+        line = json.dumps(rec) + "\n"
+        with _PUBMED_AUDIT_LOCK:
+            with open(path, "a", encoding="utf-8") as fh:
+                fh.write(line)
     except Exception as e:
         print(f"    [pubmed_audit] write failed: {e}")
 
@@ -2178,7 +2346,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         # log records every call so we can prove later that any PMID we
         # showed Claude came from a real NCBI response at a known timestamp.
         t0 = _time.perf_counter()
-        search_response = requests.get(search_url, params=search_params, timeout=20)
+        search_response = ncbi_get(search_url, params=search_params, timeout=20)
         latency_ms = int((_time.perf_counter() - t0) * 1000)
 
         if search_response.status_code != 200:
@@ -2220,7 +2388,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 try:
                     bp = dict(search_params); bp["term"] = broadened
                     t1 = _time.perf_counter()
-                    r2 = requests.get(search_url, params=bp, timeout=20)
+                    r2 = ncbi_get(search_url, params=bp, timeout=20)
                     ms2 = int((_time.perf_counter() - t1) * 1000)
                     if r2.status_code == 200:
                         raw2 = r2.json().get("esearchresult", {}).get("idlist") or []
@@ -2245,7 +2413,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             "rettype": "abstract",
             "retmode": "text",
         })
-        fetch_response = requests.get(fetch_url, params=fetch_params, timeout=20)
+        fetch_response = ncbi_get(fetch_url, params=fetch_params, timeout=20)
         abstract_text  = fetch_response.text
 
         print(f"    Fetching metadata for {len(ids)} papers...")
@@ -2496,6 +2664,8 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 # corpus tracks what clinicians actually ask about. Disable with
 # LIBRARY_WRITE_BACK=false if the library must stay a curated, fixed set.
 LIBRARY_WRITE_BACK = os.getenv("LIBRARY_WRITE_BACK", "true").lower() in ("1", "true", "yes")
+
+_warn_if_no_ncbi_key()
 
 QUALITY_FLOOR    = 50   # global ceiling on any per-tier floor (see below)
 
@@ -3428,7 +3598,23 @@ Output JSON only:
 
 
 # ── ASK CLAUDE ───────────────────────────────────────────
-def ask_clinical_question(question, evidence):
+def ask_clinical_question(question, evidence, stream_cb=None, abort_cb=None):
+    """Synthesise the answer, streaming it out as it is written.
+
+    `stream_cb(partial_markdown)` — optional. Called at the cadence set by
+    STREAM_PARTIAL_MIN_DELTAS / STREAM_PARTIAL_MIN_INTERVAL with the RAW model
+    text written so far. It is the ONLY thing that ever sees partial text.
+
+    `abort_cb()` — optional. Polled once per stream event; a true result raises
+    StreamAborted so a cancelled job stops paying for tokens immediately.
+
+    THE GUARDRAIL INVARIANT: `validate_evidence_mapping` and
+    `verify_citation_support` are called below on `answer`, which is read from
+    the FINAL message after the stream has closed. Neither is reachable from
+    inside `stream_cb`. A truncated citation ("[[PMID:312" mid-token) would
+    read as a fabrication to the validator and produce a false warning about a
+    perfectly good answer, so partial text must never reach them.
+    """
     client = anthropic.Anthropic(api_key=_get_api_key())
 
     system_prompt = """═══════════════════════════════════════════════════════════════
@@ -3533,7 +3719,17 @@ Clinical Question: {question}"""
     # inline [[PMID:N]] provenance. Quality regression here is most user-visible.
     # Revisit only after eval infrastructure exists.
     convo = [{"role": "user", "content": user_message}]
-    message = _invoke_claude(client, function_name="ask_clinical_question",
+
+    def _publish_partial(partial_text: str):
+        # A failure to show progress must never fail the answer.
+        try:
+            stream_cb(partial_text)
+        except Exception as e:      # pragma: no cover — defensive
+            print(f"  [stream] partial publish failed: {type(e).__name__}: {e}")
+
+    message = _invoke_claude_streaming(client, function_name="ask_clinical_question",
+        on_partial=(_publish_partial if stream_cb is not None else None),
+        abort_cb=abort_cb,
         model=MODELS["reasoning_heavy"],
         max_tokens=8000,
         system=system_prompt,
@@ -3544,7 +3740,16 @@ Clinical Question: {question}"""
                         message.usage, mode="review")
     print(f"  Cost: ${cost:.4f} ({message.usage.input_tokens} in / {message.usage.output_tokens} out)")
 
+    # The COMPLETE text, read off the final message — not off the accumulated
+    # stream chunks and not off anything stream_cb was handed. Everything past
+    # this line (validators, support check, cache, audit, cost log) sees this
+    # string and only this string.
     answer = message.content[0].text
+
+    if abort_cb is not None and abort_cb():
+        # Cancelled while the last tokens were in flight — don't spend two more
+        # LLM calls validating an answer nobody will read.
+        raise StreamAborted()
 
     # Validate-and-retry against evidence base
     result = validate_evidence_mapping(answer, evidence)
@@ -3557,6 +3762,10 @@ Clinical Question: {question}"""
         print(f"  RETRY — validation failed: {result['failure_reason']}")
         convo.append({"role": "assistant", "content": answer})
         convo.append({"role": "user", "content": _build_corrective_message(result)})
+        # DELIBERATELY NOT STREAMED. The retry rewrites the whole answer, so
+        # streaming it would rewind text the clinician is already reading and
+        # replace it line by line. The header chips still read "checking…"
+        # throughout, so the pause here is honest rather than a false pass.
         retry = _invoke_claude(client, function_name="ask_clinical_question_retry",
             model=MODELS["reasoning_heavy"],
             max_tokens=8000,
@@ -4306,6 +4515,217 @@ def merge_evidence_bases(per_module_evidence: list) -> dict:
     return combined
 
 
+# ═════════════════════════════════════════════════════════════════════════
+# PARALLEL MODULE GENERATION (steps B + C)
+#
+# Modules are independent of each other until the stitcher: each retrieves its
+# own evidence and writes its own script over that evidence alone. Serially the
+# phase costs sum(module_time); in parallel it costs max(module_time). Measured
+# on the laser curriculum (run 2026-08-30 10:45, reconstructed from
+# pubmed_audit.jsonl + cost_log.jsonl):
+#
+#   module   retrieval   writing   total
+#     1         44.7s     145.1s   189.8s
+#     2        107.9s     138.6s   246.5s
+#     3         70.7s     131.7s   202.4s
+#     4         63.5s     137.4s   200.9s
+#   serial sum  286.8s    552.7s   839.5s      critical path: 246.5s
+#
+# Bounded at 4 workers. What actually bounds this is not CPU:
+#   * NCBI — every eutils request goes through _ncbi_rate_limit(), a
+#     process-wide spacing lock (3 req/s bare, 9 with a key). Extra threads
+#     queue behind it rather than exceeding it, so this module deliberately
+#     adds NO second rate limiter; measured demand is ~0.2 req/s, far under it.
+#   * The psycopg2 ThreadedConnectionPool (DB_POOL_MAX, default 10), which
+#     RAISES rather than blocks when exhausted. One module holds at most one
+#     connection at a time, so 4 workers leaves 6 spare.
+#   * Anthropic — four concurrent Sonnet calls is inside any tier's limit.
+CURRICULUM_MAX_WORKERS = max(1, int(os.getenv("CURRICULUM_MAX_WORKERS", "4")))
+
+# Progress band owned by the parallel module phase (step A ends at 8,
+# the stitcher starts at 82).
+_MODULE_PROGRESS_BASE = 15
+_MODULE_PROGRESS_SPAN = 60
+
+import threading as _curriculum_thread
+from concurrent.futures import ThreadPoolExecutor as _CurriculumPool
+from concurrent.futures import as_completed as _curriculum_as_completed
+
+
+def _is_cancellation(exc: BaseException) -> bool:
+    """Did the progress callback abort us, or did it merely fail?
+
+    app.py's learn-mode callback raises RuntimeError("Cancelled by user") when
+    is_aborted(job_id) goes true. That raise IS the abort signal — it is the only
+    one build_deep_learning_module ever receives. Any other callback failure is a
+    UI problem and must not take down a run that has already been paid for.
+    """
+    return isinstance(exc, RuntimeError) and "cancel" in str(exc).lower()
+
+
+class _CurriculumProgress:
+    """Thread-safe, monotonic progress reporting for the parallel module phase.
+
+    Two things break when N modules report from N threads:
+
+      1. The callback mutates `jobs[job_id]`. app.py's update_job holds
+         jobs_lock, so the dict itself is safe — but nothing serialises the
+         *decision* about what percentage to report, and modules finishing out
+         of order make a per-module percentage jump backwards.
+      2. A smooth ramp stops being meaningful anyway once four modules are all
+         "in progress" at once. So the module phase reports completions —
+         "N of M modules complete" — and the percentage is clamped
+         non-decreasing.
+    """
+
+    def __init__(self, progress_cb):
+        self._cb   = progress_cb
+        self._lock = _curriculum_thread.Lock()
+        self._pct  = 0
+        self._msg  = ""
+        self._done = 0
+
+    def tick(self, pct: int, msg: str) -> None:
+        with self._lock:
+            self._pct = max(self._pct, int(pct))
+            self._msg = msg
+            self._emit()
+
+    def module_complete(self, total: int) -> int:
+        """One module finished, in whatever order. Returns the new done count."""
+        with self._lock:
+            self._done += 1
+            done = self._done
+            self._pct = max(self._pct, _MODULE_PROGRESS_BASE +
+                            int(done / max(total, 1) * _MODULE_PROGRESS_SPAN))
+            self._msg = f"{done} of {total} modules complete"
+            self._emit()
+            return done
+
+    def probe(self) -> None:
+        """Re-emit the current state without moving it.
+
+        Worker threads call this at their stage boundaries for one reason: to
+        give the callback a chance to raise the cancellation that signals an
+        aborted job. It is the parallel equivalent of the serial builder's
+        is_aborted() checkpoints.
+        """
+        with self._lock:
+            self._emit()
+
+    def _emit(self) -> None:
+        if not self._cb:
+            return
+        try:
+            self._cb(self._pct, self._msg)
+        except BaseException as e:      # noqa: BLE001 — deliberate, see below
+            # The old _tick swallowed *everything*, which quietly disabled abort
+            # for the whole learn path: app.py raised "Cancelled by user" into a
+            # bare `except Exception: pass` and the run carried on to completion.
+            # Cancellation now propagates; genuine callback bugs still do not.
+            if _is_cancellation(e):
+                raise
+
+
+def _run_curriculum_module(idx: int, mod: dict, question: str, total: int,
+                           progress: "_CurriculumProgress",
+                           abort_evt) -> dict:
+    """Steps B + C for ONE module: retrieval, evidence gate, writing, validation.
+
+    Runs on a worker thread. Returns
+        {"index", "evidence", "entry", "cost", "elapsed"}
+    and mutates nothing shared — the caller reassembles by "index", so the order
+    modules happen to finish in cannot reach the document. Raises only on
+    cancellation.
+
+    Every gate is the serial one, unchanged: module_has_usable_evidence /
+    MIN_MODULE_PAPERS, the single broadening retry, the "Module not generated"
+    block, and validate_module_output's numeric-parameter-without-citation
+    rejection. A module that failed its gate before still fails it here.
+    """
+    started = _time.perf_counter()
+    num     = idx + 1
+    title   = mod.get("title", f"Module {num}")
+
+    def _bail():
+        return {"index": idx, "evidence": {}, "entry": None, "cost": 0.0,
+                "elapsed": _time.perf_counter() - started, "aborted": True}
+
+    if abort_evt.is_set():
+        return _bail()
+    progress.probe()          # abort checkpoint before we spend anything
+
+    # ── Step B — retrieval for this module ──
+    print(f"\n[curriculum] Step B.{num}/{total} — retrieving: '{title}'")
+    ev = build_evidence_base(mod["search_query"], mode="learn")
+    ok, n_papers = module_has_usable_evidence(ev)
+
+    # Retrieval came back empty or near-empty. Broaden the query once before
+    # giving up — a narrow or over-specified query is the usual cause.
+    if not ok:
+        print(f"  [module {num}] only {n_papers} paper(s) — broadening and retrying")
+        try:
+            broadened = generate_search_terms(
+                f"{mod['title']} (broad concept search; use OR-groups of "
+                f"synonyms, abbreviations and device names)"
+            )
+            ev_retry = build_evidence_base(broadened, mode="learn")
+            ok_retry, n_retry = module_has_usable_evidence(ev_retry)
+            if n_retry > n_papers:
+                ev, ok, n_papers = ev_retry, ok_retry, n_retry
+                print(f"  [module {num}] broadened search found {n_retry} paper(s)")
+        except Exception as e:
+            print(f"  [module {num}] broadened retry failed: {e}")
+
+    if abort_evt.is_set():
+        return _bail()
+    progress.probe()          # abort checkpoint between retrieval and writing
+
+    if not ok:
+        # Still nothing. Emit an explicit gap rather than a module: a numeric
+        # protocol written from no sources is the worst output this system can
+        # produce, and a disclaimer does not redeem it.
+        print(f"  [module {num}] SKIPPED — {n_papers} paper(s), below minimum "
+              f"{MIN_MODULE_PAPERS}")
+        return {
+            "index":   idx,
+            "evidence": ev,
+            "cost":    0.0,
+            "elapsed": _time.perf_counter() - started,
+            "entry": {
+                **mod,
+                "script": _module_not_generated_block(
+                    title, n_papers, mod.get("search_query", "")),
+                "not_generated": True,
+            },
+        }
+
+    # ── Step C — writing for this module ──
+    script, cost = write_curriculum_module(mod, ev, question, idx=num, total=total)
+
+    # Even with evidence present, refuse a module that specifies clinical
+    # parameters while citing nothing.
+    verdict = validate_module_output(script, ev)
+    if not verdict["ok"]:
+        print(f"  [module {num}] REJECTED — {verdict['reason']}")
+        return {
+            "index":   idx,
+            "evidence": ev,
+            "cost":    cost,
+            "elapsed": _time.perf_counter() - started,
+            "entry": {
+                **mod,
+                "script": _module_not_generated_block(
+                    title, n_papers, mod.get("search_query", "")),
+                "not_generated": True,
+            },
+        }
+
+    return {"index": idx, "evidence": ev, "cost": cost,
+            "elapsed": _time.perf_counter() - started,
+            "entry": {**mod, "script": script}}
+
+
 def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
     """
     Top-level orchestrator for the agentic curriculum builder.
@@ -4313,96 +4733,110 @@ def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
 
     `progress_cb(percent: int, message: str)` — optional, called between stages
     so the Flask job tracker can update the UI.
-    """
-    def _tick(pct, msg):
-        if progress_cb:
-            try: progress_cb(pct, msg)
-            except Exception: pass
 
+    Steps B (retrieval) and C (writing) run concurrently across modules on a
+    pool of at most CURRICULUM_MAX_WORKERS threads. Step D (the stitcher) is
+    strictly after every module has finished, and module order in the output is
+    the syllabus order regardless of completion order.
+    """
+    progress   = _CurriculumProgress(progress_cb)
     total_cost = 0.0
 
-    # Step A — Syllabus
-    _tick(8, "Generating curriculum syllabus...")
+    # ── Step A — Syllabus ──
+    progress.tick(8, "Generating curriculum syllabus...")
     syllabus, c = generate_curriculum_syllabus(question)
     total_cost += c
 
-    # Step B — per-module retrieval
-    n = len(syllabus)
-    per_module_evidence = []
-    modules_with_scripts = []
+    n       = len(syllabus)
+    workers = max(1, min(CURRICULUM_MAX_WORKERS, n))
+    progress.tick(_MODULE_PROGRESS_BASE, f"0 of {n} modules complete")
+    print(f"\n[curriculum] Steps B+C — {n} module(s) across {workers} worker(s)")
 
-    # Reserve 30-65% of progress bar for retrieval (the slow PubMed bit)
-    retrieval_span = 35
-    retrieval_base = 15
-    for i, mod in enumerate(syllabus):
-        pct = retrieval_base + int((i / max(n, 1)) * retrieval_span)
-        _tick(pct, f"Searching evidence for module {i+1}/{n}: {mod['title']}")
-        ev = build_evidence_base(mod["search_query"], mode="learn")
-        per_module_evidence.append(ev)
+    # ── Steps B + C — retrieval and writing, one task per module ──
+    abort_evt = _curriculum_thread.Event()
+    results   = {}
+    cancelled = None
+    phase_t0  = _time.perf_counter()
 
-    # Step C — per-module writing
-    writing_span = 20
-    writing_base = 55
-    for i, (mod, ev) in enumerate(zip(syllabus, per_module_evidence)):
-        pct = writing_base + int((i / max(n, 1)) * writing_span)
-        _tick(pct, f"Writing module {i+1}/{n}: {mod['title']}")
-        ok, n_papers = module_has_usable_evidence(ev)
-
-        # Retrieval came back empty or near-empty. Broaden the query once before
-        # giving up — a narrow or over-specified query is the usual cause.
-        if not ok:
-            print(f"  [module {i+1}] only {n_papers} paper(s) — broadening and retrying")
+    with _CurriculumPool(max_workers=workers,
+                         thread_name_prefix="curriculum") as pool:
+        futures = {
+            pool.submit(_run_curriculum_module, i, mod, question, n,
+                        progress, abort_evt): i
+            for i, mod in enumerate(syllabus)
+        }
+        for fut in _curriculum_as_completed(futures):
+            i = futures[fut]
             try:
-                broadened = generate_search_terms(
-                    f"{mod['title']} (broad concept search; use OR-groups of "
-                    f"synonyms, abbreviations and device names)"
-                )
-                ev_retry = build_evidence_base(broadened, mode="learn")
-                ok_retry, n_retry = module_has_usable_evidence(ev_retry)
-                if n_retry > n_papers:
-                    ev, ok, n_papers = ev_retry, ok_retry, n_retry
-                    print(f"  [module {i+1}] broadened search found {n_retry} paper(s)")
-            except Exception as e:
-                print(f"  [module {i+1}] broadened retry failed: {e}")
+                res = fut.result()
+            except BaseException as e:
+                if _is_cancellation(e):
+                    # Tell every other worker to stop at its next checkpoint.
+                    # We do NOT kill running threads: a half-torn Anthropic call
+                    # is worse than waiting out the one in flight.
+                    abort_evt.set()
+                    cancelled = cancelled or e
+                    continue
+                abort_evt.set()
+                raise
+            if res.get("aborted"):
+                continue
+            results[i] = res
+            try:
+                progress.module_complete(n)
+            except BaseException as e:
+                if _is_cancellation(e):
+                    abort_evt.set()
+                    cancelled = cancelled or e
+                else:
+                    raise
 
-        if not ok:
-            # Still nothing. Emit an explicit gap rather than a module: a
-            # numeric protocol written from no sources is the worst output
-            # this system can produce, and a disclaimer does not redeem it.
-            print(f"  [module {i+1}] SKIPPED — {n_papers} paper(s), below minimum "
-                  f"{MIN_MODULE_PAPERS}")
+    if cancelled is not None:
+        # Same exception type and message the serial builder used to raise, so
+        # app.py's `except RuntimeError` → status="aborted" is unchanged.
+        raise cancelled
+
+    phase_s  = _time.perf_counter() - phase_t0
+    serial_s = sum(r.get("elapsed", 0.0) for r in results.values())
+    for i in sorted(results):
+        print(f"  [module {i+1}] wall {results[i].get('elapsed', 0.0):.1f}s  "
+              f"${results[i].get('cost', 0.0):.4f}")
+    print(f"[curriculum] module phase: {phase_s:.1f}s wall on {workers} worker(s); "
+          f"serial equivalent {serial_s:.1f}s"
+          + (f" ({serial_s / phase_s:.2f}x)" if phase_s > 0 else ""))
+
+    # Reassemble in SYLLABUS order. Completion order must never reach the
+    # document — a curriculum whose modules shuffle run to run is not the same
+    # teaching artefact, and the stitcher writes transitions between whatever
+    # order it is handed.
+    per_module_evidence  = []
+    modules_with_scripts = []
+    for i in range(n):
+        res = results.get(i)
+        if res is None:
+            # A worker that neither produced an entry nor cancelled the run.
+            # Shrinking the curriculum silently is the wrong failure: render the
+            # same explicit gap block the evidence floor renders.
+            mod = syllabus[i]
             modules_with_scripts.append({
                 **mod,
                 "script": _module_not_generated_block(
-                    mod.get("title", f"Module {i+1}"), n_papers,
+                    mod.get("title", f"Module {i+1}"), 0,
                     mod.get("search_query", "")),
                 "not_generated": True,
             })
             continue
+        per_module_evidence.append(res["evidence"])
+        modules_with_scripts.append(res["entry"])
+        total_cost += res["cost"]        # summed in index order → deterministic
 
-        script, c = write_curriculum_module(mod, ev, question, idx=i+1, total=n)
-        total_cost += c
-
-        # Even with evidence present, refuse a module that specifies clinical
-        # parameters while citing nothing.
-        verdict = validate_module_output(script, ev)
-        if not verdict["ok"]:
-            print(f"  [module {i+1}] REJECTED — {verdict['reason']}")
-            script = _module_not_generated_block(
-                mod.get("title", f"Module {i+1}"), n_papers,
-                mod.get("search_query", ""))
-            modules_with_scripts.append({**mod, "script": script, "not_generated": True})
-            continue
-
-        modules_with_scripts.append({**mod, "script": script})
-
-    # Step D — Stitch
-    _tick(82, "Stitching curriculum...")
+    # ── Step D — Stitch (strictly after every module has completed) ──
+    progress.tick(82, "Stitching curriculum...")
     combined = merge_evidence_bases(per_module_evidence)
     final, c = stitch_curriculum(question, modules_with_scripts, combined)
     total_cost += c
 
-    _tick(95, "Finalising...")
+    progress.tick(95, "Finalising...")
     return final, total_cost, combined
 
 
