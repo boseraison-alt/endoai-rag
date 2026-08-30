@@ -18,7 +18,9 @@ not pin its route stops testing the thing it was written for, without failing.
 """
 import argparse
 import json
+import re
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -80,6 +82,101 @@ def _esearch_hits_since(offset):
             if rec.get("level_key") == "level1":
                 terms += 1
     return total, n, empty, terms
+
+
+DIVIDED_MARKER = "The literature is currently divided on this topic"
+MODULE_NOT_GENERATED = "Module not generated"
+# Any numeric clinical parameter — concentrations, energies, times, ISO sizes.
+NUMERIC_PARAM_RE = re.compile(
+    r"\b\d+(?:\.\d+)?\s*(?:%|mJ|mW|W|Hz|mm|mL|ml|mg|s\b|sec\b|min\b|month|year)",
+    re.IGNORECASE)
+
+
+def run_case_with_synthesis(case):
+    """Run the FULL production path — retrieval plus LLM synthesis — through
+    the Flask test client, so the answer-level assertions are evaluated against
+    a real generated answer.
+
+    This costs real money (~$1/case), which is why it is opt-in and limited to
+    SYNTHESIS_SUBSET. It goes through /ask rather than calling the synthesiser
+    directly so that the guardrails, validation and rendering are all exercised
+    exactly as a clinician would hit them.
+    """
+    import endo_ai
+    import app as app_mod
+
+    endo_ai.LIBRARY_WRITE_BACK = False
+
+    # /ask has no force_route parameter — pin it by wrapping the builder for
+    # the duration of this case only.
+    original = app_mod.build_evidence_base_with_progress
+    pinned = case.get("force_route")
+
+    def _pinned_builder(job_id, question, force_route=None):
+        return original(job_id, question, force_route=pinned)
+
+    app_mod.build_evidence_base_with_progress = _pinned_builder
+    try:
+        client = app_mod.app.test_client()
+        r = client.post("/ask", json={"question": case["question"],
+                                      "mode": case.get("mode", "review"),
+                                      "skip_clarify": True})
+        if r.status_code != 200:
+            raise RuntimeError(f"/ask returned {r.status_code}: {r.data[:200]}")
+        job_id = r.get_json()["job_id"]
+        for _ in range(4000):                       # generous: learn mode is slow
+            st = client.get(f"/status/{job_id}").get_json()
+            if st.get("status") in ("complete", "error", "aborted"):
+                break
+            time.sleep(0.5)
+        else:
+            raise TimeoutError("job did not finish")
+    finally:
+        app_mod.build_evidence_base_with_progress = original
+
+    if st.get("status") != "complete":
+        raise RuntimeError(f"job {st.get('status')}: {st.get('error')}")
+
+    answer = st.get("answer") or ""
+    exp = case.get("expect", {})
+    failures = []
+
+    for phrase in exp.get("must_contain", []):
+        if phrase.lower() not in answer.lower():
+            failures.append(f"must_contain {phrase!r} absent from the answer")
+    for phrase in exp.get("must_not_contain", []):
+        if phrase.lower() in answer.lower():
+            failures.append(f"must_not_contain {phrase!r} present in the answer")
+
+    banner = exp.get("banner", "any")
+    has_banner = DIVIDED_MARKER.lower() in answer.lower()
+    if banner == "divided" and not has_banner:
+        failures.append("expected the divided-literature banner, none present")
+    elif banner == "none" and has_banner:
+        failures.append("divided-literature banner present but not expected")
+
+    if exp.get("modules_non_empty") and MODULE_NOT_GENERATED.lower() in answer.lower():
+        n = answer.lower().count(MODULE_NOT_GENERATED.lower())
+        failures.append(f"{n} module(s) not generated for lack of evidence")
+
+    # A module stating numeric clinical parameters with zero citations is the
+    # failure that started all of this (invented Er:YAG settings behind a
+    # disclaimer). Check per-section rather than per-answer.
+    cap = exp.get("max_unsourced_numeric_modules")
+    if cap is not None:
+        unsourced = 0
+        for section in re.split(r"\n##+ ", answer):
+            if NUMERIC_PARAM_RE.search(section) and "[[PMID:" not in section:
+                unsourced += 1
+        if unsourced > cap:
+            failures.append(f"{unsourced} section(s) state numeric clinical "
+                            f"parameters with no citation (max {cap})")
+
+    return {"route": pinned or "?", "papers": len(st.get("papers") or []),
+            "per_tier": {}, "esearch_queries": 0, "esearch_hits": 0,
+            "esearch_empty": 0, "esearch_hits_per_query": None,
+            "search_terms_used": 0, "answer_chars": len(answer),
+            "cost_usd": st.get("cost_usd"), "has_banner": has_banner}, failures
 
 
 def run_case(case):
@@ -212,15 +309,41 @@ def run_case(case):
     return measured, failures
 
 
+# The five cases the synthesis subset runs. Chosen to cover both routes, both
+# modes, and the two topics with a known regression history. Everything else
+# stays retrieval-only: synthesis costs roughly $1 per case.
+SYNTHESIS_SUBSET = [
+    "laser-root-canal-disinfection-live",
+    "laser-root-canal-disinfection-library",
+    "single-vs-multiple-visit",
+    "naocl-concentration",
+    "pips-vs-ultrasonic",
+]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--id", help="run only this case id")
     ap.add_argument("--route", help="run only cases pinned to this route")
     ap.add_argument("--update-baseline", action="store_true",
                     help="rewrite each case's baseline from this run")
+    ap.add_argument("--cheap", action="store_true",
+                    help="retrieval only, no synthesis (this is the DEFAULT; "
+                         "the flag exists to be explicit in scripts)")
+    ap.add_argument("--synthesis-subset", action="store_true",
+                    help="run the 5-case subset WITH LLM synthesis and evaluate "
+                         "answer-level assertions. Costs real money (~$1/case).")
+    ap.add_argument("--diff", action="store_true",
+                    help="print a table against baseline; exit non-zero on any "
+                         "floor breach")
     args = ap.parse_args()
 
     doc, cases = load_cases()
+    if args.synthesis_subset:
+        cases = [c for c in cases if c["id"] in SYNTHESIS_SUBSET]
+        missing = set(SYNTHESIS_SUBSET) - {c["id"] for c in cases}
+        if missing:
+            print(f"WARNING: subset ids not in questions.json: {sorted(missing)}")
     if args.id:
         cases = [c for c in cases if c["id"] == args.id]
     if args.route:
@@ -229,13 +352,19 @@ def main():
         print("no cases matched")
         return 1
 
+    mode_label = ("SYNTHESIS" if args.synthesis_subset else "RETRIEVAL-ONLY")
+    print(f"mode: {mode_label}" + ("" if args.synthesis_subset else
+          "  (no answers generated; must_contain / banner / modules_non_empty "
+          "are NOT evaluated)"))
+
     n_fail = 0
     for case in cases:
         pin = case.get("force_route")
         print(f"\n{'=' * 70}\n{case['id']}"
               f"{f'   [pinned: {pin}]' if pin else '   [route not pinned]'}\n{'=' * 70}")
         try:
-            measured, failures = run_case(case)
+            measured, failures = (run_case_with_synthesis(case)
+                                  if args.synthesis_subset else run_case(case))
         except Exception as e:
             print(f"  ERROR {type(e).__name__}: {e}")
             n_fail += 1
@@ -271,7 +400,11 @@ def main():
         QUESTIONS.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
         print("\nbaselines rewritten")
 
-    print(f"\n{len(cases) - n_fail}/{len(cases)} cases passed")
+    print(f"\n{len(cases) - n_fail}/{len(cases)} cases passed  [{mode_label}]")
+    if not args.synthesis_subset:
+        print("NOTE: answer-level assertions (must_contain, must_not_contain, "
+              "banner, modules_non_empty, max_unsourced_numeric_modules) were "
+              "NOT evaluated. Run --synthesis-subset for those.")
     return 1 if n_fail else 0
 
 
