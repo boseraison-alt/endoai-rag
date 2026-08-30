@@ -4532,6 +4532,13 @@ def merge_evidence_bases(per_module_evidence: list) -> dict:
 #     4         63.5s     137.4s   200.9s
 #   serial sum  286.8s    552.7s   839.5s      critical path: 246.5s
 #
+# Measured again after the change, same question, 4 workers: modules 229.9 /
+# 236.3 / 235.9 / 257.5 s, phase 257.5 s wall against a 959.6 s serial
+# equivalent (3.73x), whole curriculum 1080.7s -> 508.6s (18.01 -> 8.48 min).
+# Cost moved 1.3633 -> 1.4772, entirely on module input tokens (243.8K ->
+# 282.7K): same call count, same models, same max_tokens, larger evidence
+# contexts from the retrieval changes that landed alongside this one.
+#
 # Bounded at 4 workers. What actually bounds this is not CPU:
 #   * NCBI — every eutils request goes through _ncbi_rate_limit(), a
 #     process-wide spacing lock (3 req/s bare, 9 with a key). Extra threads
