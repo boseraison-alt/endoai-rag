@@ -335,6 +335,31 @@ random samples for review rather than a summary count:
 A migration script that prints only totals cannot surface either. Print random
 samples, not top-N, so the sample cannot flatter itself.
 
+### The synthesis assertions earned their keep on the first run
+
+`run_eval.py --synthesis-subset` ran once, 2026-08-30, 4/5 cases passed,
+$1.0541 across 13 LLM calls. The one failure is worth more than the four
+passes.
+
+`single-vs-multiple-visit` asserts `must_contain: ["Cochrane"]`. The answer did
+not mention Cochrane — and it did not cite the review either. CD005296 "Single
+versus multiple visits for endodontic treatment" is the definitive systematic
+review on precisely that question, all three of its versions are in the library,
+and the current one (PMID 36512807, score 70.4, tier `cochrane`, not
+superseded, not retracted) was not among the 8 papers served.
+
+Re-measured immediately afterwards on a fresh query, that paper sits at cosine
+0.61 against the generated search terms and 0.68 against the raw question —
+comfortably above the 0.55 floor and inside the top-100 KNN. So nothing is
+structurally excluding it. The failing run simply generated a query for which
+it fell out.
+
+That is the search-term variance already recorded as the top open item, but
+this is the version of it that matters: not "paper counts move 3x between
+runs", but **"whether the single most authoritative paper on the question
+reaches the clinician depends on which query the generator happened to emit."**
+Retrieval-only runs cannot see this — the count looked fine.
+
 ## Cost
 
 A four-module Deep Learning curriculum with real retrieval costs **~$1.18**
