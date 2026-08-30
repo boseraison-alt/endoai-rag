@@ -1,5 +1,5 @@
 # Endo AI RAG — frozen dependencies
-# Pinned to the versions actually in use (pip freeze, 2026-05). Pin exactly so
+# Pinned to the versions actually in use (pip freeze, 2026-08). Pin exactly so
 # a fresh install can never silently pull an incompatible major (e.g. a new
 # torch/transformers that breaks sentence-transformers embeddings).
 #
@@ -22,7 +22,10 @@ torch==2.11.0
 transformers==5.6.2
 tokenizers==0.22.2
 safetensors==0.7.0
-huggingface-hub>=0.30,<1.0
+# Was pinned >=0.30,<1.0 while 1.12.0 was actually installed and working —
+# a fresh install would have silently downgraded to a different major than
+# the one every test ran against. Pin to the running version.
+huggingface-hub==1.12.0
 numpy==2.4.4
 scipy==1.17.1
 psycopg2-binary==2.9.12
