@@ -1867,6 +1867,18 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
 
 # ── Audio Export ──────────────────────────────────────────
 
+# Caps on client-supplied export text. The export endpoints accept an answer
+# from the browser when no live job matches (history-loaded answers have no
+# server-side job), and that text is fed to a paid TTS API — an unbounded field
+# there is a cheap way to run up a bill or tie up the single worker process.
+MAX_EXPORT_ANSWER_CHARS   = 200_000
+MAX_EXPORT_QUESTION_CHARS = 2_000
+
+
+class ExportSourceTooLarge(ValueError):
+    """Raised by _resolve_export_source; endpoints turn it into a 413."""
+
+
 def _resolve_export_source(data: dict):
     """Return (question, answer) for an export request.
 
@@ -1883,9 +1895,20 @@ def _resolve_export_source(data: dict):
         job = jobs.get(job_id)
     if job and job.get("answer"):
         return job.get("question", ""), job["answer"]
+
+    # Client-supplied fallback. This text is untrusted input that flows into a
+    # paid TTS pipeline, so it is capped: real answers measured across the
+    # library run 7.7k-11.5k chars, and the cap is ~17x the largest observed.
+    # Truncating instead of rejecting would silently narrate half an answer,
+    # so an oversized body is refused outright.
     answer = (data.get("answer") or "").strip()
+    if len(answer) > MAX_EXPORT_ANSWER_CHARS:
+        raise ExportSourceTooLarge(
+            f"answer is {len(answer):,} characters; the limit is "
+            f"{MAX_EXPORT_ANSWER_CHARS:,}")
+    question = (data.get("question") or "").strip()[:MAX_EXPORT_QUESTION_CHARS]
     if answer:
-        return (data.get("question") or "").strip(), answer
+        return question, answer
     return None, None
 
 
@@ -1901,7 +1924,10 @@ def generate_audio_endpoint():
     voice          = data.get("voice", "onyx")
     style          = data.get("style", "lecture")   # "lecture" | "conversation"
 
-    src_question, src_answer = _resolve_export_source(data)
+    try:
+        src_question, src_answer = _resolve_export_source(data)
+    except ExportSourceTooLarge as e:
+        return jsonify({"error": f"Answer too large to export: {e}"}), 413
     if not src_answer:
         return jsonify({"error": "Job not found or no answer to convert"}), 404
 
@@ -2108,7 +2134,10 @@ def generate_slides_endpoint():
     length_minutes = max(5, min(60, length_minutes))
     voice          = data.get("voice", "onyx")
 
-    src_question, src_answer = _resolve_export_source(data)
+    try:
+        src_question, src_answer = _resolve_export_source(data)
+    except ExportSourceTooLarge as e:
+        return jsonify({"error": f"Answer too large to export: {e}"}), 413
     if not src_answer:
         return jsonify({"error": "Job not found or no answer"}), 404
 
@@ -2156,7 +2185,10 @@ def generate_video_endpoint():
     length_minutes = max(5, min(60, length_minutes))
     voice          = data.get("voice", "onyx")
 
-    src_question, src_answer = _resolve_export_source(data)
+    try:
+        src_question, src_answer = _resolve_export_source(data)
+    except ExportSourceTooLarge as e:
+        return jsonify({"error": f"Answer too large to export: {e}"}), 413
     if not src_answer:
         return jsonify({"error": "Job not found or no answer"}), 404
 
