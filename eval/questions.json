@@ -157,15 +157,15 @@
         "cochrane": 1,
         "cochrane_note": "1 genuine Cochrane Database review in every run, down from the falsely-reported 10. This is the stable number and the one to watch.",
         "variance_note": "The 2x spread in paper count tracked term-count flapping (1 vs 3 with parse luck), fixed 2026-08-30 - see post_generator_fix.",
-        "papers": 132,
+        "papers": 116,
         "per_tier": {
           "cochrane": 1,
-          "level1": 65,
-          "level2": 31,
-          "level3a": 13,
-          "level3b": 4,
-          "level4": 11,
-          "level5": 7
+          "level1": 57,
+          "level2": 32,
+          "level3a": 6,
+          "level3b": 3,
+          "level4": 8,
+          "level5": 9
         }
       },
       "post_generator_fix": {
@@ -238,7 +238,7 @@
         "recorded": "2026-08-29",
         "note": "Retrieval only, via scripts/probe_retrieval.py, after the Cochrane tier fix and the 109-row demotion.",
         "route": "library",
-        "papers": 27,
+        "papers": 17,
         "cochrane": 3,
         "level1": 25,
         "classic": 1,
@@ -251,9 +251,7 @@
         ],
         "cochrane_note": "All three are genuine Cochrane Database reviews on adjacent topics, not laser-specific. That is the honest answer for a topic Cochrane has not reviewed.",
         "per_tier": {
-          "cochrane": 1,
-          "level1": 24,
-          "level2": 2
+          "level1": 17
         }
       }
     },
@@ -311,10 +309,10 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 29,
+        "papers": 30,
         "per_tier": {
           "level1": 25,
-          "level2": 1,
+          "level2": 2,
           "level3a": 2,
           "level3b": 1
         }
@@ -339,10 +337,11 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 20,
+        "papers": 19,
         "per_tier": {
-          "level1": 16,
-          "classic": 4
+          "level1": 13,
+          "classic": 5,
+          "level3a": 1
         }
       }
     },
@@ -401,11 +400,13 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 29,
+        "papers": 32,
         "per_tier": {
           "cochrane": 1,
           "level1": 25,
-          "level2": 3
+          "classic": 1,
+          "level2": 4,
+          "level3b": 1
         }
       }
     },
@@ -431,13 +432,14 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 18,
+        "papers": 77,
         "per_tier": {
-          "level1": 1,
-          "level2": 1,
-          "level3a": 4,
-          "level4": 8,
-          "level5": 4
+          "level1": 20,
+          "level2": 16,
+          "level3a": 19,
+          "level3b": 2,
+          "level4": 12,
+          "level5": 8
         }
       }
     },
@@ -460,11 +462,12 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 27,
+        "papers": 30,
         "per_tier": {
           "cochrane": 1,
           "level1": 25,
-          "level3b": 1
+          "level3a": 2,
+          "level3b": 2
         }
       }
     },
@@ -489,10 +492,10 @@
         "route": "library",
         "papers": 35,
         "per_tier": {
-          "cochrane": 2,
+          "cochrane": 3,
           "level1": 25,
           "classic": 3,
-          "level2": 4,
+          "level2": 3,
           "level3a": 1
         }
       }
@@ -519,11 +522,12 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 19,
+        "papers": 29,
         "per_tier": {
-          "level1": 16,
-          "level2": 2,
-          "level5": 1
+          "level1": 25,
+          "classic": 1,
+          "level2": 1,
+          "level3a": 2
         }
       }
     },
@@ -549,12 +553,14 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 57,
+        "papers": 150,
         "per_tier": {
-          "cochrane": 1,
-          "level1": 20,
-          "level2": 18,
-          "level3a": 18
+          "cochrane": 4,
+          "level1": 59,
+          "level2": 34,
+          "level3a": 32,
+          "level4": 14,
+          "level5": 7
         }
       }
     },
@@ -585,9 +591,12 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 2,
+        "papers": 11,
         "per_tier": {
-          "level1": 2
+          "level1": 6,
+          "level2": 1,
+          "level4": 2,
+          "level5": 2
         }
       }
     },
@@ -616,14 +625,14 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 41,
+        "papers": 64,
         "per_tier": {
-          "level1": 10,
-          "level2": 7,
-          "level3a": 9,
-          "level3b": 2,
-          "level4": 6,
-          "level5": 7
+          "level1": 9,
+          "level2": 10,
+          "level3a": 19,
+          "level3b": 4,
+          "level4": 10,
+          "level5": 12
         }
       }
     },
@@ -649,10 +658,11 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 3,
+        "papers": 6,
         "per_tier": {
-          "level2": 1,
-          "level5": 2
+          "level3a": 1,
+          "level4": 1,
+          "level5": 4
         }
       }
     },
@@ -675,9 +685,12 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 3,
+        "papers": 28,
         "per_tier": {
-          "level1": 3
+          "level1": 25,
+          "classic": 1,
+          "level2": 1,
+          "level3a": 1
         }
       }
     },
@@ -706,12 +719,13 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 36,
+        "papers": 24,
         "per_tier": {
-          "level1": 8,
-          "level2": 5,
-          "level3a": 12,
-          "level4": 8,
+          "level1": 2,
+          "level2": 2,
+          "level3a": 4,
+          "level3b": 1,
+          "level4": 12,
           "level5": 3
         }
       }
@@ -738,8 +752,11 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 2,
+        "papers": 7,
         "per_tier": {
+          "level1": 3,
+          "level3a": 1,
+          "level4": 1,
           "level5": 2
         }
       }
@@ -766,11 +783,11 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "library",
-        "papers": 12,
+        "papers": 19,
         "per_tier": {
-          "level1": 7,
+          "level1": 12,
           "classic": 3,
-          "level2": 2
+          "level2": 4
         }
       }
     },
@@ -799,14 +816,13 @@
         "recorded": null,
         "note": "PENDING - run eval/run_eval.py --update-baseline",
         "route": "live",
-        "papers": 113,
+        "papers": 42,
         "per_tier": {
-          "level1": 37,
-          "level2": 23,
-          "level3a": 30,
-          "level3b": 3,
-          "level4": 10,
-          "level5": 10
+          "level1": 1,
+          "level2": 1,
+          "level3a": 19,
+          "level4": 14,
+          "level5": 7
         }
       }
     },
