@@ -33,7 +33,7 @@ class TestWriteBackIsDisabled:
         monkeypatch.setattr(endo_ai, "LIBRARY_WRITE_BACK", True, raising=False)
         seen = {}
 
-        def _fake_builder(job_id, question, force_route=None):
+        def _fake_builder(job_id, question, force_route=None, mode="review"):
             seen["write_back"] = endo_ai.LIBRARY_WRITE_BACK
             return {}
 
