@@ -123,6 +123,8 @@ def stub(monkeypatch):
             self.default_delay   = 0.0
             self.write_cost      = 0.25
             self.stitched        = None       # what the stitcher was handed
+            self.writes_done     = []         # module indices that finished step C
+            self.writes_at_stitch = None      # how many had finished when D ran
             self.concurrent_peak = 0
             self._live           = 0
             self._lock           = threading.Lock()
@@ -166,10 +168,13 @@ def stub(monkeypatch):
             script = self.scripts.get(i)
             if script is None:
                 script = cited_script(module["title"], evidence)
+            with self._lock:
+                self.writes_done.append(i)
             return script, self.write_cost
 
         def stitch_curriculum(self, parent_question, modules_with_scripts,
                               all_evidence):
+            self.writes_at_stitch = len(self.writes_done)
             self.stitched = list(modules_with_scripts)
             body = "\n\n".join(m["script"] for m in modules_with_scripts)
             return f"# {parent_question}\n\n{body}\n", 0.30
@@ -236,12 +241,20 @@ class TestModulesRunConcurrently:
             f"peak concurrency {stub.concurrent_peak} exceeded the bound of 2")
 
     def test_stitcher_runs_only_after_every_module_completes(self, stub):
-        """Step D must never see a partial curriculum."""
+        """Step D must never see a partial curriculum.
+
+        The staggered writing delays mean the modules settle 0.1 s apart, so a
+        stitcher that started on the first completion would run with one or two
+        writes done.
+        """
         for i in range(4):
             stub.writing_delay[i] = 0.1 * (i + 1)
         build_deep_learning_module(QUESTION)
+        assert stub.writes_at_stitch == 4, (
+            f"stitcher ran with {stub.writes_at_stitch}/4 modules written")
         assert len(stub.stitched) == 4
         assert all(m.get("script") for m in stub.stitched)
+        assert not any(m.get("not_generated") for m in stub.stitched)
 
 
 # ── 2. deterministic order ────────────────────────────────────────────────
@@ -449,6 +462,31 @@ class TestAbortStopsTheRun:
 
         assert len(started) <= 2, (
             f"{len(started)}/4 modules still retrieved after the abort")
+        assert stub.stitched is None
+
+    def test_a_hard_failure_in_one_module_stops_the_others(self, stub, monkeypatch):
+        """Not every abort comes from the user. If one module dies outright, the
+        run is already lost — the queued modules must bail at their abort_evt
+        checkpoint rather than each paying for a retrieval and a write.
+        """
+        monkeypatch.setattr(endo_ai, "CURRICULUM_MAX_WORKERS", 1)
+        stub.default_delay = 0.05
+        started = []
+        original = stub.build_evidence_base
+
+        def exploding(topic, mode="review"):
+            started.append(topic)
+            if len(started) == 1:
+                raise ValueError("Neon connection pool exhausted")
+            return original(topic, mode=mode)
+
+        monkeypatch.setattr(endo_ai, "build_evidence_base", exploding)
+
+        with pytest.raises(ValueError, match="pool exhausted"):
+            build_deep_learning_module(QUESTION)
+
+        assert len(started) == 1, (
+            f"{len(started)} modules retrieved after module 1 died")
         assert stub.stitched is None
 
     def test_a_broken_progress_callback_does_not_kill_a_paid_run(self, stub):
