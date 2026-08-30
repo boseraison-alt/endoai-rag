@@ -873,6 +873,14 @@ LEVEL_SCORES = {
     "level3b":  35,   # case-control — works backward from outcome
     "level3":   45,   # legacy alias for older library entries
     "level4":   20,
+    # Bench work: extracted teeth, dentine blocks, bovine models, agar
+    # diffusion, capillary tubes. Endodontics is heavily bench-based, so
+    # without this tier a large share of the library classified as
+    # "prospective" and sat at Level II. An in vitro result is real
+    # evidence about a mechanism and no evidence at all about what happens
+    # in a patient, so it ranks below a human case series and above expert
+    # opinion.
+    "invitro":  15,
     "level5":   10,
     # San Antonio Guide / College of Diplomates classics. Heterogeneous study
     # designs (1960s-2000s landmark RCTs, anatomical surveys, microbiology
@@ -903,7 +911,7 @@ LEVEL_SCORES = {
 # bucket (45) previously sat AFTER "level3b" (35), presenting case-control
 # studies as the stronger of the two — guarded now by test_tier_banding.py.
 TIER_ORDER = ["cochrane", "level1", "classic", "level2", "level3a", "level3",
-              "level3b", "level4", "level5"]
+              "level3b", "level4", "invitro", "level5"]
 TIER_LABEL = {
     "cochrane": "Cochrane Reviews",
     "level1":   "Level I — RCTs and Systematic Reviews",
@@ -912,6 +920,7 @@ TIER_LABEL = {
     "level3b":  "Level IIIb — Case-Control",
     "level3":   "Level III — Retrospective / Case-Control (legacy)",
     "level4":   "Level IV — Case Series",
+    "invitro":  "In Vitro / Ex Vivo — Bench Studies (not clinical evidence)",
     "level5":   "Level V — Expert Opinion / Reviews",
     "classic":  "Classic / Foundational (San Antonio Guide)",
     "retracted": "Retracted — excluded from evidence",
@@ -1284,7 +1293,90 @@ def detect_preregistration(level_key: str, registry_ids: list, abstract_text: st
 # Design tiers only — "classic" is a curation label and "level3" a legacy
 # alias, so a demotion must never land on either.
 _DEMOTABLE_TIERS = ["cochrane", "level1", "level2", "level3a", "level3b",
-                    "level4", "level5"]
+                    "level4", "invitro", "level5"]
+
+
+# ── IN VITRO / EX VIVO DETECTION ─────────────────────────
+# Bench studies are indexed as ordinary journal articles and read as
+# "prospective" to a design classifier, so they land at Level II. What
+# separates them is not the design language but the SUBJECT: extracted teeth,
+# dentine blocks, bovine incisors, agar plates. Precision matters far more than
+# recall here — wrongly demoting a real clinical trial to a bench tier is a
+# much worse error than leaving one bench paper at Level II — so a single weak
+# hint is never enough.
+
+# Unambiguous on their own. Each names a preparation that cannot be a patient.
+_INVITRO_STRONG_RE = __import__("re").compile(
+    r"(?:"
+    r"extracted\s+(?:human\s+|bovine\s+|permanent\s+|single-rooted\s+)*teeth"
+    r"|extracted\s+(?:human\s+|bovine\s+)?(?:tooth|molars?|premolars?|incisors?)"
+    r"|dentin(?:e)?\s+(?:blocks?|slices?|discs?|specimens?|cylinders?)"
+    r"|bovine\s+(?:teeth|tooth|dentin(?:e)?|incisors?)"
+    r"|(?:resin|acrylic)\s+blocks?"
+    r"|agar\s+(?:diffusion|plates?)"
+    r"|capillary\s+tubes?"
+    r"|ex\s+vivo"
+    r"|in\s+vitro"
+    r")", __import__("re").IGNORECASE)
+
+# Individually weak — "biofilm model" and "simulated" appear in clinical papers
+# too — so two are required, or one strong.
+_INVITRO_WEAK_RE = __import__("re").compile(
+    r"(?:"
+    r"biofilm\s+model"
+    r"|(?:mono|poly)?microbial\s+biofilm"
+    r"|enterococcus\s+faecalis"
+    r"|simulated\s+(?:canals?|root\s+canals?)"
+    r"|artificial\s+(?:canals?|teeth)"
+    r"|scanning\s+electron\s+microscop"
+    r"|micro-?ct|micro\s+computed\s+tomograph"
+    r"|push-?out\s+bond\s+strength"
+    r"|fracture\s+resistance"
+    r"|colony[- ]forming\s+units?|CFU"
+    r"|specimens?\s+were\s+(?:randomly\s+)?(?:divided|assigned|allocated)"
+    r")", __import__("re").IGNORECASE)
+
+# Clinical language that overrides everything. A paper following PATIENTS is
+# not a bench study, even when it also runs SEM on extracted samples — and
+# clinical trials on extracted third molars do exist.
+_CLINICAL_OVERRIDE_RE = __import__("re").compile(
+    r"(?:"
+    r"patients?\s+(?:were|was)\s+(?:randomi|recruit|enroll|assign)"
+    r"|were\s+(?:randomi[sz]ed|recruited|enrolled)"
+    r"|informed\s+consent"
+    r"|ethics\s+committee\s+approv"
+    r"|follow(?:ed)?[- ]up\s+(?:period\s+)?of\s+\d+\s*(?:month|year)"
+    r"|clinical\s+trial\s+registr"
+    r"|randomi[sz]ed\s+controlled\s+(?:clinical\s+)?trial"
+    r")", __import__("re").IGNORECASE)
+
+# Designs whose label already outranks any cue: a Cochrane review or an RCT is
+# not reclassified on the strength of a phrase in its abstract. Reviews OF in
+# vitro studies are a real category and stay where they are.
+_INVITRO_PROTECTED_LEVELS = {"cochrane", "level1", "classic"}
+
+
+def detect_in_vitro(title: str, abstract: str, level_key: str = "") -> tuple:
+    """Return (is_in_vitro, reason). Conservative by construction.
+
+    Requires one strong cue or two distinct weak cues, is vetoed by clinical
+    language, and never touches the protected design tiers.
+    """
+    if level_key in _INVITRO_PROTECTED_LEVELS:
+        return False, "protected tier"
+    text = f"{title or ''}
+{abstract or ''}"
+    if not text.strip():
+        return False, "no text"
+    if _CLINICAL_OVERRIDE_RE.search(text):
+        return False, "clinical-language override"
+    strong = {m.group(0).lower() for m in _INVITRO_STRONG_RE.finditer(text)}
+    if strong:
+        return True, f"strong: {sorted(strong)[0][:40]}"
+    weak = {m.group(0).lower() for m in _INVITRO_WEAK_RE.finditer(text)}
+    if len(weak) >= 2:
+        return True, f"weak x{len(weak)}: {', '.join(sorted(weak)[:2])[:50]}"
+    return False, f"insufficient ({len(weak)} weak cue)"
 
 
 def _demote_one_tier(level_key: str) -> str:
