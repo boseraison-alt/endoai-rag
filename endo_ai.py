@@ -658,31 +658,148 @@ Return ONLY valid JSON — no markdown, no explanation."""}]
 
 
 # ── MULTI-TERM SEARCH GENERATOR ───────────────────────────
+# ── SEARCH-TERM PARSING ──────────────────────────────────
+# Search terms coming back from Haiku were parsed with a bare json.loads, and
+# any failure fell through `except: pass` to a single term. Measured on ten
+# consecutive live calls (2026-08-29): 5/10 parse failures, zero of them
+# truncation. The cause is structural: PubMed queries REQUIRE quoted phrases
+# ("photodynamic therapy"), the prompt demands them, and Haiku emits them
+# unescaped inside JSON strings about half the time — invalid JSON by
+# construction. The result was retrieval breadth silently flapping between 1
+# and 3 terms for the same question (paper count 43 vs 92), which is why the
+# eval baselines had to be recorded as ranges.
+#
+# The contract is now line-based ("TERM: <query>" per line), which cannot
+# collide with the quotes the queries themselves need. The parser below still
+# accepts a clean JSON array (legacy) and recovers the quote-mangled JSON shape
+# (dominant observed failure) so a model that ignores the format instruction
+# degrades gracefully instead of to 1 term.
+
+_TERM_LINE_RE = re.compile(r"^\s*TERM\s*:\s*(.+?)\s*$", re.MULTILINE)
+
+
+def _looks_like_query(t: str) -> bool:
+    """A usable boolean query, not prose and not mangled.
+
+    Unbalanced parens/quotes are dropped rather than repaired: PubMed does not
+    reject a malformed query, it silently reinterprets it (see
+    tests/test_tier_filter_syntax.py for the bug class), so a damaged term is
+    worse than a missing one.
+    """
+    if not t or len(t) < 10:
+        return False
+    if " OR " not in t and " AND " not in t:
+        return False                      # the spec requires OR-groups
+    if t.count("(") != t.count(")"):
+        return False
+    if t.count('"') % 2:
+        return False
+    return True
+
+
+def _parse_term_list(raw: str) -> list:
+    """Extract a list of PubMed query strings from an LLM response.
+
+    Tries, in order: TERM: lines (current contract), a strict JSON array
+    (legacy contract), then per-line recovery of a JSON-ish array whose string
+    elements contain unescaped inner quotes — the failure that hit 5 of 10
+    probed calls. Every candidate passes _looks_like_query before it counts.
+    """
+    text = re.sub(r"```(?:json)?", "", raw or "").strip()
+
+    terms = [m.group(1) for m in _TERM_LINE_RE.finditer(text)]
+
+    if not terms:
+        try:
+            arr = json.loads(text)
+            if isinstance(arr, list):
+                terms = [str(t).strip() for t in arr]
+        except (json.JSONDecodeError, TypeError):
+            # JSON-ish with unescaped quotes. The elements still sit one per
+            # line between the brackets; strip the array punctuation and the
+            # single outer quote pair per line.
+            for line in text.splitlines():
+                line = line.strip().rstrip(",")
+                if line in ("[", "]", ""):
+                    continue
+                if line.startswith('"'):
+                    line = line[1:]
+                if line.endswith('"'):
+                    line = line[:-1]
+                terms.append(line.strip())
+
+    seen, good = set(), []
+    for t in terms:
+        if _looks_like_query(t) and t not in seen:
+            seen.add(t)
+            good.append(t)
+    return good
+
+
+MIN_SEARCH_TERMS = 4      # below this after retry, warn loudly — never silent
+TARGET_EXTRA_TERMS = 6    # + primary = 7, inside the 6-10 band the eval expects
+
+_MULTI_TERM_FORMAT = (
+    f"Return EXACTLY {TARGET_EXTRA_TERMS} lines. Each line starts with "
+    '"TERM: " followed by one boolean query. No JSON, no code fences, no '
+    "numbering, no commentary — quotes inside the queries are fine."
+)
+
+
 def generate_multi_search_terms(question: str, primary_term: str) -> list:
     """
-    Generate 3 PubMed search terms for broader coverage.
-    The primary_term (from generate_search_terms) is always included.
-    Returns a list of 3 strings.
+    Generate additional PubMed queries for broader coverage; the primary_term
+    (from generate_search_terms) is always included and always first.
+
+    Never silently returns fewer than MIN_SEARCH_TERMS: one corrective retry,
+    then a loud warning. Retrieval breadth flapping with parse luck is what
+    made every eval number ±50% noise.
     """
     client = anthropic.Anthropic(api_key=_get_api_key())
-    try:
-        # Routed to Haiku 2026-04-27 — was Opus. Reason: structured JSON list output.
-        resp = _invoke_claude(client, function_name="generate_multi_search_terms",
-            model=MODELS["structured_fast"],
-            max_tokens=200,
-            messages=[{"role": "user", "content":
-                f'Generate 2 additional PubMed search strings for this endodontic question: "{question}"\n'
-                f'(The primary search "{primary_term}" is already being used — generate 2 different angles.)\n'
-                f'Return ONLY a JSON array of 2 strings. No explanation.'}]
-        )
-        log_llm_call("generate_multi_search_terms", MODELS["structured_fast"],
-                     resp.usage, mode="review")
-        extras = json.loads(re.sub(r"```json|```", "", resp.content[0].text).strip())
-        if isinstance(extras, list):
-            return [primary_term] + [str(t) for t in extras[:2]]
-    except Exception:
-        pass
-    return [primary_term]
+
+    base_prompt = (
+        f'Generate {TARGET_EXTRA_TERMS} additional PubMed search queries for this '
+        f'endodontic question: "{question}"\n'
+        f'The primary search below is already in use — cover DIFFERENT angles: '
+        f'alternative vocabulary, adjacent techniques, outcome framings, '
+        f'organism/material names.\n'
+        f'Primary: {primary_term}\n\n'
+        f'Each query: 2-3 concept groups, each an OR-list of synonyms, '
+        f'abbreviations, device and brand names, joined by AND. Use * stem '
+        f'truncation and quote multi-word phrases. Do NOT add [pt] filters or '
+        f'endodontics domain terms — both are appended automatically.\n\n'
+        f'{_MULTI_TERM_FORMAT}'
+    )
+
+    terms = []
+    for attempt, prompt in enumerate((
+        base_prompt,
+        # Corrective retry: name the failure, restate only the format.
+        base_prompt + "\n\nYour previous response could not be parsed. "
+                      "Follow the output format EXACTLY: one query per line, "
+                      'each line beginning "TERM: ", nothing else.',
+    )):
+        try:
+            resp = _invoke_claude(client, function_name="generate_multi_search_terms",
+                model=MODELS["structured_fast"],
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}])
+            log_llm_call("generate_multi_search_terms", MODELS["structured_fast"],
+                         resp.usage, mode="review")
+            terms = _parse_term_list(resp.content[0].text)
+        except Exception as e:
+            print(f"  [search_terms] generate_multi attempt {attempt + 1} failed: {e}")
+            terms = []
+        if len(terms) + 1 >= MIN_SEARCH_TERMS:
+            break
+        if attempt == 0:
+            print(f"  [search_terms] got {len(terms)} usable extra terms, retrying with corrective prompt")
+
+    result = [primary_term] + [t for t in terms if t != primary_term][:TARGET_EXTRA_TERMS + 3]
+    if len(result) < MIN_SEARCH_TERMS:
+        print(f"  [search_terms] WARNING: only {len(result)} search term(s) after retry — "
+              f"retrieval breadth is degraded for this run")
+    return result
 
 
 # ── EVIDENCE LEVEL SEARCH TERMS ─────────────────────────
@@ -1030,13 +1147,37 @@ def score_followup(followup_months):
         return 3.0
 
 # ── GENERATE SMART SEARCH TERMS ──────────────────────────
+def _clean_single_query(raw: str) -> str:
+    """Extract one boolean query from a single-query LLM response.
+
+    The response is a bare string, so JSON quoting is not a risk here, but the
+    other observed failure shapes are: code fences, a prose preamble/epilogue
+    around the query, and a surrounding quote pair. Pick the line that most
+    looks like the query (longest line containing a boolean operator) and
+    validate it with _looks_like_query — an unbalanced query must never reach
+    PubMed, which reinterprets rather than rejects.
+    Returns "" when nothing usable is found, so the caller can retry.
+    """
+    text = re.sub(r"```(?:json)?", "", raw or "").strip()
+    if text.startswith('"') and text.endswith('"'):
+        text = text[1:-1].strip()
+    candidates = [ln.strip() for ln in text.splitlines()
+                  if " OR " in ln or " AND " in ln]
+    if not candidates:
+        candidates = [text]
+    best = max(candidates, key=len)
+    return best if _looks_like_query(best) else ""
+
+
 def generate_search_terms(question):
     client = anthropic.Anthropic(api_key=_get_api_key())
     # Routed to Haiku 2026-04-27 — was Opus. Reason: single-string structured generation
     # (PubMed query, ≤10 words). Called on EVERY retrieval; the cheapest model is the right one.
+    # max_tokens raised 200 → 400: OR-group queries run ~60-80 tokens and a
+    # truncated one is an unbalanced-paren query PubMed silently reinterprets.
     message = _invoke_claude(client, function_name="generate_search_terms",
         model=MODELS["structured_fast"],
-        max_tokens=200,
+        max_tokens=400,
         messages=[{
             "role": "user",
             "content": f"""Convert this clinical endodontic question into a PubMed BOOLEAN query.
@@ -1064,7 +1205,27 @@ PubMed boolean query:"""
     )
     log_llm_call("generate_search_terms", MODELS["structured_fast"],
                  message.usage, mode="shared")
-    search_string = message.content[0].text.strip()
+    search_string = _clean_single_query(message.content[0].text)
+    if not search_string:
+        # One corrective retry, then fall back to the raw question rather than
+        # ship a query we know is mangled. The raw question through PubMed's
+        # own term mapping beats an unbalanced boolean string.
+        try:
+            retry = _invoke_claude(client, function_name="generate_search_terms",
+                model=MODELS["structured_fast"], max_tokens=400,
+                messages=[{"role": "user", "content":
+                    f'Return ONE PubMed boolean query for: "{question}". '
+                    f'2-3 OR-groups joined by AND, quoted phrases, * stems. '
+                    f'Output the query alone on a single line — no fences, no prose.'}])
+            log_llm_call("generate_search_terms", MODELS["structured_fast"],
+                         retry.usage, mode="shared")
+            search_string = _clean_single_query(retry.content[0].text)
+        except Exception as e:
+            print(f"  [search_terms] primary-query retry failed: {e}")
+    if not search_string:
+        print(f"  [search_terms] WARNING: could not parse a usable primary query — "
+              f"falling back to the raw question")
+        search_string = question
     print(f"  Smart search terms: '{search_string}'")
     return search_string
 
@@ -3173,6 +3334,43 @@ CURRICULUM_WORDS_PER_MODULE  = 650    # ~4 min at 150 wpm
 CURRICULUM_INTRO_OUTRO_WORDS = 600    # intro + transitions + closing + takeaways
 CURRICULUM_TOTAL_TARGET_MIN  = 20     # density-over-duration cap
 
+_MODULE_LINE_RE = re.compile(
+    r"^\s*(?:MODULE\s*:\s*)?(.+?)\s*\|\|\|\s*(.+?)\s*$", re.MULTILINE)
+
+
+def _parse_module_lines(raw: str, n_modules: int) -> list:
+    """Parse 'MODULE: <title> ||| <query>' lines from an LLM response.
+
+    Also accepts the legacy JSON-array-of-objects shape, and recovers
+    title/search_query pairs from quote-mangled JSON via regex. Queries are
+    validated with _looks_like_query; a module whose query fails validation is
+    dropped (the caller retries), because an unbalanced query reaching PubMed
+    is silently reinterpreted, not rejected.
+    """
+    text = re.sub(r"```(?:json)?", "", raw or "").strip()
+    pairs = [(m.group(1), m.group(2)) for m in _MODULE_LINE_RE.finditer(text)]
+
+    if not pairs:
+        try:
+            arr = json.loads(text)
+            if isinstance(arr, list):
+                pairs = [(str(m.get("title", "")), str(m.get("search_query", "")))
+                         for m in arr if isinstance(m, dict)]
+        except (json.JSONDecodeError, TypeError):
+            # Quote-mangled JSON: pull the field values line-wise.
+            titles  = re.findall(r'"title"\s*:\s*"([^"]+)"', text)
+            queries = re.findall(r'"search_query"\s*:\s*"(.+?)"\s*[,}]\s*$',
+                                 text, re.MULTILINE)
+            pairs = list(zip(titles, queries))
+
+    cleaned = []
+    for title, query in pairs[:n_modules]:
+        title, query = title.strip().strip('"'), query.strip()
+        if title and _looks_like_query(query):
+            cleaned.append({"title": title, "search_query": query})
+    return cleaned
+
+
 def generate_curriculum_syllabus(question: str, n_modules: int = CURRICULUM_MODULE_COUNT) -> list:
     """
     STEP A — ask Claude to break the user's topic into a coherent teaching syllabus.
@@ -3183,11 +3381,14 @@ def generate_curriculum_syllabus(question: str, n_modules: int = CURRICULUM_MODU
     print(f"\n[curriculum] Step A — generating {n_modules}-module syllabus for: '{question}'")
 
     try:
-        # Routed to Haiku 2026-04-27 — was Opus. Reason: produces a JSON outline of 4
-        # {title, search_query} objects. Pure structural task, no clinical synthesis.
+        # Routed to Haiku 2026-04-27 — was Opus. Pure structural task.
+        # Line format, not JSON: the queries contain quoted PubMed phrases,
+        # which Haiku emits unescaped inside JSON strings ~half the time
+        # (measured 5/10 on the multi-term generator). max_tokens 600 → 1500:
+        # four OR-group queries plus titles ran right up against 600.
         resp = _invoke_claude(client, function_name="generate_curriculum_syllabus",
             model=MODELS["structured_fast"],
-            max_tokens=600,
+            max_tokens=1500,
             messages=[{"role": "user", "content":
                 f"""You are a senior endodontic educator designing a tight, dense ~{CURRICULUM_TOTAL_TARGET_MIN}-minute teaching module on:
 
@@ -3221,29 +3422,45 @@ abbreviations AND expansions for any technique; never write a bare multi-word
 string. Do NOT add [pt] design filters or endodontic domain terms — those are
 appended automatically, and duplicating them narrows the search.
 
-Return ONLY a JSON array of {n_modules} objects. No prose, no markdown, no ```json fence."""
+Return EXACTLY {n_modules} lines, one per module, in this format:
+MODULE: <title> ||| <boolean query>
+No JSON, no fences, no numbering, no other text. Quotes inside the query are fine."""
             }]
         )
-        raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
-        modules = json.loads(raw)
         cost = log_llm_call("generate_curriculum_syllabus", MODELS["structured_fast"],
                             resp.usage, mode="learn")
-        if isinstance(modules, list) and modules:
-            cleaned = []
-            for m in modules[:n_modules]:
-                if isinstance(m, dict) and m.get("title") and m.get("search_query"):
-                    cleaned.append({
-                        "title":        str(m["title"]).strip(),
-                        "search_query": str(m["search_query"]).strip(),
-                    })
-            if cleaned:
-                print(f"  syllabus: {[c['title'] for c in cleaned]}")
-                print(f"  Cost: ${cost:.4f}")
-                return cleaned, cost
+        cleaned = _parse_module_lines(resp.content[0].text, n_modules)
+        if len(cleaned) < n_modules:
+            # Corrective retry — the old bare json.loads fell straight through
+            # to the bag-of-words fallback below on any parse hiccup, which is
+            # the exact query shape that caused the 5-PMID laser regression.
+            print(f"  [curriculum] parsed {len(cleaned)}/{n_modules} modules, retrying")
+            resp = _invoke_claude(client, function_name="generate_curriculum_syllabus",
+                model=MODELS["structured_fast"], max_tokens=1500,
+                messages=[{"role": "user", "content":
+                    f'Design {n_modules} sequential teaching modules for the endodontic '
+                    f'topic "{question}" (background → diagnosis → treatment → outcomes). '
+                    f'For each, output ONE line: MODULE: <5-8 word title> ||| <PubMed '
+                    f'boolean query, 2-3 OR-groups of synonyms/abbreviations/device names '
+                    f'joined by AND, quoted phrases, * stems>. Exactly {n_modules} lines, '
+                    f'nothing else.'}])
+            cost += log_llm_call("generate_curriculum_syllabus", MODELS["structured_fast"],
+                                 resp.usage, mode="learn")
+            cleaned = _parse_module_lines(resp.content[0].text, n_modules)
+        if cleaned:
+            print(f"  syllabus: {[c['title'] for c in cleaned]}")
+            print(f"  Cost: ${cost:.4f}")
+            return cleaned, cost
     except Exception as e:
         print(f"  [curriculum] syllabus generation failed: {e}")
+    print("  [curriculum] WARNING: using generic fallback syllabus — module "
+          "structure is not topic-specific for this run")
 
-    # Fallback — generic 4-module syllabus
+    # Fallback — generic 4-module syllabus. These look like bag-of-words
+    # queries, but they never reach PubMed raw: build_evidence_base() passes
+    # every module search_query through generate_search_terms(), which
+    # OR-expands it. The real cost of landing here is generic module structure,
+    # hence the WARNING above.
     fallback = [
         {"title": "Background & Pathophysiology",  "search_query": f"{question} pathophysiology"},
         {"title": "Diagnosis & Clinical Findings", "search_query": f"{question} diagnosis"},
