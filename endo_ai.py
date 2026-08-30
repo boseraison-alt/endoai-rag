@@ -675,6 +675,95 @@ Return ONLY valid JSON — no markdown, no explanation."""}]
 # (dominant observed failure) so a model that ignores the format instruction
 # degrades gracefully instead of to 1 term.
 
+# ── AND-GROUP CAP ────────────────────────────────────────
+# The prompt asks for 2-3 concept groups; the model sometimes emits 4 or more.
+# Each extra AND is a hard conjunction, so a 4-group query demands that all four
+# concepts co-occur in one record — pips-vs-ultrasonic emitted
+# (laser) AND (irrigation) AND (ultrasonic) AND (healing) and retrieved 3 papers
+# where sibling runs of the same question retrieved 29.
+#
+# When over-cap, keep the groups with the MOST OR-synonyms. Those are the
+# broadest and, empirically, the ones carrying the question's core concepts; a
+# narrow trailing qualifier like ("healing outcome*") is what should go.
+MAX_AND_GROUPS = 3
+
+
+def _split_and_groups(query: str) -> list:
+    """Split a boolean query on top-level ' AND ' (depth 0 only).
+
+    Naive string splitting would cut inside a parenthesised OR-list that itself
+    contains AND, so this tracks depth and ignores anything inside quotes.
+    """
+    parts, buf, depth, in_q = [], [], 0, False
+    i = 0
+    while i < len(query):
+        ch = query[i]
+        if ch == '"':
+            in_q = not in_q
+        elif not in_q and ch == "(":
+            depth += 1
+        elif not in_q and ch == ")":
+            depth -= 1
+        elif (not in_q and depth == 0
+              and query.startswith(" AND ", i)):
+            parts.append("".join(buf).strip())
+            buf = []
+            i += 5
+            continue
+        buf.append(ch)
+        i += 1
+    if "".join(buf).strip():
+        parts.append("".join(buf).strip())
+    return [p for p in parts if p]
+
+
+def _or_breadth(group: str) -> int:
+    """How many alternatives this concept group offers."""
+    return group.upper().count(" OR ") + 1
+
+
+BROADEN_THRESHOLD = 5   # below this many hits, retry once with one group dropped
+
+
+def _broaden_query(term: str) -> str:
+    """Drop the narrowest top-level AND-group. Returns "" if not broadenable.
+
+    The design/domain filters appended by fetch_papers are themselves
+    AND-groups, so only the leading TOPIC groups are eligible — broadening by
+    removing the endodontics filter would return the whole of PubMed.
+    """
+    groups = _split_and_groups(term)
+    if not groups:
+        return ""
+    # fetch_papers builds "(TOPIC) AND (design) AND domain NOT ...", so the
+    # whole topic is ONE depth-0 group. Unwrap it and broaden inside; dropping
+    # a depth-0 group would remove the design or domain filter and return most
+    # of PubMed.
+    head, rest = groups[0], groups[1:]
+    inner = head[1:-1].strip() if head.startswith("(") and head.endswith(")") else head
+    sub = _split_and_groups(inner)
+    if len(sub) < 2:
+        return ""
+    narrowest = min(sub, key=_or_breadth)
+    kept = " AND ".join(g for g in sub if g is not narrowest)
+    return " AND ".join([f"({kept})"] + rest)
+
+
+def cap_and_groups(query: str, max_groups: int = MAX_AND_GROUPS) -> tuple:
+    """Return (query, dropped_groups). Keeps the broadest `max_groups`.
+
+    Original order is preserved among the kept groups so the query still reads
+    the way the model wrote it.
+    """
+    groups = _split_and_groups(query)
+    if len(groups) <= max_groups:
+        return query, []
+    ranked = sorted(range(len(groups)), key=lambda i: -_or_breadth(groups[i]))
+    keep = sorted(ranked[:max_groups])
+    dropped = [groups[i] for i in ranked[max_groups:]]
+    return " AND ".join(groups[i] for i in keep), dropped
+
+
 _TERM_LINE_RE = re.compile(r"^\s*TERM\s*:\s*(.+?)\s*$", re.MULTILINE)
 
 
@@ -730,9 +819,16 @@ def _parse_term_list(raw: str) -> list:
 
     seen, good = set(), []
     for t in terms:
-        if _looks_like_query(t) and t not in seen:
-            seen.add(t)
-            good.append(t)
+        if not _looks_like_query(t) or t in seen:
+            continue
+        t, dropped = cap_and_groups(t)
+        if dropped:
+            print(f"  [search_terms] capped to {MAX_AND_GROUPS} AND-groups, "
+                  f"dropped: {' | '.join(d[:60] for d in dropped)}")
+        if t in seen:
+            continue
+        seen.add(t)
+        good.append(t)
     return good
 
 
@@ -1182,7 +1278,13 @@ def _clean_single_query(raw: str) -> str:
     if not candidates:
         candidates = [text]
     best = max(candidates, key=len)
-    return best if _looks_like_query(best) else ""
+    if not _looks_like_query(best):
+        return ""
+    best, dropped = cap_and_groups(best)
+    if dropped:
+        print(f"  [search_terms] capped to {MAX_AND_GROUPS} AND-groups, "
+              f"dropped: {' | '.join(x[:60] for x in dropped)}")
+    return best
 
 
 def generate_search_terms(question):
@@ -2105,6 +2207,32 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         print(f"  [NCBI_LIVE] {label}: esearch returned {len(ids)} PMIDs in {latency_ms}ms (HTTP 200)")
         _pubmed_audit_log(label, level_key, search_term, ids,
                           search_response.status_code, latency_ms)
+
+        # A3 auto-broaden. A tier that comes back nearly empty is usually
+        # over-conjoined rather than genuinely unstudied: every AND is a hard
+        # requirement that all concepts co-occur in one record. Drop the
+        # NARROWEST group (fewest OR-synonyms) and try once more. One retry
+        # only — a second would mostly return the domain filter's own results.
+        if len(ids) < BROADEN_THRESHOLD:
+            broadened = _broaden_query(search_term)
+            if broadened:
+                print(f"  ~~ {label}: {len(ids)} hits, broadening once")
+                try:
+                    bp = dict(search_params); bp["term"] = broadened
+                    t1 = _time.perf_counter()
+                    r2 = requests.get(search_url, params=bp, timeout=20)
+                    ms2 = int((_time.perf_counter() - t1) * 1000)
+                    if r2.status_code == 200:
+                        raw2 = r2.json().get("esearchresult", {}).get("idlist") or []
+                        ids2 = [pid for pid in raw2 if _PMID_FORMAT_RE.match(str(pid))]
+                        _pubmed_audit_log(label + " [broadened]", level_key,
+                                          broadened, ids2, r2.status_code, ms2)
+                        if len(ids2) > len(ids):
+                            print(f"  [NCBI_LIVE] {label} [broadened]: "
+                                  f"{len(ids2)} PMIDs in {ms2}ms")
+                            ids, search_term = ids2, broadened
+                except Exception as _be:
+                    print(f"  ~~ {label}: broaden failed, keeping original ({_be})")
 
         if not ids:
             print(f"  -- {label}: 0 results found")
@@ -3647,6 +3775,10 @@ def _parse_module_lines(raw: str, n_modules: int) -> list:
     for title, query in pairs[:n_modules]:
         title, query = title.strip().strip('"'), query.strip()
         if title and _looks_like_query(query):
+            query, dropped = cap_and_groups(query)
+            if dropped:
+                print(f"  [curriculum] '{title[:30]}' capped to {MAX_AND_GROUPS} "
+                      f"AND-groups, dropped: {' | '.join(x[:50] for x in dropped)}")
             cleaned.append({"title": title, "search_query": query})
     return cleaned
 

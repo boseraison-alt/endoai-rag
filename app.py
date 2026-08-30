@@ -456,6 +456,113 @@ def run_question(job_id: str, question: str, mode: str = "review"):
         update_job(job_id, status="error", progress=100, error=str(e), message=str(e))
 
 
+def multi_query_search(question: str, generated_terms: list, limit: int = 100) -> list:
+    """KNN the library once per query string and union the results, keeping the
+    best similarity seen for each PMID.
+
+    Retrieval used to depend on a single generated boolean, and that coupled two
+    things that pull in opposite directions. A well-formed PubMed query is
+    mostly operators, quotes and truncation asterisks, so it embeds FURTHER from
+    a paper's prose than a sloppy one does. Measured on Cochrane CD005296
+    (PMID 36512807) for "single-visit versus multiple-visit root canal
+    treatment":
+
+        raw clinician question                      0.680   rank 20   kept
+        bag-of-words generated query                0.585   rank 19   kept
+        3-group query, best spec compliance         0.546   rank 11   CUT
+
+    The review was rank 11 in the entire library for the query that missed it —
+    the KNN found it and the absolute floor removed it. The better the boolean,
+    the worse it scored.
+
+    Embedding the clinician's ORIGINAL question alongside every generated term
+    and taking the max removes the coupling: the question is prose and matches
+    prose, while the booleans keep contributing their own recall for the
+    vocabulary the question does not use.
+    """
+    from rag import search as _search
+
+    queries, seen_q = [], set()
+    for q in [question] + list(generated_terms or []):
+        q = (q or "").strip()
+        if q and q not in seen_q:
+            seen_q.add(q)
+            queries.append(q)
+
+    best = {}
+    for q in queries:
+        try:
+            for row in _search(q, level_key=None, limit=limit) or []:
+                pmid = row.get("pmid")
+                if not pmid:
+                    continue
+                sim = float(row.get("similarity") or 0)
+                prev = best.get(pmid)
+                if prev is None or sim > float(prev.get("similarity") or 0):
+                    row = dict(row)
+                    row["similarity"] = sim
+                    best[pmid] = row
+        except Exception as e:
+            # One bad query must not lose the recall of the others.
+            print(f"  [rag] query failed, continuing: {e}")
+
+    out = sorted(best.values(), key=lambda r: -float(r.get("similarity") or 0))
+    print(f"  [rag] {len(queries)} quer{'y' if len(queries) == 1 else 'ies'} "
+          f"-> {len(out)} distinct papers (best similarity kept per PMID)")
+    return out[:limit * 2]
+
+
+# Papers that must reach the clinician whatever the query happened to surface.
+AUTHORITY_TOP_LEVEL1 = 3
+
+
+def ensure_authoritative(candidates: list, relevant: list, floor: float) -> list:
+    """Guarantee the strongest evidence survives query variance.
+
+    Any journal-verified Cochrane review above the floor is included, and so are
+    the top AUTHORITY_TOP_LEVEL1 Level I papers by score. Everything here is
+    already a KNN candidate above the similarity floor — this does not inject
+    unrelated papers, it stops the *most* relevant ones being dropped because
+    one generated string embedded badly.
+
+    Retracted, withdrawn and superseded rows are excluded upstream by
+    rag.search(); this re-checks rather than assuming, because a guarantee that
+    can resurrect a retracted paper is worse than no guarantee.
+    """
+    from endo_ai import _COCHRANE_JOURNAL_HINTS
+
+    def usable(p):
+        if float(p.get("similarity") or 0) < floor:
+            return False
+        if p.get("has_retraction") or (p.get("superseded_by") or ""):
+            return False
+        if (p.get("title") or "").upper().startswith("WITHDRAWN:"):
+            return False
+        return True
+
+    have = {p.get("pmid") for p in relevant}
+    added = []
+
+    cochrane = [p for p in candidates
+                if p.get("level_key") == "cochrane"
+                and any(h in (p.get("journal") or "").lower()
+                        for h in _COCHRANE_JOURNAL_HINTS)
+                and usable(p) and p.get("pmid") not in have]
+    added.extend(cochrane)
+
+    lvl1 = sorted([p for p in candidates
+                   if p.get("level_key") == "level1" and usable(p)
+                   and p.get("pmid") not in have
+                   and p.get("pmid") not in {a.get("pmid") for a in added}],
+                  key=lambda p: -float(p.get("score") or 0))[:AUTHORITY_TOP_LEVEL1]
+    added.extend(lvl1)
+
+    if added:
+        print(f"  [authority] re-included {len(cochrane)} Cochrane review(s) and "
+              f"{len(lvl1)} top Level I paper(s) that the similarity floor had cut")
+    return relevant + added
+
+
 # ── Library relevance gate ───────────────────────────────
 # The floor and the count that interprets it are ONE setting, kept together
 # deliberately. See HANDOVER.md "The similarity floor asks a different question
@@ -546,7 +653,15 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     if library_ok:
         update_job(job_id, message="Searching local library...", progress=15)
         # Search without level_key filter — library stores all levels together
-        rag_results = rag_search(smart_topic, level_key=None, limit=100)
+        # A4: never let one generated string decide what the library returns.
+        # generate_multi_search_terms is only called on the live path below, so
+        # produce the extra angles here too — cheap relative to a wrong answer.
+        try:
+            _terms = generate_multi_search_terms(question, smart_topic)
+        except Exception as _te:
+            print(f"  [rag] multi-term generation failed, using primary only: {_te}")
+            _terms = [smart_topic]
+        rag_results = multi_query_search(question, _terms, limit=100)
 
         # Coverage test, not just a count: enough genuinely-similar papers, and
         # at least one high-tier design among them. A library that answers with
@@ -590,6 +705,8 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # citing papers on apex locators and sealer heat properties, which
             # the claim-support check then correctly flagged. The similarity
             # floor has to filter the evidence, not merely decide the gate.
+            relevant = ensure_authoritative(rag_results, relevant,
+                                            RAG_SIMILARITY_FLOOR)
             all_rag = rag_results_to_scored(relevant)
 
             # Band by STUDY DESIGN (level_key), rank by score WITHIN each band.
