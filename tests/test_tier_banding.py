@@ -90,9 +90,21 @@ class TestTierOrderIsComplete:
     """A tier missing from TIER_ORDER is invisible to _build_evidence_context(),
     so its papers never reach Claude at all."""
 
+    # 'retracted' is labelled but deliberately absent from TIER_ORDER: that
+    # absence IS the exclusion mechanism (see TestRetractedIsExcludedByDesign
+    # below). It carries a label only so admin and bibliography views can name
+    # it honestly. Any OTHER tier appearing here is a silent data-loss bug.
+    DELIBERATELY_NOT_SYNTHESISED = {"retracted"}
+
     def test_every_labelled_tier_is_in_tier_order(self):
-        missing = [k for k in TIER_LABEL if k not in TIER_ORDER]
+        missing = [k for k in TIER_LABEL
+                   if k not in TIER_ORDER and k not in self.DELIBERATELY_NOT_SYNTHESISED]
         assert not missing, f"tiers with labels but absent from TIER_ORDER: {missing}"
+
+    def test_the_exclusion_list_stays_short(self):
+        """A growing allowlist would turn this guard into a rubber stamp."""
+        assert self.DELIBERATELY_NOT_SYNTHESISED == {"retracted"}, \
+            "new non-synthesised tier — is it really meant to be invisible to Claude?"
 
     def test_classics_are_included(self):
         """272 library papers are 'classic'. Before this was added they would
