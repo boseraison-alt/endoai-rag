@@ -2369,7 +2369,39 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 # LIBRARY_WRITE_BACK=false if the library must stay a curated, fixed set.
 LIBRARY_WRITE_BACK = os.getenv("LIBRARY_WRITE_BACK", "true").lower() in ("1", "true", "yes")
 
-QUALITY_FLOOR    = 50   # min score to count as "quality" evidence
+QUALITY_FLOOR    = 50   # global ceiling on any per-tier floor (see below)
+
+# Per-tier quality floors. Score is NOT comparable across tiers by
+# construction: study design contributes 39% of it, so a Cochrane review starts
+# from 100 and a case series from 20 before anything about the individual paper
+# is weighed. A single flat cut therefore does not remove weak papers evenly —
+# it removes whole tiers. Measured on the real library at the flat 50
+# (scripts/measure_quality_floor.py):
+#
+#     tier      n    survived  share   p90    
+#     level4    175  4          2%     43.7   even its best work was below the floor
+#     invitro   155  1          1%     42.9   same
+#     level5    153  3          2%     39.8   same
+#     level3    320  94        29%     53.4   thinned to a third
+#
+# Only MIN_PAPERS_KEPT=3 was rescuing those tiers, so a "case series" block
+# shown to a clinician held three papers picked by a rule that had already
+# discarded the other 172 — not the best three of 175.
+#
+# Each floor is that tier's own 40th percentile, so a tier is judged against
+# its own distribution. Every value is CAPPED at QUALITY_FLOOR by _tier_floor:
+# this change may only ever loosen a tier, never tighten one, so no paper that
+# reaches a clinician today can be removed by it.
+TIER_QUALITY_FLOORS = {
+    "cochrane": 50, "level1": 50, "classic": 50, "level2": 50, "level3b": 50,
+    "level3a": 45, "level3":  41,
+    "level4":   27, "invitro": 31, "level5": 38,
+}
+
+
+def _tier_floor(tier_key: str) -> float:
+    """This tier's quality floor, never above the global QUALITY_FLOOR."""
+    return min(QUALITY_FLOOR, TIER_QUALITY_FLOORS.get(tier_key, QUALITY_FLOOR))
 MIN_PAPERS_KEPT  = 3    # keep at least this many even if low-quality (avoid empty tier)
 MAX_PAPERS_KEPT  = 25   # default hard cap so one tier can't drown out others
 
@@ -2405,7 +2437,8 @@ def _apply_quality_threshold(scored_papers: list, mode: str = "review",
                               tier_key: str = "") -> list:
     """
     Quality-driven cut with mode-aware per-tier caps:
-      - retain every paper scoring >= QUALITY_FLOOR
+      - retain every paper scoring >= this TIER's floor (see
+        TIER_QUALITY_FLOORS; never above the global QUALITY_FLOOR)
       - if fewer than MIN_PAPERS_KEPT survive, top up with the next-best
       - never keep more than the per-tier cap for the active mode
     Caller is responsible for sorting by score before calling.
@@ -2414,7 +2447,8 @@ def _apply_quality_threshold(scored_papers: list, mode: str = "review",
         return scored_papers
 
     cap = _tier_cap(mode, tier_key) if tier_key else MAX_PAPERS_KEPT
-    above = [p for p in scored_papers if p.get("score", 0) >= QUALITY_FLOOR]
+    floor = _tier_floor(tier_key) if tier_key else QUALITY_FLOOR
+    above = [p for p in scored_papers if p.get("score", 0) >= floor]
 
     if len(above) >= MIN_PAPERS_KEPT:
         return above[:cap]
