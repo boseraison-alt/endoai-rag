@@ -204,6 +204,22 @@ class TestSynthesisModeIsActuallyWired:
             f"a default run must never spend synthesis money: {called}"
 
 
+class TestPinnedBuilderSignature:
+    def test_wrapper_accepts_everything_the_real_builder_does(self):
+        """The synthesis wrapper replaces build_evidence_base_with_progress for
+        the duration of a case. When the real builder grew a mode= kwarg, the
+        wrapper silently didn't — and three of five synthesis cases ERRORED on
+        an unexpected keyword argument. The wiring tests missed it because they
+        stub run_case_with_synthesis wholesale. Compare signatures instead."""
+        import inspect
+        import app
+        real = set(inspect.signature(app.build_evidence_base_with_progress).parameters)
+        src = inspect.getsource(run_eval.run_case_with_synthesis)
+        for param in real - {"job_id", "question"}:
+            assert f"{param}=" in src.split("def _pinned_builder")[1].split("return")[1], \
+                f"_pinned_builder does not forward {param!r} to the real builder"
+
+
 class TestModeLabelling:
     def test_subset_ids_all_exist_in_questions(self):
         """A typo'd id would silently shrink the subset to nothing."""

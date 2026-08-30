@@ -119,8 +119,8 @@ def run_case_with_synthesis(case):
     original = app_mod.build_evidence_base_with_progress
     pinned = case.get("force_route")
 
-    def _pinned_builder(job_id, question, force_route=None):
-        return original(job_id, question, force_route=pinned)
+    def _pinned_builder(job_id, question, force_route=None, mode="review"):
+        return original(job_id, question, force_route=pinned, mode=mode)
 
     app_mod.build_evidence_base_with_progress = _pinned_builder
     try:
