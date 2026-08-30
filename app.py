@@ -8,6 +8,7 @@ import os
 import sys
 import uuid
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import tempfile
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_file
@@ -98,7 +99,7 @@ except ImportError:
     print("Warning: python-pptx not installed -- run: pip install python-pptx")
 
 from endo_ai import (build_evidence_base, ask_clinical_question, ask_learn_question,
-                     build_deep_learning_module,
+                     build_deep_learning_module, StreamAborted,
                      save_answer, generate_clarifying_questions,
                      classify_question_intent,
                      analyze_radiograph, _analysis_to_prefill,
@@ -171,7 +172,18 @@ def create_job(question: str, mode: str = "review") -> str:
             "status":     "running",
             "progress":   0,
             "message":    "Starting...",
+            # `answer` is the GUARDED text: it is only ever set once
+            # validate_evidence_mapping and verify_citation_support have run on
+            # the complete synthesis. `partial_answer` is the raw, unchecked
+            # stream. The UI derives its trust chips from `answer` alone, so a
+            # pass-state chip is structurally unreachable while streaming —
+            # this split is the fix for bug class (d) in this path.
             "answer":     None,
+            "partial_answer": "",
+            "streaming":  False,
+            # "pending" until the guardrails have actually run on the finished
+            # text; the header chips read "checking…" for as long as it says so.
+            "checks_status": "pending",
             "papers":     [],
             "images":     [],
             "cost_usd":   None,
@@ -374,6 +386,11 @@ def run_question(job_id: str, question: str, mode: str = "review"):
                 papers   = cached["papers"],
                 images   = [],
                 cost_usd = 0.0,
+                # A cached answer was guarded before it was stored, and the
+                # chips are read back off the markers inside it — including the
+                # explicit "not available" case.
+                streaming     = False,
+                checks_status = "complete",
             )
             return
 
@@ -411,14 +428,54 @@ def run_question(job_id: str, question: str, mode: str = "review"):
                           "complex": "complex multi-system question"}.get(intent["kind"], "question")
             update_job(job_id, message=f"Routing as {kind_label} — generating search terms...",
                        progress=5)
-            evidence = build_evidence_base_with_progress(job_id, question)
+            evidence = build_evidence_base_with_progress(job_id, question, mode=mode)
 
             if is_aborted(job_id):
                 update_job(job_id, status="aborted", progress=100, message="Cancelled")
                 return
 
-            update_job(job_id, message="Asking Claude to synthesize the evidence...", progress=80)
-            answer, cost = ask_clinical_question(question, evidence)
+            # Publish the retrieved papers BEFORE synthesis so the inline
+            # [[PMID:N]] pills rendered mid-stream can resolve to real author
+            # names instead of bare numbers. `_safe_papers` still strips the
+            # abstracts on the way out of /status.
+            update_job(job_id,
+                       message   = "Asking Claude to synthesize the evidence...",
+                       progress  = 80,
+                       papers    = evidence.get("_summary", {}).get("all_scored", []),
+                       streaming = True,
+                       partial_answer = "",
+                       checks_status  = "pending")
+
+            def _on_partial(text: str):
+                # Raw, UNCHECKED model text. It goes to `partial_answer` — never
+                # to `answer` — so nothing downstream can mistake it for a
+                # validated result.
+                update_job(job_id,
+                           partial_answer = text,
+                           streaming      = True,
+                           checks_status  = "pending",
+                           message        = "Writing the answer…",
+                           progress       = min(95, 80 + len(text) // 400))
+
+            def _on_phase(label: str):
+                # The model has stopped writing but the guardrails have NOT
+                # finished. checks_status stays "pending" — the chips keep
+                # saying "checking…" for exactly this window.
+                update_job(job_id, streaming=False, checks_status="pending",
+                           progress=97,
+                           message="Checking citations against the abstracts…")
+
+            try:
+                answer, cost = ask_clinical_question(
+                    question, evidence,
+                    stream_cb = _on_partial,
+                    abort_cb  = lambda: is_aborted(job_id),
+                    phase_cb  = _on_phase,
+                )
+            except StreamAborted:
+                update_job(job_id, status="aborted", progress=100,
+                           message="Cancelled", streaming=False, partial_answer="")
+                return
 
         cost = float(cost or 0.0) + intent_cost
         images = []
@@ -450,10 +507,16 @@ def run_question(job_id: str, question: str, mode: str = "review"):
             papers   = papers,
             images   = images,
             cost_usd = round(cost, 4),
+            # Guardrails have now run on the complete text — and only now may
+            # the header chips show a real pass/fail state.
+            streaming      = False,
+            partial_answer = "",
+            checks_status  = "complete",
         )
 
     except Exception as e:
-        update_job(job_id, status="error", progress=100, error=str(e), message=str(e))
+        update_job(job_id, status="error", progress=100, error=str(e), message=str(e),
+                   streaming=False, checks_status="pending")
 
 
 def multi_query_search(question: str, generated_terms: list, limit: int = 100) -> list:
@@ -563,6 +626,17 @@ def ensure_authoritative(candidates: list, relevant: list, floor: float) -> list
     return relevant + added
 
 
+# ── B2/B5 retrieval concurrency ──────────────────────────
+# Bounded by the NCBI rate limit, not by CPU: at 9 req/sec with an API key and
+# 2 HTTP calls per fetch, ~6 in flight keeps the limiter saturated without
+# queueing work that can only wait. Also stays under DB_POOL_MAX (10).
+TIER_FETCH_WORKERS = 6
+
+# B5 early stop, Review mode only.
+EARLY_STOP_TIERS      = ("level1",)   # cochrane is fetched before this loop
+EARLY_STOP_MIN_PAPERS = 15
+
+
 # ── Library relevance gate ───────────────────────────────
 # The floor and the count that interprets it are ONE setting, kept together
 # deliberately. See HANDOVER.md "The similarity floor asks a different question
@@ -588,11 +662,18 @@ RELEVANCE_GATE = {
 
 
 def build_evidence_base_with_progress(job_id: str, question: str,
-                                      force_route: str = None) -> dict:
+                                      force_route: str = None,
+                                      mode: str = "review") -> dict:
     """
     RAG-first evidence pipeline.
     Searches the full library without level_key filter (level_key is empty
     in the current library build). Falls back to PubMed if < MIN_RAG_RESULTS.
+
+    `mode` is "review" or "learn". It gates the B5 early stop only: Review
+    stops once the top tiers have supplied enough evidence, because tier
+    banding means a case series cannot override a Level I finding anyway. Learn
+    mode always sweeps every tier — a teaching curriculum genuinely wants the
+    narrative scaffolding that reviews and editorials provide.
 
     force_route pins retrieval for evaluation runs: "live" skips the library
     gate entirely, "library" refuses to fall back to PubMed. Production always
@@ -613,7 +694,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         LEVEL_4_TERMS, LEVEL_5_TERMS,
         detect_outliers, apply_currency_tags,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
-        flag_superseded_by_review,
+        flag_superseded_by_review, _pubmed_audit_log,
     )
     from rag import search as rag_search, rag_results_to_scored, library_stats
 
@@ -796,34 +877,97 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         ("level5",  LEVEL_5_TERMS,  TIER_LABEL["level5"],  72),
     ]
 
+    # ── B2/B5: parallel tier fetches, in two phases ──────────────────────
+    # Every (tier, search-term) pair is an independent HTTP round trip; there
+    # are ~7 tiers x ~7 terms of them and they used to run one after another.
+    # The NCBI limiter (endo_ai.ncbi_get) now paces departures globally, so
+    # concurrency here is bounded by the rate limit rather than by the loop.
+    #
+    # Two properties have to survive, and both are easy to lose:
+    #
+    #  1. DEDUP ORDER. seen_pmids gave a duplicate paper to whichever tier was
+    #     processed first, and tiers ran strongest-first — so a paper found in
+    #     both level1 and level4 was presented as Level I. That is correct and
+    #     must not become a race. Fetching is therefore parallel but dedup is
+    #     applied afterwards, sequentially, in TIER_ORDER.
+    #  2. EVIDENCE ORDER. evidence[] is built in tier order regardless of which
+    #     fetch finished first, so completion order cannot leak into the answer.
     seen_pmids: set = set()
-    for level_key, terms, label, pct in levels:
+    _fetch_lock = threading.Lock()
+
+    def _fetch_one(level_key, terms, label, term):
+        """One (tier, term) fetch. Returns raw results; no dedup here."""
         if is_aborted(job_id):
-            break
-        update_job(job_id, message=f"{label} — searching PubMed...", progress=pct)
-        level_scored: list = []
-        level_ids:   list = []
-        level_text = ""
+            return level_key, None
+        try:
+            return level_key, fetch_papers(term, " OR ".join(terms), label,
+                                           level_key, question=question)
+        except Exception as e:
+            print(f"  XX {label}: fetch failed ({e})")
+            return level_key, None
 
-        # Fetch for each search term and deduplicate by PMID
-        for term in search_terms:
-            if is_aborted(job_id):
-                break
-            text, ids, scored = fetch_papers(term, " OR ".join(terms), label,
-                                             level_key, question=question)
-            new_scored = [p for p in scored if p["pmid"] not in seen_pmids]
-            new_ids    = [i for i in ids    if i not in seen_pmids]
-            for p in new_scored:
-                seen_pmids.add(p["pmid"])
-            level_scored.extend(new_scored)
-            level_ids.extend(new_ids)
-            if text and not level_text:
-                level_text = text  # use text from first successful term
+    def _run_tiers(tier_specs):
+        """Fetch every (tier, term) pair concurrently, then fold the results
+        into `evidence` in strict tier order."""
+        raw = {lk: [] for lk, _t, _l, _p in tier_specs}
+        jobs_list = [(lk, terms, label, term)
+                     for lk, terms, label, _pct in tier_specs
+                     for term in search_terms]
+        if not jobs_list:
+            return 0
 
-        level_scored.sort(key=lambda x: x["score"], reverse=True)
-        evidence[level_key] = {"text": level_text, "ids": level_ids,
-                               "scored": level_scored, "source": "pubmed"}
-        all_scored.extend(level_scored)
+        done = 0
+        with ThreadPoolExecutor(max_workers=TIER_FETCH_WORKERS) as pool:
+            futures = [pool.submit(_fetch_one, *j) for j in jobs_list]
+            for fut in as_completed(futures):
+                lk, res = fut.result()
+                done += 1
+                if res is not None:
+                    with _fetch_lock:
+                        raw[lk].append(res)
+                # Progress is a completion count, not a per-tier percentage:
+                # with parallel fetches a monotonic per-tier pct is a lie.
+                update_job(job_id,
+                           message=f"Searching PubMed — {done}/{len(jobs_list)} queries",
+                           progress=min(72, 20 + int(50 * done / len(jobs_list))))
+
+        added = 0
+        for level_key, _terms, _label, _pct in tier_specs:
+            level_scored, level_ids, level_text = [], [], ""
+            for text, ids, scored in raw[level_key]:
+                new_scored = [p for p in scored if p["pmid"] not in seen_pmids]
+                new_ids    = [i for i in ids    if i not in seen_pmids]
+                for p in new_scored:
+                    seen_pmids.add(p["pmid"])
+                level_scored.extend(new_scored)
+                level_ids.extend(new_ids)
+                if text and not level_text:
+                    level_text = text
+            level_scored.sort(key=lambda x: x["score"], reverse=True)
+            evidence[level_key] = {"text": level_text, "ids": level_ids,
+                                   "scored": level_scored, "source": "pubmed"}
+            all_scored.extend(level_scored)
+            added += len(level_scored)
+        return added
+
+    if not is_aborted(job_id):
+        strong = _run_tiers([l for l in levels if l[0] in EARLY_STOP_TIERS])
+
+        # B5 early stop. In Review mode, once the top tiers have supplied
+        # enough evidence, the weak tiers cannot change the recommendation —
+        # tier banding means a case series never overrides a Level I finding.
+        # Learn mode is exempt: a teaching curriculum genuinely wants the
+        # narrative scaffolding that reviews and editorials provide.
+        n_strong = len((evidence.get("cochrane") or {}).get("scored") or []) + strong
+        early = (mode == "review" and n_strong >= EARLY_STOP_MIN_PAPERS)
+        if early:
+            print(f"  [early_stop] {n_strong} papers from cochrane+level1 "
+                  f">= {EARLY_STOP_MIN_PAPERS}; skipping weaker tiers (mode=review)")
+            _pubmed_audit_log("early_stop", "level1",
+                              f"n_strong={n_strong} threshold={EARLY_STOP_MIN_PAPERS}",
+                              [], 200, 0)
+        else:
+            _run_tiers([l for l in levels if l[0] not in EARLY_STOP_TIERS])
 
     # Apply outlier detection and currency tags to PubMed results
     all_scored = detect_outliers(apply_currency_tags(all_scored))

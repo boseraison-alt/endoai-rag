@@ -3598,7 +3598,8 @@ Output JSON only:
 
 
 # ── ASK CLAUDE ───────────────────────────────────────────
-def ask_clinical_question(question, evidence, stream_cb=None, abort_cb=None):
+def ask_clinical_question(question, evidence, stream_cb=None, abort_cb=None,
+                          phase_cb=None):
     """Synthesise the answer, streaming it out as it is written.
 
     `stream_cb(partial_markdown)` — optional. Called at the cadence set by
@@ -3607,6 +3608,10 @@ def ask_clinical_question(question, evidence, stream_cb=None, abort_cb=None):
 
     `abort_cb()` — optional. Polled once per stream event; a true result raises
     StreamAborted so a cancelled job stops paying for tokens immediately.
+
+    `phase_cb(label)` — optional. Fired once when the model stream closes and
+    the guardrails start, so the UI can stop pretending text is still arriving
+    without claiming the checks have finished either.
 
     THE GUARDRAIL INVARIANT: `validate_evidence_mapping` and
     `verify_citation_support` are called below on `answer`, which is read from
@@ -3750,6 +3755,12 @@ Clinical Question: {question}"""
         # Cancelled while the last tokens were in flight — don't spend two more
         # LLM calls validating an answer nobody will read.
         raise StreamAborted()
+
+    if phase_cb is not None:
+        try:
+            phase_cb("checking")
+        except Exception as e:      # pragma: no cover — defensive
+            print(f"  [stream] phase publish failed: {type(e).__name__}: {e}")
 
     # Validate-and-retry against evidence base
     result = validate_evidence_mapping(answer, evidence)

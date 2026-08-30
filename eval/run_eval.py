@@ -210,7 +210,8 @@ def run_case(case):
 
     offset = _audit_offset()
     evidence = build_evidence_base_with_progress(
-        job_id, case["question"], force_route=case.get("force_route")) or {}
+        job_id, case["question"], force_route=case.get("force_route"),
+        mode=case.get("mode", "review")) or {}
     esearch_total, n_queries, n_empty, n_terms, n_failed = _esearch_hits_since(offset)
 
     per_tier, papers = {}, []
