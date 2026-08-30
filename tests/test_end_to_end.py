@@ -21,6 +21,7 @@ those three bugs lived.
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -331,6 +332,186 @@ class TestEvalRoutePinning:
                 "pin-live", "Single visit versus multiple visit endodontic treatment?",
                 force_route="live")
         assert reached.get("yes"), "live path never reached the search-term generator"
+
+
+# ── WORKLIST 4.7: no paper reaches the evidence base unlabelled ─────────────
+# Real rows, copied out of endo_papers_rag after
+# scripts/fix_empty_level_key.py --apply. All five sat at level_key = '' and
+# were classified from their own abstracts; the tier on each row here is the
+# tier the migration wrote. 39885347 is the one that matters most: it is an
+# Evidence-Based Dentistry critical summary whose abstract opens by describing
+# somebody else's randomised trial, so a cue-matcher that reads "randomised
+# control trial" out of it installs a one-page commentary at Level I.
+MIGRATED_LIBRARY_ROWS = [
+    {"pmid": "42260496", "level_key": "level3a", "year": 2026,
+     "title": "Frequency and associated factors of segmental root developmental "
+              "arrest in endodontically treated immature permanent teeth with "
+              "apical periodontitis: a retrospective cohort study.",
+     "abstract": "BACKGROUND: Segmental root developmental arrest (SRDA) is an "
+                 "uncommon developmental pattern in immature permanent teeth "
+                 "with apical periodontitis. This retrospective study evaluated "
+                 "the frequency, clinical features, and factors associated with "
+                 "SRDA after regenerative endodontic procedures (REPs) or "
+                 "apexification. METHODS: A total of 103 immature permanent "
+                 "teeth were retrospectively reviewed. RESULTS: SRDA was "
+                 "identified in 12 of 103 teeth (11.65%).",
+     "journal": "BMC oral health", "authors": "Author A", "score": 57.3,
+     "similarity": 0.74},
+    {"pmid": "39885347", "level_key": "level5", "year": 2025,
+     "title": "Tooth vitality and periapical healing: is Biodentine at par with "
+              "MTA in regenerative endodontics?",
+     "abstract": "DESIGN: The study is a prospective, double-blinded randomised "
+                 "control trial that compares the mineral trioxide aggregate "
+                 "(MTA) and Biodentine as the pulp space barrier material. A "
+                 "total of 36 patients were included in the study. CASE "
+                 "SELECTION: Participants were recruited from the Department of "
+                 "Endodontics outpatient clinic. RESULTS: Firstly, the author "
+                 "presented the overall healing of the periapical lesion.",
+     "journal": "Evidence-based dentistry", "authors": "Author B", "score": 59.4,
+     "similarity": 0.73},
+    {"pmid": "39775507", "level_key": "level2", "year": 2025,
+     "title": "Clinical and radiographic evaluation of two different "
+              "apexification protocols in traumatized immature permanent incisors.",
+     "abstract": "BACKGROUND: Dental trauma can cause damage to the pulp tissue "
+                 "in immature teeth. The aim of this prospective study was to "
+                 "evaluate the radiographic and clinical results of immature "
+                 "teeth with a history of trauma. METHODS: Forty-one patients "
+                 "aged between 7 and 12 years were included in the study and "
+                 "followed for a period of 24 months.",
+     "journal": "Ulusal travma ve acil cerrahi dergisi", "authors": "Author C",
+     "score": 58.3, "similarity": 0.72},
+    {"pmid": "41167331", "level_key": "level5", "year": 2026,
+     "title": "Clinical and Laboratory Insights Into the GentleWave System: A "
+              "Scoping Review.",
+     "abstract": "INTRODUCTION: The GentleWave System is an advanced endodontic "
+                 "irrigation technology. This scoping review aims to "
+                 "systematically assess the available clinical and laboratory "
+                 "evidence. METHODS: This review was conducted in accordance "
+                 "with PRISMA-ScR guidelines. RESULTS: A total of 34 studies met "
+                 "the inclusion criteria.",
+     "journal": "Journal of endodontics", "authors": "Author D", "score": 37.5,
+     "similarity": 0.71},
+    {"pmid": "30519823", "level_key": "level3a", "year": 2019,
+     "title": "The fate of root canals obturated with Thermafil: 10-year data "
+              "for patients treated in a master's program.",
+     "abstract": "OBJECTIVES: Retrospective description of the 10-year success "
+                 "rate of endodontic treatments with Thermafil (TF). MATERIALS "
+                 "AND METHODS: Teeth satisfying the inclusion criteria (206 "
+                 "teeth in 89 patients) were reexamined clinically and "
+                 "radiographically. RESULTS: At 10 years, 179 (87%) teeth "
+                 "survived and 27 were extracted.",
+     "journal": "Clinical oral investigations", "authors": "Author E",
+     "score": 64.1, "similarity": 0.70},
+]
+
+# Fill in the columns rag.search() returns, so these rows are shaped exactly
+# like the ones the real query produces.
+for _r in MIGRATED_LIBRARY_ROWS:
+    _r.update({"impact_factor": None, "sample_size": None,
+               "followup_months": 12, "citations": 3, "is_curated": False,
+               "coi_flag": False, "coi_funder": "", "coi_status": "no_statement",
+               "registry": "", "has_erratum": False, "has_retraction": False,
+               "medline_indexed": True})
+
+
+class TestNoUnlabelledPaperReachesTheEvidenceBase:
+    """WORKLIST 4.7. `level_key` drives the design axis at 39% of the score, and
+    app.py bands anything it cannot recognise to level5 — safe, but it means a
+    ten-year retrospective cohort of 206 teeth is handed to Claude stamped
+    "Level V — Expert Opinion". 14 rows were in that state.
+
+    The banding fallback above is still load-bearing and its own test
+    (test_unlabelled_paper_bands_to_the_weakest_tier) stays. What these two add
+    is the stronger property the migration establishes: nothing unlabelled
+    should be arriving in the first place.
+    """
+
+    def test_every_paper_in_the_evidence_base_carries_a_tier(self, client,
+                                                             monkeypatch):
+        """Offline twin, on the real migrated rows.
+
+        Fails if any of those rows regresses to level_key = '', and fails if a
+        future change to the retrieval path drops the column on the way through.
+        """
+        import rag
+        from app import build_evidence_base_with_progress, jobs
+        from endo_ai import TIER_ORDER
+
+        rows = [dict(r) for r in MIGRATED_LIBRARY_ROWS] + \
+               [_filler(i) for i in range(22)]
+        monkeypatch.setattr(rag, "search", lambda *a, **k: [dict(r) for r in rows])
+        monkeypatch.setattr(rag, "get_cached_abstracts_bulk",
+                            lambda pmids: {r["pmid"]: r for r in rows
+                                           if r["pmid"] in set(pmids)})
+
+        # Pinned, for the same reason the eval cases are: none of these rows is
+        # cochrane/level1, so the coverage gate's high-tier check hands the
+        # question to live PubMed and the test measures the wrong path (and
+        # goes online). The library path is the one that reads stored
+        # level_key, so it is the one this property belongs to.
+        jobs["unlabelled-probe"] = {"status": "running", "steps": [], "progress": 0}
+        evidence = build_evidence_base_with_progress(
+            "unlabelled-probe",
+            "Single visit versus multiple visit endodontic treatment?",
+            force_route="library")
+
+        unlabelled = [(t, p.get("pmid"))
+                      for t in TIER_ORDER
+                      for p in ((evidence.get(t) or {}).get("scored") or [])
+                      if not (p.get("level_key") or "").strip()]
+        assert not unlabelled, (
+            f"{len(unlabelled)} paper(s) reached the evidence base with no "
+            f"level_key: {unlabelled}")
+
+        # And the migrated rows actually made it in — an empty evidence base
+        # would satisfy the assertion above for the wrong reason.
+        served = {p.get("pmid")
+                  for t in TIER_ORDER
+                  for p in ((evidence.get(t) or {}).get("scored") or [])}
+        assert {"42260496", "39885347", "30519823"} <= served, \
+            f"migrated rows never reached the evidence base: {sorted(served)}"
+
+        # 39885347 is a critical summary of somebody else's RCT. If it ever
+        # shows up at level1 the cue matcher has read the summarised trial's
+        # design off the summarising paper.
+        placed = {p["pmid"]: t
+                  for t in TIER_ORDER
+                  for p in ((evidence.get(t) or {}).get("scored") or [])}
+        assert placed["39885347"] == "level5", (
+            f"an Evidence-Based Dentistry critical summary was banded as "
+            f"{placed['39885347']!r} — its abstract describes the trial it "
+            f"summarises, not itself")
+
+    @pytest.mark.network
+    @pytest.mark.skipif(os.environ.get("RUN_NETWORK_TESTS") != "1",
+                        reason="reads the live Neon library; "
+                               "set RUN_NETWORK_TESTS=1 to enable")
+    def test_library_holds_no_unlabelled_rows(self):
+        """The property at its source. The offline twin above cannot see the
+        database, and the leak that produced these 14 rows was a write path, not
+        a read path."""
+        import psycopg2.extras
+        from rag import get_conn
+
+        conn = get_conn()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        try:
+            cur.execute("""
+                SELECT pmid, LEFT(COALESCE(title, ''), 70) AS title
+                  FROM endo_papers_rag
+                 WHERE COALESCE(level_key, '') = ''
+                 ORDER BY pmid;
+            """)
+            rows = cur.fetchall()
+        finally:
+            cur.close(); conn.close()
+
+        assert not rows, (
+            f"{len(rows)} library row(s) carry no level_key and will be banded "
+            f"to Level V regardless of design — run "
+            f"scripts/fix_empty_level_key.py --apply, then "
+            f"scripts/rescore_library.py --apply:\n"
+            + "\n".join(f"  {r['pmid']}  {r['title']}" for r in rows))
 
 
 class TestGuardrailsRunOnTheRealPath:
