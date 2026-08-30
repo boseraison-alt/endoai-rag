@@ -286,6 +286,55 @@ after checking the gate fails closed. **When a cache shows no hits, prove it is
 cold before assuming it is.**
 
 
+## Evidence tiers: what each one now means
+
+`TIER_ORDER` is strongest-first and `LEVEL_SCORES` must stay monotonic along it
+(`tests/test_tier_banding.py` pins this). Two tiers were added on 2026-08-30.
+
+**`invitro` (15), between case series and expert opinion.** Endodontics is
+heavily bench-based, and extracted teeth, dentine blocks, bovine incisors and
+agar plates all read as "prospective" to a design classifier — 155 bench
+studies were sitting at Level II/III and being shown as the second-strongest
+kind of evidence there is. `detect_in_vitro` is deliberately asymmetric:
+demoting a real clinical trial into a bench tier is far worse than leaving one
+bench paper at Level II, so it needs one strong cue (a preparation that cannot
+be a patient) or two weak ones, clinical language vetoes everything, and
+cochrane/level1/classic are never touched.
+
+**`retracted` (0), deliberately NOT in `TIER_ORDER`.** Absence from that list
+is this codebase's mechanism for "never rendered to Claude". It has a
+`TIER_LABEL` only so admin and bibliography views can name it honestly.
+
+### Quality floors are per-tier, and may only loosen
+
+`QUALITY_FLOOR` was one number (50) for every tier. Score is not comparable
+across tiers by construction — design contributes 39%, so a Cochrane review
+starts from 100 and a case series from 20 before the paper itself is weighed.
+Measured on the real library, the flat floor kept 4 of 175 level4 rows, 1 of
+155 invitro, 3 of 153 level5: for those three tiers even the 90th percentile
+was below the floor, so it was not filtering quality, it was deleting the tier.
+Only `MIN_PAPERS_KEPT=3` kept them non-empty, which meant a "case series" block
+held three papers chosen by a rule that had already discarded the other 172.
+
+`TIER_QUALITY_FLOORS` gives each tier its own 40th percentile. **`_tier_floor`
+caps every value at `QUALITY_FLOOR`, so this can only ever loosen a tier.** Keep
+that property: it is what makes the config safe to edit — no change to the dict
+can remove a paper that reaches a clinician today. Re-measure with
+`scripts/measure_quality_floor.py` if the library composition shifts.
+
+### Two migrations, one lesson about dry runs
+
+Both 1.4 and 1.5 shipped guards that only existed because the dry run printed
+random samples for review rather than a summary count:
+
+- 8 rows would have been *promoted* into `invitro` from `level5` (15 > 10) —
+  narrative reviews that merely discuss bench work.
+- One genuine clinical case report was caught by an "extracted premolars" cue
+  describing the procedure, not the specimens.
+
+A migration script that prints only totals cannot surface either. Print random
+samples, not top-N, so the sample cannot flatter itself.
+
 ## Cost
 
 A four-module Deep Learning curriculum with real retrieval costs **~$1.18**
