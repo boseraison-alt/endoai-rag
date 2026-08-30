@@ -3927,6 +3927,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 <script>
 var pollTimer    = null;
 var currentJob   = null;
+var _exportSource = null;   // {question, answer} of the rendered result
 var mode         = 'review';
 var caseConvId   = null;
 var caseMessages = [];
@@ -4042,6 +4043,9 @@ function loadHistoryItem(id, itemMode, el) {
       // Fill question
       document.getElementById('qInput').value = data.question;
       // Render answer directly
+      // Drop any stale live-job id: with one set, an export request would
+      // prefer it server-side and narrate the PREVIOUS answer, not this one.
+      currentJob = null;
       var fakeJob = {
         status: 'complete', message: 'Done (from cache)',
         question: data.question, answer: data.answer,
@@ -4484,6 +4488,10 @@ function showStreamingPartial(question, job) {
 
 // ── Render result ────────────────────────────────────
 function showResult(question, job) {
+  // Exports narrate what is ON SCREEN. A history-loaded answer has no live
+  // job in the server's memory, so the export endpoints accept the text
+  // itself as a fallback source; this is where it gets captured.
+  if (job && job.answer) _exportSource = { question: question, answer: job.answer };
   _streamActive = false;
   document.getElementById('progressCard').style.display = 'none';
   document.getElementById('answerCard').style.display   = 'block';
@@ -5758,7 +5766,7 @@ function setSpeed(spd) {
 function startExport() {
   var status = document.getElementById('exportStatus');
   var jobId  = currentJob;
-  if (!jobId) { status.textContent = 'No answer to export.'; return; }
+  if (!jobId && !_exportSource) { status.textContent = 'No answer to export.'; return; }
 
   status.textContent = '';
   _hideAudioPlayer();
@@ -5787,7 +5795,9 @@ function _startAudioExport(jobId, style) {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({
       job_id:jobId, length_minutes:_exportDuration,
-      voice:_exportVoice, style:style
+      voice:_exportVoice, style:style,
+      question: _exportSource ? _exportSource.question : '',
+      answer:   _exportSource ? _exportSource.answer   : ''
     }),
   })
   .then(function(r){ return r.json(); })
@@ -5835,7 +5845,9 @@ function pollAudioJob(aid) {
 function _startVideoExport(jobId) {
   fetch('/generate_video', {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration, voice:_exportVoice}),
+    body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration, voice:_exportVoice,
+      question: _exportSource ? _exportSource.question : '',
+      answer:   _exportSource ? _exportSource.answer   : ''}),
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
@@ -5880,7 +5892,9 @@ function pollVideoJob(aid) {
 function _startSlidesExport(jobId) {
   fetch('/generate_slides', {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration, voice:_exportVoice}),
+    body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration, voice:_exportVoice,
+      question: _exportSource ? _exportSource.question : '',
+      answer:   _exportSource ? _exportSource.answer   : ''}),
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {

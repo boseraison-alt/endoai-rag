@@ -592,7 +592,10 @@ def _run_node(js_body):
         pytest.skip("node not available — cannot exercise the shipped JS")
     harness = _extract_js([
         "CHIPS_CHECKING", "buildTrustChips", "_stripSupportBlockquote",
-        "_citeEsc", "pmidMeta", "formatCite", "renderAnswer",
+        # deShout sentence-cases ALL-CAPS headings; renderAnswer has called it
+        # since the Instrument Serif typography change, so it must ride along
+        # or the extracted function throws ReferenceError under node.
+        "_citeEsc", "pmidMeta", "formatCite", "deShout", "renderAnswer",
         "_recommendationTier", "renderAnswerWithBox",
     ])
     prog = "var mode = 'review';\nvar trunc = function(s){return s;};\n" + harness + "\n" + js_body
@@ -709,4 +712,7 @@ class TestRecommendationBoxDuringStreaming:
         """ % (json.dumps(ANSWER_MD), json.dumps(ANSWER_MD)))
         assert "rec-box" in out["box"]
         assert "Based on Level I evidence" in out["box"]
-        assert "EVIDENCE SUMMARY" in out["body"]
+        # Sentence-cased by deShout: the engine emits ALL-CAPS headings, and
+        # since the serif-typography change the renderer deliberately turns
+        # "## EVIDENCE SUMMARY" into an "Evidence summary" headline.
+        assert "Evidence summary" in out["body"]

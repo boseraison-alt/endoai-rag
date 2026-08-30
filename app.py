@@ -1867,6 +1867,28 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
 
 # ── Audio Export ──────────────────────────────────────────
 
+def _resolve_export_source(data: dict):
+    """Return (question, answer) for an export request.
+
+    Exports used to require a live job in THIS process's memory, which broke
+    the moment an answer was loaded from the history sidebar or the server
+    restarted: the audio/slides/video buttons 404'd ("Job not found") or,
+    worse, exported a PREVIOUS question's answer through a stale job id. The
+    client already holds the rendered answer, so it now sends question+answer
+    with the request and a job id is just the preferred source, not the only
+    one.
+    """
+    job_id = data.get("job_id", "")
+    with jobs_lock:
+        job = jobs.get(job_id)
+    if job and job.get("answer"):
+        return job.get("question", ""), job["answer"]
+    answer = (data.get("answer") or "").strip()
+    if answer:
+        return (data.get("question") or "").strip(), answer
+    return None, None
+
+
 @app.route("/generate_audio", methods=["POST"])
 def generate_audio_endpoint():
     if not TTS_AVAILABLE:
@@ -1879,9 +1901,8 @@ def generate_audio_endpoint():
     voice          = data.get("voice", "onyx")
     style          = data.get("style", "lecture")   # "lecture" | "conversation"
 
-    with jobs_lock:
-        job = jobs.get(job_id)
-    if not job or not job.get("answer"):
+    src_question, src_answer = _resolve_export_source(data)
+    if not src_answer:
         return jsonify({"error": "Job not found or no answer to convert"}), 404
 
     audio_id = str(uuid.uuid4())
@@ -1893,7 +1914,7 @@ def generate_audio_endpoint():
             "file_path":      None,
             "script":         None,         # list of {host,text} for conversation
             "style":          style,
-            "question":       job["question"],
+            "question":       src_question,
             "length_minutes": length_minutes,
             "error":          None,
             "started_at":     _t_audio.time(),
@@ -1902,7 +1923,7 @@ def generate_audio_endpoint():
 
     thread = threading.Thread(
         target=run_generate_audio,
-        args=(audio_id, job["answer"], job["question"], length_minutes, voice, style),
+        args=(audio_id, src_answer, src_question, length_minutes, voice, style),
         daemon=True,
     )
     thread.start()
@@ -2087,9 +2108,8 @@ def generate_slides_endpoint():
     length_minutes = max(5, min(60, length_minutes))
     voice          = data.get("voice", "onyx")
 
-    with jobs_lock:
-        job = jobs.get(job_id)
-    if not job or not job.get("answer"):
+    src_question, src_answer = _resolve_export_source(data)
+    if not src_answer:
         return jsonify({"error": "Job not found or no answer"}), 404
 
     audio_id = str(uuid.uuid4())
@@ -2097,14 +2117,14 @@ def generate_slides_endpoint():
         import time as _t_slides
         audio_jobs[audio_id] = {
             "status": "running", "file_path": None, "error": None, "type": "pptx",
-            "question": job["question"], "length_minutes": length_minutes,
+            "question": src_question, "length_minutes": length_minutes,
             "started_at": _t_slides.time(),
             "slides_done": 0, "slides_total": 0,
         }
 
     thread = threading.Thread(
         target=run_generate_slides,
-        args=(audio_id, job["answer"], job["question"], length_minutes, voice),
+        args=(audio_id, src_answer, src_question, length_minutes, voice),
         daemon=True,
     )
     thread.start()
@@ -2136,9 +2156,8 @@ def generate_video_endpoint():
     length_minutes = max(5, min(60, length_minutes))
     voice          = data.get("voice", "onyx")
 
-    with jobs_lock:
-        job = jobs.get(job_id)
-    if not job or not job.get("answer"):
+    src_question, src_answer = _resolve_export_source(data)
+    if not src_answer:
         return jsonify({"error": "Job not found or no answer"}), 404
 
     audio_id = str(uuid.uuid4())
@@ -2147,14 +2166,14 @@ def generate_video_endpoint():
         audio_jobs[audio_id] = {
             "status": "running", "file_path": None,
             "error": None, "file_ext": "mp4", "type": "video",
-            "question": job["question"], "length_minutes": length_minutes,
+            "question": src_question, "length_minutes": length_minutes,
             "started_at": _t_init.time(),
             "slides_done": 0, "slides_total": 0,
         }
 
     thread = threading.Thread(
         target=run_generate_video,
-        args=(audio_id, job["answer"], job["question"], length_minutes, voice),
+        args=(audio_id, src_answer, src_question, length_minutes, voice),
         daemon=True,
     )
     thread.start()
