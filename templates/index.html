@@ -4619,6 +4619,11 @@ function renderAnswerWithBox(text) {
   var rest   = text.replace(m[0], '');
   var tier   = _recommendationTier(recRaw);
   var divided = /literature is currently divided/i.test(text);
+  // "…as a colored banner, not a sentence" — once the banner renders, the
+  // sentence itself is redundant in the recommendation prose.
+  if (divided) {
+    recRaw = recRaw.replace(/[^.\n]*literature is currently divided on this topic[^.\n]*\.?\s*/i, '').trim();
+  }
 
   // "Does not apply when…" — surfaced separately when the model supplied it.
   var caveat = '';
