@@ -212,6 +212,80 @@ measurement** — check the distribution (top, p90, count above 0.60) instead.
 
 ---
 
+### The measurement behind `RELEVANCE_GATE`
+
+Every hit count below is a real measurement against the live library, one row
+per WORKLIST §7 eval question, taken 2026-08-30 after the term-generator fix.
+`top` is the single closest paper; `p90` the 10th-closest; the last three
+columns count hits clearing each candidate floor.
+
+| question | top | p90 | ≥0.45 | ≥0.55 | ≥0.60 |
+|---|---|---|---|---|---|
+| single-vs-multiple-visit | 0.689 | 0.570 | 55 | 10 | 8 |
+| mta-vs-biodentine-pulpotomy | 0.782 | 0.687 | 79 | 36 | 24 |
+| naocl-concentration | 0.727 | 0.663 | 38 | 25 | 18 |
+| cbct-vs-periapical | 0.702 | 0.612 | 36 | 17 | 12 |
+| bioceramic-vs-resin-sealer | 0.723 | 0.671 | 95 | 48 | 34 |
+| retreatment-vs-microsurgery | 0.743 | 0.637 | 97 | 32 | 12 |
+| direct-pulp-capping | 0.768 | 0.674 | 82 | 55 | 42 |
+| preemptive-nsaid | 0.764 | 0.619 | 77 | 38 | 13 |
+| regenerative-immature | 0.634 | 0.591 | 78 | 16 | 7 |
+| cracked-tooth-prognosis | 0.689 | 0.575 | 48 | 11 | 7 |
+| laser-disinfection | 0.725 | 0.637 | 58 | 32 | 17 |
+| apdt-primary-molars | 0.658 | 0.538 | 39 | 8 | 2 |
+| bisphosphonates | 0.559 | 0.515 | 60 | 3 | 0 |
+| **pregnancy** | **0.553** | **0.509** | **63** | **1** | **0** |
+| pips-vs-ultrasonic | 0.657 | 0.584 | 88 | 25 | 4 |
+| intentional-replantation | 0.660 | 0.531 | 64 | 4 | 1 |
+| sdf-pulp-outcomes | 0.554 | 0.477 | 23 | 1 | 0 |
+| sonic-vs-ultrasonic | 0.690 | 0.567 | 31 | 14 | 5 |
+| dens-invaginatus | 0.655 | 0.486 | 34 | 5 | 5 |
+| diabetes-outcomes | 0.783 | 0.649 | 94 | 56 | 25 |
+
+Read the pregnancy row: **63 hits above 0.45, one above 0.55, none above 0.60.**
+Hand-checking those 63 found not one on-topic paper — they were AAE and ESE
+position statements plus unrelated outcome studies. The `≥0.45` column does not
+measure coverage at all; it measures how much endodontics is in the library.
+
+The `≥0.55` column separates: thin topics collapse to 1–8, covered ones hold
+14–56. That is where `similarity_floor` now sits.
+
+**Caveat on reproducing this table.** Search terms are LLM-generated, so counts
+move between runs — `retreatment-vs-microsurgery` measured 32 above 0.55 here
+and 7 on a later run with different terms, which is why it ended up pinned
+`live`. Compare the *shape* (does the count collapse as the floor rises?), not
+the absolute number. `eval/probe_routes.py` regenerates the routing half of
+this on demand.
+
+### Why the semantic answer cache needs its Haiku gate
+
+The same compression that broke the 0.45 floor explains a design choice that
+otherwise looks like belt-and-braces. `query_cache` serves a stored answer when
+a new question embeds within cosine 0.92 of a cached one, and then *also* asks
+Haiku whether the two are clinically the same question before serving.
+
+MiniLM squeezes this whole corpus into a narrow band: across twenty genuinely
+different clinical questions, the closest library paper scored between 0.553
+and 0.783 — nothing anywhere near 0.92. So 0.92 is genuinely selective, but the
+usable range above it is thin, and the distance between "the same question" and
+"a different question about the same procedure" is a few hundredths. A pure
+threshold cannot hold that line reliably, and the failure is expensive: serving
+a stored answer to a question it does not answer.
+
+The Haiku equivalence check is not redundant with the threshold — it is the
+part that does not depend on the embedding space being well-spread. Anywhere
+this codebase makes a decision from a MiniLM cosine value, assume the space is
+compressed and pair the threshold with a check of a different kind.
+
+A postscript that makes the point sharper: none of that gate had ever run.
+`get_cached_answer` selected a column `question` where the table has
+`question_text`, so every lookup raised, the broad `except` swallowed it, and
+the cache returned a miss — for its entire existence. A permanent miss looks
+exactly like a cold cache, which is why it survived so long. Fixed 2026-08-30
+after checking the gate fails closed. **When a cache shows no hits, prove it is
+cold before assuming it is.**
+
+
 ## Cost
 
 A four-module Deep Learning curriculum with real retrieval costs **~$1.18**
@@ -367,3 +441,16 @@ successor only; the library backfill resolves chains to the terminal version
   admin routes require `X-Admin-Token`, because the sidebar delete button calls
   it without a header. Gating it needs a UI change.
 - The eval harness does not evaluate answer-level assertions (see above).
+
+## Commit-history notes
+
+- The 1.2 (live supersession) change lives in commit `b139af5`, titled
+  `wip: 1.2 live supersession before mutation check`. The annotation commit
+  `af6a57c` that explains it mistypes the hash as `b139af9`. Left uncorrected
+  deliberately: rewriting a pushed-shaped history to fix a typo in a comment is
+  a worse trade than a note here.
+- Several changes landed under `wip:` titles because the mutation-check
+  workflow (commit, mutate, verify the test fails, `git checkout --` to
+  restore) returns the tree to the WIP commit, and concurrent agents' unstaged
+  work made rewording unsafe. Each has a following empty annotation commit with
+  the real message.
