@@ -11,7 +11,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import tempfile
 from datetime import datetime
-from flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file, session
 from dotenv import load_dotenv
 
 # Load .env FIRST so all os.getenv() calls below (and in imported modules) see the keys
@@ -122,14 +122,71 @@ app = Flask(__name__)
 # Deny by default: if ADMIN_TOKEN is unset, the gated routes return 403 —
 # they never fail open. This is bug class (d) in HANDOVER.md (a check that
 # fails open) applied to auth.
+#
+# TWO ways to pass the gate (WORKLIST C4):
+#   1. The X-Admin-Token header, matching env ADMIN_TOKEN — unchanged, for
+#      curl and the tests.
+#   2. A signed admin SESSION, established once via POST /admin/login with
+#      that same header. The browser then holds an HttpOnly session cookie
+#      and the token itself never appears in page source. (It used to be
+#      rendered into a <meta> tag on `/`, where anyone who could load the
+#      page could read it.)
+#
+# The session stores an HMAC fingerprint of the token, keyed on the server's
+# secret key — NOT the token or any bare hash of it, because Flask session
+# cookies are signed but READABLE client-side, and a readable sha256(token)
+# would hand out an offline brute-force target. Recomputing the fingerprint
+# per request means rotating ADMIN_TOKEN (or the secret key) invalidates
+# every session already issued.
+#
+# app.secret_key comes from env FLASK_SECRET_KEY and FAILS CLOSED: when it is
+# unset there is no signing key, no session can be issued or read, and the
+# session path simply never authenticates — the header path still works. A
+# hard-coded fallback key would let anyone who has read the source forge the
+# cookie.
 import hmac as _admin_hmac
+import hashlib as _admin_hashlib
 from functools import wraps as _admin_wraps
+
+_secret = (os.getenv("FLASK_SECRET_KEY") or "").strip()
+if _secret:
+    app.secret_key = _secret
+else:
+    print("Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled "
+          "(the X-Admin-Token header still works).")
+app.config.setdefault("SESSION_COOKIE_HTTPONLY", True)
+app.config.setdefault("SESSION_COOKIE_SAMESITE", "Lax")
+del _secret
+
+
+def _admin_session_fingerprint(token: str) -> str:
+    """HMAC(secret_key, token) — what an authenticated session stores."""
+    return _admin_hmac.new(app.secret_key.encode("utf-8"),
+                           token.encode("utf-8"),
+                           _admin_hashlib.sha256).hexdigest()
+
+
+def _admin_session_valid(expected: str) -> bool:
+    """True when this request carries a session whose fingerprint matches the
+    CURRENT token. Fails closed: no secret key, no session support, no
+    unexpected exception ever authenticates."""
+    try:
+        if not app.secret_key:
+            return False
+        stored = session.get("admin_fp") or ""
+        if not stored:
+            return False
+        return _admin_hmac.compare_digest(stored,
+                                          _admin_session_fingerprint(expected))
+    except Exception:
+        return False
 
 
 def require_admin_token(fn):
-    """403 unless the request carries X-Admin-Token matching env ADMIN_TOKEN.
+    """403 unless the request carries X-Admin-Token matching env ADMIN_TOKEN,
+    or an admin session established through POST /admin/login.
 
-    Comparison is constant-time (hmac.compare_digest) so the token can't be
+    Comparisons are constant-time (hmac.compare_digest) so the token can't be
     recovered byte-by-byte from response timing.
     """
     @_admin_wraps(fn)
@@ -142,11 +199,46 @@ def require_admin_token(fn):
                          "them (see README)."
             }), 403
         provided = request.headers.get("X-Admin-Token", "")
-        if not _admin_hmac.compare_digest(provided.encode("utf-8"),
-                                          expected.encode("utf-8")):
-            return jsonify({"error": "Invalid or missing X-Admin-Token header."}), 403
-        return fn(*args, **kwargs)
+        if _admin_hmac.compare_digest(provided.encode("utf-8"),
+                                      expected.encode("utf-8")):
+            return fn(*args, **kwargs)
+        if _admin_session_valid(expected):
+            return fn(*args, **kwargs)
+        return jsonify({"error": "Invalid or missing X-Admin-Token header, "
+                                 "and no admin session."}), 403
     return _admin_guard
+
+
+@app.route("/admin/login", methods=["POST"])
+def admin_login():
+    """Trade the admin token (sent ONCE, as a header) for a signed session.
+
+    The browser UI calls this so the token never has to live in page source;
+    afterwards the HttpOnly cookie authenticates the gated routes. Deny by
+    default on every axis: no ADMIN_TOKEN => 403; no FLASK_SECRET_KEY => 403
+    (nothing to sign the cookie with — never issue an unsigned/forgeable
+    one); wrong token => 403.
+    """
+    expected = (os.getenv("ADMIN_TOKEN") or "").strip()
+    if not expected:
+        return jsonify({
+            "error": "Admin routes are disabled: ADMIN_TOKEN is not set "
+                     "on the server. Set ADMIN_TOKEN in .env to enable "
+                     "them (see README)."
+        }), 403
+    if not app.secret_key:
+        return jsonify({
+            "error": "Admin sessions are disabled: FLASK_SECRET_KEY is not "
+                     "set on the server, so there is nothing to sign the "
+                     "session cookie with. Set it in .env (see README) or "
+                     "send X-Admin-Token per request."
+        }), 403
+    provided = request.headers.get("X-Admin-Token", "")
+    if not _admin_hmac.compare_digest(provided.encode("utf-8"),
+                                      expected.encode("utf-8")):
+        return jsonify({"error": "Invalid or missing X-Admin-Token header."}), 403
+    session["admin_fp"] = _admin_session_fingerprint(expected)
+    return jsonify({"ok": True})
 
 
 # ── In-memory job store ──────────────────────────────────
@@ -209,15 +301,13 @@ def update_job(job_id: str, **kwargs):
 
 @app.route("/")
 def index():
-    # SECURITY TRADEOFF: ADMIN_TOKEN is rendered into the page so the sidebar's
-    # delete button can send X-Admin-Token; anyone who can load / can read the
-    # token from the HTML. Accepted because this is a single-user local app and
-    # the token only gates local admin routes — do NOT reuse this token for
-    # anything network-facing, and do not copy this pattern to a hosted deploy.
-    return render_template(
-        "index.html",
-        admin_token=(os.getenv("ADMIN_TOKEN") or "").strip(),
-    )
+    # The admin token is deliberately NOT rendered into the page (it used to
+    # be, in a <meta name="admin-token"> tag, where anyone who could load /
+    # could read it — WORKLIST C4). The sidebar's admin actions authenticate
+    # through POST /admin/login instead: the operator pastes the token once,
+    # the server sets a signed HttpOnly session cookie, and page source stays
+    # secret-free.
+    return render_template("index.html")
 
 
 @app.route("/tos")

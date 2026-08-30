@@ -3,10 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<!-- SECURITY TRADEOFF: the admin token is readable by anyone who can load this
-     page. Accepted for this single-user local app (it only gates local admin
-     routes); never ship this pattern to a multi-user or hosted deployment. -->
-<meta name="admin-token" content="{{ admin_token|default('', true) }}"/>
+<!-- The admin token is deliberately NOT in this page (WORKLIST C4): admin
+     actions authenticate via POST /admin/login, which sets a signed HttpOnly
+     session cookie. Page source stays secret-free. -->
 <title>Endo AI — Evidence-Based Clinical Assistant</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -7433,18 +7432,21 @@ function toggleLearnHistory() {
   if (panel) panel.classList.toggle('collapsed');
 }
 
-// The admin token the server rendered into this page (see the meta tag in
-// <head> and the SECURITY TRADEOFF comment there). Empty string when
-// ADMIN_TOKEN is unset on the server — in that case the gated routes 403 and
-// the caller must surface the refusal, not swallow it.
-function adminToken() {
-  var m = document.querySelector('meta[name="admin-token"]');
-  return (m && m.content) || '';
-}
-
-function adminHeaders() {
-  var t = adminToken();
-  return t ? { 'X-Admin-Token': t } : {};
+// Admin authentication (WORKLIST C4): the token is no longer rendered into
+// page source. The gated routes accept a signed session cookie instead,
+// established ONCE via POST /admin/login — the operator pastes the token into
+// a prompt, the server sets an HttpOnly cookie, and this page never holds the
+// secret. Empty/cancelled prompt resolves false and the caller must surface
+// the refusal, not swallow it.
+function adminLogin() {
+  var t = window.prompt('Admin action — paste the ADMIN_TOKEN configured on the server:');
+  if (!t) return Promise.resolve(false);
+  return fetch('/admin/login', {
+    method:  'POST',
+    headers: { 'X-Admin-Token': t }
+  })
+    .then(function(r) { return r.status === 200; })
+    .catch(function() { return false; });
 }
 
 // Bug class (d): show the refusal next to the row that failed, and leave the
@@ -7469,17 +7471,36 @@ function _showLearnDeleteError(btnEl, msg) {
 
 function deleteLearnReport(filename, btnEl) {
   if (!confirm('Delete this report? This cannot be undone.')) return;
+  _sendLearnDelete(filename, btnEl, true);
+}
+
+function _sendLearnDelete(filename, btnEl, mayLogin) {
   var status = 0;
-  fetch('/learn_history/' + encodeURIComponent(filename), {
-    method:  'DELETE',
-    headers: adminHeaders()
-  })
+  // No token header: the session cookie (set by /admin/login) authenticates.
+  fetch('/learn_history/' + encodeURIComponent(filename), { method: 'DELETE' })
     .then(function(r) {
       status = r.status;
       return r.json().catch(function() { return {}; });
     })
     .then(function(data) {
       data = data || {};
+      // A 403 with ADMIN_TOKEN configured means "no admin session yet" —
+      // offer the login prompt ONCE, then retry. When the server says
+      // ADMIN_TOKEN itself is unset, logging in cannot help; fall through to
+      // the error banner instead.
+      if (status === 403 && mayLogin &&
+          String(data.error || '').indexOf('ADMIN_TOKEN is not set') === -1) {
+        adminLogin().then(function(ok) {
+          if (ok) {
+            _sendLearnDelete(filename, btnEl, false);
+          } else {
+            _showLearnDeleteError(btnEl,
+              'Not authorised — admin login was cancelled or the token was ' +
+              'rejected. Nothing was deleted.');
+          }
+        });
+        return;
+      }
       // Only an explicit 200 + {ok:true} may remove the row. 403 from the
       // admin gate, 404, 500, or an unparseable body all keep the row and say
       // why — the server is the only authority on whether the file is gone.
@@ -7487,12 +7508,6 @@ function deleteLearnReport(filename, btnEl) {
         var why = data.error
           ? data.error
           : ('The server answered ' + status + '.');
-        // The server already names ADMIN_TOKEN when it is unset; only add the
-        // hint when it did not (e.g. a stale token in an old page).
-        if (status === 403 && why.indexOf('ADMIN_TOKEN') === -1) {
-          why += ' This page is not authorised for admin actions — check ADMIN_TOKEN' +
-                 ' on the server (see README), then reload this page.';
-        }
         _showLearnDeleteError(btnEl, why);
         return;
       }

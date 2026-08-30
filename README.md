@@ -36,6 +36,7 @@ See `.env.example` for the full annotated list. The load-bearing ones:
 | `GEMINI_API_KEY` | no | Gemini vision (X-ray path, if enabled) |
 | `NCBI_API_KEY`, `NCBI_EMAIL` | no | Higher eutils rate limits |
 | `ADMIN_TOKEN` | no | Enables the admin routes (below) |
+| `FLASK_SECRET_KEY` | no | Signs the admin session cookie (below) |
 | `ENABLE_XRAY` | no | Enables `POST /api/analyze-xray` (default OFF) |
 
 ## Admin routes
@@ -54,24 +55,26 @@ for everyone — there is no unauthenticated fallback. Generate a token with
 e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"` and set it
 in `.env` as `ADMIN_TOKEN=<paste the generated value>`.
 
-### The delete button and the token in the page
+### The delete button and the admin session
 
 `DELETE /learn_history/<file>` is the one gated route the UI itself calls (the
-sidebar's per-report delete button). So that it can send the header, `GET /`
-renders `ADMIN_TOKEN` into `<meta name="admin-token">` and the button forwards
-it as `X-Admin-Token`.
+sidebar's per-report delete button). The token is **never rendered into the
+page** (it used to be, in a `<meta>` tag readable by anyone who could load
+`/`). Instead, the first admin action prompts for the token, sends it once to
+`POST /admin/login`, and the server answers with a **signed HttpOnly session
+cookie** that authenticates subsequent admin requests. The cookie stores an
+HMAC fingerprint of the token — not the token or a bare hash of it — so
+rotating `ADMIN_TOKEN` invalidates every session already issued.
 
-**Tradeoff, stated plainly: anyone who can load the page can read the token
-out of the HTML.** That is acceptable here because Endo AI is a single-user
-app bound to localhost and the token gates only local admin routes — it is not
-a credential for anything else. Do not reuse this token elsewhere, and do not
-carry this pattern into a hosted or multi-user deployment; that would need a
-session/CSRF-token scheme instead.
+Sessions need a signing key: set `FLASK_SECRET_KEY` in `.env` (generate one
+the same way as the token). **This fails closed**: with `FLASK_SECRET_KEY`
+unset, no session is ever issued or accepted — there is no built-in fallback
+key — and admin requests must carry `X-Admin-Token` per request instead. With
+`ADMIN_TOKEN` unset, everything admin answers 403 regardless of any cookie.
 
-With `ADMIN_TOKEN` unset the delete button gets a 403 and the report list says
-so — the row stays put and the file stays on disk. It never looks like the
-delete worked. Set `ADMIN_TOKEN`, restart the server, and reload the page to
-enable deleting.
+With no valid session and a cancelled/rejected login, the delete button shows
+the refusal and the row stays put — it never looks like the delete worked
+while the file survives on disk.
 
 ## X-ray analysis (disabled by default)
 
