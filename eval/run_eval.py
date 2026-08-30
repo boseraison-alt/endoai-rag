@@ -56,8 +56,8 @@ def _esearch_hits_since(offset):
     Returns (total_returned, n_queries, n_empty_queries).
     """
     if not AUDIT_LOG.exists():
-        return None, 0, 0
-    total = n = empty = 0
+        return None, 0, 0, 0
+    total = n = empty = terms = 0
     with AUDIT_LOG.open("r", encoding="utf-8") as fh:
         fh.seek(offset)
         for line in fh:
@@ -73,7 +73,13 @@ def _esearch_hits_since(offset):
             n += 1
             if got == 0:
                 empty += 1
-    return total, n, empty
+            # Each search term is fetched once per tier, so the number of
+            # level1 records IS the term count for the run. This is how the
+            # harness watches generator stability (1-term flapping was the
+            # ±50% noise source) without needing a new field in the pipeline.
+            if rec.get("level_key") == "level1":
+                terms += 1
+    return total, n, empty, terms
 
 
 def run_case(case):
@@ -87,7 +93,7 @@ def run_case(case):
     offset = _audit_offset()
     evidence = build_evidence_base_with_progress(
         job_id, case["question"], force_route=case.get("force_route")) or {}
-    esearch_total, n_queries, n_empty = _esearch_hits_since(offset)
+    esearch_total, n_queries, n_empty, n_terms = _esearch_hits_since(offset)
 
     per_tier, papers = {}, []
     for tier in TIER_ORDER:
@@ -118,7 +124,20 @@ def run_case(case):
         # Per-query separates the two cleanly: the failing laser run managed
         # 0.2 hits/query, healthy runs 29-41.
         "esearch_hits_per_query": (esearch_total / n_queries) if n_queries else None,
+        "search_terms_used": n_terms,
     }
+
+    # Contamination guard: audit records carry no run identity, so any OTHER
+    # process doing retrieval during this case (an agent verifying the UI, a
+    # user in the app) bleeds into the offset window. The generator caps at 10
+    # terms, so >10 level1 records can only mean interleaved runs — in which
+    # case every esearch-derived number here is untrustworthy and asserting on
+    # it would fail the case for someone else's queries.
+    contaminated = n_terms > 10
+    if contaminated:
+        print(f"  WARNING: {n_terms} search terms in the audit window — a "
+              f"concurrent retrieval is interleaved; skipping esearch-based "
+              f"assertions for this run. Re-run when the app is idle.")
 
     exp = case.get("expect", {})
     failures = []
@@ -138,7 +157,7 @@ def run_case(case):
     if n_rct < exp.get("min_rct", 0):
         failures.append(f"level1={n_rct} < min_rct={exp['min_rct']}")
 
-    if exp.get("min_hits_per_query") is not None:
+    if exp.get("min_hits_per_query") is not None and not contaminated:
         if not n_queries:
             failures.append("min_hits_per_query set but no esearch calls were logged "
                             "(library route, or pubmed_audit.jsonl is not being written)")
@@ -150,11 +169,23 @@ def run_case(case):
                     f"({measured['esearch_hits']} over {n_queries} queries) — "
                     "the laser regression's real signature")
 
-    if exp.get("max_empty_queries") is not None and n_queries:
-        if n_empty > exp["max_empty_queries"]:
-            failures.append(f"{n_empty}/{n_queries} queries returned nothing "
-                            f"(max {exp['max_empty_queries']}) — a query that matches "
-                            "no records is usually malformed, not a thin topic")
+    if exp.get("min_terms") is not None and n_queries and not contaminated:
+        if n_terms < exp["min_terms"]:
+            failures.append(f"search_terms={n_terms} < min_terms={exp['min_terms']} "
+                            "(generator degraded — check [search_terms] warnings)")
+
+    # A FRACTION, not an absolute: with 7+ generated terms, the niche angle
+    # terms crossed with narrow tier filters (case-control, case series)
+    # legitimately return zeros. What distinguishes the malformed-query failure
+    # is that MOST queries return nothing (25/28 = 89% in the laser
+    # regression), not that some do.
+    if exp.get("max_empty_fraction") is not None and n_queries and not contaminated:
+        frac = n_empty / n_queries
+        if frac > exp["max_empty_fraction"]:
+            failures.append(f"{n_empty}/{n_queries} queries ({frac:.0%}) returned "
+                            f"nothing (max {exp['max_empty_fraction']:.0%}) — when most "
+                            "queries match no records the queries are malformed, "
+                            "not the topic thin")
 
     # The check that would have caught "Cochrane Review[pt]" directly.
     if exp.get("cochrane_papers_must_be_cochrane_journal"):
@@ -206,7 +237,8 @@ def main():
             print(f"  esearch  {measured['esearch_hits']} hits over "
                   f"{measured['esearch_queries']} queries = "
                   f"{measured['esearch_hits_per_query']:.1f}/query "
-                  f"({measured['esearch_empty']} returned nothing)")
+                  f"({measured['esearch_empty']} returned nothing, "
+                  f"{measured['search_terms_used']} search terms)")
 
         base = case.get("baseline") or {}
         if base.get("papers") is not None:
