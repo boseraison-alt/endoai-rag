@@ -268,6 +268,23 @@ video.media-video {
 }
 .hbadge-review { background: rgba(37,99,235,0.15); color: #1d4ed8; }
 .hbadge-learn  { background: rgba(15,122,77,0.15); color: #12885a; }
+
+/* Dangling history entry — backing cache row / archive file was purged */
+.history-item.history-gone { cursor: default; opacity: 0.75; }
+.history-item.history-gone:hover { background: none; }
+.history-item.history-gone .history-item-q { text-decoration: line-through; color: #768292; }
+.history-gone-note { color: #854d0e; font-weight: 600; }
+.history-regen-btn {
+  background: #e5edff; border: 1px solid #dbe6fd; color: #1e40af;
+  font-size: 9.5px; font-weight: 700; padding: 1px 7px; border-radius: 4px;
+  cursor: pointer; font-family: inherit;
+}
+.history-regen-btn:hover { filter: brightness(0.97); }
+.report-gone {
+  background: #faf0dc; border: 1px solid #e6cf9a; color: #7a4a12;
+  border-radius: 8px; padding: 12px 15px; font-size: 13px; line-height: 1.5;
+}
+.report-gone .history-regen-btn { font-size: 11px; padding: 3px 10px; margin-left: 6px; }
 .hbadge-case   { background: rgba(161,98,7,0.15); color: #b45309; }
 
 .sidebar-empty {
@@ -3946,7 +3963,8 @@ function loadHistory() {
         groups[label].forEach(function(item) {
           var badgeCls = 'hbadge-' + item.mode;
           var badgeLbl = item.mode === 'learn' ? '🎓 Deep Learning' : item.mode === 'case' ? '🩺 Case' : '🔬 Review';
-          html += '<div class="history-item" onclick="loadHistoryItem(' + item.id + ',\'' + item.mode + '\')">' +
+          html += '<div class="history-item" data-q="' + escHtml(item.question) + '" data-mode="' + escHtml(item.mode) + '" ' +
+            'onclick="loadHistoryItem(' + item.id + ',\'' + item.mode + '\', this)">' +
             '<div class="history-item-q">' + escHtml(item.question) + '</div>' +
             '<div class="history-item-meta"><span class="history-mode-badge ' + badgeCls + '">' + badgeLbl + '</span>' +
             (item.hit_count > 0 ? '<span>' + item.hit_count + ' hits</span>' : '') +
@@ -3958,11 +3976,13 @@ function loadHistory() {
     .catch(function() {});
 }
 
-function loadHistoryItem(id, itemMode) {
+function loadHistoryItem(id, itemMode, el) {
   fetch('/history/' + id)
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.error) return;
+      // 3.8 — a purged cache row must not reload as if valid, and must not
+      // fail silently either: mark the entry instead of rendering nothing.
+      if (data.error) { _markHistoryGone(el); return; }
       // Switch to appropriate tab
       setMode(itemMode === 'case' ? 'review' : itemMode);
       // Fill question
@@ -3973,9 +3993,34 @@ function loadHistoryItem(id, itemMode) {
         question: data.question, answer: data.answer,
         papers: data.papers || [], images: [], cost_usd: 0,
       };
-      showAnswer(fakeJob);
+      showResult(data.question, fakeJob);
     })
-    .catch(function() {});
+    .catch(function() { _markHistoryGone(el); });
+}
+
+// Replaces a dangling sidebar entry (its backing cache row / archive file was
+// purged) with an explicit "no longer available" state and a one-click
+// regenerate. Never leaves a click doing nothing or a blank answer pane.
+function _markHistoryGone(el) {
+  if (!el) return;
+  var q = el.dataset.q || '';
+  el.classList.add('history-gone');
+  el.onclick = null;
+  el.innerHTML =
+    '<div class="history-item-q">' + escHtml(q) + '</div>' +
+    '<div class="history-item-meta"><span class="history-gone-note">No longer available</span>' +
+    '<button class="history-regen-btn" onclick="event.stopPropagation();regenHistoryEntry(this)">Regenerate</button>' +
+    '</div>';
+}
+
+function regenHistoryEntry(btn) {
+  var item = btn.closest('.history-item, .learn-hist-item');
+  if (!item) return;
+  var q = item.dataset.q || '';
+  var m = item.dataset.mode === 'learn' ? 'learn' : 'review';
+  setMode(m);
+  document.getElementById('qInput').value = q;
+  submitQuestion();
 }
 
 function escHtml(s) {
@@ -7148,7 +7193,11 @@ function profileOpenLearnViewer(filename) {
     .then(function(r) { return r.json(); })
     .then(function(rec) {
       if (rec.error) {
-        bodyEl.innerHTML = '<div class="profile-list-empty">Error: ' + _ppEscape(rec.error) + '</div>';
+        // 3.8 — purged archive file: say so explicitly and drop the entry.
+        bodyEl.innerHTML = '<div class="profile-list-empty">This report is no longer ' +
+          'available — its archive file was deleted or has expired. ' +
+          'Ask the question again from the Deep Learning tab to regenerate it.</div>';
+        profileLoadLearnHistory();
         return;
       }
       titleEl.textContent = rec.question || 'Untitled';
@@ -7196,7 +7245,8 @@ function loadLearnModeHistory() {
         var meta = [paperLbl, costLbl].filter(Boolean).join(' · ');
         var safeQ  = _ppEscape(it.question || 'Untitled');
         var safeFn = _ppEscape(it.file);
-        return '<div class="learn-hist-item" onclick="openLearnHistoryItem(\'' + safeFn + '\')">' +
+        return '<div class="learn-hist-item" data-q="' + safeQ + '" data-mode="learn" ' +
+          'onclick="openLearnHistoryItem(\'' + safeFn + '\', this)">' +
           '<div class="learn-hist-item-icon">🎓</div>' +
           '<div class="learn-hist-item-body">' +
             '<div class="learn-hist-item-q">' + safeQ + '</div>' +
@@ -7237,7 +7287,27 @@ function deleteLearnReport(filename, btnEl) {
     .catch(function() { alert('Delete failed.'); });
 }
 
-function openLearnHistoryItem(filename) {
+// 3.8 — shown in the answer pane when a report's backing archive file no
+// longer exists (deleted or expired). Never a blank pane, never a raw error.
+function _showLearnReportGone(el) {
+  var q = (el && el.dataset.q) || '';
+  document.getElementById('answerQuestion').textContent = q || 'Deep Learning report';
+  document.getElementById('answerTags').innerHTML =
+    '<span class="atag atag-learn">Deep Learning</span>' +
+    '<span class="atag atag-neutral">No longer available</span>';
+  document.getElementById('answerContent').innerHTML =
+    '<div class="report-gone">This report is no longer available — its archive file was ' +
+    'deleted or has expired.' +
+    (q ? ' <button class="history-regen-btn" onclick="setMode(\'learn\');' +
+         'document.getElementById(\'qInput\').value=this.dataset.q;submitQuestion()" data-q="' +
+         escHtml(q) + '">Regenerate</button>' : '') +
+    '</div>';
+  document.getElementById('exportBar').style.display = 'none';
+  // Drop the dangling entry: the list rebuilds from the archive directory.
+  loadLearnModeHistory();
+}
+
+function openLearnHistoryItem(filename, el) {
   // Scroll to top of content area
   var scroll = document.querySelector('.content-scroll');
   if (scroll) scroll.scrollTop = 0;
@@ -7260,11 +7330,7 @@ function openLearnHistoryItem(filename) {
   fetch('/learn_history/' + encodeURIComponent(filename))
     .then(function(r) { return r.json(); })
     .then(function(rec) {
-      if (rec.error) {
-        document.getElementById('answerContent').innerHTML =
-          '<div class="profile-list-empty">Error: ' + _ppEscape(rec.error) + '</div>';
-        return;
-      }
+      if (rec.error) { _showLearnReportGone(el); return; }
       var q = rec.question || 'Untitled';
       document.getElementById('answerQuestion').textContent = q;
       var ts = rec.timestamp ? new Date(rec.timestamp).toLocaleString() : '';
@@ -7289,10 +7355,7 @@ function openLearnHistoryItem(filename) {
       window._lastLearnQuestion = q;
       window._lastLearnAnswer   = rec.answer || '';
     })
-    .catch(function() {
-      document.getElementById('answerContent').innerHTML =
-        '<div class="profile-list-empty">Failed to load report.</div>';
-    });
+    .catch(function() { _showLearnReportGone(el); });
 }
 
 document.addEventListener('keydown', function(e) {
