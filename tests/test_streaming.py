@@ -448,7 +448,7 @@ def flask_client(monkeypatch):
     monkeypatch.setattr(rag, "embed", lambda text: [0.01] * 384, raising=False)
 
     app_mod.app.config["TESTING"] = True
-    return app_mod.app.test_client(), app_mod
+    return app_mod.app.test_client(), app_mod, fake
 
 
 def _poll_until(client, job_id, pred, timeout=25.0, interval=0.05):
@@ -466,7 +466,7 @@ def _poll_until(client, job_id, pred, timeout=25.0, interval=0.05):
 class TestJobRecordDuringStreaming:
 
     def test_partial_answer_reaches_the_job_record(self, flask_client):
-        client, _app = flask_client
+        client, _app, _fake = flask_client
         r = client.post("/ask", json={"question": "MTA versus Biodentine?",
                                       "mode": "review", "skip_clarify": True})
         job_id = r.get_json()["job_id"]
@@ -483,7 +483,7 @@ class TestJobRecordDuringStreaming:
         """THE bug-class-(d) invariant. The UI derives every pass/fail chip from
         `answer` and only when `checks_status == 'complete'`; if either leaks
         early, a green chip can appear over unchecked text."""
-        client, _app = flask_client
+        client, _app, _fake = flask_client
         r = client.post("/ask", json={"question": "MTA versus Biodentine?",
                                       "mode": "review", "skip_clarify": True})
         job_id = r.get_json()["job_id"]
@@ -509,7 +509,7 @@ class TestJobRecordDuringStreaming:
 
     def test_papers_are_published_before_the_answer(self, flask_client):
         """Inline citation pills must resolve to author names mid-stream."""
-        client, _app = flask_client
+        client, _app, _fake = flask_client
         r = client.post("/ask", json={"question": "MTA versus Biodentine?",
                                       "mode": "review", "skip_clarify": True})
         job_id = r.get_json()["job_id"]
@@ -519,7 +519,11 @@ class TestJobRecordDuringStreaming:
         assert mid and mid[0]["papers"], "papers were not published before synthesis"
 
     def test_abort_mid_stream_stops_the_job(self, flask_client):
-        client, _app = flask_client
+        """Not just "the job ends aborted" — the pre-existing post-synthesis
+        `is_aborted` check would satisfy that while the stream ran to
+        completion and billed the whole answer. The event count is what makes
+        this test sensitive to PROMPTNESS."""
+        client, _app, fake = flask_client
         r = client.post("/ask", json={"question": "MTA versus Biodentine?",
                                       "mode": "review", "skip_clarify": True})
         job_id = r.get_json()["job_id"]
@@ -535,6 +539,12 @@ class TestJobRecordDuringStreaming:
             f"abort mid-stream left the job at {final['status']}")
         assert not final.get("answer")
         assert final.get("checks_status") != "complete"
+
+        stream = fake.messages.streams[0]
+        total = len(_tokenise(ANSWER_MD, fake.messages.chunk))
+        assert stream.events_consumed < total, (
+            f"the stream ran to completion ({stream.events_consumed}/{total} events) "
+            "after abort — the job was only marked cancelled afterwards")
 
 
 # ── 5. The chips, running the real JavaScript ─────────────
