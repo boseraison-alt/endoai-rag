@@ -267,7 +267,8 @@ def setup_table():
 # ── Store a paper ─────────────────────────────────────────
 
 def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
-                            min_score: float = 50.0) -> int:
+                            min_score: float = 50.0,
+                            query_text: str = None) -> int:
     """Add good papers found on the live PubMed path into the local library.
 
     Without this the library is frozen at its ingestion date while the coverage
@@ -280,6 +281,13 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
     corrections) because the live path just computed all of it. Only papers at
     or above the quality floor are kept, and only ones carrying an abstract —
     a row without one is useless for both retrieval and the support check.
+
+    `query_text` is the query this write-back came from. When it is supplied
+    and this call writes at least CACHE_INVALIDATION_MIN_PAPERS papers, the
+    cached answers sitting near that query are dropped — they were synthesised
+    from the thinner evidence base this call just replaced. It is OPTIONAL: a
+    caller that has no query degrades to "write back, invalidate nothing",
+    never to an exception.
 
     Returns the number of papers written. Never raises: a failure here must not
     break the answer that is already being returned to the clinician.
@@ -378,6 +386,21 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                 cur.close(); conn.close()
     except Exception as e:
         print(f"  [learn] write-back aborted: {e}")
+
+    # A write-back big enough to change a topic's evidence base invalidates the
+    # answers cached on that topic: they were synthesised before these papers
+    # existed locally and would keep being served, at $0, until their TTL
+    # expired. Deliberately OUTSIDE the try above, so a partial write-back that
+    # aborted halfway still clears the answers its completed rows outdated —
+    # and inside its own guard, because invalidation is a cache optimisation
+    # and must never cost the caller either the papers it just wrote or the
+    # answer already on its way to the clinician.
+    if written >= CACHE_INVALIDATION_MIN_PAPERS:
+        try:
+            invalidate_cache_near_query(query_text)
+        except Exception as e:
+            print(f"  [learn] cache invalidation skipped: {e}")
+
     if written:
         print(f"  [learn] library grew by {written} paper(s) from this search")
     return written
@@ -625,6 +648,23 @@ def setup_query_cache():
 CACHE_EXACT_THRESHOLD    = 0.985
 CACHE_EQUIVALENCE_CHECK  = os.getenv("CACHE_EQUIVALENCE_CHECK", "true").lower() in ("1", "true", "yes")
 
+# ── Write-back cache invalidation (WORKLIST 4.6) ─────────────────────────
+# How many papers one write-back must add before the topic counts as having
+# materially changed. Below this the library gained a few rows it probably
+# already had neighbours for; above it, answers cached on the topic were
+# synthesised from a measurably thinner evidence base.
+CACHE_INVALIDATION_MIN_PAPERS = 5
+
+# Cosine above which a cached question counts as "on the written-back topic".
+# LOOSER than the 0.92 serve threshold in get_cached_answer() on purpose: that
+# one asks "is this the same question?", this one asks "is this the same
+# topic?", and a topic-level change to the evidence should clear a wider
+# neighbourhood than an exact-question match. Measured on real eval questions
+# (MiniLM, 2026-08-30): paraphrases of one question score 0.87-0.97, while two
+# genuinely different endodontic questions top out at 0.55 — so 0.85 clears
+# the rephrasings of the written-back question and nothing else.
+CACHE_INVALIDATION_SIMILARITY = 0.85
+
 
 def _same_clinical_question(a: str, b: str) -> bool:
     """Would these two questions have the same evidence-based answer?
@@ -660,6 +700,82 @@ Answer with exactly one word: SAME or DIFFERENT."""}])
     except Exception as e:
         print(f"  [cache] equivalence check unavailable ({e}) — treating as MISS")
         return False
+
+
+def invalidate_cache_near_query(query_text: str,
+                                threshold: float = CACHE_INVALIDATION_SIMILARITY,
+                                dry_run: bool = False) -> int:
+    """Drop cached answers whose question sits within `threshold` cosine of
+    `query_text`.
+
+    The rescore and tier-migration scripts invalidate by truncating the whole
+    table, because a rescore moves every paper. A write-back moves one topic,
+    so it clears one neighbourhood instead — see CACHE_INVALIDATION_SIMILARITY
+    for why that neighbourhood is wider than the serve threshold.
+
+    Rows with a NULL `question_embedding` are never touched. `NULL >= x` is
+    NULL rather than true in SQL, so they would survive incidentally, but the
+    guard is written out: "we cannot tell what this row is about" must resolve
+    to keeping it, not to whatever the comparison happens to do.
+
+    Returns the number of rows deleted, or under `dry_run` the number that
+    would have been. Never raises — every caller is on the request path behind
+    an answer that has already been generated.
+    """
+    if not (query_text or "").strip():
+        return 0                      # no query — invalidate nothing
+    if not DATABASE_URL:
+        return 0
+
+    conn = cur = None
+    try:
+        q_vec = embed(query_text.strip())
+        conn  = get_conn()
+        cur   = conn.cursor()
+        cur.execute("""
+            SELECT id, question_text,
+                   1 - (question_embedding <=> %s::vector) AS similarity
+            FROM query_cache
+            WHERE question_embedding IS NOT NULL
+              AND 1 - (question_embedding <=> %s::vector) >= %s
+            ORDER BY similarity DESC;
+        """, (q_vec, q_vec, threshold))
+        doomed = cur.fetchall() or []
+        if not doomed:
+            return 0
+
+        verb = "would invalidate" if dry_run else "invalidating"
+        for row_id, qtext, sim in doomed:
+            print(f"  [cache] {verb} #{row_id} (cos {float(sim):.3f}): "
+                  f"{(qtext or '')[:70]}")
+        if dry_run:
+            return len(doomed)
+
+        # Delete by the ids just listed rather than re-running the predicate,
+        # so what is removed is exactly what was reported.
+        cur.execute("DELETE FROM query_cache WHERE id = ANY(%s);",
+                    ([int(r[0]) for r in doomed],))
+        deleted = cur.rowcount
+        conn.commit()
+        print(f"  [cache] invalidated {deleted} cached answer(s) within cos "
+              f"{threshold} of the written-back query")
+        return deleted
+    except Exception as e:
+        try:
+            if conn is not None:
+                conn.rollback()
+        except Exception:
+            pass
+        print(f"  [cache] invalidation skipped: {e}")
+        return 0
+    finally:
+        try:
+            if cur is not None:
+                cur.close()
+            if conn is not None:
+                conn.close()
+        except Exception:
+            pass
 
 
 def get_cached_answer(question: str, threshold: float = 0.92,
