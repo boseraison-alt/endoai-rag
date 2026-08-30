@@ -1274,6 +1274,54 @@ def detect_preregistration(level_key: str, registry_ids: list, abstract_text: st
     return False, ""
 
 
+# Design tiers only — "classic" is a curation label and "level3" a legacy
+# alias, so a demotion must never land on either.
+_DEMOTABLE_TIERS = ["cochrane", "level1", "level2", "level3a", "level3b",
+                    "level4", "level5"]
+
+
+def _demote_one_tier(level_key: str) -> str:
+    """One step down the design hierarchy; level5 and unknown tiers stay put."""
+    try:
+        i = _DEMOTABLE_TIERS.index(level_key)
+    except ValueError:
+        return level_key
+    return _DEMOTABLE_TIERS[min(i + 1, len(_DEMOTABLE_TIERS) - 1)]
+
+
+def _apply_supersession(scored_papers: list) -> list:
+    """Live-path twin of the library's superseded_by exclusion.
+
+    Cochrane review updates are new PubMed records; the old versions stay
+    indexed, so a live search can retrieve a 2012 version of a review updated
+    in 2020. An old version whose replacement is ALSO in this batch adds
+    nothing — drop it. One whose replacement was not retrieved still carries
+    evidence, but must not sit at the tier its successor earned: demote one
+    tier and badge it (format_provenance_badges renders "SUPERSEDED — see
+    PMID X" for both retrieval paths), so Claude never treats it as current.
+
+    Note the chain case: the live path does not chain-resolve. In a batch
+    holding three generations, the oldest drops only if its DIRECT successor
+    is present; the library backfill resolves chains to the terminal version.
+    """
+    if not scored_papers:
+        return scored_papers
+    batch_pmids = {p["pmid"] for p in scored_papers}
+    kept, dropped = [], 0
+    for p in scored_papers:
+        succ = p.get("superseded_by") or ""
+        if succ and succ in batch_pmids:
+            dropped += 1
+            continue
+        if succ:
+            p["level_key"] = _demote_one_tier(p["level_key"])
+        kept.append(p)
+    if dropped:
+        print(f"    [superseded] dropped {dropped} outdated version(s) "
+              f"whose current version is in the same batch")
+    return kept
+
+
 def format_provenance_badges(paper: dict) -> str:
     """Render a paper's integrity badges for Claude's evidence context.
 
@@ -1289,6 +1337,9 @@ def format_provenance_badges(paper: dict) -> str:
         badges.append("CORRECTION PUBLISHED")
     if paper.get("has_retraction"):
         badges.append("RETRACTION NOTICE — treat with extreme caution")
+    if paper.get("superseded_by"):
+        badges.append(f"SUPERSEDED — a newer version exists, see PMID "
+                      f"{paper['superseded_by']}")
     if paper.get("medline_indexed") is False:
         badges.append("not MEDLINE-indexed")
 
@@ -1359,6 +1410,17 @@ def _merge_corrections_and_registries(ids: list, metadata: dict) -> None:
                 entry["has_erratum"] = True
             elif ref in ("retractionin", "retractedandrepublishedin"):
                 entry["has_retraction"] = True
+            elif ref == "updatein":
+                # Cochrane versioning: every review update is a NEW PubMed
+                # record and the old versions stay indexed. UpdateIn sits on
+                # the OLDER record and names its successor (UpdateOf points
+                # backwards — confusing the two inverts the feature; verified
+                # against raw XML for the CD005296 chain, PMIDs 27905673 /
+                # 36512807). The successor PMID is a plain <PMID> CHILD of
+                # CommentsCorrections, not a RefPMID attribute.
+                succ = cc.find("PMID")
+                if succ is not None and (succ.text or "").strip():
+                    entry["superseded_by"] = succ.text.strip()
 
         # Publication types — feeds the level_key backfill from the same pass.
         ptypes = [(pt.text or "").strip() for pt in article.iter("PublicationType")]
@@ -1450,6 +1512,7 @@ def fetch_metadata(ids):
                 "has_retraction": False,
                 "registry_ids": [],
                 "coi_statement": "",
+                "superseded_by": "",
             }
 
     except Exception as e:
@@ -1460,7 +1523,8 @@ def fetch_metadata(ids):
                               "volume": "", "issue": "", "pages": "",
                               "medline_indexed": True, "pubtypes": [],
                               "has_erratum": False, "has_retraction": False,
-                              "registry_ids": [], "coi_statement": ""}
+                              "registry_ids": [], "coi_statement": "",
+                              "superseded_by": ""}
 
     # ── Corrections + trial-registry pass (efetch XML) ────────────────────
     # esummary carries neither CommentsCorrections nor DataBankList, so one XML
@@ -2051,6 +2115,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 "registry":        reg_source,
                 "has_erratum":     bool(meta.get("has_erratum")),
                 "has_retraction":  bool(meta.get("has_retraction")),
+                "superseded_by":   meta.get("superseded_by", "") or "",
                 "medline_indexed": meta.get("medline_indexed", True),
                 "is_old":          age > CURRENCY_THRESHOLD_YEARS,
                 "age_years":       age,
@@ -2072,6 +2137,8 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             if demoted:
                 print(f"    [tier] demoted {demoted} non-Cochrane review(s) "
                       f"from the cochrane tier to level1")
+
+        scored_papers = _apply_supersession(scored_papers)
 
         if n_coi_papers:
             print(f"    [COI] {n_coi_papers} of {len(ids)} papers carry an industry-funder "
