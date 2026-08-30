@@ -360,6 +360,29 @@ runs", but **"whether the single most authoritative paper on the question
 reaches the clinician depends on which query the generator happened to emit."**
 Retrieval-only runs cannot see this — the count looked fine.
 
+### The Cochrane miss: closed, and the root cause was not the query shape
+
+The follow-up diagnosis (Phase A, 2026-08-30) overturned the working
+hypothesis. The generated queries for the failing question had 1-3 AND-groups,
+never 4 — generator variance is real (recorded above) but did not cause this.
+The case is library-routed, so the boolean is EMBEDDED, not sent to PubMed:
+the best-formed query scored CD005296 at cosine 0.546 (rank 11 in the whole
+library, cut by the 0.55 floor) while the raw clinician question scored 0.680.
+A well-formed boolean is mostly operators and quotes, so the better the PubMed
+query, the worse the vector search.
+
+Three layers now stand between a query and a lost authority:
+- `multi_query_search` (app.py) unions KNN over the raw question plus every
+  generated term, keeping the best similarity per PMID;
+- `ensure_authoritative` (app.py) guarantees journal-verified, current
+  Cochrane reviews above the floor and the top-3 Level I papers, re-checking
+  retracted/superseded/withdrawn itself;
+- the eval pins `must_include_pmid`/`must_cite_pmid` on 36512807.
+
+Measured: the question went from 10 relevant papers (and an answer that never
+mentioned Cochrane) to 36-38 across three runs, with CD005296 present and
+cited in every one. Library-pinned eval cases are now near-deterministic.
+
 ## Cost
 
 A four-module Deep Learning curriculum with real retrieval costs **~$1.18**
