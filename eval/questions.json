@@ -272,10 +272,17 @@
         "must_not_contain": [
           "contraindicated"
         ],
-        "banner": "any"
+        "banner": "any",
+        "must_include_pmid": [
+          "36512807"
+        ],
+        "must_cite_pmid": [
+          "36512807"
+        ]
       },
       "why": [
-        "Draft said library and the topic is genuinely well covered (Cochrane CD005296 is in the library), but the measured gate at the 0.55 floor put it at 10 relevant hits - just under MIN_RAG_RELEVANT. Pinned library deliberately: this is THE canonical well-covered question, and if the library cannot answer it the library is the thing that is broken, which is what the case should surface."
+        "Draft said library and the topic is genuinely well covered (Cochrane CD005296 is in the library), but the measured gate at the 0.55 floor put it at 10 relevant hits - just under MIN_RAG_RELEVANT. Pinned library deliberately: this is THE canonical well-covered question, and if the library cannot answer it the library is the thing that is broken, which is what the case should surface.",
+        "PIN, 2026-08-30: the synthesis run for this case neither cited nor mentioned Cochrane CD005296 (PMID 36512807), the definitive review on exactly this question, present in the library at score 70.4. Root cause was not an over-narrow query but an embedding mismatch: the best-formed boolean scored it 0.546 (rank 11, cut by the 0.55 floor) while the raw question scored 0.680. A well-formed PubMed boolean is mostly operators and quotes, so it embeds further from prose than a sloppy one - the better the query, the worse the vector search. Fixed by union-KNN over the question plus every generated term (A4) and an authority guarantee (A5). must_include_pmid is checked on retrieval, must_cite_pmid on the generated answer."
       ],
       "baseline": {
         "recorded": null,

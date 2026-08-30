@@ -148,6 +148,10 @@ def run_case_with_synthesis(case):
     exp = case.get("expect", {})
     failures = []
 
+    for pmid in exp.get("must_cite_pmid", []):
+        if pmid not in answer:
+            failures.append(f"must_cite_pmid {pmid} not cited in the answer")
+
     for phrase in exp.get("must_contain", []):
         if phrase.lower() not in answer.lower():
             failures.append(f"must_contain {phrase!r} absent from the answer")
@@ -310,6 +314,16 @@ def run_case(case):
                             f"nothing (max {exp['max_empty_fraction']:.0%}) — when most "
                             "queries match no records the queries are malformed, "
                             "not the topic thin")
+
+    # A6: named papers that must survive query variance. Retrieval-side.
+    want = exp.get("must_include_pmid") or []
+    if want:
+        got = {p.get("pmid") for t in TIER_ORDER
+               for p in ((evidence.get(t) or {}).get("scored") or [])}
+        missing = [x for x in want if x not in got]
+        if missing:
+            failures.append(f"must_include_pmid absent from the evidence base: "
+                            f"{missing} — the authority guarantee did not hold")
 
     # The check that would have caught "Cochrane Review[pt]" directly.
     if exp.get("cochrane_papers_must_be_cochrane_journal"):
