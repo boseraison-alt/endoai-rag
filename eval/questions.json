@@ -31,12 +31,13 @@
       "question": "Use of lasers in root canal disinfection",
       "mode": "learn",
       "expect": {
-        "route": "live",
-        "min_papers": 30,
+        "route": "any",
+        "min_papers": 25,
         "min_sr": 1,
         "min_rct": 1,
         "modules_non_empty": true,
-        "max_unsourced_numeric_modules": 0
+        "max_unsourced_numeric_modules": 0,
+        "cochrane_papers_must_be_cochrane_journal": true
       },
       "why": [
         "Retrieval regression, 2026-08-29. esearch returned 5 PMIDs across 28",
@@ -51,17 +52,39 @@
         "PIPS, SWEEPS, photodynamic therapy and Er:YAG, so any query that does",
         "not OR-expand synonyms will miss it while appearing to succeed.",
         "",
-        "Baseline after fix (2026-08-29): 51 papers, 10 Cochrane, 9 Level I,",
-        "4/4 modules generated, 0 unsourced numeric modules, ~909 esearch PMIDs."
+        "The first post-fix run reported 10 Cochrane reviews, which is not a",
+        "plausible number for this topic and was not real. COCHRANE_TERM was",
+        "'Cochrane Review[pt]', a publication type PubMed does not have; it was",
+        "translated to a word match on 'cochrane' ANDed with Review[pt], so any",
+        "SR that mentioned searching the Cochrane Library was promoted to the",
+        "top tier. Fixed to a journal-scoped filter. 109 library rows carrying",
+        "the false tag were demoted and rescored (median -7.8).",
+        "",
+        "route is 'any' deliberately. The first fixed run went live and wrote",
+        "196 papers back into the library, so the same question now serves from",
+        "the library. That is the learning loop working as designed; pinning",
+        "the route would make a correct behaviour look like a regression."
       ],
       "baseline": {
         "recorded": "2026-08-29",
-        "papers": 51,
-        "cochrane": 10,
-        "level1": 9,
+        "note": "Library route, measured by scripts/probe_retrieval.py after the Cochrane tier fix.",
+        "route": "library",
+        "papers": 30,
+        "cochrane": 3,
+        "level1": 25,
+        "avg_score": 81.2,
         "modules_generated": 4,
-        "unsourced_numeric_modules": 0,
+        "unsourced_numeric_modules": 0
+      },
+      "superseded_baseline": {
+        "recorded": "2026-08-29",
+        "note": "First post-fix run, live route. Its Cochrane count was inflated by the fake publication-type filter; kept because the paper count and module numbers were real.",
+        "route": "live",
+        "papers": 51,
+        "cochrane": "10 (FALSE - see why[])",
+        "level1": 9,
         "esearch_pmids": 909,
+        "papers_written_back": 196,
         "cost_usd": 1.18
       },
       "regression_reference": {

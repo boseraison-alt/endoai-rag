@@ -450,6 +450,7 @@ def search(
                 FROM endo_papers_rag
                 WHERE level_key = %s
                   AND NOT COALESCE(has_retraction, FALSE)
+                  AND title NOT ILIKE 'WITHDRAWN:%%'
                   AND 1 - (embedding <=> %s::vector) >= %s
                 ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
                 LIMIT %s;
@@ -465,6 +466,12 @@ def search(
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE NOT COALESCE(has_retraction, FALSE)
+                  -- Cochrane withdraws a review when it is no longer reliable
+                  -- (superseded methods, unresolved concerns). PubMed does not
+                  -- mark these as retracted, so has_retraction misses them,
+                  -- and they sit in the cochrane tier at ~70 score. The
+                  -- withdrawal notice replaces the title verbatim.
+                  AND title NOT ILIKE 'WITHDRAWN:%%'
                   AND 1 - (embedding <=> %s::vector) >= %s
                 ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
                 LIMIT %s;

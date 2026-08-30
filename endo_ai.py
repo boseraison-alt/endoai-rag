@@ -686,7 +686,18 @@ def generate_multi_search_terms(question: str, primary_term: str) -> list:
 
 
 # ── EVIDENCE LEVEL SEARCH TERMS ─────────────────────────
-COCHRANE_TERM = "Cochrane Review[pt]"
+# PubMed has no "Cochrane Review" publication type. It silently translated
+# `Cochrane Review[pt]` into ("cochran" OR "cochrane" ...) AND "Review"[pt],
+# which matches ANY review mentioning the word Cochrane — i.e. nearly every
+# systematic review, since they all say "we searched the Cochrane Library" in
+# their methods. That put ordinary journal SRs into the top tier, where the
+# prompt tells Claude to let them override everything below.
+# The journal is the only reliable identifier of a real Cochrane review.
+COCHRANE_TERM = '"Cochrane Database Syst Rev"[jour]'
+
+# Journal-name fragments that identify a genuine Cochrane review, used to
+# demote anything that reaches the cochrane tier without belonging there.
+_COCHRANE_JOURNAL_HINTS = ("cochrane database", "cochrane db syst")
 
 LEVEL_1_TERMS = [
     "randomized controlled trial[pt]",
@@ -727,7 +738,13 @@ LEVEL_4_TERMS = [
 LEVEL_5_TERMS = [
     "review[pt]",
     "editorial[pt]",
-    "expert opinion"
+    # "expert opinion" was untagged, so PubMed searched it across All Fields and
+    # ORed in any paper containing the phrase. Same bug class as the Level II
+    # "less quality" annotation and the non-existent "Cochrane Review[pt]".
+    # PubMed has no expert-opinion publication type; comment and letter are the
+    # closest real equivalents.
+    "comment[pt]",
+    "letter[pt]",
 ]
 
 # ── EVIDENCE LEVEL SCORES ────────────────────────────────
@@ -1878,6 +1895,22 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 "age_years":       age,
                 "is_outlier":      False,  # set later by detect_outliers()
             })
+
+        # A paper only belongs in the cochrane tier if it was published in the
+        # Cochrane Database. Anything else that lands here is a systematic
+        # review in an ordinary journal and is demoted to Level I, which is
+        # where it genuinely sits. Guards against a filter regression putting
+        # journal SRs where the prompt grants overriding authority.
+        if level_key == "cochrane":
+            demoted = 0
+            for p in scored_papers:
+                jl = (p.get("journal") or "").lower()
+                if not any(h in jl for h in _COCHRANE_JOURNAL_HINTS):
+                    p["level_key"] = "level1"
+                    demoted += 1
+            if demoted:
+                print(f"    [tier] demoted {demoted} non-Cochrane review(s) "
+                      f"from the cochrane tier to level1")
 
         if n_coi_papers:
             print(f"    [COI] {n_coi_papers} of {len(ids)} papers carry an industry-funder "
