@@ -113,6 +113,41 @@ setup_abstract_cache()
 
 app = Flask(__name__)
 
+# ── Admin authentication ─────────────────────────────────
+# Shared-secret gate for operator-only / destructive routes. The token is
+# checked at REQUEST time (not import time) so tests and deployments can set
+# or rotate ADMIN_TOKEN without restarting differently-configured workers.
+#
+# Deny by default: if ADMIN_TOKEN is unset, the gated routes return 403 —
+# they never fail open. This is bug class (d) in HANDOVER.md (a check that
+# fails open) applied to auth.
+import hmac as _admin_hmac
+from functools import wraps as _admin_wraps
+
+
+def require_admin_token(fn):
+    """403 unless the request carries X-Admin-Token matching env ADMIN_TOKEN.
+
+    Comparison is constant-time (hmac.compare_digest) so the token can't be
+    recovered byte-by-byte from response timing.
+    """
+    @_admin_wraps(fn)
+    def _admin_guard(*args, **kwargs):
+        expected = (os.getenv("ADMIN_TOKEN") or "").strip()
+        if not expected:
+            return jsonify({
+                "error": "Admin routes are disabled: ADMIN_TOKEN is not set "
+                         "on the server. Set ADMIN_TOKEN in .env to enable "
+                         "them (see README)."
+            }), 403
+        provided = request.headers.get("X-Admin-Token", "")
+        if not _admin_hmac.compare_digest(provided.encode("utf-8"),
+                                          expected.encode("utf-8")):
+            return jsonify({"error": "Invalid or missing X-Admin-Token header."}), 403
+        return fn(*args, **kwargs)
+    return _admin_guard
+
+
 # ── In-memory job store ──────────────────────────────────
 jobs      = {}
 jobs_lock = threading.Lock()
@@ -229,6 +264,7 @@ def abort(job_id: str):
 
 
 @app.route("/cache/clear", methods=["POST"])
+@require_admin_token
 def cache_clear():
     """Delete a specific cached answer so it gets regenerated fresh."""
     from rag import get_conn
@@ -1012,6 +1048,7 @@ def get_abstract(pmid):
 # so the operator can measure savings from the model-routing changes.
 
 @app.route("/admin/costs")
+@require_admin_token
 def admin_costs():
     """Aggregate Claude API cost data over the last N days.
 
@@ -1137,6 +1174,7 @@ def admin_costs():
 # actually grounding its claims in the retrieved evidence base.
 
 @app.route("/admin/evidence-mapping")
+@require_admin_token
 def admin_evidence_mapping():
     """Aggregate evidence-mapping validation results over the last N days.
 
