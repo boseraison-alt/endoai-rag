@@ -453,20 +453,27 @@ successor only; the library backfill resolves chains to the terminal version
   - `40683315` Vital pulp therapy **in dogs**… a 25-year retrospective study
     (*JAVMA*) — the design cue is real (retrospective cohort) but the tier would
     not be: this hierarchy ranks human clinical evidence and `level3a` outranks a
-    human case series. No animal tier exists and WORKLIST 1.4 (in vitro/ex vivo)
-    has not been done, so it was parked at `level5` rather than given an invented
-    tier. **There is no filter that keeps veterinary studies out of the library
-    at all — worth checking how many others are in there.**
+    human case series. ~~There is no filter that keeps veterinary studies out of
+    the library at all.~~ **DONE (WORKLIST C2, 2026-08-30):**
+    `animal_subjects.detect_animal_subject` +
+    `scripts/classify_animal_subjects.py` moved 36 animal-subject rows
+    (15 level2, 12 level3a, 9 level3) into `invitro` (backup run_id
+    `animal_subjects_20260830`), guarded by tests/test_animal_subjects.py.
+    The JAVMA row itself stays parked at `level5` — the migration never
+    promotes, even into `invitro`.
 
-- **DECISION NEEDED — scoping reviews now disagree with themselves.** These 3
-  went to `level5`; the 8 scoping reviews already in the library sit at
-  `level1`. Both migrations declined to invent a tier and defaulted to the
-  direction that preserved existing banding, and they defaulted opposite ways.
-  A scoping review charts a literature without effect estimates or quality
-  appraisal, so it is neither Level I nor plainly Level V. Recommendation: move
-  all 11 to `level5` (a scoping review makes no effect claim, so presenting it
-  to Claude as Level I evidence overstates it), or add a tier — but not before
-  WORKLIST 1.4, which is already reshaping the bottom of `TIER_ORDER`.
+- ~~DECISION NEEDED — scoping reviews now disagree with themselves.~~
+  **DONE (WORKLIST C3, 2026-08-30.)** `scripts/reclassify_scoping_reviews.py`
+  applies one rule to every title-identified scoping review: `level5` UNLESS
+  `PublicationTypeList` includes Systematic Review / Meta-Analysis on a
+  MEDLINE-indexed record (none currently does — NLM has a dedicated "Scoping
+  Review" pubtype and uses it). 15 rows moved (9 level1, 2 level2, 4 level3;
+  backup run_id `scoping_reviews_20260830T134620`), 4 already `level5`,
+  3 parked: 2 at `invitro` (placed by classify_invitro's reviewed migration)
+  and 39487671, which NLM tagged both Scoping Review AND Consensus Statement
+  — demoting it would conflict with reclassify_by_pubtype's consensus→level1
+  mapping, so it is left for a human. Guarded by
+  tests/test_scoping_review_tier.py.
 - 25 `Journal Article`-only rows sit at `level1` with no derivable design — the
   tier was never verified for them. Note that `Journal Article`-only is now
   known to be the *normal* state for MEDLINE-indexed observational endodontic
