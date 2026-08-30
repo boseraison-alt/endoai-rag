@@ -4653,6 +4653,9 @@ function renderAnswerWithBox(text) {
 function renderAnswer(text) {
   return text
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // Markdown blockquote markers (the engine's appended citation-support /
+    // validation blocks) would otherwise render as literal "&gt;" scruff.
+    .replace(/^&gt;\s?/gm, '')
     .replace(/^---$/gm, '<hr>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
