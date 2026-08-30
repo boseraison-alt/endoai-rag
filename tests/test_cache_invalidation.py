@@ -71,6 +71,76 @@ REAL_PAPERS = [
 REAL_QUESTION = "Use of lasers in root canal disinfection"
 
 
+# ── One question's write-back, as fetch_papers() actually issues it ──────
+# fetch_papers() calls learn_from_live_results() ONCE PER TIER, so a single
+# question produces a sequence of small write-backs, not one large one. These
+# are the real top laser/irrigation rows of each tier in endo_papers_rag
+# (pulled 2026-08-30), four per tier — the shape of the write-back the laser
+# question produces. The `cochrane` tier is absent because a laser search
+# genuinely returns no Cochrane reviews; that is what the real batch looks
+# like. 23 papers in total, and NOT ONE of the six calls reaches 5.
+REAL_TIER_BATCHES = [
+    ("level1", [
+        ("41833582", "Clinical Efficiency of Lasers in Endodontic Treatment of Primary Endodontic Cases",
+         "OBJECTIVES: To evaluate and synthesise the current evidence on the efficacy of l"),
+        ("39287434", "Efficacy of laser adjuvant therapy in the management of post-operative endodontic pain",
+         "BACKGROUND: Postoperative endodontic pain (PEP) is crucial in clinical practice."),
+        ("41063319", "Preventive and therapeutic effects of semiconductor laser on pain in root canal treatment",
+         "OBJECTIVE: This study aimed to evaluate the preventive and therapeutic effects o"),
+        ("40492415", "Clinical efficacy of diode laser for pulpotomy in primary teeth: a meta-analysis",
+         "To systematically evaluate the efficacy of diode laser for pulpotomy in primary "),
+    ]),
+    ("level2", [
+        ("39815035", "Evaluation of the effect of different irrigation solutions used in regenerative endodontics",
+         "OBJECTIVES: This study evaluates the effect of different irrigation solutions fo"),
+        ("35267110", "Postoperative pain after SWEEPS, PIPS, sonic and ultrasonic-assisted irrigation",
+         "To investigate the efficacy of a new laser irrigation activation system [shock w"),
+        ("41436629", "Effect of Er, Cr: YSGG laser-activated final irrigation on gingival crevicular fluid",
+         "This study aims to investigate the effect of Er, Cr: YSGG laser activation of Na"),
+        ("40407835", "Clinical and radiographic evaluation of Er: YAG laser-assisted direct pulp capping",
+         "PURPOSE: The study aimed to evaluate the clinical and radiographic outcomes of t"),
+    ]),
+    ("level3a", [
+        ("40287087", "Healing Outcomes Following the Treatment of Molars Using Different Root Canal Protocols",
+         "INTRODUCTION: To address the shortage of clinical outcome studies on contemporar"),
+        ("42482547", "Effectiveness and safety of water laser-assisted endodontic-periodontal therapy",
+         "ObjectiveCombined endodontic-periodontal lesions are challenging to manage becau"),
+        ("37849444", "Evaluation of photobiomodulation for postoperative discomfort following laser treatment",
+         "BACKGROUND: Minimally invasive endodontics is recommended for young, immature te"),
+        ("38157279", "The Outcome of GaAlAs Diode Laser (980 Nm) Pulpotomy in Patients with Symptomatic Pulpitis",
+         "OBJECTIVE: To evaluate the effect of diode laser (GaAlAs-980 nm) for full corona"),
+    ]),
+    ("level4", [
+        ("40889700", "Managing Perforating Internal Root Resorption in Mature Incisor with Laser-assisted Therapy",
+         "INTRODUCTION: This report presented the successful application of laser-assisted"),
+        ("39917669", "Unique root anatomy of mandibular second premolars: clinical strategies",
+         "It is difficult to predict the outcomes of non-surgical root canal treatment (NS"),
+        ("11678544", "Laser Doppler flowmetry for monitoring traumatized teeth.",
+         "Laser Doppler Flowmetry (LDF) has been shown to be valuable in monitoring revasc"),
+    ]),
+    ("invitro", [
+        ("40261531", "Comparative analysis of antimicrobial activity and oxidative damage induced by laser ablation",
+         "Laser ablation and Antimicrobial Photodynamic Therapy (aPDT) serve as adjunctive"),
+        ("40713572", "Effect of intracanal medicaments on dentinal tubule penetration of root canal sealers",
+         "BACKGROUND: This study investigated the effect of three intracanal medicaments o"),
+        ("39888502", "In vitro evaluation of dye penetration and dentin microhardness after laser irradiation",
+         "The purpose of this study was to compare the penetration of methylene blue (MB) "),
+        ("41389357", "Comparative analysis of laser and ultrasonic irrigation techniques for smear layer removal",
+         "OBJECTIVE: This in vitro study compared the efficacy of Er, Cr: YSGG laser (2780"),
+    ]),
+    ("level5", [
+        ("42513311", "Prognosis of Periapical Lesions Treated by Activated Disinfection (PUI, Laser)",
+         "Background/Objectives: Activated irrigation techniques improve intracanal disinf"),
+        ("35338652", "Present status and future directions - irrigants and irrigation methods.",
+         "Irrigation is considered the primary means of cleaning and disinfection of the r"),
+        ("24640478", "Traditional and contemporary techniques for optimizing root canal irrigation.",
+         "Canal irrigation during root canal treatment is an important component of chemo-"),
+        ("24651335", "Irrigation in endodontics.",
+         "Irrigation is a key part of successful root canal treatment. It has several impo"),
+    ]),
+]
+
+
 def _scored(n):
     """n real papers in the shape fetch_papers() hands to write-back."""
     out = []
@@ -121,6 +191,18 @@ class _FakeConn:
 
     def close(self):
         pass
+
+
+@pytest.fixture(autouse=True)
+def _fresh_tally():
+    """The write-back count is accumulated PER QUESTION across the seven
+    tier-by-tier calls one question makes (WORKLIST C1), so it survives
+    between tests in the same process. Every test here starts from zero;
+    without this, the 4-paper test would leave 4 on the tally and the next
+    test's first paper would trip the threshold."""
+    rag._reset_writeback_tally()
+    yield
+    rag._reset_writeback_tally()
 
 
 @pytest.fixture
@@ -182,6 +264,180 @@ class TestWriteBackTriggersInvalidation:
     def test_write_back_above_the_threshold_invalidates(self, write_back):
         run, calls = write_back
         run(rag.CACHE_INVALIDATION_MIN_PAPERS + 1, query_text=REAL_QUESTION)
+        assert len(calls) == 1
+
+
+# ── The threshold counts per QUESTION, not per tier (WORKLIST C1) ────────
+
+def _tier_scored(papers, tier):
+    """One tier's write-back, in the shape fetch_papers() hands over."""
+    return [{
+        "pmid": pmid, "score": 70.0, "year": 2025, "journal": "",
+        "level_key": tier, "authors": "", "citations": 0,
+        "has_retraction": False, "superseded_by": "",
+        "medline_indexed": True, "has_erratum": False, "registry": "",
+        "has_coi": False, "coi_funder": "", "coi_status": "no_statement",
+    } for pmid, _t, _a in papers]
+
+
+def _tier_per_pmid(papers):
+    return {p[0]: {"title": p[1], "abstract": p[2]} for p in papers}
+
+
+class TestTheThresholdCountsPerQuestionNotPerTier:
+    """`learn_from_live_results` is called ONCE PER TIER by fetch_papers() —
+    up to seven times for one question. Testing the threshold against a single
+    call therefore tests something the production call path never does.
+
+    The bug this pins: a question that writes four papers into each of six
+    tiers adds 23 papers to the library — a large topic change, and exactly
+    the shape of a real laser-question write-back — while no individual call
+    reaches five, so the old `written >= 5` test invalidated nothing at all.
+    """
+
+    @pytest.fixture
+    def tier_run(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(rag, "embed", lambda text: [0.01] * 384)
+        monkeypatch.setattr(rag, "get_conn", lambda: _FakeConn([]))
+        monkeypatch.setattr(rag, "invalidate_cache_near_query",
+                            lambda *a, **k: calls.append((a, k)) or 0)
+
+        def _run(papers, tier="level1", **kwargs):
+            return rag.learn_from_live_results(_tier_scored(papers, tier),
+                                               _tier_per_pmid(papers), **kwargs)
+
+        return _run, calls
+
+    def test_no_single_tier_batch_reaches_the_threshold(self):
+        """Guards the premise. If a fixture tier ever grew to five papers the
+        test below would pass for the wrong reason."""
+        for tier, papers in REAL_TIER_BATCHES:
+            assert len(papers) < rag.CACHE_INVALIDATION_MIN_PAPERS, (
+                f"{tier} holds {len(papers)} papers — this fixture no longer "
+                f"demonstrates the per-tier/per-question difference")
+
+    def test_one_question_across_all_its_tiers_invalidates(self, tier_run):
+        run, calls = tier_run
+        total = 0
+        for tier, papers in REAL_TIER_BATCHES:
+            total += run(papers, tier=tier, query_text=REAL_QUESTION)
+        assert total == 23, f"fixture wrote {total} papers, expected 23"
+        assert len(calls) == 1, (
+            f"{total} papers written for one question across "
+            f"{len(REAL_TIER_BATCHES)} tiers produced {len(calls)} "
+            f"invalidation(s) — the threshold is still being applied per tier")
+        args, kwargs = calls[0]
+        assert (args[0] if args else kwargs.get("query_text")) == REAL_QUESTION
+
+    def test_it_fires_on_the_tier_that_crosses_the_threshold(self, tier_run):
+        """Not after the last tier: the moment the question's running total
+        reaches five. That is still before synthesis, so this question's own
+        cache row (written afterwards by save_query_cache) is never the one
+        deleted."""
+        run, calls = tier_run
+        first, second = REAL_TIER_BATCHES[0][1], REAL_TIER_BATCHES[1][1]
+        run(first[:2], tier="level1", query_text=REAL_QUESTION)      # total 2
+        assert calls == []
+        run(first[2:4], tier="level1", query_text=REAL_QUESTION)     # total 4
+        assert calls == []
+        run(second[:1], tier="level2", query_text=REAL_QUESTION)     # total 5
+        assert len(calls) == 1
+
+    def test_it_fires_only_once_per_question(self, tier_run):
+        """The neighbourhood is already cleared. Re-running the delete on
+        every later tier would only remove rows cached since — including,
+        eventually, this question's own answer."""
+        run, calls = tier_run
+        for tier, papers in REAL_TIER_BATCHES:
+            run(papers, tier=tier, query_text=REAL_QUESTION)
+        assert len(calls) == 1
+        for tier, papers in REAL_TIER_BATCHES:      # a second full sweep
+            run(papers, tier=tier, query_text=REAL_QUESTION)
+        assert len(calls) == 1
+
+    def test_two_different_questions_do_not_pool_their_counts(self, tier_run):
+        """A single global counter would pass every test above and be wrong:
+        four papers on lasers plus four on CBCT is not a topic change to
+        either topic."""
+        run, calls = tier_run
+        other = "CBCT versus periapical radiography for detecting apical periodontitis"
+        run(REAL_TIER_BATCHES[0][1], tier="level1", query_text=REAL_QUESTION)
+        run(REAL_TIER_BATCHES[1][1], tier="level1", query_text=other)
+        assert calls == [], (
+            "counts from two different questions were pooled — invalidation "
+            "fired on a topic that gained only four papers")
+
+    def test_the_same_question_asked_again_later_can_invalidate_again(
+            self, tier_run):
+        """The tally is a per-question session, not a permanent record: a
+        question re-asked after the write-backs have stopped must be able to
+        clear the cache again. Simulated by ageing the tally entry past the
+        idle gap, which is what a second ask an hour later looks like."""
+        run, calls = tier_run
+        for tier, papers in REAL_TIER_BATCHES[:2]:
+            run(papers, tier=tier, query_text=REAL_QUESTION)
+        assert len(calls) == 1
+
+        key = REAL_QUESTION.lower()
+        assert key in rag._writeback_tally
+        rag._writeback_tally[key]["last"] -= (rag._WRITEBACK_SESSION_GAP_SECONDS + 1)
+
+        for tier, papers in REAL_TIER_BATCHES[:2]:
+            run(papers, tier=tier, query_text=REAL_QUESTION)
+        assert len(calls) == 2, (
+            "the same question asked again after the idle gap could not "
+            "invalidate — the tally is permanent, not a session")
+
+    def test_a_write_back_with_no_query_never_accumulates(self, tier_run):
+        """Pre-C1 callers pass no query. They must not silently accumulate
+        against each other under a shared empty key and then invalidate a
+        neighbourhood nobody named."""
+        run, calls = tier_run
+        for tier, papers in REAL_TIER_BATCHES:
+            run(papers, tier=tier)
+        assert calls == []
+        assert rag._writeback_total("") == 0
+
+    def test_the_running_total_is_the_papers_actually_written(self, tier_run):
+        run, _calls = tier_run
+        written = 0
+        for tier, papers in REAL_TIER_BATCHES[:3]:
+            written += run(papers, tier=tier, query_text=REAL_QUESTION)
+        assert rag._writeback_total(REAL_QUESTION) == written == 12
+
+    def test_the_key_ignores_whitespace_and_case(self, tier_run):
+        """The same question arriving with different spacing from two tiers
+        must land on one tally, not two."""
+        run, calls = tier_run
+        run(REAL_TIER_BATCHES[0][1], tier="level1", query_text=REAL_QUESTION)
+        run(REAL_TIER_BATCHES[1][1][:1], tier="level2",
+            query_text="  " + REAL_QUESTION.upper() + "\n")
+        assert len(calls) == 1
+
+    def test_the_tally_does_not_grow_without_bound(self, tier_run):
+        """A long-lived server answers thousands of questions; the accumulator
+        must not become a leak."""
+        run, _ = tier_run
+        for i in range(rag._WRITEBACK_TALLY_MAX * 2):
+            run(REAL_TIER_BATCHES[0][1][:1], tier="level1",
+                query_text=f"endodontic question number {i}")
+        assert len(rag._writeback_tally) <= rag._WRITEBACK_TALLY_MAX
+
+    def test_a_broken_tally_still_invalidates_on_a_big_single_call(
+            self, tier_run, monkeypatch):
+        """Never-raises, one level deeper: if the accounting itself fails the
+        write-back must still complete AND must fall back to the old per-call
+        rule rather than silently dropping invalidation altogether."""
+        run, calls = tier_run
+
+        def _boom(*a, **k):
+            raise RuntimeError("tally lock held by a dead thread")
+
+        monkeypatch.setattr(rag, "_note_writeback", _boom)
+        written = run(REAL_TIER_BATCHES[0][1] + REAL_TIER_BATCHES[1][1],
+                      tier="level1", query_text=REAL_QUESTION)
+        assert written == 8
         assert len(calls) == 1
 
 

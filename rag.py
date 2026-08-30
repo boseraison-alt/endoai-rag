@@ -9,6 +9,7 @@ import os
 import json
 import hashlib
 import threading
+import time
 import psycopg2
 import psycopg2.extras
 import psycopg2.extensions
@@ -282,11 +283,13 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
     or above the quality floor are kept, and only ones carrying an abstract —
     a row without one is useless for both retrieval and the support check.
 
-    `query_text` is the query this write-back came from. When it is supplied
-    and this call writes at least CACHE_INVALIDATION_MIN_PAPERS papers, the
-    cached answers sitting near that query are dropped — they were synthesised
-    from the thinner evidence base this call just replaced. It is OPTIONAL: a
-    caller that has no query degrades to "write back, invalidate nothing",
+    `query_text` is the query this write-back came from, and doubles as the
+    identity of the QUESTION for cache invalidation. Once the write-backs
+    carrying that query have added CACHE_INVALIDATION_MIN_PAPERS papers in
+    total — across however many tier-by-tier calls it takes — the cached
+    answers sitting near that query are dropped, once. They were synthesised
+    from the thinner evidence base those calls just replaced. It is OPTIONAL:
+    a caller that has no query degrades to "write back, invalidate nothing",
     never to an exception.
 
     Returns the number of papers written. Never raises: a failure here must not
@@ -395,7 +398,17 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
     # and inside its own guard, because invalidation is a cache optimisation
     # and must never cost the caller either the papers it just wrote or the
     # answer already on its way to the clinician.
-    if written >= CACHE_INVALIDATION_MIN_PAPERS:
+    #
+    # The threshold is on the QUESTION's total, not this call's: fetch_papers()
+    # calls this once per tier, so a question writing 4 papers into each of 7
+    # tiers is a 28-paper topic change that no single call could ever report.
+    # _note_writeback() accumulates and returns True exactly once per question.
+    try:
+        _should = _note_writeback(query_text, written)
+    except Exception as e:                     # accounting must never break
+        print(f"  [learn] write-back tally skipped: {e}")
+        _should = written >= CACHE_INVALIDATION_MIN_PAPERS
+    if _should:
         try:
             invalidate_cache_near_query(query_text)
         except Exception as e:
@@ -654,6 +667,89 @@ CACHE_EQUIVALENCE_CHECK  = os.getenv("CACHE_EQUIVALENCE_CHECK", "true").lower() 
 # already had neighbours for; above it, answers cached on the topic were
 # synthesised from a measurably thinner evidence base.
 CACHE_INVALIDATION_MIN_PAPERS = 5
+
+# ── Per-QUESTION accumulation of the write-back count (WORKLIST C1) ──────
+# CACHE_INVALIDATION_MIN_PAPERS is a threshold on ONE QUESTION's write-back,
+# but learn_from_live_results() is called once per TIER inside fetch_papers()
+# — seven times for a single question. A question that writes 4 papers into
+# each of 7 tiers adds 28 papers to the library, a large topic change, and
+# under a per-call test invalidated NOTHING: no single call reached 5.
+#
+# The counter therefore lives here, keyed by the query the write-back came
+# from, and the threshold is applied to the RUNNING TOTAL for that question.
+# Invalidation fires exactly once per question, on the tier whose write
+# crosses the threshold — which is still before the answer is synthesised and
+# cached, so this question's own fresh cache row is never the one deleted.
+#
+# Why keyed here rather than threaded through fetch_papers(): the call site
+# is one line inside a function this workstream does not own, and threading a
+# per-question counter through build_evidence_base -> fetch_papers -> rag
+# would put the correctness of the invalidation in the hands of every future
+# caller (`learn_from_live_results` has three). Keying on the query text that
+# the caller ALREADY passes keeps the whole rule in one place, and a caller
+# that passes no query still degrades to "write back, invalidate nothing".
+#
+# A question re-asked later must be able to invalidate again, so a tally is
+# only continued while writes keep arriving: a gap longer than
+# WRITEBACK_SESSION_GAP_SECONDS starts a fresh tally for the same query. The
+# seven tier calls of one question arrive within seconds of each other.
+_WRITEBACK_SESSION_GAP_SECONDS = float(
+    os.getenv("WRITEBACK_SESSION_GAP_SECONDS", "300"))
+# Bound the dict — a long-lived server answers thousands of questions.
+_WRITEBACK_TALLY_MAX = 64
+
+_writeback_tally = {}          # query key -> {"written", "invalidated", "last"}
+_writeback_lock  = threading.Lock()
+
+
+def _reset_writeback_tally():
+    """Drop every accumulated per-question count. Tests use this; nothing on
+    the request path needs it (entries expire by idle gap)."""
+    with _writeback_lock:
+        _writeback_tally.clear()
+
+
+def _writeback_total(query_text: str) -> int:
+    """Papers written so far for this question. Read-only; for tests/logging."""
+    key = " ".join((query_text or "").lower().split())
+    with _writeback_lock:
+        return int((_writeback_tally.get(key) or {}).get("written", 0))
+
+
+def _note_writeback(query_text: str, written: int) -> bool:
+    """Add `written` to this question's running total.
+
+    Returns True on the ONE call whose write pushes the question's total to
+    CACHE_INVALIDATION_MIN_PAPERS or beyond; False every other time, including
+    every later tier of the same question (the neighbourhood has already been
+    cleared — clearing it again would only delete rows cached since).
+    """
+    key = " ".join((query_text or "").lower().split())
+    if not key or written <= 0:
+        return False
+    now = time.monotonic()
+    with _writeback_lock:
+        entry = _writeback_tally.get(key)
+        if entry is None or (now - entry["last"]) > _WRITEBACK_SESSION_GAP_SECONDS:
+            entry = {"written": 0, "invalidated": False, "last": now}
+            _writeback_tally[key] = entry
+        entry["written"] += int(written)
+        entry["last"] = now
+
+        if len(_writeback_tally) > _WRITEBACK_TALLY_MAX:
+            for stale, _ in sorted(_writeback_tally.items(),
+                                   key=lambda kv: kv[1]["last"]
+                                   )[:len(_writeback_tally) - _WRITEBACK_TALLY_MAX]:
+                if stale != key:
+                    _writeback_tally.pop(stale, None)
+
+        if entry["invalidated"]:
+            return False
+        if entry["written"] >= CACHE_INVALIDATION_MIN_PAPERS:
+            entry["invalidated"] = True
+            return True
+        return False
+
 
 # Cosine above which a cached question counts as "on the written-back topic".
 # LOOSER than the 0.92 serve threshold in get_cached_answer() on purpose: that
