@@ -1,0 +1,385 @@
+{
+ "_source": "learn_history/20260830_110319_use_of_lasers_in_root_canal_disinfection.json and pubmed_audit.jsonl 2026-08-30 10:45:17-10:50:10 \u2014 the real laser curriculum run used as the B3 baseline",
+ "question": "Use of lasers in root canal disinfection",
+ "syllabus": [
+  {
+   "title": "Laser Physics and Endodontic Disinfection Mechanisms",
+   "search_query": "(laser* OR photon* OR light-activated OR photoactivated) AND (wavelength* OR \"wave length\" OR chromophore* OR absorption OR penetration OR thermal OR photochemical) AND (disinfect* OR antimicrobial OR bactericidal OR biofilm)"
+  },
+  {
+   "title": "Laser Systems and Clinical Application Techniques",
+   "search_query": "(Er:YAG OR \"erbium:yttrium\" OR Nd:YAG OR \"neodymium:yttrium\" OR diode OR excimer OR \"photodynamic therapy\" OR PDT OR aPDT OR PIPS OR \"laser-activated irrigation\" OR LAI) AND (\"root canal*\" OR endodontic* OR intracanal OR \"canal disinfection\")"
+  },
+  {
+   "title": "Efficacy of Laser Disinfection Against Resistant Pathogens",
+   "search_query": "(laser* OR \"photodynamic therapy\" OR PDT OR aPDT OR \"light activation\") AND (\"Enterococcus faecalis\" OR \"E. faecalis\" OR polymicrobial OR biofilm* OR resistant OR recalcitrant) AND (\"root canal*\" OR endodontic* OR disinfect*)"
+  },
+  {
+   "title": "Clinical Outcomes, Complications, and Comparative Effectiveness",
+   "search_query": "(laser* OR \"photodynamic therapy\" OR PDT OR \"light activation\" OR \"laser-activated\") AND (\"root canal*\" OR endodontic*) AND (success rate* OR treatment outcome* OR prognosis OR complication* OR adverse effect* OR efficacy OR versus OR comparison OR chlorhexidine OR \"sodium hypochlorite\")"
+  }
+ ],
+ "baseline_seconds": {
+  "retrieval": [
+   44.7,
+   107.9,
+   70.7,
+   63.5
+  ],
+  "writing": [
+   145.1,
+   138.6,
+   131.7,
+   137.4
+  ],
+  "stitch": 241.2,
+  "total": 1080.7,
+  "cost_usd": 1.3633
+ },
+ "papers_by_tier": {
+  "cochrane": [
+   {
+    "pmid": "27759881",
+    "level_key": "cochrane",
+    "year": "2016",
+    "authors": "Del Fabbro M, Corbella S, Sequeira-Byron P et al.",
+    "journal": "The Cochrane database of systematic reviews",
+    "score": 81.1,
+    "impact_factor": 12.0,
+    "citations": 62
+   }
+  ],
+  "level1": [
+   {
+    "pmid": "36156804",
+    "level_key": "level1",
+    "year": "2023",
+    "authors": "Meire MA, Bronzato JD, Bomfim RA et al.",
+    "journal": "International endodontic journal",
+    "score": 80.5,
+    "impact_factor": 4.5,
+    "citations": 15
+   },
+   {
+    "pmid": "41833582",
+    "level_key": "level1",
+    "year": "2026",
+    "authors": "Duarte MA, Neves JA, Ca\u00e7ador M et al.",
+    "journal": "International dental journal",
+    "score": 78.5,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "37195228",
+    "level_key": "level1",
+    "year": "2024",
+    "authors": "Ara\u00fajo LP, Gobbo LB, Silva TAD et al.",
+    "journal": "International journal of paediatric dentistry",
+    "score": 78.5,
+    "impact_factor": null,
+    "citations": 3
+   },
+   {
+    "pmid": "41388259",
+    "level_key": "level1",
+    "year": "2025",
+    "authors": "Das U, Giri J, Ayer A",
+    "journal": "BMC oral health",
+    "score": 78.5,
+    "impact_factor": 2.5,
+    "citations": 0
+   },
+   {
+    "pmid": "40775318",
+    "level_key": "level1",
+    "year": "2025",
+    "authors": "Bapat RA, Eusufzai SZ, Akram Z et al.",
+    "journal": "BMC oral health",
+    "score": 78.5,
+    "impact_factor": 2.5,
+    "citations": 0
+   },
+   {
+    "pmid": "38556608",
+    "level_key": "level1",
+    "year": "2024",
+    "authors": "Nunes LP, Nunes GP, Ferrisse TM et al.",
+    "journal": "Clinical oral investigations",
+    "score": 78.5,
+    "impact_factor": 4.0,
+    "citations": 6
+   }
+  ],
+  "level2": [
+   {
+    "pmid": "38878107",
+    "level_key": "level2",
+    "year": "2024",
+    "authors": "Do\u011fan MU, Ar\u0131c\u0131o\u011flu B, K\u00f6se TE et al.",
+    "journal": "Clinical oral investigations",
+    "score": 70.0,
+    "impact_factor": 4.0,
+    "citations": 5
+   },
+   {
+    "pmid": "40261531",
+    "level_key": "level2",
+    "year": "2026",
+    "authors": "Rodrigues GWL, Del Bianco Vargas Gouveia S, Oliveira LC et al.",
+    "journal": "Odontology",
+    "score": 67.0,
+    "impact_factor": 6.5,
+    "citations": 3
+   },
+   {
+    "pmid": "36662285",
+    "level_key": "level2",
+    "year": "2023",
+    "authors": "Ismail HH, Obeid M, Hassanien E",
+    "journal": "Clinical oral investigations",
+    "score": 65.9,
+    "impact_factor": 4.0,
+    "citations": 15
+   },
+   {
+    "pmid": "32202965",
+    "level_key": "level2",
+    "year": "2020",
+    "authors": "Brizuela C, Meza G, Urrejola D et al.",
+    "journal": "Journal of dental research",
+    "score": 65.3,
+    "impact_factor": 7.0,
+    "citations": 63
+   },
+   {
+    "pmid": "33098889",
+    "level_key": "level2",
+    "year": "2021",
+    "authors": "Tan HSG, Lim KC, Lui JN et al.",
+    "journal": "Journal of endodontics",
+    "score": 62.6,
+    "impact_factor": 3.5,
+    "citations": 18
+   },
+   {
+    "pmid": "35267110",
+    "level_key": "level2",
+    "year": "2022",
+    "authors": "Erkan E, G\u00fcndo\u011far M, Uslu G et al.",
+    "journal": "Odontology",
+    "score": 62.6,
+    "impact_factor": 6.5,
+    "citations": 15
+   }
+  ],
+  "level3a": [
+   {
+    "pmid": "41894079",
+    "level_key": "level3a",
+    "year": "2026",
+    "authors": "Zhao J, Wang Q, Xie F et al.",
+    "journal": "European archives of paediatric dentistry : official journal of the European Academy of Paediatric Dentistry",
+    "score": 66.5,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "41121058",
+    "level_key": "level3a",
+    "year": "2025",
+    "authors": "Ayhan M, Altunba\u015f D, Akdeniz \u0130",
+    "journal": "BMC oral health",
+    "score": 66.1,
+    "impact_factor": 2.5,
+    "citations": 0
+   },
+   {
+    "pmid": "42482547",
+    "level_key": "level3a",
+    "year": "2026",
+    "authors": "Li J, Chen C, Wu D et al.",
+    "journal": "The Journal of international medical research",
+    "score": 65.0,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "37849444",
+    "level_key": "level3a",
+    "year": "2024",
+    "authors": "Olszewska A, Matys J, Gedrange T et al.",
+    "journal": "Advances in clinical and experimental medicine : official organ Wroclaw Medical University",
+    "score": 63.1,
+    "impact_factor": null,
+    "citations": 1
+   },
+   {
+    "pmid": "38804663",
+    "level_key": "level3a",
+    "year": "2024",
+    "authors": "Sen Yavuz B, Cekmegeli E, Mentes A",
+    "journal": "European journal of paediatric dentistry",
+    "score": 62.8,
+    "impact_factor": null,
+    "citations": 1
+   },
+   {
+    "pmid": "38157279",
+    "level_key": "level3a",
+    "year": "2024",
+    "authors": "Swetha D, Ballal S, Sundar S et al.",
+    "journal": "European endodontic journal",
+    "score": 62.8,
+    "impact_factor": null,
+    "citations": 0
+   }
+  ],
+  "level3b": [
+   {
+    "pmid": "40517888",
+    "level_key": "level3b",
+    "year": "2025",
+    "authors": "Desai S, Tepperman A, Ben Suleiman A et al.",
+    "journal": "Journal of endodontics",
+    "score": 60.6,
+    "impact_factor": 3.5,
+    "citations": 0
+   },
+   {
+    "pmid": "29420856",
+    "level_key": "level3b",
+    "year": "2018",
+    "authors": "Okamoto CB, Motta LJ, Prates RA et al.",
+    "journal": "Photochemistry and photobiology",
+    "score": 35.1,
+    "impact_factor": null,
+    "citations": 4
+   }
+  ],
+  "level5": [
+   {
+    "pmid": "42611134",
+    "level_key": "level5",
+    "year": "2026",
+    "authors": "Huang Q, Cui C, Fan J et al.",
+    "journal": "Lasers in medical science",
+    "score": 50.9,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "40585660",
+    "level_key": "level5",
+    "year": "2025",
+    "authors": "Gulhane A, Sapkale KD, Sayed A et al.",
+    "journal": "Cureus",
+    "score": 49.4,
+    "impact_factor": null,
+    "citations": 1
+   },
+   {
+    "pmid": "34293029",
+    "level_key": "level5",
+    "year": "2021",
+    "authors": "Alberti A, Corbella S, Taschieri S et al.",
+    "journal": "PloS one",
+    "score": 46.5,
+    "impact_factor": 3.7,
+    "citations": 16
+   },
+   {
+    "pmid": "39663253",
+    "level_key": "level5",
+    "year": "2024",
+    "authors": "Perin MLC, Silva LSMD, Duarte ML et al.",
+    "journal": "Lasers in medical science",
+    "score": 44.3,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "37017759",
+    "level_key": "level5",
+    "year": "2023",
+    "authors": "Balhaddad AA, Garcia IM, Mokeem L et al.",
+    "journal": "Clinical oral investigations",
+    "score": 42.0,
+    "impact_factor": 4.0,
+    "citations": 32
+   },
+   {
+    "pmid": "34733754",
+    "level_key": "level5",
+    "year": "2021",
+    "authors": "Fornaini C, Fekrazad R, Rocca JP et al.",
+    "journal": "Journal of lasers in medical sciences",
+    "score": 41.8,
+    "impact_factor": null,
+    "citations": 12
+   }
+  ],
+  "level4": [
+   {
+    "pmid": "42505761",
+    "level_key": "level4",
+    "year": "2026",
+    "authors": "Wang Y, Ran S",
+    "journal": "Dentistry journal",
+    "score": 47.4,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "42581563",
+    "level_key": "level4",
+    "year": "2026",
+    "authors": "Liu Z, Zhou X, Wan Q et al.",
+    "journal": "International endodontic journal",
+    "score": 47.4,
+    "impact_factor": 4.5,
+    "citations": 0
+   },
+   {
+    "pmid": "40206775",
+    "level_key": "level4",
+    "year": "2025",
+    "authors": "Nasrabadi N, Yazdani A, Mehrabani M",
+    "journal": "Iranian endodontic journal",
+    "score": 45.3,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "39193104",
+    "level_key": "level4",
+    "year": "2024",
+    "authors": "Nasrabadi N, Asnaashari M, Daghighi Y",
+    "journal": "Journal of lasers in medical sciences",
+    "score": 45.3,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "38577008",
+    "level_key": "level4",
+    "year": "2024",
+    "authors": "Amiri M, Mirzaie A",
+    "journal": "Iranian endodontic journal",
+    "score": 45.3,
+    "impact_factor": null,
+    "citations": 0
+   },
+   {
+    "pmid": "41789272",
+    "level_key": "level4",
+    "year": "2025",
+    "authors": "Zargar N, Nasrabadi N, Hemmati G et al.",
+    "journal": "Journal of lasers in medical sciences",
+    "score": 45.3,
+    "impact_factor": null,
+    "citations": 0
+   }
+  ]
+ }
+}
