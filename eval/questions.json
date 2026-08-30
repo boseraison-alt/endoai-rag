@@ -4,29 +4,30 @@
     "search-term generation, tier filters, the quality floor, scoring, or the",
     "library/live routing gate.",
     "",
-    "Every number the project currently quotes about its own behaviour is a",
-    "single live observation. This file exists so those become tracked metrics.",
-    "",
-    "Run with: python eval/run_eval.py",
+    "Run with: python eval/run_eval.py   (retrieval only - no LLM synthesis)",
     "",
     "Fields per case:",
     "  id                 stable slug",
     "  question           exactly as a clinician would type it",
     "  mode               review | learn",
-    "  force_route        live | library — PIN the retrieval path for this case",
+    "  force_route        live | library - PIN the retrieval path for this case",
     "  expect.route       the route the run must actually take",
     "  expect.min_papers  floor on evidence-base size",
     "  expect.min_sr      minimum Cochrane + Level I papers",
     "  expect.min_rct     minimum Level I papers",
-    "  expect.min_hits_per_query  live only: mean PMIDs esearch returned",
-    "                     per query, read from pubmed_audit.jsonl. Per-query,",
-    "                     not total - the term generator varies its term count",
+    "  expect.min_terms           live only: search terms the generator produced",
+    "  expect.min_hits_per_query  live only: mean PMIDs esearch returned per",
+    "                     query, from pubmed_audit.jsonl. Per-query, not total.",
     "  expect.max_empty_fraction  live only: max share of queries returning zero",
     "  expect.cochrane_papers_must_be_cochrane_journal  every cochrane-tier",
     "                     paper's journal must be the Cochrane Database",
-    "  expect.modules_non_empty   learn mode: every module must be generated",
-    "  expect.max_unsourced_numeric_modules  modules with numeric params and 0 citations",
     "  why                what this case is guarding against",
+    "",
+    "NOT YET ENFORCED by run_eval.py: must_contain, must_not_contain, banner,",
+    "modules_non_empty, max_unsourced_numeric_modules. These are ANSWER-level",
+    "assertions and the harness is retrieval-only, so they are recorded here as",
+    "intent and are inert until a synthesis mode exists. Do not read a passing",
+    "run as evidence that they hold.",
     "",
     "ALWAYS SET force_route. A case without it measures whichever path the",
     "library happens to favour that day, and write-back moves that line under",
@@ -35,11 +36,15 @@
     "testing the library path instead. A topic worth testing on both paths gets",
     "two cases, one pinned each way.",
     "",
-    "TO FILL IN: cases 3-20. Half should be topics the library covers well and",
-    "half genuinely thin. That split is a clinical judgement call — it needs RB,",
-    "not the model, or the baseline measures assumptions rather than reality."
+    "ROUTES ARE MEASURED, NOT ASSUMED. eval/probe_routes.py runs each question",
+    "through the real coverage gate and reports where the measurement disagrees",
+    "with clinical expectation. Doing that surfaced the similarity-floor bug:",
+    "at the old 0.45 floor 18 of 20 questions routed to the library, including",
+    "'root canal treatment in pregnancy' with 63 hits above the floor and not",
+    "one on-topic paper among them. Floor raised to 0.55; split is now 12",
+    "library / 9 live. Where measurement is borderline, clinical judgement wins",
+    "and the case's why[] says so."
   ],
-
   "cases": [
     {
       "id": "laser-root-canal-disinfection-live",
@@ -119,13 +124,36 @@
         "recorded": "2026-08-29",
         "note": "Live route, retrieval only, via eval/run_eval.py after the Cochrane journal-scoping fix. Recorded as a RANGE over 4 consecutive runs, not a point: search terms are LLM-generated and the term count is not stable, so a point baseline would read as a regression on the next run. Thresholds are floors, set well below the observed range.",
         "route": "live",
-        "papers_observed": [43, 44, 91, 92],
-        "per_tier_typical": {"cochrane": 1, "level1": "18-48", "level2": "12-19",
-                             "level3a": "6-10", "level3b": 1, "level4": "3-7",
-                             "level5": "2-5"},
-        "esearch_queries_observed": [7, 19, 56],
-        "hits_per_query_observed": [21.5, 29.3, 41.2],
-        "esearch_empty_observed": [0, 0, 7],
+        "papers_observed": [
+          43,
+          44,
+          91,
+          92
+        ],
+        "per_tier_typical": {
+          "cochrane": 1,
+          "level1": "18-48",
+          "level2": "12-19",
+          "level3a": "6-10",
+          "level3b": 1,
+          "level4": "3-7",
+          "level5": "2-5"
+        },
+        "esearch_queries_observed": [
+          7,
+          19,
+          56
+        ],
+        "hits_per_query_observed": [
+          21.5,
+          29.3,
+          41.2
+        ],
+        "esearch_empty_observed": [
+          0,
+          0,
+          7
+        ],
         "cochrane": 1,
         "cochrane_note": "1 genuine Cochrane Database review in every run, down from the falsely-reported 10. This is the stable number and the one to watch.",
         "variance_note": "The 2x spread in paper count tracked term-count flapping (1 vs 3 with parse luck), fixed 2026-08-30 - see post_generator_fix."
@@ -135,8 +163,15 @@
         "note": "First clean run after the term-generator fix (stable 7-8 terms). Papers roughly tripled vs the 1-term runs; expect future runs near this shape.",
         "route": "live",
         "papers": 131,
-        "per_tier": {"cochrane": 1, "level1": 67, "level2": 32, "level3a": 9,
-                     "level3b": 3, "level4": 10, "level5": 9},
+        "per_tier": {
+          "cochrane": 1,
+          "level1": 67,
+          "level2": 32,
+          "level3a": 9,
+          "level3b": 3,
+          "level4": 10,
+          "level5": 9
+        },
         "search_terms": 8,
         "esearch_queries": 50,
         "hits_per_query": 18.0,
@@ -164,7 +199,6 @@
         "cost_usd": 0.5968
       }
     },
-
     {
       "id": "laser-root-canal-disinfection-library",
       "question": "Use of lasers in root canal disinfection",
@@ -200,8 +234,452 @@
         "classic": 1,
         "level2": 1,
         "avg_score": 81.2,
-        "cochrane_pmids": ["27759881", "36512807", "31145805"],
+        "cochrane_pmids": [
+          "27759881",
+          "36512807",
+          "31145805"
+        ],
         "cochrane_note": "All three are genuine Cochrane Database reviews on adjacent topics, not laser-specific. That is the honest answer for a topic Cochrane has not reviewed."
+      }
+    },
+    {
+      "id": "single-vs-multiple-visit",
+      "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "must_contain": [
+          "Cochrane"
+        ],
+        "must_not_contain": [
+          "contraindicated"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Draft said library and the topic is genuinely well covered (Cochrane CD005296 is in the library), but the measured gate at the 0.55 floor put it at 10 relevant hits - just under MIN_RAG_RELEVANT. Pinned library deliberately: this is THE canonical well-covered question, and if the library cannot answer it the library is the thing that is broken, which is what the case should surface."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "mta-vs-biodentine-pulpotomy",
+      "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "must_not_contain": [
+          "superior"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measurement agrees with the draft: 36-60 relevant, 51+ high-tier. Among the best-covered topics in the library."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "naocl-concentration",
+      "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "banner": "any"
+      },
+      "why": [
+        "Measured 25 relevant. The literature genuinely conflicts here, so this case also guards the divided-literature banner."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "cbct-vs-periapical",
+      "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "must_contain": [
+          "ALARA",
+          "selection"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measured 17 relevant, 12 above 0.60. Also guards that a diagnostic-accuracy question keeps its ALARA/selection-criteria caveat."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "bioceramic-vs-resin-sealer",
+      "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "must_contain": [
+          "follow-up"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measured 48-60 relevant, one of the densest topics. Short follow-up is the standing limitation."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "retreatment-vs-microsurgery",
+      "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "banner": "any"
+      },
+      "why": [
+        "DISAGREES with the draft. At the 0.45 floor this looked like 89 relevant; at 0.55 it is 7, newest 2024. The apparent coverage was domain-vocabulary noise. Pinned live until the library genuinely holds the topic."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "direct-pulp-capping",
+      "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "banner": "any"
+      },
+      "why": [
+        "Measured 50-55 relevant, 42 above 0.60. Position statements (ESE/AAE) are in the library as curated rows."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "preemptive-nsaid",
+      "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "banner": "any"
+      },
+      "why": [
+        "Measured 34-38 relevant. A question where a cited effect direction is expected rather than a hedge."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "regenerative-immature",
+      "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "must_contain": [
+          "survival"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measured 26 relevant. This topic previously produced the apex-locator misretrieval that motivated the similarity floor, so it is worth a standing case."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "cracked-tooth-prognosis",
+      "question": "Cracked tooth prognosis after root canal treatment by crack extent",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "banner": "any"
+      },
+      "why": [
+        "DISAGREES with the draft. 64 relevant at 0.45 collapsed to 10-11 at 0.55. Thin in this library; pinned live."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "apdt-primary-molars",
+      "question": "Antimicrobial photodynamic therapy as an adjunct in primary molars with necrotic pulps",
+      "mode": "learn",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "modules_non_empty": true,
+        "max_unsourced_numeric_modules": 0,
+        "must_not_contain": [
+          "superior to sodium hypochlorite"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measurement agrees: 8 relevant at 0.55. Paediatric aPDT is genuinely thin here."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "bisphosphonates",
+      "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "must_contain": [
+          "MRONJ"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measurement agrees: 2-3 relevant. At the old 0.45 floor this showed 60 'relevant' hits that were entirely generic AAE position statements - the clearest single example of why the floor moved."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "pregnancy",
+      "question": "Root canal treatment in pregnancy timing and local anesthetic choice",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "banner": "any"
+      },
+      "why": [
+        "Pinned live against a borderline measurement (1 hit above 0.55 in the distribution sweep, 12 on a later run with different generated terms - it straddles MIN_RAG_RELEVANT). Hand-checked: not one on-topic paper in the library, the 'relevant' set was AAE position statements. Clinical judgement overrides the borderline number."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "pips-vs-ultrasonic",
+      "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "banner": "any"
+      },
+      "why": [
+        "DISAGREES with the draft. Measured 25-40 relevant - write-back from the laser runs genuinely populated this topic. Pinned library to guard what write-back deposited."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "intentional-replantation",
+      "question": "Intentional replantation for teeth unsuitable for surgery",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "must_contain": [
+          "extra-oral"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measurement agrees: 1-4 relevant, newest 2024. Genuinely thin."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "sdf-pulp-outcomes",
+      "question": "Silver diamine fluoride and pulp outcomes in deep carious lesions in adult teeth",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "banner": "any"
+      },
+      "why": [
+        "Measurement agrees and is the thinnest of all: 0-1 relevant at 0.55. Guards against extrapolating paediatric caries-arrest data to adult pulp outcomes."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "sonic-vs-ultrasonic",
+      "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "must_contain": [
+          "in vitro"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "DISAGREES with the draft. Measured 14-21 relevant. Also the designated in-vitro-tier case: once WORKLIST 1.4 lands this should retrieve >= 1 invitro-tier paper and must distinguish bench from in vivo evidence."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "dens-invaginatus",
+      "question": "Dens invaginatus type III management",
+      "mode": "review",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 15,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "min_terms": 4,
+        "min_hits_per_query": 5,
+        "max_empty_fraction": 0.5,
+        "must_contain": [
+          "case"
+        ],
+        "banner": "any"
+      },
+      "why": [
+        "Measurement agrees at 0.55 (4 relevant, newest 2023). Hand-checked at 0.45: the 34 'relevant' hits were AAE position statements, zero on-topic. Evidence here is case-level and the answer must say so."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
+      }
+    },
+    {
+      "id": "diabetes-outcomes",
+      "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
+      "mode": "review",
+      "force_route": "library",
+      "expect": {
+        "route": "library",
+        "min_papers": 12,
+        "min_sr": 1,
+        "cochrane_papers_must_be_cochrane_journal": true,
+        "banner": "any"
+      },
+      "why": [
+        "DISAGREES with the draft. Measured 29-56 relevant, 25 above 0.60 - genuinely well covered. Must distinguish association from causation."
+      ],
+      "baseline": {
+        "recorded": null,
+        "note": "PENDING - run eval/run_eval.py --update-baseline"
       }
     }
   ]

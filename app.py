@@ -484,7 +484,23 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     # library and the network is then almost never consulted. These thresholds
     # make the gate ask whether the library actually COVERS the question.
     MIN_RAG_RESULTS   = 20
-    RAG_SIMILARITY_FLOOR = 0.45   # a hit must be this close to count
+    # 0.45 -> 0.55 (2026-08-30). Measured across the 20 eval questions: at
+    # 0.45 the gate routed 18/20 to the library, including "root canal
+    # treatment in pregnancy" (63 hits above the floor, top similarity 0.553)
+    # whose entire "relevant" set was generic AAE position statements and
+    # unrelated outcome papers — not one on-topic result. all-MiniLM-L6-v2
+    # puts any two endodontic texts around 0.45 simply because they share the
+    # domain vocabulary, so a 0.45 floor asks "is this endodontics?" rather
+    # than "is this the question?".
+    #
+    # 0.55 separates cleanly: genuinely covered topics keep 14-56 hits, the
+    # thin ones collapse to 1-8 (pregnancy 1, SDF 1, bisphosphonates 3).
+    # The errors are asymmetric — routing live when the library would have
+    # done costs a PubMed search, routing to the library when it lacks the
+    # topic answers a clinical question from papers about something else — so
+    # the floor is set where the thin topics fall out, not where coverage is
+    # maximised.
+    RAG_SIMILARITY_FLOOR = 0.55   # a hit must be this close to count
     MIN_RAG_RELEVANT  = 12        # ...and we need this many that clear it
     MAX_RAG_PAPERS_PER_TIER = 25  # mirrors the live path's per-tier cap
     RAG_MAX_TOPIC_AGE_YEARS = 3   # library's newest paper on the topic; older -> go live
