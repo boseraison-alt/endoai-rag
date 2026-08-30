@@ -1,0 +1,449 @@
+{
+  "_README": [
+    "Eval baselines, folded over 1 run(s): run1-2026-08-30T03:14.",
+    "",
+    "PROVISIONAL \u2014 a single run is an observation, not a baseline. Do not treat these numbers as thresholds.",
+    "",
+    "Every number is retrieval-only unless a run was made with --synthesis-subset. Search terms are LLM-generated, so counts move between runs; compare the shape, not the digits.",
+    "",
+    "Regenerate: python eval/run_eval.py --update-baseline && python eval/snapshot_baseline.py --add"
+  ],
+  "runs": [
+    "run1-2026-08-30T03:14"
+  ],
+  "cases": {
+    "laser-root-canal-disinfection-live": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 132,
+        "max": 132,
+        "runs": [
+          132
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 65,
+          "level2": 31,
+          "level3a": 13,
+          "level3b": 4,
+          "level4": 11,
+          "level5": 7
+        }
+      ]
+    },
+    "laser-root-canal-disinfection-library": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 27,
+        "max": 27,
+        "runs": [
+          27
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 24,
+          "level2": 2
+        }
+      ]
+    },
+    "single-vs-multiple-visit": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 10,
+        "max": 10,
+        "runs": [
+          10
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 9
+        }
+      ]
+    },
+    "mta-vs-biodentine-pulpotomy": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 29,
+        "max": 29,
+        "runs": [
+          29
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 25,
+          "level2": 1,
+          "level3a": 2,
+          "level3b": 1
+        }
+      ]
+    },
+    "naocl-concentration": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 20,
+        "max": 20,
+        "runs": [
+          20
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 16,
+          "classic": 4
+        }
+      ]
+    },
+    "cbct-vs-periapical": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 17,
+        "max": 17,
+        "runs": [
+          17
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 11,
+          "level2": 1,
+          "level3a": 1,
+          "level3": 2,
+          "level3b": 2
+        }
+      ]
+    },
+    "bioceramic-vs-resin-sealer": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 29,
+        "max": 29,
+        "runs": [
+          29
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "level2": 3
+        }
+      ]
+    },
+    "retreatment-vs-microsurgery": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 18,
+        "max": 18,
+        "runs": [
+          18
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 1,
+          "level2": 1,
+          "level3a": 4,
+          "level4": 8,
+          "level5": 4
+        }
+      ]
+    },
+    "direct-pulp-capping": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 27,
+        "max": 27,
+        "runs": [
+          27
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "level3b": 1
+        }
+      ]
+    },
+    "preemptive-nsaid": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 35,
+        "max": 35,
+        "runs": [
+          35
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "classic": 3,
+          "level2": 4,
+          "level3a": 1
+        }
+      ]
+    },
+    "regenerative-immature": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 19,
+        "max": 19,
+        "runs": [
+          19
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 16,
+          "level2": 2,
+          "level5": 1
+        }
+      ]
+    },
+    "cracked-tooth-prognosis": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 57,
+        "max": 57,
+        "runs": [
+          57
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 20,
+          "level2": 18,
+          "level3a": 18
+        }
+      ]
+    },
+    "apdt-primary-molars": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 2,
+        "max": 2,
+        "runs": [
+          2
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 2
+        }
+      ]
+    },
+    "bisphosphonates": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 41,
+        "max": 41,
+        "runs": [
+          41
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 10,
+          "level2": 7,
+          "level3a": 9,
+          "level3b": 2,
+          "level4": 6,
+          "level5": 7
+        }
+      ]
+    },
+    "pregnancy": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 3,
+        "max": 3,
+        "runs": [
+          3
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level2": 1,
+          "level5": 2
+        }
+      ]
+    },
+    "pips-vs-ultrasonic": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 3,
+        "max": 3,
+        "runs": [
+          3
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 3
+        }
+      ]
+    },
+    "intentional-replantation": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 36,
+        "max": 36,
+        "runs": [
+          36
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 8,
+          "level2": 5,
+          "level3a": 12,
+          "level4": 8,
+          "level5": 3
+        }
+      ]
+    },
+    "sdf-pulp-outcomes": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 2,
+        "max": 2,
+        "runs": [
+          2
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level5": 2
+        }
+      ]
+    },
+    "sonic-vs-ultrasonic": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 12,
+        "max": 12,
+        "runs": [
+          12
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 7,
+          "classic": 3,
+          "level2": 2
+        }
+      ]
+    },
+    "dens-invaginatus": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "min": 113,
+        "max": 113,
+        "runs": [
+          113
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "level1": 37,
+          "level2": 23,
+          "level3a": 30,
+          "level3b": 3,
+          "level4": 10,
+          "level5": 10
+        }
+      ]
+    },
+    "diabetes-outcomes": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "min": 29,
+        "max": 29,
+        "runs": [
+          29
+        ]
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
+          "level3a": 1
+        }
+      ]
+    }
+  },
+  "provisional": true
+}

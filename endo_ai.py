@@ -2227,7 +2227,19 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         if LIBRARY_WRITE_BACK:
             try:
                 from rag import learn_from_live_results
-                learn_from_live_results(scored_papers, _per_pmid)
+                # `topic` is the query this write-back came from, so a big
+                # write-back can clear the answers cached on that topic.
+                #
+                # CAVEAT (WORKLIST 4.6): at this point `topic` is the generated
+                # PubMed BOOLEAN string, not the clinician's question — the
+                # question is not threaded past build_evidence_base(). Measured
+                # against real cached questions, a boolean topic string scores
+                # 0.42-0.45 cosine where the question itself scores 0.87-1.00,
+                # so invalidation stays inert until the question reaches here.
+                # Fix is a `question=None` kwarg on fetch_papers passed through
+                # from build_evidence_base; owned by whoever owns this file.
+                learn_from_live_results(scored_papers, _per_pmid,
+                                        query_text=topic)
             except Exception as _we:
                 print(f"    [learn] write-back skipped: {_we}")
 
