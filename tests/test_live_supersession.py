@@ -95,9 +95,13 @@ class TestApplySupersession:
 
 class TestDemoteOneTier:
 
+    # level4 -> invitro, not level4 -> level5: WORKLIST 1.4 inserted the
+    # in vitro tier between them, and a demotion must step one rung rather
+    # than skip the new one.
     @pytest.mark.parametrize("src,dst", [
         ("cochrane", "level1"), ("level1", "level2"), ("level2", "level3a"),
-        ("level3a", "level3b"), ("level4", "level5"), ("level5", "level5"),
+        ("level3a", "level3b"), ("level4", "invitro"), ("invitro", "level5"),
+        ("level5", "level5"),
     ])
     def test_one_step_down(self, src, dst):
         assert _demote_one_tier(src) == dst
