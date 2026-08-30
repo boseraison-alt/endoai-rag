@@ -1301,13 +1301,13 @@ _DEMOTABLE_TIERS = ["cochrane", "level1", "level2", "level3a", "level3b",
 # "prospective" to a design classifier, so they land at Level II. What
 # separates them is not the design language but the SUBJECT: extracted teeth,
 # dentine blocks, bovine incisors, agar plates. Precision matters far more than
-# recall here — wrongly demoting a real clinical trial to a bench tier is a
-# much worse error than leaving one bench paper at Level II — so a single weak
-# hint is never enough.
+# recall here — wrongly demoting a real clinical trial to a bench tier is a much
+# worse error than leaving one bench paper at Level II — so a single weak hint
+# is never enough.
 
-# Unambiguous on their own. Each names a preparation that cannot be a patient.
-_INVITRO_STRONG_RE = __import__("re").compile(
-    r"(?:"
+# Unambiguous on their own: each names a preparation that cannot be a patient.
+_INVITRO_STRONG_RE = re.compile(
+    r"\b(?:"
     r"extracted\s+(?:human\s+|bovine\s+|permanent\s+|single-rooted\s+)*teeth"
     r"|extracted\s+(?:human\s+|bovine\s+)?(?:tooth|molars?|premolars?|incisors?)"
     r"|dentin(?:e)?\s+(?:blocks?|slices?|discs?|specimens?|cylinders?)"
@@ -1316,15 +1316,16 @@ _INVITRO_STRONG_RE = __import__("re").compile(
     r"|agar\s+(?:diffusion|plates?)"
     r"|capillary\s+tubes?"
     r"|ex\s+vivo"
-    r"|in\s+vitro"
-    r")", __import__("re").IGNORECASE)
+    r"|in\s+vitro"
+    r")",
+    re.IGNORECASE)
 
-# Individually weak — "biofilm model" and "simulated" appear in clinical papers
-# too — so two are required, or one strong.
-_INVITRO_WEAK_RE = __import__("re").compile(
-    r"(?:"
+# Individually weak — "biofilm model" and "fracture resistance" turn up in
+# clinical papers too — so two distinct ones are required, or one strong.
+_INVITRO_WEAK_RE = re.compile(
+    r"\b(?:"
     r"biofilm\s+model"
-    r"|(?:mono|poly)?microbial\s+biofilm"
+    r"|(?:mono|poly)microbial\s+biofilm"
     r"|enterococcus\s+faecalis"
     r"|simulated\s+(?:canals?|root\s+canals?)"
     r"|artificial\s+(?:canals?|teeth)"
@@ -1332,40 +1333,45 @@ _INVITRO_WEAK_RE = __import__("re").compile(
     r"|micro-?ct|micro\s+computed\s+tomograph"
     r"|push-?out\s+bond\s+strength"
     r"|fracture\s+resistance"
-    r"|colony[- ]forming\s+units?|CFU"
+    r"|colony[- ]forming\s+units?"
+    r"|CFU"
     r"|specimens?\s+were\s+(?:randomly\s+)?(?:divided|assigned|allocated)"
-    r")", __import__("re").IGNORECASE)
+    r")",
+    re.IGNORECASE)
 
-# Clinical language that overrides everything. A paper following PATIENTS is
-# not a bench study, even when it also runs SEM on extracted samples — and
-# clinical trials on extracted third molars do exist.
-_CLINICAL_OVERRIDE_RE = __import__("re").compile(
-    r"(?:"
+# Clinical language that overrides everything. A study following PATIENTS is not
+# a bench study even when it also runs SEM on extracted samples — and clinical
+# trials that collect extracted third molars genuinely exist.
+_CLINICAL_OVERRIDE_RE = re.compile(
+    r"\b(?:"
     r"patients?\s+(?:were|was)\s+(?:randomi|recruit|enroll|assign)"
     r"|were\s+(?:randomi[sz]ed|recruited|enrolled)"
     r"|informed\s+consent"
     r"|ethics\s+committee\s+approv"
+    r"|institutional\s+review\s+board"
     r"|follow(?:ed)?[- ]up\s+(?:period\s+)?of\s+\d+\s*(?:month|year)"
     r"|clinical\s+trial\s+registr"
     r"|randomi[sz]ed\s+controlled\s+(?:clinical\s+)?trial"
-    r")", __import__("re").IGNORECASE)
+    r")",
+    re.IGNORECASE)
 
-# Designs whose label already outranks any cue: a Cochrane review or an RCT is
-# not reclassified on the strength of a phrase in its abstract. Reviews OF in
-# vitro studies are a real category and stay where they are.
+# Designs whose label already outranks any cue. A Cochrane review or an RCT is
+# not reclassified on the strength of a phrase in its abstract, and a systematic
+# review OF in vitro studies is a real category that stays where it is.
 _INVITRO_PROTECTED_LEVELS = {"cochrane", "level1", "classic"}
 
 
 def detect_in_vitro(title: str, abstract: str, level_key: str = "") -> tuple:
-    """Return (is_in_vitro, reason). Conservative by construction.
+    """Return (is_in_vitro, reason). Deliberately conservative.
 
     Requires one strong cue or two distinct weak cues, is vetoed by clinical
-    language, and never touches the protected design tiers.
+    language, and never touches a protected design tier. The reason string is
+    returned so a migration can print WHY each row moved and a human can audit
+    the decision rather than trusting a boolean.
     """
     if level_key in _INVITRO_PROTECTED_LEVELS:
         return False, "protected tier"
-    text = f"{title or ''}
-{abstract or ''}"
+    text = f"{title or ''}\n{abstract or ''}"
     if not text.strip():
         return False, "no text"
     if _CLINICAL_OVERRIDE_RE.search(text):
