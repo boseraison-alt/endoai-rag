@@ -141,8 +141,37 @@ run wrote 196 papers into the library, and the same case silently started
 testing the library path instead. It would have passed the next identical
 regression. A topic worth testing both ways gets two cases, one pinned each way.
 
-Cases 3–20 are unwritten and need clinical judgement about which topics the
-library genuinely covers — guessing that makes the baseline measure assumptions.
+**Routes are measured, not assumed.** `eval/probe_routes.py` runs each question
+through the real coverage gate and reports where measurement disagrees with
+clinical expectation. It disagreed on 8 of 20 — in both directions — and
+finding that is what surfaced the similarity-floor bug below. 21 cases now,
+12 library / 9 live.
+
+**Answer-level assertions are recorded but inert.** `must_contain`,
+`must_not_contain`, `banner`, `modules_non_empty` and
+`max_unsourced_numeric_modules` live in the case files as intent; the harness
+is retrieval-only and does not evaluate them. A green run is not evidence that
+they hold. The README in `questions.json` repeats this — do not let it drift.
+
+### The similarity floor asks a different question than you think
+
+`RAG_SIMILARITY_FLOOR` in `app.py` decides both routing and which papers reach
+Claude. It was 0.45. Measured across the 20 eval questions, that routed 18 of
+20 to the library — including "root canal treatment in pregnancy", which had
+63 hits above the floor and **not one on-topic paper**; the whole "relevant"
+set was generic AAE/ESE position statements clustering at 0.45–0.52.
+
+all-MiniLM-L6-v2 scores any two endodontic texts around 0.45 purely on shared
+domain vocabulary. At that threshold the gate asks *is this endodontics?*, not
+*is this the question?*. At 0.55 the thin topics fall out (pregnancy 1, SDF 1,
+bisphosphonates 3) while covered ones keep 14–56.
+
+The errors here are asymmetric and the floor is set accordingly: routing live
+when the library would have served costs one PubMed search; routing to the
+library when it lacks the topic answers a clinical question from papers about
+something else. Set the floor where the thin topics fall out, not where
+coverage looks best. **A count of hits above a low floor is not a coverage
+measurement** — check the distribution (top, p90, count above 0.60) instead.
 
 ---
 
@@ -200,23 +229,28 @@ Three separate ways a paper can be obsolete and still be served:
   terminal version (CD005296 has three generations). `UpdateIn` is carried by the
   *older* record and names its successor; `UpdateOf` points backwards.
 
-**The live PubMed path has no supersession concept.** It filters retractions at
-query time but nothing parses `UpdateIn`, so a question that routes live can
-still surface a stale Cochrane version. Same bug, other path, still open.
+Both retrieval paths now handle all three. The live path parses `UpdateIn` in
+`_merge_corrections_and_registries` and `_apply_supersession` drops an old
+version when its replacement is in the same batch, or demotes and badges it
+when the replacement was not retrieved. The live path records the DIRECT
+successor only; the library backfill resolves chains to the terminal version
+(CD005296 has three generations).
 
 ## Known open items
 
 - 14 library rows carry no `level_key`. They band to the weakest tier, which is
   safe and pinned by `test_end_to_end.py`, but live write-back keeps producing
-  them and the source has not been traced.
-- `generate_multi_search_terms` is not stable in how many terms it emits — 1 term
-  and 8 terms for the same question minutes apart, an 8x swing in retrieval
-  breadth. The eval asserts floors only because of this.
-- `endo_ai._merge_corrections_and_registries` iterates only `PubmedArticle`, so
-  `PubmedBookArticle` records (StatPearls chapters) get no pubtypes, no MEDLINE
-  status, no COI and no corrections. Three sit at Level I scoring 67.
-- 11 rows tagged `Retracted Publication` remain at `level1`/`cochrane`. The
-  retraction penalty is a 0.5x score multiplier, not a tier demotion; they are
-  excluded from search, so this is presentation debt rather than exposure.
+  them and the source has not been traced. (WORKLIST 4.7)
 - 8 scoping reviews and 25 `Journal Article`-only rows sit at `level1` with no
-  derivable design.
+  derivable design — the tier was never verified for them.
+- No in vitro / ex vivo tier yet (WORKLIST 1.4). Bench studies — extracted
+  teeth, dentin blocks, bovine models — classify as "prospective" and land at
+  Level II. Endodontics is heavily bench-based, so this inflates a large share
+  of the library.
+- The quality floor is flat at 50 (WORKLIST 1.5), which culls entire fields
+  whose best papers score in the 40s by construction (no n, no follow-up,
+  older).
+- `DELETE /learn_history/<filename>` is deliberately ungated while the other
+  admin routes require `X-Admin-Token`, because the sidebar delete button calls
+  it without a header. Gating it needs a UI change.
+- The eval harness does not evaluate answer-level assertions (see above).
