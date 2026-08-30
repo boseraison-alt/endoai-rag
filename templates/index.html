@@ -1607,6 +1607,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 .rec-note {
   margin-top: 10px; font-size: 11px; color: #768292; font-style: italic;
 }
+.rec-note-under { margin: -12px 2px 20px; }
 
 /* ── Bibliography tiers + provenance badges ──────────────── */
 .biblio-tier { margin-bottom: 14px; }
@@ -4575,8 +4576,11 @@ function renderAnswerWithBox(text) {
         : '') +
       '<div class="rec-box-body">' + renderAnswer(recRaw) + '</div>' +
       (caveat ? '<div class="rec-caveat">' + _citeEsc(caveat) + '</div>' : '') +
-      '<div class="rec-note">Synthesized from abstracts, not full text.</div>' +
-    '</div>';
+    '</div>' +
+    // 3.6 — one line directly UNDER the recommendation box, not buried in it:
+    // the honest limit of the whole product, stated where the action item is.
+    '<div class="rec-note rec-note-under">This recommendation is synthesized from ' +
+    'published abstracts, not full texts.</div>';
   return { box: box, body: renderAnswer(rest) };
 }
 
