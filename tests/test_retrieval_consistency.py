@@ -151,6 +151,19 @@ class TestMultiQuerySearch:
         assert out[0]["similarity"] == pytest.approx(0.680), \
             "the raw question's better score must win over the boolean's"
 
+    def test_best_wins_even_when_it_is_seen_last(self, monkeypatch):
+        """Order-independence. The question is searched first, so a
+        keep-the-first-seen implementation would pass the test above by
+        accident — here the best score arrives from the LAST query."""
+        from app import multi_query_search
+        self._fake(monkeypatch, {
+            "q":   [{"pmid": "X", "similarity": 0.50}],
+            "t1":  [{"pmid": "X", "similarity": 0.55}],
+            "t2":  [{"pmid": "X", "similarity": 0.90}],
+        })
+        out = multi_query_search("q", ["t1", "t2"])
+        assert out[0]["similarity"] == pytest.approx(0.90)
+
     def test_recall_is_the_union_not_the_intersection(self, monkeypatch):
         from app import multi_query_search
         self._fake(monkeypatch, {
