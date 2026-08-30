@@ -131,6 +131,43 @@ class TestNumericParamRegex:
         assert bool(run_eval.NUMERIC_PARAM_RE.search(text)) is hit
 
 
+class TestSynthesisModeIsActuallyWired:
+    """Testing the assertion functions directly is not enough: the first
+    version of --synthesis-subset only FILTERED the case list and still called
+    the retrieval-only path, so every answer-level check was dead code behind a
+    banner that said SYNTHESIS. These tests drive main() and assert which
+    executor it chose."""
+
+    def _spy_main(self, monkeypatch, argv):
+        called = []
+        monkeypatch.setattr(run_eval, "run_case_with_synthesis",
+                            lambda c: (called.append(("synthesis", c["id"])),
+                                       ({"route": "library", "papers": 1, "per_tier": {},
+                                         "esearch_queries": 0}, []))[1])
+        monkeypatch.setattr(run_eval, "run_case",
+                            lambda c: (called.append(("retrieval", c["id"])),
+                                       ({"route": "library", "papers": 1, "per_tier": {},
+                                         "esearch_queries": 0}, []))[1])
+        monkeypatch.setattr(sys, "argv", ["run_eval.py"] + argv)
+        run_eval.main()
+        return called
+
+    def test_synthesis_subset_uses_the_synthesis_executor(self, monkeypatch):
+        called = self._spy_main(monkeypatch, ["--synthesis-subset"])
+        assert called, "no cases ran"
+        assert {kind for kind, _ in called} == {"synthesis"}, \
+            f"--synthesis-subset ran the retrieval-only path: {called}"
+
+    def test_synthesis_subset_runs_exactly_the_named_cases(self, monkeypatch):
+        called = self._spy_main(monkeypatch, ["--synthesis-subset"])
+        assert sorted(cid for _, cid in called) == sorted(run_eval.SYNTHESIS_SUBSET)
+
+    def test_default_run_uses_the_retrieval_executor(self, monkeypatch):
+        called = self._spy_main(monkeypatch, ["--id", "laser-root-canal-disinfection-library"])
+        assert {kind for kind, _ in called} == {"retrieval"}, \
+            f"a default run must never spend synthesis money: {called}"
+
+
 class TestModeLabelling:
     def test_subset_ids_all_exist_in_questions(self):
         """A typo'd id would silently shrink the subset to nothing."""
