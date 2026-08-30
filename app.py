@@ -197,7 +197,15 @@ def update_job(job_id: str, **kwargs):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    # SECURITY TRADEOFF: ADMIN_TOKEN is rendered into the page so the sidebar's
+    # delete button can send X-Admin-Token; anyone who can load / can read the
+    # token from the HTML. Accepted because this is a single-user local app and
+    # the token only gates local admin routes — do NOT reuse this token for
+    # anything network-facing, and do not copy this pattern to a hosted deploy.
+    return render_template(
+        "index.html",
+        admin_token=(os.getenv("ADMIN_TOKEN") or "").strip(),
+    )
 
 
 @app.route("/tos")
@@ -796,8 +804,15 @@ def get_learn_history_item(filename: str):
 
 
 @app.route("/learn_history/<filename>", methods=["DELETE"])
+@require_admin_token
 def delete_learn_history_item(filename: str):
-    """Permanently delete a single archived Deep Learning curriculum."""
+    """Permanently delete a single archived Deep Learning curriculum.
+
+    Token-gated (WORKLIST 4.1): each curriculum costs ~$1 to regenerate, so an
+    unauthenticated DELETE is the most destructive route in the app. The UI's
+    sidebar delete button sends the token injected into the page by index();
+    with ADMIN_TOKEN unset the route 403s and the UI says so.
+    """
     if "/" in filename or "\\" in filename or ".." in filename or not filename.endswith(".json"):
         return jsonify({"error": "invalid filename"}), 400
     path = os.path.join(_LEARN_HISTORY_DIR, filename)

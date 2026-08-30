@@ -1,22 +1,24 @@
 """
 Admin route authentication (WORKLIST 4.1).
 
-The gated routes — /admin/costs, /admin/evidence-mapping, /cache/clear — are
-operator-only: two read telemetry logs, one deletes cached answers from the
-database. None is called by the UI (grepped templates/index.html), so a shared
-secret costs nothing in UX.
+The gated routes — /admin/costs, /admin/evidence-mapping, /cache/clear and
+DELETE /learn_history/<filename> — are operator-only: two read telemetry logs,
+one deletes cached answers from the database, one permanently deletes an
+archived curriculum from disk.
 
 The property under test is DENY BY DEFAULT. HANDOVER.md bug class (d) is "a
 check that fails open"; the specific failure this file pins is an auth guard
 that, when ADMIN_TOKEN is unset, lets everything through instead of nothing.
 
-DELETE /learn_history/<filename> is deliberately NOT gated: the UI sidebar's
-delete button calls it directly (templates/index.html, fetch with
-method:'DELETE'), and the route is already path-validated and scoped to the
-learn_history/ archive. A test below pins that it stays reachable without a
-token, so gating it later is a conscious decision that must also touch the UI.
+DELETE /learn_history/<filename> is called by the UI, so gating it required a
+UI change: app.index() renders ADMIN_TOKEN into a <meta name="admin-token">
+tag and the sidebar delete button sends it as X-Admin-Token. The UI half of
+bug class (d) is pinned in the template itself — the row is removed only on an
+explicit 200 + {"ok": true}; a 403 leaves the row and shows an error, so a
+delete can never look like it worked while the file survives on disk.
 """
 
+import json
 import sys
 from pathlib import Path
 
@@ -26,11 +28,14 @@ import pytest
 
 TOKEN = "test-admin-secret"
 
-# (method, path) for every route behind require_admin_token
+# (method, path) for every route behind require_admin_token.
+# The learn_history path names a file that does not exist: with a valid token
+# the handler answers 404, so these parametrized cases can never delete data.
 GATED_ROUTES = [
-    ("get",  "/admin/costs"),
-    ("get",  "/admin/evidence-mapping"),
-    ("post", "/cache/clear"),
+    ("get",    "/admin/costs"),
+    ("get",    "/admin/evidence-mapping"),
+    ("post",   "/cache/clear"),
+    ("delete", "/learn_history/no_such_file_ever.json"),
 ]
 
 
@@ -114,12 +119,100 @@ class TestTokenChecking:
         assert "Question" in (resp.get_json() or {}).get("error", "")
 
 
-class TestUiRoutesStayOpen:
+class TestLearnHistoryDeleteIsGated:
+    """DELETE /learn_history/<file> is now token-gated. THE GATING DECISION
+    CHANGED: an earlier pass left this route open because the UI sidebar
+    delete button called it with no header and that pass could not edit
+    templates/index.html. It is closed now because it is the most destructive
+    route in the app — each archived curriculum costs roughly $1 of Claude
+    calls to regenerate, and the archive is the only copy — and because the UI
+    can now send the header: app.index() renders ADMIN_TOKEN into a
+    <meta name="admin-token"> tag which deleteLearnReport() forwards as
+    X-Admin-Token. The test that used to assert this route stays reachable
+    without a token has been inverted into the cases below.
+    """
 
-    def test_learn_history_delete_is_not_token_gated(self, client, monkeypatch):
-        """Deliberate exception (WORKLIST 4.1): the UI sidebar delete button
-        calls DELETE /learn_history/<file> with no header. It must not 403;
-        404 for a nonexistent file is the expected answer."""
-        monkeypatch.delenv("ADMIN_TOKEN", raising=False)
+    def test_no_header_denies(self, client, monkeypatch):
+        """The exact call the old UI made — DELETE, no header — must 403."""
+        monkeypatch.setenv("ADMIN_TOKEN", TOKEN)
         resp = client.delete("/learn_history/no_such_file_ever.json")
+        assert resp.status_code == 403
+
+    def test_wrong_token_denies(self, client, monkeypatch):
+        monkeypatch.setenv("ADMIN_TOKEN", TOKEN)
+        resp = _call(client, "delete", "/learn_history/no_such_file_ever.json",
+                     token="wrong-token")
+        assert resp.status_code == 403
+
+    def test_unset_env_denies(self, client, monkeypatch):
+        """Deny by default survives the gating change: with ADMIN_TOKEN unset
+        the route refuses everyone, header or not — it never falls back to
+        'no token configured, so no auth' (bug class (d))."""
+        monkeypatch.delenv("ADMIN_TOKEN", raising=False)
+        assert client.delete(
+            "/learn_history/no_such_file_ever.json").status_code == 403
+        assert _call(client, "delete", "/learn_history/no_such_file_ever.json",
+                     token="anything").status_code == 403
+
+    def test_right_token_reaches_handler(self, client, monkeypatch):
+        """With a valid token the request reaches the handler's own logic:
+        404 for a file that does not exist, NOT the guard's 403. Proves the
+        guard passes without deleting anything."""
+        monkeypatch.setenv("ADMIN_TOKEN", TOKEN)
+        resp = _call(client, "delete", "/learn_history/no_such_file_ever.json",
+                     token=TOKEN)
         assert resp.status_code == 404
+
+    def test_right_token_actually_deletes(self, client, monkeypatch, tmp_path):
+        """Success path, against a throwaway archive directory so the real
+        learn_history/ entries (≈$1 each to regenerate) are never touched:
+        200 + {"ok": true} and the file is gone from disk."""
+        import app as app_mod
+        monkeypatch.setenv("ADMIN_TOKEN", TOKEN)
+        monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
+        victim = tmp_path / "20260101_000000_throwaway_fixture.json"
+        victim.write_text(json.dumps({
+            "question": "throwaway", "timestamp": "2026-01-01T00:00:00",
+            "answer": "", "papers": [], "total_papers": 0, "cost_usd": 0.0,
+        }), encoding="utf-8")
+
+        resp = _call(client, "delete", "/learn_history/" + victim.name,
+                     token=TOKEN)
+        assert resp.status_code == 200
+        assert resp.get_json() == {"ok": True}
+        assert not victim.exists()
+
+    def test_denied_delete_leaves_the_file_on_disk(self, client, monkeypatch,
+                                                   tmp_path):
+        """The phantom-success guard, server side: a refused delete must not
+        remove the file. If this ever fails, the UI's 'row stays put on 403'
+        logic is hiding a real deletion."""
+        import app as app_mod
+        monkeypatch.setenv("ADMIN_TOKEN", TOKEN)
+        monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
+        survivor = tmp_path / "20260101_000000_throwaway_fixture.json"
+        survivor.write_text("{}", encoding="utf-8")
+
+        assert client.delete("/learn_history/" + survivor.name).status_code == 403
+        assert _call(client, "delete", "/learn_history/" + survivor.name,
+                     token="wrong-token").status_code == 403
+        assert survivor.exists()
+
+
+class TestTemplateCarriesTheToken:
+    """The UI can only send the header if the server puts the token in the
+    page. These pin the injection contract that deleteLearnReport() reads."""
+
+    def test_index_renders_the_token_into_a_meta_tag(self, client, monkeypatch):
+        monkeypatch.setenv("ADMIN_TOKEN", TOKEN)
+        html = client.get("/").get_data(as_text=True)
+        assert '<meta name="admin-token" content="%s"' % TOKEN in html
+
+    def test_index_renders_empty_meta_when_token_unset(self, client, monkeypatch):
+        """Unset ADMIN_TOKEN must render an empty value, not the literal
+        'None' — a 'None' token would be sent as a header and read as a
+        deliberate (wrong) credential rather than 'not configured'."""
+        monkeypatch.delenv("ADMIN_TOKEN", raising=False)
+        html = client.get("/").get_data(as_text=True)
+        assert '<meta name="admin-token" content=""' in html
+        assert 'content="None"' not in html

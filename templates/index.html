@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- SECURITY TRADEOFF: the admin token is readable by anyone who can load this
+     page. Accepted for this single-user local app (it only gates local admin
+     routes); never ship this pattern to a multi-user or hosted deployment. -->
+<meta name="admin-token" content="{{ admin_token|default('', true) }}"/>
 <title>Endo AI — Evidence-Based Clinical Assistant</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -285,6 +289,13 @@ video.media-video {
   border-radius: 8px; padding: 12px 15px; font-size: 13px; line-height: 1.5;
 }
 .report-gone .history-regen-btn { font-size: 11px; padding: 3px 10px; margin-left: 6px; }
+/* Bug class (d): a failed delete must be loud. Never a silent no-op, and
+   never a row that vanishes while the file is still on disk. */
+.learn-delete-error {
+  background: #fdecec; border: 1px solid #e5a3a3; color: #8d1f1f;
+  border-radius: 8px; padding: 9px 12px; margin: 6px 0;
+  font-size: 12px; line-height: 1.45;
+}
 .hbadge-case   { background: rgba(161,98,7,0.15); color: #b45309; }
 
 .sidebar-empty {
@@ -7278,12 +7289,69 @@ function toggleLearnHistory() {
   if (panel) panel.classList.toggle('collapsed');
 }
 
+// The admin token the server rendered into this page (see the meta tag in
+// <head> and the SECURITY TRADEOFF comment there). Empty string when
+// ADMIN_TOKEN is unset on the server — in that case the gated routes 403 and
+// the caller must surface the refusal, not swallow it.
+function adminToken() {
+  var m = document.querySelector('meta[name="admin-token"]');
+  return (m && m.content) || '';
+}
+
+function adminHeaders() {
+  var t = adminToken();
+  return t ? { 'X-Admin-Token': t } : {};
+}
+
+// Bug class (d): show the refusal next to the row that failed, and leave the
+// row where it is. A vanished row over a file that still exists on disk is the
+// phantom success this whole guard exists to prevent.
+function _showLearnDeleteError(btnEl, msg) {
+  var item = btnEl && (btnEl.closest('.learn-hist-item') || btnEl.closest('.profile-list-item'));
+  var box = document.createElement('div');
+  box.className = 'learn-delete-error';
+  box.setAttribute('data-testid', 'learn-delete-error');
+  box.textContent = 'Delete failed — the report was NOT deleted. ' + msg;
+  if (item && item.parentNode) {
+    var prev = item.nextElementSibling;
+    if (prev && prev.classList.contains('learn-delete-error')) prev.remove();
+    item.parentNode.insertBefore(box, item.nextSibling);
+  } else {
+    var list = document.getElementById('learnHistList') || document.getElementById('ppLearnList');
+    if (list) list.insertBefore(box, list.firstChild);
+    else alert(box.textContent);
+  }
+}
+
 function deleteLearnReport(filename, btnEl) {
   if (!confirm('Delete this report? This cannot be undone.')) return;
-  fetch('/learn_history/' + encodeURIComponent(filename), { method: 'DELETE' })
-    .then(function(r) { return r.json(); })
+  var status = 0;
+  fetch('/learn_history/' + encodeURIComponent(filename), {
+    method:  'DELETE',
+    headers: adminHeaders()
+  })
+    .then(function(r) {
+      status = r.status;
+      return r.json().catch(function() { return {}; });
+    })
     .then(function(data) {
-      if (data.error) { alert('Delete failed: ' + data.error); return; }
+      data = data || {};
+      // Only an explicit 200 + {ok:true} may remove the row. 403 from the
+      // admin gate, 404, 500, or an unparseable body all keep the row and say
+      // why — the server is the only authority on whether the file is gone.
+      if (status !== 200 || data.ok !== true) {
+        var why = data.error
+          ? data.error
+          : ('The server answered ' + status + '.');
+        // The server already names ADMIN_TOKEN when it is unset; only add the
+        // hint when it did not (e.g. a stale token in an old page).
+        if (status === 403 && why.indexOf('ADMIN_TOKEN') === -1) {
+          why += ' This page is not authorised for admin actions — check ADMIN_TOKEN' +
+                 ' on the server (see README), then reload this page.';
+        }
+        _showLearnDeleteError(btnEl, why);
+        return;
+      }
       // Remove the item from whichever list contains the button
       var item = btnEl.closest('.learn-hist-item') || btnEl.closest('.profile-list-item');
       if (item) item.remove();
@@ -7292,7 +7360,9 @@ function deleteLearnReport(filename, btnEl) {
       var ppList = document.getElementById('ppLearnList');
       if (ppList) profileLoadLearnHistory();
     })
-    .catch(function() { alert('Delete failed.'); });
+    .catch(function(e) {
+      _showLearnDeleteError(btnEl, 'The request did not complete (' + (e && e.message ? e.message : 'network error') + ').');
+    });
 }
 
 // 3.8 — shown in the answer pane when a report's backing archive file no

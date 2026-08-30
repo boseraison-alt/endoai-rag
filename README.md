@@ -40,9 +40,10 @@ See `.env.example` for the full annotated list. The load-bearing ones:
 
 ## Admin routes
 
-`GET /admin/costs`, `GET /admin/evidence-mapping` and `POST /cache/clear` are
-operator-only and gated behind a shared secret. Requests must send an
-`X-Admin-Token` header matching the `ADMIN_TOKEN` environment variable:
+`GET /admin/costs`, `GET /admin/evidence-mapping`, `POST /cache/clear` and
+`DELETE /learn_history/<file>` are operator-only and gated behind a shared
+secret. Requests must send an `X-Admin-Token` header matching the
+`ADMIN_TOKEN` environment variable:
 
 ```
 curl -H "X-Admin-Token: <your token>" http://127.0.0.1:5000/admin/costs
@@ -51,12 +52,26 @@ curl -H "X-Admin-Token: <your token>" http://127.0.0.1:5000/admin/costs
 Deny by default: if `ADMIN_TOKEN` is unset or empty, these routes return 403
 for everyone — there is no unauthenticated fallback. Generate a token with
 e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"` and set it
-in `.env`.
+in `.env` as `ADMIN_TOKEN=<paste the generated value>`.
 
-`DELETE /learn_history/<file>` is deliberately *not* token-gated: the UI
-sidebar's delete button calls it, it is path-validated, and it can only touch
-files inside `learn_history/`. If you gate it later, the UI fetch in
-`templates/index.html` must learn to send the header too.
+### The delete button and the token in the page
+
+`DELETE /learn_history/<file>` is the one gated route the UI itself calls (the
+sidebar's per-report delete button). So that it can send the header, `GET /`
+renders `ADMIN_TOKEN` into `<meta name="admin-token">` and the button forwards
+it as `X-Admin-Token`.
+
+**Tradeoff, stated plainly: anyone who can load the page can read the token
+out of the HTML.** That is acceptable here because Endo AI is a single-user
+app bound to localhost and the token gates only local admin routes — it is not
+a credential for anything else. Do not reuse this token elsewhere, and do not
+carry this pattern into a hosted or multi-user deployment; that would need a
+session/CSRF-token scheme instead.
+
+With `ADMIN_TOKEN` unset the delete button gets a 403 and the report list says
+so — the row stays put and the file stays on disk. It never looks like the
+delete worked. Set `ADMIN_TOKEN`, restart the server, and reload the page to
+enable deleting.
 
 ## X-ray analysis (disabled by default)
 
