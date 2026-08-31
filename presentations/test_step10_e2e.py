@@ -124,8 +124,21 @@ def main():
         print("    WARNING: fewer than 6 unique patterns — prompt may need tuning")
 
     print("\n[2] Building PPTX via build_deck_from_specs() ...")
-    prs, queue = build_deck_from_specs(deck)
-    print(f"    → {len(queue)} slides rendered")
+    # source_text is what gates chart rendering: spec §1.5 requires every
+    # plotted value to appear verbatim in the cited source, so the builder is
+    # handed the answer the deck was written from. Without it, no charts.
+    prs, queue = build_deck_from_specs(deck, source_text=MOCK_ANSWER)
+    print(f"    → {len(queue)} slides rendered "
+          f"({len(queue) - len(slides)} added by the body-budget split)")
+
+    from presentations.text_budget import has_raw_marker
+    leaked = [
+        n for n, (slide_obj, _, _) in enumerate(queue, 1)
+        for shape in slide_obj.shapes
+        if shape.has_text_frame and has_raw_marker(shape.text_frame.text)
+    ]
+    print(f"    → raw citation markers on slides: {len(leaked)} "
+          f"{'(FAIL: ' + str(sorted(set(leaked))) + ')' if leaked else '(OK)'}")
 
     prs.save(OUT)
     size_kb = os.path.getsize(OUT) // 1024

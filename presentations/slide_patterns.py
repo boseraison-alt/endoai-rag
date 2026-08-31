@@ -1,1253 +1,1128 @@
 """
-Endo AI — Slide Pattern Library
-=================================
-Ten named layout functions. Each accepts structured content dicts and writes
-one fully-composed slide into the supplied Presentation object.
+Curo — Slide Pattern Library
+=============================
+The eight approved layouts of spec §1.4, plus the restyled
+"module not generated" notice, plus adapters that keep the pattern names the
+slide generator already emits working unchanged.
 
-All coordinates are in inches, all sizes in points. Every color/font/size is
-read from design_tokens — no magic numbers here.
+    1. title_slide       — hero + the mandatory evidence-shape card
+    2. section_divider   — flat #1e40af module break
+    3. content_slide     — furniture + bullets (+ optional figure)
+    4. table_slide       — bordered container, zebra rows, PMID pills
+    5. decision_tree     — 2-col IF / THEN / BECAUSE cards
+    6. chart_slide       — a chart that passed the §1.5 hard rules
+    7. takeaways_slide   — 2x2 serif numerals + "does not apply when" notice
+    8. references_slide  — numbered rows with tier chip, pill, score
+    9. notice_slide      — "module not generated — insufficient evidence"
 
-Pattern signatures follow the spec in the implementation plan. Optional keyword
-args default to sensible values so callers only supply what varies per slide.
+Every coordinate comes from design_tokens; every visible run goes through
+slide_helpers, so no pattern can put a raw citation marker on a slide.
+
+Two structural notes
+--------------------
+* **A pattern may return a list of slides.** When a body overflows its budget
+  (spec §1.3) the pattern emits continuation slides and returns all of them.
+  `build_deck` flattens the result, so callers upstream — including `app.py`,
+  which this phase does not modify — are unaffected.
+
+* **Legacy pattern names are adapters, not duplicates.** `objectives_slide`,
+  `cascade_slide`, `two_column_compare`, `three_route_grid`, `decision_table`,
+  `stat_panel` and `evidence_summary` are the vocabulary
+  `endo_ai.generate_slides_specs` emits. Each maps onto one of the eight
+  approved layouts rather than defining a ninth look.
 """
 
 from __future__ import annotations
 
 from pptx.enum.text import PP_ALIGN
 
-from presentations.design_tokens import COLORS, FONTS, SIZES, LAYOUT, SEMANTIC
+from presentations.design_tokens import (
+    COLORS, SIZES, SIZES_PX, LAYOUT, LINE_HEIGHT, BODY_BUDGET,
+    TIER_ORDER, TIER_LABELS, TIER_CHART_FILL, TIER_CHART_FILL_LIGHT,
+    CHIP_IF, CHIP_THEN, CHIP_BECAUSE, TAKEAWAY_NUMERALS, BULLET_MARKER,
+    TRACK_EYEBROW, TRACK_CHIP, px_in, tier_key,
+)
 from presentations.slide_helpers import (
-    new_presentation, blank_slide,
-    hex_rgb, set_font,
-    add_textbox, add_multiline_textbox,
-    add_eyebrow, add_title, add_body, add_footer,
-    add_filled_rect, add_circle, add_concentric_circles,
-    add_callout_box, add_left_accent_bar,
-    add_icon_glyph, add_icon_in_circle,
+    new_presentation, blank_slide, dark_slide, slide_background,
+    add_textbox, add_multiline_textbox, add_filled_rect, add_rounded_rect,
+    add_circle, add_hairline, add_chip, add_tier_chip, add_pmid_pill,
+    chip_width_in, add_header_row, add_slide_title, add_lead, add_footer,
+    add_notice_box, add_bullet_row, add_image_bytes,
+    estimate_height_in, resolve_color, sanitize, extract_pmids,
+)
+from presentations.text_budget import (
+    split_bullets, split_rows, split_cards, continuation_eyebrow,
+)
+from presentations import chart_data, charts
+
+_W = LAYOUT["slide_w_in"]
+_H = LAYOUT["slide_h_in"]
+_PX = LAYOUT["pad_x_in"]
+_CW = LAYOUT["content_w_in"]
+
+CURO_LABEL = "CURO"
+
+
+# ── shared furniture ─────────────────────────────────────────────────────────
+
+def _citation_fields(spec: dict) -> str:
+    """Short citation line for the footer, assembled from the spec's own text.
+
+    Never composed from nothing: only fields the generator actually wrote are
+    used, plus the PMIDs harvested out of them. `add_textbox` strips the raw
+    markers, so the footer shows author/journal prose plus clean PMID text.
+    """
+    parts: list[str] = []
+    for key in ("citation", "footer_caption", "caption", "footer_metadata",
+                "source", "footer"):
+        val = spec.get(key)
+        if isinstance(val, str) and sanitize(val).strip():
+            parts.append(sanitize(val).strip().rstrip("."))
+            break
+
+    pmids: list[str] = []
+    for key, val in spec.items():
+        if key.startswith("_") or key == "speaker_notes":
+            continue
+        pmids.extend(extract_pmids(_flatten_text(val)))
+    seen, ordered = set(), []
+    for p in pmids:
+        if p not in seen:
+            seen.add(p)
+            ordered.append(p)
+    if ordered:
+        parts.append(" · ".join(f"PMID {p}" for p in ordered[:4]))
+    return " · ".join(p for p in parts if p)
+
+
+def _flatten_text(value) -> str:
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        return " ".join(_flatten_text(v) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return " ".join(_flatten_text(v) for v in value)
+    return ""
+
+
+def _content_frame(prs, *, eyebrow: str, title: str,
+                   tier: str | None = None,
+                   right_label: str | None = None,
+                   lead: str | None = None,
+                   citations: str = "",
+                   page_num: int | None = None,
+                   title_width: float | None = None,
+                   reserve_bottom: float = 0.0):
+    """Paint the furniture every content-class slide shares. Returns
+    (slide, body_top_y, body_height).
+
+    `reserve_bottom` withholds space above the footer rule for something the
+    caller will draw there — a notice box, a caption — so the body is laid out
+    around it instead of underneath it.
+    """
+    slide = dark_slide(prs)
+    add_header_row(slide, eyebrow, tier=tier,
+                   right_label=right_label if not tier else None)
+    title_bottom = add_slide_title(slide, title, width_in=title_width)
+    body_top = add_lead(slide, lead or "", title_bottom) + px_in(26)
+    add_footer(slide, citations=citations, page_num=page_num)
+    body_h = LAYOUT["footer_rule_y_in"] - px_in(22) - reserve_bottom - body_top
+    return slide, body_top, max(body_h, px_in(60))
+
+
+def _pages_meta(page_index: int, eyebrow: str, page_num) -> tuple[str, int | None]:
+    """Eyebrow + page number for the nth page of a split body."""
+    return (continuation_eyebrow(eyebrow, page_index),
+            None if page_num is None else page_num + page_index)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1. Title
+# ─────────────────────────────────────────────────────────────────────────────
+
+def title_slide(prs, *, title: str, subtitle: str = "", eyebrow: str = "",
+                tagline: str = "", footer_metadata: str = "",
+                tier_counts: dict | None = None,
+                disclaimer: str | None = None,
+                _page_num: int = 1, _total_pages: int = 1, **_ignored):
+    """Dark hero: wordmark row, serif title, subtitle, evidence-shape card.
+
+    The light evidence-shape card is MANDATORY on every deck (spec §1.4) — it
+    is the product signature. When the caller supplies no per-tier paper counts
+    the card is still drawn, and says so: the label row appears with an honest
+    "breakdown not available" line rather than a bar built from invented
+    numbers.
+    """
+    slide = dark_slide(prs)
+
+    # ── Wordmark row: "Curo" serif italic · 1px divider · cyan eyebrow ──
+    row_y = LAYOUT["pad_top_in"]
+    mark_w = px_in(74)
+    add_textbox(slide, "Curo", _PX, row_y, mark_w, px_in(34),
+                font_role="display", size=SIZES["wordmark"],
+                color=COLORS["text_title"], italic=True, wrap=False)
+    div_x = _PX + mark_w
+    add_filled_rect(slide, div_x, row_y + px_in(6), LAYOUT["hairline_in"],
+                    px_in(22), COLORS["border"])
+    if eyebrow:
+        add_textbox(slide, eyebrow, div_x + px_in(16), row_y + px_in(10),
+                    _CW - mark_w - px_in(16), px_in(22),
+                    font_role="body", size=SIZES["eyebrow"],
+                    color=COLORS["accent_cyan"], bold=True, upper=True,
+                    tracking=TRACK_EYEBROW, wrap=False)
+
+    # ── Hero title ──
+    title_y = row_y + px_in(64)
+    title_h = estimate_height_in(title, SIZES["title_hero"], _CW * 0.92,
+                                 font_role="display",
+                                 line_height=LINE_HEIGHT["title"])
+    add_textbox(slide, title, _PX, title_y, _CW * 0.92, title_h + px_in(10),
+                font_role="display", size=SIZES["title_hero"],
+                color=COLORS["text_title"], line_spacing=LINE_HEIGHT["title"])
+    y = title_y + title_h + px_in(26)
+
+    if subtitle:
+        sub_h = estimate_height_in(subtitle, SIZES["subtitle"], _CW * 0.80,
+                                   line_height=LINE_HEIGHT["lead"])
+        add_textbox(slide, subtitle, _PX, y, _CW * 0.80, sub_h + px_in(6),
+                    font_role="body", size=SIZES["subtitle"],
+                    color=COLORS["text_lead"],
+                    line_spacing=LINE_HEIGHT["lead"])
+        y += sub_h + px_in(10)
+
+    if tagline:
+        tag_h = estimate_height_in(tagline, SIZES["lead"], _CW * 0.78,
+                                   line_height=LINE_HEIGHT["lead"])
+        add_textbox(slide, tagline, _PX, y, _CW * 0.78, tag_h + px_in(6),
+                    font_role="body", size=SIZES["lead"],
+                    color=COLORS["text_secondary"], italic=True,
+                    line_spacing=LINE_HEIGHT["lead"])
+        y += tag_h + px_in(12)
+
+    # ── The evidence-shape card ──
+    # Mandatory on every deck; sized to what it actually carries so a deck
+    # without per-tier counts gets a compact honest card, not a tall empty one.
+    card_h = px_in(150) if tier_counts else px_in(96)
+    card_y = min(max(y + px_in(14), px_in(392)),
+                 LAYOUT["footer_rule_y_in"] - card_h - px_in(40))
+    _evidence_shape_card(slide, _PX, card_y, _CW, card_h, tier_counts)
+
+    # ── Footer disclaimer ──
+    note = disclaimer or footer_metadata
+    if note:
+        add_textbox(slide, note, _PX, card_y + card_h + px_in(12), _CW,
+                    px_in(20), font_role="body", size=SIZES["footer"],
+                    color=COLORS["title_disclaimer"], wrap=False)
+    return slide
+
+
+def _evidence_shape_card(slide, x, y, w, h, tier_counts: dict | None):
+    """Light card holding the label row, stacked tier bar, and legend."""
+    add_rounded_rect(slide, x, y, w, h, COLORS["light_card"],
+                     radius_in=LAYOUT["container_radius_in"])
+    pad = px_in(22)
+    ix, iw = x + pad, w - pad * 2
+
+    add_textbox(slide, "Evidence shape of this deck", ix, y + pad, iw,
+                px_in(18), font_role="body", size=SIZES["eyebrow"],
+                color=COLORS["light_card_ink_muted"], bold=True, upper=True,
+                tracking=TRACK_EYEBROW, wrap=False)
+
+    chart = chart_data.evidence_shape(tier_counts or {})
+    bar_y = y + pad + px_in(28)
+    bar_h = LAYOUT["evidence_bar_h_in"]
+
+    if chart is None:
+        # No counts supplied. The card stays — the bar does not get invented.
+        add_textbox(slide, "Evidence breakdown not available for this deck",
+                    ix, bar_y + px_in(4), iw, px_in(24),
+                    font_role="body", size=SIZES["lead"],
+                    color=COLORS["light_card_ink_muted"], italic=True)
+        return
+
+    png = charts.render_evidence_shape(chart, on_light_card=True,
+                                       width_in=iw, height_in=0.42)
+    if png:
+        add_image_bytes(slide, png, ix, bar_y, width_in=iw)
+    else:
+        _draw_stacked_bar(slide, ix, bar_y, iw, bar_h, chart)
+
+    # Legend row: swatch + name + count per tier.
+    legend_y = bar_y + bar_h + px_in(22)
+    lx = ix
+    for tier, label, value in zip(chart.tier_keys, chart.labels, chart.values):
+        swatch = px_in(10)
+        add_rounded_rect(slide, lx, legend_y + px_in(4), swatch, swatch,
+                         TIER_CHART_FILL_LIGHT[tier], radius_in=px_in(2))
+        text = f"{label} {int(value)}"
+        tw = px_in(len(text) * 7.6 + 10)
+        add_textbox(slide, text, lx + swatch + px_in(6), legend_y, tw,
+                    px_in(20), font_role="body", size=SIZES["footer"],
+                    color=COLORS["light_card_ink"], wrap=False)
+        lx += swatch + px_in(6) + tw + px_in(14)
+
+
+def _draw_stacked_bar(slide, x, y, w, h, chart):
+    """Vector fallback for the evidence-shape bar when matplotlib is absent."""
+    total = sum(chart.values) or 1.0
+    gap = LAYOUT["evidence_gap_in"]
+    usable = w - gap * max(0, len(chart.values) - 1)
+    cx = x
+    for tier, value in zip(chart.tier_keys, chart.values):
+        seg = usable * (value / total)
+        add_filled_rect(slide, cx, y, max(seg, px_in(3)), h,
+                        TIER_CHART_FILL_LIGHT[tier])
+        cx += seg + gap
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2. Section divider
+# ─────────────────────────────────────────────────────────────────────────────
+
+def section_divider(prs, *, module_title: str = "", module_label: str = "",
+                    module_subtitle: str = "", topics: list | None = None,
+                    tier: str | None = None, caveat: str = "",
+                    footer: str = "",
+                    _module_index: int | None = None,
+                    _module_total: int | None = None,
+                    _page_num: int = 1, _total_pages: int = 1, **_ignored):
+    """Flat #1e40af module break with the giant serif numeral top-right."""
+    slide = dark_slide(prs, COLORS["divider_bg"])
+
+    # Giant serif module number, top-right, kept clear of the text column.
+    numeral = _module_numeral(module_label, _module_index)
+    if numeral:
+        add_textbox(slide, numeral, _W - _PX - px_in(300),
+                    LAYOUT["pad_top_in"] - px_in(24), px_in(300), px_in(230),
+                    font_role="display", size=SIZES["title_hero"] * 2.6,
+                    color=COLORS["divider_numeral"], align=PP_ALIGN.RIGHT,
+                    wrap=False)
+
+    text_w = max(LAYOUT["divider_text_min_in"], _CW - px_in(320))
+
+    eyebrow = _module_eyebrow(module_label, _module_index, _module_total)
+
+    # Measure the whole text block first, then centre it between the top
+    # padding and the bottom chip row. A divider with no topic lines otherwise
+    # leaves a half-slide void under the title.
+    topic_texts = [
+        sanitize(t if isinstance(t, str) else _flatten_text(t))
+        for t in (topics or [])[:3]
+    ]
+    topic_texts = [t for t in topic_texts if t]
+    tick_x = _PX + LAYOUT["divider_tick_w_in"] + px_in(14)
+    block_h = (px_in(30) if eyebrow else 0.0)
+    block_h += estimate_height_in(module_title, SIZES["title_divider"],
+                                  text_w, font_role="display",
+                                  line_height=LINE_HEIGHT["title"]) + px_in(26)
+    for text in topic_texts:
+        block_h += estimate_height_in(text, SIZES["divider_tick"],
+                                      text_w - (tick_x - _PX),
+                                      line_height=LINE_HEIGHT["lead"]) \
+            + px_in(14)
+
+    top = LAYOUT["pad_top_in"] + px_in(40)
+    bottom = LAYOUT["footer_rule_y_in"] - px_in(90)
+    y = max(top, top + (bottom - top - block_h) / 2)
+
+    if eyebrow:
+        add_textbox(slide, eyebrow, _PX, y, text_w, px_in(20),
+                    font_role="body", size=SIZES["eyebrow"],
+                    color="#c7d6ff", bold=True, upper=True,
+                    tracking=TRACK_EYEBROW, wrap=False)
+        y += px_in(30)
+
+    title_h = estimate_height_in(module_title, SIZES["title_divider"], text_w,
+                                 font_role="display",
+                                 line_height=LINE_HEIGHT["title"])
+    add_textbox(slide, module_title, _PX, y, text_w, title_h + px_in(10),
+                font_role="display", size=SIZES["title_divider"],
+                color=COLORS["text_title"], line_spacing=LINE_HEIGHT["title"])
+    y += title_h + px_in(26)
+
+    # Tick-mark topic lines: 18x2px cyan dash + #dbe6fd text.
+    for text in topic_texts:
+        add_filled_rect(slide, _PX, y + px_in(11),
+                        LAYOUT["divider_tick_w_in"],
+                        LAYOUT["divider_tick_h_in"], COLORS["accent_cyan"])
+        tx = tick_x
+        th = estimate_height_in(text, SIZES["divider_tick"],
+                                text_w - (tx - _PX),
+                                line_height=LINE_HEIGHT["lead"])
+        add_textbox(slide, text, tx, y, text_w - (tx - _PX), th + px_in(4),
+                    font_role="body", size=SIZES["divider_tick"],
+                    color="#dbe6fd", line_spacing=LINE_HEIGHT["lead"])
+        y += th + px_in(14)
+
+    # Bottom: module evidence chip + one-line caveat.
+    bottom_y = LAYOUT["footer_rule_y_in"] - px_in(56)
+    cx = _PX
+    if tier and tier_key(tier):
+        cx += add_tier_chip(slide, tier, cx, bottom_y) + px_in(14)
+    note = sanitize(caveat or module_subtitle)
+    if note:
+        add_textbox(slide, note, cx, bottom_y + px_in(1),
+                    _CW - (cx - _PX), px_in(26),
+                    font_role="body", size=SIZES["table_body"],
+                    color="#c7d6ff", wrap=False)
+    return slide
+
+
+def _module_numeral(module_label: str, index: int | None) -> str:
+    import re
+    if module_label:
+        m = re.search(r"(\d+)", str(module_label))
+        if m:
+            return f"{int(m.group(1)):02d}"
+    if index:
+        return f"{index:02d}"
+    return ""
+
+
+def _module_eyebrow(module_label: str, index: int | None,
+                    total: int | None) -> str:
+    if index and total:
+        return f"Module {index} of {total}"
+    return sanitize(module_label)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 3. Content
+# ─────────────────────────────────────────────────────────────────────────────
+
+def content_slide(prs, *, title: str, eyebrow: str = "",
+                  bullets: list | None = None, lead: str | None = None,
+                  tier: str | None = None, citations: str = "",
+                  figure_png: bytes | None = None,
+                  figure_caption: str = "",
+                  _page_num: int | None = None,
+                  _total_pages: int = 1, **_ignored):
+    """Furniture + bullets, with an optional right-side figure.
+
+    Overflows the body budget by splitting onto continuation slides; returns a
+    list when it does.
+    """
+    pages = split_bullets(bullets or [])
+    body_w = _CW * (0.56 if figure_png else 1.0)
+    out = []
+
+    for i, page in enumerate(pages):
+        eb, pn = _pages_meta(i, eyebrow, _page_num)
+        slide, y, avail = _content_frame(
+            prs, eyebrow=eb, title=title, tier=tier,
+            right_label=CURO_LABEL, lead=lead if i == 0 else None,
+            citations=citations, page_num=pn,
+            title_width=body_w if figure_png else None)
+
+        for item in page:
+            y = _draw_bullet(slide, item, _PX, y, body_w) + px_in(16)
+
+        if figure_png and i == 0:
+            fig_x = _PX + _CW * 0.60
+            fig_w = _CW * 0.40
+            add_image_bytes(slide, figure_png, fig_x,
+                            LAYOUT["title_y_in"] + px_in(20), width_in=fig_w)
+            if figure_caption:
+                add_textbox(slide, figure_caption, fig_x,
+                            LAYOUT["footer_rule_y_in"] - px_in(46), fig_w,
+                            px_in(30), font_role="body", size=SIZES["footer"],
+                            color=COLORS["text_footer"])
+        out.append(slide)
+    return out if len(out) > 1 else out[0]
+
+
+def _draw_bullet(slide, item, x, y, w) -> float:
+    """One bullet. A {header, body} bullet renders as bold lead + body line."""
+    if isinstance(item, dict):
+        header = sanitize(item.get("header") or item.get("heading")
+                          or item.get("label") or "")
+        body = sanitize(item.get("body") or item.get("description")
+                        or item.get("text") or "")
+        number = sanitize(str(item.get("number") or ""))
+        if number and header:
+            header = f"{number} · {header}"
+    else:
+        header, body, number = sanitize(str(item)), "", ""
+
+    if header and body:
+        d = LAYOUT["bullet_dot_in"]
+        text_x = x + d + px_in(14)
+        text_w = w - (text_x - x)
+        add_circle(slide, x + d / 2, y + px_in(11), d, BULLET_MARKER)
+        h1 = estimate_height_in(header, SIZES["bullet"], text_w,
+                                line_height=LINE_HEIGHT["bullet"])
+        h2 = estimate_height_in(body, SIZES["bullet"], text_w,
+                                line_height=LINE_HEIGHT["bullet"])
+        add_multiline_textbox(slide, [
+            {"text": header, "font_role": "body", "size": SIZES["bullet"],
+             "bold": True, "color": COLORS["text_body"],
+             "line_spacing": LINE_HEIGHT["bullet"]},
+            {"text": body, "font_role": "body", "size": SIZES["bullet"],
+             "color": COLORS["text_secondary"], "space_before": 2,
+             "line_spacing": LINE_HEIGHT["bullet"]},
+        ], text_x, y, text_w, h1 + h2 + px_in(8))
+        return y + h1 + h2 + px_in(4)
+
+    return add_bullet_row(slide, header or body, x, y, w,
+                          marker_color=BULLET_MARKER)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 4. Table
+# ─────────────────────────────────────────────────────────────────────────────
+
+def table_slide(prs, *, title: str, headers: list, rows: list,
+                eyebrow: str = "", tier: str | None = None,
+                citations: str = "", col_spans: list | None = None,
+                reserve_bottom: float = 0.0,
+                _page_num: int | None = None, _total_pages: int = 1,
+                **_ignored):
+    """Bordered rounded container, 12-col grid rows, header repeated on split.
+
+    `rows` is a list of cell lists. A cell that is a list of PMIDs (or a dict
+    {"pmids": [...]}) renders as right-aligned PMID pills in that column.
+    """
+    headers = [sanitize(str(h)) for h in (headers or [])]
+    ncols = max(1, len(headers))
+    spans = col_spans or _default_spans(ncols)
+    pages = split_rows(rows or [])
+    out = []
+
+    for i, page in enumerate(pages):
+        eb, pn = _pages_meta(i, eyebrow, _page_num)
+        slide, y, avail = _content_frame(
+            prs, eyebrow=eb, title=title, tier=tier,
+            right_label=CURO_LABEL, citations=citations, page_num=pn,
+            reserve_bottom=reserve_bottom if i == len(pages) - 1 else 0.0)
+
+        header_h = px_in(34)
+        row_h = min(px_in(78), max(px_in(44),
+                                   (avail - header_h) / max(len(page), 1)))
+        table_h = header_h + row_h * len(page)
+
+        add_rounded_rect(slide, _PX, y, _CW, table_h, COLORS["bg"],
+                         radius_in=LAYOUT["table_radius_in"],
+                         line_color=COLORS["border"], line_width_pt=0.75)
+        add_rounded_rect(slide, _PX, y, _CW, header_h, COLORS["surface"],
+                         radius_in=LAYOUT["table_radius_in"])
+
+        xs = _col_positions(spans, _PX, _CW)
+        pad = px_in(16)
+        for label, (cx, cwid) in zip(headers, xs):
+            add_textbox(slide, label, cx + pad, y + px_in(9), cwid - pad * 1.4,
+                        px_in(20), font_role="body",
+                        size=SIZES["table_header"],
+                        color=COLORS["text_body"], bold=True, upper=True,
+                        tracking=TRACK_EYEBROW, wrap=False)
+
+        ry = y + header_h
+        for r, row in enumerate(page):
+            if r % 2 == 0:
+                add_filled_rect(slide, _PX + LAYOUT["hairline_in"], ry,
+                                _CW - LAYOUT["hairline_in"] * 2, row_h,
+                                COLORS["surface_alt"])
+            add_hairline(slide, _PX, ry, _CW, COLORS["border"])
+            cells = row if isinstance(row, (list, tuple)) else [row]
+            for c, (cx, cwid) in enumerate(xs):
+                if c >= len(cells):
+                    break
+                _draw_cell(slide, cells[c], cx, ry, cwid, row_h,
+                           first_col=(c == 0), last_col=(c == len(xs) - 1))
+            ry += row_h
+        out.append(slide)
+    return out if len(out) > 1 else out[0]
+
+
+def _default_spans(ncols: int) -> list[int]:
+    """12-col grid: the parameter column gets the extra width."""
+    if ncols <= 1:
+        return [12]
+    base = 12 // ncols
+    spans = [base] * ncols
+    spans[0] += 12 - base * ncols
+    return spans
+
+
+def _col_positions(spans: list[int], x: float, w: float):
+    total = sum(spans) or 1
+    out, cx = [], x
+    for s in spans:
+        cw = w * (s / total)
+        out.append((cx, cw))
+        cx += cw
+    return out
+
+
+def _draw_cell(slide, cell, x, y, w, h, *, first_col: bool, last_col: bool):
+    pad = px_in(16)
+    pmids = cell.get("pmids") if isinstance(cell, dict) else None
+    if pmids is None and isinstance(cell, (list, tuple)):
+        pmids = [str(p) for p in cell]
+    if pmids is None and isinstance(cell, str):
+        found = extract_pmids(cell)
+        if found and not sanitize(cell).strip():
+            pmids = found
+
+    if pmids:
+        px_right = x + w - pad
+        cy = y + (h - LAYOUT["chip_h_in"]) / 2
+        for pmid in list(pmids)[:2][::-1]:
+            used = add_pmid_pill(slide, str(pmid), 0, cy, right_edge=px_right)
+            px_right -= used + px_in(6)
+        return
+
+    # Only the source column is right-aligned, and only because it holds PMID
+    # pills (spec §1.4). Prose stays left-aligned whichever column it is in.
+    text = sanitize(cell if isinstance(cell, str) else _flatten_text(cell))
+    add_textbox(slide, text, x + pad, y + px_in(10), w - pad * 1.6,
+                h - px_in(14), font_role="body", size=SIZES["table_body"],
+                color=COLORS["text_body"] if first_col
+                else COLORS["text_secondary"],
+                bold=first_col, line_spacing=LINE_HEIGHT["card"])
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 5. Decision tree
+# ─────────────────────────────────────────────────────────────────────────────
+
+def decision_tree(prs, *, title: str, cards: list, eyebrow: str = "",
+                  tier: str | None = None, citations: str = "",
+                  _page_num: int | None = None, _total_pages: int = 1,
+                  **_ignored):
+    """2-col grid of IF / THEN / BECAUSE cards. Never rendered as bullets.
+
+    Cards are measured before they are placed. A card whose text needs more
+    room than the grid row can give would otherwise render clipped, so the
+    grid packs by measured height and starts a continuation slide when the
+    next row will not fit.
+    """
+    gap = px_in(24)
+    cols = 2 if len(cards or []) > 1 else 1
+    card_w = (_CW - gap * (cols - 1)) / cols
+    # A page is worth roughly the body height; measure against that up front.
+    probe_avail = LAYOUT["footer_rule_y_in"] - LAYOUT["title_y_in"] - px_in(110)
+    pages = _pack_rows(cards or [], cols, card_w, probe_avail, gap)
+
+    out = []
+    for i, page in enumerate(pages):
+        eb, pn = _pages_meta(i, eyebrow, _page_num)
+        slide, y, avail = _content_frame(
+            prs, eyebrow=eb, title=title, tier=tier,
+            right_label=CURO_LABEL, citations=citations, page_num=pn)
+
+        rows = [page[k:k + cols] for k in range(0, len(page), cols)]
+        heights = [max(_decision_card_height(c, card_w) for c in row)
+                   for row in rows]
+        scale = 1.0
+        needed = sum(heights) + gap * (len(rows) - 1)
+        if needed > avail:
+            scale = avail / needed
+        cy = y
+        for row, row_h in zip(rows, heights):
+            row_h *= scale
+            for j, card in enumerate(row):
+                cx = _PX + j * (card_w + gap)
+                _draw_decision_card(slide, card, cx, cy, card_w, row_h)
+            cy += row_h + gap
+        out.append(slide)
+    return out if len(out) > 1 else out[0]
+
+
+def _pack_rows(cards: list, cols: int, card_w: float, avail: float,
+               gap: float) -> list[list]:
+    """Group cards into pages whose measured rows fit the body height."""
+    pages, page, used = [], [], 0.0
+    for k in range(0, len(cards), cols):
+        row = cards[k:k + cols]
+        row_h = max(_decision_card_height(c, card_w) for c in row)
+        extra = row_h + (gap if page else 0.0)
+        if page and used + extra > avail:
+            pages.append(page)
+            page, used = [], 0.0
+            extra = row_h
+        page.extend(row)
+        used += extra
+    if page:
+        pages.append(page)
+    return pages or [[]]
+
+
+def _decision_card_height(card, card_w: float) -> float:
+    """Predicted height of one IF/THEN/BECAUSE card at `card_w` wide."""
+    pad_x, pad_y = px_in(28), px_in(26)
+    iw = card_w - pad_x * 2
+    total = pad_y * 2
+    for chip_label, keys, _ in _DECISION_ROWS:
+        text = _decision_row_text(card, keys)
+        if not text:
+            continue
+        cw = chip_width_in(chip_label, size_px=SIZES_PX["chip"])
+        tw = iw - cw - px_in(12)
+        th = estimate_height_in(text, SIZES["card_body"], tw,
+                                line_height=LINE_HEIGHT["card"])
+        total += max(th, LAYOUT["chip_h_in"]) + px_in(14)
+    return max(total, px_in(110))
+
+
+def _decision_row_text(card, keys) -> str:
+    if not isinstance(card, dict):
+        return sanitize(str(card))
+    for key in keys:
+        val = card.get(key)
+        if isinstance(val, str) and sanitize(val).strip():
+            return sanitize(val).strip()
+        if isinstance(val, (list, tuple)) and val:
+            return sanitize(" ".join(str(v) for v in val))
+    return ""
+
+
+_DECISION_ROWS = (
+    ("IF", ("if", "finding", "when", "condition", "label"), CHIP_IF),
+    ("THEN", ("then", "path", "action", "how", "headline"), CHIP_THEN),
+    ("BECAUSE", ("because", "implication", "why", "rationale", "tagline"),
+     CHIP_BECAUSE),
 )
 
-# ── convenience ───────────────────────────────────────────────────────────────
-_W  = LAYOUT["slide_w_in"]
-_H  = LAYOUT["slide_h_in"]
-_MX = LAYOUT["margin_x_in"]
-_MY = LAYOUT["margin_y_in"]
+
+def _draw_decision_card(slide, card, x, y, w, h):
+    add_rounded_rect(slide, x, y, w, h, COLORS["card"],
+                     radius_in=LAYOUT["card_radius_in"],
+                     line_color=COLORS["border"], line_width_pt=0.75)
+    pad_x, pad_y = px_in(28), px_in(26)
+    iy = y + pad_y
+    iw = w - pad_x * 2
+
+    if not isinstance(card, dict):
+        card = {"then": str(card)}
+
+    for chip_label, keys, (chip_bg, chip_fg) in _DECISION_ROWS:
+        text = _decision_row_text(card, keys)
+        if not text:
+            continue
+        cw = add_chip(slide, chip_label, x + pad_x, iy,
+                      bg=chip_bg, fg=chip_fg,
+                      radius_in=LAYOUT["chip_radius_in"],
+                      tracking=TRACK_CHIP)
+        tx = x + pad_x + cw + px_in(12)
+        tw = iw - cw - px_in(12)
+        th = estimate_height_in(text, SIZES["card_body"], tw,
+                                line_height=LINE_HEIGHT["card"])
+        color = (COLORS["text_secondary"] if chip_label == "BECAUSE"
+                 else COLORS["text_body"])
+        add_textbox(slide, text, tx, iy, tw, th + px_in(4),
+                    font_role="body", size=SIZES["card_body"], color=color,
+                    line_spacing=LINE_HEIGHT["card"])
+        iy += max(th, LAYOUT["chip_h_in"]) + px_in(14)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1. title_slide
+# 6. Chart
 # ─────────────────────────────────────────────────────────────────────────────
 
-def title_slide(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    subtitle: str,
-    tagline: str = "",
-    footer_metadata: str = "",
-    motif_color: str | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Dark teal hero slide.
+def chart_slide(prs, *, title: str, chart, eyebrow: str = "",
+                tier: str | None = None, citations: str = "",
+                lead: str | None = None,
+                _page_num: int | None = None, _total_pages: int = 1,
+                **_ignored):
+    """Render an already-verified ChartSpec. Never call this with raw numbers —
+    `chart_data.detect_chartable` is the gate, and it is the only gate."""
+    # The chart's own PMIDs go in the footer (spec §1.5), but the adapters
+    # already harvest PMIDs from the whole spec — dedupe so a cited paper is
+    # not listed twice.
+    footer = citations or ""
+    if chart is not None and chart.pmids:
+        already = set(extract_pmids(footer))
+        extra = [p for p in chart.pmids if p not in already]
+        if extra:
+            pmid_text = " · ".join(f"PMID {p}" for p in extra[:4])
+            footer = f"{footer} · {pmid_text}" if footer else pmid_text
 
-    Layout:
-      • Concentric circles — top-right decorative motif
-      • Eyebrow — coral, top-left, ALL-CAPS
-      • Big serif italic title (44 pt)
-      • Subtitle — muted white, 24 pt sans
-      • Thin coral rule
-      • Tagline — cream callout box (if supplied)
-      • Footer metadata line at bottom
-    """
-    if motif_color is None:
-        motif_color = COLORS["rule_on_dark"]
+    slide, y, avail = _content_frame(
+        prs, eyebrow=eyebrow, title=title, tier=tier,
+        right_label=CURO_LABEL, lead=lead, citations=footer,
+        page_num=_page_num)
 
-    slide = blank_slide(prs)
-
-    # ── Background ──
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_dark"])
-
-    # ── Concentric circles — center anchored 1.8" from right edge, vertically
-    #    centered in the upper half. cx > slide_w intentionally lets rings bleed
-    #    off the right edge for the partial-arc motif seen in the reference deck.
-    add_concentric_circles(
-        slide,
-        cx=_W - 1.4,
-        cy=2.6,
-        max_diameter=LAYOUT["concentric_max_diameter_in"],
-        color=motif_color,
-        rings=5,
-    )
-
-    # ── Eyebrow — coral so it pops on dark ──
-    add_textbox(
-        slide, eyebrow.upper(),
-        _MX, LAYOUT["eyebrow_y_in"], _W * 0.60, 0.38,
-        font_role="mono", size=SIZES["eyebrow"],
-        color=COLORS["accent_coral"],
-        tracking=150,
-    )
-
-    # ── Main title — serif italic, 44 pt
-    #    Height is generous: 44pt × 1.2 line-spacing × 3 lines ≈ 2.2"
-    _title_y = 0.92
-    _title_h = 2.30
-    add_title(
-        slide, title,
-        _MX, _title_y,
-        size=SIZES["title_xl"],
-        color=COLORS["ink_on_dark"],
-        italic=True,
-        width=_W * 0.62,
-        height=_title_h,
-    )
-
-    # ── Coral accent rule — fixed anchor below the title zone ──
-    _rule_y = _title_y + _title_h + 0.12   # 0.12" breathing room
-    add_filled_rect(slide, _MX, _rule_y, 3.2, 0.025, COLORS["accent_coral"])
-
-    # ── Subtitle ──
-    add_body(
-        slide, subtitle,
-        _MX, _rule_y + 0.15, _W * 0.60, 0.75,
-        size=SIZES["subtitle"],
-        color=COLORS["ink_on_dark_muted"],
-    )
-
-    # ── Tagline callout box ──
-    if tagline:
-        add_callout_box(
-            slide, tagline,
-            _MX, _rule_y + 1.05, _W * 0.58, 0.75,
-            accent_color=COLORS["accent_coral"],
-            bg_color="#1A4F53",
-            color=COLORS["ink_on_dark"],
-            italic=True,
-        )
-
-    # ── Footer metadata ──
-    if footer_metadata:
-        add_textbox(
-            slide, footer_metadata,
-            _MX, LAYOUT["footer_y_in"], _W - 2 * _MX, 0.35,
-            font_role="mono", size=SIZES["footer"],
-            color=COLORS["ink_on_dark_muted"],
-            tracking=100,
-        )
-
+    png = charts.render_chart_png(chart)
+    if png:
+        # Fit the rendered PNG inside the body box preserving its aspect. The
+        # matplotlib output is cropped to its content, so its aspect is not
+        # known ahead of time — placing it at a fixed width would stretch a
+        # short chart across the slide or push a tall one through the footer.
+        w, h = _CW, avail
+        size = charts.png_size(png)
+        if size:
+            aspect = size[1] / float(size[0])
+            if _CW * aspect <= avail:
+                w, h = _CW, _CW * aspect
+            else:
+                h, w = avail, avail / aspect
+        add_image_bytes(slide, png, _PX + (_CW - w) / 2, y,
+                        width_in=w, height_in=h)
     return slide
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2. section_divider
+# 7. Key takeaways
 # ─────────────────────────────────────────────────────────────────────────────
 
-def section_divider(
-    prs,
-    *,
-    module_label: str,
-    module_title: str,
-    module_subtitle: str = "",
-    footer: str = "",
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Minimal dark-teal divider between modules.
+def takeaways_slide(prs, *, title: str = "", items: list | None = None,
+                    eyebrow: str = "", does_not_apply: str = "",
+                    citations: str = "",
+                    _page_num: int | None = None, _total_pages: int = 1,
+                    **_ignored):
+    """2x2 grid of serif numerals + text, over a 'does not apply when' notice."""
+    pages = split_cards(items or [], max_cards=BODY_BUDGET["max_takeaways"])
+    notice_text = sanitize(does_not_apply or "")
+    notice_h = 0.0
+    if notice_text:
+        notice_h = estimate_height_in(
+            notice_text, SIZES["card_body"], _CW - px_in(44),
+            line_height=LINE_HEIGHT["card"]) + px_in(76)
 
-    Layout:
-      • Full dark background
-      • Small coral module label eyebrow (e.g. "MODULE 03")
-      • Large serif title, vertically centered-ish
-      • Muted subtitle below
-      • Thin coral left accent bar beside title block
-      • Footer section label + page count
-    """
-    slide = blank_slide(prs)
+    out = []
+    for i, page in enumerate(pages):
+        eb, pn = _pages_meta(i, eyebrow, _page_num)
+        last = (i == len(pages) - 1)
+        slide, y, avail = _content_frame(
+            prs, eyebrow=eb, title=title, right_label=CURO_LABEL,
+            citations=citations, page_num=pn)
 
-    # ── Background ──
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_dark"])
+        grid_h = avail - (notice_h + px_in(24) if notice_h and last else 0)
+        gap = px_in(28)
+        cols = 2 if len(page) > 1 else 1
+        cell_w = (_CW - gap * (cols - 1)) / cols
+        rows_n = max(1, (len(page) + cols - 1) // cols)
+        cell_h = (grid_h - gap * (rows_n - 1)) / rows_n
 
-    # ── Left accent bar — coral, full content-height strip ──
-    bar_x = _MX
-    bar_h = 3.2
-    bar_y = 2.0
-    add_filled_rect(slide, bar_x, bar_y, LAYOUT["left_accent_bar_w_in"] * 2, bar_h,
-                    COLORS["accent_coral"])
+        for j, item in enumerate(page):
+            cx = _PX + (j % cols) * (cell_w + gap)
+            cy = y + (j // cols) * (cell_h + gap)
+            _draw_takeaway(slide, item, j, cx, cy, cell_w, cell_h)
 
-    # ── Content block — offset right of the bar ──
-    cx = bar_x + LAYOUT["left_accent_bar_w_in"] * 2 + 0.28
+        if notice_text and last:
+            add_notice_box(slide, notice_text, _PX,
+                           y + grid_h + px_in(24), _CW, notice_h,
+                           heading="Does not apply when")
+        out.append(slide)
+    return out if len(out) > 1 else out[0]
 
-    # Module eyebrow
-    add_textbox(
-        slide, module_label.upper(),
-        cx, bar_y + 0.10, 6.0, 0.40,
-        font_role="mono", size=SIZES["eyebrow"],
-        color=COLORS["accent_coral"],
-        tracking=200,
-    )
 
-    # Main title
-    add_title(
-        slide, module_title,
-        cx, bar_y + 0.58,
-        size=SIZES["title"],
-        color=COLORS["ink_on_dark"],
-        italic=False,
-        width=_W - cx - _MX,
-        height=1.30,
-    )
+def _draw_takeaway(slide, item, index, x, y, w, h):
+    if isinstance(item, dict):
+        number = sanitize(str(item.get("number") or f"{index + 1:02d}"))
+        header = sanitize(item.get("header") or item.get("heading") or "")
+        body = sanitize(item.get("body") or "")
+    else:
+        number = f"{index + 1:02d}"
+        header, body = sanitize(str(item)), ""
 
-    # Subtitle
-    if module_subtitle:
-        add_body(
-            slide, module_subtitle,
-            cx, bar_y + 2.05,
-            _W - cx - _MX, 0.80,
-            size=SIZES["body"],
-            color=COLORS["ink_on_dark_muted"],
-            italic=True,
-        )
+    color = TAKEAWAY_NUMERALS[index % len(TAKEAWAY_NUMERALS)]
+    num_w = px_in(84)
+    add_textbox(slide, number, x, y - px_in(10), num_w, px_in(76),
+                font_role="display", size=SIZES["takeaway_num"], color=color,
+                wrap=False)
 
-    # ── Decorative small concentric circles — bottom-right ──
-    add_concentric_circles(
-        slide,
-        cx=_W - _MX - 0.5,
-        cy=_H - 1.5,
-        max_diameter=2.8,
-        color=COLORS["rule_on_dark"],
-        rings=4,
-    )
+    tx = x + num_w
+    tw = w - num_w
+    lines = []
+    if header:
+        lines.append({"text": header, "font_role": "body",
+                      "size": SIZES["takeaway_body"], "bold": True,
+                      "color": COLORS["text_body"],
+                      "line_spacing": LINE_HEIGHT["takeaway"]})
+    if body:
+        lines.append({"text": body, "font_role": "body",
+                      "size": SIZES["takeaway_body"],
+                      "color": COLORS["text_secondary"], "space_before": 3,
+                      "line_spacing": LINE_HEIGHT["takeaway"]})
+    if lines:
+        add_multiline_textbox(slide, lines, tx, y + px_in(4), tw, h - px_in(8))
 
-    # ── Footer ──
-    label = footer if footer else module_label
-    add_footer(slide, section_label=label, page_num=_page_num,
-               total_pages=_total_pages, theme="dark")
 
+# ─────────────────────────────────────────────────────────────────────────────
+# 8. References
+# ─────────────────────────────────────────────────────────────────────────────
+
+def references_slide(prs, *, references: list, title: str = "References",
+                     eyebrow: str = "", citations: str = "",
+                     _page_num: int | None = None, _total_pages: int = 1,
+                     **_ignored):
+    """Numbered rows: title/journal/year, tier chip, PMID pill, evidence score."""
+    pages = split_cards(references or [],
+                        max_cards=BODY_BUDGET["max_reference_rows"])
+    out = []
+    for i, page in enumerate(pages):
+        eb, pn = _pages_meta(i, eyebrow, _page_num)
+        slide, y, avail = _content_frame(
+            prs, eyebrow=eb, title=title, right_label=CURO_LABEL,
+            citations=citations, page_num=pn)
+
+        row_h = min(px_in(84), avail / max(len(page), 1))
+        for j, ref in enumerate(page):
+            _draw_reference_row(slide, ref,
+                                i * BODY_BUDGET["max_reference_rows"] + j,
+                                _PX, y, _CW, row_h)
+            y += row_h
+            add_hairline(slide, _PX, y, _CW, COLORS["border"])
+
+        add_textbox(slide,
+                    "Scores shown are Curo evidence scores.",
+                    _PX, LAYOUT["footer_rule_y_in"] - px_in(26), _CW,
+                    px_in(20), font_role="body", size=SIZES["footer"],
+                    color=COLORS["text_muted"], wrap=False)
+        out.append(slide)
+    return out if len(out) > 1 else out[0]
+
+
+def _draw_reference_row(slide, ref, index, x, y, w, h):
+    if not isinstance(ref, dict):
+        ref = {"citation": str(ref)}
+    num = f"{index + 1}."
+    add_textbox(slide, num, x, y + px_in(6), px_in(34), px_in(24),
+                font_role="body", size=SIZES["references"],
+                color=COLORS["text_muted"], wrap=False)
+
+    text = sanitize(ref.get("citation") or ref.get("title") or "")
+    journal = sanitize(ref.get("journal") or "")
+    year = sanitize(str(ref.get("year") or ""))
+    tail = " · ".join(p for p in (journal, year) if p)
+    line = f"{text} · {tail}" if tail else text
+
+    tx = x + px_in(34)
+    tw = w * 0.60
+    add_textbox(slide, line, tx, y + px_in(4), tw, h - px_in(10),
+                font_role="body", size=SIZES["references"],
+                color=COLORS["text_body"], line_spacing=LINE_HEIGHT["card"])
+
+    right = x + w
+    score = ref.get("score")
+    if score not in (None, ""):
+        add_textbox(slide, str(score), right - px_in(64), y + px_in(8),
+                    px_in(64), px_in(22), font_role="body",
+                    size=SIZES["score"], color=COLORS["text_lead"],
+                    bold=True, align=PP_ALIGN.RIGHT, wrap=False)
+        right -= px_in(76)
+
+    pmid = ref.get("pmid") or (extract_pmids(_flatten_text(ref)) or [None])[0]
+    if pmid:
+        right -= add_pmid_pill(slide, str(pmid), 0, y + px_in(6),
+                               right_edge=right) + px_in(10)
+
+    tier = ref.get("tier") or ref.get("level_key")
+    if tier and tier_key(tier):
+        add_tier_chip(slide, tier, 0, y + px_in(6), right_edge=right)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 9. Notice — "module not generated, insufficient evidence"
+# ─────────────────────────────────────────────────────────────────────────────
+
+def notice_slide(prs, *, title: str = "Module not generated",
+                 message: str = "Insufficient evidence",
+                 eyebrow: str = "", citations: str = "",
+                 heading: str = "Insufficient evidence",
+                 _page_num: int | None = None, _total_pages: int = 1,
+                 **_ignored):
+    """A notice, not an error — the dark-theme restyle of the missing-module
+    slide. No alert-red furniture: the deck is reporting a coverage fact."""
+    slide, y, avail = _content_frame(
+        prs, eyebrow=eyebrow, title=title, right_label=CURO_LABEL,
+        citations=citations, page_num=_page_num)
+    add_notice_box(slide, message, _PX, y, _CW,
+                   min(avail, px_in(180)), heading=heading)
     return slide
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 3. objectives_slide
+# Adapters — the vocabulary generate_slides_specs() emits
 # ─────────────────────────────────────────────────────────────────────────────
 
-def objectives_slide(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    items: list[dict],
-    closing_callout: str | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
+def objectives_slide(prs, *, title: str = "", items: list | None = None,
+                     eyebrow: str = "", closing_callout: str | None = None,
+                     _source_text: str | None = None, **kw):
+    """Learning goals -> content bullets."""
+    return content_slide(prs, title=title, eyebrow=eyebrow,
+                         bullets=items or [], lead=closing_callout,
+                         citations=_citation_fields(kw), **_page_kw(kw))
+
+
+def cascade_slide(prs, *, title: str = "", steps: list | None = None,
+                  eyebrow: str = "", footer_callout: str | None = None,
+                  _source_text: str | None = None, **kw):
+    """Sequential steps -> numbered content bullets."""
+    return content_slide(prs, title=title, eyebrow=eyebrow,
+                         bullets=steps or [], lead=footer_callout,
+                         citations=_citation_fields(kw), **_page_kw(kw))
+
+
+def two_column_compare(prs, *, title: str = "", left_card: dict | None = None,
+                       right_card: dict | None = None, eyebrow: str = "",
+                       caption: str | None = None,
+                       _source_text: str | None = None, **kw):
+    """Two competing approaches -> two cards in the decision-card grid."""
+    cards = [c for c in (left_card, right_card) if c]
+    spec = dict(kw)
+    spec["caption"] = caption or ""
+    return decision_tree(prs, title=title, eyebrow=eyebrow,
+                         cards=[_compare_card(c) for c in cards],
+                         citations=_citation_fields(spec), **_page_kw(kw))
+
+
+def _compare_card(card: dict) -> dict:
+    """Map a compare card onto the IF/THEN/BECAUSE card.
+
+    The `lines` list is joined with a middot rather than a space: the entries
+    are separate clinical statements, and running them together reads as one
+    sentence the source never wrote. The separator is punctuation, not text.
     """
-    Light background. Eyebrow + serif title at top.
-    Up to 4 objective rows — each row: icon-in-circle (left) + bold header + body text.
-    Optional cream callout box at bottom.
-
-    items: [{"icon": str, "number": "01", "header": str, "body": str}, ...]
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
-
-    # ── Eyebrow ──
-    add_eyebrow(slide, eyebrow, on_dark=False)
-
-    # ── Title — 26 pt so even a long sentence stays on 1-2 lines without
-    #    dominating the slide. Objectives slides are content-heavy; the title
-    #    is a short framing statement, not the hero element.
-    _title_y = 0.82
-    _title_h = 0.72   # 26 pt × 1.2× spacing × 2 lines ≈ 0.87" — generous
-    add_title(slide, title,
-              _MX, _title_y,
-              size=26,
-              color=COLORS["ink_primary"],
-              italic=False,
-              height=_title_h)
-
-    # ── Teal underline — anchored below title zone, never inside it ──
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_teal"])
-
-    # ── Row layout — calculated from underline down to footer rule ──
-    n_items   = min(len(items), 4)
-    avail_h   = LAYOUT["footer_rule_y_in"] - (_underline_y + 0.18)
-    # If callout needed, reserve 0.75" for it at the bottom
-    if closing_callout:
-        avail_h -= 0.85
-    row_gap  = 0.14
-    row_h    = (avail_h - row_gap * (n_items - 1)) / n_items
-    row_h    = min(row_h, 1.05)   # cap so items don't get too tall on short lists
-
-    content_y = _underline_y + 0.18
-    circle_d  = 0.52
-    circle_x  = _MX
-    text_x    = _MX + circle_d + 0.20
-    text_w    = _W - text_x - _MX - 0.2
-
-    circle_colors = [
-        COLORS["accent_coral"],
-        COLORS["accent_teal"],
-        COLORS["accent_gold"],
-        COLORS["ink_primary"],
-    ]
-
-    for i, item in enumerate(items[:4]):
-        y  = content_y + i * (row_h + row_gap)
-        cy = y + circle_d / 2
-
-        # Icon circle — vertically centered on the row
-        add_icon_in_circle(
-            slide, item.get("icon", "bullet"),
-            cx=circle_x + circle_d / 2, cy=cy,
-            diameter=circle_d,
-            circle_fill=circle_colors[i % len(circle_colors)],
-            icon_color=COLORS["ink_on_dark"],
-            icon_size_pt=16,
-        )
-
-        # Small number badge — top-right corner of the circle
-        add_textbox(
-            slide, item.get("number", f"{i+1:02d}"),
-            circle_x + circle_d - 0.04, y - 0.03, 0.28, 0.24,
-            font_role="mono", size=7,
-            color=COLORS["ink_muted"],
-        )
-
-        # Header + body
-        add_multiline_textbox(
-            slide,
-            [
-                {
-                    "text": item.get("header", ""),
-                    "font_role": "serif", "size": SIZES["section_header"],
-                    "bold": True, "color": COLORS["ink_primary"],
-                },
-                {
-                    "text": item.get("body", ""),
-                    "font_role": "sans", "size": SIZES["body_sm"],
-                    "color": COLORS["ink_secondary"],
-                    "space_before": 3,
-                },
-            ],
-            text_x, y + 0.04, text_w, row_h - 0.04,
-        )
-
-        # Subtle separator rule between rows
-        if i < n_items - 1:
-            rule_y = y + row_h + row_gap * 0.48
-            add_filled_rect(slide, text_x, rule_y, text_w, 0.007,
-                            COLORS["rule_subtle"])
-
-    # ── Optional closing callout ──
-    if closing_callout:
-        callout_y = content_y + n_items * (row_h + row_gap) - row_gap + 0.08
-        add_callout_box(
-            slide, closing_callout,
-            _MX, callout_y, _W - 2 * _MX, 0.68,
-            accent_color=COLORS["accent_coral"],
-        )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. two_column_compare
-# ─────────────────────────────────────────────────────────────────────────────
-
-def two_column_compare(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    left_card: dict,
-    right_card: dict,
-    center_chip: str = "arrow_both",
-    caption: str | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Light background. Two cream cards side-by-side with a central icon chip.
-
-    left_card / right_card: {
-        "label": str,           eyebrow label (colored)
-        "headline": str,        large serif card title
-        "lines": [str, ...],    body lines (first line bold-italic if it's the key contrast)
-        "verdict": {
-            "icon": str,        icon name
-            "text": str,        verdict label
-            "color": str,       hex color key from COLORS or raw hex
-        }
+    verdict = card.get("verdict") or {}
+    lines = [str(l).strip().rstrip(".") for l in (card.get("lines") or [])
+             if str(l).strip()]
+    return {
+        "if": card.get("label") or "",
+        "then": card.get("headline") or "",
+        "because": " · ".join(lines) or (verdict.get("text") or ""),
     }
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
 
-    add_eyebrow(slide, eyebrow, on_dark=False)
 
-    _title_y = 0.82
-    _title_h = 0.72
-    add_title(slide, title, _MX, _title_y,
-              size=26, color=COLORS["ink_primary"], height=_title_h)
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_coral"])
-
-    # Card geometry
-    gap        = LAYOUT["col_gap_in"]
-    chip_w     = 0.70
-    card_y     = _underline_y + 0.18
-    card_h     = LAYOUT["footer_rule_y_in"] - card_y - 0.05
-    usable_w   = _W - 2 * _MX - chip_w - gap * 2
-    card_w     = usable_w / 2
-    left_x     = _MX
-    chip_x     = left_x + card_w + gap
-    right_x    = chip_x + chip_w + gap
-    pad        = LAYOUT["card_padding_in"]
-    bar_w      = LAYOUT["left_accent_bar_w_in"]
-
-    def _draw_card(card: dict, x: float, accent: str):
-        # Cream card background
-        add_filled_rect(slide, x, card_y, card_w, card_h, COLORS["bg_cream"])
-        # Colored left accent bar
-        add_left_accent_bar(slide, x, card_y, card_h, accent)
-
-        ix = x + bar_w + pad
-        iw = card_w - bar_w - pad * 1.5
-        iy = card_y + pad * 0.6
-
-        # Card eyebrow label
-        add_textbox(
-            slide, card.get("label", "").upper(),
-            ix, iy, iw, 0.32,
-            font_role="mono", size=SIZES["eyebrow"],
-            color=accent, tracking=120,
-        )
-
-        # Headline
-        add_title(
-            slide, card.get("headline", ""),
-            ix, iy + 0.38,
-            size=SIZES["card_header"],
-            color=COLORS["ink_primary"],
-            italic=False,
-            width=iw, height=0.72,
-        )
-
-        # Body lines
-        line_y = iy + 1.20
-        lines  = card.get("lines", [])
-        for j, line in enumerate(lines[:5]):
-            bold_it = (j == 0)  # first line is the key contrast — bold italic
-            add_textbox(
-                slide, line,
-                ix, line_y, iw, 0.40,
-                font_role="sans", size=SIZES["body_sm"],
-                color=COLORS["ink_primary"],
-                bold=bold_it, italic=bold_it,
-            )
-            line_y += 0.38
-
-        # Verdict footer
-        verdict = card.get("verdict", {})
-        if verdict:
-            vcolor_key = verdict.get("color", "accent_teal")
-            vcolor = COLORS.get(vcolor_key, vcolor_key)
-            add_filled_rect(slide, x, card_y + card_h - 0.55, card_w, 0.55, "#EAE4DB")
-            add_icon_glyph(
-                slide, verdict.get("icon", "check"),
-                ix, card_y + card_h - 0.48, size=13, color=vcolor, w=0.28, h=0.38,
-            )
-            add_textbox(
-                slide, verdict.get("text", ""),
-                ix + 0.30, card_y + card_h - 0.48, iw - 0.30, 0.38,
-                font_role="sans", size=SIZES["body_sm"],
-                color=vcolor, bold=True,
-            )
-
-    # Left card — coral accent
-    left_accent  = COLORS.get(
-        left_card.get("accent", "accent_coral"), COLORS["accent_coral"])
-    right_accent = COLORS.get(
-        right_card.get("accent", "accent_teal"),  COLORS["accent_teal"])
-    _draw_card(left_card,  left_x,  left_accent)
-    _draw_card(right_card, right_x, right_accent)
-
-    # Center chip — dark circle with swap/arrow icon
-    chip_cy = card_y + card_h / 2
-    chip_cx = chip_x + chip_w / 2
-    add_icon_in_circle(
-        slide, center_chip,
-        cx=chip_cx, cy=chip_cy,
-        diameter=0.60,
-        circle_fill=COLORS["ink_primary"],
-        icon_color=COLORS["ink_on_dark"],
-        icon_size_pt=16,
-    )
-
-    # Optional italic caption below cards
-    if caption:
-        cap_y = card_y + card_h + 0.18
-        add_textbox(
-            slide, caption,
-            _MX, cap_y, _W - 2 * _MX, 0.45,
-            font_role="sans", size=SIZES["caption"],
-            color=COLORS["ink_secondary"], italic=True,
-            align=PP_ALIGN.CENTER,
-        )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 5. takeaways_slide
-# ─────────────────────────────────────────────────────────────────────────────
-
-def takeaways_slide(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    items: list[dict],
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Dark background closing slide. Large coral numbered rows, serif italic body.
-    Concentric circles motif in background corner.
-
-    items: [{"number": "01", "header": str, "body": str}, ...]  (up to 5)
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_dark"])
-
-    # Faint concentric circles — bottom-right background motif
-    add_concentric_circles(
-        slide,
-        cx=_W - 0.6, cy=_H - 0.4,
-        max_diameter=4.0,
-        color=COLORS["rule_on_dark"],
-        rings=5,
-    )
-
-    # Eyebrow — coral
-    add_textbox(
-        slide, eyebrow.upper(),
-        _MX, LAYOUT["eyebrow_y_in"], _W - 2 * _MX, 0.35,
-        font_role="mono", size=SIZES["eyebrow"],
-        color=COLORS["accent_coral"], tracking=150,
-    )
-
-    # Title — serif italic on dark
-    add_title(slide, title,
-              _MX, LAYOUT["title_y_in"],
-              size=SIZES["title"],
-              color=COLORS["ink_on_dark"],
-              italic=True,
-              height=0.72)
-
-    # Thin coral underline
-    add_filled_rect(slide, _MX, LAYOUT["title_underline_y"], 3.5, 0.022,
-                    COLORS["accent_coral"])
-
-    # Takeaway rows
-    row_y   = LAYOUT["content_y_in"]
-    row_gap = 0.08
-    num_w   = 0.65
-    text_x  = _MX + num_w + 0.15
-    text_w  = _W - text_x - _MX - 0.3
-    row_h   = (LAYOUT["footer_rule_y_in"] - row_y - row_gap * 4) / 5
-
-    for i, item in enumerate(items[:5]):
-        y = row_y + i * (row_h + row_gap)
-
-        # Large coral number
-        add_textbox(
-            slide, item.get("number", f"{i+1:02d}"),
-            _MX, y, num_w, row_h,
-            font_role="serif", size=32,
-            color=COLORS["accent_coral"],
-            bold=True, italic=True,
-        )
-
-        # Header + body
-        add_multiline_textbox(
-            slide,
-            [
-                {
-                    "text": item.get("header", ""),
-                    "font_role": "serif", "size": SIZES["body"],
-                    "bold": True, "color": COLORS["ink_on_dark"],
-                },
-                {
-                    "text": item.get("body", ""),
-                    "font_role": "sans", "size": SIZES["body_sm"],
-                    "italic": True, "color": COLORS["ink_on_dark_muted"],
-                    "space_before": 2,
-                },
-            ],
-            text_x, y + 0.04, text_w, row_h,
-        )
-
-        # Subtle rule between rows
-        if i < len(items) - 1:
-            add_filled_rect(slide,
-                            _MX, y + row_h + row_gap * 0.5,
-                            _W - 2 * _MX, 0.008,
-                            COLORS["rule_on_dark"])
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="dark")
-    return slide
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 6. cascade_slide
-# ─────────────────────────────────────────────────────────────────────────────
-
-def cascade_slide(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    steps: list[dict],
-    footer_callout: str | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Light background. Horizontal sequence of N cards (3–5) with arrow connectors.
-    Last card is inverted (dark bg, coral top band) to signal the endpoint.
-
-    steps: [{"number": "01", "header": str, "body": str}, ...]
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
-
-    add_eyebrow(slide, eyebrow, on_dark=False)
-
-    _title_y = 0.82
-    _title_h = 0.72
-    add_title(slide, title, _MX, _title_y,
-              size=26, color=COLORS["ink_primary"], height=_title_h)
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_coral"])
-
-    n          = min(len(steps), 5)
-    arrow_w    = 0.28
-    card_y     = _underline_y + 0.18
-    card_h     = 3.60 if not footer_callout else 3.10
-    usable_w   = _W - 2 * _MX - arrow_w * (n - 1)
-    card_w     = usable_w / n
-    band_h     = 0.42   # colored top band height
-    pad        = 0.20
-
-    # Top-band colors cycle through palette (last card always coral)
-    band_colors = [
-        COLORS["accent_teal"],
-        COLORS["accent_gold"],
-        COLORS["ink_secondary"],
-        COLORS["accent_coral"],
-        COLORS["accent_coral"],
-    ]
-
-    for i, step in enumerate(steps[:n]):
-        is_last = (i == n - 1)
-        x = _MX + i * (card_w + arrow_w)
-
-        card_bg   = COLORS["bg_dark"]  if is_last else COLORS["bg_cream"]
-        band_col  = COLORS["accent_coral"]
-        num_col   = COLORS["ink_on_dark"] if is_last else COLORS["accent_coral"]
-        head_col  = COLORS["ink_on_dark"] if is_last else COLORS["ink_primary"]
-        body_col  = COLORS["ink_on_dark_muted"] if is_last else COLORS["ink_secondary"]
-
-        if not is_last:
-            band_col = band_colors[i % len(band_colors)]
-
-        # Card body
-        add_filled_rect(slide, x, card_y, card_w, card_h, card_bg)
-
-        # Colored top band
-        add_filled_rect(slide, x, card_y, card_w, band_h, band_col)
-
-        # Step number inside band
-        add_textbox(
-            slide, step.get("number", f"{i+1:02d}"),
-            x + pad, card_y + 0.04, card_w - pad * 2, band_h - 0.08,
-            font_role="serif", size=18,
-            color=COLORS["ink_on_dark"], bold=True,
-        )
-
-        # Header
-        add_textbox(
-            slide, step.get("header", ""),
-            x + pad, card_y + band_h + 0.12,
-            card_w - pad * 2, 0.72,
-            font_role="serif", size=SIZES["body"],
-            color=head_col, bold=True, wrap=True,
-        )
-
-        # Body
-        add_textbox(
-            slide, step.get("body", ""),
-            x + pad, card_y + band_h + 0.92,
-            card_w - pad * 2, card_h - band_h - 1.05,
-            font_role="sans", size=SIZES["body_sm"],
-            color=body_col, wrap=True,
-        )
-
-        # Arrow connector (between cards, not after last)
-        if not is_last:
-            ax = x + card_w + arrow_w * 0.15
-            ay = card_y + card_h / 2 - 0.18
-            add_icon_glyph(
-                slide, "arrow_right",
-                ax, ay, size=20,
-                color=COLORS["ink_muted"],
-                w=arrow_w * 0.70, h=0.36,
-            )
-
-    # Optional callout below cards
-    if footer_callout:
-        fc_y = card_y + card_h + 0.16
-        add_callout_box(
-            slide, footer_callout,
-            _MX, fc_y, _W - 2 * _MX, 0.65,
-            accent_color=COLORS["accent_coral"],
-        )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 7. decision_table
-# ─────────────────────────────────────────────────────────────────────────────
-
-def decision_table(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    rows: list[dict],
-    footer_caption: str | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Light background. Dark teal header row + data rows with colored left bars.
-
-    rows: [{
-        "finding": str,
-        "implication": str,
-        "path": str,
-        "severity_color": str,   # COLORS key or raw hex
-    }, ...]
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
-
-    add_eyebrow(slide, eyebrow, on_dark=False)
-
-    # 26 pt — table slides are content-heavy; title is a framing label, not hero
-    _title_y = 0.82
-    _title_h = 0.72
-    add_title(slide, title, _MX, _title_y,
-              size=26, color=COLORS["ink_primary"], height=_title_h)
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_coral"])
-
-    # Table geometry — anchored below underline, not off hardcoded content_y
-    table_y   = _underline_y + 0.18
-    table_w   = _W - 2 * _MX
-    bar_w     = LAYOUT["left_accent_bar_w_in"]
-    header_h  = 0.38
-    n_rows    = min(len(rows), 6)
-    footer_reserve = 0.55 if footer_caption else 0.0
-    avail_h   = LAYOUT["footer_rule_y_in"] - table_y - header_h - footer_reserve - 0.10
-    row_h     = avail_h / n_rows
-
-    # Column widths (proportional)
-    col_w = [table_w * 0.30, table_w * 0.38, table_w * 0.32]
-    col_x = [_MX, _MX + col_w[0], _MX + col_w[0] + col_w[1]]
-    pad   = 0.14
-
-    # ── Header row ──
-    add_filled_rect(slide, _MX, table_y, table_w, header_h, COLORS["bg_dark"])
-    col_labels = ["FINDING", "IMPLICATION", "FAVOURED PATH"]
-    for j, (label, cx, cw) in enumerate(zip(col_labels, col_x, col_w)):
-        add_textbox(
-            slide, label,
-            cx + pad, table_y + 0.06, cw - pad * 1.5, header_h - 0.10,
-            font_role="mono", size=SIZES["eyebrow"],
-            color=COLORS["ink_on_dark"], tracking=100,
-        )
-
-    # ── Data rows ──
-    for i, row in enumerate(rows[:n_rows]):
-        ry      = table_y + header_h + i * row_h
-        alt_bg  = "#F7F4EE" if i % 2 == 0 else COLORS["bg_light"]
-        sev_col = COLORS.get(row.get("severity_color", "accent_teal"),
-                             row.get("severity_color", COLORS["accent_teal"]))
-
-        # Row background
-        add_filled_rect(slide, _MX, ry, table_w, row_h, alt_bg)
-
-        # Colored severity bar
-        add_left_accent_bar(slide, _MX, ry, row_h, sev_col)
-
-        # Finding (col 0) — bold serif
-        add_textbox(
-            slide, row.get("finding", ""),
-            col_x[0] + bar_w + pad, ry + 0.06,
-            col_w[0] - bar_w - pad * 1.5, row_h - 0.12,
-            font_role="serif", size=SIZES["body_sm"],
-            color=COLORS["ink_primary"], bold=True, wrap=True,
-        )
-
-        # Implication (col 1) — regular sans
-        add_textbox(
-            slide, row.get("implication", ""),
-            col_x[1] + pad, ry + 0.06,
-            col_w[1] - pad * 1.5, row_h - 0.12,
-            font_role="sans", size=SIZES["body_sm"],
-            color=COLORS["ink_secondary"], wrap=True,
-        )
-
-        # Favoured path (col 2) — italic, colored
-        add_textbox(
-            slide, row.get("path", ""),
-            col_x[2] + pad, ry + 0.06,
-            col_w[2] - pad * 1.5, row_h - 0.12,
-            font_role="sans", size=SIZES["body_sm"],
-            color=sev_col, italic=True, wrap=True,
-        )
-
-        # Bottom rule
-        if i < n_rows - 1:
-            add_filled_rect(slide, _MX, ry + row_h - 0.006, table_w, 0.006,
-                            COLORS["rule_subtle"])
-
-    # ── Optional caption ──
-    if footer_caption:
-        cap_y = table_y + header_h + n_rows * row_h + 0.10
-        add_textbox(
-            slide, footer_caption,
-            _MX, cap_y, table_w, 0.38,
-            font_role="sans", size=SIZES["caption"],
-            color=COLORS["ink_muted"], italic=True,
-        )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 8. three_route_grid
-# ─────────────────────────────────────────────────────────────────────────────
-
-def three_route_grid(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    routes: list[dict],
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Light background. Three equal cards across the slide, each with a colored
-    header band, icon, WHEN section, HOW section, and citation footer.
-
-    routes: [{
-        "color": str,       COLORS key or raw hex for header band
-        "icon": str,        icon name
-        "name": str,        card title
-        "tagline": str,     italic subtitle in header
-        "when": str,        WHEN section body
-        "how": str,         HOW section body
-        "citation": str,    bottom citation line
-    }, ...]   (exactly 3)
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
-
-    add_eyebrow(slide, eyebrow, on_dark=False)
-
-    # 26 pt — cards need all the vertical space below
-    _title_y = 0.82
-    _title_h = 0.72
-    add_title(slide, title, _MX, _title_y,
-              size=26, color=COLORS["ink_primary"], height=_title_h)
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_teal"])
-
-    gap     = LAYOUT["col_gap_in"]
-    card_y  = _underline_y + 0.18
-    card_h  = LAYOUT["footer_rule_y_in"] - card_y - 0.05
-    card_w  = (_W - 2 * _MX - gap * 2) / 3
-    band_h  = 1.10
-    pad     = 0.18
-    sec_gap = 0.22   # gap between WHEN and HOW sections
-
-    for i, route in enumerate(routes[:3]):
-        x       = _MX + i * (card_w + gap)
-        col     = COLORS.get(route.get("color", "accent_teal"),
-                             route.get("color", COLORS["accent_teal"]))
-
-        # Card shell
-        add_filled_rect(slide, x, card_y, card_w, card_h, COLORS["bg_cream"])
-
-        # Colored header band
-        add_filled_rect(slide, x, card_y, card_w, band_h, col)
-
-        # Icon circle in header band (top-center)
-        icon_cx = x + card_w / 2
-        icon_cy = card_y + 0.40
-        add_icon_in_circle(
-            slide, route.get("icon", "circle"),
-            cx=icon_cx, cy=icon_cy,
-            diameter=0.46,
-            circle_fill=COLORS["bg_light"],
-            icon_color=col,
-            icon_size_pt=14,
-        )
-
-        # Card name
-        add_textbox(
-            slide, route.get("name", ""),
-            x + pad, card_y + 0.58, card_w - pad * 2, 0.38,
-            font_role="serif", size=SIZES["body"],
-            color=COLORS["ink_on_dark"], bold=True,
-            align=PP_ALIGN.CENTER,
-        )
-
-        # Tagline
-        if route.get("tagline"):
-            add_textbox(
-                slide, route["tagline"],
-                x + pad, card_y + 0.92, card_w - pad * 2, 0.30,
-                font_role="sans", size=9,
-                color="#C8DFE0", italic=True,
-                align=PP_ALIGN.CENTER,
-            )
-
-        # Content area starts below band
-        cy = card_y + band_h + pad * 0.6
-
-        # WHEN section
-        add_textbox(
-            slide, "WHEN",
-            x + pad, cy, card_w - pad * 2, 0.22,
-            font_role="mono", size=SIZES["eyebrow"],
-            color=col, tracking=120,
-        )
-        cy += 0.24
-        add_textbox(
-            slide, route.get("when", ""),
-            x + pad, cy, card_w - pad * 2,
-            (card_h - band_h - pad * 0.6 - 0.24 * 2 - sec_gap - 0.30) / 2,
-            font_role="sans", size=SIZES["body_sm"],
-            color=COLORS["ink_secondary"], wrap=True,
-        )
-        cy += (card_h - band_h - pad * 0.6 - 0.24 * 2 - sec_gap - 0.30) / 2 + sec_gap
-
-        # HOW section
-        add_textbox(
-            slide, "HOW",
-            x + pad, cy, card_w - pad * 2, 0.22,
-            font_role="mono", size=SIZES["eyebrow"],
-            color=col, tracking=120,
-        )
-        cy += 0.24
-        add_textbox(
-            slide, route.get("how", ""),
-            x + pad, cy, card_w - pad * 2,
-            (card_h - band_h - pad * 0.6 - 0.24 * 2 - sec_gap - 0.30) / 2,
-            font_role="sans", size=SIZES["body_sm"],
-            color=COLORS["ink_secondary"], wrap=True,
-        )
-
-        # Citation footer strip
-        add_filled_rect(slide, x, card_y + card_h - 0.30, card_w, 0.30, "#E8E2D8")
-        if route.get("citation"):
-            add_textbox(
-                slide, route["citation"],
-                x + pad, card_y + card_h - 0.26, card_w - pad * 2, 0.22,
-                font_role="sans", size=8,
-                color=COLORS["ink_muted"], italic=True,
-            )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 9. stat_panel
-# ─────────────────────────────────────────────────────────────────────────────
-
-def stat_panel(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    primary_stat: str,
-    primary_label: str,
-    secondary_stat: str | None = None,
-    secondary_label: str | None = None,
-    callout: str | None = None,
-    citation: str | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Light background. Hero stat(s) in large serif, descriptive label below.
-    Optional second stat side-by-side. Optional cream callout. Citation in muted text.
-
-    primary_stat:  e.g. "96.1%"
-    primary_label: e.g. "periapical healing at 24 months (AAE meta-analysis, n=412)"
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
-
-    add_eyebrow(slide, eyebrow, on_dark=False)
-
-    _title_y = 0.82
-    _title_h = 0.72
-    add_title(slide, title, _MX, _title_y,
-              size=26, color=COLORS["ink_primary"], height=_title_h)
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_coral"])
-
-    content_y = _underline_y + 0.30
-
-    has_two = bool(secondary_stat)
-    # If two stats: each occupies half the width with a divider
-    stat_w   = (_W - 2 * _MX - (0.80 if has_two else 0)) / (2 if has_two else 1)
-
-    def _draw_stat(stat_text, label_text, x, w, accent):
-        # Big coral/teal number
-        add_textbox(
-            slide, stat_text,
-            x, content_y, w, 1.40,
-            font_role="serif", size=SIZES["stat_xl"],
-            color=accent, bold=True,
-        )
-        # Descriptive label below stat
-        add_textbox(
-            slide, label_text,
-            x, content_y + 1.45, w, 0.70,
-            font_role="sans", size=SIZES["body"],
-            color=COLORS["ink_secondary"], wrap=True,
-        )
-
-    _draw_stat(primary_stat, primary_label,
-               _MX, stat_w, COLORS["accent_coral"])
-
-    if has_two:
-        # Thin vertical divider
-        divider_x = _MX + stat_w + 0.30
-        add_filled_rect(slide,
-                        divider_x, content_y,
-                        0.012, 2.20,
-                        COLORS["rule_subtle"])
-        _draw_stat(secondary_stat, secondary_label or "",
-                   divider_x + 0.50, stat_w, COLORS["accent_teal"])
-
-    # Callout box
-    if callout:
-        callout_y = content_y + 2.30
-        add_callout_box(
-            slide, callout,
-            _MX, callout_y, _W - 2 * _MX, 0.80,
-            accent_color=COLORS["accent_coral"],
-        )
-
-    # Muted citation
-    if citation:
-        cite_y = LAYOUT["footer_rule_y_in"] - 0.42
-        add_textbox(
-            slide, citation,
-            _MX, cite_y, _W - 2 * _MX, 0.35,
-            font_role="sans", size=SIZES["caption"],
-            color=COLORS["ink_muted"], italic=True,
-        )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 10. evidence_summary
-# ─────────────────────────────────────────────────────────────────────────────
-
-def evidence_summary(
-    prs,
-    *,
-    eyebrow: str,
-    title: str,
-    hierarchy_rows: list[dict],
-    trap_callout: dict | None = None,
-    _page_num: int = 1,
-    _total_pages: int = 1,
-):
-    """
-    Light background. Left column: evidence tier hierarchy rows.
-    Right column: "THE TRAP" or insight callout with a big supporting stat.
-
-    hierarchy_rows: [{
-        "tier_label": str,    e.g. "PRIMARY"
-        "description": str,   e.g. "Systematic reviews + RCTs"
-        "stat": str,          e.g. "96.1%"
-        "color": str,         COLORS key for the tier label chip
-    }, ...]
-
-    trap_callout: {
-        "heading": str,       e.g. "THE TRAP"
-        "body": str,          insight text
-        "stat": str,          big supporting number
-        "stat_label": str,    label under the stat
-        "color": str,         accent color key
+def three_route_grid(prs, *, title: str = "", routes: list | None = None,
+                     eyebrow: str = "", _source_text: str | None = None, **kw):
+    """Three parallel options -> the decision-card grid."""
+    cards = []
+    for route in (routes or []):
+        if not isinstance(route, dict):
+            continue
+        cards.append({
+            "if": route.get("when") or route.get("tagline") or "",
+            "then": route.get("name") or "",
+            "because": route.get("how") or "",
+        })
+    return decision_tree(prs, title=title, eyebrow=eyebrow, cards=cards,
+                         citations=_citation_fields(
+                             {**kw, "routes": routes or []}),
+                         **_page_kw(kw))
+
+
+def decision_table(prs, *, title: str = "", rows: list | None = None,
+                   eyebrow: str = "", footer_caption: str | None = None,
+                   _source_text: str | None = None, **kw):
+    """finding -> implication -> action, as the bordered table."""
+    headers = ["Finding", "Implication", "Favoured path"]
+    table_rows = []
+    for row in (rows or []):
+        if isinstance(row, dict):
+            table_rows.append([row.get("finding", ""),
+                               row.get("implication", ""),
+                               row.get("path", "")])
+        elif isinstance(row, (list, tuple)):
+            table_rows.append(list(row)[:3])
+    spec = dict(kw)
+    spec["footer_caption"] = footer_caption or ""
+    return table_slide(prs, title=title, eyebrow=eyebrow, headers=headers,
+                       rows=table_rows, col_spans=[4, 4, 4],
+                       citations=_citation_fields(spec), **_page_kw(kw))
+
+
+def stat_panel(prs, *, title: str = "", primary_stat: str = "",
+               primary_label: str = "", secondary_stat: str | None = None,
+               secondary_label: str | None = None, eyebrow: str = "",
+               callout: str | None = None, citation: str | None = None,
+               _source_text: str | None = None, **kw):
+    """Big numbers. A chart ONLY if the values are verbatim in the source."""
+    spec = {
+        "title": title, "primary_stat": primary_stat,
+        "primary_label": primary_label, "secondary_stat": secondary_stat,
+        "secondary_label": secondary_label, "citation": citation or "",
+        "callout": callout or "",
     }
-    """
-    slide = blank_slide(prs)
-    add_filled_rect(slide, 0, 0, _W, _H, COLORS["bg_light"])
+    chart = chart_data.detect_chartable(spec, _source_text)
+    if chart is not None:
+        return chart_slide(prs, title=title, eyebrow=eyebrow, chart=chart,
+                           lead=callout, citations=_citation_fields(spec),
+                           **_page_kw(kw))
 
-    add_eyebrow(slide, eyebrow, on_dark=False)
+    # No verified chart: the numbers still belong on the slide, as takeaway
+    # numerals. They are NOT plotted, because plotting them would assert a
+    # comparison the source text does not support.
+    items = []
+    if primary_stat:
+        items.append({"number": sanitize(str(primary_stat)),
+                      "header": sanitize(primary_label or ""), "body": ""})
+    if secondary_stat:
+        items.append({"number": sanitize(str(secondary_stat)),
+                      "header": sanitize(secondary_label or ""), "body": ""})
+    return takeaways_slide(prs, title=title, eyebrow=eyebrow, items=items,
+                           does_not_apply=sanitize(callout or ""),
+                           citations=_citation_fields(spec), **_page_kw(kw))
 
-    _title_y = 0.82
-    _title_h = 0.72
-    add_title(slide, title, _MX, _title_y,
-              size=26, color=COLORS["ink_primary"], height=_title_h)
-    _underline_y = _title_y + _title_h + 0.08
-    add_filled_rect(slide, _MX, _underline_y, 3.5, 0.018, COLORS["accent_teal"])
 
-    content_y  = _underline_y + 0.20
-    content_h  = LAYOUT["footer_rule_y_in"] - content_y - 0.05
+def evidence_summary(prs, *, title: str = "",
+                     hierarchy_rows: list | None = None,
+                     trap_callout: dict | None = None, eyebrow: str = "",
+                     _source_text: str | None = None, **kw):
+    """Evidence hierarchy -> chart when verified, otherwise the table."""
+    spec = {"title": title, "hierarchy_rows": hierarchy_rows or [],
+            **{k: v for k, v in kw.items() if isinstance(v, str)}}
+    chart = chart_data.detect_chartable(spec, _source_text)
+    if chart is not None:
+        return chart_slide(prs, title=title, eyebrow=eyebrow, chart=chart,
+                           citations=_citation_fields(spec), **_page_kw(kw))
 
-    # Split: left 58% hierarchy, right 38% trap callout (4% gap)
-    gap        = 0.40
-    left_w     = (_W - 2 * _MX) * 0.58
-    right_w    = (_W - 2 * _MX) - left_w - gap
-    right_x    = _MX + left_w + gap
+    headers = ["Tier", "What the studies are", "Reported"]
+    rows = []
+    for row in (hierarchy_rows or []):
+        if not isinstance(row, dict):
+            continue
+        rows.append([row.get("tier_label", ""), row.get("description", ""),
+                     row.get("stat", "")])
 
-    # ── Left: hierarchy rows ──
-    n          = min(len(hierarchy_rows), 5)
-    row_gap    = 0.12
-    row_h      = (content_h - row_gap * (n - 1)) / n
-    bar_w      = LAYOUT["left_accent_bar_w_in"]
-    pad        = 0.16
-
-    for i, hrow in enumerate(hierarchy_rows[:n]):
-        ry      = content_y + i * (row_h + row_gap)
-        col_key = hrow.get("color", "accent_teal")
-        col     = COLORS.get(col_key, col_key)
-        alt_bg  = "#F7F4EE" if i % 2 == 0 else COLORS["bg_light"]
-
-        # Row background + left bar
-        add_filled_rect(slide, _MX, ry, left_w, row_h, alt_bg)
-        add_left_accent_bar(slide, _MX, ry, row_h, col)
-
-        # Tier chip (colored mono label)
-        add_textbox(
-            slide, hrow.get("tier_label", "").upper(),
-            _MX + bar_w + pad, ry + 0.06,
-            1.20, 0.26,
-            font_role="mono", size=8,
-            color=col, tracking=100,
-        )
-
-        # Description
-        add_textbox(
-            slide, hrow.get("description", ""),
-            _MX + bar_w + pad, ry + 0.30,
-            left_w - bar_w - pad * 2 - 1.40, row_h - 0.36,
-            font_role="sans", size=SIZES["body_sm"],
-            color=COLORS["ink_primary"], wrap=True,
-        )
-
-        # Stat — right-aligned within the left column
-        if hrow.get("stat"):
-            add_textbox(
-                slide, hrow["stat"],
-                _MX + left_w - 1.30, ry + 0.04,
-                1.20, row_h - 0.08,
-                font_role="serif", size=22,
-                color=col, bold=True,
-                align=PP_ALIGN.RIGHT,
-            )
-
-    # ── Right: trap / insight callout ──
+    # Measure the trap notice FIRST and reserve its band, so the table is laid
+    # out above it rather than under it.
+    notice_text = notice_heading = ""
+    notice_h = 0.0
     if trap_callout:
-        tc_col_key = trap_callout.get("color", "accent_coral")
-        tc_col     = COLORS.get(tc_col_key, tc_col_key)
+        body = sanitize(trap_callout.get("body", ""))
+        stat = sanitize(str(trap_callout.get("stat") or ""))
+        label = sanitize(trap_callout.get("stat_label", ""))
+        notice_text = " · ".join(
+            p for p in (body, f"{stat} {label}".strip()) if p)
+        notice_heading = sanitize(trap_callout.get("heading") or "") \
+            or "Read this before quoting the headline"
+        if notice_text:
+            inner_w = _CW - px_in(44)
+            notice_h = estimate_height_in(
+                notice_text, SIZES["card_body"], inner_w,
+                line_height=LINE_HEIGHT["card"]) + px_in(76)
 
-        # Dark card background
-        add_filled_rect(slide, right_x, content_y, right_w, content_h,
-                        COLORS["bg_dark"])
+    result = table_slide(prs, title=title, eyebrow=eyebrow, headers=headers,
+                         rows=rows, col_spans=[3, 6, 3],
+                         citations=_citation_fields(spec),
+                         reserve_bottom=notice_h + px_in(20) if notice_h else 0.0,
+                         **_page_kw(kw))
 
-        # Colored top band
-        band_h = 0.38
-        add_filled_rect(slide, right_x, content_y, right_w, band_h, tc_col)
+    if notice_text:
+        slide = result[-1] if isinstance(result, list) else result
+        add_notice_box(slide, notice_text, _PX,
+                       LAYOUT["footer_rule_y_in"] - px_in(22) - notice_h,
+                       _CW, notice_h, heading=notice_heading)
+    return result
 
-        # Heading
-        add_textbox(
-            slide, trap_callout.get("heading", "THE TRAP"),
-            right_x + pad, content_y + 0.04,
-            right_w - pad * 2, band_h - 0.08,
-            font_role="mono", size=SIZES["eyebrow"],
-            color=COLORS["ink_on_dark"], bold=True, tracking=150,
-        )
 
-        # Body text
-        body_y = content_y + band_h + 0.18
-        add_textbox(
-            slide, trap_callout.get("body", ""),
-            right_x + pad, body_y,
-            right_w - pad * 2, 1.40,
-            font_role="sans", size=SIZES["body_sm"],
-            color=COLORS["ink_on_dark"], wrap=True,
-        )
-
-        # Big supporting stat
-        if trap_callout.get("stat"):
-            stat_y = body_y + 1.50
-            add_textbox(
-                slide, trap_callout["stat"],
-                right_x + pad, stat_y,
-                right_w - pad * 2, 1.10,
-                font_role="serif", size=48,
-                color=tc_col, bold=True,
-                align=PP_ALIGN.CENTER,
-            )
-            if trap_callout.get("stat_label"):
-                add_textbox(
-                    slide, trap_callout["stat_label"],
-                    right_x + pad, stat_y + 1.15,
-                    right_w - pad * 2, 0.50,
-                    font_role="sans", size=SIZES["body_sm"],
-                    color=COLORS["ink_on_dark_muted"], italic=True,
-                    align=PP_ALIGN.CENTER, wrap=True,
-                )
-
-    add_footer(slide, section_label=eyebrow, page_num=_page_num,
-               total_pages=_total_pages, theme="light")
-    return slide
+def _page_kw(kw: dict) -> dict:
+    """Pass the builder's page metadata through an adapter untouched."""
+    out = {}
+    if "_page_num" in kw:
+        out["_page_num"] = kw["_page_num"]
+    if "_total_pages" in kw:
+        out["_total_pages"] = kw["_total_pages"]
+    return out
 
 
 __all__ = [
-    "title_slide", "section_divider",
-    "objectives_slide", "two_column_compare", "takeaways_slide",
-    "cascade_slide", "decision_table", "three_route_grid",
-    "stat_panel", "evidence_summary",
+    "title_slide", "section_divider", "content_slide", "table_slide",
+    "decision_tree", "chart_slide", "takeaways_slide", "references_slide",
+    "notice_slide",
+    # adapters for the generator's vocabulary
+    "objectives_slide", "cascade_slide", "two_column_compare",
+    "three_route_grid", "decision_table", "stat_panel", "evidence_summary",
 ]
