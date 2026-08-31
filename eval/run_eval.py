@@ -119,8 +119,13 @@ def run_case_with_synthesis(case):
     original = app_mod.build_evidence_base_with_progress
     pinned = case.get("force_route")
 
-    def _pinned_builder(job_id, question, force_route=None, mode="review"):
-        return original(job_id, question, force_route=pinned, mode=mode)
+    def _pinned_builder(job_id, question, force_route=None, mode="review",
+                        context_block="", prior_pmids=None):
+        # Eval cases are single questions with no thread, so these are always
+        # empty in practice — but they are forwarded rather than dropped, so a
+        # future conversational case measures the real builder's behaviour.
+        return original(job_id, question, force_route=pinned, mode=mode,
+                        context_block=context_block, prior_pmids=prior_pmids)
 
     app_mod.build_evidence_base_with_progress = _pinned_builder
     try:

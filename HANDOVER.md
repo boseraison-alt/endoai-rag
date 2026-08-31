@@ -277,6 +277,40 @@ part that does not depend on the embedding space being well-spread. Anywhere
 this codebase makes a decision from a MiniLM cosine value, assume the space is
 compressed and pair the threshold with a check of a different kind.
 
+### The cache key has a second half: the conversation context
+
+Review mode carries a thread (last 3 exchanges: previous question, its CLINICAL
+RECOMMENDATION only, its cited PMIDs) into the clarify gate, the intent router,
+both search-term generators and synthesis. That creates a cache failure mode the
+threshold cannot see.
+
+The cache matches on an EMBEDDING of the question text. "What about in immature
+teeth?" is the *same string* whether it follows a laser question, follows
+nothing, or follows a question about sealers — cosine 1.0 against itself, above
+both the 0.92 serve threshold and the 0.985 exact threshold that skips the Haiku
+gate entirely. Nothing in the question text records which conversation it
+belonged to. Without a second key the first follow-up of every thread would be
+served the context-free answer.
+
+`query_cache.context_hash` (`rag.context_fingerprint`, sha256 of the whitespace-
+normalised block, "" for no context) is therefore an **equality term in the
+WHERE clause, not another similarity signal** — a hard partition. `""` is the
+partition every pre-existing row lives in (the column defaults to `''` and the
+lookup COALESCEs NULL), so standalone questions keep hitting the entries they
+always hit. Verified on the live table: the follow-up's answer stored under
+`01c3d414…`, all ten pre-existing rows under `''`.
+
+The general rule, and it is the same one the Haiku gate exists for: **anything
+that changes what an answer was derived from must be in the cache KEY, not left
+to the embedding to notice.** The embedding sees the question. It does not see
+the conversation, the route, or the evidence base.
+
+Related, and by design: a follow-up's write-back can invalidate the PARENT
+question's cached answer (`invalidate_cache_near_query` clears a 0.85
+neighbourhood regardless of context partition). Observed live — the laser
+answer's row was gone by the time the follow-up finished. That is correct: the
+topic's evidence changed for both.
+
 A postscript that makes the point sharper: none of that gate had ever run.
 `get_cached_answer` selected a column `question` where the table has
 `question_text`, so every lookup raised, the broad `except` swallowed it, and

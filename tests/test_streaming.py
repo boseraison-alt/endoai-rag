@@ -435,9 +435,13 @@ def flask_client(monkeypatch):
     monkeypatch.setattr(app_mod, "save_query_cache", lambda *a, **k: None, raising=False)
     monkeypatch.setattr(app_mod, "save_answer", lambda *a, **k: None, raising=False)
     monkeypatch.setattr(app_mod, "write_citation_audit", lambda *a, **k: None, raising=False)
+    # **kw, not a fixed arity: run_question passes the Review conversation
+    # context through here, and a stub narrower than the real signature turns
+    # every job in this file into a TypeError.
     monkeypatch.setattr(app_mod, "classify_question_intent",
-                        lambda q: {"kind": "standard", "needs_clarify": False,
-                                   "retrieval": "local", "reason": "x", "cost": 0.0},
+                        lambda q, **kw: {"kind": "standard", "needs_clarify": False,
+                                         "retrieval": "local", "reason": "x",
+                                         "cost": 0.0},
                         raising=False)
     monkeypatch.setattr(app_mod, "build_evidence_base_with_progress",
                         lambda job_id, question, **kw: {
