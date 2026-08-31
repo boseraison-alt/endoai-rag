@@ -53,3 +53,8 @@ tenacity==9.1.4
 
 # ── Testing ──────────────────────────────────────────────
 pytest==9.0.3
+
+# Deck chart rendering (presentations/charts.py). Without it the
+# builder degrades to no-chart rather than crashing, so a missing
+# install shows up as silently chartless decks in production.
+matplotlib==3.11.1
