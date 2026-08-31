@@ -807,6 +807,11 @@ def takeaways_slide(prs, *, title: str = "", items: list | None = None,
     return out if len(out) > 1 else out[0]
 
 
+def _numeral_width_in(text: str, size_pt: float) -> float:
+    """Predicted width of a serif numeral run, for sizing its gutter."""
+    return (len(text or "") * size_pt * 0.545) / 72.0 + px_in(18)
+
+
 def _draw_takeaway(slide, item, index, x, y, w, h):
     if isinstance(item, dict):
         number = sanitize(str(item.get("number") or f"{index + 1:02d}"))
@@ -817,10 +822,18 @@ def _draw_takeaway(slide, item, index, x, y, w, h):
         header, body = sanitize(str(item)), ""
 
     color = TAKEAWAY_NUMERALS[index % len(TAKEAWAY_NUMERALS)]
-    num_w = px_in(84)
+    # The numeral column is sized to the numeral. "01" and "96.1%" are both
+    # legitimate here (stat_panel routes its numbers through this layout), and
+    # a fixed 84px gutter silently overlaps the text for anything wider.
+    size = SIZES["takeaway_num"]
+    num_w = _numeral_width_in(number, size)
+    max_w = w * 0.42
+    if num_w > max_w:
+        size *= max_w / num_w
+        num_w = max_w
+    num_w = max(num_w, px_in(84))
     add_textbox(slide, number, x, y - px_in(10), num_w, px_in(76),
-                font_role="display", size=SIZES["takeaway_num"], color=color,
-                wrap=False)
+                font_role="display", size=size, color=color, wrap=False)
 
     tx = x + num_w
     tw = w - num_w
@@ -1041,19 +1054,34 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
                            lead=callout, citations=_citation_fields(spec),
                            **_page_kw(kw))
 
-    # No verified chart: the numbers still belong on the slide, as takeaway
-    # numerals. They are NOT plotted, because plotting them would assert a
-    # comparison the source text does not support.
-    items = []
-    if primary_stat:
-        items.append({"number": sanitize(str(primary_stat)),
-                      "header": sanitize(primary_label or ""), "body": ""})
-    if secondary_stat:
-        items.append({"number": sanitize(str(secondary_stat)),
-                      "header": sanitize(secondary_label or ""), "body": ""})
-    return takeaways_slide(prs, title=title, eyebrow=eyebrow, items=items,
-                           does_not_apply=sanitize(callout or ""),
-                           citations=_citation_fields(spec), **_page_kw(kw))
+    # No verified chart. The values still belong on the slide — they are the
+    # slide's content — they are simply not plotted, because plotting them
+    # would assert a comparison the source text does not support.
+    pairs = [(primary_stat, primary_label), (secondary_stat, secondary_label)]
+    pairs = [(sanitize(str(s)), sanitize(l or "")) for s, l in pairs if s]
+
+    # The generator does not always put a NUMBER in a "stat" field; real decks
+    # come back with "Lowest" or "Lab only". A word is not a numeral, and
+    # rendering it at 54pt serif in the numeral gutter overruns the text beside
+    # it, so a non-numeric stat becomes a bold bullet lead instead.
+    if pairs and all(_is_numeric_stat(s) for s, _ in pairs):
+        items = [{"number": s, "header": l, "body": ""} for s, l in pairs]
+        return takeaways_slide(prs, title=title, eyebrow=eyebrow, items=items,
+                               does_not_apply=sanitize(callout or ""),
+                               citations=_citation_fields(spec), **_page_kw(kw))
+
+    bullets = [{"header": s, "body": l} for s, l in pairs]
+    return content_slide(prs, title=title, eyebrow=eyebrow, bullets=bullets,
+                         lead=sanitize(callout or ""),
+                         citations=_citation_fields(spec), **_page_kw(kw))
+
+
+def _is_numeric_stat(text: str) -> bool:
+    """True when a stat field actually holds a number the numeral slot can take."""
+    text = (text or "").strip()
+    if not text or len(text) > 12:
+        return False
+    return chart_data.parse_number(text) is not None
 
 
 def evidence_summary(prs, *, title: str = "",
