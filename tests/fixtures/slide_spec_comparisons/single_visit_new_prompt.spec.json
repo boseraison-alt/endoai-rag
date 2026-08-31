@@ -1,0 +1,510 @@
+{
+ "title": "Single vs Multi-Visit RCT",
+ "subtitle": "Evidence-based guidance for necrotic teeth with apical periodontitis",
+ "footer": "OVERVIEW · ENDODONTIC EDUCATION",
+ "slides": [
+  {
+   "pattern": "title_slide",
+   "eyebrow": "ENDODONTICS · TREATMENT PROTOCOL",
+   "title": "Single-Visit Versus\nMultiple-Visit Root Canal Treatment",
+   "subtitle": "What the highest-tier evidence says about necrotic teeth with apical periodontitis",
+   "tagline": "Cochrane-level data, societal guidelines, and clinical decision rules in 10 minutes.",
+   "footer_metadata": "Cochrane · ESE QG 2023 · AAE Position Statement · Level I–III Evidence",
+   "speaker_notes": "Welcome. Over the next ten minutes we will work through the best available evidence comparing single-visit and multiple-visit root canal treatment for necrotic teeth with apical periodontitis. We will cover the biological rationale, the clinical outcomes data, postoperative pain considerations, and a practical decision framework you can apply chair-side starting today. Let us begin."
+  },
+  {
+   "pattern": "objectives_slide",
+   "eyebrow": "MODULE 1 · OBJECTIVES",
+   "title": "What you will be able to do after this session",
+   "items": [
+    {
+     "icon": "microscope",
+     "number": "01",
+     "header": "Appraise the evidence hierarchy",
+     "body": "Distinguish Cochrane, RCT, and cohort-level data on visit protocol and healing."
+    },
+    {
+     "icon": "tooth",
+     "number": "02",
+     "header": "Compare healing outcomes",
+     "body": "State the long-term radiographic healing equivalence between single- and multiple-visit protocols."
+    },
+    {
+     "icon": "alert",
+     "number": "03",
+     "header": "Counsel on postoperative pain",
+     "body": "Accurately disclose short-term pain risk differences during informed consent."
+    },
+    {
+     "icon": "clipboard",
+     "number": "04",
+     "header": "Apply a decision framework",
+     "body": "Select visit protocol based on case complexity, symptoms, and patient preference."
+    },
+    {
+     "icon": "flag",
+     "number": "05",
+     "header": "Identify true prognostic drivers",
+     "body": "Recognise that lesion size and restoration quality outweigh visit number in long-term prognosis."
+    }
+   ],
+   "closing_callout": "The visit protocol is less important than achieving biological objectives — disinfection, shaping, and a quality coronal seal.",
+   "speaker_notes": "These five objectives frame our session. By the end you should be comfortable critically reading trial abstracts on this topic, counselling patients accurately about pain expectations, and making a defensible protocol choice for any necrotic case that crosses your chair. The overarching message we will build toward is that biology drives outcome, not the number of appointments."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 01",
+   "module_title": "The Clinical Question and Its Importance",
+   "module_subtitle": "Why visit protocol still generates controversy despite decades of evidence",
+   "footer": "MODULE 1 · BACKGROUND",
+   "speaker_notes": "Let us set the stage. Despite extensive literature, clinicians still debate whether to complete root canal treatment in one sitting or to place an interappointment dressing and return. This module frames why the question matters, what the biological stakes are, and what the evidence base looks like at the highest tier."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 1 · SEQUENCE",
+   "title": "Biological Rationale: Why Visit Number Is Debated",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Polymicrobial infection drives pathology",
+     "body": "Apical periodontitis results from intracanal bacteria triggering periapical bone destruction. Disinfection is the therapeutic target."
+    },
+    {
+     "number": "02",
+     "header": "Single-visit: one-step disinfection and seal",
+     "body": "Chemo-mechanical preparation plus obturation in one appointment aims to entomb any residual bacteria immediately."
+    },
+    {
+     "number": "03",
+     "header": "Multiple-visit: interappointment medicament bridge",
+     "body": "Calcium hydroxide placed between visits theoretically extends antibacterial action and dries the canal before obturation."
+    },
+    {
+     "number": "04",
+     "header": "The hypothesis under test",
+     "body": "Does that extra microbiological step translate into better periapical healing at 12 months and beyond?"
+    }
+   ],
+   "footer_callout": "The Cochrane reviews and Level I RCTs both address this hypothesis directly — with consistent findings.",
+   "speaker_notes": "The debate is fundamentally biological. Apical periodontitis is a biofilm-driven disease, and every protocol decision maps onto disinfection strategy. Single-visit proponents argue that modern instrumentation and irrigation achieve adequate bacterial reduction in one sitting. Multiple-visit advocates argue that calcium hydroxide buys additional antimicrobial time. The key question is whether that biological difference produces a clinical difference in healing rates."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 1 · EVIDENCE",
+   "title": "Evidence Hierarchy for This Question",
+   "hierarchy_rows": [
+    {
+     "tier_label": "COCHRANE — PRIMARY",
+     "description": "Del Fabbro et al. 2016: no significant difference in radiographic healing at up to 10 years follow-up. Low-to-moderate certainty.",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "COCHRANE — MEDICAMENTS",
+     "description": "Mergoni et al. 2022: Ca(OH)₂ reduces cultivable bacteria between visits but low-certainty evidence it improves periapical healing.",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "LEVEL I — RCT / SR",
+     "description": "Kumar et al. 2024 RCT and Sabeti et al. 2024 network meta-analysis: equivalent 12-month healing, no significant advantage for interappointment medication.",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "LEVEL II — PROSPECTIVE",
+     "description": "Simon et al. 2025 (n=160, 24 months) and Almeida et al. 2023 (n=150, 24 months): comparable healing; lesion size and coronal restoration quality dominate prognosis.",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "LEVEL III — RETROSPECTIVE",
+     "description": "Jurič et al. 2024 (n=1,259, 13 years) and Van Nieuwenhuysen et al. 2023 (n=2,500, 20 years): visit number not a dominant survival predictor.",
+     "color": "accent_coral"
+    }
+   ],
+   "trap_callout": {
+    "heading": "THE TRAP",
+    "body": "Clinicians sometimes weight large retrospective cohorts against the Cochrane pooled estimate. These Level III datasets are consistent with — not independent counterevidence to — the Cochrane conclusion. The pooled RCT data remain the highest reference point.",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "The evidence pyramid here is unusually coherent. Two separate Cochrane reviews, multiple RCTs, two large prospective cohorts, and retrospective series extending to twenty years all point in the same direction. The trap to avoid is treating a 2,500-tooth retrospective dataset as if it overrides the randomised evidence — it does not. It corroborates. That internal consistency is actually reassuring for clinical practice."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 02",
+   "module_title": "Long-Term Healing Outcomes",
+   "module_subtitle": "Radiographic periapical healing — what the numbers actually say",
+   "footer": "MODULE 2 · HEALING OUTCOMES",
+   "speaker_notes": "Now let us look at the outcome data in detail. We will focus on radiographic periapical healing as the primary endpoint, which is how the Cochrane review and the RCTs defined treatment success."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 2 · COMPARISON",
+   "title": "Single-Visit vs Multiple-Visit: Long-Term Healing",
+   "left_card": {
+    "label": "SINGLE-VISIT",
+    "headline": "One appointment to obturation",
+    "lines": [
+     "Chemo-mechanical prep and obturation completed same sitting",
+     "Residual bacteria entombed beneath root filling immediately",
+     "No interappointment medication phase"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Equivalent radiographic healing at ≥1 year",
+     "color": "accent_teal"
+    }
+   },
+   "right_card": {
+    "label": "MULTIPLE-VISIT",
+    "headline": "Interappointment dressing phase",
+    "lines": [
+     "Ca(OH)₂ placed between visits to extend antibacterial action",
+     "Allows canal drying and symptom resolution before obturation",
+     "Adds clinical time and patient recall requirement"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Equivalent radiographic healing at ≥1 year",
+     "color": "accent_teal"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "Del Fabbro et al. Cochrane 2016 [[PMID:27759881]]: no clinically or statistically significant difference in periapical healing across follow-up periods up to 10 years.",
+   "speaker_notes": "Both verdicts are green because both protocols deliver equivalent long-term results. The Cochrane review pooled randomised trials with follow-up extending to ten years and found no clinically or statistically significant difference in radiographic healing. The Kumar et al. 2024 RCT corroborated this at twelve months, noting a non-significant early trend toward faster periapical index score reduction in the multiple-visit arm that had fully resolved by one year [[PMID:38566370]]."
+  },
+  {
+   "pattern": "stat_panel",
+   "eyebrow": "MODULE 2 · OUTCOMES",
+   "title": "Periapical Healing Rate: Vital vs Necrotic Cases — Foundational Benchmark",
+   "primary_stat": "96%",
+   "primary_label": "Vital pulp cases",
+   "secondary_stat": "86%",
+   "secondary_label": "Apical periodontitis cases",
+   "callout": "Sjögren et al. established that preoperative periapical status — not visit number — is the dominant prognostic variable. Both single- and multiple-visit necrotic cases fall within the 86% healing benchmark when disinfection and obturation are technically adequate.",
+   "citation": "Sjögren et al., foundational histobacteriological study [[PMID:2084204]]",
+   "speaker_notes": "This foundational figure from Sjögren and colleagues remains one of the most clinically instructive numbers in endodontics. The roughly ten percentage point gap between vital and necrotic cases reflects the biological penalty of established periapical infection — and it applies equally to single- and multiple-visit protocols. The lesson is clear: your disinfection technique and obturation quality matter far more than how many times the patient sits down."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 03",
+   "module_title": "Postoperative Pain and Flare-Up Risk",
+   "module_subtitle": "The one area where visit protocol does make a measurable difference",
+   "footer": "MODULE 3 · POSTOPERATIVE PAIN",
+   "speaker_notes": "We have established healing equivalence. But there is one clinically meaningful difference between protocols: short-term postoperative pain. This module covers what the data say, how large the effect is, and how to communicate it accurately during informed consent."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 3 · SEQUENCE",
+   "title": "Short-Term Pain After Single-Visit Treatment: What Happens",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Obturation in inflamed periapex",
+     "body": "Sealing bacteria and debris in one visit may provoke an acute periapical inflammatory response within hours."
+    },
+    {
+     "number": "02",
+     "header": "Pain peaks within 48 hours",
+     "body": "Nunes et al. 2024 meta-analysis confirmed excess early pain in single-visit cases, particularly within the first 48 hours post-obturation."
+    },
+    {
+     "number": "03",
+     "header": "Analgesic use and swelling higher",
+     "body": "Del Fabbro Cochrane 2016 found modestly increased analgesic use and swelling frequency after single-visit treatment."
+    },
+    {
+     "number": "04",
+     "header": "Resolution is equivalent by one week",
+     "body": "Pain differences resolve quickly. Rates of long-term complications — sinus tract, swelling, tooth loss — are equivalent between protocols."
+    },
+    {
+     "number": "05",
+     "header": "Consent implication",
+     "body": "Patients should be informed of slightly higher short-term pain risk before single-visit treatment is chosen."
+    }
+   ],
+   "footer_callout": "Disclosure of short-term pain risk is a consent obligation, not a reason to abandon single-visit treatment as a protocol.",
+   "speaker_notes": "The Nunes et al. 2024 meta-analysis [[PMID:38556608]] and the Del Fabbro Cochrane review [[PMID:27759881]] are aligned here. Single-visit patients experience modestly more pain and analgesic consumption in the first forty-eight hours. This is a real and reproducible finding. However, it is a short-term phenomenon. By the first week, and certainly by the first month, pain profiles are indistinguishable. The clinical obligation is accurate pre-treatment disclosure, not protocol abandonment."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 04",
+   "module_title": "The Role of Calcium Hydroxide",
+   "module_subtitle": "Microbiological benefit versus clinical healing benefit — are they the same?",
+   "footer": "MODULE 4 · INTERAPPOINTMENT MEDICAMENT",
+   "speaker_notes": "One of the most nuanced findings in this literature involves calcium hydroxide. Its antibacterial properties in vitro and ex vivo are well established. But does placing it between visits actually improve periapical healing outcomes in randomised trials? The answer is more complex than many clinicians assume."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 4 · COMPARISON",
+   "title": "Calcium Hydroxide: Microbiological vs Clinical Benefit",
+   "left_card": {
+    "label": "MICROBIOLOGICAL EFFECT",
+    "headline": "Reduces cultivable intracanal bacteria",
+    "lines": [
+     "Ca(OH)₂ high pH disrupts bacterial cell membranes",
+     "Mergoni et al. 2022 Cochrane: bacteria measurably reduced between visits",
+     "Effect is real and reproducible in sampling studies"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Confirmed microbiological benefit",
+     "color": "accent_teal"
+    }
+   },
+   "right_card": {
+    "label": "CLINICAL HEALING EFFECT",
+    "headline": "Does bacterial reduction translate to better healing?",
+    "lines": [
+     "Mergoni et al. 2022: low-certainty evidence of improved periapical healing",
+     "Sabeti et al. 2024 network meta-analysis: no significant advantage at 12 months",
+     "Kumar et al. 2024 RCT: 12-month healing equivalent regardless of Ca(OH)₂"
+    ],
+    "verdict": {
+     "icon": "alert",
+     "text": "Microbiological benefit does not reliably translate to better healing",
+     "color": "accent_gold"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "Mergoni et al. Cochrane 2022 [[PMID:36512807]]; Sabeti et al. 2024 [[PMID:37966465]]; Kumar et al. 2024 [[PMID:38566370]]",
+   "speaker_notes": "This dissociation between microbiological and clinical outcomes is critically important. We know calcium hydroxide kills bacteria. What the Mergoni Cochrane review tells us is that we cannot yet say with high certainty that killing those extra bacteria produces measurably better periapical healing. The Sabeti network meta-analysis at twelve months agrees. This does not mean calcium hydroxide is useless — it may still be the right choice in specific scenarios — but it is not supported by high-certainty evidence of superior healing."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 05",
+   "module_title": "True Prognostic Drivers",
+   "module_subtitle": "What actually predicts long-term healing when visit number does not",
+   "footer": "MODULE 5 · PROGNOSIS",
+   "speaker_notes": "If visit number is not the dominant prognostic variable, what is? Module five synthesises the prospective and retrospective cohort evidence to identify the tooth-level and patient-level factors that genuinely predict long-term outcomes."
+  },
+  {
+   "pattern": "decision_table",
+   "eyebrow": "MODULE 5 · DECISION FRAMEWORK",
+   "title": "Factors That Actually Drive Long-Term Healing",
+   "rows": [
+    {
+     "finding": "Large preoperative periapical lesion",
+     "implication": "Reduced healing probability regardless of visit number",
+     "path": "Extend radiographic review to 4 years before declaring failure",
+     "severity_color": "accent_red"
+    },
+    {
+     "finding": "Poor-quality coronal restoration",
+     "implication": "Dominant predictor of tooth loss in long-term cohorts",
+     "path": "Prioritise definitive coronal seal at or before obturation visit",
+     "severity_color": "accent_red"
+    },
+    {
+     "finding": "Root filling quality — length and density",
+     "implication": "Technically inadequate obturation impairs healing in all protocols",
+     "path": "Achieve working length and homogeneous fill regardless of visit number",
+     "severity_color": "accent_coral"
+    },
+    {
+     "finding": "Persistent exudate — canal not dry",
+     "implication": "Relative contraindication to same-visit obturation",
+     "path": "Place Ca(OH)₂ and return; do not obturate a wet canal",
+     "severity_color": "accent_coral"
+    },
+    {
+     "finding": "Preoperative acute symptoms — pain, swelling",
+     "implication": "Higher flare-up risk in single-visit; may benefit from staged approach",
+     "path": "Consider multiple-visit or drainage before obturation",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Adequate disinfection achieved, canal dry",
+     "implication": "Biological objectives met; either visit schedule is defensible",
+     "path": "Proceed with obturation; document decision rationale",
+     "severity_color": "accent_teal"
+    }
+   ],
+   "footer_caption": "Simon et al. 2025 [[PMID:40491343]]; Jurič et al. 2024 [[PMID:38243912]]; Van Nieuwenhuysen et al. 2023 [[PMID:36683563]]; ESE QG 2023",
+   "speaker_notes": "This table operationalises the evidence from the long-term cohort studies. Simon et al. found that tooth-level factors — particularly lesion size and coronal restoration quality — exerted a larger influence on outcome than visit number [[PMID:40491343]]. Jurič and colleagues, with thirteen years of follow-up on over a thousand teeth, confirmed that root filling quality and coronal restoration status were the dominant survival predictors [[PMID:38243912]]. The red rows are your clinical stop signs; the teal row is your green light."
+  },
+  {
+   "pattern": "three_route_grid",
+   "eyebrow": "MODULE 5 · OPTIONS",
+   "title": "Selecting the Right Protocol for Each Case",
+   "routes": [
+    {
+     "color": "accent_teal",
+     "icon": "check",
+     "name": "Single-Visit Protocol",
+     "tagline": "Routine necrotic cases with dry canals",
+     "when": "Canal achieves dryness after irrigation, no acute swelling, patient preference for fewer appointments.",
+     "how": "Complete chemo-mechanical preparation, confirm dryness, obturate and place coronal seal in one sitting. Disclose short-term pain risk.",
+     "citation": "Del Fabbro et al., Cochrane 2016 [[PMID:27759881]]"
+    },
+    {
+     "color": "accent_gold",
+     "icon": "repeat",
+     "name": "Multiple-Visit Protocol",
+     "tagline": "Wet canals, acute presentations, high bacterial load",
+     "when": "Persistent exudate, acute soft tissue swelling, preoperative severe pain, or operator uncertainty about disinfection adequacy.",
+     "how": "Place calcium hydroxide interappointment dressing, review at 1–4 weeks, obturate when canal is dry and symptoms resolved.",
+     "citation": "Mergoni et al., Cochrane 2022 [[PMID:36512807]]"
+    },
+    {
+     "color": "accent_coral",
+     "icon": "flag",
+     "name": "Complex Case — Specialist Referral",
+     "tagline": "Anatomy, comorbidity, or uncertain diagnosis",
+     "when": "Calcified canals, internal/external resorption, immunocompromised patient, or diagnostic uncertainty about periapical pathology.",
+     "how": "Refer to specialist endodontist. Visit number decision deferred to treating specialist based on intraoperative findings.",
+     "citation": "ESE Quality Guidelines 2023; AAE Position Statement"
+    }
+   ],
+   "speaker_notes": "These three routes are not a rigid algorithm — they are a starting-point framework. Most straightforward necrotic cases with achievable dry canals are candidates for single-visit treatment. When you encounter persistent exudate or acute soft tissue involvement, the multiple-visit route gives you biological time and reduces short-term flare-up risk. Cases with anatomical complexity or diagnostic uncertainty deserve specialist assessment regardless of which visit protocol will ultimately be used."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 06",
+   "module_title": "Guidelines and Antibiotic Stewardship",
+   "module_subtitle": "What societal guidelines say — and what they do not recommend",
+   "footer": "MODULE 6 · GUIDELINES",
+   "speaker_notes": "Module six briefly addresses the guideline landscape and a related clinical question that frequently arises alongside visit protocol decisions: should systemic antibiotics be prescribed? The answer from the most recent Cochrane evidence is unambiguous and carries direct implications for your prescribing practice."
+  },
+  {
+   "pattern": "objectives_slide",
+   "eyebrow": "MODULE 6 · GUIDELINES",
+   "title": "What ESE, AAE, and Cochrane Agree On",
+   "items": [
+    {
+     "icon": "book",
+     "number": "01",
+     "header": "Both protocols are endorsed",
+     "body": "ESE Quality Guidelines 2023 and AAE position statements endorse single- and multiple-visit protocols when disinfection objectives are met."
+    },
+    {
+     "icon": "stethoscope",
+     "number": "02",
+     "header": "Operator judgement is central",
+     "body": "Guidelines emphasise clinical judgement — symptom status, canal drying, case complexity — over a universal visit-number rule."
+    },
+    {
+     "icon": "alert",
+     "number": "03",
+     "header": "Antibiotics are NOT indicated",
+     "body": "Cope et al. 2024 Cochrane: adjunctive systemic antibiotics are not indicated for apical periodontitis regardless of visit protocol chosen."
+    },
+    {
+     "icon": "star",
+     "number": "04",
+     "header": "Quality of obturation is non-negotiable",
+     "body": "Technical adequacy of root filling and coronal restoration drives long-term prognosis in every guideline statement."
+    }
+   ],
+   "closing_callout": "No guideline recommends one visit protocol universally — preference, case complexity, and biological endpoints should guide every decision.",
+   "speaker_notes": "The ESE Quality Guidelines 2023 and AAE position statements are deliberately non-prescriptive on visit number because the evidence does not support a universal rule. What they are prescriptive about is obturation quality and coronal seal. The Cope et al. 2024 Cochrane review on antibiotics [[PMID:38712714]] is directly relevant here: clinicians sometimes reach for systemic antibiotics when managing symptomatic necrotic cases, but the evidence does not support this practice for apical periodontitis in immunocompetent patients."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 6 · SEQUENCE",
+   "title": "Applying Guidelines Chair-Side: A Decision Sequence",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Confirm diagnosis — necrotic pulp with apical periodontitis",
+     "body": "Verify with pulp testing, periapical radiograph, and CBCT if indicated. Rule out acute dentoalveolar abscess requiring drainage first."
+    },
+    {
+     "number": "02",
+     "header": "Assess case complexity",
+     "body": "Note canal anatomy, lesion size, presence of exudate, and preoperative pain level. These drive protocol selection, not visit number per se."
+    },
+    {
+     "number": "03",
+     "header": "Achieve disinfection objectives intraoperatively",
+     "body": "Full working length, adequate taper, copious NaOCl irrigation, EDTA final rinse. Confirm canal dryness with paper points."
+    },
+    {
+     "number": "04",
+     "header": "Make the visit decision at the decision point — after shaping",
+     "body": "If canal is dry, symptoms controlled, and anatomy manageable, single-visit obturation is defensible. If not, place Ca(OH)₂ and reschedule."
+    },
+    {
+     "number": "05",
+     "header": "Obturate, restore, and follow up radiographically",
+     "body": "Place definitive coronal restoration at or before obturation. Schedule periapical review at 6, 12, and 24 months minimum."
+    }
+   ],
+   "footer_callout": "The visit decision is made intraoperatively — not at the pre-treatment appointment — based on biological endpoints achieved.",
+   "speaker_notes": "This sequence reflects the clinical logic embedded in the ESE and AAE guidance. The key insight is that the visit protocol decision is not fixed before you start — it is made intraoperatively based on what you find. A case you planned as single-visit may become multiple-visit if the canal will not dry, or if you encounter unexpected exudate. The guidelines endorse this adaptive decision-making approach, and the evidence supports it."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 07",
+   "module_title": "Synthesis and Clinical Implications",
+   "module_subtitle": "Translating the evidence into defensible, patient-centred practice",
+   "footer": "MODULE 7 · SYNTHESIS",
+   "speaker_notes": "We are now in the final module. Let us synthesise everything we have covered into a set of clear, evidence-based practice implications. The goal is to give you a framework you can articulate to a patient, a colleague, or an examiner with confidence."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 7 · EVIDENCE",
+   "title": "Why the Evidence Is Unusually Coherent",
+   "hierarchy_rows": [
+    {
+     "tier_label": "COCHRANE × 2",
+     "description": "Del Fabbro 2016 and Mergoni 2022: healing equivalent; Ca(OH)₂ microbiological benefit does not translate to superior healing with high certainty.",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "RCT LEVEL I",
+     "description": "Kumar 2024 and Sabeti 2024 network meta-analysis: 12-month healing equivalent; no significant advantage for interappointment medication.",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "PROSPECTIVE LEVEL II",
+     "description": "Simon 2025 (n=160) and Almeida 2023 (n=150): 24-month comparable healing; lesion size and coronal restoration dominate prognosis over visit number.",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "RETROSPECTIVE LEVEL III",
+     "description": "Jurič 2024 (n=1,259, 13 yr) and Van Nieuwenhuysen 2023 (n=2,500, 20 yr): visit protocol not a dominant survival predictor across all follow-up horizons.",
+     "color": "accent_gold"
+    }
+   ],
+   "trap_callout": {
+    "heading": "REMAINING UNCERTAINTY",
+    "body": "Overall evidence is rated low-to-moderate certainty due to heterogeneity in outcome definitions and follow-up loss across trials. The equivalence conclusion is robust but the precision of any effect estimate is limited. Future high-quality RCTs with standardised PAI scoring and minimum 4-year follow-up are needed.",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "Unusually for a clinical controversy that has persisted for decades, the evidence across all tiers points in the same direction. That does not mean we have perfect certainty — the Cochrane reviews themselves rate overall evidence as low to moderate, largely because of heterogeneous outcome definitions and follow-up attrition. But the direction and magnitude of effect are consistent: visit number does not drive long-term healing. Biological objectives do."
+  },
+  {
+   "pattern": "takeaways_slide",
+   "eyebrow": "MODULE 7 · KEY TAKEAWAYS",
+   "title": "What the Evidence Tells Us — and What It Asks of Us",
+   "items": [
+    {
+     "number": "01",
+     "header": "Healing outcomes are equivalent long-term",
+     "body": "Single- and multiple-visit protocols yield equivalent radiographic periapical healing at one year and beyond for necrotic teeth with apical periodontitis. Either is defensible."
+    },
+    {
+     "number": "02",
+     "header": "Single-visit carries a short-term pain penalty",
+     "body": "Modestly higher postoperative pain, swelling, and analgesic use within 48 hours of single-visit obturation is real and must be disclosed during informed consent."
+    },
+    {
+     "number": "03",
+     "header": "Calcium hydroxide helps bacteria, not necessarily healing",
+     "body": "Ca(OH)₂ reduces intracanal bacteria between visits but low-certainty evidence supports conversion of this microbiological benefit into superior periapical healing."
+    },
+    {
+     "number": "04",
+     "header": "Lesion size and coronal seal predict outcome more than visit number",
+     "body": "The dominant prognostic factors are preoperative lesion size, root filling quality, and the quality of the coronal restoration — not how many appointments it took."
+    },
+    {
+     "number": "05",
+     "header": "The visit decision is made intraoperatively",
+     "body": "Adapt protocol based on canal dryness, symptom control, and anatomy achieved at the chair — not by a fixed pre-treatment rule. Either path, executed well, serves the patient."
+    }
+   ],
+   "does_not_apply": "Multiple-visit treatment with interappointment calcium hydroxide may offer a small reduction in intracanal bacterial load, but this does not translate into a meaningful difference in periapical healing at ≥1 year.",
+   "speaker_notes": "Let us close with these five takeaways. The core message is one of equivalence with nuance: equivalent healing, a real short-term pain difference, and a prognostic landscape dominated by biology and technical quality rather than appointment count. Your most powerful tools are adequate chemo-mechanical disinfection, a homogeneous root fill, and a definitive coronal seal placed as soon as possible. Everything else is secondary. Thank you for your attention — clinical questions are welcome."
+  }
+ ]
+}

@@ -1,0 +1,518 @@
+{
+ "title": "Lasers in Root Canal Disinfection",
+ "subtitle": "Evidence-based selection, protocols, and realistic outcome expectations",
+ "footer": "ENDODONTICS · LASER DISINFECTION",
+ "slides": [
+  {
+   "pattern": "title_slide",
+   "eyebrow": "ENDODONTICS · LASER DISINFECTION",
+   "title": "Lasers in Root Canal\nDisinfection",
+   "subtitle": "Evidence-based selection, protocols, and realistic outcome expectations",
+   "tagline": "Technology must serve technique — not replace it.",
+   "footer_metadata": "ESE Systematic Review · PROSPERO-registered · PMID:36156804",
+   "speaker_notes": "Welcome. Over the next ten minutes we will build a clinically grounded framework for laser-assisted root canal disinfection. We will move from basic physics through antimicrobial mechanisms, examine what the highest-tier evidence actually says, and finish with a clear decision framework you can apply chair-side. The central message is this: lasers are adjuncts, not replacements, for optimised chemo-mechanical preparation."
+  },
+  {
+   "pattern": "objectives_slide",
+   "eyebrow": "MODULE 1 · OBJECTIVES",
+   "title": "What you will be able to do after this session",
+   "items": [
+    {
+     "icon": "microscope",
+     "number": "01",
+     "header": "Explain laser-tissue interaction by wavelength",
+     "body": "Match each laser platform to its primary chromophore and endodontic mechanism."
+    },
+    {
+     "icon": "tooth",
+     "number": "02",
+     "header": "Describe three disinfection mechanisms",
+     "body": "Distinguish thermal, photoacoustic, and photodynamic pathways with clinical relevance."
+    },
+    {
+     "icon": "chart_bar",
+     "number": "03",
+     "header": "Interpret the evidence hierarchy accurately",
+     "body": "Apply GRADE certainty levels to laser modalities and communicate limitations to patients."
+    },
+    {
+     "icon": "clipboard",
+     "number": "04",
+     "header": "Apply a validated procedural protocol",
+     "body": "Select parameters and sequence steps correctly for Er:YAG SWEEPS and aPDT."
+    },
+    {
+     "icon": "flag",
+     "number": "05",
+     "header": "Make evidence-based modality decisions",
+     "body": "Use a decision framework to choose or decline laser adjuncts for a given clinical scenario."
+    }
+   ],
+   "closing_callout": "Competency is knowing when not to use the laser as much as when to use it.",
+   "speaker_notes": "Five objectives structure this session. Notice that objective three asks you to interpret evidence critically — this is deliberate. The highest-tier synthesis available, the ESE systematic review by Meire and colleagues, returns very low to low GRADE certainty for most laser modalities. Being able to explain that to a patient or a colleague is a core clinical skill, not a footnote."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 01",
+   "module_title": "Laser Physics & Tissue Interaction",
+   "module_subtitle": "Wavelength determines chromophore — chromophore determines clinical role",
+   "footer": "MODULE 1 · LASER PHYSICS",
+   "speaker_notes": "Module one establishes the physical foundation. Every clinical decision about laser selection flows from understanding which tissue component absorbs a given wavelength and what that absorption produces. Without this, parameter selection becomes guesswork."
+  },
+  {
+   "pattern": "three_route_grid",
+   "eyebrow": "MODULE 1 · PLATFORMS",
+   "title": "Three laser platforms — three primary mechanisms",
+   "routes": [
+    {
+     "color": "accent_teal",
+     "icon": "repeat",
+     "name": "Er:YAG / Er,Cr:YSGG",
+     "tagline": "Photoacoustic streaming",
+     "when": "Irrigant activation in shaped canals; SWEEPS and PIPS protocols.",
+     "how": "2940 nm / 2780 nm absorbed by water; pulsed energy creates cavitation bubbles that implode and drive irrigant into lateral canals and tubules.",
+     "citation": "PMID:38340037"
+    },
+    {
+     "color": "accent_coral",
+     "icon": "search",
+     "name": "Diode (810–980 nm)",
+     "tagline": "Direct bactericidal irradiation",
+     "when": "Canal wall disinfection; aPDT light-source activation at 630–660 nm variants.",
+     "how": "Absorbed by haemoglobin and melanin; thermal denaturation of bacterial protein and membrane disruption at 0.75–2 W pulsed.",
+     "citation": "PMID:36156313"
+    },
+    {
+     "color": "accent_gold",
+     "icon": "microscope",
+     "name": "Nd:YAG (1064 nm)",
+     "tagline": "Deep tubule penetration",
+     "when": "Dentinal tubule disinfection where deeper penetration is the primary objective.",
+     "how": "Near-infrared photons penetrate dentine via predominantly thermal mechanism; bactericidal effect extends into tubule walls.",
+     "citation": "PMID:36978686"
+    }
+   ],
+   "speaker_notes": "Three platforms, three dominant mechanisms. Erbium lasers are water-absorbers — their energy couples into the irrigant film, not the dentine itself, making them ideal for photoacoustic activation. Diode lasers target pigmented chromophores in bacteria and biofilm, delivering a direct thermal kill. Nd:YAG sits between them, penetrating dentinal tubules thermally. Choosing wrong means the energy goes somewhere unintended."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 1 · MECHANISMS",
+   "title": "How lasers disinfect: three pathways",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Direct thermal / photon absorption",
+     "body": "Near-infrared photons denature bacterial proteins and rupture cell membranes. Diode lasers at 0.75–2 W pulsed mode are the primary exponents of this pathway."
+    },
+    {
+     "number": "02",
+     "header": "Photoacoustic streaming and cavitation",
+     "body": "Pulsed Er:YAG energy creates transient vapour bubbles that implode, generating shockwaves that drive irrigant into lateral canals, isthmuses, and dentinal tubules. This is the mechanism behind PIPS and SWEEPS."
+    },
+    {
+     "number": "03",
+     "header": "Antimicrobial photodynamic therapy (aPDT)",
+     "body": "A photosensitiser pre-loaded into the canal is activated by a wavelength-matched light source at 630–660 nm, generating singlet oxygen and reactive oxygen species that irreversibly oxidise bacterial cell walls and DNA."
+    }
+   ],
+   "footer_callout": "In clinical practice, photoacoustic streaming and direct thermal effects may operate simultaneously during Er:YAG activation.",
+   "speaker_notes": "These three pathways are not mutually exclusive. During an Er:YAG SWEEPS cycle, you get photoacoustic streaming as the primary mechanism, but residual thermal effects also occur. For aPDT, the photosensitiser is the active agent — the laser is only the trigger. Understanding which pathway dominates for each platform prevents you from misapplying a modality and expecting effects it cannot produce."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 02",
+   "module_title": "Evidence Hierarchy",
+   "module_subtitle": "What the highest-tier synthesis actually concludes",
+   "footer": "MODULE 2 · EVIDENCE",
+   "speaker_notes": "Module two is the most important segment of this presentation. We now examine what the systematic review literature actually says about laser adjuncts in root canal treatment. The conclusions are more conservative than much of the primary literature suggests, and understanding why is essential for ethical clinical practice."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 2 · EVIDENCE",
+   "title": "Laser adjuncts and periapical healing: the evidence hierarchy",
+   "hierarchy_rows": [
+    {
+     "tier_label": "LEVEL I — UMBRELLA REVIEW",
+     "description": "2026 umbrella review of nine systematic reviews; confirms no adjunctive laser modality has demonstrated superiority over optimised chemo-mechanical preparation for periapical healing.",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "LEVEL I — ESE SYSTEMATIC REVIEW",
+     "description": "Meire et al., 2023; PROSPERO-registered; 13 RCTs + 1 cohort; GRADE: very low certainty for diode laser, low certainty for aPDT; meta-analysis not achievable for most laser modalities due to heterogeneity.",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "LEVEL II — REGISTERED RCT",
+     "description": "Doğan et al., 2024; n=56; 12-month CBCT follow-up; SWEEPS vs conventional irrigation in single-rooted teeth; difference in lesion volume reduction was not statistically significant (p > 0.05).",
+     "color": "accent_coral"
+    },
+    {
+     "tier_label": "LEVEL III — IN VITRO",
+     "description": "Er,Cr:YSGG activation with NaOCl + EDTA achieved lowest smear layer scores across all canal thirds, outperforming diode, PUI, and needle irrigation — extracted tooth laboratory data only, no clinical outcome correlation.",
+     "color": "ink_secondary"
+    }
+   ],
+   "trap_callout": {
+    "heading": "THE EVIDENCE TRAP",
+    "body": "Positive in vitro smear layer scores and impressive bacterial reduction percentages do not translate to demonstrated superiority in periapical healing in clinical trials. The ESE review conclusion is unambiguous.",
+    "stat_label": "ESE conclusion: insufficient evidence to recommend any adjunctive laser for apical periodontitis",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "Read the evidence pyramid carefully. The highest-tier sources — a PROSPERO-registered ESE systematic review and a 2026 umbrella review of nine systematic reviews — are unequivocal. No adjunctive laser modality has demonstrated superiority over optimised chemo-mechanical preparation for periapical healing. The registered RCT by Doğan and colleagues illustrates this: SWEEPS produced a larger lesion reduction numerically, but the difference was not statistically significant. In vitro data must never be extrapolated to clinical outcome claims."
+  },
+  {
+   "pattern": "stat_panel",
+   "eyebrow": "MODULE 2 · OUTCOMES",
+   "title": "SWEEPS vs conventional irrigation: lesion volume reduction at 12 months",
+   "primary_stat": "86.9%",
+   "primary_label": "SWEEPS laser-activated irrigation",
+   "secondary_stat": "74.5%",
+   "secondary_label": "Conventional needle irrigation",
+   "callout": "A 12.4 percentage-point numerical advantage for SWEEPS was not statistically significant (p > 0.05) in single-rooted teeth — the trial was not powered to detect this difference as superiority.",
+   "citation": "Doğan et al., J Endod 2024 [[PMID:38878107]]",
+   "speaker_notes": "This slide illustrates exactly the kind of result that can mislead a clinician reading only the abstract. Eighty-six point nine percent versus seventy-four point five percent looks compelling visually. But the registered RCT by Doğan and colleagues, using CBCT volumetric analysis at twelve months, returned a p-value above 0.05. The sample size was fifty-six teeth — too small to establish superiority. This is a signal worth watching, not a practice-changing finding."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 2 · COMPARISON",
+   "title": "Postoperative pain reduction: pulsed Er:YAG vs diode LAI",
+   "left_card": {
+    "label": "DIODE LAI",
+    "headline": "No pooled benefit for pain",
+    "lines": [
+     "Sabeti et al., 2026: SMD = 0.03 versus ultrasonic activation",
+     "Meire et al., 2023: no significant pain difference at Day 7 versus control",
+     "Pooled data across both major analyses fails to show analgesic benefit"
+    ],
+    "verdict": {
+     "icon": "x_circle",
+     "text": "Unsupported for postoperative pain reduction",
+     "color": "accent_red"
+    }
+   },
+   "right_card": {
+    "label": "PULSED Er:YAG LAI (SWEEPS)",
+    "headline": "Consistent pain reduction signal",
+    "lines": [
+     "Kohok et al., 2026: largest 24-hour pain reduction among all modalities (P-score = 0.993)",
+     "Sabeti et al., 2026: SWEEPS SMD = −1.57 versus ultrasonic activation",
+     "Low-to-moderate GRADE certainty; 7 RCTs in the network meta-analysis"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Supported for short-term pain reduction — low-to-moderate certainty",
+     "color": "accent_teal"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "GRADE certainty remains low-to-moderate; effect sizes should not be communicated as definitive to patients. [[PMID:42214656]] [[PMID:40818665]]",
+   "speaker_notes": "This is where the evidence diverges clearly by platform. Two independent pooled analyses — Kohok and colleagues in 2026 and Sabeti and colleagues also in 2026 — both find that pulsed Er:YAG, particularly SWEEPS, produces the strongest short-term postoperative pain reduction. Diode laser activated irrigation shows no pooled benefit for this outcome. If pain reduction is your clinical objective, platform selection matters enormously and diode is not the answer."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 03",
+   "module_title": "Clinical Protocols",
+   "module_subtitle": "Validated parameters and procedural sequencing",
+   "footer": "MODULE 3 · PROTOCOLS",
+   "speaker_notes": "Module three moves from evidence appraisal to chair-side application. We will step through the procedural sequence that must frame any laser adjunct, then detail the specific parameters for Er:YAG SWEEPS and aPDT. The sequence matters as much as the parameters — lasers activated in an unshaped or unirrigated canal cannot perform their intended function."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 3 · SEQUENCE",
+   "title": "Procedural sequence for laser-adjunct root canal treatment",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Complete chemo-mechanical preparation first",
+     "body": "Shape to minimum ISO size 25/.06 taper. Laser irradiation does not substitute for mechanical debridement and will not reach an unshaped canal predictably."
+    },
+    {
+     "number": "02",
+     "header": "Deliver primary irrigant: 5.25% NaOCl",
+     "body": "Deposit 2–3 mL per canal via side-vented needle to working length. NaOCl combined with EDTA produced the best smear layer scores in activated irrigation protocols."
+    },
+    {
+     "number": "03",
+     "header": "Select modality based on clinical objective",
+     "body": "For photoacoustic streaming use Er:YAG with a radial-firing tip. For direct bactericidal irradiation or aPDT activation, use the diode system with a 200–320 µm tapered fibre."
+    },
+    {
+     "number": "04",
+     "header": "Activate Er:YAG SWEEPS protocol",
+     "body": "Position P400FL fibre at canal orifice. Set 25 pps, 50 mJ, 300 µs pulse duration. Activate for 3 × 20-second cycles with continuous NaOCl replenishment between cycles."
+    },
+    {
+     "number": "05",
+     "header": "Final EDTA irrigation and obturation",
+     "body": "Complete final rinse sequence and obturate as planned. Laser activation is an irrigant enhancement step — it does not change obturation protocol or recall intervals."
+    }
+   ],
+   "footer_callout": "Step 1 is non-negotiable: no laser adjunct compensates for incomplete mechanical preparation.",
+   "speaker_notes": "Memorise the sequence as a rule: shape first, irrigate, then activate. Clinicians who introduce laser activation before adequate shaping find that the photoacoustic streaming cannot penetrate a canal that is too narrow for the irrigant to flow freely. The parameters listed for SWEEPS — twenty-five pulses per second, fifty millijoules, three hundred microsecond pulse duration — come from the validated protocol reported by Lukac and colleagues."
+  },
+  {
+   "pattern": "three_route_grid",
+   "eyebrow": "MODULE 3 · OPTIONS",
+   "title": "Choosing your activation approach: three clinical routes",
+   "routes": [
+    {
+     "color": "accent_teal",
+     "icon": "repeat",
+     "name": "SWEEPS / PIPS",
+     "tagline": "Irrigant activation — photoacoustic",
+     "when": "Primary objective is enhanced irrigant penetration into isthmuses, lateral canals, and dentinal tubules.",
+     "how": "Er:YAG, radial-firing tip at orifice level; 3 × 20-second cycles; continuous NaOCl replenishment between cycles.",
+     "citation": "PMID:38382735"
+    },
+    {
+     "color": "accent_coral",
+     "icon": "search",
+     "name": "Diode Direct Irradiation",
+     "tagline": "Canal wall bactericidal — thermal",
+     "when": "Adjunct bactericidal step in canals with persistent infection or heavy biofilm; not indicated for primary pain reduction.",
+     "how": "200–320 µm tapered fibre; 0.75–2 W continuous or pulsed; helical motion from apex toward orifice.",
+     "citation": "PMID:36156313"
+    },
+    {
+     "color": "accent_gold",
+     "icon": "star",
+     "name": "aPDT",
+     "tagline": "Photosensitiser + light — oxidative",
+     "when": "Persistent polymicrobial infection; useful in teeth with complex anatomy where direct irradiation is limited.",
+     "how": "Preload photosensitiser (630–660 nm matched); activate with diode at matched wavelength; excited molecules generate singlet oxygen and ROS.",
+     "citation": "PMID:30548497"
+    }
+   ],
+   "speaker_notes": "Three routes, three distinct mechanisms, three different indications. SWEEPS and PIPS are your irrigant enhancement tools — they make the chemistry work better, not differently. Diode direct irradiation is a bactericidal step for walls and exposed biofilm. aPDT is your photochemical option for complex anatomy where direct thermal access is limited. Selecting the wrong route means you are activating a mechanism that cannot reach the bacteria you are trying to kill."
+  },
+  {
+   "pattern": "decision_table",
+   "eyebrow": "MODULE 3 · DECISION FRAMEWORK",
+   "title": "Clinical scenario → modality selection",
+   "rows": [
+    {
+     "finding": "Primary root canal treatment, straightforward anatomy",
+     "implication": "Optimised chemo-mechanical prep likely sufficient; laser adds complexity without proven healing benefit",
+     "path": "Proceed with optimised NaOCl + EDTA irrigation; reserve laser as optional adjunct only",
+     "severity_color": "ink_secondary"
+    },
+    {
+     "finding": "Significant postoperative pain risk (e.g. symptomatic irreversible pulpitis)",
+     "implication": "SWEEPS Er:YAG LAI shows strongest short-term pain reduction signal across pooled analyses",
+     "path": "Consider Er:YAG SWEEPS activation; counsel patient on low-to-moderate certainty level",
+     "severity_color": "accent_teal"
+    },
+    {
+     "finding": "Persistent apical periodontitis — retreatment case",
+     "implication": "Complex biofilm; photoacoustic streaming may enhance irrigant penetration into lateral anatomy",
+     "path": "Er:YAG SWEEPS or aPDT as adjunct after complete re-shaping and irrigant delivery",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Heavy biofilm on canal walls — complex multi-rooted tooth",
+     "implication": "Direct diode irradiation or aPDT may add bactericidal effect beyond what chemo-mechanical achieves",
+     "path": "aPDT with matched photosensitiser; document rationale; set realistic patient expectations",
+     "severity_color": "accent_coral"
+    },
+    {
+     "finding": "Patient requests laser treatment as perceived superior technology",
+     "implication": "No laser modality has demonstrated superiority over optimised chemo-mechanical prep for healing",
+     "path": "Provide evidence-based counselling; do not adopt laser adjunct solely in response to patient demand",
+     "severity_color": "accent_red"
+    }
+   ],
+   "footer_caption": "Decision framework derived from Meire et al., 2023 [[PMID:36156804]] and Kohok et al., 2026 [[PMID:42214656]]",
+   "speaker_notes": "Use this table at chair-side. The most important row is the last one — patient-driven demand for laser technology is not a clinical indication. The ESE systematic review is explicit: there is currently insufficient evidence to recommend any adjunctive laser therapy for the treatment of apical periodontitis. Your role is to translate that conclusion accurately, not to market a device."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 04",
+   "module_title": "aPDT in Depth",
+   "module_subtitle": "Photosensitisers, activation, and current evidence",
+   "footer": "MODULE 4 · aPDT",
+   "speaker_notes": "Module four zooms in on antimicrobial photodynamic therapy — the modality with the most distinct mechanistic profile of the three. Understanding the photochemistry here is essential because aPDT's efficacy depends entirely on the photosensitiser-wavelength match. Get that wrong and you are simply illuminating a canal with coloured light."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 4 · SEQUENCE",
+   "title": "aPDT: the photochemical kill sequence",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Photosensitiser loading",
+     "body": "Deliver photosensitiser into the fully shaped and irrigated canal. Allow adequate contact time for penetration into biofilm and dentinal tubule surface layers."
+    },
+    {
+     "number": "02",
+     "header": "Wavelength-matched light activation",
+     "body": "Activate with a diode or LED source matched to the photosensitiser's absorption peak (630–660 nm for most porphyrin-based agents). Mismatched wavelengths produce no photochemical effect."
+    },
+    {
+     "number": "03",
+     "header": "Singlet oxygen and ROS generation",
+     "body": "Excited photosensitiser molecules transfer energy to molecular oxygen, producing singlet oxygen and reactive oxygen species that irreversibly oxidise bacterial cell walls and DNA."
+    },
+    {
+     "number": "04",
+     "header": "Irreversible bacterial oxidation",
+     "body": "Unlike thermal mechanisms, ROS-mediated oxidation causes irreversible membrane and DNA damage; resistance development is theoretically less likely than with antibiotic-based approaches."
+    }
+   ],
+   "footer_callout": "aPDT efficacy is photosensitiser-dependent — the laser is the trigger, not the active agent.",
+   "speaker_notes": "The photochemical sequence has four steps and every one of them must succeed for aPDT to work. The loading step is often rushed — inadequate contact time means the photosensitiser has not penetrated the biofilm before activation. The wavelength match is non-negotiable: a 980 nm diode will not activate a porphyrin-based sensitiser designed for 660 nm. Know your photosensitiser's absorption peak before selecting your light source."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 4 · COMPARISON",
+   "title": "aPDT vs direct laser irradiation: mechanism and evidence",
+   "left_card": {
+    "label": "DIRECT LASER IRRADIATION",
+    "headline": "Thermal bactericidal mechanism",
+    "lines": [
+     "Photons directly heat and denature bacterial proteins",
+     "Effective on canal wall surface and exposed biofilm",
+     "Limited penetration into complex anatomy and isthmuses",
+     "Diode at 810–980 nm; GRADE certainty very low for periapical healing outcomes"
+    ],
+    "verdict": {
+     "icon": "x_circle",
+     "text": "Very low GRADE certainty for healing; no pain benefit in pooled data",
+     "color": "accent_red"
+    }
+   },
+   "right_card": {
+    "label": "aPDT",
+    "headline": "Photochemical oxidative mechanism",
+    "lines": [
+     "Photosensitiser — not the laser — is the active bactericidal agent",
+     "ROS penetrate into biofilm architecture beyond direct photon reach",
+     "Effective in complex anatomy where direct irradiation is geometrically limited",
+     "GRADE certainty low for periapical healing; promising for adjunct biofilm control"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Low GRADE certainty; mechanistic advantage in complex anatomy",
+     "color": "accent_gold"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "Both modalities are adjuncts to — not replacements for — optimised chemo-mechanical preparation. [[PMID:36156804]] [[PMID:41187828]]",
+   "speaker_notes": "The comparison here is mechanistic and prognostic, not a declaration of superiority. aPDT's photochemical mechanism gives it a theoretical geometric advantage — reactive oxygen species diffuse into biofilm architecture that direct photons cannot reach around curves and in isthmuses. But the clinical evidence for both modalities returns low to very low GRADE certainty for periapical healing. Neither modality escapes that evidentiary constraint."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 05",
+   "module_title": "Limitations & Safety",
+   "module_subtitle": "What lasers cannot do — and where harm can occur",
+   "footer": "MODULE 5 · LIMITATIONS",
+   "speaker_notes": "Module five is brief but essential. Every laser platform carries risks that are entirely avoidable when parameters are set correctly and the procedural sequence is followed. We also need to acknowledge the ceiling effect in the evidence — understanding why no laser modality has broken through to demonstrated healing superiority helps us set honest patient expectations."
+  },
+  {
+   "pattern": "decision_table",
+   "eyebrow": "MODULE 5 · DECISION FRAMEWORK",
+   "title": "Laser complications: recognition and prevention",
+   "rows": [
+    {
+     "finding": "Thermal injury to periapical tissues",
+     "implication": "Excessive power settings or prolonged activation without irrigant replenishment transmit heat apically",
+     "path": "Never activate without irrigant present; adhere to validated cycle times and power parameters",
+     "severity_color": "accent_red"
+    },
+    {
+     "finding": "Dentinal crack propagation",
+     "implication": "Thermal stress from Nd:YAG or high-power diode may initiate or extend existing cracks in dentine",
+     "path": "Avoid high-power continuous mode; use pulsed protocols; assess dentine thickness before activation",
+     "severity_color": "accent_red"
+    },
+    {
+     "finding": "Photosensitiser left in canal (aPDT)",
+     "implication": "Residual sensitiser may interfere with sealer adhesion or cause localised tissue reaction",
+     "path": "Final rinse with sterile saline after aPDT activation before obturation",
+     "severity_color": "accent_coral"
+    },
+    {
+     "finding": "Over-reliance on laser, under-preparation mechanically",
+     "implication": "Laser cannot debride; inadequate shaping leaves biofilm that no activation protocol can penetrate",
+     "path": "Confirm working length, apical size, and taper before any laser step — never abbreviate preparation",
+     "severity_color": "accent_red"
+    },
+    {
+     "finding": "Eye and skin exposure to laser emission",
+     "implication": "All dental lasers above Class 1 pose ocular and skin hazard — even reflected beams",
+     "path": "Wavelength-appropriate protective eyewear for operator, assistant, and patient at all times",
+     "severity_color": "accent_coral"
+    }
+   ],
+   "footer_caption": "Safety protocols apply regardless of laser class or clinical objective. No evidence supports deviation from protective standards.",
+   "speaker_notes": "Safety is non-negotiable. Thermal injury to periapical tissues is entirely preventable — it requires only irrigant presence during activation and adherence to cycle times. The over-reliance error is the most insidious because it is cognitive, not technical: assuming the laser compensates for inadequate shaping is the single most common misapplication of this technology. And eye protection is mandatory for every person in the room — always."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 5 · EVIDENCE",
+   "title": "Where the evidence ceiling sits — and why",
+   "hierarchy_rows": [
+    {
+     "tier_label": "UMBRELLA REVIEW 2026",
+     "description": "Nine systematic reviews synthesised; confirms no adjunctive laser modality has yet demonstrated superiority over optimised chemo-mechanical preparation for periapical healing.",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "ESE SYSTEMATIC REVIEW 2023",
+     "description": "13 RCTs + 1 cohort; GRADE very low for diode, low for aPDT; meta-analysis not achievable due to heterogeneity; conclusion: insufficient evidence to recommend any adjunctive laser for apical periodontitis.",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "COCHRANE REVIEW 2016",
+     "description": "Low-level laser therapy in surgical endodontics; very low quality evidence; no reliable clinical guideline derivable for laser use; no evidence of postoperative pain prevention in surgical context.",
+     "color": "accent_coral"
+    },
+    {
+     "tier_label": "NETWORK META-ANALYSIS 2026",
+     "description": "Kohok et al.; 7 RCTs; low-to-moderate GRADE; Er:YAG SWEEPS strongest short-term pain signal; diode LAI shows no significant pain benefit.",
+     "color": "ink_secondary"
+    }
+   ],
+   "trap_callout": {
+    "heading": "WHY THE CEILING EXISTS",
+    "body": "Heterogeneity in canal anatomy, preparation quality, irrigant concentration, activation parameters, and follow-up duration prevents pooled trials from reaching the statistical power needed to detect superiority in healing. The ceiling is methodological, not necessarily biological.",
+    "stat_label": "The ceiling may shift — but only with standardised, powered, registered RCTs",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "The evidence ceiling is not a verdict on laser physics — it is a verdict on the quality and comparability of trials conducted to date. Heterogeneity is the methodological enemy. When one trial uses SWEEPS at fifty millijoules and another uses a different Er:YAG platform at different parameters with a different irrigant protocol, pooling those results is statistically indefensible. Future high-quality standardised RCTs may shift the ceiling. Current evidence does not."
+  },
+  {
+   "pattern": "takeaways_slide",
+   "eyebrow": "MODULE 5 · KEY TAKEAWAYS",
+   "title": "What this session has established",
+   "items": [
+    {
+     "number": "01",
+     "header": "Wavelength dictates mechanism — select accordingly",
+     "body": "Erbium lasers are photoacoustic irrigant activators; diodes are thermal bactericidal tools; Nd:YAG penetrates tubules thermally. Misapplying a platform means activating the wrong mechanism."
+    },
+    {
+     "number": "02",
+     "header": "No laser adjunct has demonstrated superiority for periapical healing",
+     "body": "The ESE systematic review and 2026 umbrella review are unequivocal — insufficient evidence exists to recommend any adjunctive laser therapy for apical periodontitis treatment."
+    },
+    {
+     "number": "03",
+     "header": "Pulsed Er:YAG SWEEPS shows the strongest short-term pain reduction signal",
+     "body": "Two independent 2026 pooled analyses favour SWEEPS over all other modalities for 24-hour postoperative pain; diode LAI shows no pooled benefit for this outcome."
+    },
+    {
+     "number": "04",
+     "header": "Sequence is non-negotiable: shape, irrigate, then activate",
+     "body": "Laser activation before complete chemo-mechanical preparation cannot compensate for inadequate debridement and will not reach biofilm in an unshaped canal."
+    },
+    {
+     "number": "05",
+     "header": "Communicate uncertainty honestly to patients",
+     "body": "GRADE certainty remains very low to low-to-moderate across all laser modalities. Patients requesting lasers as superior technology deserve an accurate evidence-based explanation."
+    }
+   ],
+   "does_not_apply": "There is currently insufficient evidence to recommend any adjunctive laser therapy for the treatment of apical periodontitis.",
+   "speaker_notes": "Five takeaways anchor this session. Laser technology in endodontics is legitimate, mechanistically sound, and shows genuine clinical signals — particularly SWEEPS for short-term pain reduction. But it operates within an evidentiary framework that is honest about what we do not yet know. Your responsibility is to bring both the technology and the evidence to your patients with equal rigour. Thank you."
+  }
+ ]
+}

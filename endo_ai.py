@@ -5222,13 +5222,23 @@ AVAILABLE PATTERNS — use the one whose structure best matches the content:
    {"pattern":"three_route_grid","eyebrow":"MODULE X · OPTIONS","title":"Short title","routes":[{"color":"accent_teal","icon":"repeat","name":"Route Name","tagline":"When to use","when":"Indication sentence.","how":"Technique sentence.","citation":"Author, Journal Year"}],"speaker_notes":"..."}
    color options: accent_teal, accent_coral, accent_gold
 
-8. stat_panel  (1–2 big numbers with context)
-   {"pattern":"stat_panel","eyebrow":"MODULE X · OUTCOMES","title":"Short title","primary_stat":"96.1%","primary_label":"What it measures and source","secondary_stat":"61%","secondary_label":"What it measures","callout":"Insight sentence bridging the two numbers.","citation":"Full citations.","speaker_notes":"..."}
-   secondary_stat and secondary_label are optional.
+8. stat_panel  (ONE quantity measured across TWO arms — a like-for-like comparison)
+   {"pattern":"stat_panel","eyebrow":"MODULE X · OUTCOMES","title":"Short title","primary_stat":"86.9%","primary_label":"Laser-activated irrigation","secondary_stat":"74.5%","secondary_label":"Conventional irrigation","callout":"Insight sentence about the comparison.","citation":"Author et al., Journal Year [[PMID:N]]","speaker_notes":"..."}
+   primary_stat and secondary_stat MUST be the SAME quantity in the SAME unit, copied
+   digit-for-digit from the evidence report (86.9%, not "approximately 87%").
+   primary_label and secondary_label name the two ARMS being compared, 2-5 words each —
+   the title and callout say what is being measured, the labels say who is being measured.
+   Put every supporting [[PMID:N]] in "citation".
+   Omit secondary_stat/secondary_label only when the slide is a single headline number
+   with no counterpart in the source — see the comparison rules below.
 
 9. evidence_summary  (evidence hierarchy + insight callout)
    {"pattern":"evidence_summary","eyebrow":"MODULE X · EVIDENCE","title":"Short title","hierarchy_rows":[{"tier_label":"PRIMARY","description":"What studies","stat":"96.1%","color":"accent_teal"}],"trap_callout":{"heading":"THE TRAP","body":"Why headline figure misleads.","stat":"61%","stat_label":"What the real number is","color":"accent_coral"},"speaker_notes":"..."}
    color options: accent_teal, accent_gold, accent_coral, ink_secondary, ink_muted
+   "stat" is OPTIONAL per row. Include it only when that row carries a real number in the
+   SAME unit as every other row's stat. A verdict word ("Unproven", "Limited", "Superior",
+   "p < 0.05") is not a stat — omit the key on that row and put the word in "description".
+   Mixing a number and a word across rows makes the whole set unusable.
 
 10. takeaways_slide  (final summary, always last or second-to-last)
     {"pattern":"takeaways_slide","eyebrow":"MODULE X · KEY TAKEAWAYS","title":"Short serif italic title","items":[{"number":"01","header":"Bold takeaway","body":"Supporting sentence."}],"does_not_apply":"The single clearest situation in which this recommendation does NOT hold, taken verbatim from the source text. Omit the key entirely if the source states no such limit — never invent one.","speaker_notes":"..."}
@@ -5243,7 +5253,7 @@ PATTERN SELECTION RULES:
 - Sequence of 3-5 steps → cascade_slide
 - Decision rules (finding → action) → decision_table
 - Exactly 3 parallel paths → three_route_grid
-- Big numbers / success rates → stat_panel
+- Two arms measured on the SAME outcome (success rate, reduction %, healing %) → stat_panel
 - Evidence quality hierarchy → evidence_summary
 - Learning goals → objectives_slide
 - NEVER use the same pattern twice in a row
@@ -5264,11 +5274,33 @@ Top-level format:
 
 {pattern_rules}
 
+COMPARISON RULES (these decide whether a slide's numbers can be plotted — read them before writing any stat):
+- When presenting a comparison, give two or more values of the SAME quantity in the SAME unit
+  across arms or groups — success rate % for single-visit vs multiple-visit, lesion volume
+  reduction % for laser vs control, bacterial reduction % per wavelength — with the [[PMID:N]]
+  for that comparison in the slide's "citation" field.
+- A single value pairs with nothing. NEVER pair different quantities: an effect size beside a
+  heterogeneity statistic (SMD −0.551 vs I² 23.89%), a duration beside a count (24–48 h vs 0
+  adverse events), an outcome beside a device setting (86.9% vs 2940 nm · 75–100 mJ). Those are
+  two facts, not a comparison — put each in prose on a content_slide or cascade_slide instead.
+- Ranges are text, not comparison values: "24–48 h", "2–3 mL", "0.005%–0.1%" may never be used
+  as primary_stat, secondary_stat or a hierarchy "stat".
+- Words are not stats: "Superior", "Limited", "Unproven", "Significant", "p < 0.05", "Day 7".
+- Every comparison value must carry its unit (%, mm, months, mJ, n=). A bare unitless number
+  is never a comparison value: standardised mean differences, P-scores, odds ratios, I²,
+  p-values and confidence limits belong in the callout or speaker_notes as prose, never in
+  primary_stat, secondary_stat or a hierarchy "stat". Two unitless numbers look comparable
+  and usually are not (a P-score of 0.993 and an SMD of −0.58 measure nothing in common).
+- Copy each value digit-for-digit from the evidence report — same digits, same decimal places.
+  A rounded or re-derived number is treated as fabricated.
+- If the evidence report contains no same-quantity comparison for a topic, emit no stat_panel
+  and no hierarchy stats for it. A comparison is optional; a false comparison is forbidden.
+
 CONTENT RULES:
 - speaker_notes per slide: ~{words_per_slide} words, natural spoken English, no markdown, no headers. This is the narration track the clinician will hear.
 - Card body / table cell / step body: terse, max 20 words each
 - All statistics must come from the evidence report below — do not fabricate numbers
-- Use [[PMID:N]] citations within speaker_notes only, never in card body text
+- Use [[PMID:N]] citations within speaker_notes and in the "citation"/"footer_caption" fields; never in card body text, labels or headers
 - Vary the deck: at minimum use title_slide + takeaways_slide + at least 4 other distinct patterns
 
 Evidence report (your only source):

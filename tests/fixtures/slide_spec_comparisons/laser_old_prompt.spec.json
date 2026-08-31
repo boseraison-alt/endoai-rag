@@ -1,0 +1,499 @@
+{
+ "title": "Lasers in Root Canal Disinfection",
+ "subtitle": "Evidence-based integration of laser adjuncts into endodontic practice",
+ "footer": "LASER ENDODONTICS · CURRICULUM",
+ "slides": [
+  {
+   "pattern": "title_slide",
+   "eyebrow": "ENDODONTICS · LASER DISINFECTION",
+   "title": "Lasers in Root Canal\nDisinfection",
+   "subtitle": "Evidence-based integration of laser adjuncts into endodontic practice",
+   "tagline": "Where photoacoustic science meets the apical third.",
+   "footer_metadata": "Umbrella Review 2026 · PROSPERO-registered · Duarte et al.",
+   "speaker_notes": "Welcome. Over the next ten minutes we will cover the physics behind four major laser modalities, how each one targets bacteria in the root canal system, the clinical techniques for applying them, and — critically — what the evidence actually supports versus what is still unproven. Understanding those boundaries is just as important as knowing how to operate the equipment. Let us begin."
+  },
+  {
+   "pattern": "objectives_slide",
+   "eyebrow": "MODULE 1 · OBJECTIVES",
+   "title": "What you will be able to do after this session",
+   "items": [
+    {
+     "icon": "microscope",
+     "number": "01",
+     "header": "Explain laser-tissue interaction mechanisms",
+     "body": "Describe photoacoustic, photothermal, and photochemical pathways for each wavelength family."
+    },
+    {
+     "icon": "tooth",
+     "number": "02",
+     "header": "Select the appropriate laser modality",
+     "body": "Match Er:YAG, Er,Cr:YSGG, Nd:YAG, or diode/aPDT to the specific clinical scenario."
+    },
+    {
+     "icon": "chart_bar",
+     "number": "03",
+     "header": "Apply evidence-based parameters",
+     "body": "Translate published optimal parameters into safe chairside laser-activated irrigation protocols."
+    },
+    {
+     "icon": "alert",
+     "number": "04",
+     "header": "Critically evaluate outcome claims",
+     "body": "Distinguish genuine benefits — pain reduction — from areas where evidence remains insufficient."
+    }
+   ],
+   "closing_callout": "Laser adjuncts are promising — but not yet proven replacements for chemomechanical preparation.",
+   "speaker_notes": "These four objectives frame the entire presentation. By the end you should be able to explain why lasers are investigated, choose the right system for a given case, set parameters with confidence, and — most importantly — counsel patients and colleagues accurately about what lasers can and cannot yet deliver. That last skill separates the evidence-informed clinician from the enthusiast."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 01",
+   "module_title": "Laser Physics and Disinfection Mechanisms",
+   "module_subtitle": "Why conventional irrigation falls short — and what lasers add",
+   "footer": "MODULE 1 · PHYSICS & MECHANISMS",
+   "speaker_notes": "Module one lays the scientific foundation. We will look at where conventional sodium hypochlorite irrigation loses effectiveness, then map each laser wavelength to its biological target. Understanding mechanism is what allows us to choose rationally rather than by brand preference or anecdote."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 1 · COMPARISON",
+   "title": "Conventional Irrigation vs Laser-Activated Irrigation",
+   "left_card": {
+    "label": "CONVENTIONAL NEEDLE IRRIGATION",
+    "headline": "Effective coronally, limited apically",
+    "lines": [
+     "5.25% NaOCl + 17% EDTA clears coronal/middle thirds well",
+     "Significant efficacy loss toward the apical third",
+     "Cannot reach lateral canals, isthmuses, or deep tubules"
+    ],
+    "verdict": {
+     "icon": "x_circle",
+     "text": "Anatomical shortcoming drives biofilm persistence",
+     "color": "accent_red"
+    }
+   },
+   "right_card": {
+    "label": "LASER-ACTIVATED IRRIGATION (LAI)",
+    "headline": "Hydrodynamic streaming reaches the apical third",
+    "lines": [
+     "Cavitation and acoustic streaming agitate irrigant throughout canal",
+     "Superior apical irrigant penetration vs needle delivery",
+     "PIPS/SWEEPS tips fire from coronal chamber — reduces extrusion risk"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Promising adjunct — not yet a proven replacement",
+     "color": "accent_teal"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "Duarte et al. 2026 umbrella review: LAI evidence remains limited and heterogeneous.",
+   "speaker_notes": "The fundamental problem is anatomy. Standard irrigation is excellent in the straight, accessible portions of the canal but loses efficacy at the apical third where biofilm persists in lateral canals and isthmuses. Laser-activated irrigation generates cavitation bubbles that collapse violently, driving irrigant into spaces a needle cannot reach. However, the 2026 PROSPERO-registered umbrella review [[PMID:41833582]] still classifies LAI as having unproven clinical benefit, so we must hold both truths simultaneously."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 1 · SEQUENCE",
+   "title": "How Laser-Activated Irrigation Creates Cavitation",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Pulsed laser energy fires into irrigant",
+     "body": "Er:YAG or Er,Cr:YSGG tip fires within the irrigant column inside the canal."
+    },
+    {
+     "number": "02",
+     "header": "Rapid vaporisation forms a vapour bubble",
+     "body": "Intense local energy vaporises fluid instantly, expanding a gas bubble outward."
+    },
+    {
+     "number": "03",
+     "header": "Bubble implodes — cavitation event",
+     "body": "Inward collapse generates hydrodynamic streaming and shockwaves throughout the canal system."
+    },
+    {
+     "number": "04",
+     "header": "Irrigant penetrates lateral canals and isthmuses",
+     "body": "Streaming carries sodium hypochlorite into anatomical spaces inaccessible to conventional delivery."
+    },
+    {
+     "number": "05",
+     "header": "Parameters govern cavitation intensity",
+     "body": "Wavelength, pulse energy, pulse length, and tip geometry all modulate the cavitation effect."
+    }
+   ],
+   "footer_callout": "PIPS and SWEEPS geometries maximise streaming with the tip kept in the coronal chamber.",
+   "speaker_notes": "High-speed imaging has confirmed every step in this chain [[PMID:38340037]]. The key insight is that the laser is acting on the irrigant, not primarily on the dentinal wall. That is why tip position matters so much. PIPS and SWEEPS designs keep the tip coronally, which reduces the risk of irrigant extrusion beyond the apex while still generating powerful streaming all the way to the apical third [[PMID:40136729]]."
+  },
+  {
+   "pattern": "three_route_grid",
+   "eyebrow": "MODULE 1 · OPTIONS",
+   "title": "Three Laser Wavelength Families: Mechanisms at a Glance",
+   "routes": [
+    {
+     "color": "accent_teal",
+     "icon": "repeat",
+     "name": "Erbium Lasers",
+     "tagline": "Peak water absorbers — photoacoustic streaming",
+     "when": "Primary disinfection adjunct in any root canal case via LAI.",
+     "how": "Er:YAG 2940 nm or Er,Cr:YSGG 2780 nm; PIPS/SWEEPS tip in coronal chamber; 75–100 mJ, <50 Hz.",
+     "citation": "Ghahari et al., Lasers Med Sci 2024"
+    },
+    {
+     "color": "accent_coral",
+     "icon": "search",
+     "name": "Nd:YAG (1064 nm)",
+     "tagline": "Deep tubule penetrator — photothermal action",
+     "when": "Complex mixed-species biofilms; periodontic-endodontic lesion adjunct.",
+     "how": "Photothermal mechanism denatures bacterial proteins; complete sterilisation not consistently achieved.",
+     "citation": "Xu et al., J Periodontol 2026"
+    },
+    {
+     "color": "accent_gold",
+     "icon": "star",
+     "name": "Diode / aPDT (630–980 nm)",
+     "tagline": "Photosensitiser activator — photochemical ROS",
+     "when": "Adjunct when antibiotic resistance or biofilm resilience is a concern.",
+     "how": "Methylene blue 0.005% × 3 min; 660 nm diode at 100 mW, 4 J/cm² × 40 sec.",
+     "citation": "Okamoto et al., Photodiagnosis 2020"
+    }
+   ],
+   "speaker_notes": "Three distinct mechanisms — photoacoustic, photothermal, and photochemical — mean these systems are not interchangeable. Erbium lasers act on water in the irrigant; Nd:YAG penetrates dentinal tubules directly; diode lasers activate a separately applied photosensitiser to generate reactive oxygen species [[PMID:31809911]] [[PMID:34733754]]. Choosing the wrong modality for the intended target is like prescribing penicillin for a fungal infection — the mechanism simply does not match."
+  },
+  {
+   "pattern": "stat_panel",
+   "eyebrow": "MODULE 1 · OUTCOMES",
+   "title": "Erbium Laser Biofilm Reduction: The Numbers",
+   "primary_stat": "SMD −0.551",
+   "primary_label": "Standardised mean difference in biofilm reduction by erbium lasers vs controls — 19 studies, n=565 samples; I²=23.89%; p=0.031 (Ghahari et al. 2024)",
+   "secondary_stat": "2940 nm · 75–100 mJ · <50 Hz",
+   "secondary_label": "Optimal parameters identified for erbium LAI: wavelength, pulse energy, pulse frequency",
+   "callout": "Statistically significant biofilm reduction is achievable — but effect size and optimal parameters matter more than simply owning a laser.",
+   "citation": "Ghahari et al., Lasers Med Sci 2024 [[PMID:38662505]]; Duarte et al., Int Endod J 2026 [[PMID:41833582]]",
+   "speaker_notes": "This meta-analysis [[PMID:38662505]] is the most parameter-specific evidence currently available. The standardised mean difference of negative 0.551 is a moderate effect, and the low heterogeneity at under 24 percent gives us reasonable confidence in the pooled result. What this tells us clinically is that erbium lasers at the right settings do reduce biofilm significantly, but that the settings themselves are critical — under-powered or incorrectly configured lasers will not reproduce these results."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 02",
+   "module_title": "Antimicrobial Photodynamic Therapy",
+   "module_subtitle": "The three-component photochemical system and its clinical evidence",
+   "footer": "MODULE 2 · APDT",
+   "speaker_notes": "We now shift from photoacoustic to photochemical mechanisms. Antimicrobial photodynamic therapy — aPDT — is fundamentally different from laser-activated irrigation. It does not work by moving fluid. It works by generating reactive oxygen species inside bacterial cells. Understanding that distinction is essential before we look at the clinical data."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 2 · SEQUENCE",
+   "title": "The aPDT Three-Component Mechanism",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Apply photosensitiser to canal",
+     "body": "Methylene blue 0.005% or toluidine blue 0.1 mg/mL; allow 3 minutes of contact time."
+    },
+    {
+     "number": "02",
+     "header": "Activate with matched wavelength light",
+     "body": "660 nm diode for methylene blue; 630 nm for toluidine blue — must match absorption peak precisely."
+    },
+    {
+     "number": "03",
+     "header": "Reactive oxygen species are generated",
+     "body": "In presence of molecular oxygen, activated photosensitiser produces ROS that oxidise bacterial membranes and DNA."
+    },
+    {
+     "number": "04",
+     "header": "Bacterial cell death without resistance",
+     "body": "Multi-target oxidative mechanism does not induce microbial resistance — a key advantage over antibiotics."
+    }
+   ],
+   "footer_callout": "aPDT does not adversely affect bond strength or penetration of endodontic sealers (Almadi 2023).",
+   "speaker_notes": "The elegance of aPDT is in its non-specific oxidative kill — bacteria cannot develop resistance because the mechanism attacks multiple cellular targets simultaneously [[PMID:38618073]]. The photosensitiser must be matched to the light wavelength; mismatching them is a common error that renders the treatment ineffective. Importantly, Almadi's 2023 systematic review of 12 laboratory studies confirmed that aPDT does not compromise sealer penetration or bond strength [[PMID:36563709]], so it integrates safely into standard obturation workflows."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 2 · EVIDENCE",
+   "title": "aPDT Adjunct Benefit: What the RCT Data Show",
+   "hierarchy_rows": [
+    {
+     "tier_label": "RCT — PRIMARY TEETH",
+     "description": "Okamoto et al. 2020, n=30; methylene blue 0.005%, 660 nm, 100 mW, 4 J/cm², 40 sec",
+     "stat": "99%",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "CONVENTIONAL ALONE",
+     "description": "Same RCT control arm — standard chemomechanical preparation without aPDT",
+     "stat": "93%",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "SYSTEMATIC REVIEW",
+     "description": "Bordea et al. 2020 — aPDT standalone superiority over conventional irrigation unproven",
+     "stat": "Unproven",
+     "color": "ink_secondary"
+    }
+   ],
+   "trap_callout": {
+    "heading": "THE INTERPRETATION TRAP",
+    "body": "The 99% vs 93% reduction sounds dramatic, but the difference did not reach statistical significance in Okamoto et al. 2020. aPDT adds value as an adjunct — its standalone superiority is not established.",
+    "stat": "p > 0.05",
+    "stat_label": "aPDT vs conventional — not statistically significant",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "This is where critical appraisal matters most. Ninety-nine versus ninety-three percent bacterial reduction sounds compelling until you learn the difference was not statistically significant [[PMID:32171875]]. Bordea et al. reinforced this, finding no proven standalone superiority for aPDT [[PMID:31809911]]. The honest message is that aPDT may offer a clinically meaningful incremental benefit as an adjunct, but we cannot yet claim it independently outperforms conventional irrigation."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 03",
+   "module_title": "Clinical Application Techniques",
+   "module_subtitle": "Device selection, step-by-step protocols, and safety parameters",
+   "footer": "MODULE 3 · CLINICAL TECHNIQUES",
+   "speaker_notes": "With mechanisms and evidence established, module three turns to practical chairside application. We will cover how to select the right device, how to set parameters, and the specific protocol steps for laser-activated irrigation and aPDT. Safety — particularly avoiding irrigant extrusion — will be emphasised throughout."
+  },
+  {
+   "pattern": "decision_table",
+   "eyebrow": "MODULE 3 · DECISION FRAMEWORK",
+   "title": "Choosing the Right Laser Modality by Clinical Scenario",
+   "rows": [
+    {
+     "finding": "Primary root canal — routine biofilm reduction needed",
+     "implication": "Erbium LAI provides significant biofilm reduction with well-defined parameters",
+     "path": "Er:YAG PIPS/SWEEPS, 2940 nm, 75–100 mJ, <50 Hz, tip in coronal chamber",
+     "severity_color": "accent_teal"
+    },
+    {
+     "finding": "Resistant mixed-species biofilm or deep tubule involvement",
+     "implication": "Nd:YAG penetrates dentinal tubules; photothermal protein denaturation",
+     "path": "Nd:YAG 1064 nm adjunct; note complete sterilisation not consistently achieved",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Antibiotic resistance concern or adjunct antimicrobial desired",
+     "implication": "aPDT generates ROS without inducing microbial resistance",
+     "path": "Methylene blue 0.005% × 3 min; 660 nm diode, 100 mW, 4 J/cm², 40 sec",
+     "severity_color": "accent_teal"
+    },
+    {
+     "finding": "Periodontic-endodontic lesion with combined tissue destruction",
+     "implication": "Dual-wavelength approach reduces inflammatory cytokines and improves bacterial clearance",
+     "path": "Nd:YAG root canal + Er:YAG periodontal debridement; monitor IL-1β, IL-6 at 3 months",
+     "severity_color": "accent_coral"
+    },
+    {
+     "finding": "Patient with significant postoperative pain concern",
+     "implication": "LAI superior to conventional syringe irrigation for early postoperative pain at 24–48 hours",
+     "path": "LAI as adjunct; set expectation that difference resolves by day 7",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Evidence of Er,Cr:YSGG system available in practice",
+     "implication": "Strong water and hydroxyapatite absorption; photoacoustic streaming and photothermal effects",
+     "path": "Apply photoacoustic streaming protocol at 2780 nm; comparable LAI mechanism to Er:YAG",
+     "severity_color": "ink_secondary"
+    }
+   ],
+   "footer_caption": "All parameter recommendations derived from Ghahari et al. 2024 [[PMID:38662505]] and Xu et al. 2026 [[PMID:41918875]].",
+   "speaker_notes": "This table gives you a rapid decision map for the four main clinical scenarios you will encounter. The key principle running through every row is that laser modality must be matched to mechanism. Using a diode laser and hoping for photoacoustic streaming will not work — the wavelength simply does not drive cavitation in water. Conversely, using erbium LAI when the goal is deep tubule penetration means you are relying on streaming alone rather than the direct photothermal contact Nd:YAG provides [[PMID:40565094]]."
+  },
+  {
+   "pattern": "cascade_slide",
+   "eyebrow": "MODULE 3 · SEQUENCE",
+   "title": "Step-by-Step Er:YAG PIPS/SWEEPS Protocol",
+   "steps": [
+    {
+     "number": "01",
+     "header": "Complete standard chemomechanical preparation",
+     "body": "Instrument to working length; laser does not replace shaping — it supplements it."
+    },
+    {
+     "number": "02",
+     "header": "Flood canal with fresh NaOCl irrigant",
+     "body": "Fill chamber and canal fully; laser activates the irrigant, not dentinal walls."
+    },
+    {
+     "number": "03",
+     "header": "Position PIPS or SWEEPS tip in coronal chamber",
+     "body": "Do NOT insert to working length; coronal position drives streaming apically while minimising extrusion."
+    },
+    {
+     "number": "04",
+     "header": "Fire at optimal parameters",
+     "body": "2940 nm, 75–100 mJ pulse energy, 100–150 μs pulse duration, less than 50 Hz frequency."
+    },
+    {
+     "number": "05",
+     "header": "Repeat cycle; final rinse with EDTA",
+     "body": "Multiple short activation cycles; complete with 17% EDTA and final NaOCl flush before obturation."
+    }
+   ],
+   "footer_callout": "PIPS/SWEEPS tip placement in the coronal chamber is the single most important safety modification.",
+   "speaker_notes": "The step most often performed incorrectly is tip position. Early adopters inserted the tip near working length, which increased extrusion risk significantly. PIPS and SWEEPS designs were developed precisely to allow coronal tip placement while still achieving superior apical irrigant penetration through the hydrodynamic streaming effect [[PMID:40136729]]. The parameters listed here come directly from the Ghahari 2024 meta-analysis as the settings associated with optimal biofilm reduction [[PMID:38662505]]."
+  },
+  {
+   "pattern": "stat_panel",
+   "eyebrow": "MODULE 3 · OUTCOMES",
+   "title": "Postoperative Pain: The Clearest Clinical Benefit",
+   "primary_stat": "Superior",
+   "primary_label": "LAI vs conventional syringe irrigation for postoperative pain at 24–48 hours — Gulhane et al. SR of 9 RCTs, n=547 (2025)",
+   "secondary_stat": "Day 7",
+   "secondary_label": "Pain equivalence restored — no significant difference between LAI and conventional groups by day 7",
+   "callout": "LAI offers a genuine, reproducible benefit for early postoperative comfort — but the window is narrow and patients should be counselled accordingly.",
+   "citation": "Gulhane et al., Clin Oral Investig 2025 [[PMID:40585660]]; Xu et al., J Periodontol 2026 [[PMID:41918875]]",
+   "speaker_notes": "Pain reduction is currently the most robustly supported clinical benefit of laser adjuncts in endodontics [[PMID:40585660]]. Gulhane's 2025 systematic review across nine RCTs and five hundred forty-seven patients found LAI consistently superior at twenty-four to forty-eight hours. This is meaningful — postoperative pain drives patient satisfaction and recall compliance. However, the benefit is time-limited. By day seven there is no statistically significant difference, so we should communicate this accurately rather than overselling the laser as a global pain solution."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 04",
+   "module_title": "Evidence Quality and Clinical Boundaries",
+   "module_subtitle": "Where lasers help, where they do not, and how to read the hierarchy",
+   "footer": "MODULE 4 · EVIDENCE APPRAISAL",
+   "speaker_notes": "This final module is perhaps the most important for daily practice. Technology adoption in dentistry often runs ahead of evidence, and lasers are a clear example. We will look at the umbrella review that sits at the top of the evidence hierarchy, examine the specific claims we can and cannot make, and build a framework for critical appraisal as new data emerge."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 4 · EVIDENCE",
+   "title": "The Evidence Hierarchy for Laser Adjuncts in Endodontics",
+   "hierarchy_rows": [
+    {
+     "tier_label": "UMBRELLA REVIEW (HIGHEST)",
+     "description": "Duarte et al. 2026 — 9 systematic reviews, 5 databases, through Dec 2024; PROSPERO-registered",
+     "stat": "Limited",
+     "color": "accent_coral"
+    },
+    {
+     "tier_label": "SYSTEMATIC REVIEW + META-ANALYSIS",
+     "description": "Ghahari et al. 2024 — 19 studies, n=565 samples; erbium laser biofilm reduction",
+     "stat": "Significant",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "SYSTEMATIC REVIEW",
+     "description": "Gulhane et al. 2025 — 9 RCTs, n=547; LAI vs conventional for postoperative pain",
+     "stat": "Superior (24–48 h)",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "INDIVIDUAL RCT",
+     "description": "Xu et al. 2026 — n=99; dual-wavelength laser in periodontic-endodontic lesions, 6-month follow-up",
+     "stat": "p < 0.05",
+     "color": "accent_gold"
+    }
+   ],
+   "trap_callout": {
+    "heading": "THE HIERARCHY TRAP",
+    "body": "The meta-analysis shows statistically significant biofilm reduction — yet the umbrella review above it concludes clinical benefit is unproven. Laboratory biofilm reduction does not automatically translate to improved clinical healing outcomes. Always read up the hierarchy.",
+    "stat": "Unproven",
+    "stat_label": "Clinical benefit per Duarte umbrella review 2026",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "This is the most nuanced slide in the deck. The meta-analysis [[PMID:38662505]] and the umbrella review [[PMID:41833582]] appear to contradict each other, but they do not. The meta-analysis measures biofilm reduction in laboratory and ex vivo models — a valid surrogate. The umbrella review asks whether that biofilm reduction translates to improved clinical healing of apical periodontitis in patients — and concludes the evidence is still insufficient. Both statements are true simultaneously, and conflating them is the most common error in laser marketing claims."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 4 · COMPARISON",
+   "title": "Periodontic-Endodontic Lesions: Dual-Wavelength Laser vs Conventional Surgery",
+   "left_card": {
+    "label": "CONVENTIONAL SURGERY ALONE",
+    "headline": "Standard surgical debridement",
+    "lines": [
+     "Mechanical debridement of periodontic-endodontic defect",
+     "Standard root canal preparation and irrigation",
+     "No adjunctive laser disinfection component"
+    ],
+    "verdict": {
+     "icon": "x_circle",
+     "text": "Higher day-1 VAS pain scores; no cytokine advantage at 3 months",
+     "color": "accent_red"
+    }
+   },
+   "right_card": {
+    "label": "DUAL-WAVELENGTH LASER ADJUNCT",
+    "headline": "Nd:YAG + Er:YAG combination",
+    "lines": [
+     "Nd:YAG for root canal disinfection; Er:YAG for periodontal debridement",
+     "Significantly reduced IL-1β, IL-6, and MMP-8 at 3 months",
+     "Lower VAS pain scores at day 1 — equivalent by day 7"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Statistically significant cytokine reduction and improved bacterial clearance (p<0.05)",
+     "color": "accent_teal"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "Xu et al. 2026 RCT, n=99 completers, 6-month follow-up. Single-centre study — external validity awaits replication.",
+   "speaker_notes": "Xu et al. 2026 [[PMID:41918875]] is the most clinically detailed recent RCT in this literature. The dual-wavelength approach makes mechanistic sense — Nd:YAG for the dentinal tubule biofilm and Er:YAG for the periodontal defect debridement. The cytokine reductions at three months are biologically plausible and statistically significant. However, this is a single centre, ninety-nine completers, six-month follow-up. Replication in larger multicentre trials is needed before this becomes a standard-of-care recommendation."
+  },
+  {
+   "pattern": "decision_table",
+   "eyebrow": "MODULE 4 · DECISION FRAMEWORK",
+   "title": "What Lasers Can and Cannot Yet Claim",
+   "rows": [
+    {
+     "finding": "Early postoperative pain reduction (24–48 h)",
+     "implication": "Supported by SR of 9 RCTs, n=547 — reproducible across studies",
+     "path": "Make this claim confidently; counsel patients that benefit resolves by day 7",
+     "severity_color": "accent_teal"
+    },
+    {
+     "finding": "Biofilm reduction in vitro / ex vivo",
+     "implication": "Supported by meta-analysis — moderate effect size, low heterogeneity",
+     "path": "Use as mechanistic justification; do not conflate with clinical healing outcomes",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Inflammatory cytokine reduction in periodontic-endodontic lesions",
+     "implication": "One RCT (n=99) — promising but not yet replicated",
+     "path": "Present as emerging evidence; await multicentre confirmation before protocol change",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Healing of apical periodontitis",
+     "implication": "Umbrella review 2026 — evidence limited and heterogeneous",
+     "path": "Do NOT claim superiority over conventional chemomechanical preparation",
+     "severity_color": "accent_red"
+    },
+    {
+     "finding": "aPDT standalone superiority over conventional irrigation",
+     "implication": "Unproven per Bordea SR 2020 and Okamoto RCT (p>0.05)",
+     "path": "Position aPDT as adjunct only; avoid standalone superiority marketing claims",
+     "severity_color": "accent_red"
+    }
+   ],
+   "footer_caption": "Evidence boundaries per Duarte et al. 2026 [[PMID:41833582]] and Bordea et al. 2020 [[PMID:31809911]].",
+   "speaker_notes": "This table is the practical tool to take out of today's session. Green rows are claims you can defend at a journal club or to a patient. Red rows are claims you should push back on when you see them in a sales brochure or a conference presentation. The gap between biofilm reduction and apical periodontitis healing is the most important boundary in this entire field — laser companies often blur it, and it is our responsibility to maintain it clearly."
+  },
+  {
+   "pattern": "takeaways_slide",
+   "eyebrow": "MODULE 4 · KEY TAKEAWAYS",
+   "title": "Lasers in Root Canal Disinfection: What We Know",
+   "items": [
+    {
+     "number": "01",
+     "header": "Match modality to mechanism",
+     "body": "Erbium lasers drive photoacoustic streaming; Nd:YAG penetrates tubules thermally; diode/aPDT generates photochemical ROS. The wrong modality for the target produces no benefit."
+    },
+    {
+     "number": "02",
+     "header": "Parameters are not optional",
+     "body": "Optimal erbium LAI: 2940 nm, 75–100 mJ, 100–150 μs pulse duration, less than 50 Hz. Deviating from these settings invalidates the biofilm reduction evidence."
+    },
+    {
+     "number": "03",
+     "header": "Postoperative pain reduction is the strongest proven benefit",
+     "body": "LAI is superior to conventional irrigation for pain at 24–48 hours across 9 RCTs — a genuine, reproducible, patient-relevant outcome."
+    },
+    {
+     "number": "04",
+     "header": "Biofilm reduction ≠ clinical healing",
+     "body": "The umbrella review concludes clinical benefit of LAI for apical periodontitis healing remains unproven. Laboratory data and clinical outcomes are not interchangeable."
+    },
+    {
+     "number": "05",
+     "header": "Lasers supplement — they do not replace — chemomechanical preparation",
+     "body": "No laser modality has demonstrated superiority over optimised shaping and irrigation. Laser adjuncts add value at the margins of what instruments and chemistry alone can reach."
+    }
+   ],
+   "does_not_apply": "Laser-assisted irrigation should currently be regarded as an adjunct with unproven clinical benefit.",
+   "speaker_notes": "These five takeaways are the clinical compass for everything we have covered. The field is genuinely exciting — photoacoustic streaming, dual-wavelength periodontic-endodontic protocols, and the resistance-free antimicrobial mechanism of aPDT all represent real advances. But the umbrella review [[PMID:41833582]] and the meta-analysis [[PMID:38662505]] together define both the promise and the current limits. Stay current, read at the top of the hierarchy, and your patients will receive neither undersold nor oversold care. Thank you."
+  }
+ ]
+}
