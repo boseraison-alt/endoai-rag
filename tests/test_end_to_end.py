@@ -267,6 +267,45 @@ class TestTierHierarchyHoldsEndToEnd:
         assert "1001" in every_id and "1004" in every_id
 
 
+class TestDeckExportInvariants:
+    """WORKLIST 5.2. Two invariants that only hold end-to-end: a deck built
+    from a real spec has slides, and no raw citation marker survives onto a
+    slide surface. Both are guarded per-renderer in presentations/ and
+    tests/test_webdeck.py; this pins them through the builder the app calls,
+    where a wiring change (a missing source_text, a swapped spec source)
+    would break them without touching either renderer's own tests."""
+
+    SPEC = {"slides": [
+        {"pattern": "title_slide", "eyebrow": "LASERS", "title": "Laser disinfection",
+         "subtitle": "Evidence review", "speaker_notes": "n"},
+        {"pattern": "content_slide", "eyebrow": "M1 · EVIDENCE", "title": "Findings",
+         "bullets": ["Reduces bacterial load [[PMID:28294701]]",
+                     "No apical-healing benefit [[PMID:41833582]]"],
+         "speaker_notes": "n"},
+        {"pattern": "takeaways_slide", "eyebrow": "KEY TAKEAWAYS", "title": "Summary",
+         "items": [{"number": "01", "header": "Adjunct only", "body": "Not a substitute."}],
+         "does_not_apply": "Immature apices with open foramina.",
+         "speaker_notes": "n"},
+    ]}
+
+    def _slide_text(self, prs):
+        return "\n".join(sh.text_frame.text for sl in prs.slides
+                         for sh in sl.shapes if sh.has_text_frame)
+
+    def test_deck_has_slides(self):
+        from presentations.build_deck import build_deck_from_specs
+        prs, _q = build_deck_from_specs(self.SPEC, source_text="x")
+        assert len(prs.slides) > 0
+
+    def test_no_raw_markers_reach_a_slide(self):
+        """The bullets above carry [[PMID:...]] deliberately."""
+        from presentations.build_deck import build_deck_from_specs
+        prs, _q = build_deck_from_specs(self.SPEC, source_text="x")
+        text = self._slide_text(prs)
+        assert "[[PMID:" not in text, "a raw citation marker reached a slide"
+        assert "PMID" in text or "Findings" in text, "the slide rendered nothing"
+
+
 class TestEvalRoutePinning:
     """force_route exists so the eval set keeps measuring the path each case was
     written for. Write-back silently moved the laser case from the live path

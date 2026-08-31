@@ -424,3 +424,50 @@ class TestChartHardRules:
         prs, queue = build_deck_from_specs(spec, source_text=SOURCE)
         pictures = [sh for sh in queue[0][0].shapes if sh.shape_type == 13]
         assert pictures, "a verified comparison did not produce a chart"
+
+
+class TestChartUnitConsistency:
+    """A shared axis asserts the values are comparable magnitudes. Two real,
+    correctly-cited numbers in different units are not.
+
+    Both cases below are from the Phase 4 laser deck, where they rendered as
+    charts that passed every provenance check and still misled: an SMD of
+    -0.551 beside an I-squared of 23.89% (the bar implied heterogeneity was
+    ~43x the effect), and a 24-hour window beside 0 adverse events (one bar
+    had no length). Found by looking at the PNGs, not by any assertion.
+    """
+
+    def test_matching_units_are_chartable(self):
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["78%", "64%"]) == "%"
+        assert consistent_unit(["12 months", "24 months"]) == "months"
+
+    def test_bare_numbers_share_the_empty_unit(self):
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["12", "34"]) == ""
+
+    def test_effect_size_beside_a_percentage_is_refused(self):
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["-0.551", "23.89%"]) is None
+
+    def test_a_duration_beside_a_bare_count_is_refused(self):
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["24 hours", "0"]) is None
+
+    def test_stat_panel_with_mixed_units_produces_no_chart(self):
+        """End of the path: the builder must return None, not a chart."""
+        from presentations.chart_data import detect_chartable
+        spec = {"pattern": "stat_panel", "title": "Mixed",
+                "primary_stat": "-0.551", "primary_label": "SMD",
+                "secondary_stat": "23.89%", "secondary_label": "I2"}
+        src = "The SMD was -0.551 and heterogeneity was 23.89%."
+        assert detect_chartable(spec, src) is None
+
+    def test_stat_panel_with_one_unit_still_charts(self):
+        """The gate must not have suppressed charting altogether."""
+        from presentations.chart_data import detect_chartable
+        spec = {"pattern": "stat_panel", "title": "Success",
+                "primary_stat": "78%", "primary_label": "Laser",
+                "secondary_stat": "64%", "secondary_label": "Control"}
+        src = "Success was 78% with the laser and 64% in controls."
+        assert detect_chartable(spec, src) is not None

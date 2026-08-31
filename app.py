@@ -3936,7 +3936,11 @@ def run_generate_slides(audio_id: str, answer: str, question: str,
             q   = audio_jobs[audio_id].get("question", "")
             dur = audio_jobs[audio_id].get("length_minutes", 10)
         _persist_media(final_path, audio_id, "pptx", q, "slides", "slides", dur)
-        print(f"  OK Done ({n_slides} slides, {len(slide_audios)} with audio)")
+        # len(prs.slides), not len(slides_list): the body-budget rule splits
+        # overfull slides onto continuation pages, so the spec count under-
+        # reports what was actually rendered.
+        print(f"  OK Done ({len(prs.slides)} slides, "
+              f"{len(slide_audios)} with audio)")
 
     except Exception as e:
         import traceback; traceback.print_exc()

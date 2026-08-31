@@ -124,12 +124,37 @@ def _unit_of(raw: str) -> str:
     if "%" in s:
         return "%"
     for token, unit in (("month", "months"), ("year", "years"),
-                        ("week", "weeks"), ("day", "days")):
+                        ("week", "weeks"), ("day", "days"),
+                        ("hour", "hours"), ("minute", "minutes"),
+                        ("second", "seconds"), ("mm", "mm"), ("mj", "mJ")):
         if token in s.lower():
             return unit
     if re.search(r"\bn\s*=", s, re.I):
         return "n"
     return ""
+
+
+def consistent_unit(literals) -> str | None:
+    """The shared unit of every literal, or None if they disagree.
+
+    A bar or dot plot puts its values on ONE axis, which asserts they are
+    comparable magnitudes. Two real, correctly-cited numbers in different units
+    are not. Observed on the laser deck before this gate existed:
+
+      * a standardised mean difference of -0.551 plotted beside an I-squared
+        of 23.89% — the bar chart implied the heterogeneity was ~43x the
+        effect size;
+      * a 24-hour superiority window plotted beside 0 severe adverse events,
+        where the second bar had no length at all.
+
+    Both passed the provenance gate: every value was verbatim in the cited
+    source with its PMIDs in the footer. Provenance was never the problem —
+    the visual encoding was making a claim the numbers do not support. So when
+    units disagree, we draw nothing, which is what the rest of this module
+    already does with data it cannot vouch for.
+    """
+    units = {_unit_of(str(lit)) for lit in literals}
+    return units.pop() if len(units) == 1 else None
 
 
 def _choose_kind(values: list[float], unit: str) -> tuple[str, str | None]:
@@ -193,7 +218,12 @@ def _from_stat_panel(spec: dict, source_text: str) -> ChartSpec | None:
     verified = _verified_pairs(pairs, source_text)
     if not verified:
         return None
-    unit = _unit_of(str(prim))
+    # Units come from the RAW inputs: _verified_pairs normalises
+    # "23.89%" to "23.89", so checking the verified literals would
+    # always see agreement and the gate would never fire.
+    unit = consistent_unit([raw for _, raw in pairs])
+    if unit is None:
+        return None          # mixed units — see consistent_unit()
     vals = [v for _, _, v in verified]
     kind, note = _choose_kind(vals, unit)
     return ChartSpec(
@@ -223,7 +253,9 @@ def _from_hierarchy(spec: dict, source_text: str) -> ChartSpec | None:
     verified = _verified_pairs(pairs, source_text)
     if not verified:
         return None
-    unit = _unit_of(pairs[0][1])
+    unit = consistent_unit([raw for _, raw in pairs])
+    if unit is None:
+        return None          # mixed units — see consistent_unit()
     vals = [v for _, _, v in verified]
     kind, note = _choose_kind(vals, unit)
     return ChartSpec(
