@@ -221,14 +221,25 @@ def test_pre_fix_rerun_pairs_unitless_quantities():
     So "the old prompt drew no charts" is not the whole before-state, and a
     fix judged only on chart COUNT would have scored this run as a success.
     The thing that changed is which pairs are offered, not how many.
+
+    UPDATE: when this fixture was recorded, the render-time gate DID pass this
+    pairing, and the docstring above said the gate could not close it. That was
+    true of the gate as it then stood and is no longer true: consistent_unit
+    now refuses a unitless PAIR outright, on the reasoning that a bare number
+    is not evidence of a shared quantity but the absence of evidence either
+    way. The fixture keeps its value — it is still the run that proves chart
+    count is the wrong success metric — and now also pins the gate that closed
+    the hole it exposed. Both layers are asserted below, deliberately: the
+    generator should not offer the pairing, and the renderer should refuse it
+    if it ever does.
     """
     spec, source = _load("laser_old_prompt_rerun")
     violations = comparison_violations(spec)
-    assert any("unitless" in v for v in violations), (
-        "the P-score/SMD pairing is no longer caught — see the note in "
-        "comparison_violations() about why the render-time gate cannot"
+    assert violations, "the P-score/SMD pairing is no longer flagged at all"
+    assert any(("unitless" in v) or ("units disagree" in v) for v in violations), (
+        f"the pairing is flagged, but not as a unit problem: {violations}"
     )
-    assert charted_slides(spec, source), (
-        "fixture drift: this run is kept precisely because the gates PASSED "
-        "it; if it no longer charts, it no longer demonstrates the hole"
+    assert charted_slides(spec, source) == [], (
+        "the render-time gate should now refuse this pairing; if it charts "
+        "again, the unitless refusal in consistent_unit has been lost"
     )
