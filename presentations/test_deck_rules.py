@@ -500,12 +500,24 @@ class TestChartRangeValues:
         assert consistent_unit(["15 min", "30 min"]) == "min"
         assert consistent_unit(["24 h", "12"]) is None
 
+    def test_a_unit_letter_inside_a_word_is_not_a_unit(self):
+        """The word boundaries are load-bearing. Without them the "h" in
+        "Charter" reads as hours, the two literals disagree, and a perfectly
+        chartable comparison is silently dropped."""
+        from presentations.chart_data import _unit_of, consistent_unit
+        assert _unit_of("Charter") == ""
+        assert _unit_of("18 charts") == ""
+        assert consistent_unit(["18 charts", "24 charts"]) == ""
+
     def test_a_range_produces_no_chart(self):
+        """Both literals carry the SAME unit here, deliberately: with mismatched
+        units the unit gate fires first and this test would pass even with the
+        range gate deleted. Mutation-checking caught exactly that."""
         from presentations.chart_data import detect_chartable
         spec = {"pattern": "stat_panel", "title": "T",
                 "primary_stat": "24–48 h", "primary_label": "Window",
-                "secondary_stat": "0", "secondary_label": "Adverse events"}
-        src = "superior for 24–48 h; 0 severe adverse events were reported"
+                "secondary_stat": "12 h", "secondary_label": "Comparator"}
+        src = "superior for 24–48 h against 12 h for the comparator"
         assert detect_chartable(spec, src) is None
 
     def test_two_scalars_still_chart(self):
