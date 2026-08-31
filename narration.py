@@ -27,6 +27,16 @@ from datetime import datetime
 
 from pronunciation import apply_pronunciation
 
+# app.py loads .env before importing anything, but this module is also driven
+# from scripts and tests. Without its own load_dotenv, OPENAI_API_KEY is unset,
+# openai_available() returns False and the export silently degrades to gTTS —
+# which is exactly the regression §4.1 exists to prevent.
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except Exception:
+    pass
+
 # ── Voice and model selection (§4.1) ──────────────────────
 # onyx is the chosen professional voice: the deepest and most level of the
 # OpenAI set, and the one that reads long-form clinical prose without the
@@ -382,12 +392,18 @@ def openai_client():
     if "c" not in _client_cache:
         client = None
         key = os.getenv("OPENAI_API_KEY")
-        if key:
+        if not key:
+            # Loud, because the consequence is a silent quality downgrade to
+            # gTTS rather than a failure anyone would notice.
+            print("  [narration] OPENAI_API_KEY not set — narration will use "
+                  "the gTTS fallback voice")
+        else:
             try:
                 from openai import OpenAI
                 client = OpenAI(api_key=key)
             except Exception as e:
-                print(f"  [narration] OpenAI client unavailable: {e}")
+                print(f"  [narration] OpenAI client unavailable ({e}) — "
+                      "falling back to gTTS")
         _client_cache["c"] = client
     return _client_cache["c"]
 

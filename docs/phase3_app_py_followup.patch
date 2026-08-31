@@ -1,0 +1,152 @@
+Phase 3 (Agent C) — required app.py changes, NOT applied.
+=========================================================
+
+app.py was owned by Agent B during Phase 3, so these edits are handed over
+rather than made. All the logic they call already exists and is tested in
+narration.py; these are call-site swaps only.
+
+Apply with `git apply docs/phase3_app_py_followup.patch` if app.py is
+unchanged around these hunks, or transcribe by hand — the anchors are quoted
+below each item.
+
+---------------------------------------------------------------------------
+1. REQUIRED — import the module (top of app.py, near the other local imports)
+---------------------------------------------------------------------------
+
+    import narration
+
+---------------------------------------------------------------------------
+2. REQUIRED — §4.1: let TTS_VOICE actually take effect
+---------------------------------------------------------------------------
+Three endpoints hardcode "onyx" as the request default, which always beats the
+env var because it arrives as an explicit argument. Drop the literal and let
+narration.resolve_voice() apply the precedence (request > TTS_VOICE > onyx).
+
+app.py:1924   generate_audio_endpoint
+app.py:2135   generate_video_endpoint
+app.py:2186   generate_slides_endpoint
+
+-    voice          = data.get("voice", "onyx")
++    voice          = (data.get("voice") or "").strip()   # "" -> narration.resolve_voice()
+
+The three run_* signatures should lose their literal defaults to match:
+
+-def run_generate_audio(audio_id: str, answer: str, question: str,
+-                       length_minutes: int, voice: str = "onyx",
+-                       style: str = "lecture"):
++def run_generate_audio(audio_id: str, answer: str, question: str,
++                       length_minutes: int, voice: str = "",
++                       style: str = "lecture"):
+
+(same for run_generate_video ~line 2997 and run_generate_slides ~line 3575)
+
+---------------------------------------------------------------------------
+3. REQUIRED — §4.1/§4.2/§4.3/§4.5: the lecture synthesis block
+---------------------------------------------------------------------------
+app.py:2091-2107, inside run_generate_audio, the LECTURE branch.
+
+REPLACE:
+
+        if OPENAI_TTS_AVAILABLE:
+            print(f"  Using OpenAI TTS voice: {voice}")
+            CHUNK = 4000
+            chunks = [script[i:i+CHUNK] for i in range(0, len(script), CHUNK)]
+            audio_bytes = b""
+            for chunk in chunks:
+                resp = _oai_tts.audio.speech.create(
+                    model="tts-1-hd", voice=voice, input=chunk)
+                audio_bytes += resp.content
+            with open(tmp.name, "wb") as f:
+                f.write(audio_bytes)
+        elif GTTS_AVAILABLE:
+            print("  Using gTTS fallback...")
+            tts = gTTS(text=script, lang="en", slow=False)
+            tts.save(tmp.name)
+        else:
+            raise RuntimeError("No TTS backend available")
+
+WITH:
+
+        narration.synthesize_lecture(
+            script, tmp.name, audio_id=audio_id, voice=voice,
+            style="lecture", mode="export",
+            function_name="run_generate_audio")
+
+That one call now does: pronunciation dictionary + markdown/PMID stripping
+(§4.2), OpenAI-primary with gTTS fallback (§4.1), the sidecar timestamp map
+(§4.3), and the per-character cost row (§4.5).
+
+The sidecar lands at generated_media/<audio_id>.timestamps.json — the same
+directory and stem _persist_media() uses for the MP3 — so _persist_media needs
+NO change and the Media tab keeps working as-is.
+
+---------------------------------------------------------------------------
+4. RECOMMENDED — the conversation (two-host podcast) branch
+---------------------------------------------------------------------------
+app.py:2038-2056. Two voices are intentional there, so it should NOT call
+synthesize_lecture. It needs the dictionary and a cost row:
+
+         if OPENAI_TTS_AVAILABLE:
+             HOST1_VOICE = "onyx"   # DR. CHEN
+             HOST2_VOICE = "nova"   # ALEX
+             audio_bytes = b""
++            spoken_chars = 0
+             for i, line in enumerate(lines):
+                 host  = line.get("host", "")
+                 text  = (line.get("text") or "").strip()
+                 if not text:
+                     continue
++                text = narration.prepare_for_speech(text)
++                spoken_chars += len(text)
+                 v = HOST1_VOICE if "CHEN" in host.upper() else HOST2_VOICE
+                 try:
+                     resp = _oai_tts.audio.speech.create(
+                         model="tts-1-hd", voice=v, input=text[:4096])
+...
+             with open(tmp.name, "wb") as f:
+                 f.write(audio_bytes)
++            from endo_ai import log_tts_call
++            log_tts_call("run_generate_audio_conversation", "tts-1-hd",
++                         spoken_chars, mode="export", request_id=audio_id,
++                         duration_seconds=narration.probe_duration_seconds(tmp.name))
+
+---------------------------------------------------------------------------
+5. RECOMMENDED — video and pptx narration
+---------------------------------------------------------------------------
+Both synthesise per-slide notes with model="tts-1" and log nothing.
+
+app.py:3065  run_generate_video, _tts_one()
+-                    resp = _oai_tts.audio.speech.create(
+-                        model="tts-1", voice=voice, input=notes[:4096])
++                    resp = _oai_tts.audio.speech.create(
++                        model="tts-1", voice=narration.resolve_voice(voice),
++                        input=narration.prepare_for_speech(notes)[:4096])
+
+app.py:3626  run_generate_slides, _tts_pptx()
+-                    resp = _oai_tts.audio.speech.create(
+-                        model="tts-1", voice=voice, input=narration[:4096])
++                    resp = _oai_tts.audio.speech.create(
++                        model="tts-1", voice=narration_mod.resolve_voice(voice),
++                        input=narration_mod.prepare_for_speech(narration)[:4096])
+
+NOTE the name collision: run_generate_slides already binds a local variable
+called `narration` (the slide's notes text). Import the module there as
+`import narration as narration_mod`, or rename the local — do not shadow it.
+
+Both should also accumulate characters and call endo_ai.log_tts_call once per
+export with model="tts-1" so per-export narration spend is complete.
+
+---------------------------------------------------------------------------
+6. OPTIONAL — serve the timestamp map to the web deck (Agent B's consumer)
+---------------------------------------------------------------------------
+Nothing exposes the sidecar over HTTP yet. One route, next to the other media
+routes (~app.py:3780):
+
+    @app.route("/api/media/<media_id>/timestamps")
+    def media_timestamps(media_id: str):
+        tmap = narration.load_timestamp_map(media_id)
+        if not tmap:
+            return jsonify({"error": "No timestamp map for this audio"}), 404
+        return jsonify(tmap)
+
+Gate it the same way the sibling media routes are gated.
