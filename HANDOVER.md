@@ -383,6 +383,68 @@ Measured: the question went from 10 relevant papers (and an answer that never
 mentioned Cochrane) to 36-38 across three runs, with CD005296 present and
 cited in every one. Library-pinned eval cases are now near-deterministic.
 
+## How case discussion answers (measured 2026-08-31)
+
+Written because a case answer citing two papers looked like a retrieval
+failure. It is not. The retrieval is the same engine Review uses; the loss is
+downstream.
+
+### The pipeline
+
+`/case_chat` (app.py) → clarify gate on the FIRST message only
+(`generate_clarifying_questions`, Haiku) → `run_case_chat` on a worker thread
+→ `build_evidence_base_with_progress(job_id, search_q)` → `ask_case_question`
+(endo_ai.py) → `validate_evidence_mapping` + one corrective retry → job record.
+
+Retrieval is **not** a small fixed search. It is the full engine: library
+coverage gate, union-KNN across the question and generated terms, tier
+banding, per-tier quality floors, the authority guarantee, retraction /
+superseded / withdrawn exclusion. A follow-up turn re-searches with
+`"{original case} -- {latest message}"`, so vague follow-ups still land.
+
+### What the numbers say
+
+Last five case discussions, from `evidence_mapping.jsonl`:
+
+| when | evidence base | cited | ratio | passed |
+|---|---|---|---|---|
+| 2026-04-27 | 100 | 2 | 0.02 | yes |
+| 2026-05-02 | 100 | 1 | 0.01 | yes |
+| 2026-08-09 | 3 | 2 | 0.67 | yes |
+| 2026-08-30 | 148 | 6 | 0.04 | yes |
+| 2026-08-31 | 37 | 5 | 0.14 | yes |
+
+**Evidence base: median 100 papers. Cited: median 2.** The evidence is
+retrieved and then almost entirely unused. Review, for comparison, reaches 31
+citations on its best runs against a median-26 evidence base.
+
+### The three real causes
+
+1. **`max_tokens = 2000`** for `ask_case_question`, against **8000** for
+   `ask_clinical_question`. A conversational answer that must also carry
+   citations cannot spend what it does not have.
+2. **The review-mode early stop fires on case answers.** `run_case_chat` calls
+   `build_evidence_base_with_progress(job_id, search_q)` with no `mode=`, so it
+   defaults to `"review"` — and `EARLY_STOP_MIN_PAPERS` then skips level2
+   through level5 and invitro once cochrane+level1 clear 15 papers. Those are
+   exactly the tiers a case discussion wants: case series and case reports are
+   often the only literature on an unusual presentation. Learn mode passes
+   `mode="learn"` and sweeps every tier; case was never given the same
+   treatment.
+3. **`verify_citation_support` never runs on case answers.** It is called only
+   inside `ask_clinical_question` (endo_ai.py:3866). `validate_evidence_mapping`
+   DOES run, with a corrective retry, so a case answer cannot cite a fabricated
+   PMID — but nothing checks whether the cited abstract actually supports the
+   claim, which is the check that catches real-but-irrelevant citations.
+
+### What was NOT wrong
+
+The original hypothesis was that the case path used a small fixed retrieval and
+skipped the validator. Both halves are false: retrieval is the full engine, and
+the validator runs with a retry. Reporting that plainly matters more than
+confirming the guess — a fix aimed at retrieval would have changed nothing
+visible, because retrieval was already returning a hundred papers.
+
 ## Cost
 
 A four-module Deep Learning curriculum with real retrieval costs **~$1.18**
