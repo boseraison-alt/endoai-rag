@@ -2491,35 +2491,60 @@ _NS_R    = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
 _NS_REL  = 'http://schemas.openxmlformats.org/package/2006/relationships'
 _NS_CT   = 'http://schemas.openxmlformats.org/package/2006/content-types'
 _AUDIO_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/audio'
+_MEDIA_REL = "http://schemas.microsoft.com/office/2007/relationships/media"
 _IMAGE_REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
 
 
 def _patch_slide_xml_zip(data: bytes, slide_num: int) -> bytes:
-    """
-    String-based injection of hidden audio shape + autoplay timing into slide XML.
-    Uses p:audioFile (not p:sndAc) in p:nvPr — the only valid OOXML media element there.
-    No inline namespace redeclarations (root element already declares them).
+    """Inject a hidden autoplay audio shape into one slide's XML.
+
+    Every element below is copied from what PowerPoint itself writes when you
+    insert an audio file and tick "Start automatically". That ground truth was
+    obtained by driving PowerPoint over COM and reading the saved XML, because
+    three earlier hand-authored attempts all produced files PowerPoint refused
+    to open with "corrupted and unreadable" — and the COM render path used for
+    verification opened them anyway, so nothing caught it.
+
+    The three things the hand-written version got wrong:
+
+      * `<p:audioFile>` — no such element. Audio lives in the DrawingML
+        namespace as `<a:audioFile>`. This was the fatal one.
+      * `<p:audio>` was nested inside the click-sequence's `<p:par>` chain. It
+        is a SIBLING of `<p:seq>`, both children of the root node's childTnLst.
+      * `<p:cond evt="onPrevClick"><p:tn/></p:cond>` — the event names are
+        `onPrev`/`onNext` and the target is `<p:tgtEl><p:sldTgt/></p:tgtEl>`;
+        a bare `<p:tn/>` has no `val` and is invalid.
+
+    PowerPoint also declares the mp3 TWICE: once as an `audio` relationship for
+    `a:audioFile`, and once as a Microsoft `media` relationship referenced from
+    a `p14:media` extension. Both are required for the media to play in modern
+    PowerPoint, which is why `_patch_slide_rels_zip` writes two rels per slide.
     """
     xml = data.decode('utf-8')
     shape_id  = 900 + slide_num
-    rId_audio = f'rIdAudio{slide_num}'
+    rId_audio = f'rIdAudio{slide_num}'      # .../relationships/audio
+    rId_media = f'rIdMedia{slide_num}'      # microsoft .../relationships/media
     rId_icon  = f'rIdAIcon{slide_num}'
 
-    # 1. Hidden audio p:pic — no inline namespace redeclarations (already at root).
-    #    p:audioFile with r:link is the correct OOXML way to embed audio in a shape.
-    #    cx/cy="457200" = 0.5 inch; valid non-zero EMU value.
     pic = (
         f'<p:pic>'
         f'<p:nvPicPr>'
         f'<p:cNvPr id="{shape_id}" name="Narration {slide_num}">'
         f'<a:hlinkClick r:id="" action="ppaction://media"/>'
         f'</p:cNvPr>'
-        f'<p:cNvPicPr><a:picLocks noRot="1"/></p:cNvPicPr>'
-        f'<p:nvPr><p:audioFile r:link="{rId_audio}"/></p:nvPr>'
+        f'<p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr>'
+        f'<p:nvPr>'
+        f'<a:audioFile r:link="{rId_audio}"/>'
+        f'<p:extLst>'
+        f'<p:ext uri="{{DAA4B4D4-6D71-4841-9C94-3DE7FCFB9230}}">'
+        f'<p14:media xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" '
+        f'r:embed="{rId_media}"/>'
+        f'</p:ext>'
+        f'</p:extLst>'
+        f'</p:nvPr>'
         f'</p:nvPicPr>'
         f'<p:blipFill>'
         f'<a:blip r:embed="{rId_icon}"/>'
-        f'<a:srcRect/>'
         f'<a:stretch><a:fillRect/></a:stretch>'
         f'</p:blipFill>'
         f'<p:spPr>'
@@ -2531,40 +2556,47 @@ def _patch_slide_xml_zip(data: bytes, slide_num: int) -> bytes:
     if '</p:spTree>' in xml:
         xml = xml.replace('</p:spTree>', pic + '</p:spTree>', 1)
 
-    # 2. Strip any existing <p:timing> block
     xml = _re.sub(r'<p:timing\b[^>]*>[\s\S]*?</p:timing>', '', xml)
 
-    # 3. Autoplay timing — no inline namespace redeclarations.
-    #    p:prevCondLst / p:nextCondLst are DIRECT children of p:seq (no p:nav wrapper —
-    #    p:nav is not a valid OOXML element and causes PowerPoint to reject the file).
+    # Structure mirrors PowerPoint's own: a mainSeq holding one clickEffect
+    # that issues playFrom(0.0), and a SIBLING p:audio media node.
     timing = (
-        f'<p:timing>'
-        f'<p:tnLst><p:par>'
-        f'<p:cTn id="1" dur="indefinite" restart="whenNotActive" nodeType="tmRoot">'
-        f'<p:childTnLst><p:seq concurrent="1" nextAc="seek">'
-        f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq">'
-        f'<p:childTnLst><p:par><p:cTn id="3" fill="hold">'
-        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-        f'<p:childTnLst><p:par><p:cTn id="4" fill="hold">'
-        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst>'
-        f'<p:childTnLst><p:audio>'
-        f'<p:cMediaNode vol="80000" mute="0" numSld="0" showWhenStopped="0">'
-        f'<p:cTn id="5" fill="hold" display="0">'
-        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>'
+        f'<p:timing><p:tnLst><p:par>'
+        f'<p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst>'
+        f'<p:seq concurrent="1" nextAc="seek">'
+        f'<p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>'
+        f'<p:par><p:cTn id="3" fill="hold">'
+        f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst><p:childTnLst>'
+        f'<p:par><p:cTn id="4" fill="hold">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>'
+        f'<p:par><p:cTn id="5" presetID="1" presetClass="mediacall" '
+        f'presetSubtype="0" fill="hold" nodeType="clickEffect">'
+        f'<p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>'
+        f'<p:cmd type="call" cmd="playFrom(0.0)"><p:cBhvr>'
+        f'<p:cTn id="6" dur="indefinite" fill="hold"/>'
         f'<p:tgtEl><p:spTgt spid="{shape_id}"/></p:tgtEl>'
-        f'</p:cMediaNode></p:audio></p:childTnLst>'
-        f'</p:cTn></p:par></p:childTnLst>'
-        f'</p:cTn></p:par></p:childTnLst></p:cTn>'
-        f'<p:prevCondLst><p:cond evt="onPrevClick" delay="0"><p:tn/></p:cond></p:prevCondLst>'
-        f'<p:nextCondLst><p:cond evt="onNextClick" delay="0"><p:tn/></p:cond></p:nextCondLst>'
-        f'</p:seq></p:childTnLst></p:cTn>'
-        f'</p:par></p:tnLst>'
-        f'<p:bldLst><p:bldP spid="{shape_id}" grpId="0" uiExpand="1" build="p"/></p:bldLst>'
-        f'</p:timing>'
+        f'</p:cBhvr></p:cmd>'
+        f'</p:childTnLst></p:cTn></p:par>'
+        f'</p:childTnLst></p:cTn></p:par>'
+        f'</p:childTnLst></p:cTn></p:par>'
+        f'</p:childTnLst></p:cTn>'
+        f'<p:prevCondLst><p:cond evt="onPrev" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst>'
+        f'<p:nextCondLst><p:cond evt="onNext" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst>'
+        f'</p:seq>'
+        f'<p:audio><p:cMediaNode vol="80000" showWhenStopped="0">'
+        f'<p:cTn id="7" fill="hold" display="0">'
+        f'<p:stCondLst><p:cond delay="indefinite"/></p:stCondLst>'
+        f'<p:endCondLst><p:cond evt="onStopAudio" delay="0">'
+        f'<p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:endCondLst>'
+        f'</p:cTn>'
+        f'<p:tgtEl><p:spTgt spid="{shape_id}"/></p:tgtEl>'
+        f'</p:cMediaNode></p:audio>'
+        f'</p:childTnLst></p:cTn></p:par></p:tnLst></p:timing>'
     )
     if '</p:sld>' in xml:
         xml = xml.replace('</p:sld>', timing + '</p:sld>', 1)
-
     return xml.encode('utf-8')
 
 
@@ -2572,10 +2604,17 @@ def _patch_slide_rels_zip(data: bytes, slide_num: int) -> bytes:
     """String-based injection of audio + icon relationships into slide rels XML."""
     xml = data.decode('utf-8')
     rId_audio = f'rIdAudio{slide_num}'
+    rId_media = f'rIdMedia{slide_num}'
     rId_icon  = f'rIdAIcon{slide_num}'
     inserts = ''
     if rId_audio not in xml:
         inserts += (f'<Relationship Id="{rId_audio}" Type="{_AUDIO_REL}"'
+                    f' Target="../media/narration_s{slide_num}.mp3"/>')
+    # PowerPoint declares the same mp3 twice: the standard `audio` rel above
+    # for a:audioFile, and this Microsoft `media` rel for the p14:media
+    # extension. Modern PowerPoint needs both to play embedded media.
+    if rId_media not in xml:
+        inserts += (f'<Relationship Id="{rId_media}" Type="{_MEDIA_REL}"'
                     f' Target="../media/narration_s{slide_num}.mp3"/>')
     if rId_icon not in xml:
         inserts += (f'<Relationship Id="{rId_icon}" Type="{_IMAGE_REL}"'
