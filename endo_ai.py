@@ -5231,7 +5231,7 @@ AVAILABLE PATTERNS — use the one whose structure best matches the content:
    color options: accent_teal, accent_gold, accent_coral, ink_secondary, ink_muted
 
 10. takeaways_slide  (final summary, always last or second-to-last)
-    {"pattern":"takeaways_slide","eyebrow":"MODULE X · KEY TAKEAWAYS","title":"Short serif italic title","items":[{"number":"01","header":"Bold takeaway","body":"Supporting sentence."}],"speaker_notes":"..."}
+    {"pattern":"takeaways_slide","eyebrow":"MODULE X · KEY TAKEAWAYS","title":"Short serif italic title","items":[{"number":"01","header":"Bold takeaway","body":"Supporting sentence."}],"does_not_apply":"The single clearest situation in which this recommendation does NOT hold, taken verbatim from the source text. Omit the key entirely if the source states no such limit — never invent one.","speaker_notes":"..."}
 """
 
     pattern_rules = f"""

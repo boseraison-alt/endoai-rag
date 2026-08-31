@@ -74,6 +74,9 @@ var document = {
   querySelectorAll: function(){ return []; },
   querySelector: function(){ return null; },
 };
+// The export payloads read window._lastJob for the paper list that feeds the
+// evidence-shape card; node has no window.
+var window = {_lastJob: {papers: [{pmid: "1", level_key: "level1"}]}};
 var _fetches = [];
 function fetch(url, opts) {
   _fetches.push({url: url, body: opts && opts.body ? JSON.parse(opts.body) : null});

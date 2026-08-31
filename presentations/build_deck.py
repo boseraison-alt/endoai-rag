@@ -172,6 +172,12 @@ def _coerce_legacy_slide(spec: dict, deck: dict) -> dict:
             "eyebrow": spec.get("eyebrow", "KEY TAKEAWAYS"),
             "title": spec.get("title", ""),
             "items": items,
+            # §1.4 #7's "DOES NOT APPLY WHEN" box. The renderer has always
+            # supported it; the generator never emitted the field, so the box
+            # was dormant. Accept both spellings — webdeck/plan.py reads
+            # `contraindication` as an alias too.
+            "does_not_apply": spec.get("does_not_apply")
+                              or spec.get("contraindication", ""),
             "speaker_notes": spec.get("speaker_notes", ""),
         }
 

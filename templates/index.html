@@ -5854,7 +5854,11 @@ function _startVideoExport(jobId) {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration, voice:_exportVoice,
       question: _exportSource ? _exportSource.question : '',
-      answer:   _exportSource ? _exportSource.answer   : ''}),
+      answer:   _exportSource ? _exportSource.answer   : '',
+      // The pptx evidence-shape card needs the tier breakdown, same as the
+      // web deck. A history-loaded answer has no server-side job to read it
+      // from, so the page sends what it rendered.
+      papers: (window._lastJob && window._lastJob.papers) || []}),
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {
@@ -5901,7 +5905,11 @@ function _startSlidesExport(jobId) {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration, voice:_exportVoice,
       question: _exportSource ? _exportSource.question : '',
-      answer:   _exportSource ? _exportSource.answer   : ''}),
+      answer:   _exportSource ? _exportSource.answer   : '',
+      // The pptx evidence-shape card needs the tier breakdown, same as the
+      // web deck. A history-loaded answer has no server-side job to read it
+      // from, so the page sends what it rendered.
+      papers: (window._lastJob && window._lastJob.papers) || []}),
   })
   .then(function(r){ return r.json(); })
   .then(function(data) {

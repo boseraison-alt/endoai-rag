@@ -9,6 +9,8 @@ import sys
 import uuid
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+import narration
 import tempfile
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_file, session
@@ -1921,7 +1923,7 @@ def generate_audio_endpoint():
     job_id         = data.get("job_id", "")
     length_minutes = int(data.get("length_minutes", 10))
     length_minutes = max(5, min(60, length_minutes))
-    voice          = data.get("voice", "onyx")
+    voice          = (data.get("voice") or "").strip()   # "" -> narration.resolve_voice()
     style          = data.get("style", "lecture")   # "lecture" | "conversation"
 
     try:
@@ -2014,7 +2016,7 @@ def audio_download(audio_id: str):
 
 
 def run_generate_audio(audio_id: str, answer: str, question: str,
-                       length_minutes: int, voice: str = "onyx",
+                       length_minutes: int, voice: str = "",
                        style: str = "lecture"):
     try:
         # ── CONVERSATION style (two-host podcast) ───────────────
@@ -2088,23 +2090,15 @@ def run_generate_audio(audio_id: str, answer: str, question: str,
         tmp = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
         tmp.close()
 
-        if OPENAI_TTS_AVAILABLE:
-            print(f"  Using OpenAI TTS voice: {voice}")
-            CHUNK = 4000
-            chunks = [script[i:i+CHUNK] for i in range(0, len(script), CHUNK)]
-            audio_bytes = b""
-            for chunk in chunks:
-                resp = _oai_tts.audio.speech.create(
-                    model="tts-1-hd", voice=voice, input=chunk)
-                audio_bytes += resp.content
-            with open(tmp.name, "wb") as f:
-                f.write(audio_bytes)
-        elif GTTS_AVAILABLE:
-            print("  Using gTTS fallback...")
-            tts = gTTS(text=script, lang="en", slow=False)
-            tts.save(tmp.name)
-        else:
-            raise RuntimeError("No TTS backend available")
+        # One call covers WORKLIST 4.1/4.2/4.3/4.5: pronunciation dictionary
+        # and marker stripping, OpenAI-primary with a LOUD gTTS fallback, the
+        # sidecar timestamp map the web deck reads, and the per-character cost
+        # row. The sidecar lands beside the mp3 under the same stem, so
+        # _persist_media needs no change.
+        narration.synthesize_lecture(
+            script, tmp.name, audio_id=audio_id, voice=voice,
+            style="lecture", mode="export",
+            function_name="run_generate_audio")
 
         with audio_jobs_lock:
             audio_jobs[audio_id]["status"]    = "complete"
@@ -2132,7 +2126,7 @@ def generate_slides_endpoint():
     job_id         = data.get("job_id", "")
     length_minutes = int(data.get("length_minutes", 10))
     length_minutes = max(5, min(60, length_minutes))
-    voice          = data.get("voice", "onyx")
+    voice          = (data.get("voice") or "").strip()   # "" -> narration.resolve_voice()
 
     try:
         src_question, src_answer = _resolve_export_source(data)
@@ -2153,7 +2147,8 @@ def generate_slides_endpoint():
 
     thread = threading.Thread(
         target=run_generate_slides,
-        args=(audio_id, src_answer, src_question, length_minutes, voice),
+        args=(audio_id, src_answer, src_question, length_minutes, voice,
+              data.get("papers") or []),
         daemon=True,
     )
     thread.start()
@@ -2424,7 +2419,7 @@ def generate_video_endpoint():
     job_id         = data.get("job_id", "")
     length_minutes = int(data.get("length_minutes", 10))
     length_minutes = max(5, min(60, length_minutes))
-    voice          = data.get("voice", "onyx")
+    voice          = (data.get("voice") or "").strip()   # "" -> narration.resolve_voice()
 
     try:
         src_question, src_answer = _resolve_export_source(data)
@@ -3235,7 +3230,7 @@ def _render_slide_image(slide_data: dict, slide_num: int, total_slides: int,
 # ── Narrated video generation ─────────────────────────────
 
 def run_generate_video(audio_id: str, answer: str, question: str,
-                       length_minutes: int, voice: str = "onyx"):
+                       length_minutes: int, voice: str = ""):
     """Generate a narrated MP4 video: Pillow slide images + OpenAI TTS audio."""
     import os as _os3, tempfile as _tmp3
     try:
@@ -3813,16 +3808,26 @@ _RENDERERS = {
 
 
 def run_generate_slides(audio_id: str, answer: str, question: str,
-                        length_minutes: int, voice: str = "onyx"):
+                        length_minutes: int, voice: str = "",
+                        papers: list | None = None):
     try:
-        from endo_ai import generate_slides_specs
         from presentations.build_deck import build_deck_from_specs
+        from presentations.chart_data import tier_counts_from_papers
+        import slide_spec_cache
 
         with audio_jobs_lock:
             audio_jobs[audio_id]["status"] = "generating_content"
 
         print(f"  Generating {length_minutes}-min pattern-based slide specs...")
-        deck = generate_slides_specs(answer, question, length_minutes)
+        # §5.1: ONE canonical text object per answer. The web deck already
+        # reads through this cache; the pptx path used to call the generator
+        # directly, so the two decks were laying out two DIFFERENT LLM
+        # generations of the same answer and their content hashes could never
+        # have matched.
+        deck, spec_hash, from_cache = slide_spec_cache.get_or_build(
+            answer, question, length_minutes)
+        print(f"  slide spec {spec_hash[:12]} "
+              f"({'cached' if from_cache else 'generated'})")
 
         slides_list = deck.get("slides", []) or []
         if not slides_list:
@@ -3837,7 +3842,14 @@ def run_generate_slides(audio_id: str, answer: str, question: str,
             audio_jobs[audio_id]["slides_done"]  = 0
 
         print(f"  Building {len(slides_list)}-slide PPTX with design-token patterns...")
-        prs, slides_queue = build_deck_from_specs(deck)
+        # source_text is what the chart gate verifies plotted values against.
+        # Without it every chart is correctly suppressed — §1.5 forbids
+        # plotting a number that is not verbatim in the cited source, and the
+        # deck's own speaker notes cannot serve as that corpus because the
+        # same model wrote both.
+        prs, slides_queue = build_deck_from_specs(
+            deck, source_text=answer,
+            tier_counts=tier_counts_from_papers(papers or []))
 
         # ── Save base PPTX (no audio yet) ─────────────────────
         tmp_base = tempfile.NamedTemporaryFile(suffix=".pptx", delete=False)
