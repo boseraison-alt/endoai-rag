@@ -799,6 +799,104 @@ class TestExportRouteWiring:
             "without this the Media tab downloads the deck as octet-stream"
 
 
+# ── the page's own JavaScript (§3.5) ─────────────────────
+# Runs the real functions out of templates/index.html under node, the technique
+# tests/test_export_client.py established. Asserting on a Python
+# re-implementation of the dispatcher would prove nothing about the page.
+class TestExportBarJavaScript:
+
+    @staticmethod
+    def _js(body):
+        from test_export_client import HARNESS, _extract_function
+        return (HARNESS
+                + "var _lastJob = null; var window = {};\n"
+                + _extract_function("startExport") + "\n"
+                + _extract_function("_startWebDeckExport") + "\n"
+                + _extract_function("_startAudioExport") + "\n"
+                + _extract_function("_startVideoExport") + "\n"
+                + _extract_function("_startSlidesExport") + "\n"
+                + body)
+
+    def _run(self, body):
+        from test_export_client import _run_node
+        return json.loads(_run_node(self._js(body)))
+
+    def test_the_web_deck_style_reaches_its_own_endpoint(self):
+        got = self._run("""
+            _exportSource = {question: 'Q', answer: 'A on screen'};
+            currentJob = null; _exportStyle = 'webdeck';
+            startExport();
+            console.log(JSON.stringify({url: _fetches[0].url,
+                                        body: _fetches[0].body}));
+        """)
+        assert got["url"] == "/generate_webdeck"
+        assert got["body"]["answer"] == "A on screen"
+        assert got["body"]["question"] == "Q"
+
+    def test_a_history_loaded_answer_still_exports(self):
+        """The bug the audio fix closed. With no live job the deck export must
+        still go out, carrying the answer the clinician is looking at."""
+        got = self._run("""
+            _exportSource = {question: 'Q', answer: 'A'};
+            currentJob = null; _exportStyle = 'webdeck';
+            startExport();
+            console.log(JSON.stringify({n: _fetches.length,
+                status: document.getElementById('exportStatus').textContent}));
+        """)
+        assert got["n"] == 1
+        assert got["status"] != "No answer to export."
+
+    def test_paper_metadata_travels_with_the_request(self):
+        """Without it a history-loaded deck has no evidence-shape card and no
+        references — the two things built from paper metadata."""
+        got = self._run("""
+            _exportSource = {question: 'Q', answer: 'A'};
+            window._lastJob = {papers: [{pmid: '1', level_key: 'level1'}]};
+            currentJob = null; _exportStyle = 'webdeck';
+            startExport();
+            console.log(JSON.stringify(_fetches[0].body.papers));
+        """)
+        assert got == [{"pmid": "1", "level_key": "level1"}]
+
+    def test_missing_paper_metadata_sends_an_empty_list_not_a_crash(self):
+        got = self._run("""
+            _exportSource = {question: 'Q', answer: 'A'};
+            window._lastJob = undefined;
+            currentJob = null; _exportStyle = 'webdeck';
+            startExport();
+            console.log(JSON.stringify({papers: _fetches[0].body.papers,
+                                        n: _fetches.length}));
+        """)
+        assert got["papers"] == [] and got["n"] == 1
+
+    def test_the_other_export_styles_are_untouched(self):
+        for style, url in [("lecture", "/generate_audio"),
+                           ("video", "/generate_video"),
+                           ("slides", "/generate_slides")]:
+            got = self._run(f"""
+                _exportSource = {{question: 'Q', answer: 'A'}};
+                currentJob = null; _exportStyle = '{style}';
+                startExport();
+                console.log(JSON.stringify({{url: _fetches[0].url}}));
+            """)
+            assert got["url"] == url
+
+    def test_the_export_bar_offers_the_web_deck_card(self):
+        html = (ROOT / "templates" / "index.html").read_text(encoding="utf-8")
+        card = re.search(r'<div class="style-card[^"]*" data-style="webdeck".*?</div>',
+                         html, re.S)
+        assert card, "no Web deck card in the export bar"
+        assert "selectExportStyle('webdeck')" in card.group(0)
+
+    def test_the_media_tab_can_open_a_saved_deck(self):
+        """A .html item with only a Download button is a dead end in the
+        sidebar — the whole point of the format is that it opens."""
+        html = (ROOT / "templates" / "index.html").read_text(encoding="utf-8")
+        render = html.split("function renderMediaItem")[1].split("\nfunction ")[0]
+        assert "webdeck:" in render
+        assert "/webdeck_view/" in render
+
+
 # ── the browser half (§3.6) ──────────────────────────────
 # Runs the shipped page under a real engine. Opt-in because it needs a
 # Chromium download; the assertions above cover the same rules structurally.

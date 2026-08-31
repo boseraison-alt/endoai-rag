@@ -3031,7 +3031,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
           <span class="style-card-desc">PowerPoint with<br>speaker notes</span>
         </div>
         <div class="style-card" data-style="webdeck" onclick="selectExportStyle('webdeck')">
-          <span class="style-card-icon">🖥</span>
+          <span class="style-card-icon">🌐</span>
           <span class="style-card-name">Web deck</span>
           <span class="style-card-desc">One HTML file<br>clickable citations</span>
         </div>
@@ -5976,7 +5976,7 @@ function pollWebDeckJob(aid) {
     if (data.status === 'complete') {
       hideDentalAnim(); _lockExportBtns(false); _currentExportId = null; _hidePhaseBar();
       document.getElementById('exportStatus').innerHTML =
-        '🖥 Ready — <a href="/webdeck_view/'+aid+'" target="_blank" style="color:#12885a;font-weight:600">Open deck</a>' +
+        '🌐 Ready — <a href="/webdeck_view/'+aid+'" target="_blank" style="color:#12885a;font-weight:600">Open deck</a>' +
         ' · <a href="/webdeck_view/'+aid+'?print-pdf" target="_blank" style="color:#12885a;">Print view</a>' +
         ' · <a href="/webdeck_download/'+aid+'" style="color:#12885a;" download>Download HTML</a>';
       _notifyMediaReady();
@@ -6080,7 +6080,7 @@ function loadMediaLibrary() {
 }
 
 function renderMediaItem(item) {
-  var icons = { conversation:'🎙', lecture:'📖', video:'🎬', slides:'📊', webdeck:'🖥' };
+  var icons = { conversation:'🎙', lecture:'📖', video:'🎬', slides:'📊', webdeck:'🌐' };
   var icon  = icons[item.style] || '🎵';
   var q     = escHtml((item.question || '').substring(0, 120));
   var date  = item.created_at ? item.created_at.substring(0, 10) : '';
