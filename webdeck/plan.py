@@ -250,12 +250,16 @@ def _citation_fields(spec_slide: dict):
 def plan_deck(spec: dict, papers: dict, papers_list, source_text: str) -> list[dict]:
     raw = (spec or {}).get("slides") or []
     planned: list[dict] = []
-    for s in raw:
+    for spec_index, s in enumerate(raw):
         for out in adapt(s, papers, source_text):
             out.setdefault("pattern", s.get("pattern"))
             out.setdefault("eyebrow", s.get("eyebrow") or "")
             out.setdefault("speaker_notes", s.get("speaker_notes") or "")
             out["_source"] = s
+            # Which spec slide this section came from. A spec slide can expand
+            # to several sections under the §1.3 body budget, so narration
+            # timings keyed on spec slides need this to find a section.
+            out["_spec_index"] = spec_index
             planned.append(out)
 
     # §1.4 #8 lists the deck's evidence base, which is the answer's citations —
@@ -300,3 +304,13 @@ def plan_deck(spec: dict, papers: dict, papers_list, source_text: str) -> list[d
             page += 1
             s["_page"] = page
     return planned
+
+
+def spec_to_section_map(planned) -> dict:
+    """spec-slide index → the FIRST deck section it produced."""
+    out = {}
+    for i, s in enumerate(planned):
+        idx = s.get("_spec_index")
+        if isinstance(idx, int) and idx not in out:
+            out[idx] = i
+    return out

@@ -78,7 +78,7 @@ def _section(slide, ctx) -> str:
 
 def build_web_deck(spec: dict, question: str, answer: str,
                    papers_list=None, abstracts=None, narration=None,
-                   spec_hash: str = "") -> str:
+                   spec_hash: str = "", narration_loader=None) -> str:
     """Render the deck. `spec` is the canonical object from
     `slide_spec_cache.get_or_build` — never re-derived from `answer`, which is
     used only as the citation source and the §1.5 chart-value check."""
@@ -97,6 +97,17 @@ def build_web_deck(spec: dict, question: str, answer: str,
     ctx = {"papers": papers, "question": question,
            "tier_counts": tier_counts(papers_list)}
     sections = "\n".join(_section(s, ctx) for s in planned)
+
+    # §3.3. The loader needs the spec→section mapping, which only exists after
+    # planning, so it is injected as a callable rather than pre-loaded. Any
+    # failure inside it costs the deck its audio, never the export.
+    if narration is None and narration_loader is not None:
+        try:
+            narration = narration_loader(len((spec or {}).get("slides") or []),
+                                         P.spec_to_section_map(planned))
+        except Exception as e:
+            print(f"  [webdeck] narration loader failed ({e}); no audio embedded")
+            narration = None
 
     config = {
         "width": assets.SLIDE_W, "height": assets.SLIDE_H,

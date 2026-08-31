@@ -169,17 +169,32 @@ def _pill_row(pmids, papers) -> str:
             + "</div>")
 
 
-def _is_light(hex_color: str) -> bool:
-    """WCAG relative luminance, used only to pick black-or-white ink on a
-    coloured chip. The 0.42 cut is where #a78bfa (Level III) lands on the
-    light side and #0891b2 (Level I) on the dark side."""
+DARK_INK = "#1b2033"
+LIGHT_INK = "#ffffff"
+
+
+def _luminance(hex_color: str) -> float:
+    """WCAG relative luminance."""
     h = hex_color.lstrip("#")
     r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
 
     def lin(c):
         return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b) > 0.42
+    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+
+
+def ink_for(bg: str) -> str:
+    """Whichever of white / near-black contrasts better against `bg`.
+
+    Measured, not eyeballed. A fixed white label is what fails on #a78bfa —
+    and Level III, whose fill that is, is exactly the tier §1.2 says must
+    ALWAYS carry its label.
+    """
+    lum = _luminance(bg)
+    white_ratio = 1.05 / (lum + 0.05)
+    dark_ratio = (lum + 0.05) / (_luminance(DARK_INK) + 0.05)
+    return DARK_INK if dark_ratio > white_ratio else LIGHT_INK
 
 
 # ── evidence-shape bar (§1.4 #1 — MANDATORY on every deck) ──
@@ -212,10 +227,7 @@ def evidence_shape(tier_counts: dict) -> str:
         n = counts[slot]
         color = T.chart_color_light(slot)
         name = T.TIER_NAME.get(slot, slot)
-        # Level III's fill is the light lavender of the CVD-validated set, so a
-        # white in-segment label on it fails contrast outright — and Level III
-        # is exactly the tier §1.2 says must ALWAYS carry its label.
-        ink = "#1b2033" if _is_light(color) else "#ffffff"
+        ink = ink_for(color)
         label = (f'<span class="ev-seg-label" style="color:{ink}">{esc(name)}</span>'
                  if (slot in T.ALWAYS_LABEL or n / total >= 0.16) else "")
         segs.append(f'<span class="ev-seg" style="flex-grow:{n};background:{color}" '
@@ -413,7 +425,7 @@ def layout_decision(s, ctx) -> str:
 
 
 # ── layout 6: chart ──────────────────────────────────────
-def _wrap_tspans(text, x, y, width=20, max_lines=2, dy=15):
+def _wrap_tspans(text, x, width=20, max_lines=2, dy=15):
     """SVG has no text wrapping. An axis label that overflows is elided HERE
     only — `layout_chart` also prints every label verbatim beneath the chart,
     so no word is lost from the slide."""
@@ -454,7 +466,7 @@ def _bar_svg(series) -> str:
                       f'class="v-label" text-anchor="middle">{esc(raw)}</text>')
         cx = x + bw / 2
         labels.append(f'<text y="{h + 22:.1f}" class="x-label" text-anchor="middle">'
-                      f'<title>{esc(name)}</title>{_wrap_tspans(name, cx, h + 22)}</text>')
+                      f'<title>{esc(name)}</title>{_wrap_tspans(name, cx)}</text>')
     return (f'<svg class="chart" viewBox="0 0 {w} {h + 56}" role="img">'
             f'{"".join(grid)}{"".join(bars)}{"".join(labels)}'
             f'<line x1="0" y1="{h}" x2="{w}" y2="{h}" class="axis"/></svg>')

@@ -2240,6 +2240,31 @@ def _embed_abstracts(pmids) -> dict:
     return out
 
 
+def _find_narration_audio_id(question: str, length_minutes: int) -> str:
+    """Newest audio render of the same question at the same length.
+
+    The timestamp sidecar (narration.build_timestamp_map) records the audio_id,
+    voice and duration but nothing that identifies WHICH answer was narrated,
+    so this is the only available link and it is deliberately narrow: a
+    different length is a different script, and a different question is a
+    different deck. No match simply means a deck without audio.
+    """
+    q = (question or "").strip()
+    if not q:
+        return ""
+    for item in _load_media_index():          # newest first
+        if item.get("type") != "audio":
+            continue
+        if (item.get("question") or "").strip() != q:
+            continue
+        if int(item.get("length_minutes") or 0) != int(length_minutes):
+            continue
+        if os.path.exists(os.path.join(MEDIA_DIR,
+                                       f"{item['id']}.timestamps.json")):
+            return item["id"]
+    return ""
+
+
 @app.route("/generate_webdeck", methods=["POST"])
 def generate_webdeck_endpoint():
     data           = request.json or {}
@@ -2313,20 +2338,22 @@ def run_generate_webdeck(audio_id: str, answer: str, question: str,
         abstracts = _embed_abstracts(cited)
         print(f"  [webdeck] embedded {len(abstracts)}/{len(cited)} abstracts")
 
-        # §3.3 — audio only if a sidecar for THIS deck exists. Absent, the deck
-        # is built without it rather than failing.
-        narration = None
-        try:
-            narration = load_narration(MEDIA_DIR, spec_hash=spec_hash,
-                                       audio_id=narration_audio_id,
-                                       slide_count=len(slides) * 3)
-        except Exception as e:
-            print(f"  [webdeck] narration sidecar ignored: {e}")
-        print(f"  [webdeck] narration: {'attached' if narration else 'none'}")
+        # §3.3 — attach an existing narration render for the SAME answer. The
+        # sidecar carries no answer identity of its own, so the link is the
+        # media index: same question, same length, most recent audio render.
+        narr_id = narration_audio_id or _find_narration_audio_id(
+            question, length_minutes)
+
+        def _load_narration(spec_slide_count, spec_to_section):
+            if not narr_id:
+                return None
+            return load_narration(MEDIA_DIR, narr_id,
+                                  spec_slide_count=spec_slide_count,
+                                  spec_to_section=spec_to_section)
 
         html_out = build_web_deck(spec, question, answer, papers_list=papers,
-                                  abstracts=abstracts, narration=narration,
-                                  spec_hash=spec_hash)
+                                  abstracts=abstracts, spec_hash=spec_hash,
+                                  narration_loader=_load_narration)
 
         tmp = tempfile.NamedTemporaryFile(suffix=".html", delete=False,
                                           mode="w", encoding="utf-8")

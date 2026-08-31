@@ -298,6 +298,7 @@ body {{ font-family: var(--font-body); color: var(--text-body); }}
   font-size: 11px; cursor: pointer; }}
 #n-sync[aria-pressed="true"] {{ background: {T.PMID_PILL[0]};
   color: {T.PMID_PILL[1]}; border-color: {T.PMID_PILL[1]}; }}
+#n-sync:disabled {{ cursor: help; opacity: 0.6; }}
 
 /* ── fallback: reveal.js unavailable, or ?print-pdf ── */
 html.no-reveal body, html.print-pdf body {{ background: var(--bg); }}
@@ -456,12 +457,23 @@ def runtime_js(config_json: str) -> str:
   // ── §3.3 narration sync ────────────────────────────────
   function setupNarration(deck) {
     var n = CFG.narration;
-    if (!n || !n.cues || !n.cues.length || !n.audio_src) return;
+    if (!n || !n.audio_src) return;
     var bar = document.getElementById("narration");
     var audio = document.getElementById("n-audio");
     var btn = document.getElementById("n-sync");
     audio.src = n.audio_src;
     bar.classList.add("on");
+
+    // No usable per-slide timings: the audio still plays, and the reason
+    // auto-advance is unavailable is stated rather than left to look like a
+    // feature that silently did nothing.
+    if (!n.synced || !n.cues || !n.cues.length) {
+      btn.setAttribute("aria-pressed", "false");
+      btn.disabled = true;
+      btn.textContent = "Auto-advance off";
+      if (n.sync_note) btn.title = n.sync_note;
+      return;
+    }
 
     var synced = true;
     btn.setAttribute("aria-pressed", "true");
