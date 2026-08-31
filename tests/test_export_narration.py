@@ -367,3 +367,39 @@ def test_empty_notes_produce_no_request_and_no_cost(monkeypatch):
     seg = narration.synthesize_segment("   \n  ")
     assert seg["audio"] == b""
     assert seg["characters"] == 0
+
+
+class TestPodcastBranchUsesTheDictionary:
+    """The conversation/podcast export was the last path still calling the raw
+    TTS API, so a podcast said "er cr ysgg" while every other export said
+    "erbium chromium Y-S-G-G". Two voices are deliberate there, so it cannot
+    use resolve_voice() — but the dictionary, the model and the cost row all
+    apply."""
+
+    def _source(self):
+        import inspect, app
+        return inspect.getsource(app.run_generate_audio)
+
+    def test_podcast_does_not_call_the_raw_tts_api(self):
+        src = self._source()
+        conv = src[src.index("conversation"):src.index("LECTURE style")]
+        assert "_oai_tts.audio.speech.create" not in conv, (
+            "the podcast branch is back on the legacy call and will speak raw "
+            "notation")
+
+    def test_podcast_goes_through_synthesize_segment(self):
+        src = self._source()
+        conv = src[src.index("conversation"):src.index("LECTURE style")]
+        assert "narration.synthesize_segment" in conv
+
+    def test_podcast_logs_one_cost_row(self):
+        src = self._source()
+        conv = src[src.index("conversation"):src.index("LECTURE style")]
+        assert "log_narration_cost" in conv
+
+    def test_podcast_keeps_two_distinct_host_voices(self):
+        """The fix must not collapse the two hosts onto one voice."""
+        src = self._source()
+        conv = src[src.index("conversation"):src.index("LECTURE style")]
+        assert "HOST1_VOICE" in conv and "HOST2_VOICE" in conv
+        assert "onyx" in conv and "nova" in conv

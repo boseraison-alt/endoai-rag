@@ -2038,9 +2038,17 @@ def run_generate_audio(audio_id: str, answer: str, question: str,
             tmp.close()
 
             if OPENAI_TTS_AVAILABLE:
+                # Two voices are deliberate here, so this cannot use
+                # resolve_voice() — but everything else the other exports get
+                # applies: the pronunciation dictionary, tts-1-hd, sentence
+                # splitting instead of a silent notes[:4096] truncation, and a
+                # single cost row. Without it the podcast was the last export
+                # still saying "er cr ysgg".
                 HOST1_VOICE = "onyx"   # DR. CHEN
                 HOST2_VOICE = "nova"   # ALEX
                 audio_bytes = b""
+                spoken_chars = 0
+                used_model = narration.resolve_model(None)
                 for i, line in enumerate(lines):
                     host  = line.get("host", "")
                     text  = (line.get("text") or "").strip()
@@ -2048,14 +2056,22 @@ def run_generate_audio(audio_id: str, answer: str, question: str,
                         continue
                     v = HOST1_VOICE if "CHEN" in host.upper() else HOST2_VOICE
                     try:
-                        resp = _oai_tts.audio.speech.create(
-                            model="tts-1-hd", voice=v, input=text[:4096])
-                        audio_bytes += resp.content
+                        seg = narration.synthesize_segment(
+                            text, voice=v, model=used_model,
+                            label=f"{host} {i+1}/{len(lines)}",
+                            allow_gtts=False)
+                        audio_bytes += seg["audio"]
+                        spoken_chars += seg["characters"]
                         print(f"    [{i+1}/{len(lines)}] {host} OK ({v})")
                     except Exception as tts_err:
                         print(f"    [{i+1}/{len(lines)}] TTS error: {tts_err}")
                 with open(tmp.name, "wb") as f:
                     f.write(audio_bytes)
+                if spoken_chars:
+                    narration.log_narration_cost(
+                        "run_generate_audio", used_model, spoken_chars,
+                        request_id=audio_id,
+                        voice=f"{HOST1_VOICE}+{HOST2_VOICE}")
             elif GTTS_AVAILABLE:
                 # Fallback: concatenate all text as one block
                 full_text = " ".join(l.get("text", "") for l in lines)
