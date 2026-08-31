@@ -172,7 +172,22 @@ def consistent_unit(literals) -> str | None:
     already does with data it cannot vouch for.
     """
     units = {_unit_of(str(lit)) for lit in literals}
-    return units.pop() if len(units) == 1 else None
+    if len(units) != 1:
+        return None
+    unit = units.pop()
+    # A bare number is not evidence of a shared quantity — it is the absence of
+    # evidence either way. Treating "" as a unit made every unnamed quantity
+    # mutually comparable, so a network-meta P-score of 0.993 charted happily
+    # beside an SMD of -0.58: both map to "", and {""} has length one. That was
+    # observed on a real rendered deck, not hypothesised.
+    #
+    # Refusing unitless pairs is the same choice this module makes everywhere
+    # else it cannot vouch for the data. It costs the occasional legitimate
+    # count-vs-count chart, which is the cheaper error: a suppressed chart
+    # omits information, a false one asserts something untrue.
+    if unit == "" and len(list(literals)) > 1:
+        return None
+    return unit
 
 
 def _choose_kind(values: list[float], unit: str) -> tuple[str, str | None]:

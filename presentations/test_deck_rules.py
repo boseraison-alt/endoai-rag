@@ -442,9 +442,26 @@ class TestChartUnitConsistency:
         assert consistent_unit(["78%", "64%"]) == "%"
         assert consistent_unit(["12 months", "24 months"]) == "months"
 
-    def test_bare_numbers_share_the_empty_unit(self):
+    def test_bare_numbers_are_refused(self):
+        """Changed deliberately. This used to assert that two unitless values
+        share the empty unit and may be charted together. That is what let a
+        network-meta P-score of 0.993 chart beside an SMD of -0.58 on a real
+        deck: both map to "", and {""} has length one, so the gate saw
+        agreement where there was only ignorance.
+
+        A bare number is not evidence of a shared quantity. It costs the
+        occasional legitimate count-vs-count chart, which is the cheaper error:
+        a suppressed chart omits information, a false one asserts something
+        untrue."""
         from presentations.chart_data import consistent_unit
-        assert consistent_unit(["12", "34"]) == ""
+        assert consistent_unit(["12", "34"]) is None
+        assert consistent_unit(["0.993", "-0.58"]) is None
+
+    def test_a_single_unitless_value_still_resolves(self):
+        """The refusal is about PAIRING unitless values, not about the unit
+        lookup itself — a lone literal has nothing to disagree with."""
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["12"]) == ""
 
     def test_effect_size_beside_a_percentage_is_refused(self):
         from presentations.chart_data import consistent_unit
@@ -504,10 +521,12 @@ class TestChartRangeValues:
         """The word boundaries are load-bearing. Without them the "h" in
         "Charter" reads as hours, the two literals disagree, and a perfectly
         chartable comparison is silently dropped."""
-        from presentations.chart_data import _unit_of, consistent_unit
+        from presentations.chart_data import _unit_of
         assert _unit_of("Charter") == ""
         assert _unit_of("18 charts") == ""
-        assert consistent_unit(["18 charts", "24 charts"]) == ""
+        # Asserted at the _unit_of level: consistent_unit now refuses unitless
+        # PAIRS outright, so it can no longer distinguish "the h in charts was
+        # correctly ignored" from "both values are unitless".
 
     def test_a_range_produces_no_chart(self):
         """Both literals carry the SAME unit here, deliberately: with mismatched
