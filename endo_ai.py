@@ -462,6 +462,72 @@ def log_llm_call(function_name: str, model: str, usage, mode: str = "shared",
 
     return cost
 
+# ── TTS COST LOGGING (PRESENTATION_WORKLIST §4.5) ─────────
+# OpenAI speech models are billed per CHARACTER of input, not per token, so
+# they cannot reuse log_llm_call's usage object. Rates confirmed against the
+# OpenAI pricing page (developers.openai.com/api/docs/pricing), USD per 1M
+# characters of synthesised input.
+TTS_PRICING = {
+    "tts-1":    15.00,
+    "tts-1-hd": 30.00,
+}
+
+# Whisper transcription, USD per minute of audio. Used by the narration
+# verification path (§4.4), not by the production export pipeline.
+TRANSCRIPTION_PRICING = {
+    "whisper-1": 0.006,
+}
+
+
+def log_tts_call(function_name: str, model: str, characters: int,
+                 mode: str = "export", request_id: str = None,
+                 duration_seconds: float = None, voice: str = None) -> float:
+    """Log a text-to-speech call to cost_log.jsonl and return its USD cost.
+
+    Written into the same append-only log as log_llm_call so /admin/costs
+    aggregates narration alongside Claude spend. `input_tokens`/`output_tokens`
+    are recorded as 0 — the billable unit is `characters`, which is carried as
+    an extra field the aggregator ignores.
+
+    Unknown models are billed at the tts-1-hd rate: over-reporting cost is the
+    safe direction for a spend log.
+    """
+    chars = max(0, int(characters or 0))
+    rate  = TTS_PRICING.get(model, TTS_PRICING["tts-1-hd"])
+    cost  = chars / 1_000_000.0 * rate
+
+    record = {
+        "ts":            datetime.now().isoformat(),
+        "function":      function_name,
+        "model":         model,
+        "mode":          mode,
+        "input_tokens":  0,
+        "output_tokens": 0,
+        "cost_usd":      round(cost, 6),
+        "kind":          "tts",
+        "characters":    chars,
+        "rate_usd_per_1m_chars": rate,
+    }
+    if voice:
+        record["voice"] = voice
+    if duration_seconds is not None:
+        record["duration_seconds"] = round(float(duration_seconds), 2)
+        if duration_seconds > 0:
+            record["cost_usd_per_minute"] = round(cost / (duration_seconds / 60.0), 6)
+    if request_id:
+        record["request_id"] = request_id
+
+    try:
+        with _COST_LOG_LOCK:
+            with open(_COST_LOG_PATH, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(record) + "\n")
+    except Exception as e:
+        # Never let logging break a real export
+        print(f"  [cost_log] TTS write failed: {e}")
+
+    return cost
+
+
 def calc_cost(usage) -> float:
     """Return USD cost from a Claude API usage object."""
     return (
