@@ -270,7 +270,14 @@ class TestChartHardRules:
              "_series": [(label, 86.9, "86.9%"), ("Control", 74.5, "74.5%")],
              "_chart_kind": "bar"}
         html = layouts.layout_chart(s, {"papers": papers})
-        assert citations.esc(label) in html
+        # Inside the <svg> the label is elided and duplicated into a <title>
+        # tooltip, neither of which a printed slide shows. It has to be in the
+        # visible key beneath the chart.
+        keys = re.search(r'<div class="chart-keys">(.*?)</div>\s*(<p|</div>)',
+                         html, re.S).group(1)
+        assert citations.esc(label) in keys
+        assert "…" in re.search(r"<svg.*?</svg>", html, re.S).group(0), \
+            "the fixture label is long enough that the SVG must elide it"
 
 
 # ── §1.4 #1 the evidence-shape card ──────────────────────
@@ -547,8 +554,16 @@ class TestPrintCss:
 
     def test_dark_backgrounds_are_forced_to_print(self, deck_html):
         block = re.search(r"@media print \{.*?\n\}\n", deck_html, re.S).group(0)
-        assert "print-color-adjust: exact" in block
-        assert "-webkit-print-color-adjust: exact" in block
+        # On html/body alone the browser still drops the backgrounds of every
+        # nested element — the slide frames, table header rows and tier chips
+        # are exactly what would go white. The universal selector is the rule
+        # that actually does the work.
+        universal = re.search(r"\n  \* \{(.*?)\}", block, re.S)
+        assert universal, "the @media print block needs a universal rule"
+        assert "print-color-adjust: exact" in universal.group(1)
+        assert "-webkit-print-color-adjust: exact" in universal.group(1)
+        body_rule = re.search(r"\n  html, body \{(.*?)\n  \}", block, re.S).group(1)
+        assert "print-color-adjust: exact" in body_rule
 
     def test_one_page_per_slide(self, deck_html):
         block = re.search(r"@media print \{.*?\n\}\n", deck_html, re.S).group(0)
@@ -585,6 +600,16 @@ def _write_sidecar(tmp_path, audio_id="abc", data=None):
     (tmp_path / f"{audio_id}.timestamps.json").write_text(
         json.dumps(data if data is not None else REAL_SIDECAR), encoding="utf-8")
     (tmp_path / f"{audio_id}.mp3").write_bytes(b"ID3fake-audio-bytes")
+
+
+def _unsynced_deck_html(spec, answer, tmp_path):
+    """A deck whose narration has 3 segments against 9 spec slides — the real
+    lecture-vs-slides mismatch, in miniature."""
+    _write_sidecar(tmp_path)
+    return builder.build_web_deck(
+        spec, "Q", answer,
+        narration_loader=lambda n, m: narration.load_narration(
+            tmp_path, "abc", n, m))
 
 
 class TestNarrationSidecar:
@@ -666,13 +691,12 @@ class TestNarrationSidecar:
         assert got["cues"] == []
         assert "3 sections" in got["sync_note"] and "25 slides" in got["sync_note"]
 
-    def test_the_deck_states_the_reason_instead_of_going_quiet(
+    def test_the_deck_carries_the_unsynced_verdict_into_the_page(
             self, spec, answer, tmp_path):
-        _write_sidecar(tmp_path)
-        html = builder.build_web_deck(
-            spec, "Q", answer,
-            narration_loader=lambda n, m: narration.load_narration(
-                tmp_path, "abc", n, m))
+        """The config the runtime reads. That the runtime then DISABLES the
+        button is asserted in the browser class below — a string check here
+        would pass with the guard deleted, since the string lives inside it."""
+        html = _unsynced_deck_html(spec, answer, tmp_path)
         assert '"synced": false' in html or '"synced":false' in html
         assert "Auto-advance off" in html
 
@@ -781,11 +805,18 @@ class TestExportRouteWiring:
 class TestInTheBrowser:
 
     @pytest.fixture(scope="class")
-    def page(self, request, tmp_path_factory):
+    def browser(self):
         import os
         if os.getenv("RUN_BROWSER_TESTS") != "1":
             pytest.skip("set RUN_BROWSER_TESTS=1 to run the Playwright half")
         pw = pytest.importorskip("playwright.sync_api")
+        with pw.sync_playwright() as p:
+            b = p.chromium.launch()
+            yield b
+            b.close()
+
+    @pytest.fixture(scope="class")
+    def page(self, browser, tmp_path_factory):
         spec_data = json.loads((FIX / "webdeck_spec.json").read_text(encoding="utf-8"))
         answer_data = (FIX / "webdeck_answer.txt").read_text(encoding="utf-8")
         papers_data = json.loads((FIX / "webdeck_papers.json").read_text(encoding="utf-8"))
@@ -799,13 +830,11 @@ class TestInTheBrowser:
                                     "authors": "Meire MA"}})
         path = tmp_path_factory.mktemp("deck") / "deck.html"
         path.write_text(html, encoding="utf-8")
-        with pw.sync_playwright() as p:
-            browser = p.chromium.launch()
-            pg = browser.new_page(viewport={"width": 1280, "height": 720})
-            pg.goto(path.as_uri())
-            pg.wait_for_timeout(2000)
-            yield pg
-            browser.close()
+        pg = browser.new_page(viewport={"width": 1280, "height": 720})
+        pg.goto(path.as_uri())
+        pg.wait_for_timeout(2000)
+        yield pg
+        pg.close()
 
     def test_the_deck_renders_every_slide(self, page):
         n = page.evaluate(
@@ -835,3 +864,50 @@ class TestInTheBrowser:
         page.wait_for_timeout(1200)
         assert "not available" in page.evaluate(
             "document.getElementById('abs-source').textContent")
+
+    def test_print_pdf_stacks_one_full_slide_box_per_section(self, page):
+        page.goto(page.url.split("?")[0] + "?print-pdf")
+        page.wait_for_timeout(1200)
+        got = page.evaluate("""() => {
+            const secs = [...document.querySelectorAll('.reveal .slides > section')];
+            const cs = getComputedStyle(secs[1]);
+            return {n: secs.length, printMode: window.CuroDeck.printMode,
+                    revealInit: !!window.CuroDeck.reveal,
+                    w: cs.width, h: cs.height, transform: cs.transform,
+                    display: cs.display};
+        }""")
+        assert got["printMode"] is True
+        assert got["revealInit"] is False, "Reveal's transform would break paging"
+        assert got["n"] == page.evaluate("window.CuroDeck.slideCount")
+        assert (got["w"], got["h"]) == ("1280px", "720px")
+        assert got["transform"] == "none"
+        assert got["display"] == "block"
+
+    def test_an_unsynced_narration_disables_auto_advance_in_the_page(
+            self, browser, tmp_path_factory):
+        """The behaviour, not the string: with the guard removed the button
+        would still SAY 'Auto-advance off' while quietly staying live."""
+        spec_data = json.loads((FIX / "webdeck_spec.json").read_text(encoding="utf-8"))
+        answer_data = (FIX / "webdeck_answer.txt").read_text(encoding="utf-8")
+        tmp = tmp_path_factory.mktemp("narr")
+        html = _unsynced_deck_html(spec_data, answer_data, tmp)
+        path = tmp / "deck.html"
+        path.write_text(html, encoding="utf-8")
+        pg = browser.new_page(viewport={"width": 1280, "height": 720})
+        try:
+            pg.goto(path.as_uri())
+            pg.wait_for_timeout(1800)
+            got = pg.evaluate("""() => {
+                const b = document.getElementById('n-sync');
+                return {barOn: document.getElementById('narration')
+                                 .classList.contains('on'),
+                        disabled: b.disabled,
+                        pressed: b.getAttribute('aria-pressed'),
+                        why: b.title};
+            }""")
+        finally:
+            pg.close()
+        assert got["barOn"] is True, "the audio must still be playable"
+        assert got["disabled"] is True
+        assert got["pressed"] == "false"
+        assert "sections" in got["why"] and "slides" in got["why"]
