@@ -182,3 +182,39 @@ class TestHistoryLoadClearsStaleJob:
         src = _extract_function("showResult")
         assert "_exportSource" in src, (
             "showResult must record the rendered answer as the export source")
+
+
+# Every function that renders a stored answer into the answer card. The
+# Review-mode loader goes through showResult(); the Deep Learning one renders
+# the card itself, which is exactly how it kept the bug after loadHistoryItem
+# was fixed — the export bar said "No answer to export." on every Deep
+# Learning report opened from history.
+#
+# Parametrised deliberately: a fourth loader added later joins this list and
+# inherits both assertions, rather than quietly shipping the same defect a
+# third time.
+HISTORY_LOADERS = ["loadHistoryItem", "openLearnHistoryItem"]
+
+
+class TestEveryHistoryLoaderArmsTheExportBar:
+
+    @pytest.mark.parametrize("fn", HISTORY_LOADERS)
+    def test_loader_arms_the_export_source(self, fn):
+        """Either directly, or by delegating to showResult() which does it.
+        Both are fine; rendering the card yourself and doing NEITHER is the
+        bug."""
+        src = _extract_function(fn)
+        arms = "_exportSource" in src or "showResult(" in src
+        assert arms, (
+            f"{fn} renders an answer but neither sets _exportSource nor goes "
+            f"through showResult, so every export from it reports 'No answer "
+            f"to export.'")
+
+    @pytest.mark.parametrize("fn", HISTORY_LOADERS)
+    def test_loader_clears_any_stale_live_job(self, fn):
+        """A leftover currentJob outranks the displayed answer server-side and
+        exports the previous question instead."""
+        src = _extract_function(fn)
+        assert "currentJob = null" in src, (
+            f"{fn} must clear currentJob or an export may narrate the wrong "
+            f"answer")

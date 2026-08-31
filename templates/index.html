@@ -7726,6 +7726,15 @@ function openLearnHistoryItem(filename, el) {
       // Store question for export actions
       window._lastLearnQuestion = q;
       window._lastLearnAnswer   = rec.answer || '';
+      // This loader renders the answer itself rather than going through
+      // showResult(), which is where _exportSource is normally captured — so
+      // without these three lines the export bar reports "No answer to
+      // export." on every Deep Learning report opened from history. Same bug
+      // the Review-mode loader had; this path was missed because it does not
+      // share showResult().
+      currentJob = null;   // never let a stale live job win
+      _exportSource = { question: q, answer: rec.answer || '' };
+      window._lastJob = { papers: rec.papers || [] };   // feeds the evidence-shape card
     })
     .catch(function() { _showLearnReportGone(el); });
 }
