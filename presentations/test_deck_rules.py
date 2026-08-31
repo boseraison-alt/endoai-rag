@@ -471,3 +471,47 @@ class TestChartUnitConsistency:
                 "secondary_stat": "64%", "secondary_label": "Control"}
         src = "Success was 78% with the laser and 64% in controls."
         assert detect_chartable(spec, src) is not None
+
+
+class TestChartRangeValues:
+    """A bar draws one number. Charting a range plots its lower bound and
+    silently discards the rest, so the value on the slide stops being the value
+    in the source — the one thing 1.5 does not allow.
+
+    From the Phase 4 laser deck: primary_stat was "24-48 h" and rendered as a
+    bar of 24, beside a bar of 0 severe adverse events. Every number was real
+    and cited; the chart still misrepresented both of them.
+    """
+
+    def test_a_span_is_detected(self):
+        from presentations.chart_data import is_range
+        assert is_range("24-48 h")
+        assert is_range("24–48 h")      # en dash, as the generator emits
+        assert is_range("3 to 5 mm")
+
+    def test_a_scalar_is_not_a_span(self):
+        from presentations.chart_data import is_range
+        assert not is_range("78%")
+        assert not is_range("-0.551")
+        assert not is_range("0")
+
+    def test_abbreviated_units_are_recognised(self):
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["15 min", "30 min"]) == "min"
+        assert consistent_unit(["24 h", "12"]) is None
+
+    def test_a_range_produces_no_chart(self):
+        from presentations.chart_data import detect_chartable
+        spec = {"pattern": "stat_panel", "title": "T",
+                "primary_stat": "24–48 h", "primary_label": "Window",
+                "secondary_stat": "0", "secondary_label": "Adverse events"}
+        src = "superior for 24–48 h; 0 severe adverse events were reported"
+        assert detect_chartable(spec, src) is None
+
+    def test_two_scalars_still_chart(self):
+        """The gate must not have suppressed charting altogether."""
+        from presentations.chart_data import detect_chartable
+        spec = {"pattern": "stat_panel", "title": "T",
+                "primary_stat": "78%", "primary_label": "Laser",
+                "secondary_stat": "64%", "secondary_label": "Control"}
+        assert detect_chartable(spec, "78% with laser versus 64% control") is not None

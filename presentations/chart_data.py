@@ -129,9 +129,27 @@ def _unit_of(raw: str) -> str:
                         ("second", "seconds"), ("mm", "mm"), ("mj", "mJ")):
         if token in s.lower():
             return unit
+    # Abbreviated units, matched as whole tokens: "24-48 h", "15 min", "2 mm".
+    # A substring test would fire on any word containing the letter.
+    m = re.search(r"\b(h|hr|hrs|min|sec|mm|mj|mw|hz|ml|mg)\b", s, re.I)
+    if m:
+        return m.group(1).lower()
     if re.search(r"\bn\s*=", s, re.I):
         return "n"
     return ""
+
+
+_RANGE_RE = re.compile(r"\d\s*(?:[\u2010-\u2015-]|\bto\b)\s*\d")
+
+
+def is_range(literal: str) -> bool:
+    """True for "24-48 h", "3 to 5 mm" — a span, not a single magnitude.
+
+    A bar can only draw one number, so charting a range plots its lower bound
+    and silently discards the rest. The value on the slide would then no longer
+    be the value in the source, which is the one thing 1.5 does not allow.
+    """
+    return bool(_RANGE_RE.search(str(literal or "")))
 
 
 def consistent_unit(literals) -> str | None:
@@ -221,6 +239,8 @@ def _from_stat_panel(spec: dict, source_text: str) -> ChartSpec | None:
     # Units come from the RAW inputs: _verified_pairs normalises
     # "23.89%" to "23.89", so checking the verified literals would
     # always see agreement and the gate would never fire.
+    if any(is_range(raw) for _, raw in pairs):
+        return None          # a span cannot be one bar — see is_range()
     unit = consistent_unit([raw for _, raw in pairs])
     if unit is None:
         return None          # mixed units — see consistent_unit()
@@ -253,6 +273,8 @@ def _from_hierarchy(spec: dict, source_text: str) -> ChartSpec | None:
     verified = _verified_pairs(pairs, source_text)
     if not verified:
         return None
+    if any(is_range(raw) for _, raw in pairs):
+        return None          # a span cannot be one bar — see is_range()
     unit = consistent_unit([raw for _, raw in pairs])
     if unit is None:
         return None          # mixed units — see consistent_unit()
