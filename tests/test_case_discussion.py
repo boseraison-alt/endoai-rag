@@ -95,18 +95,29 @@ class TestOpeningPrompt:
             assert cue in s.lower(), f"scaffold does not hint at {cue}"
 
     def test_prompt_instructs_rereading_before_asking(self):
-        """The 'never re-ask' rule has to be IN the prompt; there is no
-        post-hoc filter that could enforce it."""
-        import endo_ai
-        src = inspect.getsource(endo_ai.generate_case_followups)
-        low = src.lower()
-        assert "read the description again" in low or "re-read" in low
+        """The 'never re-ask' rule has to be IN THE PROMPT; there is no
+        post-hoc filter that could enforce it.
+
+        Asserted against CASE_FOLLOWUP_PROMPT, not the function source. An
+        earlier version grepped inspect.getsource() and so passed on the
+        docstring — it survived a mutation that deleted the rule from the
+        prompt entirely, which is exactly the test-that-cannot-fail this
+        project deletes."""
+        from endo_ai import CASE_FOLLOWUP_PROMPT as P
+        low = P.lower()
+        assert "read the description again" in low
         assert "already" in low, "prompt must forbid asking for stated facts"
 
     def test_prompt_requires_a_reason_clause(self):
-        import endo_ai
-        src = inspect.getsource(endo_ai.generate_case_followups)
-        assert "why it matters" in src.lower()
+        from endo_ai import CASE_FOLLOWUP_PROMPT as P
+        assert "why it matters" in P.lower()
+
+    def test_prompt_scales_the_question_count(self):
+        """A thorough description must be able to earn zero or one question."""
+        from endo_ai import CASE_FOLLOWUP_PROMPT as P
+        low = P.lower()
+        assert "at most one" in low
+        assert "return []" in low
 
     def test_a_complete_description_can_return_nothing(self):
         """Returning [] must be reachable — a thorough description has earned

@@ -964,31 +964,11 @@ _CASE_DECIDING_FACTS = """
 """
 
 
-def generate_case_followups(case_description: str) -> list:
-    """Up to three follow-up questions about a case, or [] if none are needed.
-
-    Deliberately NOT `generate_clarifying_questions`, which is shared with
-    Review and asks 2-3 questions on principle. That behaviour is wrong here:
-    it produced an interrogation that re-asked things the clinician had already
-    written, which reads as not having been listened to.
-
-    The three rules that make this different:
-      1. Re-read the description first, and never ask for anything it states or
-         clearly implies.
-      2. Ask only about facts that change the differential or the plan.
-      3. Say in one clause WHY each question matters, so the clinician can
-         judge whether it is worth answering.
-
-    Returns [] when the description already carries what is needed — a complete
-    description SHOULD get straight to the answer.
-    """
-    client = anthropic.Anthropic(api_key=_get_api_key())
-    try:
-        resp = _invoke_claude(
-            client, function_name="generate_case_followups",
-            model=MODELS["structured_fast"],
-            max_tokens=400,
-            messages=[{"role": "user", "content": f"""You are an experienced endodontist. A colleague has described a case:
+# The prompt itself, hoisted so tests can assert on what the model is
+# actually told rather than on the function source — which includes a
+# docstring describing the same rules, and so passed a mutation check
+# that had deleted the rule from the prompt.
+CASE_FOLLOWUP_PROMPT = """You are an experienced endodontist. A colleague has described a case:
 
 \"\"\"{case_description}\"\"\"
 
@@ -997,7 +977,7 @@ it already gives you. This matters: asking for something the colleague has
 already told you reads as not having listened, and wastes their chairside time.
 
 STEP 2 — Decide which of these decision-changing facts are genuinely MISSING:
-{_CASE_DECIDING_FACTS}
+{facts}
 
 STEP 3 — Return only questions for facts that are both missing AND would
 actually change your differential or treatment plan. Fewer is always better.
@@ -1022,7 +1002,37 @@ For example:
 Never ask about anything the description states or clearly implies.
 Never ask more than one thing per question.
 
-Return ONLY a JSON array of strings. No markdown, no explanation."""}]
+Return ONLY a JSON array of strings. No markdown, no explanation."""
+
+
+def generate_case_followups(case_description: str) -> list:
+    """Up to three follow-up questions about a case, or [] if none are needed.
+
+    Deliberately NOT `generate_clarifying_questions`, which is shared with
+    Review and asks 2-3 questions on principle. That behaviour is wrong here:
+    it produced an interrogation that re-asked things the clinician had already
+    written, which reads as not having been listened to.
+
+    The three rules that make this different:
+      1. Re-read the description first, and never ask for anything it states or
+         clearly implies.
+      2. Ask only about facts that change the differential or the plan.
+      3. Say in one clause WHY each question matters, so the clinician can
+         judge whether it is worth answering.
+
+    Returns [] when the description already carries what is needed — a complete
+    description SHOULD get straight to the answer.
+    """
+    client = anthropic.Anthropic(api_key=_get_api_key())
+    try:
+        resp = _invoke_claude(
+            client, function_name="generate_case_followups",
+            model=MODELS["structured_fast"],
+            max_tokens=400,
+            messages=[{"role": "user", "content":
+                      CASE_FOLLOWUP_PROMPT.format(
+                          case_description=case_description,
+                          facts=_CASE_DECIDING_FACTS)}]
         )
         log_llm_call("generate_case_followups", MODELS["structured_fast"],
                      resp.usage, mode="case")
