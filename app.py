@@ -2174,6 +2174,220 @@ def slides_download(audio_id: str):
     )
 
 
+# ── Web deck export (PRESENTATION_WORKLIST §3) ────────────
+# Same shape as the three exports above, and deliberately the same gating:
+# NONE. The other export routes are ungated on purpose — exports are a user
+# feature, an unset ADMIN_TOKEN would 403 them by design (HANDOVER.md bug
+# class (d)), and /ask, the expensive route, is ungated too. What this route
+# DOES inherit is the size cap, via _resolve_export_source.
+MAX_EXPORT_PAPERS = 400
+
+
+def _sanitize_export_papers(raw) -> list:
+    """Client-supplied paper metadata for a history-loaded answer.
+
+    Only the fields the deck actually renders survive, values are capped, and
+    the list is bounded — this is untrusted input that ends up inside a file
+    served from the app's origin.
+    """
+    allowed = {"pmid", "title", "authors", "year", "journal", "journal_abbrev",
+               "volume", "issue", "pages", "sample_size", "level_key", "score",
+               "has_retraction"}
+    out = []
+    for p in (raw or [])[:MAX_EXPORT_PAPERS]:
+        if not isinstance(p, dict) or not str(p.get("pmid") or "").isdigit():
+            continue
+        row = {}
+        for k in allowed:
+            v = p.get(k)
+            if isinstance(v, str):
+                row[k] = v[:400]
+            elif isinstance(v, (int, float, bool)) or v is None:
+                row[k] = v
+        out.append(row)
+    return out
+
+
+def _embed_abstracts(pmids) -> dict:
+    """Abstracts baked into the deck so it works with the server stopped (§3.2).
+
+    L1 (in-process) + L2 (Postgres abstract_cache) only. The live eutils path
+    that /api/abstract falls back to is deliberately NOT used here: 40 serial
+    rate-limited fetches would dominate the export, and a PMID missing at build
+    time is exactly the case the deck's own server-first lookup covers.
+    """
+    out = {}
+    for pmid in pmids:
+        rec = _ABSTRACT_CACHE.get(pmid)
+        if not rec:
+            try:
+                cached = get_cached_abstract(pmid)
+            except Exception as e:
+                print(f"  [webdeck] abstract lookup failed for {pmid}: {e}")
+                continue
+            if not (cached and (cached.get("abstract") or "")):
+                continue
+            rec = {"pmid": pmid,
+                   "title": (cached.get("title") or "").rstrip("."),
+                   "abstract": cached.get("abstract") or "",
+                   "journal": cached.get("journal") or "",
+                   "year": cached.get("year") or "",
+                   "authors": cached.get("authors") or ""}
+        if (rec.get("abstract") or "").strip():
+            out[str(pmid)] = {k: rec.get(k, "") for k in
+                              ("pmid", "title", "abstract", "journal",
+                               "year", "authors")}
+    return out
+
+
+@app.route("/generate_webdeck", methods=["POST"])
+def generate_webdeck_endpoint():
+    data           = request.json or {}
+    job_id         = data.get("job_id", "")
+    length_minutes = int(data.get("length_minutes", 10))
+    length_minutes = max(5, min(60, length_minutes))
+
+    try:
+        src_question, src_answer = _resolve_export_source(data)
+    except ExportSourceTooLarge as e:
+        return jsonify({"error": f"Answer too large to export: {e}"}), 413
+    if not src_answer:
+        return jsonify({"error": "Job not found or no answer"}), 404
+
+    # Paper metadata drives the mandatory evidence-shape card and the
+    # references slides. Prefer the live job; fall back to what the browser
+    # holds, the same way the answer text itself does.
+    with jobs_lock:
+        job = jobs.get(job_id)
+    papers = list((job or {}).get("papers") or [])
+    if not papers:
+        papers = _sanitize_export_papers(data.get("papers"))
+
+    audio_id = str(uuid.uuid4())
+    import time as _t_deck
+    with audio_jobs_lock:
+        audio_jobs[audio_id] = {
+            "status": "running", "file_path": None, "error": None,
+            "file_ext": "html", "type": "webdeck",
+            "question": src_question, "length_minutes": length_minutes,
+            "started_at": _t_deck.time(),
+            "slides_done": 0, "slides_total": 0,
+        }
+
+    thread = threading.Thread(
+        target=run_generate_webdeck,
+        args=(audio_id, src_answer, src_question, length_minutes, papers,
+              data.get("audio_id") or ""),
+        daemon=True,
+    )
+    thread.start()
+    return jsonify({"audio_id": audio_id})
+
+
+def run_generate_webdeck(audio_id: str, answer: str, question: str,
+                         length_minutes: int, papers: list,
+                         narration_audio_id: str = ""):
+    try:
+        import slide_spec_cache
+        from webdeck import build_web_deck, load_narration
+        from webdeck.citations import extract_pmids
+
+        with audio_jobs_lock:
+            audio_jobs[audio_id]["status"] = "generating_content"
+
+        # The canonical text object (§0 prime rule, §5.1): the PPTX export and
+        # this one read the SAME spec, so their content hashes can be compared.
+        spec, spec_hash, from_cache = slide_spec_cache.get_or_build(
+            answer, question, length_minutes)
+        slides = (spec or {}).get("slides") or []
+        if not slides:
+            raise ValueError("Slide generator returned 0 slides after retry.")
+        print(f"  [webdeck] {len(slides)} slide specs "
+              f"({'cached' if from_cache else 'generated'}), hash {spec_hash[:12]}")
+
+        with audio_jobs_lock:
+            audio_jobs[audio_id]["status"] = "building_slides"
+            audio_jobs[audio_id]["slides_total"] = len(slides)
+
+        cited = list(dict.fromkeys(extract_pmids(answer) + extract_pmids(slides)))
+        abstracts = _embed_abstracts(cited)
+        print(f"  [webdeck] embedded {len(abstracts)}/{len(cited)} abstracts")
+
+        # §3.3 — audio only if a sidecar for THIS deck exists. Absent, the deck
+        # is built without it rather than failing.
+        narration = None
+        try:
+            narration = load_narration(MEDIA_DIR, spec_hash=spec_hash,
+                                       audio_id=narration_audio_id,
+                                       slide_count=len(slides) * 3)
+        except Exception as e:
+            print(f"  [webdeck] narration sidecar ignored: {e}")
+        print(f"  [webdeck] narration: {'attached' if narration else 'none'}")
+
+        html_out = build_web_deck(spec, question, answer, papers_list=papers,
+                                  abstracts=abstracts, narration=narration,
+                                  spec_hash=spec_hash)
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".html", delete=False,
+                                          mode="w", encoding="utf-8")
+        tmp.write(html_out)
+        tmp.close()
+
+        with audio_jobs_lock:
+            audio_jobs[audio_id]["status"] = "complete"
+            audio_jobs[audio_id]["file_path"] = tmp.name
+            audio_jobs[audio_id]["spec_hash"] = spec_hash
+            q   = audio_jobs[audio_id].get("question", "")
+            dur = audio_jobs[audio_id].get("length_minutes", 10)
+        _persist_media(tmp.name, audio_id, "html", q, "webdeck", "webdeck", dur)
+        print(f"  [webdeck] OK {len(html_out):,} bytes -> {tmp.name}")
+
+    except Exception as e:
+        import traceback; traceback.print_exc()
+        with audio_jobs_lock:
+            audio_jobs[audio_id]["status"] = "error"
+            audio_jobs[audio_id]["error"]  = str(e)
+
+
+def _webdeck_path(audio_id: str):
+    with audio_jobs_lock:
+        job = audio_jobs.get(audio_id)
+    if job and job.get("status") == "complete" and job.get("file_path") \
+            and os.path.exists(job["file_path"]):
+        return job["file_path"]
+    # Media-tab copy: survives the in-memory job (single worker, restarts).
+    item = next((i for i in _load_media_index()
+                 if i.get("id") == audio_id and i.get("ext") == "html"), None)
+    if item:
+        p = os.path.join(MEDIA_DIR, item["filename"])
+        if os.path.exists(p):
+            return p
+    return None
+
+
+@app.route("/webdeck_view/<audio_id>")
+def webdeck_view(audio_id: str):
+    """Served inline so the deck's citation pills can reach /api/abstract on
+    the same origin. Every string the deck renders is escaped at build time —
+    see webdeck/citations.py and the config-JSON escaping in builder.py."""
+    path = _webdeck_path(audio_id)
+    if not path:
+        return jsonify({"error": "Web deck not ready"}), 404
+    resp = send_file(path, mimetype="text/html")
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    return resp
+
+
+@app.route("/webdeck_download/<audio_id>")
+def webdeck_download(audio_id: str):
+    path = _webdeck_path(audio_id)
+    if not path:
+        return jsonify({"error": "Web deck not ready"}), 404
+    return send_file(path, as_attachment=True,
+                     download_name=f"curo_deck_{audio_id[:8]}.html",
+                     mimetype="text/html")
+
+
 @app.route("/generate_video", methods=["POST"])
 def generate_video_endpoint():
     if not MOVIEPY_AVAILABLE:
@@ -3787,6 +4001,7 @@ def download_media(media_id: str):
     if not os.path.exists(fpath):
         return jsonify({"error": "File missing"}), 404
     ext_map = {"mp3": "audio/mpeg", "mp4": "video/mp4",
+               "html": "text/html",
                "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
     mime = ext_map.get(item.get("ext", "mp3"), "application/octet-stream")
     return send_file(fpath, as_attachment=True,
@@ -3804,6 +4019,7 @@ def stream_media(media_id: str):
     if not os.path.exists(fpath):
         return jsonify({"error": "File missing"}), 404
     ext_map = {"mp3": "audio/mpeg", "mp4": "video/mp4",
+               "html": "text/html",
                "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
     mime = ext_map.get(item.get("ext", "mp3"), "application/octet-stream")
     return send_file(fpath, mimetype=mime)

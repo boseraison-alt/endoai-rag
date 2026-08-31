@@ -3030,6 +3030,11 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
           <span class="style-card-name">Slides</span>
           <span class="style-card-desc">PowerPoint with<br>speaker notes</span>
         </div>
+        <div class="style-card" data-style="webdeck" onclick="selectExportStyle('webdeck')">
+          <span class="style-card-icon">🖥</span>
+          <span class="style-card-name">Web deck</span>
+          <span class="style-card-desc">One HTML file<br>clickable citations</span>
+        </div>
       </div>
 
       <!-- Duration pills -->
@@ -5778,6 +5783,8 @@ function startExport() {
     _startVideoExport(jobId);
   } else if (_exportStyle === 'slides') {
     _startSlidesExport(jobId);
+  } else if (_exportStyle === 'webdeck') {
+    _startWebDeckExport(jobId);
   } else {
     // conversation or lecture — both go to /generate_audio
     _startAudioExport(jobId, _exportStyle);
@@ -5935,6 +5942,59 @@ function pollSlidesJob(aid) {
   .catch(function(){ setTimeout(function(){ pollSlidesJob(aid); }, 4000); });
 }
 
+// ── Web deck export (one self-contained HTML file) ────
+function _startWebDeckExport(jobId) {
+  fetch('/generate_webdeck', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({job_id:jobId, length_minutes:_exportDuration,
+      question: _exportSource ? _exportSource.question : '',
+      answer:   _exportSource ? _exportSource.answer   : '',
+      // Paper metadata drives the evidence-shape card and the references
+      // slides. A history-loaded answer has no server-side job to read it
+      // from, so the page sends what it rendered — same fix as the answer.
+      papers: (window._lastJob && window._lastJob.papers) || []}),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.error) {
+      document.getElementById('exportStatus').textContent = 'Error: '+data.error;
+      hideDentalAnim(); _lockExportBtns(false); _hidePhaseBar(); return;
+    }
+    _currentExportId = data.audio_id;
+    pollWebDeckJob(data.audio_id);
+  })
+  .catch(function() {
+    document.getElementById('exportStatus').textContent = 'Request failed.';
+    hideDentalAnim(); _lockExportBtns(false); _hidePhaseBar();
+  });
+}
+
+function pollWebDeckJob(aid) {
+  fetch('/audio_status/' + aid)
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    if (data.status === 'complete') {
+      hideDentalAnim(); _lockExportBtns(false); _currentExportId = null; _hidePhaseBar();
+      document.getElementById('exportStatus').innerHTML =
+        '🖥 Ready — <a href="/webdeck_view/'+aid+'" target="_blank" style="color:#12885a;font-weight:600">Open deck</a>' +
+        ' · <a href="/webdeck_view/'+aid+'?print-pdf" target="_blank" style="color:#12885a;">Print view</a>' +
+        ' · <a href="/webdeck_download/'+aid+'" style="color:#12885a;" download>Download HTML</a>';
+      _notifyMediaReady();
+    } else if (data.status === 'error') {
+      hideDentalAnim(); _lockExportBtns(false); _currentExportId = null; _hidePhaseBar();
+      document.getElementById('exportStatus').textContent = 'Error: ' + (data.error || 'Unknown');
+    } else if (data.status === 'cancelled') {
+      hideDentalAnim(); _lockExportBtns(false); _currentExportId = null; _hidePhaseBar();
+      document.getElementById('exportStatus').textContent = 'Cancelled.';
+    } else {
+      showDentalAnim(_daStatusMap[data.status] !== undefined ? _daStatusMap[data.status] : 1);
+      _updateProgressLine(data);
+      setTimeout(function(){ pollWebDeckJob(aid); }, 2000);
+    }
+  })
+  .catch(function(){ setTimeout(function(){ pollWebDeckJob(aid); }, 4000); });
+}
+
 // ── Settings modal ────────────────────────────────────
 var _settingsState = { level:'clinician', balance:'balanced', voice:'onyx' };
 
@@ -6020,7 +6080,7 @@ function loadMediaLibrary() {
 }
 
 function renderMediaItem(item) {
-  var icons = { conversation:'🎙', lecture:'📖', video:'🎬', slides:'📊' };
+  var icons = { conversation:'🎙', lecture:'📖', video:'🎬', slides:'📊', webdeck:'🖥' };
   var icon  = icons[item.style] || '🎵';
   var q     = escHtml((item.question || '').substring(0, 120));
   var date  = item.created_at ? item.created_at.substring(0, 10) : '';
@@ -6044,7 +6104,15 @@ function renderMediaItem(item) {
     playerHtml = '<div class="media-mini-player">' +
       '<div class="media-pptx-thumb"><span>PowerPoint Slides</span></div>' +
       '</div>';
+  } else if (ext === 'html') {
+    playerHtml = '<div class="media-mini-player">' +
+      '<div class="media-pptx-thumb"><span>Self-contained web deck</span></div>' +
+      '</div>';
   }
+
+  var openBtn = (ext === 'html')
+    ? '<a class="media-action-btn" href="/webdeck_view/' + item.id + '" target="_blank">↗ Open</a>'
+    : '';
 
   return '<div class="media-item" id="mi-' + item.id + '">' +
     '<div class="media-item-header">' +
@@ -6058,6 +6126,7 @@ function renderMediaItem(item) {
     '</div>' +
     playerHtml +
     '<div class="media-actions">' +
+      openBtn +
       '<a class="media-action-btn" href="' + dlUrl + '" download>↓ Download</a>' +
       '<button class="media-action-btn delete" onclick="deleteMediaItem(\'' + item.id + '\')">🗑 Delete</button>' +
     '</div>' +

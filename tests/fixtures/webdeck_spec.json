@@ -1,0 +1,274 @@
+{
+ "title": "Laser Root Canal Disinfection",
+ "subtitle": "Evidence-based laser selection, protocols, and realistic outcome expectations",
+ "footer": "LASER ENDODONTICS · MASTER DECK",
+ "slides": [
+  {
+   "pattern": "title_slide",
+   "eyebrow": "ENDODONTICS · LASER DISINFECTION",
+   "title": "Lasers in Root Canal\nDisinfection",
+   "subtitle": "Evidence-based laser selection, protocols, and realistic outcome expectations",
+   "tagline": "Technology should sharpen your technique — not replace it.",
+   "footer_metadata": "ESE Systematic Review · PMID:36156804 · 2025 Edition",
+   "speaker_notes": "Welcome to this twenty-minute presentation on the use of lasers in root canal disinfection. Over the next slides we will move through laser physics, the principal disinfection mechanisms, the evidence hierarchy, validated clinical protocols, and what you should honestly tell your patients. The core message I want you to carry away is this: lasers are a genuine adjunct to contemporary endodontics, but the highest-tier synthesis we currently have — a PROSPERO-registered ESE systematic review of fourteen clinical studies — confirms that no laser modality has yet demonstrated superiority over optimised chemo-mechanical preparation for periapical healing. Understanding exactly why that ceiling exists, and where lasers do show consistent benefit, is the real competency we are building today."
+  },
+  {
+   "pattern": "section_divider",
+   "module_label": "MODULE 01",
+   "module_title": "Laser Physics and Disinfection Mechanisms",
+   "module_subtitle": "Wavelengths, chromophores, and how photons kill bacteria",
+   "footer": "MODULE 1 · PHYSICS & MECHANISMS",
+   "speaker_notes": "Module one lays the essential foundation. You cannot make a rational laser selection without understanding what each wavelength does at the tissue level. We will cover the three main laser families used in endodontics — erbium, diode, and neodymium-YAG — and then map each one to its dominant disinfection mechanism. This is not abstract physics; every parameter decision you make in the clinic traces back to the chromophore absorption curve of the laser you are holding. So let us build that map clearly before we move into protocols and evidence."
+  },
+  {
+   "pattern": "objectives_slide",
+   "eyebrow": "MODULE 1 · OBJECTIVES",
+   "title": "What you will be able to do after this deck",
+   "items": [
+    {
+     "icon": "microscope",
+     "number": "01",
+     "header": "Match wavelength to chromophore",
+     "body": "Select the correct laser platform based on its primary tissue absorption target."
+    },
+    {
+     "icon": "tooth",
+     "number": "02",
+     "header": "Explain all three disinfection mechanisms",
+     "body": "Distinguish thermal, photoacoustic, and photodynamic pathways with clinical precision."
+    },
+    {
+     "icon": "chart_bar",
+     "number": "03",
+     "header": "Interpret the evidence hierarchy accurately",
+     "body": "Apply GRADE certainty ratings to laser outcome claims without overstating benefit."
+    },
+    {
+     "icon": "clipboard",
+     "number": "04",
+     "header": "Execute validated laser protocols",
+     "body": "Reproduce SWEEPS, PIPS, and aPDT parameters from published RCT data."
+    },
+    {
+     "icon": "flag",
+     "number": "05",
+     "header": "Set realistic patient expectations",
+     "body": "Communicate what lasers can and cannot yet deliver for periapical healing."
+    }
+   ],
+   "closing_callout": "Competence with lasers means knowing when NOT to reach for one.",
+   "speaker_notes": "These five objectives frame the entire presentation. Notice that objective three — interpreting evidence accurately — sits at the centre of the deck. It is the hardest skill to teach because clinicians naturally want new technology to outperform the old standard. The ESE systematic review by Meire and colleagues returned very low GRADE certainty for diode laser and low certainty for aPDT with respect to radiographic healing. That is not a reason to abandon lasers; it is a reason to position them honestly. By the end of this session you will know precisely which clinical scenarios show a consistent signal — notably post-operative pain reduction with pulsed erbium laser activated irrigation — and which do not."
+  },
+  {
+   "pattern": "three_route_grid",
+   "eyebrow": "MODULE 1 · LASER FAMILIES",
+   "title": "Three Laser Platforms in Endodontics",
+   "routes": [
+    {
+     "color": "accent_teal",
+     "icon": "repeat",
+     "name": "Erbium Lasers",
+     "tagline": "Photoacoustic streaming — SWEEPS & PIPS",
+     "when": "Canal irrigation activation; smear layer removal; lateral canal debridement.",
+     "how": "Er:YAG 2940 nm or Er,Cr:YSGG 2780 nm; water and hydroxyapatite are primary chromophores; radial-firing tip at orifice.",
+     "citation": "Meire et al., J Endod 2023"
+    },
+    {
+     "color": "accent_coral",
+     "icon": "search",
+     "name": "Diode Lasers",
+     "tagline": "Direct bactericidal irradiation of canal wall",
+     "when": "Adjunct bactericidal step after shaping; pigmented, haemoglobin-rich biofilm targets.",
+     "how": "810–980 nm; absorbed by haemoglobin and melanin; 200–320 µm tapered fibre; 0.75–2 W pulsed mode.",
+     "citation": "Hmud et al., J Endod 2010"
+    },
+    {
+     "color": "accent_gold",
+     "icon": "star",
+     "name": "Nd:YAG Laser",
+     "tagline": "Deep dentinal tubule penetration",
+     "when": "Residual biofilm in dentinal tubules after conventional shaping.",
+     "how": "1064 nm; predominantly thermal mechanism; penetrates dentinal tubules more deeply than diode or erbium wavelengths.",
+     "citation": "Gutknecht, Lasers Med Sci 2004"
+    }
+   ],
+   "speaker_notes": "Here are the three laser families you will encounter in clinical endodontics. The erbium group — Er:YAG at 2940 nanometres and Er,Cr:YSGG at 2780 nanometres — are absorbed primarily by water and hydroxyapatite. When fired in pulsed mode inside an irrigant-filled canal, they generate rapid micro-explosive vaporisation of the fluid film. That is the physical basis for photoacoustic streaming, and it is the mechanism underlying PIPS and SWEEPS modalities. Diode lasers in the 810 to 980 nanometre range are absorbed by haemoglobin and melanin-rich pigmented tissue, making them well suited to direct bactericidal irradiation of the canal wall. Nd:YAG at 1064 nanometres penetrates dentinal tubules through a predominantly thermal mechanism. Each platform has a specific clinical niche — none of them is a universal disinfection solution."
+  },
+  {
+   "pattern": "evidence_summary",
+   "eyebrow": "MODULE 2 · EVIDENCE",
+   "title": "Evidence Hierarchy: Periapical Healing Outcomes",
+   "hierarchy_rows": [
+    {
+     "tier_label": "UMBRELLA REVIEW",
+     "description": "9 systematic reviews; 2026; broadest synthesis available",
+     "stat": "Level I",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "ESE SYSTEMATIC REVIEW",
+     "description": "14 clinical studies, PROSPERO-registered, GRADE-assessed, Meire 2023",
+     "stat": "Level I",
+     "color": "accent_teal"
+    },
+    {
+     "tier_label": "COCHRANE REVIEW",
+     "description": "Del Fabbro 2016; LLLT for post-op pain in surgical endodontics",
+     "stat": "Very Low",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "INDIVIDUAL RCTs",
+     "description": "Doğan 2024 SWEEPS RCT; n=56; 12-month CBCT; ClinicalTrials.gov-registered",
+     "stat": "Low",
+     "color": "accent_gold"
+    },
+    {
+     "tier_label": "IN VITRO STUDIES",
+     "description": "Extracted teeth; smear layer scores; no clinical outcome correlation",
+     "stat": "Bench",
+     "color": "ink_secondary"
+    }
+   ],
+   "trap_callout": {
+    "heading": "THE EVIDENCE TRAP",
+    "body": "Promotional materials cite in-vitro bacterial reduction percentages as proof of clinical superiority. The ESE review found very low GRADE certainty for periapical healing with diode laser and explicitly states: insufficient evidence to recommend any adjunctive laser therapy for apical periodontitis.",
+    "stat": "GRADE: Very Low",
+    "stat_label": "Certainty for diode laser — healing outcome",
+    "color": "accent_coral"
+   },
+   "speaker_notes": "This hierarchy slide is the intellectual centrepiece of the entire deck. When a sales representative or a conference speaker quotes a study showing ninety-eight percent bacterial reduction with laser activation, ask immediately: what was the outcome measured, and at what tier of evidence does that study sit? In-vitro bacterial reduction data sit at the bench tier — they are hypothesis-generating, not practice-changing. The ESE systematic review by Meire and colleagues — which is PROSPERO-registered, covers fourteen clinical studies, and uses formal GRADE assessment — returned very low certainty for diode laser with respect to radiographic healing. Meta-analysis was not achievable for individual laser modalities due to clinical heterogeneity across trials. The conclusion of that review is unambiguous: there is currently insufficient evidence to recommend any adjunctive laser therapy for the treatment of apical periodontitis."
+  },
+  {
+   "pattern": "stat_panel",
+   "eyebrow": "MODULE 2 · OUTCOMES",
+   "title": "Periapical Healing: SWEEPS vs Conventional Irrigation",
+   "primary_stat": "86.9%",
+   "primary_label": "Lesion volume reduction with SWEEPS LAI at 12 months — Doğan et al. 2024, CBCT-registered RCT, n=56 single-rooted teeth",
+   "secondary_stat": "74.5%",
+   "secondary_label": "Lesion volume reduction with conventional irrigation at 12 months — same RCT",
+   "callout": "A 12-percentage-point numeric difference that did NOT reach statistical significance (p > 0.05). This is the gap between a promising signal and a practice-changing finding.",
+   "citation": "Doğan et al., J Endod 2024 [PMID:38878107]. Single-rooted teeth only; multi-rooted anatomy not represented.",
+   "speaker_notes": "These two numbers illustrate perfectly why statistical literacy matters in laser endodontics. Eighty-six point nine percent lesion volume reduction with SWEEPS versus seventy-four point five percent with conventional irrigation — that is a twelve percentage point numeric difference, and it sounds impressive. But the p-value for that difference was greater than 0.05, meaning it did not reach statistical significance in this trial. Doğan and colleagues ran a well-designed, ClinicalTrials.gov-registered RCT with twelve-month cone-beam CT follow-up, which is rigorous methodology. The trial was simply not powered to detect a difference of that magnitude as statistically significant, or the true effect is smaller than the point estimate suggests. Either way, you cannot cite this paper as proof that SWEEPS produces superior periapical healing. It is a promising signal that justifies larger trials."
+  },
+  {
+   "pattern": "two_column_compare",
+   "eyebrow": "MODULE 2 · COMPARISON",
+   "title": "Post-operative Pain Evidence: Divided Literature",
+   "left_card": {
+    "label": "FAVOURS LAI FOR PAIN",
+    "headline": "Network Meta-Analysis 2026",
+    "lines": [
+     "7 RCTs; random-effects model",
+     "LAI vs conventional: SMD = −1.21 (95% CI: −1.86 to −0.55)",
+     "P-score = 0.993; SWEEPS showed strongest effect (SMD = −1.57)"
+    ],
+    "verdict": {
+     "icon": "check_circle",
+     "text": "Low-to-moderate GRADE certainty — strongest signal in the pain literature",
+     "color": "accent_teal"
+    }
+   },
+   "right_card": {
+    "label": "NO BENEFIT FOR DIODE",
+    "headline": "ESE Systematic Review 2023",
+    "lines": [
+     "13 RCTs + 1 cohort; GRADE-assessed",
+     "No significant difference in pain at 7 days for diode laser",
+     "Diode LAI SMD = 0.03; essentially no effect"
+    ],
+    "verdict": {
+     "icon": "x_circle",
+     "text": "Very low GRADE certainty — diode laser pain benefit unsupported by pooled data",
+     "color": "accent_red"
+    }
+   },
+   "center_chip": "arrow_both",
+   "caption": "Pulsed Er:YAG LAI shows the most consistent pain-reduction signal; diode laser does not. Modality choice is critical — 'laser' is not a single intervention.",
+   "speaker_notes": "This comparison captures the most clinically relevant division in the current laser literature. On the left, the Kohok et al. 2026 network meta-analysis of seven RCTs reports that laser activated irrigation produced the largest reduction in twenty-four-hour post-operative pain of all irrigation modalities studied, with a standardised mean difference of negative 1.21. The Sabeti et al. 2026 pooled analysis of 490 teeth similarly found SWEEPS produced the strongest effect at SMD negative 1.57. These are the most recent and largest pooled analyses available. On the right, the ESE systematic review found no significant pain difference for diode laser at seven days, and the diode LAI standardised mean difference was essentially zero at 0.03. The critical lesson: when a paper says laser reduces post-operative pain, you must ask — which laser, which modality, which protocol? Treating laser as a single homogeneous intervention is the most common interpretive error in this field."
+  },
+  {
+   "pattern": "decision_table",
+   "eyebrow": "MODULE 3 · DECISION FRAMEWORK",
+   "title": "Laser Modality Selection by Clinical Scenario",
+   "rows": [
+    {
+     "finding": "Primary root canal treatment, complex anatomy, pain concern",
+     "implication": "Photoacoustic streaming will drive irrigant into lateral canals; strongest pain-reduction evidence",
+     "path": "Er:YAG SWEEPS protocol; P400FL tip at orifice; 3 × 20-second cycles",
+     "severity_color": "accent_teal"
+    },
+    {
+     "finding": "Residual biofilm on canal wall, well-shaped canal",
+     "implication": "Direct bactericidal irradiation appropriate; diode absorbed by pigmented tissue",
+     "path": "Diode 810–980 nm; 0.75–2 W pulsed; 200–320 µm tapered fibre; single pass",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Necrotic tooth, heavy biofilm load, aPDT planned",
+     "implication": "Photosensitiser must match laser wavelength; 630–660 nm excitation required",
+     "path": "Load photosensitiser 60 sec; activate 630–660 nm diode; singlet oxygen generation",
+     "severity_color": "accent_gold"
+    },
+    {
+     "finding": "Periapical lesion present, primary treatment",
+     "implication": "No laser modality has demonstrated superior healing; do not promote laser as lesion cure",
+     "path": "Optimise chemo-mechanical preparation first; laser as adjunct only; set realistic expectations",
+     "severity_color": "accent_coral"
+    },
+    {
+     "finding": "Post-operative pain history in patient",
+     "implication": "Pulsed Er:YAG LAI shows strongest pooled pain-reduction signal (SMD −1.57 SWEEPS)",
+     "path": "SWEEPS protocol preferred; diode LAI not supported by pooled data for this indication",
+     "severity_color": "accent_teal"
+    },
+    {
+     "finding": "In vitro evidence cited by sales representative",
+     "implication": "Bench data do not correlate with clinical healing outcomes; GRADE certainty not applicable",
+     "path": "Request Level I clinical evidence before changing protocol; in vitro data hypothesis-generating only",
+     "severity_color": "accent_red"
+    }
+   ],
+   "footer_caption": "All parameter citations: Meire 2023 [PMID:36156804]; Kohok 2026 [PMID:42214656]; Sabeti 2026 [PMID:40818665]; Verma 2024 [PMID:41389357].",
+   "speaker_notes": "This decision table is designed to be a chairside reference. The rows move from the most evidence-supported laser indication at the top — photoacoustic streaming for complex anatomy with pain concern — down to the critical warning at the bottom about in-vitro data. Notice the periapical lesion row, highlighted in amber. When a patient presents with an established periapical lesion, you must not represent any laser modality as a superior treatment for that lesion. The ESE systematic review is explicit: there is insufficient evidence to recommend adjunctive laser therapy for apical periodontitis. Your obligation is to optimise chemo-mechanical preparation and position the laser, if used at all, as a supplementary step — not a curative one. The pain history row correctly directs you to SWEEPS and away from diode LAI, which has a pooled effect size of essentially zero for that outcome."
+  },
+  {
+   "pattern": "takeaways_slide",
+   "eyebrow": "MODULE 6 · KEY TAKEAWAYS",
+   "title": "What we know, what we do not, and what to do next",
+   "items": [
+    {
+     "number": "01",
+     "header": "Chemo-mechanical preparation is irreplaceable",
+     "body": "No laser modality substitutes for thorough mechanical debridement. Complete shaping before every laser step."
+    },
+    {
+     "number": "02",
+     "header": "No laser has proven superior periapical healing",
+     "body": "The ESE systematic review (14 studies, GRADE-assessed) finds insufficient evidence to recommend any adjunctive laser for apical periodontitis."
+    },
+    {
+     "number": "03",
+     "header": "SWEEPS shows the strongest clinical signal",
+     "body": "Pulsed Er:YAG LAI produces the largest reduction in 24-hour post-operative pain across pooled analyses — SMD up to −1.57."
+    },
+    {
+     "number": "04",
+     "header": "Diode LAI has the weakest evidence profile",
+     "body": "Pooled SMD of 0.03 for pain; very low GRADE certainty for healing. Avoid positioning diode LAI as an evidence-based adjunct for these outcomes."
+    },
+    {
+     "number": "05",
+     "header": "Modality precision is a professional obligation",
+     "body": "SWEEPS, PIPS, diode LAI, and aPDT each have distinct profiles. Never conflate them in clinical discussion or patient communication."
+    },
+    {
+     "number": "06",
+     "header": "Document everything",
+     "body": "Record modality, parameters, irrigant sequence, clinical objective, and patient-reported outcomes for every laser procedure."
+    }
+   ],
+   "speaker_notes": "Six takeaways for twenty minutes of content. The first is the non-negotiable foundation: lasers are adjuncts, not alternatives, to chemo-mechanical preparation. The second is the headline finding of the highest-tier evidence: insufficient evidence to recommend any adjunctive laser therapy for apical periodontitis — that conclusion comes from a PROSPERO-registered ESE systematic review of fourteen clinical studies and is reinforced by the 2026 umbrella review of nine systematic reviews. The third identifies where the literature does show a consistent and clinically meaningful signal: pulsed Er:YAG SWEEPS for short-term post-operative pain. The fourth draws the contrast that too few clinicians make — diode LAI has essentially no pooled benefit for either healing or pain. The fifth encodes the precision habit that separates an evidence-literate clinician from a technology enthusiast. The sixth protects you, your patient, and the evidence base. Thank you for your attention."
+  }
+ ]
+}
