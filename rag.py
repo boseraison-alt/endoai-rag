@@ -562,6 +562,57 @@ def search(
         conn.close()
 
 
+def search_by_pmids(query: str, pmids: list) -> list[dict]:
+    """Fetch specific library rows WITH their cosine similarity to `query`.
+
+    Used to seed a follow-up question's candidate set with the papers the
+    previous answer cited. It returns candidates, never results: the rows come
+    back in exactly the shape search() produces, carrying a real similarity
+    against the NEW question, so every downstream gate — the similarity floor,
+    tier banding, the per-tier quality floors — judges them on this question
+    rather than on the last one.
+
+    The exclusion clause is a copy of search()'s and must stay one: retracted,
+    WITHDRAWN: and superseded rows are unfit to serve whatever route reaches
+    them, and a seeding path that quietly re-admitted them would be the worst
+    kind of bypass — invisible, and only on follow-ups.
+    """
+    pmids = [str(p).strip() for p in (pmids or []) if str(p).strip()]
+    if not DATABASE_URL or not pmids:
+        return []
+    try:
+        query_vec = embed(query)
+    except Exception as e:
+        print(f"  Embed error: {e}")
+        return []
+
+    conn = get_conn()
+    cur  = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("""
+            SELECT
+                pmid, title, abstract, authors, year, journal,
+                impact_factor, sample_size, followup_months,
+                citations, level_key, score, is_curated,
+                medline_indexed, has_erratum, has_retraction, registry,
+                coi_flag, coi_funder, coi_status, superseded_by,
+                1 - (embedding <=> %s::vector) AS similarity
+            FROM endo_papers_rag
+            WHERE pmid = ANY(%s)
+              AND NOT COALESCE(has_retraction, FALSE)
+              AND title NOT ILIKE 'WITHDRAWN:%%'
+              AND COALESCE(superseded_by, '') = ''
+              AND embedding IS NOT NULL;
+        """, (query_vec, pmids))
+        return [dict(r) for r in cur.fetchall()]
+    except Exception as e:
+        print(f"  RAG pmid-seed error: {e}")
+        return []
+    finally:
+        cur.close()
+        conn.close()
+
+
 def has_enough_results(
     query: str,
     level_key: str,
@@ -641,8 +692,17 @@ def setup_query_cache():
                 answer            TEXT,
                 papers            JSONB,
                 hit_count         INTEGER DEFAULT 0,
-                created_at        TIMESTAMP DEFAULT NOW()
+                created_at        TIMESTAMP DEFAULT NOW(),
+                context_hash      TEXT DEFAULT ''
             );
+        """)
+        # Existing installations predate the column. An answer written under a
+        # conversation context is a DIFFERENT cache entry from the same question
+        # asked cold, and the partition has to exist before the first follow-up
+        # is served — see context_fingerprint().
+        cur.execute("""
+            ALTER TABLE query_cache
+            ADD COLUMN IF NOT EXISTS context_hash TEXT DEFAULT '';
         """)
         cur.execute("""
             CREATE INDEX IF NOT EXISTS query_cache_emb_idx
@@ -658,6 +718,31 @@ def setup_query_cache():
     finally:
         cur.close()
         conn.close()
+
+
+# ── The conversation-context half of the cache key ───────────────────────
+# The cache matches on an EMBEDDING of the question text, and a follow-up's
+# text is often near-identical to the same words asked cold: "what about in
+# immature teeth?" embeds at cosine ~1.0 against itself regardless of which
+# conversation it belongs to, and even a fully-spelled-out follow-up sits well
+# inside 0.92 of the standalone version. Nothing in the question text records
+# that the answer was synthesised under a prior exchange — so without this the
+# first follow-up in any thread would be served the context-free answer to a
+# similar-looking question, which is the exact failure the whole feature exists
+# to avoid.
+#
+# The fingerprint is therefore a HARD PARTITION of the table, not another
+# similarity term: rows are only ever compared within one context. "" is the
+# no-context partition, which is where every row written before this change
+# lives (the column defaults to '' and the lookup COALESCEs NULL to ''), so
+# ordinary standalone questions keep hitting their existing cache entries.
+def context_fingerprint(context_block: str) -> str:
+    """Stable short hash of a conversation-context block. "" (no context) maps
+    to "" so a context-free question keys exactly as it always did."""
+    text = " ".join((context_block or "").split())
+    if not text:
+        return ""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:32]
 
 
 # Above this cosine the two questions are effectively the same string and the
@@ -881,7 +966,8 @@ def invalidate_cache_near_query(query_text: str,
 
 
 def get_cached_answer(question: str, threshold: float = 0.92,
-                       max_age_days: int = None) -> dict | None:
+                       max_age_days: int = None,
+                       context_hash: str = "") -> dict | None:
     """
     Return a cached answer if a semantically similar question was asked before.
     Returns dict with 'answer', 'papers', 'created_at' (ISO str), and 'age_days'
@@ -889,6 +975,12 @@ def get_cached_answer(question: str, threshold: float = 0.92,
 
     `max_age_days` — optional cap. Used by Deep Learning mode (7-day TTL) to
     avoid serving stale cached curricula. Other modes pass None for "no limit".
+
+    `context_hash` — context_fingerprint() of the conversation context this
+    question is being asked under, "" for a standalone question. It is an
+    EQUALITY term in the WHERE clause, not part of the similarity: a follow-up
+    can never be served the answer that was generated without its context, at
+    any cosine, and vice versa.
     """
     if not DATABASE_URL:
         return None
@@ -902,7 +994,7 @@ def get_cached_answer(question: str, threshold: float = 0.92,
     try:
         # Build age filter: PostgreSQL `created_at >= NOW() - INTERVAL` if age cap set
         age_filter = ""
-        params     = [q_vec, q_vec, threshold]
+        params     = [q_vec, q_vec, threshold, (context_hash or "")]
         if max_age_days is not None and max_age_days > 0:
             age_filter = " AND created_at >= NOW() - INTERVAL '%s days'"
             params.append(int(max_age_days))
@@ -917,7 +1009,11 @@ def get_cached_answer(question: str, threshold: float = 0.92,
             SELECT id, question_text AS question, answer, papers, created_at,
                    1 - (question_embedding <=> %s::vector) AS similarity
             FROM query_cache
-            WHERE 1 - (question_embedding <=> %s::vector) >= %s{age_filter}
+            WHERE 1 - (question_embedding <=> %s::vector) >= %s
+              -- Hard partition, not a soft signal. Rows written before the
+              -- column existed are NULL and COALESCE to '', the same partition
+              -- a standalone question asks from.
+              AND COALESCE(context_hash, '') = %s{age_filter}
             ORDER BY similarity DESC
             LIMIT 1;
         """, tuple(params))
@@ -1145,8 +1241,15 @@ def bulk_cache_abstracts(entries: list) -> int:
     return n
 
 
-def save_query_cache(question: str, answer: str, papers: list):
-    """Store a completed question+answer in the cache."""
+def save_query_cache(question: str, answer: str, papers: list,
+                     context_hash: str = ""):
+    """Store a completed question+answer in the cache.
+
+    `context_hash` must be the SAME fingerprint the lookup will present — an
+    answer stored under a context and looked up without one (or under a
+    different one) is simply never found again, which is the safe direction but
+    also a permanently cold cache. app.py computes it once per job.
+    """
     if not DATABASE_URL:
         return
     try:
@@ -1158,9 +1261,10 @@ def save_query_cache(question: str, answer: str, papers: list):
     cur  = conn.cursor()
     try:
         cur.execute("""
-            INSERT INTO query_cache (question_text, question_embedding, answer, papers)
-            VALUES (%s, %s, %s, %s);
-        """, (question, q_vec, answer, json.dumps(papers)))
+            INSERT INTO query_cache (question_text, question_embedding, answer,
+                                     papers, context_hash)
+            VALUES (%s, %s, %s, %s, %s);
+        """, (question, q_vec, answer, json.dumps(papers), (context_hash or "")))
         conn.commit()
     except Exception as e:
         conn.rollback()

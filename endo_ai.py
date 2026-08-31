@@ -5212,7 +5212,7 @@ Format every response exactly like this:
 
 **Recommendation:** Clear, actionable recommendation with rationale.
 
-**Evidence:** 1-2 key studies cited as Author et al. (Year) [[PMID:XXXXXXXX]].
+**Evidence:** the studies that actually bear on THIS case, cited as Author et al. (Year) [[PMID:XXXXXXXX]]. Draw across the tiers you were given — a systematic review for the general question, a cohort or case series for the specific presentation — rather than stopping at the first one or two. You are typically given 40-150 papers; citing two of them wastes evidence the clinician is relying on you to have read. Cite as many as genuinely support the advice and no more: breadth that is real, never padding.
 
 **Key Considerations:** Any caveats, red flags, alternative approaches, or follow-up plan.
 

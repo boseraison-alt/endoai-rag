@@ -1537,6 +1537,39 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   line-height: 1.25;
 }
 
+/* Conversation memory. Subtle by design: it reports that the answer was
+   written knowing the previous question, which is a caveat on how to read it,
+   not a headline. */
+.continues-from {
+  font-size: 11px;
+  color: #6b7689;
+  margin-bottom: 6px;
+  display: none;
+  align-items: baseline;
+  gap: 5px;
+}
+.continues-from .cf-label { font-weight: 600; color: #4c586c; }
+.continues-from .cf-q {
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 46ch;
+}
+.new-topic-btn {
+  background: none;
+  border: 1px solid #ccd5e0;
+  color: #536176;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: inherit;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.new-topic-btn:hover { border-color: #1d4ed8; color: #1d4ed8; }
+
 .answer-tags {
   display: flex;
   gap: 6px;
@@ -2996,9 +3029,17 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
     <div class="answer-card-header">
       <div class="answer-mode-icon icon-review" id="answerModeIcon">🔬</div>
       <div class="answer-card-meta">
+        <div class="continues-from" id="continuesFrom">
+          <span class="cf-label">Continues from:</span>
+          <span class="cf-q" id="continuesFromQ"></span>
+        </div>
         <div class="answer-card-question" id="answerQuestion"></div>
         <div class="answer-tags" id="answerTags"></div>
       </div>
+      <button class="new-topic-btn" id="newTopicBtn" onclick="startNewTopic()"
+              title="Forget this conversation — the next question is answered on its own">
+        New topic
+      </button>
     </div>
 
     <!-- Export bar — Deep Learning only, sits ABOVE the report -->
@@ -4180,6 +4221,33 @@ function submitQuestion() {
   _postAsk(q, '', false);
 }
 
+// ── Review-mode conversation memory ──────────────────
+// The browser holds only an OPAQUE thread id. Everything the follow-up is
+// answered with — the previous question, its recommendation, its PMIDs — is
+// assembled server-side, so the "Continues from" line below states what the
+// server actually used rather than what this page assumed.
+var reviewThreadId = 'th-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+function startNewTopic() {
+  var old = reviewThreadId;
+  reviewThreadId = 'th-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  _renderContinuesFrom('');
+  fetch('/thread/clear', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ thread_id: old })
+  }).catch(function() {});
+}
+
+function _renderContinuesFrom(prevQuestion) {
+  var row = document.getElementById('continuesFrom');
+  if (!row) return;
+  var q = (prevQuestion || '').trim();
+  document.getElementById('continuesFromQ').textContent = q;
+  document.getElementById('continuesFromQ').title = q;
+  row.style.display = q ? 'flex' : 'none';
+}
+
 function _postAsk(q, context, skipClarify) {
   if (pollTimer) clearInterval(pollTimer);
   document.getElementById('askBtn').disabled = true;
@@ -4187,7 +4255,8 @@ function _postAsk(q, context, skipClarify) {
   fetch('/ask', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question: q, mode: mode, context: context, skip_clarify: skipClarify })
+    body: JSON.stringify({ question: q, mode: mode, context: context,
+                           skip_clarify: skipClarify, thread_id: reviewThreadId })
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
@@ -4453,6 +4522,7 @@ function showStreamingPartial(question, job) {
     document.getElementById('progressCard').style.display = 'none';
     document.getElementById('answerCard').style.display   = 'block';
     document.getElementById('answerQuestion').textContent = question;
+    _renderContinuesFrom(job.continues_from || '');
     var iconEl = document.getElementById('answerModeIcon');
     iconEl.textContent = '🔬';
     iconEl.className   = 'answer-mode-icon icon-review';
@@ -4513,6 +4583,12 @@ function showResult(question, job) {
   }
 
   document.getElementById('answerQuestion').textContent = question;
+  // Only ever what the server reports it used. A blank field means the answer
+  // was written cold — after "New topic", or for the first question of a
+  // thread — and the line stays hidden.
+  _renderContinuesFrom(mode === 'learn' ? '' : (job.continues_from || ''));
+  var ntBtn = document.getElementById('newTopicBtn');
+  if (ntBtn) ntBtn.style.display = (mode === 'learn') ? 'none' : 'block';
 
   // Tags
   var papers   = job.papers || [];
@@ -7658,6 +7734,7 @@ function _sendLearnDelete(filename, btnEl, mayLogin) {
 function _showLearnReportGone(el) {
   var q = (el && el.dataset.q) || '';
   document.getElementById('answerQuestion').textContent = q || 'Deep Learning report';
+  _renderContinuesFrom('');
   document.getElementById('answerTags').innerHTML =
     '<span class="atag atag-learn">Deep Learning</span>' +
     '<span class="atag atag-neutral">No longer available</span>';
@@ -7694,6 +7771,9 @@ function openLearnHistoryItem(filename, el) {
   document.getElementById('answerModeIcon').textContent = '🎓';
   document.getElementById('answerModeIcon').className   = 'answer-mode-icon icon-learn';
   document.getElementById('answerQuestion').textContent = 'Loading…';
+  // A stored report continues from nothing — the line must not survive from
+  // whatever review answer the card was showing a moment ago.
+  _renderContinuesFrom('');
   document.getElementById('answerTags').innerHTML       = '';
   document.getElementById('answerContent').innerHTML    = '<div class="profile-list-empty">Loading report…</div>';
   document.getElementById('papersSection').style.display = 'none';
