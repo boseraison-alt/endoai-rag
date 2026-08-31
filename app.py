@@ -3289,34 +3289,38 @@ def run_generate_video(audio_id: str, answer: str, question: str,
         done_lock = _th.Lock()
         done_count = [0]
 
+        # Resolved ONCE, outside the pool: every slide of one video must be
+        # spoken by the same voice, and resolve_voice() prints a warning on an
+        # unknown name that would otherwise repeat per slide.
+        tts_voice = narration.resolve_voice(voice)
+        tts_model = narration.resolve_model()
+        billed_chars = [0]
+
         def _tts_one(idx, slide_data):
+            # Per-slide, NOT synthesize_lecture: this clip is paired with this
+            # slide's image below (ffmpeg -shortest), so its audio boundary has
+            # to be the slide's own. synthesize_segment gives the same
+            # pronunciation dictionary, voice and model as the audio export
+            # without merging the slides into one file.
             slide_num = idx + 1
             notes = (slide_data.get("speaker_notes") or "").strip()
             if not notes:
-                return idx, None
+                return idx, None, 0
+            seg = narration.synthesize_segment(
+                notes, voice=tts_voice, model=tts_model,
+                label=f"video slide {slide_num}",
+                allow_gtts=GTTS_AVAILABLE)
+            if not seg["audio"]:
+                return idx, None, 0
             ap = _os3.path.join(tmpdir, f"audio_{slide_num:03d}.mp3")
-            # Try OpenAI first
-            if OPENAI_TTS_AVAILABLE:
-                try:
-                    resp = _oai_tts.audio.speech.create(
-                        model="tts-1", voice=voice, input=notes[:4096])
-                    with open(ap, 'wb') as f: f.write(resp.content)
-                    return idx, ap
-                except Exception as tts_err:
-                    print(f"    [video] slide {slide_num} OpenAI TTS error: {tts_err}")
-            # gTTS fallback
-            if GTTS_AVAILABLE:
-                try:
-                    from gtts import gTTS as _gTTS
-                    _gTTS(text=notes[:4096], lang='en', slow=False).save(ap)
-                    return idx, ap
-                except Exception as gtts_err:
-                    print(f"    [video] slide {slide_num} gTTS error: {gtts_err}")
-            return idx, None
+            with open(ap, 'wb') as f:
+                f.write(seg["audio"])
+            return idx, ap, seg["characters"]
 
         # OpenAI TTS comfortably handles 6 parallel reqs on default tier.
         # gTTS uses Google's free endpoint -- keep concurrency lower if it kicks in.
         max_workers = 6 if OPENAI_TTS_AVAILABLE else 3
+        print(f"  [video] narration: voice={tts_voice} model={tts_model}")
         with ThreadPoolExecutor(max_workers=max_workers) as pool:
             futures = [pool.submit(_tts_one, i, sd) for i, sd in enumerate(slides)]
             for fut in as_completed(futures):
@@ -3324,8 +3328,10 @@ def run_generate_video(audio_id: str, answer: str, question: str,
                     if audio_jobs[audio_id].get("cancelled"):
                         print("  [video] Cancelled mid-TTS"); return
                 try:
-                    idx, ap = fut.result()
+                    idx, ap, chars = fut.result()
                     audio_paths[idx] = ap
+                    with done_lock:
+                        billed_chars[0] += chars
                     if ap:
                         print(f"    [video] slide {idx+1}/{total} TTS OK")
                 except Exception as e:
@@ -3334,6 +3340,12 @@ def run_generate_video(audio_id: str, answer: str, question: str,
                     done_count[0] += 1
                     with audio_jobs_lock:
                         audio_jobs[audio_id]["slides_done"] = done_count[0]
+
+        # ONE cost row for the whole export, carrying the job id — the job made
+        # one API call per slide but it is one billable video.
+        narration.log_narration_cost(
+            "run_generate_video", tts_model, billed_chars[0],
+            request_id=audio_id, voice=tts_voice)
 
         # ── Assemble video with moviepy ───────────────────
         with audio_jobs_lock:
@@ -3865,23 +3877,30 @@ def run_generate_slides(audio_id: str, answer: str, question: str,
                 audio_jobs[audio_id]["status"] = "generating_audio"
                 audio_jobs[audio_id]["slides_done"] = 0
             total = len(slides_queue)
-            print(f"  Recording narration for {total} slides (voice={voice}) in parallel...")
+
+            # Resolved once for the whole deck; see run_generate_video.
+            tts_voice_p = narration.resolve_voice(voice)
+            tts_model_p = narration.resolve_model()
+            billed_chars_p = [0]
+            print(f"  Recording narration for {total} slides "
+                  f"(voice={tts_voice_p} model={tts_model_p}) in parallel...")
 
             from concurrent.futures import ThreadPoolExecutor, as_completed
             import threading as _th_pptx
             done_lock_p = _th_pptx.Lock(); done_count_p = [0]
 
             def _tts_pptx(slide_num, notes_text):
-                narration = (notes_text or "").strip()
-                if not narration:
-                    return slide_num, None
-                try:
-                    resp = _oai_tts.audio.speech.create(
-                        model="tts-1", voice=voice, input=narration[:4096])
-                    return slide_num, resp.content
-                except Exception as tts_err:
-                    print(f"    slide {slide_num} TTS error: {tts_err}")
-                    return slide_num, None
+                # Per-slide, NOT synthesize_lecture: these bytes are injected
+                # into ONE pptx slide part, so the audio boundary must be that
+                # slide's. `notes_text`, not a local named `narration` — the
+                # module import is what carries the dictionary.
+                seg = narration.synthesize_segment(
+                    notes_text, voice=tts_voice_p, model=tts_model_p,
+                    label=f"pptx slide {slide_num}",
+                    allow_gtts=False)
+                if not seg["audio"]:
+                    return slide_num, None, 0
+                return slide_num, seg["audio"], seg["characters"]
 
             with ThreadPoolExecutor(max_workers=6) as pool:
                 futures = [pool.submit(_tts_pptx, sn, n)
@@ -3890,14 +3909,20 @@ def run_generate_slides(audio_id: str, answer: str, question: str,
                     with audio_jobs_lock:
                         if audio_jobs[audio_id].get("cancelled"):
                             print("  Job cancelled by user"); return
-                    sn, content = fut.result()
+                    sn, content, chars = fut.result()
                     if content is not None:
                         slide_audios[sn] = content
                         print(f"    slide {sn}/{total} OK")
                     with done_lock_p:
+                        billed_chars_p[0] += chars
                         done_count_p[0] += 1
                         with audio_jobs_lock:
                             audio_jobs[audio_id]["slides_done"] = done_count_p[0]
+
+            # ONE cost row for the whole deck, carrying the job id.
+            narration.log_narration_cost(
+                "run_generate_slides", tts_model_p, billed_chars_p[0],
+                request_id=audio_id, voice=tts_voice_p)
 
         elif GTTS_AVAILABLE and slides_queue:
             with audio_jobs_lock:

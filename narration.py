@@ -1,11 +1,19 @@
 """Narration synthesis (PRESENTATION_WORKLIST §4.1, §4.3, §4.5).
 
-One entry point — `synthesize_lecture()` — takes a lecture script and produces:
+Two entry points, one for each shape of narration job.
+
+`synthesize_lecture()` — the audio export. Takes a lecture script and produces:
 
   * an MP3, spoken by OpenAI TTS (primary) or gTTS (fallback only);
   * a sidecar timestamp map, so the web deck can auto-advance slides against
     the audio;
   * a line in cost_log.jsonl, priced per character like every other API call.
+
+`synthesize_segment()` — the video and pptx exports. Those do PER-SLIDE TTS,
+because each clip must be paired with its own slide, so they cannot take one
+continuous file. It applies the same dictionary and the same voice/model
+resolution to a segment whose boundary the caller already owns, and hands back
+the character count so the job can log ONE cost row (`log_narration_cost`).
 
 The pronunciation dictionary is applied here, at the boundary between the
 written script and the speech engine — the script object the caller holds is
@@ -423,6 +431,103 @@ def _speak_gtts(text: str) -> bytes:
     buf = io.BytesIO()
     gTTS(text=text[:5000], lang="en", slow=False).write_to_fp(buf)
     return buf.getvalue()
+
+
+# ── Per-segment synthesis (video + pptx narration) ────────
+# synthesize_lecture() speaks one continuous script and derives a timestamp map
+# from it. That is right for the audio export, which is a single MP3, and wrong
+# for the video and pptx exports: those do PER-SLIDE TTS, because each clip has
+# to be paired with its own slide image (ffmpeg `-shortest` against the slide's
+# own mp3) or embedded in its own pptx slide part. One continuous file has no
+# per-slide boundary to pair against, so routing those jobs through
+# synthesize_lecture would destroy slide/audio sync.
+#
+# What they actually need is the narration PRIMITIVES — dictionary, resolved
+# voice/model, one cost row — applied to a segment whose boundary the caller
+# already knows. That is this function.
+
+
+def synthesize_segment(text: str, *, voice: str = None, model: str = None,
+                       label: str = "", allow_gtts: bool = True) -> dict:
+    """Speak ONE caller-bounded passage (a slide's speaker notes) to MP3 bytes.
+
+    The caller owns the boundary — this never merges or re-splits segments
+    across slides — so the audio it returns lines up with exactly one slide.
+
+    Over-long passages are split at sentence boundaries and the resulting MP3s
+    concatenated, which is what synthesize_lecture does within a chunk. The
+    legacy call sites truncated at `notes[:4096]` instead, silently dropping the
+    tail of any slide whose notes ran long.
+
+    Returns {"audio", "backend", "voice", "model", "characters", "spoken"}.
+    `audio` is b"" and `backend` "" when no backend produced anything; callers
+    treat that as "this slide gets no narration", never as a hard failure.
+    """
+    voice = resolve_voice(voice)
+    model = resolve_model(model)
+
+    # The dictionary is applied HERE and nowhere else. `text` — the speaker
+    # notes shown in the deck — is not mutated.
+    spoken = prepare_for_speech(text or "")
+    empty = {"audio": b"", "backend": "", "voice": voice, "model": model,
+             "characters": 0, "spoken": spoken}
+    if not spoken.strip():
+        return empty
+
+    pieces = _split_long_text(spoken, CHUNK_CHARS) if len(spoken) > CHUNK_CHARS \
+        else [spoken]
+
+    if openai_available():
+        try:
+            audio = b""
+            for piece in pieces:
+                audio += _speak_openai(piece, voice, model)
+            if audio:
+                return {"audio": audio, "backend": "openai", "voice": voice,
+                        "model": model, "characters": len(spoken),
+                        "spoken": spoken}
+        except Exception as e:
+            print(f"  [narration] OpenAI TTS failed for {label or 'segment'} "
+                  f"({e}); falling back to gTTS")
+
+    if allow_gtts:
+        try:
+            # gTTS is fallback only, and it is not billed — `characters` stays
+            # 0 so a fallback segment never inflates the OpenAI cost row.
+            return {"audio": _speak_gtts(spoken), "backend": "gtts",
+                    "voice": voice, "model": model, "characters": 0,
+                    "spoken": spoken}
+        except Exception as e:
+            print(f"  [narration] gTTS failed for {label or 'segment'}: {e}")
+
+    return empty
+
+
+def log_narration_cost(function_name: str, model: str, characters: int, *,
+                       request_id: str, voice: str,
+                       duration_seconds: float = None,
+                       mode: str = "export") -> float:
+    """One cost row for a whole per-slide narration job.
+
+    Per-slide jobs make one API call per slide but are one billable export, so
+    the characters are summed and logged once — /admin/costs then shows one
+    line per export, matching what the audio path already writes. Logging can
+    never break an export (HANDOVER bug class (d) cuts the other way here: the
+    failure is printed, not swallowed silently).
+    """
+    if characters <= 0:
+        return 0.0
+    try:
+        from endo_ai import log_tts_call
+        cost = log_tts_call(function_name, model, characters, mode=mode,
+                            request_id=request_id, voice=voice,
+                            duration_seconds=duration_seconds)
+        print(f"  [narration] {characters} chars, ${cost:.4f} "
+              f"({model}, voice={voice})")
+        return cost
+    except Exception as e:
+        print(f"  [narration] cost logging skipped: {e}")
+        return 0.0
 
 
 # ── Entry point ───────────────────────────────────────────
