@@ -107,9 +107,12 @@ from endo_ai import (build_evidence_base, ask_clinical_question, ask_learn_quest
                      analyze_radiograph, _analysis_to_prefill,
                      calculate_case_difficulty, match_case_to_profile,
                      generate_referral_letter, generate_podcast_script,
-                     generate_audio_script)
+                     generate_audio_script,
+                     build_context_block, context_prior_pmids,
+                     extract_clinical_recommendation, MAX_CONTEXT_EXCHANGES)
 from rag import (setup_query_cache, get_cached_answer, save_query_cache,
-                 setup_abstract_cache, get_cached_abstract, cache_abstract)
+                 setup_abstract_cache, get_cached_abstract, cache_abstract,
+                 context_fingerprint)
 
 setup_query_cache()
 setup_abstract_cache()
@@ -255,6 +258,65 @@ audio_jobs_lock = threading.Lock()
 case_convs      = {}   # conv_id → {"evidence": dict}
 case_convs_lock = threading.Lock()
 
+# ── Review-mode conversation memory ──────────────────────
+# thread_id → [{question, recommendation, pmids}], oldest first.
+#
+# Server-side rather than client-side on purpose. The recommendation has to be
+# extracted from the answer MARKDOWN, and the "continues from" line the UI
+# shows must be a report of what the server actually used — a client that
+# believed it was in a thread while the server answered cold would put a
+# continuity claim on an answer that has none.
+review_threads      = {}
+review_threads_lock = threading.Lock()
+
+# A long-lived server accumulates threads from every browser tab that ever
+# asked a question; only the last few exchanges of each are ever read.
+REVIEW_THREADS_MAX = 500
+
+
+def _thread_exchanges(thread_id: str) -> list:
+    """The carried exchanges for a thread, oldest first. Never more than
+    MAX_CONTEXT_EXCHANGES — the cap is applied on write as well as on read, so
+    the store cannot grow a long tail nothing will ever look at."""
+    if not thread_id:
+        return []
+    with review_threads_lock:
+        return list(review_threads.get(thread_id) or [])
+
+
+def _thread_record(thread_id: str, question: str, answer: str, papers: list) -> None:
+    """Append one completed exchange. Recommendation only — see
+    endo_ai.extract_clinical_recommendation for why the full answer stays out."""
+    if not thread_id:
+        return
+    from endo_ai import _extract_cited_pmids
+    cited = []
+    for p in _extract_cited_pmids(answer or ""):
+        if p not in cited:
+            cited.append(p)
+    entry = {
+        "question":       (question or "").strip(),
+        "recommendation": extract_clinical_recommendation(answer or ""),
+        "pmids":          cited[:12],
+    }
+    if not entry["question"]:
+        return
+    with review_threads_lock:
+        thread = review_threads.setdefault(thread_id, [])
+        thread.append(entry)
+        del thread[:-MAX_CONTEXT_EXCHANGES]
+        if len(review_threads) > REVIEW_THREADS_MAX:
+            for stale in list(review_threads)[:len(review_threads) - REVIEW_THREADS_MAX]:
+                if stale != thread_id:
+                    review_threads.pop(stale, None)
+
+
+def _thread_clear(thread_id: str) -> None:
+    """"New topic" — the thread is gone, and the next question is answered as
+    cold as the first one was."""
+    with review_threads_lock:
+        review_threads.pop(thread_id, None)
+
 
 def create_job(question: str, mode: str = "review") -> str:
     job_id = str(uuid.uuid4())
@@ -338,15 +400,31 @@ def ask():
     mode     = data.get("mode", "review")
     context  = data.get("context", "")   # clarification Q&A — set after user answers
     skip_clarify = data.get("skip_clarify", False)  # true when context already provided
+    thread_id = (data.get("thread_id") or "").strip()[:64]
     if mode not in ("review", "learn"):
         mode = "review"
     if not question:
         return jsonify({"error": "Question required"}), 400
 
+    # "New topic": drop the thread BEFORE reading it, so this question is
+    # answered with no context and shows no continuity line.
+    if data.get("new_topic"):
+        _thread_clear(thread_id)
+
+    # ── Conversation memory (Review only) ────────────────
+    # Deep Learning builds a whole curriculum from one question and has no
+    # follow-up turn; carrying a prior recommendation into it would be context
+    # nothing asked for.
+    exchanges     = _thread_exchanges(thread_id) if mode == "review" else []
+    context_block = build_context_block(exchanges)
+    prior_pmids   = context_prior_pmids(exchanges)
+    continues_from = exchanges[-1]["question"] if (exchanges and context_block) else ""
+
     # ── Clarify gate: check if questions needed (unless context already provided) ──
     if not skip_clarify and not context:
         try:
-            questions = generate_clarifying_questions(question)
+            questions = generate_clarifying_questions(question,
+                                                      context_block=context_block)
             if questions:
                 return jsonify({"needs_clarification": True, "questions": questions})
         except Exception:
@@ -358,13 +436,27 @@ def ask():
         full_question = f"{question}\n\nAdditional clinical context provided by the clinician:\n{context}"
 
     job_id = create_job(question, mode)
+    # The UI's "continues from" line is published with the job, so it states
+    # what the server actually did rather than what the browser assumed.
+    update_job(job_id, continues_from=continues_from)
     thread = threading.Thread(
         target=run_question,
         args=(job_id, full_question, mode),
+        kwargs={"context_block": context_block, "prior_pmids": prior_pmids,
+                "thread_id": thread_id},
         daemon=True
     )
     thread.start()
-    return jsonify({"job_id": job_id})
+    return jsonify({"job_id": job_id, "continues_from": continues_from})
+
+
+@app.route("/thread/clear", methods=["POST"])
+def thread_clear():
+    """"New topic" — forget this thread. Idempotent, and safe to call for a
+    thread_id the server has never seen."""
+    data = request.json or {}
+    _thread_clear((data.get("thread_id") or "").strip()[:64])
+    return jsonify({"ok": True})
 
 
 @app.route("/abort/<job_id>", methods=["POST"])
@@ -446,10 +538,18 @@ def status(job_id: str):
 
 # ── Background worker ────────────────────────────────────
 
-def run_question(job_id: str, question: str, mode: str = "review"):
+def run_question(job_id: str, question: str, mode: str = "review",
+                 context_block: str = "", prior_pmids: list = None,
+                 thread_id: str = ""):
     try:
         # Cache key includes mode so review/learn answers are stored separately
         cache_key = f"[{mode}] {question}"
+        # ...and the conversation context, as a hard partition of the table.
+        # A follow-up's TEXT alone is often within 0.92 of the same words asked
+        # cold — "what about in immature teeth?" is the same string either way —
+        # so without this the first follow-up in a thread would be served the
+        # context-free answer. See rag.context_fingerprint.
+        ctx_hash = context_fingerprint(context_block)
 
         # ── Cache check ───────────────────────────────────
         # Deep Learning: 7-day TTL (curricula go stale as literature evolves).
@@ -461,7 +561,8 @@ def run_question(job_id: str, question: str, mode: str = "review"):
         # ordering, since a point-of-care recommendation is exactly the thing
         # that should go stale.
         ttl = LEARN_HISTORY_TTL_DAYS if mode == "learn" else REVIEW_CACHE_TTL_DAYS
-        cached = get_cached_answer(cache_key, max_age_days=ttl)
+        cached = get_cached_answer(cache_key, max_age_days=ttl,
+                                   context_hash=ctx_hash)
         if cached:
             age_days = cached.get("age_days")
             if mode == "learn" and age_days is not None:
@@ -484,13 +585,19 @@ def run_question(job_id: str, question: str, mode: str = "review"):
                 streaming     = False,
                 checks_status = "complete",
             )
+            # A cache hit is still an exchange: the clinician asked, and an
+            # answer was given. If it did not join the thread, the NEXT
+            # follow-up would reach back past it to a stale one.
+            if mode == "review":
+                _thread_record(thread_id, question, cached["answer"],
+                               cached.get("papers") or [])
             return
 
         # ── Intent routing (Haiku triage) ─────────────────
         # Runs ahead of retrieval so we can pick a cheaper pipeline
         # for trivial questions and tell the clinician what we're doing.
         update_job(job_id, message="Routing question...", progress=2)
-        intent = classify_question_intent(question)
+        intent = classify_question_intent(question, context_block=context_block)
         intent_cost = float(intent.get("cost") or 0.0)
         print(f"[intent] kind={intent['kind']} retrieval={intent['retrieval']} "
               f"clarify={intent['needs_clarify']} reason={intent['reason']}")
@@ -520,7 +627,9 @@ def run_question(job_id: str, question: str, mode: str = "review"):
                           "complex": "complex multi-system question"}.get(intent["kind"], "question")
             update_job(job_id, message=f"Routing as {kind_label} — generating search terms...",
                        progress=5)
-            evidence = build_evidence_base_with_progress(job_id, question, mode=mode)
+            evidence = build_evidence_base_with_progress(
+                job_id, question, mode=mode,
+                context_block=context_block, prior_pmids=prior_pmids)
 
             if is_aborted(job_id):
                 update_job(job_id, status="aborted", progress=100, message="Cancelled")
@@ -563,6 +672,7 @@ def run_question(job_id: str, question: str, mode: str = "review"):
                     stream_cb = _on_partial,
                     abort_cb  = lambda: is_aborted(job_id),
                     phase_cb  = _on_phase,
+                    context_block = context_block,
                 )
             except StreamAborted:
                 update_job(job_id, status="aborted", progress=100,
@@ -581,8 +691,10 @@ def run_question(job_id: str, question: str, mode: str = "review"):
         papers  = summary.get("all_scored", [])
 
         save_answer(question, answer, evidence)
-        save_query_cache(cache_key, answer, papers)
+        save_query_cache(cache_key, answer, papers, context_hash=ctx_hash)
         write_citation_audit(question, answer, mode)
+        if mode == "review":
+            _thread_record(thread_id, question, answer, papers)
 
         # Deep Learning curricula get an additional persistent file archive
         # under learn_history/. The 7-day re-use window is enforced via the
@@ -755,17 +867,29 @@ RELEVANCE_GATE = {
 
 def build_evidence_base_with_progress(job_id: str, question: str,
                                       force_route: str = None,
-                                      mode: str = "review") -> dict:
+                                      mode: str = "review",
+                                      context_block: str = "",
+                                      prior_pmids: list = None) -> dict:
     """
     RAG-first evidence pipeline.
     Searches the full library without level_key filter (level_key is empty
     in the current library build). Falls back to PubMed if < MIN_RAG_RESULTS.
 
-    `mode` is "review" or "learn". It gates the B5 early stop only: Review
-    stops once the top tiers have supplied enough evidence, because tier
+    `mode` is "review", "learn" or "case". It gates the B5 early stop only:
+    Review stops once the top tiers have supplied enough evidence, because tier
     banding means a case series cannot override a Level I finding anyway. Learn
     mode always sweeps every tier — a teaching curriculum genuinely wants the
-    narrative scaffolding that reviews and editorials provide.
+    narrative scaffolding that reviews and editorials provide. Case mode sweeps
+    too, for a different reason: an unusual presentation may have no Level I
+    literature at all, and the case series the early stop would have skipped is
+    then the only evidence that exists.
+
+    `context_block` / `prior_pmids` carry a Review thread's earlier exchanges.
+    The block reaches the two search-term generators only — an elliptical
+    follow-up ("what about in immature teeth?") cannot be turned into a query
+    without it. `prior_pmids` seeds the CANDIDATE set after the routing gate has
+    already decided; see the seeding block below for why that ordering is the
+    whole safety property.
 
     force_route pins retrieval for evaluation runs: "live" skips the library
     gate entirely, "library" refuses to fall back to PubMed. Production always
@@ -788,7 +912,8 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review, _pubmed_audit_log,
     )
-    from rag import search as rag_search, rag_results_to_scored, library_stats
+    from rag import (search as rag_search, rag_results_to_scored, library_stats,
+                     search_by_pmids as rag_search_by_pmids)
 
     # Cosine KNN always returns its nearest neighbours, relevant or not, so a
     # bare count gate ("did we get 20 hits?") is really asking "does the
@@ -820,7 +945,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         print("  [rag_gate] force_route=live — library skipped")
 
     update_job(job_id, message="Generating smart search terms...", progress=8)
-    smart_topic = generate_search_terms(question)
+    smart_topic = generate_search_terms(question, context_block=context_block)
 
     # ── Try RAG for full evidence base ────────────────────
     if library_ok:
@@ -830,7 +955,8 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         # generate_multi_search_terms is only called on the live path below, so
         # produce the extra angles here too — cheap relative to a wrong answer.
         try:
-            _terms = generate_multi_search_terms(question, smart_topic)
+            _terms = generate_multi_search_terms(question, smart_topic,
+                                                 context_block=context_block)
         except Exception as _te:
             print(f"  [rag] multi-term generation failed, using primary only: {_te}")
             _terms = [smart_topic]
@@ -871,6 +997,37 @@ def build_evidence_base_with_progress(job_id: str, question: str,
               f"-> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
 
         if library_covers_question:
+            # ── Prior-exchange seeding (Review conversation memory) ──
+            # The papers the previous answer cited are added as CANDIDATES, with
+            # a similarity recomputed against THIS question, and then judged by
+            # every gate below exactly as a KNN hit is: the similarity floor
+            # cuts the ones the follow-up moved away from, banding puts them in
+            # their own tier, and rag.search_by_pmids applies the same
+            # retracted/withdrawn/superseded exclusion as rag.search.
+            #
+            # It runs HERE, after library_covers_question has been computed,
+            # and that ordering is load-bearing. Seeding before the gate would
+            # let three carried papers push `len(relevant)` over min_relevant
+            # and route a thin topic to the library on the strength of the
+            # PREVIOUS question's evidence — context substituting for
+            # retrieval, which is the one thing this feature must not do.
+            if prior_pmids:
+                known = {r.get("pmid") for r in rag_results}
+                try:
+                    seeds = rag_search_by_pmids(question,
+                                                [p for p in prior_pmids if p not in known])
+                except Exception as _se:
+                    print(f"  [context] prior-PMID seeding failed, continuing: {_se}")
+                    seeds = []
+                if seeds:
+                    rag_results = rag_results + seeds
+                    kept = [s for s in seeds
+                            if float(s.get("similarity") or 0) >= RAG_SIMILARITY_FLOOR]
+                    relevant = relevant + kept
+                    print(f"  [context] seeded {len(seeds)} paper(s) cited by the "
+                          f"earlier answer; {len(kept)} cleared the "
+                          f"{RAG_SIMILARITY_FLOOR} floor for this question")
+
             update_job(job_id, message=f"Found {len(rag_results)} papers in library — building evidence...", progress=40)
             # Build the evidence from the RELEVANT hits only. Feeding all 100
             # nearest neighbours put topically unrelated papers in front of
@@ -944,7 +1101,13 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     # ── Full PubMed fallback ──────────────────────────────
     # Generate multiple search terms for broader coverage (Feature 6)
     update_job(job_id, message="Generating multi-angle search terms...", progress=12)
-    search_terms = generate_multi_search_terms(question, smart_topic)
+    # The live path resolves an elliptical follow-up the same way the library
+    # path does — through the query. It does NOT seed prior PMIDs: every paper
+    # here arrives through fetch_papers(), which is where the per-tier quality
+    # floors are applied, and injecting library rows past it would be a gate
+    # bypass on exactly the path that has the least other protection.
+    search_terms = generate_multi_search_terms(question, smart_topic,
+                                               context_block=context_block)
     print(f"  Multi-term search: {search_terms}")
 
     update_job(job_id, message="Searching Cochrane Reviews...", progress=15)
@@ -1800,10 +1963,16 @@ def case_chat():
     if not question:
         return jsonify({"error": "No message provided"}), 400
 
-    # Clarify gate — first message only, not a follow-up in an ongoing chat
+    # Clarify gate — first message only, not a follow-up in an ongoing chat.
+    # Deliberately NOT generate_clarifying_questions: that one is shared with
+    # Review and asks 2-3 questions on principle, which here produced an
+    # interrogation that re-asked facts the clinician had already written.
+    # generate_case_followups re-reads the description first and returns [] when
+    # it is already sufficient, so a complete case goes straight to an answer.
     if not skip_clarify and len(messages) == 1:
         try:
-            questions = generate_clarifying_questions(question)
+            from endo_ai import generate_case_followups
+            questions = generate_case_followups(question)
             if questions:
                 return jsonify({"needs_clarification": True, "questions": questions})
         except Exception:
@@ -1839,7 +2008,13 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
                             if is_followup else
                             "Searching evidence base for this case..."),
                    progress=10)
-        evidence = build_evidence_base_with_progress(job_id, search_q)
+        # mode="case", not the default "review". The review-mode early stop
+        # skips level2-level5 and invitro once cochrane+level1 clear 15 papers,
+        # and those are exactly the tiers a case discussion needs — a case
+        # series is often the only literature on an unusual presentation.
+        # Measured before this: case answers cited a median of 2 papers from a
+        # median-100 evidence base.
+        evidence = build_evidence_base_with_progress(job_id, search_q, mode="case")
 
         # Persist the most recent evidence for this conversation
         with case_convs_lock:

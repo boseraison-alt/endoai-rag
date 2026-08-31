@@ -825,8 +825,218 @@ def flag_superseded_by_review(evidence: dict) -> dict:
     return evidence
 
 
+# ── REVIEW-MODE CONVERSATION MEMORY ───────────────────────
+# "What about in immature teeth?" is unanswerable on its own: the noun it
+# modifies lives in the previous exchange. Four call sites need that noun — the
+# clarify gate, the intent router, search-term generation and synthesis — so the
+# thread is compacted ONCE, here, and the same block is prepended to each prompt.
+#
+# What travels is deliberately narrow: the previous QUESTION, its CLINICAL
+# RECOMMENDATION only, and the PMIDs it cited. Carrying the full answer would
+# cost several thousand tokens per exchange on four separate calls, and — the
+# real reason — it would let a model answer the new question out of old prose
+# instead of new retrieval. The label states that in the model's reading order:
+# context informs the query, it never substitutes for evidence.
+CONTEXT_BLOCK_LABEL = ("Prior exchange, for context; re-verify everything "
+                       "against retrieved evidence.")
+
+# Older exchanges drop. Three is the depth a clinician's follow-up chain
+# actually reaches back to; past that the block costs more on every one of the
+# four calls than the recall is worth.
+MAX_CONTEXT_EXCHANGES = 3
+
+# The recommendation is 2-4 sentences by construction (the synthesis prompt
+# mandates it). This is the guard for a model that overruns, not the norm.
+CONTEXT_RECOMMENDATION_CHARS = 700
+CONTEXT_PMIDS_PER_EXCHANGE   = 8
+
+
+def extract_clinical_recommendation(answer: str,
+                                    max_chars: int = CONTEXT_RECOMMENDATION_CHARS) -> str:
+    """Pull the CLINICAL RECOMMENDATION section out of a finished answer.
+
+    Inline `[[PMID:N]]` markers are STRIPPED. The PMIDs travel separately as a
+    plain list, because a marker sitting in prose the model is reading is an
+    invitation to copy it into the next answer — where it would be a citation to
+    a paper that this question's retrieval never produced, i.e. a fabrication as
+    far as validate_evidence_mapping is concerned.
+    """
+    if not answer:
+        return ""
+    for title, body in _split_sections(answer):
+        t = re.sub(r"^[*_\s#]+", "", (title or "").strip().lower())
+        if not t.startswith("clinical recommendation"):
+            continue
+        text = _PMID_RE.sub("", body or "")
+        text = re.sub(r"[ \t]+", " ", text)
+        text = re.sub(r"\s*\n\s*", " ", text).strip()
+        if len(text) > max_chars:
+            cut = text[:max_chars]
+            stop = max(cut.rfind(". "), cut.rfind("! "), cut.rfind("? "))
+            text = (cut[:stop + 1] if stop > max_chars // 2 else cut).strip() + " […]"
+        return text
+    return ""
+
+
+def build_context_block(exchanges: list,
+                        max_exchanges: int = MAX_CONTEXT_EXCHANGES) -> str:
+    """Compact the last `max_exchanges` exchanges into one prompt-ready block.
+
+    `exchanges` is oldest-first; only the tail survives. Returns "" when there
+    is nothing usable, and "" must mean "no context" everywhere downstream —
+    the cache fingerprint, the UI's continues-from line and the prompts all key
+    off emptiness rather than off a separate flag that could disagree with it.
+    """
+    usable = []
+    for ex in (exchanges or []):
+        q = (ex.get("question") or "").strip()
+        if q:
+            usable.append(ex)
+    usable = usable[-max(1, int(max_exchanges)):] if usable else []
+    if not usable:
+        return ""
+
+    lines = [CONTEXT_BLOCK_LABEL]
+    for i, ex in enumerate(usable, 1):
+        lines.append(f"{i}. Earlier question: {(ex.get('question') or '').strip()}")
+        rec = (ex.get("recommendation") or "").strip()
+        if rec:
+            lines.append(f"   Its clinical recommendation was: {rec}")
+        pmids = [str(p).strip() for p in (ex.get("pmids") or []) if str(p).strip()]
+        if pmids:
+            lines.append("   Papers it cited: "
+                         + ", ".join("PMID " + p
+                                     for p in pmids[:CONTEXT_PMIDS_PER_EXCHANGE]))
+    return "\n".join(lines)
+
+
+def context_prior_pmids(exchanges: list,
+                        max_exchanges: int = MAX_CONTEXT_EXCHANGES) -> list:
+    """Every PMID cited across the carried exchanges, newest exchange first,
+    de-duplicated. These SEED retrieval; they never bypass it."""
+    out, seen = [], set()
+    tail = (exchanges or [])[-max(1, int(max_exchanges)):]
+    for ex in reversed(tail):
+        for p in (ex.get("pmids") or []):
+            p = str(p).strip()
+            if p and p not in seen:
+                seen.add(p)
+                out.append(p)
+    return out
+
+
+def _with_context(context_block: str, prompt: str, note: str = "") -> str:
+    """Prepend the context block (and an optional per-call-site instruction) to
+    a prompt. A blank block leaves the prompt byte-identical to the
+    context-free one — that identity is what the offline tests assert."""
+    block = (context_block or "").strip()
+    if not block:
+        return prompt
+    head = block + (("\n" + note.strip()) if note and note.strip() else "")
+    return f"{head}\n\n{prompt}"
+
+
 # ── CLINICAL CLARIFYING QUESTIONS ─────────────────────────
-def generate_clarifying_questions(question: str) -> list:
+# ── CASE DISCUSSION OPENING ──────────────────────────────
+# The scaffold the UI shows before the clinician types. It is deliberately a
+# single open invitation rather than a form: a case is a narrative, and asking
+# for it field-by-field produces stilted fragments that retrieve badly. The
+# parenthetical is a reminder of what usually matters, not a checklist to
+# complete — a clinician who writes three sentences still gets an answer.
+CASE_OPENING_SCAFFOLD = (
+    "Describe the case in your own words — patient age and relevant medical "
+    "history, the tooth and what you see clinically, imaging findings, symptoms "
+    "and their history, and anything already tried."
+)
+
+# Facts that genuinely change the differential or the treatment plan. Anything
+# outside this list is interesting but not worth a round trip: the clinician is
+# chairside and every question costs them time.
+_CASE_DECIDING_FACTS = """
+- PULP STATUS / vitality testing — separates reversible pulpitis, irreversible
+  pulpitis and necrosis, which have different treatments entirely.
+- PERIAPICAL FINDINGS on imaging — presence, size and character of a lesion.
+- RESTORABILITY — ferrule, remaining tooth structure, crown-root ratio.
+- MEDICAL RED FLAGS — bisphosphonates/antiresorptives, head-and-neck radiation,
+  immunosuppression, uncontrolled diabetes, anticoagulation, endocarditis risk.
+- PRIOR ENDODONTIC TREATMENT and what specifically failed.
+- Trauma: type of injury, time since it happened, apex maturity.
+"""
+
+
+def generate_case_followups(case_description: str) -> list:
+    """Up to three follow-up questions about a case, or [] if none are needed.
+
+    Deliberately NOT `generate_clarifying_questions`, which is shared with
+    Review and asks 2-3 questions on principle. That behaviour is wrong here:
+    it produced an interrogation that re-asked things the clinician had already
+    written, which reads as not having been listened to.
+
+    The three rules that make this different:
+      1. Re-read the description first, and never ask for anything it states or
+         clearly implies.
+      2. Ask only about facts that change the differential or the plan.
+      3. Say in one clause WHY each question matters, so the clinician can
+         judge whether it is worth answering.
+
+    Returns [] when the description already carries what is needed — a complete
+    description SHOULD get straight to the answer.
+    """
+    client = anthropic.Anthropic(api_key=_get_api_key())
+    try:
+        resp = _invoke_claude(
+            client, function_name="generate_case_followups",
+            model=MODELS["structured_fast"],
+            max_tokens=400,
+            messages=[{"role": "user", "content": f"""You are an experienced endodontist. A colleague has described a case:
+
+\"\"\"{case_description}\"\"\"
+
+STEP 1 — Read the description again and list, to yourself, every clinical fact
+it already gives you. This matters: asking for something the colleague has
+already told you reads as not having listened, and wastes their chairside time.
+
+STEP 2 — Decide which of these decision-changing facts are genuinely MISSING:
+{_CASE_DECIDING_FACTS}
+
+STEP 3 — Return only questions for facts that are both missing AND would
+actually change your differential or treatment plan. Fewer is always better.
+
+How many to ask depends on how much the colleague already gave you:
+- If the description already covers pulp/vitality status, periapical findings,
+  restorability and relevant medical history: ask AT MOST ONE question, and
+  only if that single fact would genuinely change what you advise. Otherwise
+  return [] — a thorough description has earned an answer, not another round
+  trip.
+- If it covers some of those: at most two.
+- If it is a bare sentence: at most three, aimed at the biggest gaps.
+
+Return [] whenever the description is sufficient to give useful advice.
+
+Each question must be ONE line in this shape:
+  <the question> — <why it matters, one clause>
+For example:
+  Is the tooth restorable with an adequate ferrule? — this decides retreatment
+  versus extraction more than any other single factor.
+
+Never ask about anything the description states or clearly implies.
+Never ask more than one thing per question.
+
+Return ONLY a JSON array of strings. No markdown, no explanation."""}]
+        )
+        log_llm_call("generate_case_followups", MODELS["structured_fast"],
+                     resp.usage, mode="case")
+        raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
+        result = json.loads(raw)
+        if isinstance(result, list):
+            return [str(q).strip() for q in result[:3] if str(q).strip()]
+    except Exception as e:
+        # Fail open: a clarify step that errors must not block the case answer.
+        print(f"  [case] follow-up generation failed, proceeding: {e}")
+    return []
+
+
+def generate_clarifying_questions(question: str, context_block: str = "") -> list:
     """
     Generate 2-3 targeted clinical clarifying questions before running a full search.
     Returns a list of question strings, or [] if not applicable.
@@ -837,7 +1047,7 @@ def generate_clarifying_questions(question: str) -> list:
         resp = _invoke_claude(client, function_name="generate_clarifying_questions",
             model=MODELS["structured_fast"],
             max_tokens=300,
-            messages=[{"role": "user", "content":
+            messages=[{"role": "user", "content": _with_context(context_block,
                 f"""You are an expert endodontist. A clinician asked: "{question}"
 
 Your job: decide whether asking 2-3 clarifying questions BEFORE answering would produce a meaningfully better, more tailored answer.
@@ -854,7 +1064,10 @@ If clarification would help, return a JSON array of 2-3 SHORT, SPECIFIC clinical
 Prioritise: type/severity of injury or condition, pulp/periapical status, tooth/root anatomy, patient age/medical factors, prior treatment.
 If genuinely no clarification needed, return [].
 
-Return ONLY valid JSON — no markdown, no explanation."""}]
+Return ONLY valid JSON — no markdown, no explanation.""",
+                note="The clinician is continuing the thread above. Do NOT ask for "
+                     "anything the earlier exchange already establishes; ask only "
+                     "about what is genuinely new in this question.")}]
         )
         log_llm_call("generate_clarifying_questions", MODELS["structured_fast"],
                      resp.usage, mode="shared")
@@ -1052,7 +1265,8 @@ _MULTI_TERM_FORMAT = (
 )
 
 
-def generate_multi_search_terms(question: str, primary_term: str) -> list:
+def generate_multi_search_terms(question: str, primary_term: str,
+                                context_block: str = "") -> list:
     """
     Generate additional PubMed queries for broader coverage; the primary_term
     (from generate_search_terms) is always included and always first.
@@ -1076,6 +1290,11 @@ def generate_multi_search_terms(question: str, primary_term: str) -> list:
         f'endodontics domain terms — both are appended automatically.\n\n'
         f'{_MULTI_TERM_FORMAT}'
     )
+    base_prompt = _with_context(
+        context_block, base_prompt,
+        note="The question may be elliptical. Resolve it against the earlier "
+             "exchange first; every query must carry the topic of the earlier "
+             "question AND the new qualifier.")
 
     terms = []
     for attempt, prompt in enumerate((
@@ -1497,7 +1716,7 @@ def _clean_single_query(raw: str) -> str:
     return best
 
 
-def generate_search_terms(question):
+def generate_search_terms(question, context_block: str = ""):
     client = anthropic.Anthropic(api_key=_get_api_key())
     # Routed to Haiku 2026-04-27 — was Opus. Reason: single-string structured generation
     # (PubMed query, ≤10 words). Called on EVERY retrieval; the cheapest model is the right one.
@@ -1508,7 +1727,8 @@ def generate_search_terms(question):
         max_tokens=400,
         messages=[{
             "role": "user",
-            "content": f"""Convert this clinical endodontic question into a PubMed BOOLEAN query.
+            "content": _with_context(context_block,
+                f"""Convert this clinical endodontic question into a PubMed BOOLEAN query.
 Return ONLY the query — no explanation, no surrounding quotes, no extra text.
 
 PubMed ANDs bare words together, so a string like "laser irradiation power
@@ -1528,7 +1748,11 @@ Rules:
 
 Question: {question}
 
-PubMed boolean query:"""
+PubMed boolean query:""",
+                note="The question may be elliptical (\"what about in immature teeth?\"). "
+                     "Resolve it against the earlier exchange first, then write the query "
+                     "for the RESOLVED question — it must carry the topic of the earlier "
+                     "question AND the new qualifier.")
         }]
     )
     log_llm_call("generate_search_terms", MODELS["structured_fast"],
@@ -3570,7 +3794,7 @@ _INTENT_KINDS     = {"simple", "standard", "complex"}
 _INTENT_RETRIEVAL = {"local", "pubmed", "both"}
 
 
-def classify_question_intent(question: str) -> dict:
+def classify_question_intent(question: str, context_block: str = "") -> dict:
     """Triage a clinician's question into a routing decision.
 
     Returns dict with keys:
@@ -3602,7 +3826,7 @@ def classify_question_intent(question: str) -> dict:
         resp = _invoke_claude(client, function_name="classify_question_intent",
             model      = MODELS["structured_fast"],
             max_tokens = 200,
-            messages   = [{"role": "user", "content":
+            messages   = [{"role": "user", "content": _with_context(context_block,
                 f"""You are routing an endodontic clinical question to the right pipeline.
 
 QUESTION: "{question}"
@@ -3624,7 +3848,10 @@ Classify it on three axes and return ONLY a JSON object (no prose, no markdown f
 4. "reason": one short sentence (max 20 words) explaining your routing choice.
 
 Output JSON only:
-{{"kind":"...","needs_clarify":false,"retrieval":"...","reason":"..."}}"""
+{{"kind":"...","needs_clarify":false,"retrieval":"...","reason":"..."}}""",
+                note="Judge the RESOLVED question — an elliptical follow-up inherits "
+                     "its subject from the earlier exchange. \"needs_clarify\" is false "
+                     "for context the earlier exchange already supplies.")
             }]
         )
         cost = log_llm_call("classify_question_intent", MODELS["structured_fast"],
@@ -3654,7 +3881,7 @@ Output JSON only:
 
 # ── ASK CLAUDE ───────────────────────────────────────────
 def ask_clinical_question(question, evidence, stream_cb=None, abort_cb=None,
-                          phase_cb=None):
+                          phase_cb=None, context_block: str = ""):
     """Synthesise the answer, streaming it out as it is written.
 
     `stream_cb(partial_markdown)` — optional. Called at the cadence set by
@@ -3765,11 +3992,23 @@ Rules:
     # not cross-tier sorted by score
     context = _build_evidence_context(evidence)
 
-    user_message = f"""Peer-reviewed endodontic literature with evidence scores:
+    user_message = _with_context(context_block,
+        f"""Peer-reviewed endodontic literature with evidence scores:
 
 {context}
 
-Clinical Question: {question}"""
+Clinical Question: {question}""",
+        # The prior exchange's PMIDs are named in the block above. Some of them
+        # will have survived this question's retrieval and appear in the
+        # evidence; the rest did not, and citing one of those would be a
+        # citation to a paper this answer was never given — indistinguishable
+        # from a fabrication to validate_evidence_mapping, and unverifiable by
+        # the clinician, since the bibliography would not contain it.
+        note="Answer the NEW clinical question below on its own retrieved evidence. "
+             "Cite ONLY PMIDs that appear in the evidence supplied for THIS question; "
+             "a PMID named in the earlier exchange is citable only if it also appears "
+             "below. Do not repeat the earlier answer — write a fresh one, and refer "
+             "back only where the follow-up genuinely turns on it.")
 
     print(f"\nAsking Claude: '{question}'")
     print("=" * 60)
@@ -5010,7 +5249,12 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
     resp, cost = tier2_invoke(
         "ask_case_question",
         mode       = "case",
-        max_tokens = 2000,
+        # 2000 -> 6000. Measured: case answers cited a median of 2 papers from
+        # a median-100 evidence base. A conversational answer that must also
+        # carry citations cannot spend what it has not got; ask_clinical_question
+        # runs at 8000. Kept below Review's because a chairside reply should
+        # still read as a conversation, not a literature review.
+        max_tokens = 6000,
         system     = system_prompt,
         messages   = api_messages,
     )
@@ -5034,7 +5278,7 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
         retry_resp, retry_cost = tier2_invoke(
             "ask_case_question_retry",
             mode       = "case",
-            max_tokens = 2000,
+            max_tokens = 6000,
             system     = system_prompt,
             messages   = retry_messages,
         )
@@ -5054,6 +5298,17 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
                 f"before acting clinically.\n\n"
             )
             answer = warning + answer
+
+    # The v2 guardrail, now on the case path too. validate_evidence_mapping
+    # above proves every cited PMID is REAL; this asks the separate question of
+    # whether the cited abstract actually SUPPORTS the claim, which is what
+    # catches a real-but-irrelevant citation. It ran only inside
+    # ask_clinical_question, so chairside advice — the output most likely to be
+    # acted on immediately — was the one place it was missing. Fail-open and
+    # advisory, exactly as on the Review path.
+    support = verify_citation_support(answer, evidence)
+    cost += support.get("cost", 0.0)
+    answer = _append_support_warnings(answer, support)
 
     return answer, cost
 
