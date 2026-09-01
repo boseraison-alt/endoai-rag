@@ -109,6 +109,59 @@ def _ncbi_params(extra: dict = None) -> dict:
 _EFETCH_ENTRY_SPLIT_RE = re.compile(r"\n\n(?=\d+\.\s+[A-Z])")
 _EFETCH_PMID_RE        = re.compile(r"^PMID:\s*(\d+)", re.MULTILINE)
 
+# The labelled blocks PubMed's text renderer emits alongside the abstract.
+# "Longest paragraph" is a proxy for "the abstract", and these are the things
+# that can be longer than one:
+#
+#   * `Author information:` — one paragraph holding every affiliation.
+#     PMID 39743567 (a consensus with ~30 institutional addresses) stored
+#     6,304 characters of university departments in place of its 707-character
+#     abstract, and that text reached synthesis as the paper's content and was
+#     written into `abstract_cache`, which is what the citation-support check
+#     reads.
+#   * `Publisher:` — a foreign-language abstract. PMID 41337506's Portuguese
+#     version is longer than its English one.
+#
+# 175 of 9,985 `abstract_cache` rows and 4 of 2,348 library rows were in one of
+# those two states. Measured against efetch XML on 198 library PMIDs, 95 of
+# them structured, the collapse loses NOTHING to a structured abstract —
+# PubMed prints BACKGROUND/METHODS/RESULTS/CONCLUSIONS as one blank-line-free
+# block — so this is the whole of the defect, and it is over-capture rather
+# than the loss that was on record.
+#
+# ANCHORED at the start of the paragraph. A paper about authorship, or one
+# whose abstract mentions an erratum, keeps its abstract.
+_NON_ABSTRACT_BLOCK_RE = re.compile(
+    r"^\s*(?:Author information|Publisher|Collaborators|Comment (?:in|on)|"
+    r"Erratum (?:in|for)|Update (?:in|of)|Republished (?:in|from)|"
+    r"Expression of [Cc]oncern (?:in|for)|Retraction (?:in|of)|"
+    r"Conflict of interest statement|Grant support|Copyright|"
+    r"DOI|PMID|PMCID)\s*:",
+    re.IGNORECASE)
+
+
+def _select_abstract_paragraph(paragraphs: list, min_chars: int = 200) -> str:
+    """Pick the paper's abstract out of a PubMed text entry's paragraphs.
+
+    The longest paragraph of at least `min_chars`, EXCLUDING the labelled
+    blocks above. Shared by every site that parses `retmode=text`, because
+    four sites each kept their own copy of this heuristic and they had already
+    drifted — `_parse_efetch_batch` returned "" when no paragraph cleared the
+    floor while `ingest_classics` fell back to the longest of any length.
+
+    If every long paragraph is an excluded block, the longest of them is
+    returned anyway. A record whose only abstract is publisher-supplied still
+    has an abstract, and blanking the field would be a second data loss on top
+    of the first — worse, an empty abstract silently skips that paper in
+    `verify_citation_support`, so the guardrail would go quiet rather than
+    complain.
+    """
+    paras = [p for p in (paragraphs or []) if p and len(p) >= min_chars]
+    if not paras:
+        return ""
+    kept = [p for p in paras if not _NON_ABSTRACT_BLOCK_RE.match(p)]
+    return max(kept or paras, key=len)
+
 
 def _parse_efetch_batch(raw_text: str) -> dict:
     """Split an efetch batch text dump into {pmid: {title, abstract}} chunks.
@@ -116,8 +169,9 @@ def _parse_efetch_batch(raw_text: str) -> dict:
     The format from efetch (rettype=abstract, retmode=text) groups one paper
     per "1. ", "2. ", ... entry. We split on those boundaries, locate the
     `PMID: NNNNNN` line, then extract title + abstract from the entry's
-    paragraph structure (longest paragraph ≥ 200 chars is virtually always
-    the abstract; the second paragraph is the title).
+    paragraph structure (the second paragraph is the title; the abstract comes
+    from `_select_abstract_paragraph`, which knows which long paragraphs are
+    not abstracts).
     """
     if not raw_text or not raw_text.strip():
         return {}
@@ -129,8 +183,6 @@ def _parse_efetch_batch(raw_text: str) -> dict:
             continue
         pmid = m.group(1).strip()
 
-        # Reuse the same paragraph-collapsing logic the live /api/abstract
-        # path uses, so cached and live results look identical to the UI.
         paragraphs, current = [], []
         for line in entry.split("\n"):
             line = line.rstrip()
@@ -148,11 +200,8 @@ def _parse_efetch_batch(raw_text: str) -> dict:
         if len(paragraphs) >= 2 and 10 <= len(paragraphs[1]) <= 400:
             title = paragraphs[1]
 
-        # Abstract heuristic: longest paragraph ≥ 200 chars
-        candidates = [p for p in paragraphs if len(p) >= 200]
-        abstract = max(candidates, key=len) if candidates else ""
-
-        out[pmid] = {"title": title, "abstract": abstract}
+        out[pmid] = {"title": title,
+                     "abstract": _select_abstract_paragraph(paragraphs)}
     return out
 
 # ── MODEL ROUTING ─────────────────────────────────────────

@@ -52,7 +52,7 @@ import requests
 from endo_ai import (
     score_paper, get_impact_factor, score_impact_factor,
     extract_sample_size, extract_followup_period,
-    _ncbi_params, NCBI_EUTILS_BASE,
+    _ncbi_params, NCBI_EUTILS_BASE, _select_abstract_paragraph,
 )
 from rag import setup_table, upsert_paper, embed, library_stats, get_conn
 
@@ -216,7 +216,10 @@ def fetch_paper_data(pmid: str) -> dict | None:
     })
     raw = r_abs.text if r_abs else ""
 
-    # Same paragraph-collapse heuristic as /api/abstract: longest paragraph >= 200 chars
+    # Same shared selector as /api/abstract and the live batch parser. This
+    # used to be a third copy of the heuristic and had already drifted — its
+    # fallback took the longest paragraph of ANY length, so a record with no
+    # abstract at all stored its citation line.
     paragraphs, current = [], []
     for line in raw.split("\n"):
         line = line.rstrip()
@@ -228,9 +231,7 @@ def fetch_paper_data(pmid: str) -> dict | None:
             current = []
     if current:
         paragraphs.append(" ".join(current))
-    candidates = [p for p in paragraphs if len(p) >= 200]
-    abstract = max(candidates, key=len) if candidates else (
-        max(paragraphs, key=len) if paragraphs else "")
+    abstract = _select_abstract_paragraph(paragraphs)
 
     return {
         "pmid":     pmid,

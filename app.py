@@ -1550,8 +1550,10 @@ def get_abstract(pmid):
         raw = f.text or ""
 
         # PubMed efetch returns: citation line, title, authors, affiliation,
-        # then abstract, then DOI/PMID footer. Heuristic: pull paragraphs and
-        # keep the longest one (which is virtually always the abstract).
+        # then abstract, then DOI/PMID footer. Pull the paragraphs and hand
+        # them to the shared selector — "longest paragraph" alone picks the
+        # AFFILIATION block on a paper with thirty institutional addresses,
+        # and the Portuguese translation on a paper that has both.
         paragraphs = []
         current    = []
         for line in raw.split("\n"):
@@ -1564,10 +1566,8 @@ def get_abstract(pmid):
                 current = []
         if current:
             paragraphs.append(" ".join(current))
-        # Discard trivially short paragraphs that aren't the abstract
-        candidates = [p for p in paragraphs if len(p) >= 200]
-        abstract   = max(candidates, key=len) if candidates else (
-            max(paragraphs, key=len) if paragraphs else "")
+        from endo_ai import _select_abstract_paragraph
+        abstract = _select_abstract_paragraph(paragraphs)
 
         authors_list = meta.get("authors", []) or []
         names = [a.get("name", "") for a in authors_list if a.get("name")]

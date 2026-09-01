@@ -320,19 +320,21 @@ def pubmed_fetch_abstracts(pmids: list[str]) -> dict[str, str]:
     })
     if not r:
         return {}
-    out: dict[str, str] = {}
-    current_id, lines = None, []
-    for line in r.text.split("\n"):
-        m = re.match(r"^(\d{5,9})\.", line)
-        if m:
-            if current_id and lines:
-                out[current_id] = " ".join(lines).strip()
-            current_id, lines = m.group(1), [line]
-        elif current_id:
-            lines.append(line)
-    if current_id and lines:
-        out[current_id] = " ".join(lines).strip()
-    return out
+    # This was a THIRD variant of the text-dump parse, and the worst of them:
+    # it joined the entire entry — citation line, authors, every affiliation,
+    # the DOI/PMID footer — into one string and stored that as the abstract.
+    # `endo_ai._parse_efetch_batch` already splits a batch into per-PMID
+    # entries and picks the abstract paragraph with the shared selector, and a
+    # guideline record is not a different shape of PubMed record.
+    #
+    # Note the numbering: this matched `^12345678.` — a PMID followed by a dot
+    # at the start of a line — where the entry separator PubMed actually emits
+    # is an ORDINAL, "1. ", "2. ". It happened to work because the PMID footer
+    # line is `PMID: 12345678 [...]`, not `12345678.`, so nothing matched and
+    # every abstract in a batch landed under whichever id matched first.
+    from endo_ai import _parse_efetch_batch
+    return {pmid: parts.get("abstract") or ""
+            for pmid, parts in _parse_efetch_batch(r.text).items()}
 
 
 def pubmed_fetch_meta(pmids: list[str]) -> dict[str, dict]:

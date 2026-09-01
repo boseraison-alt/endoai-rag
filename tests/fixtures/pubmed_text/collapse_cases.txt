@@ -1,0 +1,274 @@
+1. Int J Oral Sci. 2025 Jan 2;17(1):2. doi: 10.1038/s41368-024-00334-8.
+
+Expert consensus on apical microsurgery.
+
+Wang H(#)(1), Xu X(#)(2), Bian Z(3), Liang J(4), Chen Z(3), Hou B(5), Qiu L(6), 
+Chen W(7), Wei X(8), Hu K(9), Wang Q(10), Wang Z(11), Li J(2), Huang D(2), Wang 
+X(12), Huang Z(13), Meng L(3), Zhang C(14), Xie F(7), Yang D(6), Yu J(15), Zhao 
+J(16), Pan Y(17), Pan S(18), Yang D(19), Niu W(20), Zhang Q(21), Deng S(22), Ma 
+J(23), Meng X(24), Yang J(25), Wu J(26), Du Y(27), Ling J(28), Yue L(29), Zhou 
+X(30), Yu Q(31).
+
+Author information:
+(1)State Key Laboratory of Oral & Maxillofacial Reconstruction and Regeneration, 
+National Clinical Research Center for Oral Diseases, Shaanxi Key Laboratory of 
+Oral Diseases, Department of Operative Dentistry & Endodontics, School of 
+Stomatology, The Fourth Military Medical University, Xi'an, China.
+(2)State Key Laboratory of Oral Diseases & National Center for Stomatology & 
+National Clinical Research Center for Oral Diseases & Department of Cariology 
+and Endodontics, West China Hospital of Stomatology, Sichuan University, 
+Chengdu, China.
+(3)State Key Laboratory of Oral & Maxillofacial Reconstruction and Regeneration, 
+Key Laboratory of Oral Biomedicine Ministry of Education, Hubei Key Laboratory 
+of Stomatology, Department of Endodontics, School & Hospital of Stomatology, 
+Wuhan University, Wuhan, China.
+(4)Department of Endodontics and Operative Dentistry, Shanghai Ninth People's 
+Hospital, Shanghai Jiao Tong University School of Medicine; College of 
+Stomatology, Shanghai Jiao Tong University; National Center for Stomatology; 
+National Clinical Research Center for Oral Diseases; Shanghai Key Laboratory of 
+Stomatology, Shanghai Research Institute of Stomatology, Shanghai, China.
+(5)School of Stomatology, Capital Medical University, Beijing, China.
+(6)Department of Endodontics, School of Stomatology, China Medical University, 
+Shenyang, China.
+(7)College & Hospital of Stomatology, Guangxi Medical University, Nanning, 
+China.
+(8)Department of Operative Dentistry and Endodontics, Hospital of Stomatology, 
+Guanghua School of Stomatology, Sun Yat-Sen University & Guangdong Provincial 
+Key Laboratory of Stomatology, Guangzhou, China.
+(9)Department of Oral and Maxillofacial Surgery, School of Stomatology, Xi'an 
+Medical University, Xi'an, China.
+(10)State Key Laboratory of Oral & Maxillofacial Reconstruction and 
+Regeneration, National Clinical Research Center for Oral Diseases, Shaanxi 
+International Joint Research Center for Oral Diseases, Department of 
+Periodontology, School of Stomatology, The Fourth Military Medical University, 
+Xi'an, China.
+(11)Department of Cariology and Endodontology, Peking University School and 
+Hospital of Stomatology & National Center for Stomatology & National Clinical 
+Research Center for Oral Diseases & National Engineering Research Center of Oral 
+Biomaterials and Digital Medical Devices, Beijing, China.
+(12)Department of Cariology and Endodontology, Peking University School and 
+Hospital of Stomatology, National Center for Stomatology & National Clinical 
+Research Center for Oral Diseases & National Engineering Research Center of Oral 
+Biomaterials and Digital Medical Devices& Beijing Key Laboratory of Digital 
+Stomatology & NHC Key Laboratory of Digital Stomatology & NMPA Key Laboratory 
+for Dental Materials, Beijing, China.
+(13)Department of Endodontics, Shanghai Ninth People's Hospital, Shanghai Jiao 
+Tong University School of Medicine; College of Stomatology, Shanghai Jiao Tong 
+University, National Clinical Research Center for Oral Diseases, National Center 
+for Stomatology; Shanghai Key Laboratory of Stomatology, Shanghai, China.
+(14)Department of Endodontics, School of Stomatology, Capital Medical 
+University, Beijing, China.
+(15)Department of Endodontics, School of Stomatology, Nanjing Medical 
+University, Nanjing, China.
+(16)Department of Cariology and Endodontics, The First Affiliated Hospital of 
+Xinjiang Medical University, Urumqi, China.
+(17)Department of Endodontics, School and Hospital of Stomatology, Wenzhou 
+Medical University, Wenzhou, China.
+(18)Department of Endodontics, School of Stomatology, First Affiliated Hospital 
+of Harbin Medical University, Harbin, China.
+(19)Department of Conservative Dentistry and Endodontics, Shanghai 
+Stomatological Hospital & School of Stomatology, Shanghai Key Laboratory of 
+Craniomaxillofacial Development and Diseases, Fudan University, Shanghai, China.
+(20)Department of Endodontics, School of Stomatology, Dalian Medical University, 
+Dalian, China.
+(21)Shanghai Engineering Research Center of Tooth Restoration and Regeneration & 
+Tongji Research Institute of Stomatology & Department of Endodontics, 
+Stomatological Hospital and Dental School, Tongji University, Shanghai, China.
+(22)Stomatology Hospital, School of Stomatology, Zhejiang University School of 
+Medicine, Zhejiang Provincial Clinical Research Center for Oral Diseases, Key 
+Laboratory of Oral Biomedical Research of Zhejiang Province, Cancer Center of 
+Zhejiang University, Engineering Research Center of Oral Biomaterials and 
+Devices of Zhejiang Province, Hangzhou, China.
+(23)Department of Stomatology, Tongji Hospital, Tongji Medical College, Huazhong 
+University of Science and Technology, Wuhan, China.
+(24)Department of Endodontics, School and Hospital of Stomatology, Jilin 
+University, Changchun, China.
+(25)Department of Endodontics, The Affiliated Stomatological Hospital of 
+Nanchang University, Nanchang, China.
+(26)Department of Endodontics, Affiliated Stomatological Hospital of Zunyi 
+Medical University, Zunyi, China.
+(27)Jinan Stomatological Hospital, Jinan, China.
+(28)Hospital of Stomatology, Guanghua School of Stomatology, Sun Yat-sen 
+University, Guangzhou, China. lingjunqi@163.com.
+(29)Department of Cariology and Endodontology, Peking University School and 
+Hospital of Stomatology & National Center of Stomatology & National Clinical 
+Research Center for Oral Diseases & National Engineering Laboratory for Digital 
+and Material Technology of Stomatology & Beijing Key Laboratory of Digital 
+Stomatology & Research Center of Engineering and Technology for Computerized 
+Dentistry Ministry of Health & NMPA Key Laboratory for Dental Materials, 
+Beijing, China. kqlinyue@bjmu.edu.cn.
+(30)State Key Laboratory of Oral Diseases & National Center for Stomatology & 
+National Clinical Research Center for Oral Diseases & Department of Cariology 
+and Endodontics, West China Hospital of Stomatology, Sichuan University, 
+Chengdu, China. zhouxd@scu.edu.cn.
+(31)State Key Laboratory of Oral & Maxillofacial Reconstruction and 
+Regeneration, National Clinical Research Center for Oral Diseases, Shaanxi Key 
+Laboratory of Oral Diseases, Department of Operative Dentistry & Endodontics, 
+School of Stomatology, The Fourth Military Medical University, Xi'an, China. 
+2535165@qq.com.
+(#)Contributed equally
+
+Apical microsurgery is accurate and minimally invasive, produces few 
+complications, and has a success rate of more than 90%. However, due to the lack 
+of awareness and understanding of apical microsurgery by dental general 
+practitioners and even endodontists, many clinical problems remain to be 
+overcome. The consensus has gathered well-known domestic experts to hold a 
+series of special discussions and reached the consensus. This document specifies 
+the indications, contraindications, preoperative preparations, operational 
+procedures, complication prevention measures, and efficacy evaluation of apical 
+microsurgery and is applicable to dentists who perform apical microsurgery after 
+systematic training.
+
+© 2025. The Author(s).
+
+DOI: 10.1038/s41368-024-00334-8
+PMCID: PMC11693765
+PMID: 39743567 [Indexed for MEDLINE]
+
+Conflict of interest statement: Competing interests: The authors declare no 
+competing interests. Informed consent: Patients (or their guardians) must be 
+informed about the details of apical microsurgery and must provide informed 
+consent prior to the procedure.
+
+
+2. Braz Dent J. 2025 Dec 1;36:e256511. doi: 10.1590/0103-644020256511.
+eCollection  2025.
+
+Cyto-genotoxicity and immunomodulation in fibroblasts exposed to 
+calcium-aluminate cement with different radiopacifiers.
+
+[Article in Portuguese; Abstract available in Portuguese from the publisher]
+
+Martorano AS(1), Messias NS(2), Bighetti-Trevisan RL(2), Teixeira LN(3), 
+Oliveira IR(4), Raucci-Neto W(1), Oliveira PT(1), Castro-Raucci LMS(2).
+
+Author information:
+(1)School of Dentistry of Ribeirão Preto, University of São Paulo, Ribeirão 
+Preto, SP, Brazil.
+(2)School of Dentistry, University of Ribeirão Preto, Ribeirão Preto, SP, 
+Brazil.
+(3)Cell Biology and Oral Pathology Division, Faculdade São Leopoldo Mandic, 
+Campinas, SP, Brazil.
+(4)Institute for Research and Development, University of Vale do Paraíba, São 
+José dos Campos,SP, Brazil.
+
+Calcium aluminate cement (CAC) has been proposed as an alternative to mineral 
+trioxide aggregate (MTA), but its biological behavior remains underexplored. 
+This study evaluated the cytotoxicity, genotoxicity, and proinflammatory gene 
+expression of fibroblasts exposed to CAC formulations containing zinc oxide or 
+bismuth oxide with different proportions of calcium chloride, in comparison with 
+MTA. Fibroblasts were cultured with CACz (25% ZnO + 2.8% CaCl₂), CACb (25% Bi₂O₃ 
++ 2.8% CaCl₂), CACb+ (25% Bi₂O₃ + 10% CaCl₂), or MTA; non-exposed cells served 
+as controls. Cytotoxicity was assessed by fluorescence microscopy and MTT 
+viability assays at 24 h and 72 h, while genotoxicity was evaluated by the comet 
+assay at 24 h. Gene expression of COL-1, TNF-α, IL-1β, IL-6, and MMP-9 was 
+examined by RT-qPCR at 72 h. Data were analyzed using the Kruskal-Wallis test 
+and the Student-Newman-Keuls post hoc test (α = 0.05). Cell viability did not 
+differ among groups at 24 h, but was higher for CACb+ at 72 h (p < 0.05). DNA 
+damage levels were similar across groups (p > 0.05). For gene expression, no 
+significant differences were observed for COL-1, IL-1β, or TNF-α. All cements 
+upregulated IL-6 compared with control (p < 0.05), with the highest levels in 
+MTA and the lowest in CACb+. CACb+ increased MMP-9 expression (p < 0.05), while 
+CACz showed the lowest levels. Within the limits of this study, CAC formulations 
+with additives were not genotoxic or cytotoxic, and their biological behavior 
+was composition-dependent, with CACb+ demonstrating the most favorable profile 
+by enhancing fibroblast viability and extracellular matrix remodeling potential.
+
+Publisher: Cimento de aluminato de cálcio (CAC) tem sido proposto como 
+alternativa ao agregado de trióxido mineral (MTA), porém seu comportamento 
+biológico permanece pouco explorado. Este estudo avaliou a citotoxicidade, a 
+genotoxicidade e a expressão de genes pró-inflamatórios em fibroblastos expostos 
+a formulações de CAC contendo óxido de zinco ou óxido de bismuto, com diferentes 
+proporções de cloreto de cálcio, em comparação ao MTA. Os fibroblastos foram 
+cultivados com CACz (25% ZnO + 2,8% CaCl₂), CACb (25% Bi₂O₃ + 2,8% CaCl₂), CACb+ 
+(25% Bi₂O₃ + 10% CaCl₂) ou MTA; células não expostas serviram como controles. A 
+citotoxicidade foi avaliada por morfologia em fluorescência e ensaio de 
+viabilidade MTT em 24 h e 72 h; a genotoxicidade, pelo ensaio do cometa em 24 h; 
+e a expressão gênica de COL-1, TNF-α, IL-1β, IL-6 e MMP-9 por RT-qPCR em 72 h. 
+Os dados foram analisados pelo teste de Kruskal-Wallis, seguido do pós-teste de 
+Student-Newman-Keuls (α = 0,05). A viabilidade celular não diferiu entre os 
+grupos em 24 h, mas foi significativamente maior para o CACb+ em 72 h (p < 
+0,05). Os níveis de dano ao DNA foram semelhantes entre os grupos (p > 0,05). 
+Quanto à expressão gênica, não foram observadas diferenças significativas para 
+COL-1, IL-1β ou TNF-α. Todos os cimentos aumentaram significativamente a 
+expressão de IL-6 em comparação ao controle (p < 0,05), com os maiores níveis no 
+MTA e os menores no CACb+. O CACb+ aumentou significativamente a expressão de 
+MMP-9 (p < 0,05), enquanto o CACz apresentou os menores níveis. Dentro das 
+limitações deste estudo, as formulações de CAC com aditivos não foram 
+genotóxicas nem citotóxicas, e seu comportamento biológico foi dependente da 
+composição, sendo que o CACb+ demonstrou o perfil mais favorável ao 
+potencializar a viabilidade de fibroblastos e o remodelamento da matriz 
+extracelular.
+
+DOI: 10.1590/0103-644020256511
+PMCID: PMC12696771
+PMID: 41337506 [Indexed for MEDLINE]
+
+Conflict of interest statement: Conflict of interest: All authors declare that 
+they have no conflict of interest.
+
+
+3. Int Endod J. 2023 Oct;56 Suppl 3:455-474. doi: 10.1111/iej.13838. Epub 2022
+Oct  8.
+
+Effectiveness of adjunct therapy for the treatment of apical periodontitis: A 
+systematic review and meta-analysis.
+
+Meire MA(1), Bronzato JD(2), Bomfim RA(3), Gomes BPFA(2).
+
+Author information:
+(1)Section of Endodontology, Department of Oral Health Sciences, Ghent 
+University, Ghent, Belgium.
+(2)Division of Endodontics, Department of Restorative Dentistry, Piracicaba 
+Dental School, State University of Campinas - UNICAMP, Piracicaba, Brazil.
+(3)Department of Community Health, School of Dentistry, Federal University of 
+Mato Grosso do Sul, Campo Grande, Brazil.
+
+BACKGROUND: Adjunct therapy refers to any intracanal procedure going beyond 
+chemomechanical preparation with instruments and traditionally delivered 
+irrigants (excluding interim dressings). It is not clear whether and which of 
+these adjunct therapies have a significant impact on the outcome of root canal 
+treatment [healing of apical periodontitis (AP) and other patient-related 
+outcomes].
+OBJECTIVES: This systematic review aimed to analyse available evidence on the 
+effectiveness of adjunct therapy for the treatment of AP in permanent teeth, 
+according to a population, intervention, comparison, outcome, time and study 
+design framework formulated a priori by the European Society of Endodontology.
+METHODS: Five electronic databases (PubMed, Embase, Scopus, Cochrane and Web of 
+Science) were searched up to October 2021 to identify clinical studies comparing 
+adjunct therapy to no adjunct therapy in adult patients with AP. Animal studies, 
+reviews, studies with less than 10 patients per arm and studies with a follow-up 
+time of less than 1 year, or less than 7 days for postoperative pain, were 
+excluded. The quality of the included studies was appraised by the appropriate 
+tools [Risk of Bias 2 (RoB2) for randomized clinical trials (RCTs) and 
+Newcastle-Ottawa Scale for observational studies]. Meta-analysis was performed 
+using a random-effects model. The certainty of the evidence was assessed using 
+the Grading of Recommendations, Assessment, Development and Evaluation (GRADE) 
+approach.
+RESULTS: Fourteen studies (13 RCTs and one retrospective cohort) fulfilled the 
+inclusion criteria for this review. They evaluated different types of adjunct 
+therapy: antimicrobial photodynamic therapy (aPDT; three studies), diode laser 
+canal irradiation (3), Nd:YAG laser canal irradiation (2), Er;Cr:YSGG laser 
+canal irradiation (1), ozone therapy (2) and ultrasonically activated irrigation 
+(UAI) (4). Radiographical healing was reported in seven studies, but 
+meta-analysis was only possible for UAI (two studies), showing no statistically 
+significant difference in healing after 12 months. Pain after 7 days was 
+reported in seven studies. Meta-analysis on three studies that used aPDT and on 
+two studies using diode laser irradiation showed no significant difference in 
+the prevalence of pain after 7 days between the control and adjunct therapy. 
+According to RoB2 tool, six studies had a high risk of bias, five studies had 
+some concerns, and two studies low risk of bias. The GRADE assessment revealed a 
+very low strength of evidence for diode laser, and low strength of evidence for 
+PDT, ozone and UAI studies.
+DISCUSSION: The included studies displayed significant heterogeneity in terms of 
+type of adjunct therapy, technical details per adjunct therapy, outcome 
+reporting and several combinations of these, limiting the potential for 
+meta-analysis.
+CONCLUSIONS: There is insufficient evidence to recommend any adjunctive therapy 
+for the treatment of apical periodontitis.
+REGISTRATION: Prospero CRD42021261869.
+
+© 2022 British Endodontic Society. Published by John Wiley & Sons Ltd.
+
+DOI: 10.1111/iej.13838
+PMID: 36156804 [Indexed for MEDLINE]
