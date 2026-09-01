@@ -1,0 +1,72 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[collapsed] endo_papers_rag: 2349 rows with an abstract, 4 mis-parsed (0.17%)
+    affiliation_block    4
+[collapsed] abstract_cache: 10137 rows with an abstract, 160 mis-parsed (1.58%)
+    affiliation_block    123
+    foreign_language     37
+
+[collapsed] 162 distinct PMIDs to re-fetch from XML
+  [collapsed] 162/162 fetched (3s)
+
+[collapsed] endo_papers_rag: 2 row(s) would be rewritten
+
+[collapsed] abstract_cache: 122 row(s) would be rewritten
+[collapsed] 40 row(s) had no usable abstract in the XML and are LEFT ALONE: [('endo_papers_rag', '38734197'), ('endo_papers_rag', '7279425'), ('abstract_cache', '41203055'), ('abstract_cache', '36407657'), ('abstract_cache', '36393835'), ('abstract_cache', '32205197')]
+
+--- endo_papers_rag PMID 40410308  [affiliation_block]  2985 -> 1853 chars
+    title  : Multinational cross-sectional study and meta-analysis on radicular grooves, C-shaped canals, and taurodontism 
+    BEFORE : 'Author information: (1)Department of Endodontics, Recep Tayyip Erdogan University, Rize, Turkey. (2)Department of Oral Radiology, Faculty of Dentistry'
+    AFTER  : 'The success of root canal therapy is fully predicated upon a complete understanding of root and canal morphology and all the anatomical variations tha'
+
+--- endo_papers_rag PMID 40739139  [affiliation_block]  1897 -> 1671 chars
+    title  : Impact of allogeneic dental pulp stem cell injection on tissue regeneration in periodontitis: a multicenter ra
+    BEFORE : 'Author information: (1)Laboratory of Tissue Regeneration and Immunology and Department of Periodontics, Beijing Key Laboratory of Tooth Regeneration a'
+    AFTER  : 'Periodontitis causes the destruction of tooth-supporting tissues, and current therapies for periodontal regeneration are invasive. In this study, a hu'
+
+--- abstract_cache PMID 38180467  [affiliation_block]  1513 -> 1204 chars
+    title  : Clinical Comparison of Three Indirect Pulp Capping Restorative Protocols: A Randomized Controlled Prospective 
+    BEFORE : 'Author information: (1)*Adriana Semprum-Clavier, DDS, MS, clinical associate professor, Department of Restorative Dentistry, College of Dentistry, Uni'
+    AFTER  : 'OBJECTIVES: The objective of this prospective double-blind clinical trial was to compare clinical outcomes of indirect pulp capping restorative protoc'
+
+--- abstract_cache PMID 26576164  [affiliation_block]  433 -> 428 chars
+    title  : Conservative Treatment of an Invaginated Maxillary Lateral Incisor with a C-shaped Canal Using Cone-Beam Compu
+    BEFORE : 'Author information: (1)Dental Materials Research Center, Department of Endodontics, Dental School, Mashhad University of Medical Sciences, Mashhad, Ir'
+    AFTER  : 'This report describes the non-surgical treatment of an invaginated maxillary lateral incisor with two fused roots. The mesial root had a C-shaped cana'
+
+--- abstract_cache PMID 39862396  [foreign_language]  2199 -> 1773 chars
+    title  : Evaluation of Biodentine® and Calcium Hydroxide in the Formation of Dentin Bridge in Deep Carious Lesions.
+    BEFORE : "Publisher: CONTEXTE: Le recouvrement indirect de la pulpe est la principale modalité de traitement de la pulpite réversible. OBJECTIF: Évaluer l'effic"
+    AFTER  : 'BACKGROUND: Indirect pulp capping is the main treatment modality for reversible pulpitis. OBJECTIVE: To evaluate the efficacy of Biodentine® and Calci'
+
+--- abstract_cache PMID 41622922  [affiliation_block]  1701 -> 1605 chars
+    title  : Consensus-Based Recommendations on Pulp Therapies in Primary and Permanent Teeth: IAPD Porto Forum.
+    BEFORE : 'Author information: (1)Department of Orthodontics and Pediatric Dentistry, University of Maryland, School of Dentistry, Baltimore, Maryland, USA. (2)S'
+    AFTER  : 'BACKGROUND: Recent understanding of pulp biology has shifted treatment paradigms toward preservation-based approaches. Traditional diagnostic terminol'
+
+--- abstract_cache PMID 26465016  [foreign_language]  1053 -> 1042 chars
+    title  : [Endodontics in motion: new concepts, materials and techniques 3. The role of irrigants during root canal trea
+    BEFORE : 'Publisher: Het doel van wortelkanaalirrigatie is het van de wortelkanaalwand en uit het wortelkanaalsysteem chemisch oplossen of verstoren en het mech'
+    AFTER  : 'The aims of root canal irrigation are the chemical dissolution or disruption and the mechanical detachment of pulp tissue, dentin debris and smear lay'
+
+--- abstract_cache PMID 33361828  [foreign_language]  2496 -> 2452 chars
+    title  : ODONTOLOGICAL EFFECTS OF IONIZING RADIATION (review).
+    BEFORE : "Publisher: Peredumova. Odontologichni efekty vplyvu ionizuiuchogo vyprominiuvannia (IV) iak rezul'tat radioterapiï,naslidok avariĭ na pidpryiemstvakh "
+    AFTER  : 'BACKGROUND: Odontological effects of ionizing radiation (IR) as a result of radiotherapy, the consequences of accidents at nuclear power plants and in'
+
+--- abstract_cache PMID 30741005  [foreign_language]  1403 -> 1131 chars
+    title  : [Risk assessment of medication-related osteonecrosis of the jaw in general dental practice].
+    BEFORE : 'Publisher: Absztrakt: A gyógyszer indukálta osteonecrosis antireszorptív terápia szövődményeként léphet fel, kezelése komoly kihívást jelent. A betegs'
+    AFTER  : 'Medication-related osteonecrosis of the jaw may appear as adverse effect in antiresorptive therapy. Its successful treatment is challenging. We aimed '
+
+--- abstract_cache PMID 39991247  [affiliation_block]  1238 -> 1055 chars
+    title  : Current trends and research advances on the application of TiO2 nanoparticles in dentistry: How far are we fro
+    BEFORE : 'Author information: (1)School of Materials and Mineral Resources Engineering, Universiti Sains Malaysia, Engineering Campus, Nibong Tebal, 14300, Pena'
+    AFTER  : 'The great potential of nanotechnology-based knowledge during the past decade has shown great potential to elevate human living standards and enhance h'
+[collapsed] backed up 2 library row(s) (abstract, title, embedding) -> endo_papers_rag_collapsed_backup
+[collapsed] backed up 122 cache row(s) (abstract, title, source) -> abstract_cache_collapsed_backup
+[collapsed] wrote 2 library and 122 cache row(s)
+[reembed] 2 library rows changed by run_id=collapsed_abstract_repair
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 26651.04it/s]
+  Embedding model ready.
+[reembed] re-embedded 2 of 2
