@@ -57,3 +57,9 @@ pitch_deck.html
 templates/index.dark-theme.bak.html
 static/curo-logo-full.png
 slide_specs/
+
+# Pinned evidence bases for scripts/capture_attempt1.py. Regenerate with
+# `--pin`; they are pickles of live retrieval results, which is a fine cache
+# and a bad archival format — the measurements they produced are committed as
+# JSON in eval/logs/ and those are the durable record.
+eval/logs/pinned_evidence/
