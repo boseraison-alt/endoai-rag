@@ -160,7 +160,14 @@ def update_paper(pmid: str, med: dict, dry_run: bool) -> bool:
     paper = {
         "pmid":            pmid,
         "title":           title,
-        "abstract":        abstract[:1000],
+        # FULL abstract — do NOT reinstate a character cap here. This script
+        # exists to REPAIR rows whose abstract is missing; storing a truncated
+        # one just replaces one damaged row with another. PubMed abstracts end
+        # with CONCLUSIONS, and the synthesis prompt reads this field verbatim,
+        # so the old [:1000] cap wrote back papers that stop before their
+        # findings (593 library rows sat at exactly 1000 chars). The embedding
+        # slice below (abstract[:400]) is the deliberate one and stays.
+        "abstract":        abstract,
         "authors":         authors,
         "year":            year,
         "journal":         journal,

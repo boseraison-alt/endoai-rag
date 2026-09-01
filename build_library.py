@@ -163,7 +163,14 @@ def build_paper_record(pmid, abstract_text, meta, level_key):
     return {
         "pmid":            pmid,
         "title":           "",   # not easily available from efetch text mode
-        "abstract":        abstract_text[:1000],
+        # FULL abstract — do NOT reinstate a character cap here. This field is
+        # what the library stores and what the synthesis prompt reads back, and
+        # a PubMed abstract puts its CONCLUSIONS last: a [:1000] cap silently
+        # deleted the findings from ~57% of library rows (the word "conclusion"
+        # survived in 7.2% of truncated rows vs 39.3% of whole ones). The
+        # sentence-transformer cap belongs on the EMBEDDING text only (see the
+        # [:300]/[:400] slices at the embed() call sites), never on storage.
+        "abstract":        abstract_text,
         "authors":         meta.get("authors", ""),
         "year":            int(meta.get("year", 2000)) if str(meta.get("year", "2000")).isdigit() else 2000,
         "journal":         journal_name,
@@ -191,7 +198,14 @@ def process_topic(topic: str, seen_pmids: set) -> int:
                         vec = embed(topic + " " + cochrane_text[:400])
                         upsert_paper({
                             "pmid":      fake_pmid,
-                            "abstract":  cochrane_text[:800],
+                            # FULL text — no cap. Same reason as
+                            # build_paper_record(): the stored abstract is the
+                            # evidence the synthesis prompt reads, and a
+                            # Cochrane review's bottom line sits at the END of
+                            # the block. The embed() call above keeps its
+                            # [:400] slice, which is the only place a length
+                            # limit belongs (256-token sentence-transformer).
+                            "abstract":  cochrane_text,
                             "authors":   "Cochrane Collaboration",
                             "year":      2024,
                             "journal":   "Cochrane Database Syst Rev",

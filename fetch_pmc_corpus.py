@@ -327,7 +327,13 @@ def build_paper_record(pmid: str, abstract_text: str, meta: dict) -> dict:
     return {
         "pmid":            pmid,
         "title":           meta.get("title", ""),
-        "abstract":        abstract_text[:1200],
+        # FULL abstract — do NOT reinstate a character cap here. The stored
+        # abstract is what the synthesis prompt reads, and PubMed abstracts put
+        # CONCLUSIONS last, so the old [:1200] cap stored papers that stop
+        # before their findings. The sentence-transformer's 256-token window is
+        # respected by the [:400] slice on the embed() text in fetch_topic();
+        # that one is deliberate, this one was a bug.
+        "abstract":        abstract_text,
         "authors":         meta.get("authors", ""),
         "year":            int(year) if str(year).isdigit() else 2010,
         "journal":         journal_name,

@@ -435,7 +435,13 @@ def ingest_pubmed_guidelines(dry_run: bool = False) -> int:
             record = {
                 "pmid":            pmid,
                 "title":           meta.get("title", ""),
-                "abstract":        abstract[:1200],
+                # FULL abstract — do NOT reinstate a character cap here. A
+                # guideline abstract carries its RECOMMENDATIONS at the end, and
+                # this field is stored and later read verbatim by the synthesis
+                # prompt; the old [:1200] cap threw the recommendations away.
+                # Length limiting belongs only on the embed() text inside
+                # upsert_guideline(), which already slices to [:600].
+                "abstract":        abstract,
                 "authors":         meta.get("authors", ""),
                 "year":            int(year_str) if str(year_str).isdigit() else 2010,
                 "journal":         meta.get("journal", ""),

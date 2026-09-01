@@ -331,7 +331,13 @@ def build_record(pmid: str, abstract: str, meta: dict, source: dict) -> dict:
     return {
         "pmid":            pmid,
         "title":           meta.get("title", ""),
-        "abstract":        abstract[:1200],
+        # FULL abstract — do NOT reinstate a character cap here. This is the
+        # stored field, read back verbatim by the synthesis prompt, and a
+        # structured abstract ends with CONCLUSIONS: the old [:1200] cap cut
+        # the findings off ~749 library rows at exactly 1200 chars. The
+        # 256-token embedding limit is handled by the [:400] slice on the
+        # embed() text in process_pmids(), which must stay.
+        "abstract":        abstract,
         "authors":         meta.get("authors", ""),
         "year":            int(year_str) if str(year_str).isdigit() else 2010,
         "journal":         journal_name,
