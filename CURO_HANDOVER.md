@@ -256,6 +256,10 @@ Report in §8 format; refresh bundle; tag `claims-v1`.
 
 - Two server configs in `.claude/launch.json`. Use **`endo-ai-noreload`** (port
   5003). It does NOT pick up code changes — restart it after editing.
+  **A server started before 2026-09-01 02:00 is still running `grounding-v1`
+  code**: PID 35820 was up throughout this batch and has the pre-batch
+  `endo_ai` imported. Restart it before trusting anything it serves or
+  writes.
 - **LibreOffice is not installed.** Render PPTX→PNG with PowerPoint COM from
   PowerShell (`$pres.Slides($n).Export($path, "PNG", 1280, 720)`).
 - Bash heredocs mangle regex escapes AND line-continuation backslashes. This
