@@ -1879,7 +1879,15 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   vertical-align: super;
   line-height: 1.4;
   transition: all 0.12s;
-  user-select: none;
+  /* NOT user-select: none.
+     It was, and it silently removed every citation from anything a clinician
+     copied. Measured on a real two-turn case conversation: 34 citations
+     rendered on screen, 34 lost in the copy, 18,045 characters shown against
+     17,609 copied — the 436-character difference was precisely the citations.
+     Text pasted into a note or an email therefore carried the claims and none
+     of the evidence, which is the one thing this product exists not to do.
+     The copy handler below shortens them; it cannot include what the
+     selection refuses to contain. */
 }
 .claim-cite:hover {
   background: rgba(37,99,235,0.35);
@@ -4839,6 +4847,45 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     var p = document.getElementById('provenancePanel');
     if (p && p.classList.contains('open')) closeProvenancePanel();
+  }
+});
+
+// ── Copied text keeps its citations, in short form ────────
+// The on-screen pill reads "Sjögren et al., J Endod. 1990;16(10):498-504",
+// which is right for reading and far too long inline in a pasted paragraph.
+// This rewrites each citation in the CLIPBOARD only, to " [PMID 2084204]" —
+// short, unambiguous, and greppable — while the rendered pill is untouched.
+//
+// It exists because the citations used to be dropped from a copy entirely
+// (`user-select: none`, removed above). A clinician pasting an answer into a
+// note got the clinical claims with none of the evidence attached, and every
+// claim then looked uncited. That is the opposite of what the marker is for.
+document.addEventListener('copy', function (e) {
+  try {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    var frag = sel.getRangeAt(0).cloneContents();
+    if (!frag.querySelector || !frag.querySelector('.claim-cite')) return;
+    frag.querySelectorAll('.claim-cite').forEach(function (c) {
+      var pmid = c.dataset.pmid || '';
+      c.replaceWith(document.createTextNode(pmid ? ' [PMID ' + pmid + ']' : ''));
+    });
+    // innerText needs a laid-out element to know where the line breaks go, so
+    // the fragment is parked off-screen rather than read while detached.
+    var box = document.createElement('div');
+    box.style.cssText = 'position:absolute;left:-99999px;top:0;white-space:pre-wrap';
+    box.appendChild(frag);
+    document.body.appendChild(box);
+    var text = box.innerText;
+    var html = box.innerHTML;
+    document.body.removeChild(box);
+    e.clipboardData.setData('text/plain', text);
+    e.clipboardData.setData('text/html', html);
+    e.preventDefault();
+  } catch (err) {
+    // A copy that throws must still copy. Falling through leaves the
+    // browser's own behaviour in place, which is now correct anyway.
+    console.warn('citation copy rewrite skipped:', err);
   }
 });
 
