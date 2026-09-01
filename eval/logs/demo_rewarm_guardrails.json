@@ -1,0 +1,79 @@
+{
+  "review": [
+    {
+      "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+      "wall_s": 61.3,
+      "cost": 0.9505,
+      "papers": 43,
+      "chars": 8745
+    },
+    {
+      "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+      "wall_s": 66.8,
+      "cost": 0.83,
+      "papers": 33,
+      "chars": 8866
+    },
+    {
+      "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+      "wall_s": 55.8,
+      "cost": 0.6784,
+      "papers": 31,
+      "chars": 7704
+    },
+    {
+      "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+      "wall_s": 69.4,
+      "cost": 0.9429,
+      "papers": 38,
+      "chars": 9921
+    },
+    {
+      "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+      "wall_s": 60.3,
+      "cost": 0.8243,
+      "papers": 36,
+      "chars": 8113
+    }
+  ],
+  "learn": {
+    "question": "Use of lasers in root canal disinfection",
+    "wall_s": 447.6,
+    "cost": 1.1658,
+    "papers": 97,
+    "chars": 39684
+  },
+  "cached": [
+    {
+      "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+      "wall_s": 1.0,
+      "from_cache": true
+    },
+    {
+      "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+      "wall_s": 1.0,
+      "from_cache": true
+    },
+    {
+      "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+      "wall_s": 0.5,
+      "from_cache": true
+    },
+    {
+      "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+      "wall_s": 0.5,
+      "from_cache": true
+    },
+    {
+      "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+      "wall_s": 0.5,
+      "from_cache": true
+    },
+    {
+      "question": "Use of lasers in root canal disinfection",
+      "wall_s": 0.5,
+      "from_cache": true
+    }
+  ],
+  "exports": {}
+}
