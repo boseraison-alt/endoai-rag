@@ -11,17 +11,19 @@ Why the full claim has to be recovered: `evidence_mapping.jsonl` stores
 `claim[:160]`, and a curriculum's claims are long. Judging a truncated claim
 is judging a different claim.
 
-Why the abstract has to be shown TWICE: `verify_citation_support` passes
-`abstract[:_SUPPORT_ABSTRACT_CHARS]` (1200 chars) to the judge, while the
-library now stores whole abstracts averaging 1,631 characters. A claim about a
-paper's CONCLUSION can therefore be judged against an excerpt that stops
-before the conclusion — which is the truncation bug this project just spent a
-batch removing from ingest, still live inside the checker. The report prints
-what the judge saw and what the row holds, so "checker artifact" can be
-distinguished from "genuinely unsupported" instead of assumed.
+THE EXCERPT CAP IS GONE, and this script used to depend on it. It read
+`endo_ai._SUPPORT_ABSTRACT_CHARS` to print what the judge saw against what the
+row held — the 1,200-character truncation that accounted for 17 of the 37
+hand-judged flags. `grounding-v2` deleted that constant when it gave the judge
+the whole abstract, and this script has raised AttributeError on line 163 ever
+since, while CURO_HANDOVER.md went on telling the next session to run it.
+`--excerpt-cap` now supplies the number explicitly: pass 1200 to reproduce the
+original worksheet, and leave it at 0 (the default, meaning "the judge saw all
+of it") for any run made after that fix.
 
-    python scripts/classify_dl_flags.py            # write the worksheet
-    python scripts/classify_dl_flags.py --summary  # counts only
+    python scripts/classify_dl_flags.py --summary                 # counts only
+    python scripts/classify_dl_flags.py --runs A B --excerpt-cap 1200
+    python scripts/classify_dl_flags.py --runs C --out eval/logs/x.md
 
 Read-only. It touches no column and writes nothing but its worksheet.
 """
@@ -39,6 +41,9 @@ EVMAP = ROOT / "evidence_mapping.jsonl"
 # per-module `verify_citation_support` records inside each window: the first
 # is 118 checked / 24 flagged, the second 116 / 13. Both are the same laser
 # curriculum question, run 8 minutes apart.
+# `--runs` selects from here. A and B are the 2026-08-31 pair behind the
+# 20.3%/11.2% figures and the 37 hand-judged verdicts in dl_flag_verdicts.json;
+# C and D are the guardrails-v1 Item 3 re-measurement, after the claim-unit fix.
 RUNS = {
     "A": {
         "label":  "curriculum A — 24/118 = 20.3%",
@@ -130,6 +135,13 @@ def _match(flag, pairs):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary", action="store_true")
+    ap.add_argument("--runs", nargs="*", default=None,
+                    help="which RUNS keys to judge (default: all)")
+    ap.add_argument("--excerpt-cap", type=int, default=0,
+                    help="characters of abstract the judge was shown. 0 = the "
+                         "whole abstract, which is the truth for every run "
+                         "after grounding-v2. Pass 1200 to reproduce the "
+                         "original 2026-08-31 worksheet.")
     ap.add_argument("--out", default="eval/logs/dl_flag_worksheet.md")
     args = ap.parse_args()
 
@@ -137,7 +149,13 @@ def main():
     import endo_ai
 
     rows = []
-    for key, run in RUNS.items():
+    wanted = args.runs or list(RUNS)
+    missing = [k for k in wanted if k not in RUNS]
+    if missing:
+        print(f"unknown run key(s): {missing}; known: {sorted(RUNS)}")
+        return 1
+    for key in wanted:
+        run = RUNS[key]
         recs = _support_records(run["from"], run["to"])
         checked = sum(int(r.get("checked") or 0) for r in recs)
         flagged = sum(int(r.get("n_flagged") or 0) for r in recs)
@@ -151,6 +169,10 @@ def main():
                 rows.append({
                     "run": key, "module": mi, "pmid": str(flag["pmid"]),
                     "stored_claim": flag.get("claim") or "",
+                    # The checker records the claim SHAPE now (guardrails-v1
+                    # Item 1). Rows from before that have none, and print as
+                    # "unrecorded" rather than being silently called prose.
+                    "shape": flag.get("shape") or "unrecorded",
                     "full_claim": full or "", "matched": how,
                 })
 
@@ -160,12 +182,19 @@ def main():
           f"{sum(1 for p in pmids if (abstracts.get(p) or {}).get('abstract'))} "
           f"with a stored abstract")
 
-    cap = endo_ai._SUPPORT_ABSTRACT_CHARS
-    over = [p for p in pmids
-            if len(((abstracts.get(p) or {}).get("abstract") or "")) > cap]
-    print(f"{len(over)} of {len(pmids)} cited abstracts are longer than the "
-          f"checker's {cap}-char excerpt — the judge did not see the tail of "
-          f"those, and a structured abstract puts CONCLUSIONS last")
+    # 0 means the judge was shown the whole abstract, which is true for every
+    # run after `grounding-v2`. Passing 1200 reproduces the original worksheet.
+    cap = args.excerpt_cap
+    over = ([p for p in pmids
+             if len(((abstracts.get(p) or {}).get("abstract") or "")) > cap]
+            if cap else [])
+    if cap:
+        print(f"{len(over)} of {len(pmids)} cited abstracts are longer than the "
+              f"checker's {cap}-char excerpt — the judge did not see the tail of "
+              f"those, and a structured abstract puts CONCLUSIONS last")
+    else:
+        print("excerpt cap 0: the judge saw the WHOLE abstract for every pair, "
+              "so `artifact_tail` is not an available verdict for this run")
 
     unmatched = [r for r in rows if r["matched"] == "unmatched"]
     print(f"{len(unmatched)} claim(s) could not be matched back to the stitched "
@@ -177,16 +206,20 @@ def main():
     out = [f"# Deep Learning citation-support flags — hand-judgement worksheet",
            "",
            f"{len(rows)} flagged claim-citation pairs from two laser curricula.",
-           f"Checker excerpt cap: **{cap} chars**. "
-           f"{len(over)}/{len(pmids)} cited abstracts exceed it.",
+           (f"Checker excerpt cap: **{cap} chars**. "
+            f"{len(over)}/{len(pmids)} cited abstracts exceed it."
+            if cap else
+            "Checker excerpt cap: **none** — the judge saw the whole abstract "
+            "for every pair below."),
            ""]
     for i, r in enumerate(rows, 1):
         rec = abstracts.get(r["pmid"]) or {}
         ab = rec.get("abstract") or ""
         title = rec.get("title") or "(no title stored)"
-        seen = ab[:cap]
+        seen = ab[:cap] if cap else ab
         out += [
-            f"## {i}. run {r['run']} module {r['module']} — PMID {r['pmid']}",
+            f"## {i}. run {r['run']} module {r['module']} — PMID {r['pmid']} "
+            f"[{r['shape']}]",
             "",
             f"**Cited paper:** {title}",
             "",
@@ -202,7 +235,7 @@ def main():
             "```",
             "",
         ]
-        if len(ab) > cap:
+        if cap and len(ab) > cap:
             out += ["**Tail the judge did NOT see:**", "", "```", ab[cap:], "```", ""]
     path = ROOT / args.out
     path.parent.mkdir(parents=True, exist_ok=True)
