@@ -725,3 +725,97 @@ class TestSynthesisModeDoesNotInventARoute:
         self._run(monkeypatch, {"id": "c", "question": "q", "mode": "review",
                                 "force_route": "library", "expect": {}})
         assert "ignores force_route" not in capsys.readouterr().out
+
+
+class TestTheFlagRateIsReadFromTheAuditLog:
+    """The citation-support flag rate is the number this project has moved
+    39.4% -> 8.5% -> 4.3%, and until now it was read by hand out of console
+    scrollback. Two properties have to hold for the harness's version to be
+    worth anything.
+
+    First, the denominator must come from the audit log rather than the
+    rendered answer: `_append_support_warnings` prints at most FIVE flags and
+    never prints `checked`, and a curriculum runs the checker once per module
+    against one stitched answer. Counting the rendered block would report
+    5/unknown on a 24-flag curriculum.
+
+    Second, 0 checked must not render as 0.0%. A checker that did not run and
+    a checker that found nothing are the same shape in the data and opposite
+    in meaning — this repo's bug class (d) exactly.
+    """
+
+    def _log(self, tmp_path, monkeypatch, records):
+        p = tmp_path / "evidence_mapping.jsonl"
+        p.write_text("".join(json.dumps(r) + "\n" for r in records),
+                     encoding="utf-8")
+        monkeypatch.setattr(run_eval, "EVMAP_LOG", p)
+        return p
+
+    def test_sums_every_check_since_the_offset(self, tmp_path, monkeypatch):
+        self._log(tmp_path, monkeypatch, [
+            {"function": "verify_citation_support", "checked": 10, "n_flagged": 2},
+            {"function": "verify_citation_support", "checked": 8,  "n_flagged": 1},
+        ])
+        assert run_eval._support_since(0) == (18, 3, 2)
+
+    def test_records_before_the_offset_are_not_counted(self, tmp_path, monkeypatch):
+        """Case N+1 must not inherit case N's flags."""
+        p = self._log(tmp_path, monkeypatch, [
+            {"function": "verify_citation_support", "checked": 10, "n_flagged": 9},
+        ])
+        offset = p.stat().st_size
+        with p.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"function": "verify_citation_support",
+                                 "checked": 4, "n_flagged": 0}) + "\n")
+        assert run_eval._support_since(offset) == (4, 0, 1)
+
+    def test_the_fabrication_validator_is_not_counted(self, tmp_path, monkeypatch):
+        """validate_evidence_mapping writes to the same stream and has no
+        `checked` field of this meaning. Counting it would inflate the
+        denominator with a different check's records."""
+        self._log(tmp_path, monkeypatch, [
+            {"function": "ask_clinical_question", "mode": "review",
+             "attempt": 1, "passed": True, "score": 100},
+            {"function": "verify_citation_support", "checked": 6, "n_flagged": 1},
+        ])
+        assert run_eval._support_since(0) == (6, 1, 1)
+
+    def test_a_check_that_never_ran_reports_zero_checked(self, tmp_path, monkeypatch):
+        """Zero pairs reached the checker. The caller prints NOT RUN for this;
+        the one thing it must not be is 0/0 rendered as a clean 0.0%."""
+        self._log(tmp_path, monkeypatch, [])
+        assert run_eval._support_since(0) == (0, 0, 0)
+
+    def test_a_truncated_last_line_does_not_kill_the_run(self, tmp_path, monkeypatch):
+        """The log is appended to from several threads under a lock, but a
+        crash mid-write leaves a partial line. Losing the eval to it would be
+        worse than losing one record."""
+        p = self._log(tmp_path, monkeypatch, [
+            {"function": "verify_citation_support", "checked": 5, "n_flagged": 1},
+        ])
+        with p.open("a", encoding="utf-8") as fh:
+            fh.write('{"function": "verify_citation_sup')
+        assert run_eval._support_since(0) == (5, 1, 1)
+
+    def test_a_missing_log_is_not_an_error(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(run_eval, "EVMAP_LOG", tmp_path / "nope.jsonl")
+        assert run_eval._support_since(0) == (0, 0, 0)
+
+
+class TestTheLiveSubsetIsLivePinned:
+    """The whole citation-support history was measured on library-pinned cases.
+    A 'live subset' that quietly contained a library case would report the same
+    path again under a new name."""
+
+    def test_every_live_subset_case_exists_and_is_pinned_live(self):
+        _doc, cases = run_eval.load_cases()
+        by_id = {c["id"]: c for c in cases}
+        for cid in run_eval.LIVE_SUBSET:
+            assert cid in by_id, f"{cid} is not in questions.json"
+            assert by_id[cid].get("force_route") == "live", \
+                f"{cid} is not pinned live"
+            assert by_id[cid].get("mode", "review") == "review", \
+                f"{cid} is not a Review case — force_route is inert in learn mode"
+
+    def test_the_two_subsets_do_not_overlap(self):
+        assert not (set(run_eval.LIVE_SUBSET) & set(run_eval.SYNTHESIS_SUBSET))

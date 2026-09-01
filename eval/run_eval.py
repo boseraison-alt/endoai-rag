@@ -91,6 +91,48 @@ def _esearch_hits_since(offset):
     return total, n, empty, terms, failed
 
 
+EVMAP_LOG = ROOT / "evidence_mapping.jsonl"
+
+
+def _evmap_offset():
+    return EVMAP_LOG.stat().st_size if EVMAP_LOG.exists() else 0
+
+
+def _support_since(offset):
+    """Citation-support flag rate for everything checked since `offset`.
+
+    Read from the audit log rather than from the answer text, for the same
+    reason `_esearch_hits_since` reads esearch from `pubmed_audit.jsonl`: the
+    rendered block shows at most five flags and states no denominator per
+    check, while a curriculum runs the checker once PER MODULE and the answer
+    carries one stitched block. Summing the log records gives the real
+    numerator and denominator on both paths.
+
+    Returns (checked, flagged, n_checks). `checked` is 0 when the checker did
+    not run at all, which is NOT the same as a clean answer — the caller must
+    report it as "not run", never as 0.0%.
+    """
+    if not EVMAP_LOG.exists():
+        return 0, 0, 0
+    checked = flagged = n = 0
+    with EVMAP_LOG.open("r", encoding="utf-8") as fh:
+        fh.seek(offset)
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if rec.get("function") != "verify_citation_support":
+                continue
+            checked += int(rec.get("checked") or 0)
+            flagged += int(rec.get("n_flagged") or 0)
+            n += 1
+    return checked, flagged, n
+
+
 DIVIDED_MARKER = "The literature is currently divided on this topic"
 MODULE_NOT_GENERATED = "Module not generated"
 # Any numeric clinical parameter — concentrations, energies, times, ISO sizes.
@@ -145,6 +187,8 @@ def run_case_with_synthesis(case):
     app_mod.get_cached_answer = lambda *a, **k: None
     app_mod.save_query_cache = lambda *a, **k: None
 
+    evmap_offset = _evmap_offset()
+
     # `force_route` reaches synthesis through `build_evidence_base_with_progress`
     # and nothing else. Learn mode does not go through it: /ask hands the whole
     # question to `build_deep_learning_module`, which does its own per-module
@@ -173,6 +217,8 @@ def run_case_with_synthesis(case):
         app_mod.build_evidence_base_with_progress = original
         app_mod.get_cached_answer = original_cache_get
         app_mod.save_query_cache = original_cache_save
+
+    sup_checked, sup_flagged, sup_calls = _support_since(evmap_offset)
 
     if st.get("status") != "complete":
         raise RuntimeError(f"job {st.get('status')}: {st.get('error')}")
@@ -234,7 +280,9 @@ def run_case_with_synthesis(case):
             "per_tier": {}, "esearch_queries": 0, "esearch_hits": 0,
             "esearch_empty": 0, "esearch_hits_per_query": None,
             "search_terms_used": 0, "answer_chars": len(answer),
-            "cost_usd": st.get("cost_usd"), "has_banner": has_banner}, failures
+            "cost_usd": st.get("cost_usd"), "has_banner": has_banner,
+            "support_checked": sup_checked, "support_flagged": sup_flagged,
+            "support_checks": sup_calls}, failures
 
 
 def run_case(case):
@@ -495,6 +543,20 @@ SYNTHESIS_SUBSET = [
     "pips-vs-ultrasonic",
 ]
 
+# Every Review case in SYNTHESIS_SUBSET is library-pinned, so the whole
+# citation-support history — 39.4% → 8.5% → 4.3% — describes ONE retrieval
+# path. The live path was never measured, and it is the path where abstracts
+# were never missing, so none of the fixes that produced those numbers can
+# explain it. These five are the live-pinned Review cases from questions.json,
+# run with synthesis so the checker sees a real live-path answer.
+LIVE_SUBSET = [
+    "retreatment-vs-microsurgery",
+    "cracked-tooth-prognosis",
+    "bisphosphonates",
+    "pregnancy",
+    "intentional-replantation",
+]
+
 
 # ── --diff ────────────────────────────────────────────────────────────────
 # The flag was declared and then never read: `--diff` ran an ordinary eval,
@@ -581,6 +643,9 @@ def main():
     ap.add_argument("--synthesis-subset", action="store_true",
                     help="run the 5-case subset WITH LLM synthesis and evaluate "
                          "answer-level assertions. Costs real money (~$1/case).")
+    ap.add_argument("--live-subset", action="store_true",
+                    help="run the 5 live-pinned Review cases WITH LLM synthesis. "
+                         "Implies synthesis mode. Costs real money (~$1/case).")
     ap.add_argument("--diff", action="store_true",
                     help="print a per-case table of this run against the stored "
                          "baseline ranges. Drift is REPORTED, not gated: the "
@@ -592,9 +657,16 @@ def main():
     args = ap.parse_args()
 
     doc, cases = load_cases()
+    # --live-subset is a second selection over the same synthesis path, not a
+    # second mode. Setting the flag here keeps every downstream branch — the
+    # cache bypass, the $0 failure, the "answer-level assertions not evaluated"
+    # footer — reading one variable.
+    if args.live_subset:
+        args.synthesis_subset = True
+    subset = LIVE_SUBSET if args.live_subset else SYNTHESIS_SUBSET
     if args.synthesis_subset:
-        cases = [c for c in cases if c["id"] in SYNTHESIS_SUBSET]
-        missing = set(SYNTHESIS_SUBSET) - {c["id"] for c in cases}
+        cases = [c for c in cases if c["id"] in subset]
+        missing = set(subset) - {c["id"] for c in cases}
         if missing:
             print(f"WARNING: subset ids not in questions.json: {sorted(missing)}")
     if args.id:
@@ -617,6 +689,7 @@ def main():
     diff_rows = []
 
     n_fail = 0
+    support_rows = []
     for case in cases:
         pin = case.get("force_route")
         print(f"\n{'=' * 70}\n{case['id']}"
@@ -639,6 +712,25 @@ def main():
                   f"{measured['search_terms_used']} search terms"
                   + (f", {measured['esearch_failed']} NEVER SENT — network"
                      if measured.get("esearch_failed") else "") + ")")
+
+        if args.synthesis_subset:
+            checked = measured.get("support_checked") or 0
+            flags   = measured.get("support_flagged") or 0
+            cost    = measured.get("cost_usd") or 0.0
+            # HANDOVER's rule: cost is reported only beside the counts, never
+            # alone. Here it is also the tell that the answer was synthesised
+            # rather than served — a $0 case is already a failure above.
+            if checked:
+                print(f"  support  {flags}/{checked} flagged = "
+                      f"{100.0 * flags / checked:.1f}%  "
+                      f"({measured.get('support_checks')} check(s), "
+                      f"${cost:.4f})")
+            else:
+                # 0/0 is "the checker did not run", not "nothing was flagged".
+                print(f"  support  NOT RUN — 0 claim-citation pairs reached the "
+                      f"checker ({measured.get('support_checks')} check(s), "
+                      f"${cost:.4f})")
+            support_rows.append((case["id"], checked, flags, cost))
 
         base = case.get("baseline") or {}
         if base.get("papers") is not None:
@@ -674,6 +766,20 @@ def main():
 
     if args.diff:
         _print_diff(args.baseline, diff_rows, len(cases))
+
+    if support_rows:
+        tot_checked = sum(r[1] for r in support_rows)
+        tot_flags   = sum(r[2] for r in support_rows)
+        tot_cost    = sum(r[3] or 0.0 for r in support_rows)
+        print(f"\n{'=' * 70}\nCITATION SUPPORT\n{'=' * 70}")
+        print(f"  {'case':<40} {'flagged':>9} {'checked':>9} {'rate':>8} {'cost':>9}")
+        for cid, checked, flags, cost in support_rows:
+            rate = f"{100.0 * flags / checked:.1f}%" if checked else "n/a"
+            print(f"  {cid:<40} {flags:>9} {checked:>9} {rate:>8} "
+                  f"{('$%.4f' % cost) if cost else '$0':>9}")
+        rate = f"{100.0 * tot_flags / tot_checked:.1f}%" if tot_checked else "n/a"
+        print(f"  {'TOTAL':<40} {tot_flags:>9} {tot_checked:>9} {rate:>8} "
+              f"${tot_cost:.4f}")
 
     print(f"\n{len(cases) - n_fail}/{len(cases)} cases passed  [{mode_label}]")
     if not args.synthesis_subset:
