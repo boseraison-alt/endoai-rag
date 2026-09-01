@@ -1077,3 +1077,115 @@ class TestMultiArmOnTheWebDeck:
                          "secondary_stat": "0.58", "secondary_label": "SMD"},
                         {}, "a P-score of 0.993 and an SMD of 0.58")
         assert not [p for p in planned if p.get("layout") == "chart"]
+
+
+# ── A REAL multi-arm spec, driven through BOTH exports ──────────────────────
+
+class TestRealMultiArmSpecThroughBothExports:
+    """`arms` had no real-data coverage at all.
+
+    Every multi-arm test above is synthetic — hand-written NaOCl concentrations
+    that no generator ever emitted and no answer ever contained. Not one spec
+    in `slide_specs/` carries the key, so the whole 3+ arm path was guarded
+    only against numbers invented by the tests that guard it.
+
+    `tests/fixtures/multi_arm_stat_panel.json` fixes that. It is recorded from
+    `answers/answer_20260429_231323.txt`: the pooled microbial reduction for
+    diode irradiation (60.92%), ultrasonic activation (47.22%) and conventional
+    needle irrigation (37.97%), all at 2.5% NaOCl, cited to PMID 38484867. The
+    three values are in the answer verbatim and the paper record is the one
+    that run scored.
+
+    INVARIANT 9: one spec, two exports, the same chart/no-chart decision.
+    """
+
+    @pytest.fixture(scope="class")
+    def fx(self):
+        return json.loads((FIX / "multi_arm_stat_panel.json")
+                          .read_text(encoding="utf-8"))
+
+    @staticmethod
+    def _pptx_chart(fx):
+        """(chart_was_drawn, all_text_on_the_slide) from the PPTX export."""
+        from presentations.build_deck import build_deck_from_specs
+        prs, _queue = build_deck_from_specs(fx["deck"],
+                                            source_text=fx["source_text"])
+        slide = prs.slides[0]
+        drawn = any(sh.shape_type == 13 for sh in slide.shapes)   # PICTURE
+        texts = [sh.text_frame.text for sh in slide.shapes
+                 if sh.has_text_frame and sh.text_frame.text.strip()]
+        return drawn, " ".join(texts)
+
+    @staticmethod
+    def _web_chart(fx):
+        """(chart_was_drawn, the chart section) from the web export."""
+        papers = {str(p["pmid"]): p for p in fx["papers"]}
+        planned = plan.adapt(fx["deck"]["slides"][0], papers, fx["source_text"])
+        charts = [s for s in planned if s.get("layout") == "chart"]
+        return bool(charts), (charts[0] if charts else None)
+
+    def test_both_exports_make_the_same_decision(self, fx):
+        pptx_drawn, _ = self._pptx_chart(fx)
+        web_drawn, _ = self._web_chart(fx)
+        assert pptx_drawn == web_drawn, (
+            f"invariant 9 broken on a real spec: PPTX charted={pptx_drawn}, "
+            f"web charted={web_drawn}")
+        assert pptx_drawn, "a verified real three-arm comparison must plot"
+
+    def test_the_web_export_plots_all_three_arms(self, fx):
+        _drawn, section = self._web_chart(fx)
+        assert section is not None
+        assert [lit for _n, _v, lit in section["_series"]] == \
+            ["60.92%", "47.22%", "37.97%"]
+        assert [lbl for lbl, _v, _lit in section["_series"]] == [
+            "Diode irradiation", "Ultrasonic activation (UAI)",
+            "Conventional needle irrigation"]
+
+    def test_every_plotted_value_is_verbatim_in_the_source(self, fx):
+        """§1.5's hard rule, checked against the ANSWER the spec came from —
+        not against a source string written to make the test pass."""
+        from presentations.chart_data import detect_chartable, verbatim_in
+        arms = fx["deck"]["slides"][0]["arms"]
+        spec = {"title": "T",
+                "categories": [a["label"] for a in arms],
+                "values": [a["stat"] for a in arms]}
+        chart = detect_chartable(spec, fx["source_text"])
+        assert chart is not None
+        assert chart.values == [60.92, 47.22, 37.97]
+        assert chart.unit == "%"
+        for literal in chart.literals:
+            assert verbatim_in(literal, fx["source_text"]), literal
+        # And the source really is the stored answer, not a paraphrase of it.
+        answer = (ROOT / fx["_provenance"]["answer"]).read_text(encoding="utf-8")
+        assert fx["source_text"].split("\n\n")[-1] in answer
+
+    def test_the_pmid_reaches_the_pptx_footer(self, fx):
+        drawn, rendered = self._pptx_chart(fx)
+        assert drawn
+        assert "38484867" in rendered
+        assert "[[PMID:" not in rendered, "a raw marker reached a slide"
+
+    def test_the_pmid_reaches_the_web_footer(self, fx):
+        html = builder.build_web_deck(
+            fx["deck"], "Use of lasers in root canal disinfection",
+            fx["source_text"], papers_list=fx["papers"], abstracts={},
+            spec_hash="multiarm")
+        foot = re.findall(r'<footer class="furniture-foot">.*?</footer>',
+                          html, re.S)
+        assert foot, "the chart slide rendered without a footer"
+        assert any('data-pmid="38484867"' in f for f in foot), \
+            "the arms' PMID never reached a footer pill"
+        assert "[[PMID:" not in html
+
+    def test_an_arm_absent_from_the_answer_kills_BOTH_charts(self, fx):
+        """The all-or-nothing rule, on the real spec — and still in lockstep.
+        99.9% is not in that answer."""
+        import copy
+        broken = copy.deepcopy(fx)
+        broken["deck"]["slides"][0]["arms"].append(
+            {"label": "Fabricated arm", "stat": "99.9%"})
+        pptx_drawn, pptx_text = self._pptx_chart(broken)
+        web_drawn, _ = self._web_chart(broken)
+        assert pptx_drawn == web_drawn, "invariant 9 broken on the refusal"
+        assert not pptx_drawn
+        assert "99.9%" in pptx_text, "the refused value is still slide content"

@@ -1,0 +1,52 @@
+{
+  "_provenance": {
+    "answer": "answers/answer_20260429_231323.txt",
+    "question": "Use of lasers in root canal disinfection",
+    "why": "stat_panel accepts `arms` for a 3+ arm comparison and both deck exports read it, but no spec in slide_specs/ carries the key, so every multi-arm test was synthetic. This is a real three-arm comparison — pooled microbial reduction for diode irradiation, ultrasonic activation and conventional needle irrigation, all at 2.5% NaOCl — recorded from the stored answer above. The three values are verbatim in `source_text`; the PMID is the one the answer cites for them.",
+    "paper_record_from": "tests/fixtures/webdeck_papers.json"
+  },
+  "source_text": "- **Diode (810–980 nm)** — pigment-absorbed; useful for direct intracanal disinfection and as the activation source for antimicrobial PDT [[PMID:38403667]] [[PMID:38484867]].\n\nWhere PIPS hardware is unavailable, the diode laser offers a budget-accessible alternative. Pooled data demonstrate **60.92% microbial reduction** with diode irradiation versus 47.22% with UAI and 37.97% with conventional needle irrigation, all using 2.5% NaOCl [[PMID:38484867]]. Fahim et al. 2024 RCT confirmed **940 nm diode + 17% EDTA outperformed conventional 2.5% NaOCl/EDTA** for both aerobic and anaerobic CFU reduction in single-rooted teeth with apical periodontitis [[PMID:38403667]]. A representative operational protocol: **976 nm, 0.75 W, pulsed mode, 15 Hz, 200 µm fiber, 15 J/20 s** delivered after canal instrumentation [[PMID:41470159]]. The fiber is moved apical-to-coronal at ~2 mm/s in 4 helical passes, with a 15-second cooling interval between passes to prevent cementum overheating.",
+  "papers": [
+    {
+      "pmid": "38484867",
+      "level_key": "level1",
+      "year": "2024",
+      "authors": "McGillivray A, Dutta A",
+      "journal": "Journal of dentistry",
+      "journal_abbrev": "J Dent",
+      "volume": "144",
+      "pages": "104928",
+      "score": 74.8,
+      "has_retraction": false
+    }
+  ],
+  "deck": {
+    "title": "Lasers in Root Canal Disinfection",
+    "subtitle": "Adjunctive disinfection: what the pooled data show",
+    "footer": "CURO · LASER DISINFECTION",
+    "slides": [
+      {
+        "pattern": "stat_panel",
+        "eyebrow": "POOLED MICROBIAL REDUCTION",
+        "title": "Diode irradiation versus activated irrigation",
+        "arms": [
+          {
+            "label": "Diode irradiation",
+            "stat": "60.92%"
+          },
+          {
+            "label": "Ultrasonic activation (UAI)",
+            "stat": "47.22%"
+          },
+          {
+            "label": "Conventional needle irrigation",
+            "stat": "37.97%"
+          }
+        ],
+        "callout": "All three arms used 2.5% NaOCl.",
+        "citation": "McGillivray & Dutta, J Dent 2024 [[PMID:38484867]]",
+        "speaker_notes": "Where PIPS hardware is unavailable, the diode laser offers a budget-accessible alternative."
+      }
+    ]
+  }
+}

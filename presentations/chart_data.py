@@ -126,21 +126,78 @@ def _verified_pairs(pairs, source_text) -> list[tuple[str, str, float]] | None:
     return out or None
 
 
-def _unit_of(raw: str) -> str:
-    s = _norm(raw or "")
-    if "%" in s:
+_UNIT_WORDS = (("month", "months"), ("year", "years"),
+               ("week", "weeks"), ("day", "days"),
+               ("hour", "hours"), ("minute", "minutes"),
+               ("second", "seconds"), ("mm", "mm"), ("mj", "mJ"))
+
+# Abbreviated units, matched as whole tokens: "24-48 h", "15 min", "2 mm".
+# A substring test would fire on any word containing the letter.
+_ABBREV_UNIT_RE = re.compile(r"\b(h|hr|hrs|min|sec|mm|mj|mw|hz|ml|mg)\b", re.I)
+
+# What may sit BETWEEN the two numbers of a span: "24-48 h", "3 to 5 mm".
+# The unit of the first number lives past the second one there, so the scan
+# steps over the connector rather than concluding the number is unitless.
+_RANGE_JOIN_RE = re.compile(r"^[\s‐-―-]*(?:to[\s]*)?[\s‐-―-]*$",
+                            re.I)
+
+
+def _unit_in(segment: str) -> str:
+    """The unit named anywhere inside one segment of text, or ""."""
+    if "%" in segment:
         return "%"
-    for token, unit in (("month", "months"), ("year", "years"),
-                        ("week", "weeks"), ("day", "days"),
-                        ("hour", "hours"), ("minute", "minutes"),
-                        ("second", "seconds"), ("mm", "mm"), ("mj", "mJ")):
-        if token in s.lower():
+    low = segment.lower()
+    for token, unit in _UNIT_WORDS:
+        if token in low:
             return unit
-    # Abbreviated units, matched as whole tokens: "24-48 h", "15 min", "2 mm".
-    # A substring test would fire on any word containing the letter.
-    m = re.search(r"\b(h|hr|hrs|min|sec|mm|mj|mw|hz|ml|mg)\b", s, re.I)
+    m = _ABBREV_UNIT_RE.search(segment)
     if m:
         return m.group(1).lower()
+    return ""
+
+
+def _unit_of(raw: str) -> str:
+    """The unit of the number `parse_number` would return from `raw`.
+
+    THE UNIT MUST BELONG TO THE NUMBER THAT GETS PLOTTED. This used to scan the
+    whole string in a fixed priority order, so `_unit_of("12 mm at 3 months")`
+    answered "months" while `parse_number` answered `12` — the millimetres.
+    Two such arms then agreed on a unit computed from a number nobody plotted,
+    `consistent_unit` passed on that false agreement, and the chart was
+    axis-labelled "months" over millimetre bars. Both numbers were verbatim in
+    the source, so nothing was invented; the axis was simply lying about what
+    the bars measured, which §1.5 does not distinguish from inventing.
+
+    So: find the first number, and read the unit out of the text ATTACHED to
+    it — everything up to the next number, stepping over a range connector
+    because "24-48 h" names the unit of 24 only after 48.
+
+    Falling back to the whole-string scan when nothing is attached is
+    deliberate: "96.1 vs 88.2%" states one unit for both numbers, and refusing
+    to see it would suppress a legitimate chart. The fallback can only fire
+    where the plotted number has no unit of its own, so it can never override
+    an attached unit with a different one.
+    """
+    s = _norm(raw or "")
+    m = _NUM_RE.search(s)
+    if m is not None:
+        start = m.end()
+        while True:
+            nxt = _NUM_RE.search(s, start)
+            if nxt is None:
+                segment = s[start:]
+                break
+            segment = s[start:nxt.start()]
+            if _RANGE_JOIN_RE.match(segment):
+                start = nxt.end()
+                continue
+            break
+        attached = _unit_in(segment)
+        if attached:
+            return attached
+    unit = _unit_in(s)
+    if unit:
+        return unit
     if re.search(r"\bn\s*=", s, re.I):
         return "n"
     return ""

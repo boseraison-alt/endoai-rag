@@ -492,6 +492,68 @@ class TestChartUnitConsistency:
         assert detect_chartable(spec, src) is not None
 
 
+class TestUnitBelongsToThePlottedNumber:
+    """`_unit_of` used to scan the whole string in a fixed priority order while
+    `parse_number` took the FIRST number, so the two could answer about
+    different quantities.
+
+    Real numbers, real answer (answers/answer_20260327_214129.txt): probing
+    depths of 6mm at the 3-month re-evaluation and 5mm at 12 months. Both
+    numbers in each stat are verbatim in that answer, so nothing here is
+    invented — and that is the point. `_unit_of` said "months" for both arms,
+    they agreed, `consistent_unit` passed, and the chart drew 6 and 5 — the
+    MILLIMETRES — under an axis labelled "months". Mislabelling, not invention,
+    and still a false claim on the slide.
+    """
+
+    # Verbatim from the answer: "probing depths improved only modestly (from
+    # 8mm to 6mm circumferentially)" after "a 3-month re-evaluation period",
+    # and "At 12 months, mobility remained Grade II and probing depths
+    # averaged 5mm."
+    SOURCE = (
+        "The patient underwent a 3-month re-evaluation period during which "
+        "probing depths improved only modestly (from 8mm to 6mm "
+        "circumferentially). Periodontal surgery with open flap debridement "
+        "was performed, but minimal bone fill was observed. At 12 months, "
+        "mobility remained Grade II and probing depths averaged 5mm."
+    )
+
+    def test_the_unit_is_the_one_attached_to_the_parsed_number(self):
+        from presentations.chart_data import _unit_of, parse_number
+        assert parse_number("6mm at 3 months")[0] == "6"
+        assert _unit_of("6mm at 3 months") == "mm"
+        assert _unit_of("5mm at 12 months") == "mm"
+
+    def test_a_unit_further_along_no_longer_wins(self):
+        """The failing order: the `month` token test ran before the `mm`
+        match, so a stat whose plotted number is a length was labelled a
+        duration."""
+        from presentations.chart_data import consistent_unit
+        assert consistent_unit(["6mm at 3 months", "5mm at 12 months"]) == "mm"
+
+    def test_the_chart_axis_carries_the_unit_of_its_bars(self):
+        """End of the path. The chart is still drawn — both values are
+        verbatim and share a unit — it is the LABEL that was wrong."""
+        spec = {"pattern": "stat_panel", "title": "Probing depth",
+                "primary_stat": "6mm at 3 months",
+                "primary_label": "Re-evaluation",
+                "secondary_stat": "5mm at 12 months",
+                "secondary_label": "One year"}
+        chart = detect_chartable(spec, self.SOURCE)
+        assert chart is not None, "a verified same-unit pair must still plot"
+        assert chart.values == [6.0, 5.0]
+        assert chart.unit == "mm", (
+            f"bars of millimetres under an axis labelled {chart.unit!r}")
+
+    def test_a_duration_stat_is_still_a_duration(self):
+        """The fix must not have broken the ordinary case it reordered."""
+        from presentations.chart_data import _unit_of
+        assert _unit_of("3 months") == "months"
+        assert _unit_of("12 months follow-up") == "months"
+        assert _unit_of("24-48 h") == "h"       # unit sits past the span
+        assert _unit_of("n = 160") == "n"
+
+
 class TestChartRangeValues:
     """A bar draws one number. Charting a range plots its lower bound and
     silently discards the rest, so the value on the slide stops being the value
