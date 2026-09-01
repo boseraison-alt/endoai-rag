@@ -21,6 +21,20 @@
     "  expect.max_empty_fraction  live only: max share of queries returning zero",
     "  expect.cochrane_papers_must_be_cochrane_journal  every cochrane-tier",
     "                     paper's journal must be the Cochrane Database",
+    "  context.exchanges  a Review thread this question is a follow-up IN.",
+    "                     Built into the prompt block with the app's own",
+    "                     build_context_block / context_prior_pmids.",
+    "  expect.min_tiers_below_level1   tiers populated below level1. Case and",
+    "                     learn mode sweep every tier; review stops early.",
+    "  expect.evidence_must_mention    term(s) that must appear in a retrieved",
+    "                     paper's title — how a follow-up's context is measured",
+    "                     on the EVIDENCE rather than on the prompt string.",
+    "  expect.evidence_must_not_be_dominated_by   term(s) that must not appear",
+    "                     in a majority of retrieved titles (new-topic reset).",
+    "  expect.clarify     case mode only: bounds on generate_case_followups —",
+    "                     count_between, must_not_ask_about,",
+    "                     every_question_states_its_reason. Costs one Haiku",
+    "                     call per case, the same order as the term generator.",
     "  why                what this case is guarding against",
     "",
     "NOT YET ENFORCED by run_eval.py: must_contain, must_not_contain, banner,",
@@ -857,6 +871,156 @@
           "level1": 15
         }
       }
+    },
+    {
+      "id": "case-opening-sparse",
+      "question": "Tooth 36 hurts.",
+      "mode": "case",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 5,
+        "min_tiers_below_level1": 1,
+        "clarify": {
+          "count_between": [
+            1,
+            3
+          ],
+          "every_question_states_its_reason": true
+        }
+      },
+      "why": [
+        "Case mode has two halves and retrieval only sees one. A sparse",
+        "description must produce the DECIDING questions — 1 to 3, each",
+        "carrying the reason it is being asked — because an opening that",
+        "asks nothing hands the clinician an answer built on a three-word",
+        "history, and one that asks ten is a form, not a conversation.",
+        "",
+        "Pinned to tests/test_case_discussion.py::TestScriptedOpenings,",
+        "which asserts the same bounds against the same generator. That",
+        "test is opt-in (RUN_CASE_TESTS=1); this case runs it by default.",
+        "",
+        "min_tiers_below_level1 is the retrieval half: case mode must NOT",
+        "inherit the review early stop, which skips level2..level5 and",
+        "invitro once cochrane+level1 clear 15 papers. On an unusual",
+        "presentation those skipped tiers are the only literature there is."
+      ]
+    },
+    {
+      "id": "case-opening-full",
+      "question": "62-year-old female, well-controlled type 2 diabetes, no other medical history, no bisphosphonates. Tooth 26, previously root treated 8 years ago, now tender to percussion for 3 weeks. Periapical radiograph and CBCT show a 6mm periapical radiolucency on the MB root with an untreated MB2. Tooth is non-vital (previously treated), restorable with an adequate ferrule and existing crown is sound. No sinus tract. Patient has taken amoxicillin from her GP with partial relief.",
+      "mode": "case",
+      "force_route": "live",
+      "expect": {
+        "route": "live",
+        "min_papers": 10,
+        "min_tiers_below_level1": 1,
+        "clarify": {
+          "count_between": [
+            0,
+            1
+          ],
+          "must_not_ask_about": [
+            "bisphosphonate",
+            "ferrule",
+            "restorab",
+            "diabet"
+          ]
+        }
+      },
+      "why": [
+        "Invariant 8: case discussion never re-asks a fact present in the",
+        "clinician's description. This description states the medical",
+        "history, the bisphosphonate status, restorability and the ferrule",
+        "outright; asking for any of them is the failure. At most one",
+        "follow-up is allowed — a complete history earns an answer, not an",
+        "interrogation.",
+        "",
+        "The forbidden-token list is the ALREADY_STATED list from",
+        "tests/test_case_discussion.py, deliberately identical so the two",
+        "cannot drift."
+      ]
+    },
+    {
+      "id": "review-followup-immature-teeth",
+      "question": "What about in immature teeth?",
+      "mode": "review",
+      "force_route": "library",
+      "context": {
+        "exchanges": [
+          {
+            "question": "Use of lasers in root canal disinfection",
+            "recommendation": "Laser-activated irrigation (PIPS/SWEEPS with Er:YAG) is a reasonable adjunct to conventional NaOCl irrigation, not a replacement for it. Its advantage on healing outcomes is unproven.",
+            "pmids": [
+              "41833582",
+              "41063319",
+              "39287434"
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "route": "library",
+        "min_papers": 5,
+        "evidence_must_mention": [
+          "laser"
+        ]
+      },
+      "why": [
+        "The follow-up that has no topic of its own. 'What about in",
+        "immature teeth?' is the same string whether it follows a laser",
+        "question, a sealer question or nothing at all — so if the thread",
+        "context does not reach the two search-term generators, the queries",
+        "are built from five words that name no subject.",
+        "",
+        "The assertion is on the EVIDENCE, not on the prompt: at least one",
+        "retrieved paper must be about lasers. A prompt-string assertion",
+        "would pass while the block was being assembled and dropped.",
+        "",
+        "Thread fixture shared with tests/test_review_context.py",
+        "(LASER_EXCHANGE / FOLLOW_UP)."
+      ]
+    },
+    {
+      "id": "review-newtopic-reset",
+      "question": "What is the evidence for sodium hypochlorite concentration in primary root canal treatment?",
+      "mode": "review",
+      "force_route": "library",
+      "context": {
+        "exchanges": [
+          {
+            "question": "Use of lasers in root canal disinfection",
+            "recommendation": "Laser-activated irrigation (PIPS/SWEEPS with Er:YAG) is a reasonable adjunct to conventional NaOCl irrigation, not a replacement for it. Its advantage on healing outcomes is unproven.",
+            "pmids": [
+              "41833582",
+              "41063319",
+              "39287434"
+            ]
+          }
+        ]
+      },
+      "expect": {
+        "route": "library",
+        "min_papers": 10,
+        "evidence_must_mention": [
+          "hypochlorite"
+        ],
+        "evidence_must_not_be_dominated_by": [
+          "laser"
+        ]
+      },
+      "why": [
+        "The other half of the context contract. A question that carries",
+        "its own subject must not be dragged back to the previous one: the",
+        "block is context, not a filter, and prior_pmids SEED the candidate",
+        "set after the routing gate rather than deciding it.",
+        "",
+        "The failure this guards is silent and expensive — a clinician",
+        "changes topic mid-thread and is answered from the last topic's",
+        "papers. Stated as a majority test (>50% of retrieved titles",
+        "mentioning the old topic) rather than zero, because a few genuine",
+        "laser-irrigation papers legitimately discuss NaOCl."
+      ]
     }
   ]
 }

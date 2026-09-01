@@ -213,10 +213,21 @@ def run_case(case):
     job_id = f"eval-{case['id']}"
     jobs[job_id] = {"status": "running", "steps": [], "progress": 0}
 
+    # A conversational case carries the thread its question belongs to. The
+    # block and the seed PMIDs are built by the SAME functions the app uses
+    # (`build_context_block` / `context_prior_pmids`), so the case measures the
+    # real conversational path rather than a re-implementation of it. Without
+    # this, "What about in immature teeth?" is an eval case that tests nothing:
+    # the string alone has no topic.
+    exchanges = (case.get("context") or {}).get("exchanges") or []
+    context_block = endo_ai.build_context_block(exchanges) if exchanges else ""
+    prior_pmids = endo_ai.context_prior_pmids(exchanges) if exchanges else None
+
     offset = _audit_offset()
     evidence = build_evidence_base_with_progress(
         job_id, case["question"], force_route=case.get("force_route"),
-        mode=case.get("mode", "review")) or {}
+        mode=case.get("mode", "review"),
+        context_block=context_block, prior_pmids=prior_pmids) or {}
     esearch_total, n_queries, n_empty, n_terms, n_failed = _esearch_hits_since(offset)
 
     per_tier, papers = {}, []
@@ -321,6 +332,58 @@ def run_case(case):
                             "queries match no records the queries are malformed, "
                             "not the topic thin")
 
+    # ── Case mode sweeps every tier ──────────────────────────────────────
+    # `EARLY_STOP_MIN_PAPERS` skips level2..level5 and invitro once
+    # cochrane+level1 clear 15 papers. Review wants that; a case discussion of
+    # an unusual presentation does not, because the case series it would skip
+    # are often the only literature that exists. `min_tiers_below_level1`
+    # counts tiers actually populated BELOW level1, which is the only way to
+    # see from outside whether the early stop fired.
+    floor = exp.get("min_tiers_below_level1")
+    if floor is not None:
+        lower = [t for t in TIER_ORDER
+                 if t not in ("cochrane", "level1") and per_tier.get(t)]
+        if len(lower) < floor:
+            failures.append(
+                f"only {len(lower)} tier(s) below level1 populated ({lower}) < "
+                f"min_tiers_below_level1={floor} — the review-mode early stop "
+                "appears to have fired on a case/learn sweep")
+
+    # ── Conversation context ─────────────────────────────────────────────
+    # A follow-up whose context did not reach the term generators produces
+    # queries built from the bare follow-up string. The observable signature is
+    # a paper set with nothing to do with the thread's topic, so the case names
+    # a term the thread is about and the retrieved TITLES must contain it.
+    topic_terms = [t.lower() for t in (exp.get("evidence_must_mention") or [])]
+    if topic_terms:
+        titles = " ".join(
+            (p.get("title") or "").lower()
+            for t in TIER_ORDER
+            for p in ((evidence.get(t) or {}).get("scored") or []))
+        # Live-path papers carry no title in the scored dict; fall back to the
+        # annotated text block, which does.
+        if not titles.strip():
+            titles = " ".join(((evidence.get(t) or {}).get("text") or "").lower()
+                              for t in TIER_ORDER)
+        missing = [t for t in topic_terms if t not in titles]
+        if missing:
+            failures.append(
+                f"no retrieved paper mentions {missing} — the conversation "
+                "context did not reach the search-term generators")
+
+    # A follow-up that RESETS to a new topic must not be dragged back to the
+    # old one. Same measurement, opposite assertion.
+    for term in (exp.get("evidence_must_not_be_dominated_by") or []):
+        titles = [(p.get("title") or "").lower()
+                  for t in TIER_ORDER
+                  for p in ((evidence.get(t) or {}).get("scored") or [])]
+        if titles:
+            share = sum(term.lower() in ttl for ttl in titles) / len(titles)
+            if share > 0.5:
+                failures.append(
+                    f"{share:.0%} of retrieved papers still mention {term!r} — a "
+                    "new-topic question inherited the previous thread's topic")
+
     # A6: named papers that must survive query variance. Retrieval-side.
     want = exp.get("must_include_pmid") or []
     if want:
@@ -342,6 +405,39 @@ def run_case(case):
         if impostors:
             failures.append(f"{len(impostors)} cochrane-tier paper(s) not from the "
                             f"Cochrane Database: {impostors[:5]}")
+
+    # ── The case-discussion opening ──────────────────────────────────────
+    # One Haiku call, same order of cost as the search-term generator this
+    # harness already pays for on every case — NOT synthesis. It is here
+    # because the opening is the half of case mode that retrieval cannot see:
+    # `generate_case_followups` decides whether the clinician is interrogated
+    # about facts they already gave, and nothing downstream records that.
+    clarify = exp.get("clarify")
+    if clarify:
+        try:
+            questions = endo_ai.generate_case_followups(case["question"]) or []
+        except Exception as e:                      # fail loudly, not silently
+            questions = None
+            failures.append(f"clarify gate raised {type(e).__name__}: {e}")
+        if questions is not None:
+            measured["clarify_questions"] = len(questions)
+            lo, hi = clarify.get("count_between", [0, 99])
+            if not (lo <= len(questions) <= hi):
+                failures.append(
+                    f"clarify asked {len(questions)} question(s), expected "
+                    f"{lo}-{hi}: {questions}")
+            blob = " ".join(questions).lower()
+            asked = [t for t in (clarify.get("must_not_ask_about") or [])
+                     if t.lower() in blob]
+            if asked:
+                failures.append(
+                    f"clarify re-asked facts the description already states: "
+                    f"{asked} in {questions}")
+            if clarify.get("every_question_states_its_reason"):
+                bare = [q for q in questions
+                        if "—" not in q and " - " not in q and "–" not in q]
+                if bare:
+                    failures.append(f"clarify question(s) with no reason clause: {bare}")
 
     return measured, failures
 

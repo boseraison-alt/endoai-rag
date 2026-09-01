@@ -715,8 +715,12 @@ class TestMultiArmComparison:
         assert not picture
 
     def test_a_range_arm_produces_no_chart(self):
-        arms = self.ARMS[:2] + [{"label": "window", "stat": "24-48 h"}]
-        src = self.SOURCE + " The window was 24-48 h."
+        """Every arm carries the SAME unit here, deliberately. With a mixed
+        unit the unit gate fires first and this test passes with the range
+        gate deleted — mutation-checking caught exactly that, as it did once
+        before for the two-arm version above."""
+        arms = self.ARMS[:2] + [{"label": "pooled", "stat": "80-90%"}]
+        src = self.SOURCE + " Pooled estimates spanned 80-90%."
         slide, picture = self._render(arms, src)
         assert not picture
 
@@ -729,6 +733,12 @@ class TestMultiArmComparison:
         assert not picture
 
     def test_the_pmid_reaches_the_footer_not_the_body(self):
+        """Two independent routes put the PMID in the footer — the citation
+        harvest in `_citation_fields` and `chart.pmids` via `chart_slide` — so
+        killing this test takes removing BOTH (verified: it fails when
+        `_spec_pmids` returns [] and the harvest loop is emptied). One route
+        alone going missing is invisible here, and deliberately so: the
+        invariant is that the marker arrives, not which path carried it."""
         slide, _ = self._render(self.ARMS)
         rendered = " ".join(_texts(slide))
         assert "12345678" in rendered

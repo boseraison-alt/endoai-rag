@@ -33,7 +33,8 @@ class TestWriteBackIsDisabled:
         monkeypatch.setattr(endo_ai, "LIBRARY_WRITE_BACK", True, raising=False)
         seen = {}
 
-        def _fake_builder(job_id, question, force_route=None, mode="review"):
+        def _fake_builder(job_id, question, force_route=None, mode="review",
+                          context_block="", prior_pmids=None):
             seen["write_back"] = endo_ai.LIBRARY_WRITE_BACK
             return {}
 
@@ -227,3 +228,245 @@ class TestModeLabelling:
         ids = {c["id"] for c in cases}
         missing = [i for i in run_eval.SYNTHESIS_SUBSET if i not in ids]
         assert not missing, f"synthesis subset references unknown case ids: {missing}"
+
+
+# ── The conversational and case-mode assertions (CURO_HANDOVER §5[A]) ────────
+
+class _Builder:
+    """Records what the harness handed the real builder, and returns a
+    pre-baked evidence dict shaped like the real one."""
+
+    def __init__(self, evidence=None):
+        self.evidence = evidence or {}
+        self.seen = {}
+
+    def __call__(self, job_id, question, force_route=None, mode="review",
+                 context_block="", prior_pmids=None):
+        self.seen = {"question": question, "force_route": force_route,
+                     "mode": mode, "context_block": context_block,
+                     "prior_pmids": prior_pmids}
+        return self.evidence
+
+
+def _evidence(**tiers):
+    """{tier: [(pmid, title), ...]} -> the evidence dict shape run_case reads."""
+    out = {}
+    for tier, papers in tiers.items():
+        out[tier] = {"source": "rag",
+                     "scored": [{"pmid": p, "title": t} for p, t in papers]}
+    return out
+
+
+LASER_THREAD = {"exchanges": [{
+    "question": "Use of lasers in root canal disinfection",
+    "recommendation": "Laser-activated irrigation is a reasonable adjunct.",
+    "pmids": ["41833582", "41063319"],
+}]}
+
+
+class TestTheThreadReachesTheBuilder:
+    """A follow-up case whose context is dropped tests nothing: 'What about in
+    immature teeth?' names no subject, so the queries would be built from five
+    words. The block and the seeds must be built with the app's OWN helpers,
+    not re-implemented in the harness."""
+
+    def _run(self, monkeypatch, case):
+        b = _Builder(_evidence(level1=[("1", "Laser irrigation in immature teeth")]))
+        monkeypatch.setattr("app.build_evidence_base_with_progress", b)
+        run_eval.run_case(case)
+        return b.seen
+
+    def test_context_block_is_built_from_the_exchanges(self, monkeypatch):
+        import endo_ai
+        seen = self._run(monkeypatch, {
+            "id": "probe", "question": "What about in immature teeth?",
+            "context": LASER_THREAD, "expect": {}})
+        assert seen["context_block"], "the thread never reached the builder"
+        assert seen["context_block"] == endo_ai.build_context_block(
+            LASER_THREAD["exchanges"]), \
+            "the harness built its own block instead of the app's"
+        assert "lasers in root canal disinfection" in seen["context_block"]
+
+    def test_prior_pmids_are_forwarded(self, monkeypatch):
+        seen = self._run(monkeypatch, {
+            "id": "probe", "question": "q", "context": LASER_THREAD,
+            "expect": {}})
+        assert seen["prior_pmids"] == ["41833582", "41063319"]
+
+    def test_a_case_with_no_thread_sends_no_context(self, monkeypatch):
+        """"" must keep meaning "no context" — it is the cache partition every
+        standalone question lives in."""
+        seen = self._run(monkeypatch, {"id": "probe", "question": "q",
+                                       "expect": {}})
+        assert seen["context_block"] == ""
+        assert seen["prior_pmids"] is None
+
+    def test_case_mode_is_forwarded(self, monkeypatch):
+        seen = self._run(monkeypatch, {"id": "probe", "question": "q",
+                                       "mode": "case", "expect": {}})
+        assert seen["mode"] == "case"
+
+
+class TestEvidenceLevelContextAssertions:
+    """The assertion is on the EVIDENCE, not on the prompt. A prompt-string
+    check passes while the block is assembled and then dropped."""
+
+    def _fail(self, monkeypatch, evidence, expect):
+        b = _Builder(evidence)
+        monkeypatch.setattr("app.build_evidence_base_with_progress", b)
+        _, failures = run_eval.run_case(
+            {"id": "probe", "question": "q", "expect": expect})
+        return failures
+
+    def test_off_topic_evidence_fails_the_follow_up(self, monkeypatch):
+        ev = _evidence(level1=[("1", "Sealer heat properties"),
+                               ("2", "Apex locator accuracy")])
+        f = self._fail(monkeypatch, ev, {"evidence_must_mention": ["laser"]})
+        assert any("did not reach the search-term generators" in x for x in f)
+
+    def test_on_topic_evidence_passes(self, monkeypatch):
+        ev = _evidence(level1=[("1", "Er:YAG LASER irrigation of immature teeth")])
+        f = self._fail(monkeypatch, ev, {"evidence_must_mention": ["laser"]})
+        assert not f
+
+    def test_a_new_topic_dominated_by_the_old_one_fails(self, monkeypatch):
+        ev = _evidence(level1=[("1", "Laser disinfection"),
+                               ("2", "Laser activated irrigation"),
+                               ("3", "NaOCl concentration")])
+        f = self._fail(monkeypatch, ev,
+                       {"evidence_must_not_be_dominated_by": ["laser"]})
+        assert any("inherited the previous thread's topic" in x for x in f)
+
+    def test_a_minority_of_the_old_topic_is_allowed(self, monkeypatch):
+        """A few genuine laser-irrigation papers legitimately discuss NaOCl."""
+        ev = _evidence(level1=[("1", "Laser activated irrigation with NaOCl"),
+                               ("2", "NaOCl concentration and outcome"),
+                               ("3", "Hypochlorite accident management")])
+        f = self._fail(monkeypatch, ev,
+                       {"evidence_must_not_be_dominated_by": ["laser"]})
+        assert not f
+
+
+class TestCaseModeSweepsEveryTier:
+    """`EARLY_STOP_MIN_PAPERS` skips level2..level5 once cochrane+level1 clear
+    15 papers. Case mode is exempt, and the only way to see that from outside
+    is to count the tiers populated BELOW level1."""
+
+    def _run(self, monkeypatch, evidence, floor):
+        b = _Builder(evidence)
+        monkeypatch.setattr("app.build_evidence_base_with_progress", b)
+        _, failures = run_eval.run_case(
+            {"id": "probe", "question": "q", "mode": "case",
+             "expect": {"min_tiers_below_level1": floor}})
+        return failures
+
+    def test_top_tiers_only_fails(self, monkeypatch):
+        ev = _evidence(cochrane=[("1", "A")], level1=[("2", "B")])
+        f = self._run(monkeypatch, ev, 1)
+        assert any("early stop" in x for x in f)
+
+    def test_a_lower_tier_satisfies_the_floor(self, monkeypatch):
+        ev = _evidence(cochrane=[("1", "A")], level1=[("2", "B")],
+                       level4=[("3", "C")])
+        assert not self._run(monkeypatch, ev, 1)
+
+    def test_the_floor_counts_tiers_not_papers(self, monkeypatch):
+        """Ten case reports in one tier is one tier, not ten."""
+        ev = _evidence(level1=[("0", "B")],
+                       level4=[(str(i), "C") for i in range(10)])
+        f = self._run(monkeypatch, ev, 2)
+        assert any("early stop" in x for x in f)
+
+
+class TestTheClarifyGateAssertions:
+    """Case mode's opening is the half retrieval cannot see."""
+
+    def _run(self, monkeypatch, questions, clarify):
+        import endo_ai
+        b = _Builder(_evidence(level1=[("1", "A")]))
+        monkeypatch.setattr("app.build_evidence_base_with_progress", b)
+        monkeypatch.setattr(endo_ai, "generate_case_followups",
+                            lambda desc: questions)
+        _, failures = run_eval.run_case(
+            {"id": "probe", "question": "Tooth 36 hurts.", "mode": "case",
+             "expect": {"clarify": clarify}})
+        return failures
+
+    def test_too_many_questions_is_an_interrogation(self, monkeypatch):
+        f = self._run(monkeypatch, [f"Q{i} — reason" for i in range(6)],
+                      {"count_between": [1, 3]})
+        assert any("expected 1-3" in x for x in f)
+
+    def test_asking_nothing_of_a_sparse_description_fails(self, monkeypatch):
+        f = self._run(monkeypatch, [], {"count_between": [1, 3]})
+        assert any("expected 1-3" in x for x in f)
+
+    def test_re_asking_a_stated_fact_fails(self, monkeypatch):
+        f = self._run(monkeypatch,
+                      ["Is the tooth restorable — it decides extraction"],
+                      {"count_between": [0, 3],
+                       "must_not_ask_about": ["restorab"]})
+        assert any("re-asked facts" in x for x in f)
+
+    def test_a_question_without_its_reason_fails(self, monkeypatch):
+        f = self._run(monkeypatch, ["Is the tooth vital?"],
+                      {"count_between": [0, 3],
+                       "every_question_states_its_reason": True})
+        assert any("no reason clause" in x for x in f)
+
+    def test_a_well_formed_opening_passes(self, monkeypatch):
+        f = self._run(monkeypatch,
+                      ["Is the tooth vital — it decides the treatment path"],
+                      {"count_between": [1, 3],
+                       "must_not_ask_about": ["bisphosphonate"],
+                       "every_question_states_its_reason": True})
+        assert not f
+
+    def test_a_raised_clarify_gate_is_reported_not_swallowed(self, monkeypatch):
+        """Fail-open here would make a broken opening indistinguishable from a
+        good one — bug class (d), in the harness that exists to catch it."""
+        import endo_ai
+        b = _Builder(_evidence(level1=[("1", "A")]))
+        monkeypatch.setattr("app.build_evidence_base_with_progress", b)
+
+        def _boom(desc):
+            raise RuntimeError("no api key")
+
+        monkeypatch.setattr(endo_ai, "generate_case_followups", _boom)
+        _, failures = run_eval.run_case(
+            {"id": "probe", "question": "q", "mode": "case",
+             "expect": {"clarify": {"count_between": [1, 3]}}})
+        assert any("clarify gate raised RuntimeError" in x for x in failures)
+
+
+class TestTheNewCasesAreWellFormed:
+    """The four cases added in this batch, checked against the harness that
+    has to run them — a case naming a field the harness ignores is a case that
+    silently tests nothing."""
+
+    IDS = ["case-opening-sparse", "case-opening-full",
+           "review-followup-immature-teeth", "review-newtopic-reset"]
+
+    def _cases(self):
+        _, cases = run_eval.load_cases()
+        return {c["id"]: c for c in cases}
+
+    def test_all_four_are_present(self):
+        have = self._cases()
+        assert not [i for i in self.IDS if i not in have]
+
+    def test_every_case_pins_its_route(self):
+        for cid, case in self._cases().items():
+            assert case.get("force_route"), f"{cid} does not pin force_route"
+
+    def test_the_thread_cases_carry_a_thread(self):
+        have = self._cases()
+        for cid in ("review-followup-immature-teeth", "review-newtopic-reset"):
+            ex = (have[cid].get("context") or {}).get("exchanges") or []
+            assert ex and ex[0].get("pmids"), f"{cid} has no prior exchange"
+
+    def test_the_case_mode_cases_declare_case_mode(self):
+        have = self._cases()
+        for cid in ("case-opening-sparse", "case-opening-full"):
+            assert have[cid].get("mode") == "case"
+            assert have[cid]["expect"].get("clarify")
