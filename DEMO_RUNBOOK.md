@@ -73,16 +73,32 @@ and the answer starts streaming as soon as the evidence is in."
 
 ## Numbers to quote if asked
 
-- Cached answer: **0.5-1.0s**. Cold live Review question: **55-120s**
-  (streaming starts ~15s; the five demo questions measured 53.8 / 64.9 / 69.9 /
-  72.5 / 120.3s). Cold curriculum: **8.0 min**, $1.52.
-- Cost per cold Review answer: **~$0.79** (the five measured $0.63-$1.83). That
-  is roughly double the figure quoted before 2026-09-01, and the reason is
+- Cached answer: **0.5-1.0s** (re-measured 2026-09-01 after the re-warm:
+  1.0 / 0.5 / 0.5 / 0.5 / 0.5s, all five served from cache). Cold live Review
+  question: **60-110s** (streaming starts ~15s; the five demo questions
+  re-measured 108.6 / 99.0 / 60.8 / 78.9 / 75.9s). Cold curriculum: **8.0
+  min**, $1.52.
+- Cost per cold Review answer: **~$1.28** (the five re-measured
+  $0.72-$1.73, total $6.39), up from ~$0.79. Two drivers, both worth naming if
+  asked: these five questions retrieve 32-38 papers each and the prompt now
+  carries every one of their abstracts (36.5k input tokens against 24.4k), and
+  three of the five took a validation retry. That retry is the honest cost of
+  the grounding rule — the model now leaves a claim unmarked rather than
+  attaching a citation it cannot ground, and the recommendation-traceability
+  gate then asks for the answer again. The earlier doubling is
   worth saying out loud if asked: the library used to send Claude a metadata
   line per paper and no abstract, so answers were written without the papers'
   content. Full abstracts now go into the prompt. The citation-support flag
-  rate fell from 39.4% to 4.3% across the measured Review cases.
-- Exports, measured: **web deck 152s**, **PPTX 22s**.
+  rate on the LIVE Review path is **0 of 51 cited claims flagged**, from 7 of
+  34 before this batch; on the library path it is 3 of 48. Quote those, not
+  the older 4.3% — the same three library cases measured 8.2%, 8.9% and 6.3%
+  across one night with nothing changed between the first two, so 4.3% was a
+  draw rather than a level.
+- Exports, measured: **web deck 152s** without narration; from 2026-09-01 the
+  deck records its own per-slide narration by default, which adds ~2 min and
+  ~$0.25 and is what turns **auto-advance on** (21 segments against 21 slides,
+  verified with ffprobe). Post `{"narrate": "reuse"}` to `/generate_webdeck`
+  for the old, free, non-advancing behaviour. **PPTX 22s.**
 - Library: **2,350 papers**, 8-tier evidence hierarchy, retracted/withdrawn/
   superseded/animal-model papers excluded or quarantined. Every abstract is
   stored at full length (mean 1,631 characters, up from 1,182); 57% of them

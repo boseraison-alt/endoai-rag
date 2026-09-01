@@ -10,34 +10,53 @@ auto-compact.
 
 ---
 
-## 1. What Curo is right now (state as of tag `grounding-v1`)
+## 1. What Curo is right now (state as of tag `grounding-v2`)
 
 An evidence-graded endodontics assistant: **2,350-paper** curated library (Neon
 Postgres + pgvector) with per-paper provenance (evidence tier incl. in vitro,
 COI tri-state, retraction/withdrawal/supersession, MEDLINE status,
 pre-registration), live PubMed fallback with synonym-expanded queries and an
 authority guarantee (Cochrane-tier + top Level I papers can never be dropped by
-query variance), tier-banded synthesis with a fabrication validator + a
-citation-support check **on all three answer paths**, streaming answers,
-Review-mode conversation memory, case discussion on the full evidence engine,
-and five export styles — audio/video/slides/podcast and a self-contained
-reveal.js web deck — all generated from ONE cached slide-spec in the approved
-dark design. **1,269 tests**, all mutation-checked. **25-case retrieval eval**
-with a 3-run baseline (`eval/baseline_v6.json`, all 25 cases × 3 runs, 25/25
-passing) and its run logs archived beside it in `eval/logs/`.
+query variance), tier-banded synthesis with a fabrication validator, a
+**grounding rule on all three synthesis prompts**, and a citation-support check
+**on all three answer paths** that now reads the WHOLE abstract, streaming
+answers, Review-mode conversation memory, case discussion on the full evidence
+engine, and five export styles — audio/video/slides/podcast and a
+self-contained reveal.js web deck that now **auto-advances with its own
+narration** — all generated from ONE cached slide-spec in the approved dark
+design. **1,377 tests**, all mutation-checked. **25-case retrieval eval** with
+a 3-run baseline (`eval/baseline_v6.json`) whose harness now measures the
+citation-support flag rate per case, on both routes.
 Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 
 **The numbers that describe the current state:**
 
 | | |
 |---|---|
-| citation-support flag rate, measured Review cases | **4.3%** (2/46), from 8.5% and 39.4% |
+| citation-support flag rate, LIVE Review path | **0.0%** (0/51), from 20.6% (7/34) — p = 0.0011 |
+| citation-support flag rate, library Review path | **6.3%** (3/48); it measured 8.2% the same night before any change |
+| citation-support flag rate, Deep Learning | **13.0%** (31/239) — of which 81% is checker artifact, see below |
+| Deep Learning genuinely-unsupported rate, hand-judged | **3.0%** (7/234) |
+| abstract excerpt the support judge sees | the **whole abstract** (was the first 1,200 chars) |
+| stored rows whose "abstract" was not an abstract | **179 found, 124 healed**; 40 left are records PubMed has no abstract for |
 | library abstracts still truncated | **1** — PMID 25231145, whose PubMed abstract genuinely is 1,200 characters |
 | mean stored abstract length | **1,631** chars (was 1,182) |
-| library rows with no abstract in PubMed at all | 4, individually confirmed |
-| retrieval baseline | `eval/baseline_v6.json` — 25 cases × 3 runs |
-| Deep Learning support check, first ever measurement | **20.3%** (24/118) and **11.2%** (13/116) on two laser curricula |
-| tests | 1,269 passing, 39 skipped |
+| retrieval baseline | `eval/baseline_v6.json` — 25 cases x 3 runs |
+| web-deck auto-advance | **on** — 21 segments == 21 slides, verified with ffprobe |
+| tests | **1,377** passing, 39 skipped |
+
+**What changed in `grounding-v2`.** Read `OVERNIGHT_REPORT_2.md` for the whole
+thing. In one paragraph: the synthesis prompts got a grounding rule saying what
+a `[[PMID:N]]` marker asserts and what to do when nothing supports a claim; the
+citation-support judge stopped being shown only the first 1,200 characters of
+an abstract (the last truncation in the pipeline, sitting on the guardrail);
+124 rows whose stored "abstract" was an author-affiliation list or a
+foreign-language translation were healed; and the web deck records its own
+per-slide narration so auto-advance works. All 37 Deep Learning citation flags
+were hand-judged — 81% are artifacts of the checker, not bad citations. The
+"longest paragraph loses conclusions" hypothesis that had been on the backlog
+for three batches was **measured and found false**; the real defect was the
+opposite one.
 
 **What changed in `grounding-v1`.** Every library abstract is now stored and
 sent at full length. 1,342 of 2,350 rows (57%) had been cut at ingest at
@@ -89,7 +108,9 @@ actually used.
 
 `mvp-demo` → `mvp-demo-2` → `presentation-v1` → `demo-polish` → `case-v1` →
 `eval-v5` (baseline v5, library evidence block, deck P2s) → `grounding-v1`
-(full abstracts end to end, baseline v6, DL support check).
+(full abstracts end to end, baseline v6, DL support check) → `grounding-v2`
+(grounding rule, whole-abstract support judge, collapsed-abstract repair,
+web-deck auto-advance, maintenance script).
 
 Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
@@ -97,21 +118,48 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
 ### P1 (correctness / trust)
 
-- **The synthesis prompt still has no grounding rule.** It mandates a
-  `[[PMID:N]]` marker on every standalone clinical claim and says nothing about
-  what to do when no retrieved paper supports one; the corrective-retry message
-  pushes the same way. This is the remaining mechanism behind decorative
-  citations, and the one that applies on the LIVE path. **This is the single
-  highest-value item left** and it is §5[A] below.
-- **The "longest paragraph" abstract heuristic still loses paragraphs.**
-  `ingest_classics.py:219-232` and `app.py`'s `/api/abstract` both keep only
-  the longest paragraph of a fetched abstract. Same data-loss class as the
-  truncation just fixed, different mechanism, untouched by that fix.
-- **112 library rows returned nothing from efetch** during the repair. 4 have
-  no abstract in PubMed at all (confirmed individually); the other 108 were not
-  investigated. Some may be book records or withdrawn entries; some may be a
-  fetch bug.
-- 8 library rows have an empty `title`, which now reaches the prompt as a blank
+- **The grounding rule and the recommendation-traceability gate pull in
+  opposite directions, and every collision costs a full retry.** The Review
+  prompt requires the CLINICAL RECOMMENDATION to carry a `[[PMID:N]]` on its
+  load-bearing claim; `_GROUNDING_RULE` says do not attach one you cannot
+  ground. When both apply the model leaves it unmarked,
+  `validate_evidence_mapping` fails the answer `UNTRACEABLE_RECOMMENDATION`,
+  and a whole answer is regenerated at ~$0.34. **6 of 8 attempt-1 failures
+  after the rule are that reason, against 0 of 2 before** (0/35 vs 6/89,
+  Fisher p = 0.18 — directional, not proven), and it is the main reason a demo
+  Review answer went from ~$0.79 to ~$1.28. It may be that the recommendation
+  genuinely SHOULD always be traceable and the retry is the system working.
+  Measure it; do not guess.
+- **The claim-unit artifact is 35% of Deep Learning citation flags.**
+  `_extract_claim_citation_pairs` has no rule for a curriculum's
+  `IF / THEN / BECAUSE` decision tree or its Clinical Protocol Summary table,
+  so a seven-branch tree becomes ONE claim carrying seven markers and produces
+  seven flags from one blob. Hand-judged: 13 of 37 flags. It is the largest
+  remaining single cause in this metric, and it needs its OWN batch — the last
+  change to that splitter reversed its expected direction (merged claims were
+  flagged LESS, p=0.002), so a confounded run would teach nothing.
+- **`_SUPPORT_MAX_PAIRS = 30` still caps coverage on every curriculum module.**
+  The rendered block now names the remainder ("8 further cited claim(s) were
+  NOT checked"), so it is honest rather than silent, but 8 of 38 pairs on one
+  real module still go unchecked. Raising it costs Haiku calls and nothing
+  else; nobody has measured what it would find.
+- **112 library rows returned nothing from efetch** during the `grounding-v1`
+  repair. 4 have no abstract in PubMed at all (confirmed individually); the
+  other 108 were not investigated. Some may be book records or withdrawn
+  entries; some may be a fetch bug.
+- **`ingest_aae_guidelines`'s PubMed harvest is live for the first time.** Its
+  abstract fetcher had never returned anything (entry separator `^(\d{5,9})\.`
+  against PubMed's `1. `, `2. `), so every record it fetched was dropped by
+  `len(abstract) < 60`. Fixed in `grounding-v2`. **Dry-run that script before
+  running it** — nobody has seen what it ingests.
+- **`pubmed_audit.jsonl` and `cost_log.jsonl` are still unguarded shared
+  state.** `evidence_mapping.jsonl` now carries a pid on every
+  citation-support record because a concurrent pytest run corrupted an eval
+  measurement through it. The same class will come back through the other two.
+  `cost_log.jsonl` currently holds **$5.70 of imaginary spend** from stubbed
+  TTS in the test suite; the suite no longer writes there, and the rows were
+  left in place rather than editing an append-only log.
+- 8 library rows have an empty `title`, which reaches the prompt as a blank
   line where the paper's subject should be.
 
 ### P2 (product polish)
@@ -125,12 +173,17 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   suppressing the guardrail, not blurring it.
 - `arms` real-data coverage — **DONE**, `tests/fixtures/multi_arm_stat_panel.json`
   drives a real three-arm comparison through both exports.
-- Narration↔deck slide sync (13 segments vs 34 slides) — per-slide cuts.
+- Narration↔deck slide sync — **DONE (`grounding-v2`)**. The deck records its
+  own narration against its own spec, one segment per slide, and auto-advance
+  is armed. Verified with real TTS and ffprobe: 21 segments == 21 slides,
+  523.46s both ways. `narrate: auto` costs ~$0.25 and ~2 min per export that
+  it did not before; `narrate: reuse` restores the old behaviour.
 - Cancelled exports log no TTS cost row for characters already spent.
 - "apexification" pronunciation: needs a HUMAN listen (RB).
 - `narration.strip_markdown_for_speech` does not strip blockquotes. Harmless
   today — every narration path rewrites through an LLM first — but a raw
-  narration path would read the citation-support blocks aloud.
+  narration path would read the citation-support blocks aloud. It DOES now
+  strip a half-written `[[PMID:` fragment, which a real curriculum produced.
 
 ### P3 (before any real users)
 
@@ -139,57 +192,65 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 - PHI/X-ray path stays OFF until a BAA exists (decision recorded).
 - Second literature database (Embase/Scopus).
 - Monthly maintenance loop: provenance backfill + rescore + eval.
+## 5. Next batch — "overnight-3" (paste-ready for the fresh session)
 
-## 5. Next batch — "overnight-2" (paste-ready for the fresh session)
+Autonomous batch on `main`, tag `claims-v1` at end. Standing rules from
+`WORKLIST.md` §0/§6 apply in full, including the every-column backup rule.
+Work on `main` (§6's "never commit to `main`" is superseded, as it was for the
+last four batches).
 
-Autonomous batch on `main`, tag `prompt-v1` at end. Standing rules from
-`WORKLIST.md` §0/§6 apply in full **except the branch rule** — §6 still says
-"never commit to `main`", which the last three batches have overridden by
-explicit instruction. Work on `main`.
+**The baseline to beat, so nobody has to go looking for it.** Measured
+2026-09-01 with the answer cache bypassed, `python eval/run_eval.py
+--synthesis-subset` and `--live-subset`:
 
-**Sequencing.** [A] is the measured item and must run alone — it is the whole
-point of the batch, and the last two batches attributed cleanly only because
-they changed one thing at a time. [B], [C] and [D] are independent of it and of
-each other and can run as parallel lanes with exclusive file ownership. [A]'s
-before/after runs are strictly serial with every other eval run.
+| stratum | rate |
+|---|---|
+| Review, live-pinned (5 cases) | **0/51 = 0.0%** |
+| Review, library-pinned (3 cases) | **3/48 = 6.3%** |
+| Deep Learning (2 laser curricula) | **31/239 = 13.0%** |
 
-**The baseline to beat, so nobody has to go looking for it:** 2/46 = **4.3%**
-across `single-vs-multiple-visit`, `naocl-concentration` and
-`pips-vs-ultrasonic`, measured 2026-09-01 with the answer cache bypassed.
+The harness prints these per case now. **Do not quote 4.3% as the library
+baseline** — the same three cases measured 8.2% and 8.9% and 6.3% on three
+runs of one night with no change between the first two.
 
-**[A] The grounding rule.** Add to the `ask_clinical_question` system prompt an
-explicit instruction that a `[[PMID:N]]` marker asserts the cited paper states
-the sentence, and that a claim no retrieved paper supports must be dropped or
-written without a marker. Soften the unattributed-claims corrective message the
-same way. **Measure it exactly as the last two batches measured their fixes**:
-`--synthesis-subset --id` for `single-vs-multiple-visit`, `naocl-concentration`
-and `pips-vs-ultrasonic` before and after, and add ONE live-pinned Review case
-so the live path is measured too. Current baseline to beat: **2/46 = 4.3%**
-across those three. Report the flag rate per case with the cost beside it.
-Change nothing else in the same batch — the last two batches attributed cleanly
-because they did not.
+**[A] The claim unit — the last big one, and it must run alone.**
+`_extract_claim_citation_pairs` treats a curriculum's `IF / THEN / BECAUSE`
+decision tree and its Clinical Protocol Summary table as ordinary prose, so a
+seven-branch tree becomes ONE claim carrying seven papers' markers and every
+one of them is judged against the whole blob. That is **13 of the 37**
+hand-judged Deep Learning flags (`eval/logs/dl_flag_verdicts.json` has the
+per-flag reasoning; `scripts/classify_dl_flags.py` regenerates it).
 
-**[B] The longest-paragraph heuristic.** Fix `ingest_classics.py:219-232` and
-`app.py`'s `/api/abstract` to keep the whole abstract, then measure how many
-library rows are multi-paragraph-collapsed and repair them with the same
-dry-run-then-apply shape as `scripts/repair_truncated_abstracts.py`. That
-script is idempotent and resumable — verified: a second run reports 0 changes —
-so model the new one on it, **including backing up every column it overwrites**
-(see the standing rule added to `WORKLIST.md` §6; the abstract repair backed up
-abstracts and not embeddings, and the old vectors are gone).
+Teach the splitter about the two shapes: a decision-tree branch ends at the
+next `**IF**`, and a table cell is its own claim. Then re-run
+`--synthesis-subset` before and after. **This is the item that must not share
+a batch with anything else**: the last change to this splitter reversed its
+expected direction (merged claims were flagged LESS, p=0.002, because a longer
+blob gives the judge more surface on which to find something supported), so a
+confounded run teaches nothing. Report the split by shape — decision tree,
+table cell, prose — not just the total.
 
-**[C] The 108 unexplained efetch misses.** Take the PMIDs the repair could not
-fetch, classify them (book record / withdrawn / bad id / fetch bug), and fix
-whichever is a bug. Also backfill the 8 empty titles while you are there — they
-now reach the prompt as a blank line where the paper's subject should be.
+**[B] `_SUPPORT_MAX_PAIRS`.** It is 30, it binds on three of four curriculum
+modules, and the block now says so out loud. Measure what the unchecked tail
+contains before deciding: run one curriculum with the cap at 100, and report
+the flag rate of pairs 31+ separately from pairs 1-30. If the tail flags at the
+same rate, raise the cap; if it flags higher, that is a finding about where in
+a module the weak citations are.
 
-**[D] Chase the DL flag rate.** The Deep Learning support check has now been
-measured for the first time: 24/118 (20.3%) and 13/116 (11.2%) on two laser
-curricula. Nobody has yet looked at WHY a curriculum module flags higher than a
-Review answer. Hand-judge 20 flagged pairs from a curriculum the way §5[B] of
-`eval-v5` did for Review, and report the split before fixing anything.
+**[C] The 108 unexplained efetch misses**, still open from `grounding-v1`.
+Classify them (book record / withdrawn / bad id / fetch bug) and fix whichever
+is a bug. Backfill the 8 empty titles while you are there.
 
-Report in §8 format; refresh bundle; tag `prompt-v1`.
+**[D] Guard the other two shared logs.** `evidence_mapping.jsonl` now carries a
+pid on every citation-support record, because a concurrent pytest run put nine
+rows inside an eval case's measurement window and turned 16/119 into 16/146.
+`pubmed_audit.jsonl` and `cost_log.jsonl` have the same shape and no guard.
+While there: `cost_log.jsonl` holds ~$5.70 of imaginary spend from stubbed TTS
+rows the suite wrote before `tests/conftest.py` redirected it. Decide whether
+`/admin/costs` should filter them or whether the log gets a one-off correction
+row — do not silently edit an append-only log.
+
+Report in §8 format; refresh bundle; tag `claims-v1`.
 
 ### Environment notes the fresh session will otherwise rediscover the hard way
 
@@ -201,9 +262,19 @@ Report in §8 format; refresh bundle; tag `prompt-v1`.
   has now cost seven debugging cycles across three batches. **Use the
   Write/Edit tools for any Python containing a backslash or nested quotes.**
 - Set `PYTHONIOENCODING=utf-8` on every python invocation.
-- **Eval runs cannot overlap.** `run_eval` measures esearch from a byte offset
-  into `pubmed_audit.jsonl`; any concurrent PubMed retrieval corrupts it.
-  Library-pinned cases issue no esearch and are safe to run alongside.
+- **Eval runs cannot overlap, and NEITHER CAN A PYTEST RUN.** `run_eval`
+  measures esearch from a byte offset into `pubmed_audit.jsonl` and the
+  citation-support flag rate from one into `evidence_mapping.jsonl`. Any
+  concurrent PubMed retrieval corrupts the first; any concurrent
+  `tests/test_end_to_end.py` used to corrupt the second, and did — nine rows
+  inside one case's window turned 16/119 into 16/146. The suite now writes its
+  audit logs to a tmp path and each support record carries its writer's pid, so
+  the harness excludes foreign rows and says so. **Still: do not run the suite
+  during a measurement you intend to report.**
+- **A same-length mutation can leave a stale `.pyc`.** `cp` restoring a file
+  whose size and mtime-second match the mutated one means Python reuses the
+  cached bytecode and the "restored" run is still the mutant. `rm -rf
+  __pycache__` after every mutation restore.
 - **Never truth-test an ElementTree element.** `find(a) or find(b)` discards a
   valid childless `<PMID>12345</PMID>` because elements are falsy. Use
   `is None`. And never use `.//PMID` on a PubMed record — the
@@ -222,14 +293,27 @@ Report in §8 format; refresh bundle; tag `prompt-v1`.
 1. Listen to 60 s of laser audio spanning "apexification" — confirm or clear
    the pronunciation flag.
 2. Rehearse the demo on the presenting machine. **The cached answers were
-   regenerated 2026-09-01 and the runbook timings are re-measured** — cold
-   Review is now 55-120s and a cold curriculum 8.0 min at $1.52.
+   re-warmed 2026-09-01 02:45 after the rescore invalidated them, and the
+   runbook timings are re-measured** — cold Review 60-110s at ~$1.28 (up from
+   ~$0.79; the drivers are named in the runbook), cached 0.5-1.0s, cold
+   curriculum 8.0 min at $1.52. The laser curriculum was NOT regenerated: no
+   change this batch touched what it serves.
 3. Decide when the vision/X-ray conversation with counsel happens.
 4. **Keep the OneDrive backup zip private — it contains `.env`** — or re-zip
    without it.
 5. Session hygiene: start new agent sessions from this file; `/compact` only at
    committed boundaries.
-6. Decide whether to chase the last of the citation-support flag rate. It is
-   4.3% on the measured Review cases, from 39.4% two batches ago. §5[A] is the
-   remaining known mechanism; below a few percent the next gain probably costs
-   more than it returns.
+6. Decide whether to chase the last of the citation-support flag rate. The
+   LIVE Review path is **0/51** and the library path **3/48**; the remaining
+   headroom is on the Deep Learning path, where 81% of what the checker flags
+   is an artifact of how a claim is extracted rather than a bad citation.
+   §5[A] is that item. Recommendation: yes, once, as its own batch — it is the
+   difference between a guardrail that means something on a curriculum and one
+   that cries wolf four times in five.
+7. Decide whether the web deck should keep recording its own narration by
+   default (`narrate: auto`). It buys auto-advance for ~$0.25 and ~2 minutes
+   per export. Recommendation: yes; `narrate: reuse` restores the old
+   behaviour in one request field if the demo timing matters more.
+8. Decide when `scripts/monthly_maintenance.py` first runs in `--apply` mode.
+   It is built, tested and deliberately unscheduled. Recommendation: after the
+   demo, with the one-page report read by hand the first time.

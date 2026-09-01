@@ -639,17 +639,126 @@ identically", and the change that added the badges is where the abstract
 stopped being included. Guarded now by
 `TestTheLibraryBlockContainsThePaper`, which asserts on the assembled block.
 
-### Not fixed, deliberately
+### ~~Not fixed, deliberately~~ — DONE (`grounding-v2`, 2026-09-01)
 
-The prompt still mandates a `[[PMID:N]]` marker on every standalone clinical
-claim and gives no explicit instruction for what to do when no retrieved paper
-supports one; the corrective-retry message ("Add markers from the evidence
-base, OR rephrase") pushes the same way. That is a second, independent
-mechanism for a decorative citation, and it is the one that would still apply
-on the LIVE path — which flags at the same rate and where abstracts were never
-missing. It was left alone so this measurement attributes cleanly to one
-change. **Recommended next: add a grounding rule to the synthesis prompt and
-re-run these three cases plus a live-pinned one.**
+The prompt mandated a `[[PMID:N]]` marker on every standalone clinical claim
+and gave no instruction for what to do when no retrieved paper supports one;
+the corrective-retry message ("Add markers from the evidence base, OR
+rephrase") pushed the same way. `_GROUNDING_RULE` is now one constant spliced
+into all three synthesis prompts. See the next section for what it did.
+
+## The grounding rule, and the three-way measurement it needed
+
+`_GROUNDING_RULE` (endo_ai.py, one constant, three prompts) says a
+`[[PMID:N]]` marker is a factual claim ABOUT the paper, asks the model to find
+the language it could quote if asked "where does it say that?", and supplies
+the option the prompt was missing: cite a different paper, weaken the sentence
+to what this one states, or **write it unmarked**. It does not relax the
+marker mandate.
+
+Measured on three strata, cache bypassed, 2026-09-01:
+
+| stratum | before | + rule | + whole abstract to the judge | + collapsed-abstract fix |
+|---|---|---|---|---|
+| Review, LIVE-pinned (5 cases) | 7/34 **20.6%** | 3/32 9.4% | 3/25 12.0% | **0/51 0.0%** |
+| Review, library-pinned (3) | 4/49 8.2% | 4/45 8.9% | 3/48 6.3% | — |
+| Deep Learning (2 curricula) | 20/235 8.5% | 32/240 13.3% | 31/239 13.0% | — |
+
+**Only the live endpoint is significant, and only for the three changes
+together** (7/34 vs 0/51, Fisher exact p = 0.0011). The rule alone is p=0.31;
+the curriculum move is p=0.11. Nothing here licenses a claim about any single
+change.
+
+Three things worth keeping:
+
+- **The live path was never measured before this.** Every number in the
+  39.4% → 8.5% → 4.3% history is library-pinned, so none of the fixes behind
+  it could reach the path where abstracts were never missing. Measure the path
+  a fix cannot reach before believing the fix generalises.
+- **A lower flag rate can be bought with fewer citations, so watch the
+  denominator.** A rule whose third option is "say it unmarked" is exactly the
+  kind that could. It did not: the live denominator went 34 → 51.
+- **4.3% was a draw, not a level.** The same three library cases measured 8.2%
+  the next day with nothing changed in between. Quote a range or quote the
+  run.
+
+## The last truncation was on the guardrail
+
+`_SUPPORT_ABSTRACT_CHARS = 1200` fed `verify_citation_support`
+`abstract[:1200]`. It was harmless when written — 57% of library abstracts
+were themselves cut at 1,000 or 1,200 at ingest, so there was nothing past it.
+`grounding-v1` healed those rows to a mean of 1,631 characters **and left the
+cap in place**, which turned a no-op into the last truncation in the pipeline,
+sitting on the check whose whole job is to read the paper.
+
+Found by hand-judging all 37 Deep Learning citation flags
+(`eval/logs/dl_flag_verdicts.json`, regenerate with
+`scripts/classify_dl_flags.py`):
+
+| verdict | n |
+|---|---|
+| checker artifact — the supporting sentence was past character 1,200 | 17 |
+| checker artifact — the extracted "claim" is not one claim | 13 |
+| genuinely unsupported | 7 |
+| abstract unusable | 0 |
+
+**36 of the 37 cite a paper whose stored abstract exceeds 1,200 characters.**
+PMID 27759881 is a 6,724-character Cochrane review whose LLLT finding sits
+~5,000 characters in; the judge was shown its search strategy.
+
+So Deep Learning's 11–20% is **81% checker artifact**. Its genuinely-
+unsupported rate is 7/234 = **3.0%**, in line with Review's rather than four
+times it. The gap is explained by two things the curriculum prompt itself
+requires: a Decision Tree that emits `IF / THEN / BECAUSE` across lines (the
+splitter has no rule for it, so a seven-branch tree becomes ONE claim carrying
+seven markers), and mandated procedural specificity, which makes claims cite
+deep-in-the-abstract RESULTS values.
+
+The judge now gets the whole abstract, **bounded by batching on item
+boundaries rather than by cutting** — an item split across two requests is a
+claim judged against half its evidence, the same bug with a new cause. That
+makes the checker stricter, not looser.
+
+**The claim-unit half is untouched and is the largest remaining single cause
+in this metric.** Fixing it means changing `_extract_claim_citation_pairs`,
+and the last change to that splitter reversed its expected direction (merged
+claims were flagged LESS, p=0.002). It needs its own batch.
+
+### The other fail-open in the same function
+
+`_SUPPORT_MAX_PAIRS = 30` caps how many pairs are checked at all. The two
+laser curricula measured 29/30/30/30 — three of four modules **at the cap** —
+and the rendered block said "each of the 30 cited claims was checked" while 15
+were never looked at. True, and read as complete. `total_pairs` is recorded
+now and the block names the remainder. **A cap that binds silently is bug
+class (d) whatever the sentence around it says.**
+
+## A third shared file, and the same contamination
+
+`run_eval` computes a case's citation-support flag rate from a byte-offset
+window of `evidence_mapping.jsonl` — the same shape as `_esearch_hits_since`
+over `pubmed_audit.jsonl`, and with the same exposure. A `pytest` run of
+`tests/test_end_to_end.py`, started while an eval was in flight, put nine rows
+of `checked: 3, n_flagged: 0` inside one curriculum's window and reported
+16/146 = 11.0% for what was 16/119 = 13.4%.
+
+Two fixes, because either alone leaves a hole:
+
+- `tests/conftest.py` redirects `_EVMAP_LOG_PATH` and `_COST_LOG_PATH` to a
+  tmp directory for the whole session. **A test run must not append to the
+  record of what the product did.** It had also been adding stubbed TTS rows
+  to `cost_log.jsonl` — $5.70 of imaginary spend in one night.
+- Every `verify_citation_support` record carries `pid`, so the harness
+  EXCLUDES a foreign row instead of guessing.
+
+A timing heuristic was written first and thrown away: the real burst was 1.3 s
+apart, which is also what four curriculum modules finishing on a thread pool
+look like.
+
+**The general rule: any file in the repo root that a running process appends
+to is shared mutable state, and any measurement taken as an offset window into
+one has this bug until it identifies its own writer.** `pubmed_audit.jsonl`
+and `cost_log.jsonl` are still unguarded.
 
 ## Healing the abstracts, and two ways to write a paper onto the wrong row
 
@@ -1047,15 +1156,70 @@ successor only; the library backfill resolves chains to the terminal version
   path is affected — every narration route rewrites the answer through an LLM
   first — but if a raw-narration path is ever added, a curriculum's citation
   support blocks would be read aloud verbatim.
-- **The "longest paragraph" abstract heuristic loses paragraphs.**
-  `ingest_classics.py:219-232` builds a paper's abstract by keeping the longest
-  paragraph of the fetched text, and `app.py`'s `/api/abstract` duplicates the
-  same collapse. A multi-paragraph abstract therefore loses every paragraph but
-  one — conclusions included. Same data-loss class as the truncation fixed
-  above, different mechanism, and it survives that fix untouched because it is
-  a selection rather than a slice. Found by Lane A while removing the caps;
-  deliberately left for its own item because it needs a parser change and a
-  re-ingest of whatever it has already mangled.
+- ~~**The "longest paragraph" abstract heuristic loses paragraphs.**~~
+  **FALSE, and the correction is the interesting half. DONE
+  (`grounding-v2`, 2026-09-01.)** Measured against efetch XML on 198 library
+  PMIDs, 95 of them structured, the collapse loses **nothing**: 0 rows lose
+  more than 20 characters, 0 lose a CONCLUSIONS section, 100.0% of the text is
+  kept. PubMed's text renderer emits BACKGROUND / METHODS / RESULTS /
+  CONCLUSIONS as one blank-line-free block, so the longest paragraph IS the
+  whole structured abstract. `scripts/measure_paragraph_collapse.py` records
+  it and `tests/test_abstract_selection.py` pins it, so nobody fixes a loss
+  that does not happen.
+
+  **The real defect is the opposite one — over-capture — and it was live.**
+  "Longest paragraph" is a proxy for "the abstract", and two other blocks can
+  be longer:
+  - the AUTHOR AFFILIATION list. PMID 39743567, a consensus with ~30
+    institutional addresses, stored **6,304 characters of university
+    departments** in place of its 707-character abstract.
+  - a FOREIGN-LANGUAGE abstract, printed under `Publisher:`. PMID 41337506's
+    Portuguese version is longer than its English one.
+
+  Both reached synthesis as the paper's text AND were written into
+  `abstract_cache`, which is what `verify_citation_support` reads: a paper
+  whose "abstract" is a list of addresses flags every claim cited to it, and
+  the clinician sees the flag with no way to know why. 175 of 9,985 cache rows
+  and 4 of 2,348 library rows were in that state; 124 healed by
+  `scripts/repair_collapsed_abstracts.py`, leaving 40 records PubMed holds no
+  abstract for at all.
+
+  `endo_ai._select_abstract_paragraph` is shared by all four parsing sites
+  now. Two properties are load-bearing and each has a test: the exclusions are
+  ANCHORED (a paper whose abstract merely contains "Copyright:" keeps it), and
+  a record whose only long block is excluded keeps that block rather than
+  being blanked — an empty abstract silently SKIPS that paper in the support
+  check, so the guardrail would go quiet instead of complaining.
+
+  **Two lessons past the fix.** The first measurement drew `ORDER BY pmid
+  LIMIT 60`, which is the oldest rows in the library and the one stratum the
+  heuristic cannot hurt; it reported 0.0% and was right for the wrong reason.
+  A deterministic sample still has to be a spread one. And a hypothesis
+  carried in a handover for two batches is still a hypothesis: this one was
+  written down three times before anyone measured it.
+
+- **`ingest_aae_guidelines.pubmed_fetch_abstracts` had never returned
+  anything.** Its entry separator was `^(\d{5,9})\.` — five to nine digits
+  then a dot — while PubMed numbers entries `1. `, `2. `. Verified against a
+  real dump: zero entries, every time. Every record it fetched was then
+  dropped by `len(abstract) < 60`, and the `abstract[:1200]` cap removed from
+  that file in `grounding-v1` was on a line that had never executed. Fixed to
+  share `_parse_efetch_batch`. **That ingest path is live for the first time,
+  so dry-run the script before running it.**
+
+- **A quoted claim could end in half a citation marker.** The support block
+  quotes a flagged claim at 140 characters, and a MERGED claim carries
+  `[[PMID:N]]` markers inside it, so the cut lands mid-marker. A real
+  curriculum rendered `... resolving by day 14 [[PMID:` and
+  `strip_markdown_for_speech` left the fragment in the narration script, where
+  TTS reads it out letter by letter — and it is a raw marker on a rendered
+  surface, which invariant 3 forbids. `endo_ai._quote_claim` strips it at the
+  source and narration catches a fragment that reaches it anyway. Both
+  patterns require the DOUBLE bracket so prose that says "a PMID marker"
+  survives. **Found by an existing test whose fixture is the newest laser
+  curriculum in `learn_history/` — it started failing the moment this batch
+  generated one with the shape. Fixtures from real data pay for themselves at
+  exactly these moments.**
 
 ## Commit-history notes
 

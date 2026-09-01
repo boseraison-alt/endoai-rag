@@ -1,0 +1,104 @@
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Query cache table ready.
+Abstract cache table ready.
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+
+=== COLD  Single-visit versus multiple-visit root canal treatment for necr…
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 23876.05it/s]
+  Embedding model ready.
+[intent] kind=standard retrieval=both clarify=False reason=Well-established comparative effectiveness question; robust literature exists but benefits from recent systematic reviews.
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*) | (necrotic OR "pulp necrosis")
+  Smart search terms: '("single-visit" OR "one-visit" OR "single visit" OR "one visit") AND ("multiple-visit" OR "multi-visit" OR "multiple visit" OR "multi visit") AND ("apical periodontitis" OR "periapical" OR AP)'
+  [rag] 8 queries -> 255 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 93 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 3 primary studies as already synthesised in newer SR (PMID 41274197, 2026; cutoff ≤ 2024)
+
+Asking Claude: 'Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis'
+============================================================
+  Cost: $0.7749 (38197 in / 2692 out)
+  Evidence mapping: passed=False score=80 cited=5 fabricated=0 unattributed=5 gaps=0
+  RETRY — validation failed: UNATTRIBUTED_CLAIMS: 5 clinical claim(s) lack [[PMID:N]] markers (limit 3)
+  Retry mapping:    passed=True score=100 cited=7 fabricated=0 unattributed=1 gaps=0
+  [citation_support] all 15 claim-citation pairs OK
+  Answer saved to: answers/answer_20260901_023921.txt
+  [audit] wrote 15 claim citations -> audit_20260901_023922_bb9dc2db54.json
+    108.6s  $1.6258  36 papers  7095 chars
+
+=== COLD  MTA versus Biodentine for full pulpotomy in mature permanent tee…
+[intent] kind=standard retrieval=both clarify=False reason=Direct material comparison with defined outcomes; well-studied but benefits from recent literature.
+  [search_terms] capped to 3 AND-groups, dropped: ("irreversible pulpitis" OR "symptomatic pulpitis")
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR Biodentine OR "calcium silicate" OR "hydraulic cement") AND (pulpotomy OR "pulp amputation") AND ("permanent teeth" OR "mature teeth" OR "adult teeth")'
+  [rag] 8 queries -> 185 distinct papers (best similarity kept per PMID)
+  [rag_gate] 185 hits, 107 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 5 primary studies as already synthesised in newer SR (PMID 40991160, 2026; cutoff ≤ 2024)
+
+Asking Claude: 'MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis'
+============================================================
+  Cost: $0.8193 (38726 in / 3179 out)
+  Evidence mapping: passed=False score=70 cited=15 fabricated=1 unattributed=0 gaps=0
+  RETRY — validation failed: FABRICATED_PMIDS: 1 cited PMID(s) not in evidence base (78.1)
+  Retry mapping:    passed=True score=100 cited=14 fabricated=0 unattributed=0 gaps=0
+  [citation_support] all 18 claim-citation pairs OK
+  Answer saved to: answers/answer_20260901_024100.txt
+  [audit] wrote 15 claim citations -> audit_20260901_024101_8c0d991d74.json
+    99.0s  $1.7254  36 papers  8058 chars
+
+=== COLD  CBCT versus periapical radiography for detecting apical periodon…
+[intent] kind=standard retrieval=both clarify=False reason=Well-established diagnostic comparison with evolving evidence; warrants current literature review.
+  Smart search terms: '(CBCT OR "cone beam computed tomography" OR "cone-beam CT" OR CBCT) AND ("periapical radiograph*" OR "intraoral radiograph*" OR "conventional radiograph*") AND ("apical periodontitis" OR "periapical lesion*" OR "apical pathology" OR "periapical pathology")'
+  [rag] 8 queries -> 262 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 37 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 41510689, 2026; cutoff ≤ 2024)
+
+Asking Claude: 'CBCT versus periapical radiography for detecting apical periodontitis'
+============================================================
+  Cost: $0.7076 (31575 in / 3120 out)
+  Evidence mapping: passed=True score=100 cited=15 fabricated=0 unattributed=1 gaps=0
+  [citation_support] all 16 claim-citation pairs OK
+  Answer saved to: answers/answer_20260901_024201.txt
+  [audit] wrote 14 claim citations -> audit_20260901_024202_3e24d2bf2e.json
+    60.8s  $0.7187  35 papers  7474 chars
+
+=== COLD  Nonsurgical retreatment versus apical microsurgery for persisten…
+[intent] kind=standard retrieval=both clarify=False reason=Common retreatment decision with established evidence base; fresh data supports current comparison.
+  Smart search terms: '("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "apicoectomy" OR "periapical surgery") AND ("persistent apical periodontitis" OR "treatment failure" OR "refractory periapical lesion" OR "apical periodontitis")'
+  [rag] 8 queries -> 186 distinct papers (best similarity kept per PMID)
+  [rag_gate] 186 hits, 88 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 42288014, 2026; cutoff ≤ 2024)
+
+Asking Claude: 'Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis'
+============================================================
+  Cost: $0.8882 (40602 in / 3722 out)
+  Evidence mapping: passed=True score=95 cited=12 fabricated=0 unattributed=2 gaps=0
+  [citation_support] all 16 claim-citation pairs OK
+  Answer saved to: answers/answer_20260901_024320.txt
+  [audit] wrote 14 claim citations -> audit_20260901_024321_c580c1b258.json
+    78.9s  $0.9037  38 papers  9217 chars
+
+=== COLD  Endodontic management in patients on bisphosphonates or antireso…
+[intent] kind=complex retrieval=both clarify=True reason=Multi-system interaction requiring case context; medication effects on healing, bone metabolism, and treatment outcomes.
+  Smart search terms: '(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronic OR zolendronate OR pamidronate OR ibandronate OR denosumab OR RANKL) AND ("root canal" OR endodontic* OR pulp* OR periapical) AND (management OR treatment OR therap* OR complication* OR osteonecrosis OR "medication related osteonecrosis" OR MRONJ OR "bisphosphonate related osteonecrosis" OR BRONJ)'
+  [rag] 8 queries -> 193 distinct papers (best similarity kept per PMID)
+  [rag_gate] 193 hits, 33 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 1 primary studies as already synthesised in newer SR (PMID 42512863, 2026; cutoff ≤ 2024)
+
+Asking Claude: 'Endodontic management in patients on bisphosphonates or antiresorptives'
+============================================================
+  Cost: $0.6805 (33475 in / 2378 out)
+  Evidence mapping: passed=False score=85 cited=6 fabricated=0 unattributed=2 gaps=0
+  RETRY — validation failed: UNTRACEABLE_RECOMMENDATION: CLINICAL RECOMMENDATION does not state the strength of evidence it rests on (e.g. "Based on Level I evidence")
+  Retry mapping:    passed=True score=100 cited=6 fabricated=0 unattributed=0 gaps=0
+  [citation_support] all 11 claim-citation pairs OK
+  Answer saved to: answers/answer_20260901_024436.txt
+  [audit] wrote 11 claim citations -> audit_20260901_024437_17f8aa170c.json
+    75.9s  $1.4147  32 papers  6332 chars
+  CACHED 1.0s  (from cache)  Single-visit versus multiple-visit root canal treatm…
+  CACHED 0.5s  (from cache)  MTA versus Biodentine for full pulpotomy in mature p…
+  CACHED 0.5s  (from cache)  CBCT versus periapical radiography for detecting api…
+  CACHED 0.5s  (from cache)  Nonsurgical retreatment versus apical microsurgery f…
+  CACHED 0.5s  (from cache)  Endodontic management in patients on bisphosphonates…
+
+[demo] total cold cost $6.39
+[demo] timings -> eval/logs/demo_rewarm_20260901.json
