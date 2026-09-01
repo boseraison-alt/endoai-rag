@@ -551,9 +551,9 @@ def _diff_case(cid, measured, base):
     # Comparing that against the baseline would report every synthesis case as
     # a route change, which is noise, not drift.
     routes = base.get("routes_observed") or []
-    if routes and measured.get("route") is not None             and measured.get("route") not in routes:
-        rows.append((cid, "route", "|".join(routes), str(measured.get("route")),
-                     "CHANGED"))
+    got_route = measured.get("route")
+    if routes and got_route is not None and got_route not in routes:
+        rows.append((cid, "route", "|".join(routes), str(got_route), "CHANGED"))
     return rows
 
 
