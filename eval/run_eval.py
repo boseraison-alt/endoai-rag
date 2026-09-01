@@ -108,6 +108,18 @@ def run_case_with_synthesis(case):
     SYNTHESIS_SUBSET. It goes through /ask rather than calling the synthesiser
     directly so that the guardrails, validation and rendering are all exercised
     exactly as a clinician would hit them.
+
+    THE ANSWER CACHE IS BYPASSED, and that is not an optimisation detail. The
+    2026-08-31 baseline run reported "3/5 cases passed [SYNTHESIS]" having
+    generated exactly ONE answer: the other four were served from `query_cache`
+    rows written on 2026-08-30, so the assertions were evaluated against
+    answers the code under test never produced, at $0 and in seconds. A cache
+    hit and a clean synthesis are indistinguishable in the output. This is the
+    same reasoning as `LIBRARY_WRITE_BACK = False` and `force_route`: an eval
+    must not measure a stored artefact of an earlier run.
+
+    The cache WRITE is disabled for the same reason in the other direction —
+    an eval answer must not be served to a clinician later.
     """
     import endo_ai
     import app as app_mod
@@ -117,6 +129,8 @@ def run_case_with_synthesis(case):
     # /ask has no force_route parameter — pin it by wrapping the builder for
     # the duration of this case only.
     original = app_mod.build_evidence_base_with_progress
+    original_cache_get = app_mod.get_cached_answer
+    original_cache_save = app_mod.save_query_cache
     pinned = case.get("force_route")
 
     def _pinned_builder(job_id, question, force_route=None, mode="review",
@@ -128,6 +142,8 @@ def run_case_with_synthesis(case):
                         context_block=context_block, prior_pmids=prior_pmids)
 
     app_mod.build_evidence_base_with_progress = _pinned_builder
+    app_mod.get_cached_answer = lambda *a, **k: None
+    app_mod.save_query_cache = lambda *a, **k: None
     try:
         client = app_mod.app.test_client()
         r = client.post("/ask", json={"question": case["question"],
@@ -145,6 +161,8 @@ def run_case_with_synthesis(case):
             raise TimeoutError("job did not finish")
     finally:
         app_mod.build_evidence_base_with_progress = original
+        app_mod.get_cached_answer = original_cache_get
+        app_mod.save_query_cache = original_cache_save
 
     if st.get("status") != "complete":
         raise RuntimeError(f"job {st.get('status')}: {st.get('error')}")
@@ -152,6 +170,15 @@ def run_case_with_synthesis(case):
     answer = st.get("answer") or ""
     exp = case.get("expect", {})
     failures = []
+
+    # A synthesis case that cost nothing did not synthesise. Reported as a
+    # failure rather than a warning: a $0 case is the signature of the cache
+    # hit that made four of five assertions meaningless, and a warning in a
+    # 400-line log is not seen.
+    if not st.get("cost_usd"):
+        failures.append(
+            f"the answer cost ${st.get('cost_usd')} — no synthesis happened, so "
+            "the assertions below were evaluated against a stored answer")
 
     for pmid in exp.get("must_cite_pmid", []):
         if pmid not in answer:

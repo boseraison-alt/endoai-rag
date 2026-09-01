@@ -579,3 +579,91 @@ class TestTheDiffFlagActuallyDiffs:
                             ["run_eval.py", "--diff",
                              "--baseline", self._baseline(tmp_path, monkeypatch)])
         assert run_eval.main() == 1
+
+
+class TestSynthesisBypassesTheAnswerCache:
+    """The 2026-08-31 run printed "3/5 cases passed [SYNTHESIS]" having
+    generated ONE answer. The other four were served from `query_cache` rows
+    written the previous day, so the answer-level assertions were checked
+    against text the code under test never produced — at $0, in seconds, and
+    indistinguishable in the output from five clean runs."""
+
+    def _run(self, monkeypatch, answer="An answer.", cost=0.99):
+        import app as app_mod
+        import endo_ai
+        seen = {}
+
+        class _Resp:
+            status_code = 200
+            data = b""
+            def get_json(self):
+                return self._j
+
+        class _Client:
+            def post(self, *a, **k):
+                # Read the module attributes at the moment the request runs —
+                # that is the only window in which the bypass is in force.
+                seen["get"] = app_mod.get_cached_answer("q")
+                seen["save"] = app_mod.save_query_cache("q", "a", [])
+                r = _Resp(); r._j = {"job_id": "j1"}; return r
+
+            def get(self, *a, **k):
+                r = _Resp()
+                r._j = {"status": "complete", "answer": answer,
+                        "papers": [{"pmid": "1"}], "cost_usd": cost}
+                return r
+
+        monkeypatch.setattr(app_mod, "get_cached_answer",
+                            lambda *a, **k: {"answer": "STALE", "papers": []})
+        monkeypatch.setattr(app_mod, "save_query_cache",
+                            lambda *a, **k: "WROTE")
+        monkeypatch.setattr(app_mod.app, "test_client", lambda: _Client())
+        monkeypatch.setattr(endo_ai, "LIBRARY_WRITE_BACK", True, raising=False)
+        measured, failures = run_eval.run_case_with_synthesis(
+            {"id": "c", "question": "q", "mode": "review",
+             "force_route": "library", "expect": {}})
+        return seen, measured, failures, app_mod
+
+    def test_the_cache_returns_nothing_during_a_case(self, monkeypatch):
+        seen, _m, _f, _app = self._run(monkeypatch)
+        assert seen["get"] is None, \
+            "a stored answer would be evaluated instead of a generated one"
+
+    def test_the_cache_is_not_written_during_a_case(self, monkeypatch):
+        """An eval answer served to a clinician later is the same mistake as
+        write-back: the run mutating what it measures."""
+        seen, _m, _f, _app = self._run(monkeypatch)
+        assert seen["save"] is None
+
+    def test_both_are_restored_afterwards(self, monkeypatch):
+        _seen, _m, _f, app_mod = self._run(monkeypatch)
+        assert app_mod.get_cached_answer("q") == {"answer": "STALE", "papers": []}
+        assert app_mod.save_query_cache("q", "a", []) == "WROTE"
+
+    def test_they_are_restored_even_when_the_case_raises(self, monkeypatch):
+        import app as app_mod
+
+        class _Client:
+            def post(self, *a, **k):
+                raise RuntimeError("boom")
+
+        monkeypatch.setattr(app_mod, "get_cached_answer",
+                            lambda *a, **k: {"answer": "STALE"})
+        monkeypatch.setattr(app_mod, "save_query_cache", lambda *a, **k: "WROTE")
+        monkeypatch.setattr(app_mod.app, "test_client", lambda: _Client())
+        with pytest.raises(RuntimeError):
+            run_eval.run_case_with_synthesis(
+                {"id": "c", "question": "q", "force_route": "library",
+                 "expect": {}})
+        assert app_mod.get_cached_answer("q") == {"answer": "STALE"}
+        assert app_mod.save_query_cache("q", "a", []) == "WROTE"
+
+    def test_a_free_answer_is_a_failure_not_a_pass(self, monkeypatch):
+        """Belt and braces on the bypass: if a cached answer reaches the
+        assertions by some other route, the $0 cost gives it away."""
+        _seen, _m, failures, _app = self._run(monkeypatch, cost=0.0)
+        assert any("no synthesis happened" in f for f in failures)
+
+    def test_a_paid_answer_is_not_flagged(self, monkeypatch):
+        _seen, _m, failures, _app = self._run(monkeypatch, cost=0.42)
+        assert not any("no synthesis happened" in f for f in failures)
