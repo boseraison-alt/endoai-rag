@@ -13,6 +13,8 @@ Two failure modes matter here and neither shows up as a red test elsewhere:
 
 Both are asserted below.
 """
+import inspect
+import json
 import re
 import sys
 from pathlib import Path
@@ -470,3 +472,110 @@ class TestTheNewCasesAreWellFormed:
         for cid in ("case-opening-sparse", "case-opening-full"):
             assert have[cid].get("mode") == "case"
             assert have[cid]["expect"].get("clarify")
+
+
+class TestTheDiffFlagActuallyDiffs:
+    """`--diff` was declared with argparse and then never read: the flag ran an
+    ordinary eval, printed no table and exited 0. A reviewer running it saw a
+    clean result from a comparison that never happened — bug class (d), inside
+    the harness written to catch bug class (d)."""
+
+    BASE = {"cases": {"a-case": {
+        "force_route": "library",
+        "routes_observed": ["library"],
+        "papers": {"min": 38, "max": 39, "runs": [38, 39, 38]},
+        "search_terms": {"min": 6, "max": 9, "runs": [6, 9, 7]},
+    }}}
+
+    def _baseline(self, tmp_path, monkeypatch, doc=None):
+        f = tmp_path / "b.json"
+        f.write_text(json.dumps(doc if doc is not None else self.BASE),
+                     encoding="utf-8")
+        return str(f)
+
+    def test_the_flag_is_read_at_all(self):
+        """The regression itself: the parser knows --diff and main() uses it."""
+        src = inspect.getsource(run_eval.main)
+        assert "args.diff" in src, "--diff is declared but never read"
+
+    def test_a_value_inside_the_range_is_not_reported(self):
+        rows = run_eval._diff_case("a-case", {"papers": 39, "route": "library"},
+                                   self.BASE["cases"]["a-case"])
+        assert rows == []
+
+    def test_a_value_below_the_range_is_reported(self):
+        rows = run_eval._diff_case("a-case", {"papers": 12, "route": "library"},
+                                   self.BASE["cases"]["a-case"])
+        assert rows and rows[0][1] == "papers" and rows[0][4] == "BELOW"
+
+    def test_a_value_above_the_range_is_reported(self):
+        rows = run_eval._diff_case("a-case", {"papers": 99, "route": "library"},
+                                   self.BASE["cases"]["a-case"])
+        assert rows and rows[0][4] == "ABOVE"
+
+    def test_a_changed_route_is_reported(self):
+        rows = run_eval._diff_case("a-case", {"papers": 38, "route": "live"},
+                                   self.BASE["cases"]["a-case"])
+        assert any(r[1] == "route" and r[4] == "CHANGED" for r in rows)
+
+    def test_a_case_with_no_baseline_is_named_not_skipped(self):
+        """A silently skipped new case is the same fail-open one layer down."""
+        rows = run_eval._diff_case("new-case", {"papers": 5}, None)
+        assert rows and rows[0][4] == "NEW CASE"
+
+    def test_a_missing_baseline_file_says_so(self, capsys):
+        assert run_eval._load_baseline("definitely-not-here.json") == {}
+        assert "not found" in capsys.readouterr().out
+
+    def test_an_unreadable_baseline_says_so(self, tmp_path, capsys):
+        f = tmp_path / "bad.json"
+        f.write_text("{not json", encoding="utf-8")
+        assert run_eval._load_baseline(str(f)) == {}
+        assert "unreadable" in capsys.readouterr().out
+
+    def test_drift_does_not_change_the_exit_code(self, monkeypatch, tmp_path,
+                                                 capsys):
+        """Ranges spot drift; the floors gate. A run whose papers drifted but
+        whose floors held must still exit 0, or every LLM-variance wobble
+        becomes a red build and the signal is lost."""
+        import app as app_mod
+
+        monkeypatch.setattr(run_eval, "QUESTIONS", tmp_path / "q.json")
+        run_eval.QUESTIONS.write_text(json.dumps({"cases": [
+            {"id": "a-case", "question": "q", "force_route": "library",
+             "expect": {"min_papers": 1}}]}), encoding="utf-8")
+
+        def _builder(job_id, question, force_route=None, mode="review",
+                     context_block="", prior_pmids=None):
+            return {"level1": {"source": "rag",
+                               "scored": [{"pmid": str(i), "title": "t"}
+                                          for i in range(99)]}}
+
+        monkeypatch.setattr(app_mod, "build_evidence_base_with_progress", _builder)
+        monkeypatch.setattr(sys, "argv",
+                            ["run_eval.py", "--diff",
+                             "--baseline", self._baseline(tmp_path, monkeypatch)])
+        rc = run_eval.main()
+        out = capsys.readouterr().out
+        assert "ABOVE" in out, "the drift was not reported"
+        assert rc == 0, "drift must not gate the run; the floors do that"
+
+    def test_a_floor_breach_still_exits_non_zero(self, monkeypatch, tmp_path,
+                                                 capsys):
+        import app as app_mod
+
+        monkeypatch.setattr(run_eval, "QUESTIONS", tmp_path / "q.json")
+        run_eval.QUESTIONS.write_text(json.dumps({"cases": [
+            {"id": "a-case", "question": "q", "force_route": "library",
+             "expect": {"min_papers": 50}}]}), encoding="utf-8")
+
+        def _builder(job_id, question, force_route=None, mode="review",
+                     context_block="", prior_pmids=None):
+            return {"level1": {"source": "rag",
+                               "scored": [{"pmid": "1", "title": "t"}]}}
+
+        monkeypatch.setattr(app_mod, "build_evidence_base_with_progress", _builder)
+        monkeypatch.setattr(sys, "argv",
+                            ["run_eval.py", "--diff",
+                             "--baseline", self._baseline(tmp_path, monkeypatch)])
+        assert run_eval.main() == 1

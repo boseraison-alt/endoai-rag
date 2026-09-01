@@ -1,0 +1,1211 @@
+{
+  "_README": [
+    "Baseline: case-v1 (75e74f4) \u2014 case engine + review-mode conversation memory; retrieval-only, 3 runs 2026-08-31",
+    "Folded from 3 run log(s): run1.log, run2.log, run3.log.",
+    "",
+    "Retrieval-only \u2014 no answers were generated, so must_contain, banner, modules_non_empty and max_unsourced_numeric_modules were NOT evaluated. A green run here is not evidence that they hold.",
+    "",
+    "Search terms are LLM-generated: live-route counts move up to 3x between runs on the same question. Compare shape, not digits."
+  ],
+  "label": "case-v1 (75e74f4) \u2014 case engine + review-mode conversation memory; retrieval-only, 3 runs 2026-08-31",
+  "n_runs": 3,
+  "provisional": false,
+  "cases": {
+    "laser-root-canal-disinfection-live": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          102,
+          152,
+          190
+        ],
+        "min": 102,
+        "max": 190
+      },
+      "esearch_hits": {
+        "runs": [
+          447,
+          740,
+          975
+        ],
+        "min": 447,
+        "max": 975
+      },
+      "esearch_queries": {
+        "runs": [
+          79,
+          63,
+          72
+        ],
+        "min": 63,
+        "max": 79
+      },
+      "esearch_empty": {
+        "runs": [
+          46,
+          16,
+          14
+        ],
+        "min": 14,
+        "max": 46
+      },
+      "hits_per_query": {
+        "runs": [
+          5.7,
+          11.7,
+          13.5
+        ],
+        "min": 5.7,
+        "max": 13.5
+      },
+      "search_terms": {
+        "runs": [
+          12,
+          9,
+          10
+        ],
+        "min": 9,
+        "max": 12
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 43,
+          "level2": 22,
+          "level3a": 12,
+          "level3b": 4,
+          "level4": 7,
+          "level5": 13
+        },
+        {
+          "cochrane": 1,
+          "level1": 64,
+          "level2": 28,
+          "level3a": 26,
+          "level3b": 6,
+          "level4": 10,
+          "level5": 17
+        },
+        {
+          "cochrane": 1,
+          "level1": 81,
+          "level2": 33,
+          "level3a": 32,
+          "level3b": 7,
+          "level4": 20,
+          "level5": 16
+        }
+      ]
+    },
+    "laser-root-canal-disinfection-library": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          36,
+          37,
+          31
+        ],
+        "min": 31,
+        "max": 37
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 1,
+          "level2": 5,
+          "level3a": 2
+        },
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "classic": 1,
+          "level2": 6,
+          "level3a": 3
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 1,
+          "level2": 3,
+          "level3a": 1
+        }
+      ]
+    },
+    "single-vs-multiple-visit": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          39,
+          41,
+          37
+        ],
+        "min": 37,
+        "max": 41
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 5,
+          "level1": 25,
+          "classic": 3,
+          "level2": 2,
+          "level3a": 4
+        },
+        {
+          "cochrane": 4,
+          "level1": 25,
+          "classic": 4,
+          "level2": 4,
+          "level3a": 4
+        },
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "classic": 3,
+          "level2": 4,
+          "level3a": 3
+        }
+      ]
+    },
+    "mta-vs-biodentine-pulpotomy": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          34,
+          36,
+          41
+        ],
+        "min": 34,
+        "max": 41
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "level2": 4,
+          "level3a": 2,
+          "level3b": 1
+        },
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "level2": 5,
+          "level3a": 3,
+          "level3b": 1
+        },
+        {
+          "cochrane": 5,
+          "level1": 25,
+          "classic": 1,
+          "level2": 5,
+          "level3a": 4,
+          "level3b": 1
+        }
+      ]
+    },
+    "naocl-concentration": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          36,
+          37,
+          36
+        ],
+        "min": 36,
+        "max": 37
+      },
+      "per_tier_runs": [
+        {
+          "level1": 25,
+          "classic": 7,
+          "level2": 2,
+          "level3a": 2
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 7,
+          "level2": 2,
+          "level3a": 2
+        },
+        {
+          "level1": 25,
+          "classic": 7,
+          "level2": 2,
+          "level3a": 2
+        }
+      ]
+    },
+    "cbct-vs-periapical": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          38,
+          35,
+          39
+        ],
+        "min": 35,
+        "max": 39
+      },
+      "per_tier_runs": [
+        {
+          "level1": 25,
+          "classic": 3,
+          "level2": 1,
+          "level3a": 3,
+          "level3": 4,
+          "level3b": 2
+        },
+        {
+          "level1": 22,
+          "classic": 4,
+          "level2": 1,
+          "level3a": 3,
+          "level3": 3,
+          "level3b": 2
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 5,
+          "level2": 1,
+          "level3a": 3,
+          "level3": 2,
+          "level3b": 2
+        }
+      ]
+    },
+    "bioceramic-vs-resin-sealer": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          40,
+          47,
+          38
+        ],
+        "min": 38,
+        "max": 47
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "classic": 2,
+          "level2": 4,
+          "level3a": 3,
+          "level3": 4
+        },
+        {
+          "cochrane": 2,
+          "level1": 25,
+          "classic": 3,
+          "level2": 5,
+          "level3a": 7,
+          "level3": 4,
+          "level3b": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
+          "level2": 3,
+          "level3a": 3,
+          "level3": 4
+        }
+      ]
+    },
+    "retreatment-vs-microsurgery": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          32,
+          96,
+          35
+        ],
+        "min": 32,
+        "max": 96
+      },
+      "esearch_hits": {
+        "runs": [
+          48,
+          533,
+          67
+        ],
+        "min": 48,
+        "max": 533
+      },
+      "esearch_queries": {
+        "runs": [
+          16,
+          73,
+          17
+        ],
+        "min": 16,
+        "max": 73
+      },
+      "esearch_empty": {
+        "runs": [
+          10,
+          29,
+          11
+        ],
+        "min": 10,
+        "max": 29
+      },
+      "hits_per_query": {
+        "runs": [
+          3.0,
+          7.3,
+          3.9
+        ],
+        "min": 3.0,
+        "max": 7.3
+      },
+      "search_terms": {
+        "runs": [
+          14,
+          9,
+          15
+        ],
+        "min": 9,
+        "max": 15
+      },
+      "per_tier_runs": [
+        {
+          "level1": 32
+        },
+        {
+          "level1": 4,
+          "level2": 34,
+          "level3a": 21,
+          "level3b": 8,
+          "level4": 18,
+          "level5": 11
+        },
+        {
+          "cochrane": 1,
+          "level1": 34
+        }
+      ]
+    },
+    "direct-pulp-capping": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          39,
+          38,
+          39
+        ],
+        "min": 38,
+        "max": 39
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 4,
+          "level2": 3,
+          "level3a": 2,
+          "level3b": 2
+        },
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 4,
+          "level2": 2,
+          "level3a": 2,
+          "level3b": 2
+        },
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 5,
+          "level2": 1,
+          "level3a": 3,
+          "level3b": 2
+        }
+      ]
+    },
+    "preemptive-nsaid": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          37,
+          39,
+          40
+        ],
+        "min": 37,
+        "max": 40
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 5,
+          "level2": 5,
+          "level3a": 1
+        },
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 4,
+          "level2": 5,
+          "level3a": 2
+        },
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 5,
+          "level2": 6,
+          "level3a": 1
+        }
+      ]
+    },
+    "regenerative-immature": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          36,
+          42,
+          35
+        ],
+        "min": 35,
+        "max": 42
+      },
+      "per_tier_runs": [
+        {
+          "level1": 25,
+          "classic": 1,
+          "level2": 4,
+          "level3a": 5,
+          "level3b": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
+          "level2": 6,
+          "level3a": 7,
+          "level3b": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
+          "level2": 3,
+          "level3a": 4
+        }
+      ]
+    },
+    "cracked-tooth-prognosis": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          56,
+          56,
+          72
+        ],
+        "min": 56,
+        "max": 72
+      },
+      "esearch_hits": {
+        "runs": [
+          140,
+          131,
+          171
+        ],
+        "min": 131,
+        "max": 171
+      },
+      "esearch_queries": {
+        "runs": [
+          8,
+          15,
+          12
+        ],
+        "min": 8,
+        "max": 15
+      },
+      "esearch_empty": {
+        "runs": [
+          1,
+          6,
+          2
+        ],
+        "min": 1,
+        "max": 6
+      },
+      "hits_per_query": {
+        "runs": [
+          17.5,
+          8.7,
+          14.2
+        ],
+        "min": 8.7,
+        "max": 17.5
+      },
+      "search_terms": {
+        "runs": [
+          7,
+          13,
+          11
+        ],
+        "min": 7,
+        "max": 13
+      },
+      "per_tier_runs": [
+        {
+          "level1": 56
+        },
+        {
+          "cochrane": 1,
+          "level1": 55
+        },
+        {
+          "cochrane": 4,
+          "level1": 68
+        }
+      ]
+    },
+    "apdt-primary-molars": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          87,
+          148,
+          116
+        ],
+        "min": 87,
+        "max": 148
+      },
+      "esearch_hits": {
+        "runs": [
+          408,
+          829,
+          692
+        ],
+        "min": 408,
+        "max": 829
+      },
+      "esearch_queries": {
+        "runs": [
+          73,
+          86,
+          83
+        ],
+        "min": 73,
+        "max": 86
+      },
+      "esearch_empty": {
+        "runs": [
+          40,
+          42,
+          44
+        ],
+        "min": 40,
+        "max": 44
+      },
+      "hits_per_query": {
+        "runs": [
+          5.6,
+          9.6,
+          8.3
+        ],
+        "min": 5.6,
+        "max": 9.6
+      },
+      "search_terms": {
+        "runs": [
+          14,
+          14,
+          13
+        ],
+        "min": 13,
+        "max": 14
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 47,
+          "level2": 13,
+          "level3b": 3,
+          "level4": 15,
+          "level5": 8
+        },
+        {
+          "level1": 73,
+          "level2": 20,
+          "level3a": 27,
+          "level3b": 6,
+          "level4": 14,
+          "level5": 8
+        },
+        {
+          "cochrane": 3,
+          "level1": 47,
+          "level2": 11,
+          "level3a": 23,
+          "level3b": 4,
+          "level4": 17,
+          "level5": 11
+        }
+      ]
+    },
+    "bisphosphonates": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          74,
+          44,
+          48
+        ],
+        "min": 44,
+        "max": 74
+      },
+      "esearch_hits": {
+        "runs": [
+          173,
+          96,
+          133
+        ],
+        "min": 96,
+        "max": 173
+      },
+      "esearch_queries": {
+        "runs": [
+          16,
+          16,
+          17
+        ],
+        "min": 16,
+        "max": 17
+      },
+      "esearch_empty": {
+        "runs": [
+          6,
+          8,
+          8
+        ],
+        "min": 6,
+        "max": 8
+      },
+      "hits_per_query": {
+        "runs": [
+          10.8,
+          6.0,
+          7.8
+        ],
+        "min": 6.0,
+        "max": 10.8
+      },
+      "search_terms": {
+        "runs": [
+          14,
+          14,
+          15
+        ],
+        "min": 14,
+        "max": 15
+      },
+      "per_tier_runs": [
+        {
+          "level1": 74
+        },
+        {
+          "level1": 44
+        },
+        {
+          "level1": 48
+        }
+      ]
+    },
+    "pregnancy": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          23,
+          74,
+          32
+        ],
+        "min": 23,
+        "max": 74
+      },
+      "esearch_hits": {
+        "runs": [
+          35,
+          221,
+          75
+        ],
+        "min": 35,
+        "max": 221
+      },
+      "esearch_queries": {
+        "runs": [
+          17,
+          17,
+          17
+        ],
+        "min": 17,
+        "max": 17
+      },
+      "esearch_empty": {
+        "runs": [
+          11,
+          9,
+          13
+        ],
+        "min": 9,
+        "max": 13
+      },
+      "hits_per_query": {
+        "runs": [
+          2.1,
+          13.0,
+          4.4
+        ],
+        "min": 2.1,
+        "max": 13.0
+      },
+      "search_terms": {
+        "runs": [
+          15,
+          15,
+          15
+        ],
+        "min": 15,
+        "max": 15
+      },
+      "per_tier_runs": [
+        {
+          "level1": 23
+        },
+        {
+          "level1": 74
+        },
+        {
+          "level1": 32
+        }
+      ]
+    },
+    "pips-vs-ultrasonic": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          33,
+          30,
+          38
+        ],
+        "min": 30,
+        "max": 38
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 1,
+          "level2": 2,
+          "level3a": 2,
+          "level3": 1,
+          "level5": 1
+        },
+        {
+          "level1": 25,
+          "level2": 2,
+          "level3a": 2,
+          "level5": 1
+        },
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 1,
+          "level2": 6,
+          "level3a": 2,
+          "level5": 1
+        }
+      ]
+    },
+    "intentional-replantation": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          91,
+          28,
+          35
+        ],
+        "min": 28,
+        "max": 91
+      },
+      "esearch_hits": {
+        "runs": [
+          190,
+          30,
+          62
+        ],
+        "min": 30,
+        "max": 190
+      },
+      "esearch_queries": {
+        "runs": [
+          15,
+          17,
+          14
+        ],
+        "min": 14,
+        "max": 17
+      },
+      "esearch_empty": {
+        "runs": [
+          5,
+          10,
+          4
+        ],
+        "min": 4,
+        "max": 10
+      },
+      "hits_per_query": {
+        "runs": [
+          12.7,
+          1.8,
+          4.4
+        ],
+        "min": 1.8,
+        "max": 12.7
+      },
+      "search_terms": {
+        "runs": [
+          13,
+          15,
+          12
+        ],
+        "min": 12,
+        "max": 15
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 10,
+          "level1": 81
+        },
+        {
+          "cochrane": 1,
+          "level1": 27
+        },
+        {
+          "cochrane": 10,
+          "level1": 25
+        }
+      ]
+    },
+    "sdf-pulp-outcomes": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          32,
+          46,
+          33
+        ],
+        "min": 32,
+        "max": 46
+      },
+      "esearch_hits": {
+        "runs": [
+          45,
+          296,
+          77
+        ],
+        "min": 45,
+        "max": 296
+      },
+      "esearch_queries": {
+        "runs": [
+          16,
+          88,
+          16
+        ],
+        "min": 16,
+        "max": 88
+      },
+      "esearch_empty": {
+        "runs": [
+          10,
+          66,
+          9
+        ],
+        "min": 9,
+        "max": 66
+      },
+      "hits_per_query": {
+        "runs": [
+          2.8,
+          3.4,
+          4.8
+        ],
+        "min": 2.8,
+        "max": 4.8
+      },
+      "search_terms": {
+        "runs": [
+          14,
+          14,
+          14
+        ],
+        "min": 14,
+        "max": 14
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 6,
+          "level1": 26
+        },
+        {
+          "level1": 8,
+          "level2": 15,
+          "level3a": 8,
+          "level3b": 1,
+          "level4": 6,
+          "level5": 8
+        },
+        {
+          "level1": 33
+        }
+      ]
+    },
+    "sonic-vs-ultrasonic": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          24,
+          15,
+          33
+        ],
+        "min": 15,
+        "max": 33
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 15,
+          "classic": 3,
+          "level2": 3,
+          "invitro": 1,
+          "level5": 1
+        },
+        {
+          "level1": 10,
+          "classic": 3,
+          "level2": 1,
+          "invitro": 1
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 3,
+          "level2": 1,
+          "level3a": 2,
+          "invitro": 1
+        }
+      ],
+      "esearch_hits": {
+        "runs": [
+          50
+        ],
+        "min": 50,
+        "max": 50
+      },
+      "esearch_queries": {
+        "runs": [
+          1
+        ],
+        "min": 1,
+        "max": 1
+      },
+      "esearch_empty": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "hits_per_query": {
+        "runs": [
+          50.0
+        ],
+        "min": 50.0,
+        "max": 50.0
+      },
+      "search_terms": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      }
+    },
+    "dens-invaginatus": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          77,
+          77,
+          89
+        ],
+        "min": 77,
+        "max": 89
+      },
+      "esearch_hits": {
+        "runs": [
+          398,
+          352,
+          283
+        ],
+        "min": 283,
+        "max": 398
+      },
+      "esearch_queries": {
+        "runs": [
+          15,
+          19,
+          17
+        ],
+        "min": 15,
+        "max": 19
+      },
+      "esearch_empty": {
+        "runs": [
+          4,
+          11,
+          8
+        ],
+        "min": 4,
+        "max": 11
+      },
+      "hits_per_query": {
+        "runs": [
+          26.5,
+          18.5,
+          16.6
+        ],
+        "min": 16.6,
+        "max": 26.5
+      },
+      "search_terms": {
+        "runs": [
+          13,
+          15,
+          15
+        ],
+        "min": 13,
+        "max": 15
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 10,
+          "level1": 67
+        },
+        {
+          "level1": 77
+        },
+        {
+          "cochrane": 10,
+          "level1": 79
+        }
+      ]
+    },
+    "diabetes-outcomes": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          32,
+          32,
+          40
+        ],
+        "min": 32,
+        "max": 40
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
+          "level3a": 4
+        },
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 2,
+          "level3a": 3,
+          "level3b": 1
+        },
+        {
+          "cochrane": 3,
+          "level1": 25,
+          "classic": 4,
+          "level2": 2,
+          "level3a": 6
+        }
+      ]
+    }
+  }
+}

@@ -454,6 +454,76 @@ SYNTHESIS_SUBSET = [
 ]
 
 
+# ── --diff ────────────────────────────────────────────────────────────────
+# The flag was declared and then never read: `--diff` ran an ordinary eval,
+# printed no table, and exited 0. That is the codebase's own bug class (d) —
+# a check that fails open and shows nothing — living inside the harness whose
+# job is to catch it. Everything below exists to make the flag mean what its
+# help text says.
+#
+# Drift is REPORTED, never gated. Search terms are LLM-generated, so a count
+# outside a three-run range is routine; the floors in each case's `expect`
+# block are the gate, and they already set the exit code.
+
+# Metric name in `measured` -> metric name in the baseline file.
+_DIFF_METRICS = (
+    ("papers", "papers"),
+    ("search_terms_used", "search_terms"),
+    ("esearch_hits_per_query", "hits_per_query"),
+)
+
+
+def _load_baseline(name):
+    path = Path(name)
+    if not path.is_absolute():
+        path = Path(__file__).parent / name
+    if not path.exists():
+        print(f"WARNING: baseline {path} not found — --diff has nothing to "
+              f"compare against.")
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("cases", {})
+    except (OSError, json.JSONDecodeError) as e:
+        print(f"WARNING: baseline {path} unreadable ({e}) — --diff skipped.")
+        return {}
+
+
+def _diff_case(cid, measured, base):
+    """One row per metric that left the baseline's observed range."""
+    if not base:
+        return [(cid, "(no baseline)", "", "", "NEW CASE")]
+    rows = []
+    for got_key, base_key in _DIFF_METRICS:
+        got = measured.get(got_key)
+        rng = base.get(base_key)
+        if got is None or not rng:
+            continue
+        lo, hi = rng.get("min"), rng.get("max")
+        if lo is None or hi is None:
+            continue
+        if lo <= got <= hi:
+            continue
+        rows.append((cid, base_key, f"{lo:g}-{hi:g}", f"{got:g}",
+                     "ABOVE" if got > hi else "BELOW"))
+    routes = base.get("routes_observed") or []
+    if routes and measured.get("route") not in routes:
+        rows.append((cid, "route", "|".join(routes), str(measured.get("route")),
+                     "CHANGED"))
+    return rows
+
+
+def _print_diff(name, rows, n_cases):
+    print(f"\n{'=' * 70}\nDIFF vs {name}  ({n_cases} case(s) run)\n{'=' * 70}")
+    if not rows:
+        print("  every metric inside the range the baseline already observed")
+        return
+    print(f"  {'case':<38} {'metric':<16} {'baseline':>12} {'this run':>10}")
+    for cid, metric, rng, got, direction in rows:
+        print(f"  {cid:<38} {metric:<16} {rng:>12} {got:>10}  {direction}")
+    print(f"\n  {len(rows)} metric(s) outside the baseline range. Ranges spot "
+          f"drift; they do not gate — the exit code comes from the floors.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--id", help="run only this case id")
@@ -467,8 +537,13 @@ def main():
                     help="run the 5-case subset WITH LLM synthesis and evaluate "
                          "answer-level assertions. Costs real money (~$1/case).")
     ap.add_argument("--diff", action="store_true",
-                    help="print a table against baseline; exit non-zero on any "
-                         "floor breach")
+                    help="print a per-case table of this run against the stored "
+                         "baseline ranges. Drift is REPORTED, not gated: the "
+                         "floors in each case's expect block are what fail a "
+                         "run, and they already do.")
+    ap.add_argument("--baseline", default="baseline_v5.json",
+                    help="baseline file --diff compares against "
+                         "(default: baseline_v5.json, alongside this script)")
     args = ap.parse_args()
 
     doc, cases = load_cases()
@@ -489,6 +564,12 @@ def main():
     print(f"mode: {mode_label}" + ("" if args.synthesis_subset else
           "  (no answers generated; must_contain / banner / modules_non_empty "
           "are NOT evaluated)"))
+
+    baseline = _load_baseline(args.baseline) if args.diff else {}
+    if args.diff and not baseline:
+        print(f"WARNING: --diff found no cases in {args.baseline} — the table "
+              f"below will be empty. That is a missing file, not a clean run.")
+    diff_rows = []
 
     n_fail = 0
     for case in cases:
@@ -526,6 +607,10 @@ def main():
         else:
             print("  PASS")
 
+        if args.diff:
+            diff_rows.extend(_diff_case(case["id"], measured,
+                                        baseline.get(case["id"])))
+
         if args.update_baseline:
             case["baseline"] = {**base, "route": measured["route"],
                                 "papers": measured["papers"],
@@ -534,6 +619,9 @@ def main():
     if args.update_baseline:
         QUESTIONS.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
         print("\nbaselines rewritten")
+
+    if args.diff:
+        _print_diff(args.baseline, diff_rows, len(cases))
 
     print(f"\n{len(cases) - n_fail}/{len(cases)} cases passed  [{mode_label}]")
     if not args.synthesis_subset:
