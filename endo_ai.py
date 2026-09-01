@@ -3718,8 +3718,30 @@ def _build_corrective_message(result: dict) -> str:
 # ──────────────────────────────────────────────────────────
 
 CITATION_SUPPORT_CHECK = os.getenv("CITATION_SUPPORT_CHECK", "true").lower() in ("1", "true", "yes")
-_SUPPORT_MAX_PAIRS     = 30     # cap Haiku payload size
-_SUPPORT_ABSTRACT_CHARS = 1200  # abstract excerpt length per pair
+_SUPPORT_MAX_PAIRS     = 30     # pairs checked per answer (see the note below)
+
+# The judge sees the WHOLE abstract. This used to be `abstract[:1200]`, a cap
+# from when 57% of the library's abstracts were themselves cut at 1,000 or
+# 1,200 characters at ingest — so it cost nothing, because there was nothing
+# past it. `grounding-v1` healed those rows to a mean of 1,631 characters and
+# left this cap in place, which turned it from a no-op into the last
+# truncation in the pipeline. It sits on the guardrail.
+#
+# The measurement, from hand-judging all 37 Deep Learning flags: 36 of 37 cite
+# a paper whose stored abstract exceeds 1,200 characters, and 17 of the 37 are
+# claims whose supporting sentence is verbatim in the withheld tail. A
+# structured abstract puts CONCLUSIONS last. The Cochrane review at PMID
+# 27759881 is 6,724 characters and the judge was shown its search strategy.
+#
+# Payload is bounded by BATCHING, not by truncating: the pairs are split into
+# Haiku calls of at most `_SUPPORT_BATCH_CHARS` of abstract text and the
+# verdicts merged. More calls, same cost per character, and no claim is judged
+# against an abstract the model was not allowed to finish reading.
+#
+# This makes the checker STRICTER, not looser — it can now see a contradiction
+# in a conclusion it previously never reached — so it is not a way of moving
+# the flag rate down.
+_SUPPORT_BATCH_CHARS = 60000    # abstract characters per Haiku request
 
 
 def _extract_claim_citation_pairs(answer: str) -> list:
@@ -3765,7 +3787,14 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
         out["detail"] = "no answer text"
         return out
     try:
-        pairs = _extract_claim_citation_pairs(answer)[:_SUPPORT_MAX_PAIRS]
+        all_pairs = _extract_claim_citation_pairs(answer)
+        pairs = all_pairs[:_SUPPORT_MAX_PAIRS]
+        # How many pairs EXIST, not just how many were looked at. A curriculum
+        # module routinely produces more than 30 and the cap binds silently:
+        # the rendered block said "all 30 checked" while 15 were never seen.
+        # That is this repo's bug class (d) inside the guardrail meant to
+        # catch it, and invariant 15 requires the answer to state its outcome.
+        out["total_pairs"] = len(all_pairs)
         if not pairs:
             out["detail"] = "no cited claims to check"
             return out
@@ -3782,7 +3811,10 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
                 "i":        i,
                 "pmid":     pmid,
                 "claim":    claim[:400],
-                "abstract": ab[:_SUPPORT_ABSTRACT_CHARS],
+                # WHOLE abstract. See _SUPPORT_BATCH_CHARS above for why the
+                # 1,200-character excerpt was the last truncation in the
+                # pipeline and why the payload is bounded by batching instead.
+                "abstract": ab,
             })
         if not items:
             out["detail"] = "source abstracts unavailable"
@@ -3790,14 +3822,32 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
                   f"claim-citation pairs — check skipped")
             return out
 
+        # Split into requests small enough to send, on ITEM boundaries: an
+        # item split across two calls would be judged on half an abstract,
+        # which is the failure this change exists to remove. A single item
+        # larger than the budget still goes in a call of its own rather than
+        # being cut.
+        batches, cur, cur_chars = [], [], 0
+        for it in items:
+            size = len(it["abstract"])
+            if cur and cur_chars + size > _SUPPORT_BATCH_CHARS:
+                batches.append(cur)
+                cur, cur_chars = [], 0
+            cur.append(it)
+            cur_chars += size
+        if cur:
+            batches.append(cur)
+
         client = anthropic.Anthropic(api_key=_get_api_key())
-        payload = json.dumps([{k: it[k] for k in ("i", "claim", "abstract")} for it in items],
-                             ensure_ascii=False)
-        resp = _invoke_claude(client, function_name="verify_citation_support",
-            model      = MODELS["structured_fast"],
-            max_tokens = 1000,
-            messages   = [{"role": "user", "content":
-                f"""You are auditing citations in a clinical document. For each item, decide whether the
+        verdicts = {}
+        for batch in batches:
+            payload = json.dumps([{k: it[k] for k in ("i", "claim", "abstract")}
+                                  for it in batch], ensure_ascii=False)
+            resp = _invoke_claude(client, function_name="verify_citation_support",
+                model      = MODELS["structured_fast"],
+                max_tokens = 1000,
+                messages   = [{"role": "user", "content":
+                    f"""You are auditing citations in a clinical document. For each item, decide whether the
 ABSTRACT supports the CLAIM made in the sentence that cites it.
 
 Verdicts:
@@ -3808,19 +3858,22 @@ Verdicts:
 
 Be conservative: only use "not_supported" when the abstract clearly does not back the claim.
 Statistical values need not match verbatim — same finding in different words is "supports".
+Read the WHOLE abstract before deciding: a structured abstract puts its RESULTS and CONCLUSIONS
+last, so a claim about what a study found is usually supported at the END of the text, not the start.
 
 ITEMS (JSON):
 {payload}
 
 Return ONLY a JSON array, no prose, no markdown fence:
 [{{"i": 0, "verdict": "supports"}}, ...]"""
-            }]
-        )
-        out["cost"] = log_llm_call("verify_citation_support", MODELS["structured_fast"],
-                                   resp.usage, mode="guardrail")
-        raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
-        verdicts = {int(v["i"]): str(v.get("verdict", "")).strip().lower()
-                    for v in json.loads(raw) if "i" in v}
+                }]
+            )
+            out["cost"] += log_llm_call("verify_citation_support",
+                                        MODELS["structured_fast"],
+                                        resp.usage, mode="guardrail")
+            raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
+            verdicts.update({int(v["i"]): str(v.get("verdict", "")).strip().lower()
+                             for v in json.loads(raw) if "i" in v})
 
         by_index = {it["i"]: it for it in items}
         out["checked"] = len(items)
@@ -3833,12 +3886,16 @@ Return ONLY a JSON array, no prose, no markdown fence:
                     "verdict": verdict,
                 })
 
-        # Audit trail — same JSONL stream as the fabrication validator
+        # Audit trail — same JSONL stream as the fabrication validator. ONE
+        # record per invocation regardless of how many requests it took, so a
+        # batched check and an unbatched one aggregate identically.
         try:
             record = {
                 "ts":        datetime.now().isoformat(),
                 "function":  "verify_citation_support",
                 "checked":   out["checked"],
+                "total_pairs": out["total_pairs"],
+                "n_requests": len(batches),
                 "n_flagged": len(out["flags"]),
                 "flags":     [{"pmid": f["pmid"], "claim": f["claim"][:160]} for f in out["flags"]],
             }
@@ -3848,11 +3905,14 @@ Return ONLY a JSON array, no prose, no markdown fence:
         except Exception:
             pass
 
+        capped = (f" ({out['total_pairs'] - out['checked']} more pair(s) not "
+                  f"checked)" if out["total_pairs"] > out["checked"] else "")
         if out["flags"]:
             print(f"  [citation_support] {len(out['flags'])} of {out['checked']} "
-                  f"claim-citation pairs flagged as not supported")
+                  f"claim-citation pairs flagged as not supported{capped}")
         else:
-            print(f"  [citation_support] all {out['checked']} claim-citation pairs OK")
+            print(f"  [citation_support] all {out['checked']} claim-citation "
+                  f"pairs OK{capped}")
         return out
 
     except Exception as e:
@@ -3874,12 +3934,22 @@ def _append_support_warnings(answer: str, support: dict) -> str:
     status  = support.get("status", "not_run")
     checked = support.get("checked", 0)
 
+    # `_SUPPORT_MAX_PAIRS` caps how many pairs are checked at all, and a
+    # curriculum module routinely exceeds it. Saying "each of the 30 cited
+    # claims was checked" while 15 were never looked at is the fail-open
+    # silence invariant 15 exists to forbid — the sentence is true and the
+    # reader draws the wrong conclusion from it.
+    total    = support.get("total_pairs") or checked
+    unchecked = max(0, total - checked)
+    tail = (f" {unchecked} further cited claim(s) were NOT checked (the check "
+            f"covers the first {checked})." if unchecked else "")
+
     if flags:
         lines = [
             "\n\n---\n",
             f"> ⚠ **Citation support: {len(flags)} of {checked} flagged.** An automated "
             "review of each cited abstract found these may not directly support the "
-            "claim they are attached to. Verify before relying on them:\n>",
+            f"claim they are attached to.{tail} Verify before relying on them:\n>",
         ]
         for f in flags[:5]:
             lines.append(f"> - [[PMID:{f['pmid']}]] cited for: \"{f['claim'][:140]}\"")
@@ -3888,7 +3958,7 @@ def _append_support_warnings(answer: str, support: dict) -> str:
     if status == "verified":
         return answer + (
             f"\n\n---\n\n> ✓ **Citation support: verified.** Each of the {checked} cited "
-            "claims was checked against its source abstract."
+            f"claims was checked against its source abstract.{tail}"
         )
 
     detail = support.get("detail") or "check unavailable"
