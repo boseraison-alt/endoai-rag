@@ -11,8 +11,19 @@ eval path: the answer cache is left switched on, because a populated cache IS
 the asset. Each question is then asked a SECOND time to measure the cached
 timing the runbook quotes.
 
+THE CACHE IS EVICTED FIRST, and that is not an optimisation. The last time this
+script ran, a rescore had just DELETEd `query_cache`, so its "cold" pass really
+was cold. Run it against a WARM cache and every cold pass is served from the
+cache at $0 in half a second, the script prints its timings, and it re-warms
+NOTHING while looking exactly like a success. That is invariant 12 — an eval
+must not measure a stored artefact of an earlier run; a synthesis that cost $0
+is a failure — pointed at the re-warm instead of at the eval. So each question's
+entry is deleted before its cold pass, and a cold pass that comes back at
+$0.0000 is a hard error rather than a line of output.
+
     python scripts/regenerate_demo_assets.py            # answers only
     python scripts/regenerate_demo_assets.py --decks    # + web deck and pptx
+    python scripts/regenerate_demo_assets.py --keep-cache   # do not evict
 
 Costs real money — roughly $0.70 per Review answer and $1.40 for the
 curriculum.
@@ -38,6 +49,37 @@ REVIEW_QUESTIONS = [
     "Endodontic management in patients on bisphosphonates or antiresorptives",
 ]
 LEARN_QUESTION = "Use of lasers in root canal disinfection"
+
+
+def evict(question: str, mode: str) -> int:
+    """Delete this question's cached answer so the next ask is really cold.
+
+    The same 0.99-cosine match `/cache/clear` uses, called directly rather than
+    over HTTP so the script does not need ADMIN_TOKEN to do its own job.
+    """
+    from rag import get_conn, embed
+    q_vec = embed(f"[{mode}] {question}")
+    conn = get_conn()
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM query_cache "
+                    "WHERE 1 - (question_embedding <=> %s::vector) >= 0.99;",
+                    (q_vec,))
+        n = cur.rowcount
+        conn.commit()
+        return n
+    finally:
+        cur.close()
+        conn.close()
+
+
+def _assert_really_cold(got: dict, what: str, keep_cache: bool) -> None:
+    if got["cost"] == 0.0 and not keep_cache:
+        raise SystemExit(
+            f"COLD PASS COST $0 for {what} — it was served from the cache, so "
+            f"nothing was re-warmed and the timings below are cache hits. "
+            f"Cost is not a success metric, but a $0 synthesis is a failure "
+            f"(WORKLIST §0.7, invariant 12).")
 
 
 def ask(client, question: str, mode: str, timeout_s: int = 1800) -> dict:
@@ -83,6 +125,11 @@ def main() -> int:
                          "only touches Review saves $1.40 and eight minutes, "
                          "and leaves the cached curriculum exactly as the last "
                          "run left it — which is what the demo shows.")
+    ap.add_argument("--keep-cache", action="store_true",
+                    help="do NOT evict before the cold pass. Only for "
+                         "measuring cache timings — the 'cold' numbers this "
+                         "run prints are then cache hits, and it re-warms "
+                         "nothing.")
     ap.add_argument("--out", default=None, help="write the timing JSON here")
     args = ap.parse_args()
 
@@ -92,7 +139,10 @@ def main() -> int:
 
     for q in REVIEW_QUESTIONS:
         print(f"\n=== COLD  {q[:64]}…")
+        if not args.keep_cache:
+            print(f"    evicted {evict(q, 'review')} cached row(s)")
         got = ask(client, q, "review")
+        _assert_really_cold(got, repr(q[:60]), args.keep_cache)
         print(f"    {got['wall_s']}s  ${got['cost']:.4f}  {got['papers']} papers  "
               f"{got['chars']} chars")
         results["review"].append({"question": q, **{k: got[k] for k in
@@ -101,7 +151,10 @@ def main() -> int:
     learn = None
     if not args.reviews_only:
         print(f"\n=== COLD  [learn] {LEARN_QUESTION}")
+        if not args.keep_cache:
+            print(f"    evicted {evict(LEARN_QUESTION, 'learn')} cached row(s)")
         learn = ask(client, LEARN_QUESTION, "learn")
+        _assert_really_cold(learn, "the curriculum", args.keep_cache)
         print(f"    {learn['wall_s']}s  ${learn['cost']:.4f}  {learn['papers']} papers")
         results["learn"] = {"question": LEARN_QUESTION,
                             **{k: learn[k] for k in ("wall_s", "cost", "papers", "chars")}}
