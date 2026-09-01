@@ -1030,6 +1030,132 @@
         "mentioning the old topic) rather than zero, because a few genuine",
         "laser-irrigation papers legitimately discuss NaOCl."
       ]
+    },
+    {
+      "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+      "question": "20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?",
+      "mode": "case",
+      "force_route": "library",
+      "expect": {
+        "case_intent": "diagnostic",
+        "min_papers": 40,
+        "must_contain": [
+          "dens invaginatus",
+          "trauma",
+          "crack"
+        ],
+        "must_precede": [
+          [
+            "differential",
+            "root canal treatment"
+          ],
+          [
+            "differential",
+            "endodontic treatment"
+          ]
+        ],
+        "max_support_flags": 4,
+        "clarify": {
+          "count_between": [
+            1,
+            3
+          ],
+          "must_not_ask_about": [
+            "bisphosphonate",
+            "alendronate",
+            "antiresorptive",
+            "head-and-neck radiation",
+            "immunosuppress"
+          ],
+          "must_ask_about_any": [
+            "trauma",
+            "which tooth",
+            "invaginat",
+            "anomal",
+            "discolo",
+            "sinus tract"
+          ],
+          "every_question_states_its_reason": true
+        }
+      },
+      "why": [
+        "The case a clinician actually asked, verbatim. The answer discussed",
+        "endodontic management and AAE guidance and never produced the etiologic",
+        "differential the question asked for, and the follow-up questions asked",
+        "about bisphosphonate use — of a 20-year-old.",
+        "",
+        "Item 1 of case-v2 measured both halves before anything changed. The",
+        "follow-up generator asked a non-discriminating question in 8 runs of 15",
+        "(bisphosphonates in 7) and asked about tooth identity, developmental",
+        "anomaly, sinus tract or discoloration in ZERO. The search-term",
+        "generators put trauma in 8 runs of 8 and dens invaginatus in 2, the",
+        "palatogingival groove in 0 — so which candidate causes got any",
+        "literature at all was a coin flip.",
+        "",
+        "must_precede is the assertion that matters and it is why the harness",
+        "grew the operator: an answer that names a differential somewhere BELOW",
+        "its treatment plan has still led with management, and every",
+        "must_contain here would pass on it.",
+        "",
+        "The follow-up assertions are paired with the bisphosphonate case below.",
+        "Dropping the topic would satisfy this case and fail that one, which is",
+        "the point: the filter is by relevance, not by subject.",
+        "",
+        "Pinned LIBRARY, and the pin reaches every candidate: the",
+        "differential path calls the same build_evidence_base_with_progress",
+        "the harness wraps, once per candidate, so all six inherit it. Live",
+        "would mean up to six PubMed sweeps per run and a non-reproducible",
+        "candidate set; the library demonstrably covers all six (24-43",
+        "papers each, measured 2026-09-01)."
+      ]
+    },
+    {
+      "id": "bisphosphonate-extraction-vs-rct-treatment",
+      "question": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
+      "mode": "case",
+      "force_route": "library",
+      "expect": {
+        "case_intent": "treatment",
+        "min_papers": 25,
+        "max_support_flags": 3,
+        "clarify": {
+          "count_between": [
+            1,
+            3
+          ],
+          "must_ask_about_any": [
+            "bisphosphonate",
+            "alendronate",
+            "antiresorptive",
+            "mronj",
+            "drug holiday"
+          ],
+          "every_question_states_its_reason": true
+        }
+      },
+      "why": [
+        "The contrast case, and the reason the case above cannot be satisfied by",
+        "deleting a topic. Here the SAME question — antiresorptive duration and",
+        "route — is the highest-value question in the consultation: it decides",
+        "whether extraction carries a real MRONJ risk and therefore whether the",
+        "tooth is worth retaining.",
+        "",
+        "Measured across 10 runs after the fix: asked in 10/10 here, 0/15 on the",
+        "20-year-old. Before the fix it was asked in 7/15 of the 20-year-old",
+        "runs and, once the checklist was rewritten but before a named red flag",
+        "was made to imply a question about its DETAIL, in only 2/10 here.",
+        "",
+        "Also pins the intent split from the other direction: this is a",
+        "treatment turn and must NOT build a differential, or every routine",
+        "management question pays for six retrievals.",
+        "",
+        "Pinned LIBRARY, and the pin reaches every candidate: the",
+        "differential path calls the same build_evidence_base_with_progress",
+        "the harness wraps, once per candidate, so all six inherit it. Live",
+        "would mean up to six PubMed sweeps per run and a non-reproducible",
+        "candidate set; the library demonstrably covers all six (24-43",
+        "papers each, measured 2026-09-01)."
+      ]
     }
   ]
 }

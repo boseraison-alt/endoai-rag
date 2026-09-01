@@ -259,11 +259,24 @@ def run_case_with_synthesis(case):
               f"builder, so this case is NOT route-pinned under --synthesis-subset.")
     try:
         client = app_mod.app.test_client()
-        r = client.post("/ask", json={"question": case["question"],
-                                      "mode": case.get("mode", "review"),
-                                      "skip_clarify": True})
+        # A case turn is a different endpoint, not a different `mode` on /ask.
+        # `case-v2` added the first case cases to this set, and driving them
+        # through /ask would have measured the Review pipeline while the case
+        # pipeline — the one with the intent split and the differential — went
+        # untested. The route matters: `run_case_chat` is where both live.
+        if case.get("mode") == "case":
+            r = client.post("/case_chat", json={
+                "messages": [{"role": "user", "content": case["question"]}],
+                "skip_clarify": True})
+            endpoint = "/case_chat"
+        else:
+            r = client.post("/ask", json={"question": case["question"],
+                                          "mode": case.get("mode", "review"),
+                                          "skip_clarify": True})
+            endpoint = "/ask"
         if r.status_code != 200:
-            raise RuntimeError(f"/ask returned {r.status_code}: {r.data[:200]}")
+            raise RuntimeError(f"{endpoint} returned {r.status_code}: "
+                               f"{r.data[:200]}")
         job_id = r.get_json()["job_id"]
         for _ in range(4000):                       # generous: learn mode is slow
             st = client.get(f"/status/{job_id}").get_json()
@@ -285,6 +298,36 @@ def run_case_with_synthesis(case):
     answer = st.get("answer") or ""
     exp = case.get("expect", {})
     failures = []
+    measured_extra = {}
+
+    # Keep the answer. A synthesis case that fails an assertion is not
+    # diagnosable from the assertion text — "'root canal treatment' appears at
+    # character 1644" says nothing about whether the answer was wrong or the
+    # assertion was. Costing $1 to regenerate an answer in order to read it is
+    # the kind of thing that gets skipped, and then the assertion gets loosened
+    # on a guess.
+    try:
+        # NOT ".../answers": `.gitignore` carries a bare `answers/`, for the
+        # product answer dump at the repo root, and a bare pattern matches
+        # at any depth — so these would have been silently untracked.
+        out_dir = ROOT / "eval" / "logs" / "case_answers"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        header = [
+            f"# {case['id']}",
+            "",
+            f"> {case['question']}",
+            "",
+            f"intent: {st.get('case_intent')}  |  "
+            f"papers: {len(st.get('papers') or [])}  |  "
+            f"cost: ${st.get('cost_usd')}",
+            "",
+            "---",
+            "",
+        ]
+        (out_dir / f"{case['id']}.md").write_text(
+            "\n".join(header) + answer + "\n", encoding="utf-8")
+    except Exception as e:
+        print(f"  NOTE: could not save the answer: {e}")
 
     # A synthesis case that cost nothing did not synthesise. Reported as a
     # failure rather than a warning: a $0 case is the signature of the cache
@@ -305,6 +348,36 @@ def run_case_with_synthesis(case):
     for phrase in exp.get("must_not_contain", []):
         if phrase.lower() in answer.lower():
             failures.append(f"must_not_contain {phrase!r} present in the answer")
+
+    # ORDERING. "X before Y" was not expressible, and it is the whole
+    # assertion for a diagnostic case: an answer that names a differential
+    # somewhere below its treatment plan has still led with management, and
+    # every must_contain in this file would pass on it.
+    low = answer.lower()
+    for pair in exp.get("must_precede", []):
+        first, second = pair[0].lower(), pair[1].lower()
+        i, j = low.find(first), low.find(second)
+        if i < 0:
+            failures.append(f"must_precede: {pair[0]!r} absent from the answer")
+        elif 0 <= j < i:
+            failures.append(
+                f"must_precede: {pair[1]!r} appears at character {j}, before "
+                f"{pair[0]!r} at {i} — the answer leads with the wrong thing")
+
+    # Follow-up questions are asserted through the SAME `clarify` block the
+    # retrieval-only case cases already use — `_check_clarify` below. A second
+    # mechanism for one property is how the worse one ends up maintained.
+    failures.extend(_check_clarify(case, exp, measured_extra))
+
+    want_intent = exp.get("case_intent")
+    if want_intent and st.get("case_intent") != want_intent:
+        failures.append(f"case intent was {st.get('case_intent')!r}, "
+                        f"expected {want_intent!r}")
+
+    max_flags = exp.get("max_support_flags")
+    if max_flags is not None and sup_flagged > max_flags:
+        failures.append(f"{sup_flagged} citation-support flag(s), max "
+                        f"{max_flags}")
 
     banner = exp.get("banner", "any")
     has_banner = DIVIDED_MARKER.lower() in answer.lower()
@@ -340,6 +413,8 @@ def run_case_with_synthesis(case):
             "esearch_empty": 0, "esearch_hits_per_query": None,
             "search_terms_used": 0, "answer_chars": len(answer),
             "cost_usd": st.get("cost_usd"), "has_banner": has_banner,
+            "case_intent": st.get("case_intent"),
+            "n_candidates": len(st.get("differential") or []),
             "support_checked": sup_checked, "support_flagged": sup_flagged,
             "support_checks": sup_calls}, failures
 
@@ -561,6 +636,23 @@ def run_case(case):
     # because the opening is the half of case mode that retrieval cannot see:
     # `generate_case_followups` decides whether the clinician is interrogated
     # about facts they already gave, and nothing downstream records that.
+    failures.extend(_check_clarify(case, exp, measured))
+
+    return measured, failures
+
+
+def _check_clarify(case, exp, measured):
+    """Assertions on the questions asked BEFORE the answer.
+
+    Shared by the retrieval-only path and the synthesis path, because the
+    follow-up questions are the same output either way and `case-v2` added
+    synthesis cases that assert on them. `must_ask_about_any` is new: the
+    20-year-old case forbids the bisphosphonate question and the 68-year-old
+    case REQUIRES it, and only the pair proves the filter weighs relevance
+    rather than deleting a subject.
+    """
+    import endo_ai
+    failures = []
     clarify = exp.get("clarify")
     if clarify:
         try:
@@ -582,13 +674,18 @@ def run_case(case):
                 failures.append(
                     f"clarify re-asked facts the description already states: "
                     f"{asked} in {questions}")
+            want_any = clarify.get("must_ask_about_any") or []
+            if want_any and not any(t.lower() in blob for t in want_any):
+                failures.append(
+                    f"clarify asked about none of {want_any} — the relevance "
+                    f"filter is deleting the topic rather than weighing it: "
+                    f"{questions}")
             if clarify.get("every_question_states_its_reason"):
                 bare = [q for q in questions
                         if "—" not in q and " - " not in q and "–" not in q]
                 if bare:
                     failures.append(f"clarify question(s) with no reason clause: {bare}")
-
-    return measured, failures
+    return failures
 
 
 # The five cases the synthesis subset runs. Chosen to cover both routes, both
@@ -608,6 +705,15 @@ SYNTHESIS_SUBSET = [
 # were never missing, so none of the fixes that produced those numbers can
 # explain it. These five are the live-pinned Review cases from questions.json,
 # run with synthesis so the checker sees a real live-path answer.
+# The case-discussion subset. `case-v2` added the first two, and they are a
+# PAIR by design: the 20-year-old forbids the bisphosphonate follow-up and the
+# 68-year-old requires it. Running either alone can be satisfied by deleting a
+# topic; running both can only be satisfied by weighing relevance.
+CASE_SUBSET = [
+    "necrotic-virgin-tooth-young-adult-diagnostic",
+    "bisphosphonate-extraction-vs-rct-treatment",
+]
+
 LIVE_SUBSET = [
     "retreatment-vs-microsurgery",
     "cracked-tooth-prognosis",
@@ -705,6 +811,10 @@ def main():
     ap.add_argument("--live-subset", action="store_true",
                     help="run the 5 live-pinned Review cases WITH LLM synthesis. "
                          "Implies synthesis mode. Costs real money (~$1/case).")
+    ap.add_argument("--case-subset", action="store_true",
+                    help="run the case-discussion cases WITH LLM synthesis, "
+                         "through /case_chat. Implies synthesis mode. The two "
+                         "cases are a pair — see CASE_SUBSET.")
     ap.add_argument("--diff", action="store_true",
                     help="print a per-case table of this run against the stored "
                          "baseline ranges. Drift is REPORTED, not gated: the "
@@ -720,9 +830,10 @@ def main():
     # second mode. Setting the flag here keeps every downstream branch — the
     # cache bypass, the $0 failure, the "answer-level assertions not evaluated"
     # footer — reading one variable.
-    if args.live_subset:
+    if args.live_subset or args.case_subset:
         args.synthesis_subset = True
-    subset = LIVE_SUBSET if args.live_subset else SYNTHESIS_SUBSET
+    subset = (CASE_SUBSET if args.case_subset else
+              LIVE_SUBSET if args.live_subset else SYNTHESIS_SUBSET)
     if args.synthesis_subset:
         cases = [c for c in cases if c["id"] in subset]
         missing = set(subset) - {c["id"] for c in cases}

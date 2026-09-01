@@ -1,0 +1,123 @@
+{
+ "case": "20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?",
+ "n": 12,
+ "runs_with_non_discriminating": 0,
+ "by_kind": {},
+ "discriminating": {
+  "trauma": 16,
+  "tooth id": 12,
+  "sinus tract": 8,
+  "imaging": 7,
+  "anomaly": 13,
+  "discoloration": 3,
+  "orthodontic": 2
+ },
+ "runs": [
+  {
+   "i": 1,
+   "questions": [
+    "Any history of trauma to this tooth, even minor impact or luxation the patient may not have thought of as an injury? — trauma is the commonest cause of pulp necrosis in a virgin tooth without caries or restoration",
+    "Which tooth is it, and does it have any developmental anomaly visible on imaging or probing, such as an invagination, groove, or isolated deep pocket? — some teeth carry intrinsic pathways to pulp death that change the differential diagnosis",
+    "Any visible crack, infraction, or isolated deep probing defect on transillumination or bite testing? — a crack changes both the cause and the prognosis"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 2,
+   "questions": [
+    "Any history of trauma to this tooth, even if mild or years ago? — luxation injury is the commonest cause of pulp necrosis in a young virgin tooth without caries or restoration.",
+    "Which tooth is it, and have you seen it on radiographs yet? — anatomy varies by tooth type (dens invaginatus in maxillary laterals, dens evaginatus in mandibular premolars, cracks in molars) and periapical findings will confirm necrosis and guide treatment.",
+    "Any discoloration, and if so when did it appear? — timing tells you how long the pulp has been dead and raises the question of trauma the patient may not recall."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 3,
+   "questions": [
+    "Was there any trauma to this tooth, even minor impact the patient might not have connected to the tooth dying? — trauma is the commonest cause of pulp necrosis in a young virgin tooth with no other obvious pathway.",
+    "Which tooth is this, and does it have any unusual anatomy or an isolated deep pocket on probing? — dens invaginatus, evaginatus, or a palatogingival groove creates a direct pathway for bacterial colonization that mimics caries.",
+    "Is there a crack or infraction visible under transillumination or on bite testing? — a crack unrelated to caries or restoration can necrose a young pulp."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 4,
+   "questions": [
+    "Any history of trauma to this tooth, even if mild or the patient didn't think of it as an injury? — luxation is the commonest cause of pulp necrosis in a virgin tooth without caries or restoration.",
+    "Which tooth is it, and does it have any visible discoloration or darkening, and if so when did that appear? — tooth location raises specific anomalies (dens invaginatus in maxillary laterals), and discoloration timing dates when the pulp died.",
+    "Any history of orthodontic treatment, and was this tooth moved? — sustained force can cause pulp necrosis even years later."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 5,
+   "questions": [
+    "Any history of trauma to this tooth, even minor impact or luxation the patient might not recall as 'injury'? — trauma is the commonest cause of pulp necrosis in a virgin tooth without caries or restoration",
+    "Which tooth is it, and does it have any developmental anomaly visible on imaging or probing—such as an invagination, groove, or isolated deep pocket? — dens invaginatus and palatogingival grooves are common causes of early necrosis in incisors and premolars",
+    "Is there a visible crack, infraction, or isolated deep probing defect, and does transillumination or bite testing reproduce pain? — a crack or infraction changes both the differential and the prognosis"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 6,
+   "questions": [
+    "Was there any trauma to this tooth, even if the patient didn't think of it as an injury? — luxation or impact is the commonest cause of pulp necrosis in a virgin tooth without caries or restoration",
+    "Which tooth is this, and does it have any developmental grooves or invaginations on examination or imaging? — palatogingival grooves, dens invaginatus, and radicular grooves create pathways for infection that explain necrosis in the absence of caries or trauma"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 7,
+   "questions": [
+    "Any history of trauma to this tooth, even if minor or the patient didn't think of it as an injury? — trauma is the commonest cause of pulp necrosis in a young virgin tooth with no caries or restoration.",
+    "Which tooth is it, and does it have any developmental anomalies on imaging or a deep isolated pocket on probing? — dens invaginatus, evaginatus, and palatogingival grooves are common causes of necrosis in young teeth and change the prognosis.",
+    "Is there a crack visible on transillumination or a positive bite test? — a crack changes both the differential and the treatment plan fundamentally."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 8,
+   "questions": [
+    "Any history of trauma to this tooth, even minor impact or luxation the patient may not have mentioned? — trauma is the commonest cause of pulp necrosis in a young virgin tooth with no other obvious pathway.",
+    "Which tooth is it, and have you checked for a crack, infraction, or developmental groove (transillumination, bite test, staining)? — these are the other main causes in this age group and change nothing about treatment, but confirm the diagnosis."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 9,
+   "questions": [
+    "Any history of trauma to this tooth, even if minor or the patient didn't think of it as an injury? — trauma is the most common cause of pulp necrosis in a virgin tooth with no caries or restoration.",
+    "Which tooth is this, and has there been any orthodontic movement of it? — certain teeth (maxillary laterals, mandibular premolars) carry developmental anomaly risk, and orthodontic forces can cause pulp necrosis.",
+    "Is there any visible crack, infraction, or an isolated deep periodontal pocket on probing? — these would indicate the mechanism of pulp death and change the prognosis."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 10,
+   "questions": [
+    "Any history of trauma to this tooth, even if minor or not remembered as an injury? — luxation is the commonest cause of pulp necrosis in a virgin tooth without caries or restoration",
+    "Which tooth is it, and does it have any developmental groove or pocket on probing? — dens invaginatus, palatogingival grooves, and radicular grooves are common causes of necrosis in young patients",
+    "Any visible crack, colour change, or isolated deep periodontal pocket? — these point to a specific mechanism (trauma, crack, or groove infection) that changes the differential"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 11,
+   "questions": [
+    "Was there any trauma to this tooth, even minor or remote? — trauma is the commonest cause of pulp necrosis in a young patient with no caries or restoration.",
+    "Which tooth is it, and have you seen it on a radiograph yet? — anatomy and periapical findings would narrow the differential significantly (dens invaginatus, groove anatomy, crack, or primary infection).",
+    "Has the tooth discolored, and if so when did you first notice it? — the timing dates the pulp death and helps distinguish acute trauma from a chronic process."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 12,
+   "questions": [
+    "Any history of trauma to this tooth, even if minor or not thought of as an injury? — luxation is the commonest cause of pulp necrosis in a virgin tooth at this age.",
+    "Which tooth is it, and does it have any developmental groove or anatomical anomaly visible on imaging or probing? — invaginations, evaginations, and palatogingival grooves are common causes of necrosis in young patients.",
+    "Is there a visible crack, infraction, or isolated deep probing defect, particularly under transillumination or bite testing? — a crack changes the differential and the prognosis."
+   ],
+   "non_discriminating": []
+  }
+ ]
+}

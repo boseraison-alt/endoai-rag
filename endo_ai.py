@@ -1233,6 +1233,14 @@ How many to ask depends on how much the colleague already gave you:
 
 Return [] whenever the description is sufficient to give useful advice.
 
+ONE EXCEPTION, and it is the case this whole step exists for. If the colleague
+is asking what is CAUSING something — the cause, the aetiology, the diagnosis,
+why this happened — and the description does not give you the trauma history
+AND does not identify the tooth, then it is not sufficient, however short it
+is. Ask at least one question. Returning none there is not restraint; it is
+answering a diagnostic question while declining to obtain the two facts that
+most narrow the differential.
+
 Each question must be ONE line in this shape:
   <the question> — <why it matters, one clause>
 For example:

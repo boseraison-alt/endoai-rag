@@ -105,8 +105,28 @@ PROFILE = {"name": "young"}
 
 
 def classify(question: str) -> tuple:
+    """Classify the QUESTION, not the reason clause after the em dash.
+
+    Every question is emitted as `<question> — <why it matters>`, and matching
+    the whole line called this one non-discriminating:
+
+      "Which tooth is affected, and does it have any visible crack, infraction,
+       or isolated deep pocket? — this identifies the mechanism of pulp death
+       and whether it is restorable"
+
+    That is a textbook discriminating question. "restorab" appears only in its
+    justification. Splitting on the dash is the second correction to this
+    classifier in one batch, both in the same direction: a keyword list is a
+    blunt instrument and the measurement it produces has to be read before it
+    is believed.
+    """
     prof = PROFILES[PROFILE["name"]]
-    low = (question or "").lower()
+    text = (question or "")
+    for dash in ("—", "–", " - "):
+        if dash in text:
+            text = text.split(dash, 1)[0]
+            break
+    low = text.lower()
     bad = [k for k, pat in prof["irrelevant"].items() if re.search(pat, low)]
     good = [k for k, pat in prof["discriminating"].items() if re.search(pat, low)]
     return bad, good
