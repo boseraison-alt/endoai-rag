@@ -23,8 +23,21 @@ Review-mode conversation memory, case discussion on the full evidence engine,
 and five export styles — audio/video/slides/podcast and a self-contained
 reveal.js web deck — all generated from ONE cached slide-spec in the approved
 dark design. **1,269 tests**, all mutation-checked. **25-case retrieval eval**
-with a 3-run baseline (`eval/baseline_v6.json`) and its run logs beside it.
+with a 3-run baseline (`eval/baseline_v6.json`, all 25 cases × 3 runs, 25/25
+passing) and its run logs archived beside it in `eval/logs/`.
 Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
+
+**The numbers that describe the current state:**
+
+| | |
+|---|---|
+| citation-support flag rate, measured Review cases | **4.3%** (2/46), from 8.5% and 39.4% |
+| library abstracts still truncated | **1** — PMID 25231145, whose PubMed abstract genuinely is 1,200 characters |
+| mean stored abstract length | **1,631** chars (was 1,182) |
+| library rows with no abstract in PubMed at all | 4, individually confirmed |
+| retrieval baseline | `eval/baseline_v6.json` — 25 cases × 3 runs |
+| Deep Learning support check, first ever measurement | **20.3%** (24/118) and **11.2%** (13/116) on two laser curricula |
+| tests | 1,269 passing, 39 skipped |
 
 **What changed in `grounding-v1`.** Every library abstract is now stored and
 sent at full length. 1,342 of 2,350 rows (57%) had been cut at ingest at
@@ -127,10 +140,22 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 - Second literature database (Embase/Scopus).
 - Monthly maintenance loop: provenance backfill + rescore + eval.
 
-## 5. Next batch (paste-ready for the fresh session)
+## 5. Next batch — "overnight-2" (paste-ready for the fresh session)
 
 Autonomous batch on `main`, tag `prompt-v1` at end. Standing rules from
-`WORKLIST.md` §0/§6.
+`WORKLIST.md` §0/§6 apply in full **except the branch rule** — §6 still says
+"never commit to `main`", which the last three batches have overridden by
+explicit instruction. Work on `main`.
+
+**Sequencing.** [A] is the measured item and must run alone — it is the whole
+point of the batch, and the last two batches attributed cleanly only because
+they changed one thing at a time. [B], [C] and [D] are independent of it and of
+each other and can run as parallel lanes with exclusive file ownership. [A]'s
+before/after runs are strictly serial with every other eval run.
+
+**The baseline to beat, so nobody has to go looking for it:** 2/46 = **4.3%**
+across `single-vs-multiple-visit`, `naocl-concentration` and
+`pips-vs-ultrasonic`, measured 2026-09-01 with the answer cache bypassed.
 
 **[A] The grounding rule.** Add to the `ask_clinical_question` system prompt an
 explicit instruction that a `[[PMID:N]]` marker asserts the cited paper states
@@ -144,16 +169,19 @@ across those three. Report the flag rate per case with the cost beside it.
 Change nothing else in the same batch — the last two batches attributed cleanly
 because they did not.
 
-**[B] The longest-paragraph heuristic.** Fix `ingest_classics.py` and
+**[B] The longest-paragraph heuristic.** Fix `ingest_classics.py:219-232` and
 `app.py`'s `/api/abstract` to keep the whole abstract, then measure how many
 library rows are multi-paragraph-collapsed and repair them with the same
 dry-run-then-apply shape as `scripts/repair_truncated_abstracts.py`. That
 script is idempotent and resumable — verified: a second run reports 0 changes —
-so model the new one on it.
+so model the new one on it, **including backing up every column it overwrites**
+(see the standing rule added to `WORKLIST.md` §6; the abstract repair backed up
+abstracts and not embeddings, and the old vectors are gone).
 
 **[C] The 108 unexplained efetch misses.** Take the PMIDs the repair could not
 fetch, classify them (book record / withdrawn / bad id / fetch bug), and fix
-whichever is a bug. Also backfill the 8 empty titles while you are there.
+whichever is a bug. Also backfill the 8 empty titles while you are there — they
+now reach the prompt as a blank line where the paper's subject should be.
 
 **[D] Chase the DL flag rate.** The Deep Learning support check has now been
 measured for the first time: 24/118 (20.3%) and 13/116 (11.2%) on two laser

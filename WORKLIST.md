@@ -124,10 +124,11 @@ Do these in order in `templates/index.html` and the renderer. Screenshot each.
 
 ## 6. Process rules for the agents
 
-- Branch: continue on `evidence-scoring-provenance` or a child branch per §; never commit to `main`.
+- Branch: continue on `evidence-scoring-provenance` or a child branch per §; never commit to `main`. **SUPERSEDED for the autonomous batches** — `case-v1`, `eval-v5` and `grounding-v1` all ran on `main` by explicit instruction in their briefs, and each brief also says "standing rules from §0/§6 apply in full". Where a batch brief names a branch, the brief wins; this line is the default for everything else.
 - Before any destructive git command: `git add -A && git commit -m "wip: <item>"`.
 - Two agents never edit the same file concurrently. §1 agents own `endo_ai.py`/`rag.py`/`scripts/`; §3 agent owns `templates/` and the renderer; §4 agent owns `app.py` auth, `requirements.txt`, docs.
 - Every database migration is a script in `scripts/`, dry-run by default, idempotent, printing its delta split.
+- **Any migration backs up EVERY column it overwrites, not just the primary one — including `embedding`.** The `grounding-v1` abstract repair backed up the old abstracts, wrote new ones, and then re-embedded 1,355 rows: the abstracts are recoverable and the pre-repair vectors are gone. Derived columns are the easy ones to forget, because the migration thinks of itself as changing the source. Name the columns the script writes, and back up that list — not the column the script is *about*. This is the second time: the first Cochrane migration took no backup at all and the identity of its 109 affected rows is still unrecoverable.
 - Every network-dependent test is opt-in (`RUN_NETWORK_TESTS=1`) and has an offline twin.
 - After each § completes: full suite, one live run of the laser question (live-pinned), one library-pinned, read both by hand.
 
