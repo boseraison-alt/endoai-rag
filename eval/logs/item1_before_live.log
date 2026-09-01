@@ -1,0 +1,436 @@
+mode: SYNTHESIS
+
+======================================================================
+retreatment-vs-microsurgery   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+[intent] kind=standard retrieval=both clarify=True reason=Comparative effectiveness question; needs tooth type, vitality status, and radiographic/clinical details.
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "chronic apical periodontitis" OR "apical pathosis" OR treatment outcome* OR success rate* OR efficacy)'
+  Multi-term search: ['("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "chronic apical periodontitis" OR "apical pathosis" OR treatment outcome* OR success rate* OR efficacy)', '("root canal retreatment" OR "retreated teeth" OR "re-treatment" OR "reobturation") AND ("apical surgery" OR "retrograde filling" OR "root-end resection" OR "periradicular surgery") AND ("failed endodontic treatment" OR "treatment failure" OR "lesion healing" OR "radiographic resolution")', '("mechanical retreatment" OR "chemical retreatment" OR "instrument removal" OR "gutta-percha dissolution") AND ("microsurgical endodontics" OR "surgical endodontic therapy" OR "root-end obturation" OR "ultrasonic retrograde preparation") AND ("periapical repair" OR "bone regeneration" OR "periapical lesion" OR "apical healing")', '("re-instrumentation" OR "canal re-exploration" OR "access cavity retreatment") AND ("flap surgery" OR "surgical access" OR "transalveolar approach" OR "endodontic surgery") AND ("persistent infection" OR "resistant bacteria" OR "endodontic pathology" OR "treatment outcome")', '("nonsurgical re-treatment" OR "intraradicular retreatment" OR "orthograde re-obturation") AND ("apicoectomy" OR "apical resection" OR "root amputation" OR "surgical root therapy") AND ("clinical success" OR "radiographic success" OR "healing rate" OR "long-term outcome" OR "prognosis")', '("calcium hydroxide retreatment" OR "medicament" OR "sealer removal") AND ("bioactive glass" OR "MTA" OR "mineral trioxide aggregate" OR "retrograde material") AND ("apical periodontitis" OR "periapical disease" OR "chronic periapical lesion" OR "persistent symptoms")', '("non-surgical retreatment outcomes" OR "retreatment efficacy") AND ("surgical endodontic success" OR "surgery success rate") AND ("Enterococcus faecalis" OR "bacterial contamination" OR "microbiological assessment" OR "disinfection")']
+  Searching Cochrane for: '("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "chronic apical periodontitis" OR "apical pathosis" OR treatment outcome* OR success rate* OR efficacy)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 535ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed) [broadened]: 2 PMIDs in 607ms
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKCochrane Reviews (PubMed): 2 papers -- top score 68.9/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 3 PMIDs in 772ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 3 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 847ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 867ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1060ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1160ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 7 PMIDs in 647ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 715ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 810ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 17 PMIDs in 625ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1845ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 42 PMIDs in 783ms
+    Fetching metadata for 7 papers...
+    Fetching metadata for 3 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 22 PMIDs in 992ms
+    Fetching metadata for 17 papers...
+    Fetching metadata for 42 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 22 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 2 with registry entries
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 76.7/100
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 5 of 7 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 76.7/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 613ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 7 PMIDs in 678ms
+    Fetching metadata for 7 papers...
+    [abstract_cache] persisted 17 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 16 of 17 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 17 papers -- top score 81.1/100
+    [pubmed_xml] 1 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 22 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 1 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 22 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 22 papers -- top score 79.4/100
+    [abstract_cache] persisted 7 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 2 pre-registered, 1 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 81.7/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 4 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 79.4/100
+    [abstract_cache] persisted 42 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 42 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 42 papers -- top score 84.0/100
+  [early_stop] 72 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+
+Asking Claude: 'Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis'
+============================================================
+  Cost: $0.2759 (8488 in / 1981 out)
+  Evidence mapping: passed=True score=90 cited=4 fabricated=0 unattributed=3 gaps=0
+  [citation_support] 2 of 8 claim-citation pairs flagged as not supported
+  Answer saved to: answers/answer_20260901_003848.txt
+  [audit] wrote 5 claim citations -> audit_20260901_003848_c580c1b258.json
+  route  None
+  papers 72   {}
+  support  2/8 flagged = 25.0%  (1 check(s), $0.2801)
+  vs stale point baseline in questions.json: 58 -> 72 (+14) — use --diff for the tracked range
+  PASS
+
+======================================================================
+cracked-tooth-prognosis   [pinned: live]
+======================================================================
+[intent] kind=standard retrieval=both clarify=True reason=Prognosis requires crack classification and tooth-specific context; evidence-based outcome question.
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(crack* OR fracture* OR split* OR "vertical root fracture" OR VRF) AND ("root canal" OR endodontic* OR RCT OR "root canal treatment") AND (prognosis OR outcome* OR success OR survival OR longevity OR "tooth survival" OR "treatment outcome")'
+  Multi-term search: ['(crack* OR fracture* OR split* OR "vertical root fracture" OR VRF) AND ("root canal" OR endodontic* OR RCT OR "root canal treatment") AND (prognosis OR outcome* OR success OR survival OR longevity OR "tooth survival" OR "treatment outcome")', '("crack propagation" OR "fracture propagation" OR "crack development" OR "fracture development") AND ("root canal therapy" OR "endodontic treatment" OR "obturation" OR "gutta percha") AND ("clinical outcome" OR "tooth retention" OR "tooth loss" OR "extraction" OR "failure rate")', '("dentinal crack" OR "enamel crack" OR "radicular fracture" OR "longitudinal fracture") AND ("post-treatment" OR "post-operative" OR "follow-up" OR "long-term") AND ("radiographic" OR "periapical" OR "CBCT" OR "cone beam")', '("crack severity" OR "fracture depth" OR "crack width" OR "fracture extension") AND ("coronal" OR "cervical" OR "apical" OR "mesio-distal") AND ("predictive" OR "prognostic" OR "risk factor" OR "predictor")', '("vertical split" OR "oblique fracture" OR "horizontal fracture" OR "root perforation") AND ("periodontal" OR "periapical" OR "lesion" OR "inflammation") AND ("healing" OR "resolution" OR "repair" OR "regeneration")', '("cracked tooth syndrome" OR "tooth fracture" OR "incomplete fracture") AND ("coronal restoration" OR "crown" OR "post and core" OR "fiber post") AND ("reinforcement" OR "stress" OR "biomechanical" OR "retention")', '("crack detection" OR "fracture diagnosis" OR "visual inspection" OR "transillumination") AND ("endodontic" OR "root treatment" OR "intracanal") AND ("prognosis" OR "survivability" OR "tooth salvage" OR "retreatment")']
+  Searching Cochrane for: '(crack* OR fracture* OR split* OR "vertical root fracture" OR VRF) AND ("root canal" OR endodontic* OR RCT OR "root canal treatment") AND (prognosis OR outcome* OR success OR survival OR longevity OR "tooth survival" OR "treatment outcome")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 7 PMIDs in 598ms (HTTP 200)
+    Fetching metadata for 7 papers...
+    [abstract_cache] persisted 7 abstracts from this batch
+    [superseded] dropped 3 outdated version(s) whose current version is in the same batch
+  OKCochrane Reviews (PubMed): 7 papers -- top score 92.2/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 820ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 825ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 874ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 977ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 7 PMIDs in 1128ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1164ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 688ms
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 26 PMIDs in 928ms
+    Fetching metadata for 7 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 1102ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 1042ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 26 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 78.5/100
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 632ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 505ms
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 26 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 7 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 26 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 26 papers -- top score 84.0/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 49.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Coltène' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 3 outdated version(s) whose current version is in the same batch
+    [provenance] 8 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 47 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 87.5/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Ivoclar' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 2 outdated version(s) whose current version is in the same batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 48 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.4/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 11 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 81.7/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 12 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 49 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+  [early_stop] 80 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+
+Asking Claude: 'Cracked tooth prognosis after root canal treatment by crack extent'
+============================================================
+  Cost: $0.4615 (16240 in / 2905 out)
+  Evidence mapping: passed=True score=90 cited=8 fabricated=0 unattributed=3 gaps=0
+  [citation_support] 1 of 9 claim-citation pairs flagged as not supported
+  Answer saved to: answers/answer_20260901_004007.txt
+  [audit] wrote 9 claim citations -> audit_20260901_004007_788665f153.json
+  route  None
+  papers 80   {}
+  support  1/9 flagged = 11.1%  (1 check(s), $0.4661)
+  vs stale point baseline in questions.json: 83 -> 80 (-3) — use --diff for the tracked range
+  PASS
+
+======================================================================
+bisphosphonates   [pinned: live]
+======================================================================
+[intent] kind=complex retrieval=both clarify=True reason=Multi-system interaction requiring case context; combines endodontics with pharmacology and systemic risk.
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR RANKL OR "receptor activator of nuclear factor kappa-B ligand") AND ("root canal" OR endodontic* OR pulp* OR apical OR periapical) AND (manag* OR treat* OR therap* OR protocol* OR "medication*" OR complication* OR "osteonecrosis of the jaw" OR ONJ OR "medication-related osteonecrosis")'
+  Multi-term search: ['(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR RANKL OR "receptor activator of nuclear factor kappa-B ligand") AND ("root canal" OR endodontic* OR pulp* OR apical OR periapical) AND (manag* OR treat* OR therap* OR protocol* OR "medication*" OR complication* OR "osteonecrosis of the jaw" OR ONJ OR "medication-related osteonecrosis")', '("bone resorption inhibitor*" OR "antiresorptive drug*" OR "antiresorptive medication*" OR "bone-targeting agent*" OR "osteoclast inhibitor*") AND ("endodontic treatment" OR "root canal therapy" OR "pulpal debridement" OR "apical surgery" OR "periapical lesion*")', '(bisphosphonate* OR denosumab OR zoledronate OR alendronate) AND ("medication-related osteonecrosis of jaw" OR MRONJ OR "bisphosphonate-related osteonecrosis" OR BRONJ OR "antiresorptive-associated osteonecrosis")', '("long-term bisphosphonate" OR "chronic bisphosphonate use" OR "prolonged antiresorptive therap*") AND ("dental extraction" OR "tooth extraction" OR "oral surgery" OR "dentoalveolar procedure*" OR "endodontic intervention*")', '("osteoporosis medication*" OR "metastatic bone disease treatment*" OR "multiple myeloma therap*" OR "cancer-related bone loss") AND ("apical periodontitis" OR "symptomatic irreversible pulpitis" OR "endodontic diagnosis" OR "tooth vitality" OR "pulp status")', '(intravenous bisphosphonate* OR IV zoledronate OR IV pamidronate OR subcutaneous denosumab) AND ("endodontic outcome*" OR "root canal success" OR "apical healing" OR "periapical radiolucency" OR "treatment complication*")', '("osteoclast activity" OR "bone turnover marker*" OR "C-terminal telopeptide" OR "CTX level*" OR "P1NP") AND ("pulpitis management" OR "periradicular infection" OR "apical pathology" OR "endodontic decision-making" OR "tooth retention")']
+  Searching Cochrane for: '(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR RANKL OR "receptor activator of nuclear factor kappa-B ligand") AND ("root canal" OR endodontic* OR pulp* OR apical OR periapical) AND (manag* OR treat* OR therap* OR protocol* OR "medication*" OR complication* OR "osteonecrosis of the jaw" OR ONJ OR "medication-related osteonecrosis")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 618ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 762ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 2 PMIDs in 850ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 2 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 912ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 10 PMIDs in 1042ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1164ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1198ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 812ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 829ms
+    Fetching metadata for 10 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 884ms
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 925ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 74.8/100
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 577ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 10 abstracts from this batch
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 10 papers -- top score 75.6/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 9 PMIDs in 591ms
+    Fetching metadata for 9 papers...
+    [abstract_cache] persisted 9 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 9 papers -- top score 77.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 10 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 2 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 48 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.4/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 12 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 81.7/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Coltène' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 5 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+  [early_stop] 69 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+
+Asking Claude: 'Endodontic management in patients on bisphosphonates or antiresorptives'
+============================================================
+  Cost: $0.1725 (4217 in / 1457 out)
+  Evidence mapping: passed=True score=95 cited=2 fabricated=0 unattributed=2 gaps=0
+  [citation_support] all 5 claim-citation pairs OK
+  Answer saved to: answers/answer_20260901_004058.txt
+  [audit] wrote 5 claim citations -> audit_20260901_004058_17f8aa170c.json
+  route  None
+  papers 69   {}
+  support  0/5 flagged = 0.0%  (1 check(s), $0.1756)
+  vs stale point baseline in questions.json: 47 -> 69 (+22) — use --diff for the tracked range
+  PASS
+
+======================================================================
+pregnancy   [pinned: live]
+======================================================================
+[intent] kind=complex retrieval=both clarify=False reason=Requires integrating trimester-specific safety, anesthetic pharmacology, and endodontic timing guidelines.
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR "pulp treatment")
+  Smart search terms: '(pregnan* OR "pregnant women" OR "gestational period" OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment planning") AND ("local anesthetic*" OR "infiltration anesthesia" OR "inferior alveolar block" OR lidocaine OR prilocaine OR articaine OR epinephrine OR "vasoconstrictor*")'
+  Multi-term search: ['(pregnan* OR "pregnant women" OR "gestational period" OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment planning") AND ("local anesthetic*" OR "infiltration anesthesia" OR "inferior alveolar block" OR lidocaine OR prilocaine OR articaine OR epinephrine OR "vasoconstrictor*")', '(pregnancy OR gravid* OR maternal OR obstetric*) AND ("pulpal pain" OR "dental pain" OR "tooth pain" OR emergency) AND (anesthes* OR "pain control" OR "pain management" OR "numbing agent*")', '(pregnan* OR "pregnant patient*" OR "expectant mother*") AND ("endodontic treatment" OR "pulp therapy" OR "periapical abscess") AND (lidocaine OR prilocaine OR articaine OR "local infiltration" OR "nerve block")', '(trimester* OR "first trimester" OR "second trimester" OR "third trimester") AND ("defer treatment" OR postpone* OR delay* OR "elective procedure*") AND (vasoconstric* OR epinephrine OR adrenaline OR "drug safety")', '(pregnancy OR pregnant OR gestational) AND ("dental treatment" OR "oral treatment" OR "intraoral procedure*") AND ("infiltration block*" OR "inferior alveolar" OR "buccal infiltration" OR "palatal injection")', '(pregnan* OR "pregnant women" OR "pregnancy outcomes") AND ("treatment phase*" OR "treatment window" OR "timing of care") AND ("topical anesthetic*" OR mepivacaine OR benzocaine OR procaine OR "anesthetic efficacy")', '(maternal OR "pregnant patient*" OR "pregnancy period") AND ("pulp vitality" OR "pulpal necrosis" OR "periapical pathology") AND ("pain relief" OR "therapeutic need*" OR "pain control" AND anesthes*)']
+  Searching Cochrane for: '(pregnan* OR "pregnant women" OR "gestational period" OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment planning") AND ("local anesthetic*" OR "infiltration anesthesia" OR "inferior alveolar block" OR lidocaine OR prilocaine OR articaine OR epinephrine OR "vasoconstrictor*")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 561ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 677ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 772ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 912ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 998ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1114ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1205ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 726ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 827ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 678ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 770ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 756ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 2 papers...
+    Fetching metadata for 3 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 668ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 2 papers...
+    Fetching metadata for 50 papers...
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 5 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 54.8/100
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 62.6/100
+    [abstract_cache] persisted 2 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 67.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 5 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 78.5/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 78.1/100
+  [early_stop] 42 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+
+Asking Claude: 'Root canal treatment in pregnancy timing and local anesthetic choice'
+============================================================
+  Cost: $0.1923 (4167 in / 1731 out)
+  Evidence mapping: passed=False score=75 cited=2 fabricated=0 unattributed=2 gaps=1
+  RETRY — validation failed: UNTRACEABLE_RECOMMENDATION: CLINICAL RECOMMENDATION has no [[PMID:N]] citation — the clinician cannot trace the advice they are being asked to act on
+  Retry mapping:    passed=True score=100 cited=2 fabricated=0 unattributed=1 gaps=0
+  [citation_support] 2 of 8 claim-citation pairs flagged as not supported
+  Answer saved to: answers/answer_20260901_004209.txt
+  [audit] wrote 5 claim citations -> audit_20260901_004209_3868c26e72.json
+  route  None
+  papers 42   {}
+  support  2/8 flagged = 25.0%  (1 check(s), $0.4180)
+  vs stale point baseline in questions.json: 3 -> 42 (+39) — use --diff for the tracked range
+  PASS
+
+======================================================================
+intentional-replantation   [pinned: live]
+======================================================================
+[intent] kind=complex retrieval=both clarify=True reason=Niche procedure requiring case context (tooth type, vitality, pathology, patient age) and recent evidence synthesis.
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "limited access" OR impossible OR unfavorable)'
+  Multi-term search: ['("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "limited access" OR impossible OR unfavorable)', '("tooth extraction" OR exodontia OR "surgical extraction") AND ("intentional replantation" OR "extra-oral treatment" OR "ex vivo endodontics") AND ("surgical contraindication*" OR "anatomic limitation*" OR "posterior tooth" OR "difficult access")', '("replantation" OR reimplantation OR "tooth reposition*") AND ("apicoectomy alternative*" OR "non-surgical approach" OR "external root resorption") AND (extraction OR avulsion OR "treatment option*")', '("intentional replantation" OR "planned extraction" OR "deliberate exodontia") AND ("calcium hydroxide" OR "MTA" OR "mineral trioxide aggregate" OR "biodentin") AND ("extra-oral" OR "extraoral" OR "bench treatment")', '("tooth replantation" OR "periodontal replantation") AND ("periapical lesion*" OR "apical pathology" OR "endodontic failure*") AND ("surgical alternative*" OR "case selection" OR "treatment decision*")', '("intentional replantation" OR "intentional reimplantation" OR "ex vivo endodontic*") AND ("success rate*" OR "survival rate*" OR "clinical outcome*" OR "prognosis") AND ("anterior tooth" OR "single tooth" OR "tooth preservation")', '("replantation" OR "auto-transplantation" OR reimplantation) AND ("root canal treatment" OR "root canal therapy" OR "intracanal medicament*") AND ("chairside" OR "immediate treatment" OR "healing" OR "osseointegration")']
+  Searching Cochrane for: '("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "limited access" OR impossible OR unfavorable)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 454ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 585ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 804ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 833ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 956ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1096ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 2 PMIDs in 1165ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 2 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 706ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 10 PMIDs in 791ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 651ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 31 PMIDs in 783ms
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 3 PMIDs in 671ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 3 hits, broadening once
+    Fetching metadata for 2 papers...
+    Fetching metadata for 31 papers...
+    Fetching metadata for 10 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 689ms
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 55.9/100
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 70.4/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 10 abstracts from this batch
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 10 papers -- top score 76.7/100
+    [abstract_cache] persisted 31 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 31 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 31 papers -- top score 77.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [provenance] 5 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 49 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.0/100
+  [early_stop] 47 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+
+Asking Claude: 'Intentional replantation for teeth unsuitable for surgery'
+============================================================
+  Cost: $0.1385 (3176 in / 1212 out)
+  Evidence mapping: passed=True score=100 cited=2 fabricated=0 unattributed=1 gaps=0
+  [citation_support] 2 of 4 claim-citation pairs flagged as not supported
+  Answer saved to: answers/answer_20260901_004254.txt
+  [audit] wrote 4 claim citations -> audit_20260901_004254_f107998bf4.json
+  route  None
+  papers 47   {}
+  support  2/4 flagged = 50.0%  (1 check(s), $0.1411)
+  vs stale point baseline in questions.json: 59 -> 47 (-12) — use --diff for the tracked range
+  PASS
+
+======================================================================
+CITATION SUPPORT
+======================================================================
+  case                                       flagged   checked     rate      cost
+  retreatment-vs-microsurgery                      2         8    25.0%   $0.2801
+  cracked-tooth-prognosis                          1         9    11.1%   $0.4661
+  bisphosphonates                                  0         5     0.0%   $0.1756
+  pregnancy                                        2         8    25.0%   $0.4180
+  intentional-replantation                         2         4    50.0%   $0.1411
+  TOTAL                                            7        34    20.6% $1.4809
+
+5/5 cases passed  [SYNTHESIS]
