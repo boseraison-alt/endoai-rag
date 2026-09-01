@@ -900,14 +900,22 @@ successor only; the library backfill resolves chains to the terminal version
   admin routes require `X-Admin-Token`, because the sidebar delete button calls
   it without a header. Gating it needs a UI change.
 - The eval harness does not evaluate answer-level assertions (see above).
-- **`verify_citation_support` never runs on the Deep Learning path.** There are
-  exactly two call sites: `ask_clinical_question` (Review) and
-  `ask_case_question` (Case). `ask_learn_question` and the curriculum path
-  (`write_curriculum_module` / `stitch_curriculum`) have none — so the longest
-  and most citation-dense output the product makes is the one nothing checks
-  for claim support. `validate_evidence_mapping` does run there, so a
-  curriculum cannot cite a fabricated PMID; whether the cited abstract supports
-  the claim is unasked.
+- ~~**`verify_citation_support` never runs on the Deep Learning path.**~~
+  **DONE.** It now runs per module, after that module's own validation gate,
+  through the same `_append_support_warnings` renderer as Review and Case —
+  ~$0.0024 per module, about $0.01 on a $1.40 curriculum. Three things that
+  pass on to whoever touches it next:
+  - **The status has to survive the stitcher.** `stitch_curriculum` is an LLM
+    call told to reproduce module text verbatim, which is not a guarantee. The
+    post-stitch pass COUNTS the expected blocks in the output and restates any
+    that went missing in an appendix. Counting, not substring-matching: two
+    modules with identical statuses produce identical blocks.
+  - **The three "module not generated" paths need a status too**, or a module
+    that was never written is indistinguishable from one that passed.
+  - **The view's blockquote-strip pattern was a live regression waiting.** It
+    ended `[\s\S]*$` anchored to the FIRST match, so the moment an answer
+    carried a second support block it would have deleted the curriculum from
+    module 1 onward. Adding per-module blocks is what would have triggered it.
 - **1342 of 2342 library abstracts — 57% — are hard-truncated at ingest,**
   749 at exactly 1200 characters and 593 at exactly 1000. Five call sites do
   it: `build_library.py:166` and `repair_abstracts.py:163` store
@@ -984,6 +992,14 @@ successor only; the library backfill resolves chains to the terminal version
   the alternative is splitting a clinical sentence — but the guarantee is "no
   overflow unless one bullet alone exceeds the frame", not "no overflow". No
   cached spec triggers it.
+- **8 library rows have an empty `title`.** Harmless while the library block
+  sent metadata only; now that `_scored_to_text` emits the title, those papers
+  reach Claude with a blank line where their subject should be. Small, and the
+  titles are one efetch away.
+- **`narration.strip_markdown_for_speech` does not strip blockquotes.** No live
+  path is affected — every narration route rewrites the answer through an LLM
+  first — but if a raw-narration path is ever added, a curriculum's citation
+  support blocks would be read aloud verbatim.
 - **The "longest paragraph" abstract heuristic loses paragraphs.**
   `ingest_classics.py:219-232` builds a paper's abstract by keeping the longest
   paragraph of the fetched text, and `app.py`'s `/api/abstract` duplicates the
