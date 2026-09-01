@@ -230,3 +230,61 @@ class TestTheAuditRecordStaysOneRowPerCheck:
             "sums these records and would double-count the denominator"
         assert support[0]["checked"] == 6
         assert support[0]["n_requests"] > 1
+
+
+class TestAQuotedClaimNeverEndsInHalfAMarker:
+    """`_extract_claim_citation_pairs` strips the marker that ENDS a claim,
+    but a merged claim — a decision tree, a run of bold pseudo-headings —
+    carries markers INSIDE it, and the support block quotes at 140 characters.
+    A real curriculum (learn_history 20260901_014227) rendered
+
+        > - [[PMID:41063319]] cited for: "... resolving by day 14 [[PMID:"
+
+    and `strip_markdown_for_speech` left that fragment in the narration script,
+    where a TTS engine reads it aloud letter by letter. It is also a raw marker
+    on a rendered surface, which invariant 3 forbids.
+    """
+
+    def test_a_cut_landing_inside_a_marker_leaves_nothing_dangling(self):
+        claim = "A" * 130 + " [[PMID:41063319]] and more text after it."
+        got = endo_ai._quote_claim(claim)
+        assert "[[PMID" not in got
+        assert not got.rstrip().endswith("[")
+
+    def test_a_whole_marker_inside_the_kept_text_is_removed_too(self):
+        claim = "Lasers reduced pain [[PMID:123]] at 24 hours."
+        got = endo_ai._quote_claim(claim)
+        assert "[[PMID" not in got
+        assert "at 24 hours." in got
+
+    def test_a_short_claim_is_returned_intact(self):
+        assert endo_ai._quote_claim("A plain claim.") == "A plain claim."
+
+    def test_the_rendered_block_carries_no_fragment(self):
+        claim = "B" * 132 + " [[PMID:41063319]] trailing."
+        rendered = endo_ai._append_support_warnings("ANSWER", {
+            "flags": [{"pmid": "41063319", "claim": claim}],
+            "checked": 10, "total_pairs": 10, "status": "verified",
+            "cost": 0.0})
+        # The one marker the block is ENTITLED to is the pill it renders
+        # itself; there must be no second, broken one inside the quote.
+        assert rendered.count("[[PMID:") == 1
+
+    def test_narration_strips_a_fragment_that_reaches_it_anyway(self):
+        import narration
+        spoken = narration.strip_markdown_for_speech(
+            'cited for: "resolving by day 14 [[PMID:"')
+        assert "PMID" not in spoken
+
+    def test_narration_still_strips_whole_markers(self):
+        import narration
+        spoken = narration.strip_markdown_for_speech(
+            "Lasers reduced pain [[PMID:123]] at 24 hours.")
+        assert "PMID" not in spoken and "24 hours" in spoken
+
+    def test_a_line_mentioning_pmid_in_prose_is_not_eaten(self):
+        """The partial pattern is anchored to end-of-line so it can only take
+        a dangling fragment. A sentence that merely says the word must survive."""
+        import narration
+        text = "Every claim carries a PMID marker for the clinician to check."
+        assert narration.strip_markdown_for_speech(text) == text

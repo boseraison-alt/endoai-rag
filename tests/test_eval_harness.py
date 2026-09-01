@@ -819,3 +819,81 @@ class TestTheLiveSubsetIsLivePinned:
 
     def test_the_two_subsets_do_not_overlap(self):
         assert not (set(run_eval.LIVE_SUBSET) & set(run_eval.SYNTHESIS_SUBSET))
+
+
+class TestTheFlagRateWindowExcludesOtherProcesses:
+    """The window belongs to one case, and `evidence_mapping.jsonl` is one file
+    shared by every process on the machine. A pytest run started while an eval
+    was in flight put nine rows of `checked: 3, n_flagged: 0` inside one
+    curriculum's window and reported 16/146 (11.0%) for what was 16/119
+    (13.4%).
+
+    A timing heuristic was tried first and rejected: the real burst was 1.3 s
+    apart, which is also what four curriculum modules finishing on a thread
+    pool look like. The pid is exact."""
+
+    def _write(self, tmp_path, monkeypatch, rows):
+        p = tmp_path / "evidence_mapping.jsonl"
+        p.write_text("".join(json.dumps(
+            {"function": "verify_citation_support", **r}) + "\n" for r in rows),
+            encoding="utf-8")
+        monkeypatch.setattr(run_eval, "EVMAP_LOG", p)
+
+    def test_another_process_is_excluded_not_counted(self, tmp_path,
+                                                     monkeypatch):
+        """The exact shape of the contamination: nine foreign rows of 3 pairs
+        each, alongside four real curriculum modules."""
+        import os
+        mine = os.getpid()
+        rows = [{"checked": 3, "n_flagged": 0, "pid": mine + 1}] * 9
+        rows += [{"checked": 30, "n_flagged": 4, "pid": mine}] * 4
+        self._write(tmp_path, monkeypatch, rows)
+        assert run_eval._support_since(0) == (120, 16, 4)
+
+    def test_it_says_so_rather_than_silently_dropping_them(self, tmp_path,
+                                                           monkeypatch, capsys):
+        import os
+        self._write(tmp_path, monkeypatch,
+                    [{"checked": 3, "n_flagged": 0, "pid": os.getpid() + 1}])
+        run_eval._support_since(0)
+        out = capsys.readouterr().out
+        assert "another process" in out and "EXCLUDED" in out
+
+    def test_this_process_own_rows_are_kept(self, tmp_path, monkeypatch):
+        import os
+        self._write(tmp_path, monkeypatch,
+                    [{"checked": 12, "n_flagged": 2, "pid": os.getpid()}])
+        assert run_eval._support_since(0) == (12, 2, 1)
+
+    def test_a_record_with_no_pid_is_counted(self, tmp_path, monkeypatch):
+        """Rows written before the field existed. "We cannot tell" has to mean
+        "in the window", or every historical comparison silently loses rows."""
+        self._write(tmp_path, monkeypatch, [{"checked": 8, "n_flagged": 1}])
+        assert run_eval._support_since(0) == (8, 1, 1)
+
+    def test_four_modules_landing_together_are_not_treated_as_foreign(
+            self, tmp_path, monkeypatch, capsys):
+        """Curriculum modules run on a thread pool and their checks really do
+        finish within a second of each other. Same pid, so nothing is dropped
+        and nothing is warned about."""
+        import os
+        mine = os.getpid()
+        self._write(tmp_path, monkeypatch,
+                    [{"checked": 30, "n_flagged": 3, "pid": mine,
+                      "ts": f"2026-09-01T01:38:24.{i}00000"} for i in range(4)])
+        assert run_eval._support_since(0) == (120, 12, 4)
+        assert "another process" not in capsys.readouterr().out
+
+
+class TestTheSuiteDoesNotWriteToTheProductionAuditLog:
+    def test_the_evmap_path_is_redirected_for_the_session(self):
+        """Asserted on the live module attribute, not on conftest's source:
+        the fixture is session-scoped and autouse, so if it stops applying
+        this is the only thing that notices."""
+        import endo_ai
+        assert "evidence_mapping.jsonl" in endo_ai._EVMAP_LOG_PATH
+        assert str(Path(endo_ai.__file__).parent) not in endo_ai._EVMAP_LOG_PATH
+
+    def test_the_cost_log_is_redirected_too(self):
+        import endo_ai
+        assert str(Path(endo_ai.__file__).parent) not in endo_ai._COST_LOG_PATH

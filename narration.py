@@ -173,6 +173,11 @@ def split_script_sections(script: str) -> list:
 # become "star star" and "bracket bracket P M I D". Stripped for speech only —
 # the displayed text keeps every marker.
 _PMID_MARKER = re.compile(r"\[\[PMID:\s*\d+\s*\]\]")
+# A marker whose closing brackets a truncation removed. The DOUBLE bracket is
+# what makes this safe: prose that mentions "a PMID marker" has no `[[`, so
+# this can only ever eat a fragment. Whole markers are already gone by the
+# time it runs.
+_PARTIAL_PMID_MARKER = re.compile(r"\[\[\s*PMID\s*:?\s*\d*\s*\]?")
 _HRULE       = re.compile(r"^\s*([-*_])\s*(?:\1\s*){2,}$", re.MULTILINE)
 _ATX         = re.compile(r"^\s{0,3}#{1,6}\s+", re.MULTILINE)
 _BULLET      = re.compile(r"^\s{0,3}[-*+]\s+", re.MULTILINE)
@@ -185,6 +190,15 @@ def strip_markdown_for_speech(text: str) -> str:
     if not text:
         return text
     text = _PMID_MARKER.sub("", text)
+    # A marker cut in half by a character-count truncation upstream. The
+    # citation-support block quotes a claim at 140 characters and a merged
+    # claim carries markers INSIDE it, so a real curriculum ended a quoted
+    # claim with a bare "[[PMID:". `_PMID_MARKER` needs the closing brackets
+    # and cannot see that, and a TTS engine reads it aloud letter by letter.
+    # Fixed at the source in `endo_ai._quote_claim`; belt and braces here
+    # because narration is the last thing between a marker and a clinician's
+    # ears.
+    text = _PARTIAL_PMID_MARKER.sub("", text)
     text = _MDLINK.sub(r"\1", text)
     text = _HRULE.sub("", text)
     text = _ATX.sub("", text)

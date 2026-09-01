@@ -3942,6 +3942,14 @@ Return ONLY a JSON array, no prose, no markdown fence:
             record = {
                 "ts":        datetime.now().isoformat(),
                 "function":  "verify_citation_support",
+                # Whose check this was. `evidence_mapping.jsonl` is one file
+                # shared by every process on this machine, and the eval reads
+                # a byte-offset window of it to compute a case's flag rate —
+                # so a pytest run, or the dev server answering a question,
+                # lands in that case's numerator and denominator. It happened:
+                # nine rows from a concurrent suite run turned 16/119 into
+                # 16/146. The pid makes the window exact instead of hopeful.
+                "pid":       os.getpid(),
                 "checked":   out["checked"],
                 "total_pairs": out["total_pairs"],
                 "n_requests": len(batches),
@@ -3969,6 +3977,32 @@ Return ONLY a JSON array, no prose, no markdown fence:
         out["detail"] = "check unavailable"
         print(f"  [citation_support] check skipped: {e}")
         return out
+
+
+# A marker the truncation cut in half. The DOUBLE bracket is what makes this
+# safe to run anywhere in the string: prose that mentions "a PMID" has no `[[`.
+# The second pattern catches a cut that landed before the letters, leaving a
+# bare `[[` or `[` at the end.
+_PARTIAL_PMID_MARKER_RE = re.compile(r"\[\[\s*P?M?I?D?\s*:?\s*\d*\s*\]?")
+_TRAILING_BRACKET_RE    = re.compile(r"\s*\[+\s*$")
+
+
+def _quote_claim(claim: str, limit: int = 140) -> str:
+    """A claim, cut to `limit`, with no half a citation marker left dangling.
+
+    `_extract_claim_citation_pairs` strips the marker that ENDS a claim, but a
+    merged claim — a decision tree, a bold pseudo-heading run — carries markers
+    inside it, and cutting at a fixed character count lands inside one. A real
+    curriculum did exactly that: the block rendered `... by day 14 [[PMID:` and
+    the narration script then had a bare `[[PMID:` in it, which a raw-narration
+    path would read aloud, and which is a raw marker on a rendered surface
+    (invariant 3).
+    """
+    text = (claim or "")[:limit].rstrip()
+    text = _PMID_RE.sub("", text)
+    text = _PARTIAL_PMID_MARKER_RE.sub("", text)
+    text = _TRAILING_BRACKET_RE.sub("", text)
+    return re.sub(r"\s+([.,;:!?])", r"\1", text).rstrip()
 
 
 def _append_support_warnings(answer: str, support: dict) -> str:
@@ -4001,7 +4035,8 @@ def _append_support_warnings(answer: str, support: dict) -> str:
             f"claim they are attached to.{tail} Verify before relying on them:\n>",
         ]
         for f in flags[:5]:
-            lines.append(f"> - [[PMID:{f['pmid']}]] cited for: \"{f['claim'][:140]}\"")
+            lines.append(f"> - [[PMID:{f['pmid']}]] cited for: "
+                         f"\"{_quote_claim(f['claim'])}\"")
         return answer + "\n".join(lines)
 
     if status == "verified":

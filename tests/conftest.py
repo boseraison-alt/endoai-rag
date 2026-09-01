@@ -27,6 +27,29 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 FIXTURE_XML_DIR = Path(__file__).parent / "fixtures" / "pubmed_xml"
 
 
+@pytest.fixture(autouse=True, scope="session")
+def _audit_logs_stay_out_of_the_repo(tmp_path_factory):
+    """A test run must not append to the production audit trail.
+
+    `tests/test_end_to_end.py` drives the real `/ask` path with a stubbed
+    Claude, and `verify_citation_support` writes one row per answer into the
+    repo's `evidence_mapping.jsonl`. Nine such rows landed inside one eval
+    case's measurement window on 2026-09-01 and inflated its denominator by 27
+    — the same class of contamination `run_eval._esearch_hits_since` already
+    warns about for `pubmed_audit.jsonl`, arriving through a file nobody
+    thought of as shared state.
+
+    The cost log goes the same way: a suite run was adding rows to the record
+    of what the product spent.
+    """
+    import endo_ai
+
+    d = tmp_path_factory.mktemp("audit")
+    endo_ai._EVMAP_LOG_PATH = str(d / "evidence_mapping.jsonl")
+    endo_ai._COST_LOG_PATH = str(d / "cost_log.jsonl")
+    yield
+
+
 @pytest.fixture
 def mock_pubmed_efetch_batch() -> Callable[..., str]:
     """

@@ -111,10 +111,29 @@ def _support_since(offset):
     Returns (checked, flagged, n_checks). `checked` is 0 when the checker did
     not run at all, which is NOT the same as a clean answer — the caller must
     report it as "not run", never as 0.0%.
+
+    CONTAMINATION, and why the pid is the answer. This window belongs to one
+    case, and `evidence_mapping.jsonl` is one file shared by every process on
+    the machine. A `pytest` run of `tests/test_end_to_end.py`, started while an
+    eval was in flight, put NINE rows of `checked: 3, n_flagged: 0` inside one
+    curriculum's window and turned 16/119 (13.4%) into 16/146 (11.0%).
+
+    Two fixes, because either alone leaves a hole: the suite writes to a tmp
+    path now (`tests/conftest.py`), and every record carries its writer's pid,
+    so a foreign row is EXCLUDED rather than guessed at. A timing heuristic was
+    tried first and rejected — the real burst was 1.3 s apart, which is also
+    what four curriculum modules finishing on a thread pool look like.
+
+    Records written before the pid field existed have no pid and are counted:
+    "we cannot tell" has to mean "in the window", or every historical
+    comparison silently loses rows.
     """
     if not EVMAP_LOG.exists():
         return 0, 0, 0
+    import os
+    mine = os.getpid()
     checked = flagged = n = 0
+    foreign = foreign_checked = 0
     with EVMAP_LOG.open("r", encoding="utf-8") as fh:
         fh.seek(offset)
         for line in fh:
@@ -127,9 +146,19 @@ def _support_since(offset):
                 continue
             if rec.get("function") != "verify_citation_support":
                 continue
+            pid = rec.get("pid")
+            if pid is not None and int(pid) != mine:
+                foreign += 1
+                foreign_checked += int(rec.get("checked") or 0)
+                continue
             checked += int(rec.get("checked") or 0)
             flagged += int(rec.get("n_flagged") or 0)
             n += 1
+
+    if foreign:
+        print(f"  NOTE: {foreign} citation-support check(s) ({foreign_checked} "
+              f"pairs) in this window were written by another process and are "
+              f"EXCLUDED. Something else is using the app while the eval runs.")
     return checked, flagged, n
 
 
