@@ -3,13 +3,16 @@
 Server: the launch config in `.claude/launch.json` (or `python app.py`).
 `ADMIN_TOKEN` and `FLASK_SECRET_KEY` must be set for the sidebar delete button
 and admin routes; the demo itself needs neither. All timings below were
-measured on this machine on 2026-08-30, on the code tagged `mvp-demo-2`.
+re-measured on this machine on 2026-09-01, on the code tagged `grounding-v1`,
+against the healed library (every abstract now stored at full length). The
+cached answers below were regenerated at the same time, so the cache is warm
+and the numbers are what the room will see.
 
 ## 1. The four cached questions, in order
 
 Ask each in **Review** mode, exactly as written — the cache matches the
 question semantically, but exact text removes all doubt. Each returns in
-**under 1 second** (measured 0.4s):
+**under 1 second** (measured 0.5-1.0s on 2026-09-01):
 
 1. *Single-visit versus multiple-visit root canal treatment for necrotic teeth
    with apical periodontitis*
@@ -44,8 +47,14 @@ the complete text.
 
 ## 3. The laser curriculum (Deep Learning mode)
 
-*Use of lasers in root canal disinfection* in **Learn** mode — cached (0.4s;
-a cold build is ~8.5 min at ~$1.4, down from 18 min).
+*Use of lasers in root canal disinfection* in **Learn** mode — cached (0.5s;
+a cold build is **8.0 min at $1.52**, measured 2026-09-01).
+
+- Every module now carries its own **citation-support status** line, checked
+  against the papers' real abstracts. On the current build the six modules read
+  between "1 of 30 flagged" and "5 of 30 flagged". Say: the check runs per
+  module, and where a module's status did not survive the stitching step the
+  system restates it in an appendix rather than letting it go quiet.
 
 - Scroll to **Module 3 (clinical technique/protocol)**: every numeric
   parameter (energies, concentrations, times) carries a citation. Say: a
@@ -64,9 +73,19 @@ and the answer starts streaming as soon as the evidence is in."
 
 ## Numbers to quote if asked
 
-- Cached answer: **<1s**. Cold live Review question: **~60–70s** (streaming
-  starts ~15s). Cold curriculum: **~8.5 min**, ~$1.40.
-- Library: ~2,300 papers, 8-tier evidence hierarchy, retracted/withdrawn/
-  superseded/animal-model papers excluded or quarantined.
+- Cached answer: **0.5-1.0s**. Cold live Review question: **55-120s**
+  (streaming starts ~15s; the five demo questions measured 53.8 / 64.9 / 69.9 /
+  72.5 / 120.3s). Cold curriculum: **8.0 min**, $1.52.
+- Cost per cold Review answer: **~$0.79** (the five measured $0.63-$1.83). That
+  is roughly double the figure quoted before 2026-09-01, and the reason is
+  worth saying out loud if asked: the library used to send Claude a metadata
+  line per paper and no abstract, so answers were written without the papers'
+  content. Full abstracts now go into the prompt. The citation-support flag
+  rate fell from 39.4% to 4.3% across the measured Review cases.
+- Exports, measured: **web deck 152s**, **PPTX 22s**.
+- Library: **2,350 papers**, 8-tier evidence hierarchy, retracted/withdrawn/
+  superseded/animal-model papers excluded or quarantined. Every abstract is
+  stored at full length (mean 1,631 characters, up from 1,182); 57% of them
+  used to be cut off mid-word before their conclusions.
 - Eval: 21-case regression set, 3 consecutive full retrieval passes, 5-case
   synthesis subset green including "must cite the Cochrane review" pins.
