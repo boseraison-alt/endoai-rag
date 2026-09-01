@@ -1,0 +1,543 @@
+endo_papers_rag: 2348 rows with an abstract, 4 mis-parsed (0.17%)
+    affiliation_block    4
+abstract_cache: 9985 rows with an abstract, 175 mis-parsed (1.75%)
+    affiliation_block    134
+    foreign_language     41
+
+  [affiliation_block] endo_papers_rag 40739139 len=1897
+      title: Impact of allogeneic dental pulp stem cell injection on tissue regeneration in periodontitis: a multicenter ra
+      stored: 'Author information: (1)Laboratory of Tissue Regeneration and Immunology and Department of Periodontics, Beijing Key Laboratory of Tooth Regeneration a'
+  [affiliation_block] endo_papers_rag 38734197 len=323
+      title: Comments on 'Effect of photodynamic therapy on the healing of periapical lesions after root canal retreatment:
+      stored: 'Author information: (1)Postgraduate Resident, Operative Dentistry & Endodontics, Department of Surgery, Aga Khan University Hospital, Karachi, Pakista'
+  [affiliation_block] endo_papers_rag 40410308 len=2985
+      title: Multinational cross-sectional study and meta-analysis on radicular grooves, C-shaped canals, and taurodontism 
+      stored: 'Author information: (1)Department of Endodontics, Recep Tayyip Erdogan University, Rize, Turkey. (2)Department of Oral Radiology, Faculty of Dentistry'
+  [affiliation_block] endo_papers_rag 7279425 len=244
+      title: Sensations on stimulating the pulps of human teeth, thresholds and tolerance ratio
+      stored: 'Author information: (1)School of Dental Surgery, University of Liverpool, Liverpool L69 3BX, Great Britain MRC Statistical Research and Services Unit,'
+  [affiliation_block] abstract_cache 34503666 len=834
+      title: Pediatric Endodontic Treatment of Adolescent Patients.
+      stored: 'Author information: (1)Department of Pediatric Dentistry, University of Pittsburgh School of Dental Medicine, 3501 Terrace Street, 366A Salk Hall, Pit'
+  [affiliation_block] abstract_cache 41203055 len=1234
+      title: Enhancing endodontic surgery with photodynamic therapy: A promising complementary approach.
+      stored: 'Author information: (1)Department of Restorative Dentistry, Discipline of Endodontics, São Paulo State University (UNESP), Araçatuba School of Dentist'
+  [affiliation_block] abstract_cache 41448410 len=1120
+      title: Photodynamic therapy used as an adjunct to endodontic retreatment.
+      stored: 'Author information: (1)Department of Restorative Dentistry, Discipline of Endodontics, São Paulo State University (UNESP) School of Dentistry, Araçatu'
+  [affiliation_block] abstract_cache 40846694 len=7732
+      title: Expert consensus on the diagnosis and treatment of cemental tear.
+      stored: 'Author information: (1)Department of Periodontology, School and Hospital of Stomatology, Cheeloo College of Medicine, Shandong University & Shandong K'
+  [affiliation_block] abstract_cache 25821936 len=573
+      title: Mineral trioxide aggregate (MTA): its history, composition, and clinical applications.
+      stored: 'Author information: (1)Jacob and Charlotte Freedland Term Professor, Endodontics, University of North Carolina School of Dentistry, Chapel Hill, North'
+  [affiliation_block] abstract_cache 36407657 len=387
+      title: Editorial: Highlights in oral infections and microbes 2021/2.
+      stored: 'Author information: (1)Division of Oral Diseases, Department of Dental Medicine, Karolinska Institutet, Stockholm, Sweden. (2)Competence Center for Pe'
+  [affiliation_block] abstract_cache 30636813 len=1485
+      title: Mineral Trioxide Aggregate and Diluted Formocresol Pulpotomy: Prospective and Retrospective Study Outcomes.
+      stored: 'Author information: (1)Department of Orthodontic and Pediatric Dentistry, University of Michigan School of Dentistry. She practices at Smile Builders '
+  [affiliation_block] abstract_cache 42331141 len=1500
+      title: The Frontiers of Orthodontically Induced Inflammatory Root Resorption: Mechanism, Treatment, and Future Prospe
+      stored: 'Author information: (1)Fujian Key Laboratory of Oral Diseases, Clinical Research Center for Oral Tissue Deficiency Diseases of Fujian Province, Fujian'
+  [foreign_language] abstract_cache 32125300 len=2179
+      title: [Clinical evaluation of the innovative concept of teeth saving].
+      stored: 'Publisher: Цель исследования - оценка эффективности инновационной концепции зубосохраняющих медицинских технологий у пациентов с резецированными (ампу'
+  [foreign_language] abstract_cache 39619062 len=1378
+      title: Simultaneous periodontal and endodontic surgery: report of four clinical cases.
+      stored: 'Publisher: DESCRIPCIÓN DEL CASO: Cuatro casos de pacientes (41 a 68 años) que presentaron lesiones periapicales y necesidad de cirugía periodontal con'
+  [affiliation_block] abstract_cache 40217035 len=692
+      title: Success and failure of endodontic treatment: predictability, complications, challenges and maintenance.
+      stored: 'Author information: (1)Specialist in Endodontics/Consultant in Endodontics, Chequers Endodontic Practice, 7 Chequers Drive, Prestwood, Great Missenden'
+  [affiliation_block] abstract_cache 33740381 len=537
+      title: Repair of a Perforation Defect With Calcium Silicate-Based Cement Using an Internal Matrix.
+      stored: 'Author information: (1)Post-Graduate Student, Department of Conservative Dentistry and Endodontics, K.D. Dental College and Hospital, Mathura, Delhi, '
+  [affiliation_block] abstract_cache 33967546 len=492
+      title: The Resistance of Succedaneous Teeth to Periapical Infection: A Series of Seven Cases.
+      stored: 'Author information: (1)Department of Pedodontics and Preventive Dentistry, Goa Dental College and Hospital, Bambolim, Goa, India. (2)Department of Con'
+  [affiliation_block] abstract_cache 24870376 len=1429
+      title: Isolation of a stable subpopulation of mobilized dental pulp stem cells (MDPSCs) with high proliferation, migr
+      stored: 'Author information: (1)Department of Dental Regenerative Medicine, Center of Advanced Medicine for Dental and Oral Diseases, National Center for Geria'
+  [foreign_language] abstract_cache 41438829 len=3113
+      title: Infectious role of periapical abscesses and its influence on healing outcomes.
+      stored: 'Publisher: HINTERGRUND: Nach der Behandlung bleiben apikale Parodontitis und postoperative Schmerzen kritische Herausforderungen in der Endodontie, wo'
+  [affiliation_block] abstract_cache 33598244 len=359
+      title: Multidisciplinary management of a fused maxillary incisor: Case report with 5-year follow-up.
+      stored: 'Author information: (1)Endodontics Conservative Dentistry Department Faculty of Dentistry Alexandria University Alexandria Egypt. (2)Periodontology De'
+  [affiliation_block] abstract_cache 36393835 len=722
+      title: Editorial: Adult stem cells for regenerative medicine: From cell fate to clinical applications.
+      stored: 'Author information: (1)Institute of Precision Medicine, The First Affiliated Hospital, Sun Yat-Sen University, Guangzhou, China. (2)Department of Burn'
+  [affiliation_block] abstract_cache 32205197 len=765
+      title: Masqueraders of angioedema after a dental procedure.
+      stored: 'Author information: (1)Division of Allergy, Immunology, and Rheumatology, Department of Pediatrics, Stanford University School of Medicine, Stanford, '
+  [affiliation_block] abstract_cache 27355751 len=1388
+      title: The use of a biocompatible cement in endodontic surgery. A randomized clinical trial 1.
+      stored: "Author information: (1)Fellow Master degree, Professional Master's Program in Applied Health, Universidade di Vale do Sapucaí (UNIVÁS), Pouso Alegre-M"
+  [affiliation_block] abstract_cache 32460393 len=1732
+      title: International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 2
+      stored: 'Author information: (1)Adams School of Dentistry, University of North Carolina, Chapel Hill, NC, USA. (2)UWA Dental School, University of Western Aust'
+  [affiliation_block] abstract_cache 32221011 len=379
+      title: Iatrogenic post-pulpectomy cervicofacial subcutaneous emphysema in a paediatric patient.
+      stored: 'Author information: (1)University of Central Florida College of Medicine, Orlando, Florida, USA. (2)Ocala Regional Medical Center, Ocala, Florida, USA'
+  [affiliation_block] abstract_cache 36017346 len=1429
+      title: Modified Mineral Trioxide Aggregate-A Versatile Dental Material: An Insight on Applications and Newer Advancem
+      stored: 'Author information: (1)Department of Pedodontics and Preventive Dentistry, Faculty of Dental Sciences, M.S. Ramaiah University of Applied Sciences, Ba'
+  [affiliation_block] abstract_cache 39327418 len=2428
+      title: Experts consensus on management of tooth luxation and avulsion.
+      stored: 'Author information: (1)State Key Laboratory of Oral Diseases & National Center for Stomatology & National Clinical Research Center for Oral Diseases &'
+  [affiliation_block] abstract_cache 40025031 len=5472
+      title: Expert consensus on intentional tooth replantation.
+      stored: 'Author information: (1)Department of Operative Dentistry and Endodontics, Hospital of Stomatology, Guanghua School of Stomatology, Sun Yat-Sen Univers'
+  [foreign_language] abstract_cache 28387098 len=734
+      title: [The importance of pulp therapy in deciduous teeth].
+      stored: 'Publisher: Conserver les dents de lait est essentiel pour assurer la croissance des maxillaires, l’esthétique, la mastication et la phonation ainsi qu'
+  [affiliation_block] abstract_cache 33934366 len=1297
+      title: European Society of Endodontology position statement: endodontic management of traumatized permanent teeth.
+      stored: 'Author information: (1)Department of Conservative Dentistry and Periodontology & Center of Dental Traumatology, University Hospital of Würzburg, Würzb'
+  [affiliation_block] abstract_cache 31114070 len=398
+      title: A pulpy story.
+      stored: 'Author information: (1)Black Family Stem Cell Institute, Icahn School of Medicine at Mount Sinai, New York, NY, USA. sarah.millar@mssm.edu. (2)Departm'
+  [affiliation_block] abstract_cache 41040572 len=229
+      title: Managing an extensive, complicated crown fracture through direct fragment reattachment.
+      stored: 'Author information: (1)Iranian Centre for Endodontic Research, Research Institute of Dental Sciences, Shahid Beheshti University of Medical Sciences, '
+  [affiliation_block] abstract_cache 42306600 len=452
+      title: Precision endodontics with nanorobots: Targeted antimicrobial and regenerative strategies.
+      stored: 'Author information: (1)Editor in Chief, Journal of Conservative Dentistry and Endodontics, Dean, Professor and Head, Department of Conservative Dentis'
+  [foreign_language] abstract_cache 31513162 len=1294
+      title: [Outcomes of traumatic dental injuries in children].
+      stored: 'Publisher: Цель нашего исследования - провести анализ литературных данных об осложнениях травматических повреждений постоянных зубов у детей и подрост'
+  [affiliation_block] abstract_cache 31487979 len=302
+      title: Transient discoloration and apical breakdown after trauma in permanent dentition.
+      stored: 'Author information: (1)Oral Surgery Specialization School, Vita-Salute University San Raffaele, Milano, Italy. (2)Department of Conservative Dentistry'
+  [affiliation_block] abstract_cache 40484859 len=5647
+      title: Expert consensus on management of instrument separation in root canal therapy.
+      stored: 'Author information: (1)State Key Laboratory of Oral Diseases & National Center for Stomatology & National Clinical Research Center for Oral Diseases &'
+  [affiliation_block] abstract_cache 27912822 len=233
+      title: Endodontics at the Verge of New Era Driven by Biological Innovation.
+      stored: 'Author information: (1)Division of Constitutive and Regenerative Sciences, Section of Endodontics, UCLA School of Dentistry, CHS 43-007, 10833 Le Cont'
+  [foreign_language] abstract_cache 28635918 len=712
+      title: [Risk factors for vertical root fractures after endodontic treatment].
+      stored: 'Publisher: В обзоре литературы описаны основные факторы риска, которые связывают с возникновением вертикальных трещин корня в зубах после эндодонтичес'
+  [affiliation_block] abstract_cache 33189809 len=1748
+      title: Current applications of drug delivery nanosystems associated with antimicrobial photodynamic therapy for oral 
+      stored: 'Author information: (1)UNESP - São Paulo State University, School of Pharmaceutical Sciences - Department of Drugs and Medicines, Araraquara, SP ZIP C'
+  [affiliation_block] abstract_cache 25214737 len=842
+      title: Localized interdental bone necrosis: a case report.
+      stored: 'Author information: (1)Professor & Head, Department of Periodontology & Implantology, G Pulla Reddy Dental College & Hospital, Kurnool, Andhra Pradesh'
+  [affiliation_block] abstract_cache 41967634 len=1443
+      title: Histologic Study of a Human Immature Permanent Premolar with Chronic Apical Periodontitis after Regenerative E
+      stored: "Author information: (1)Department of Pediatric Dentistry, Shanghai Ninth People's Hospital, Shanghai Jiao Tong University School of Medicine, Shanghai"
+  [foreign_language] abstract_cache 40014823 len=1551
+      title: Apical extrusion following different glide path instrumentation in curved canals of mandibular molars.
+      stored: 'Publisher: O fracasso do tratamento geralmente é resultado de erros técnicos que comprometem os procedimentos endodônticos adequados necessários para '
+  [affiliation_block] abstract_cache 38978317 len=2023
+      title: Performance of Bonded Lithium Disilicate Partial-coverage Crowns in the Restoration of Endodontically Treated 
+      stored: 'Author information: (1)Qin Jiang, MD, Department of Prosthodontic, Stomatology Hospital, School of Stomatology, Zhejiang University School of Medicine'
+  [affiliation_block] abstract_cache 41081042 len=216
+      title: Editorial: Advances in dental pulp stem cell biology and applications.
+      stored: "Author information: (1)Department of Biotechnological and Applied Clinical Sciences, University of L'Aquila, L'Aquila, Italy. (2)Department of Oral Bi"
+  [affiliation_block] abstract_cache 30389741 len=392
+      title: Endodontic management of maxillary central incisor with pulp canal obliteration.
+      stored: 'Author information: (1)Conservative Dentistry and Endodontics, Army Dental Corps, New Delhi, India. (2)Pedodontics and preventive dentistry, Army Dent'
+  [foreign_language] abstract_cache 40014818 len=2216
+      title: Treatment of vital teeth involved in the extension of inflammatory radicular cysts: a systematic review.
+      stored: 'Publisher: El quiste radicular inflamatorio (QRI) es un quiste odontogénico asociado a una pieza dentaria no vital, que pueden comprometer dientes san'
+  [affiliation_block] abstract_cache 37496850 len=415
+      title: Editorial: Regenerating the dentin-pulp complex: understanding the challenges that lie ahead.
+      stored: 'Author information: (1)Endodontics, Conservative Dentistry Department, Faculty of Dentistry, Alexandria University, Alexandria, Egypt. (2)Tissue Engin'
+  [affiliation_block] abstract_cache 37775387 len=451
+      title: Endodontic microsurgery for failed regenerative endodontic procedures.
+      stored: 'Author information: (1)Department of Stomatology, Affiliated Hospital of Jining Medical University, Jining, China. (2)Division of Endodontics, Departm'
+  [foreign_language] abstract_cache 41799544 len=1940
+      title: Intraoral radiographs for the diagnosis, treatment, and follow-up of periodontal disease: Position paper from 
+      stored: 'Publisher: OBJECTIF: Cet exposé de position a évalué, par le biais d’une revue systématique, le rôle des radiographies intraorales, qui contribue à la'
+  [affiliation_block] abstract_cache 39762213 len=4525
+      title: Expert consensus on pulpotomy in the management of mature permanent teeth with pulpitis.
+      stored: 'Author information: (1)Department of Cariology and Endodontics, Wuhan University & State Key Laboratory of Oral & Maxillofacial Reconstruction and Reg'
+  [foreign_language] abstract_cache 30221639 len=927
+      title: [An (un)conventional autogenous tooth transplantation].
+      stored: 'Publisher: Een 15-jarige jongen werd verwezen naar de afdeling mka-chirurgie in verband met een persisterend gebitselement 85 en een malpositie van ge'
+  [affiliation_block] abstract_cache 38417990 len=412
+      title: Inflammatory Lesions of the Jaws.
+      stored: 'Author information: (1)Division of Oral Diagnosis, Oral Medicine, and Oral Radiology, Department of Oral Health Practice, University of Kentucky Colle'
+  [affiliation_block] abstract_cache 38595558 len=756
+      title: Ozone: An Adjunct in Dental Treatment.
+      stored: 'Author information: (1)Department of Oral Medicine and Radiology, Mithila Minority Dental College, Darbhanga, Bihar, India. (2)Department of Orthodont'
+  [affiliation_block] abstract_cache 38734197 len=323
+      title: Comments on 'Effect of photodynamic therapy on the healing of periapical lesions after root canal retreatment:
+      stored: 'Author information: (1)Postgraduate Resident, Operative Dentistry & Endodontics, Department of Surgery, Aga Khan University Hospital, Karachi, Pakista'
+  [affiliation_block] abstract_cache 27137436 len=1392
+      title: Fibrous Dysplasia and Medication-Related Osteonecrosis of the Jaw.
+      stored: 'Author information: (1)Medical Research Scholar, Section on Skeletal Disorders and Mineral Homeostasis, Craniofacial and Skeletal Diseases Branch, Nat'
+  [foreign_language] abstract_cache 29662262 len=1857
+      title: Treatment of endo-periodontal lesion using leukocyte-platelet-rich fibrin. A case report.
+      stored: 'Publisher: DESCRIPCIÓN DEL CASO: El objetivo de este artículo fue reportar la efectividad clínica del uso de fibrina rica en plaquetas y leucocitos (L'
+  [foreign_language] abstract_cache 26397106 len=1242
+      title: [Endodontics in motion: new concepts, materials and techniques 2. The use of cone-beam computed tomography in 
+      stored: 'Publisher: Systemen voor conebeamcomputertomografie maken een driedimensionale reconstructie van dentomaxillofaciale structuren mogelijk, zonder de pa'
+  [affiliation_block] abstract_cache 34555909 len=783
+      title: The Use of Selective Anesthesia in Endodontic Diagnosis.
+      stored: 'Author information: (1)Assistant Clinical Professor, Department of Endodontics, Tufts University School of Dental Medicine, Boston, Massachusetts; Cli'
+  [affiliation_block] abstract_cache 27634634 len=209
+      title: Clindamycin-induced necrotising oesophagitis.
+      stored: 'Author information: (1)Department of Clinical Pharmacology and Toxicology, Clinical Hospital Centre Rijeka, Rijeka, Croatia. (2)Department of Gastroen'
+  [affiliation_block] abstract_cache 30514444 len=2135
+      title: Direct Pulp Capping: What is the Most Effective Therapy?-Systematic Review and Meta-Analysis.
+      stored: 'Author information: (1)Dentistry Area, Faculty of Medicine, University of Coimbra, Coimbra, Portugal; Biophysics Institute, Faculty of Medicine, Unive'
+  [affiliation_block] abstract_cache 30687910 len=594
+      title: Dentin dysplasia type I.
+      stored: 'Author information: (1)Department of Dentistry Propaedeutics, Medical University of Bialystok, Poland. kobus.agnieszka@gmail.com. (2)Resident in the C'
+  [foreign_language] abstract_cache 30741005 len=1403
+      title: [Risk assessment of medication-related osteonecrosis of the jaw in general dental practice].
+      stored: 'Publisher: Absztrakt: A gyógyszer indukálta osteonecrosis antireszorptív terápia szövődményeként léphet fel, kezelése komoly kihívást jelent. A betegs'
+  [affiliation_block] abstract_cache 29903562 len=887
+      title: MRI for Dental Applications.
+      stored: 'Author information: (1)Division of Oral and Maxillofacial Radiology, Department of Comprehensive Dentistry, University of Texas Health San Antonio, 77'
+  [foreign_language] abstract_cache 33361828 len=2496
+      title: ODONTOLOGICAL EFFECTS OF IONIZING RADIATION (review).
+      stored: "Publisher: Peredumova. Odontologichni efekty vplyvu ionizuiuchogo vyprominiuvannia (IV) iak rezul'tat radioterapiï,naslidok avariĭ na pidpryiemstvakh "
+  [affiliation_block] abstract_cache 30227632 len=2425
+      title: Developing a New Generation of Therapeutic Dental Polymers to Inhibit Oral Biofilms and Protect Teeth.
+      stored: 'Author information: (1)Department of Orthodontics, School of Stomatology, Capital Medical University, Beijing 100069, China. tuzizhangke@163.com. (2)D'
+  [affiliation_block] abstract_cache 35963323 len=1326
+      title: Treatment of Pulp Canal Obliteration Using a Dynamic Navigation System: Two Case Reports.
+      stored: 'Author information: (1)The State Key Laboratory Breeding Base of Basic Science of Stomatology (Hubei-MOST) & Key Laboratory of Oral Biomedicine Minist'
+  [affiliation_block] abstract_cache 32610317 len=3348
+      title: How to Intervene in the Caries Process in Children: A Joint ORCA and EFCD Expert Delphi Consensus Statement.
+      stored: 'Author information: (1)Preventive and Pediatric Dentistry, Center for Oral Health, Universitätsmedizin Greifswald, Greifswald, Germany, splieth@uni-gr'
+  [affiliation_block] abstract_cache 38052782 len=2991
+      title: Expert consensus on digital guided therapy for endodontic diseases.
+      stored: 'Author information: (1)Department of Operative Dentistry and Endodontics, Hospital of Stomatology, Guanghua, School of Stomatology, Sun Yat-Sen Univer'
+  [affiliation_block] abstract_cache 27912819 len=595
+      title: Endodontic Treatment Outcomes.
+      stored: 'Author information: (1)Section of Endodontics, UCLA School of Dentistry, CHS A3-075, 10833 Le Conte Avenue, Los Angeles, CA 90095-1668, USA. Electroni'
+  [affiliation_block] abstract_cache 30945526 len=356
+      title: Delayed tooth replantation and inflammatory root resorption in childhood and adolescence.
+      stored: 'Author information: (1)Department of Surgical Sciences, Sports Dental Research Center, University of Cagliari, Cagliari, Italy. (2)Department of Surgi'
+  [affiliation_block] abstract_cache 36450715 len=2513
+      title: Expert consensus on regenerative endodontic procedures.
+      stored: 'Author information: (1)Department of Operative Dentistry and Endodontics, Hospital of Stomatology, Guanghua School of Stomatology, Sun Yat-Sen Univers'
+  [affiliation_block] abstract_cache 29971640 len=1374
+      title: Dental stem cell and dental tissue regeneration.
+      stored: 'Author information: (1)State Key Laboratory of Military Stomatology & National Clinical Research Center for Oral Diseases & Shaanxi Key Laboratory of '
+  [affiliation_block] abstract_cache 32229240 len=666
+      title: Replantation of two avulsed teeth after 1 h of storage in adverse extraoral dry conditions: A thought-provokin
+      stored: 'Author information: (1)Dental Clinic of Minhang District, Shanghai, 201107, China; Department of Orthodontics, Shanghai Stomatological Hospital, Fudan'
+  [foreign_language] abstract_cache 32876052 len=918
+      title: Maxillary fungus ball in a diabetic patient. An odontogenic origin.
+      stored: 'Publisher: Una massa granulomatosa sviluppatasi da una colonia fungina viene indicata come “palla di fungo” (FB), che può diffondersi e potenzialmente'
+  [affiliation_block] abstract_cache 38429281 len=4775
+      title: Expert consensus on difficulty assessment of endodontic therapy.
+      stored: 'Author information: (1)State Key Laboratory of Oral Diseases & National Center for Stomatology & National Clinical Research Center for Oral Diseases &'
+  [affiliation_block] abstract_cache 29179383 len=1607
+      title: Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.
+      stored: 'Author information: (1)Department of Surgical Sciences, Faculty of Dentistry, Health Sciences Center, Kuwait University, Kuwait City, Kuwait; Oral & M'
+  [affiliation_block] abstract_cache 27931479 len=1625
+      title: Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.
+      stored: 'Author information: (1)Department of Surgical Sciences, Faculty of Dentistry, Health Sciences Center, Kuwait University, Kuwait City, DDS, PhD, DrOdon'
+  [affiliation_block] abstract_cache 32064833 len=312
+      title: Regenerative endodontics procedure of an immature permanent mandibular molar with a necrotic pulp using bioden
+      stored: "Author information: (1)Private practice, Bologna, Italy. (2)Department of Life, Health and Environmental Sciences, University of L'Aquila, Italy. (3)D"
+  [affiliation_block] abstract_cache 37250556 len=709
+      title: Recurrence of Invasive Cervical Resorption after six years of Nonsurgical and Surgical management by Biocerami
+      stored: 'Author information: (1)Mustafa Hussein AlAttas, Assistant Professor, Department of Conservative Dental Sciences and Endodontics, College of Dentistry,'
+  [affiliation_block] abstract_cache 40739139 len=1897
+      title: Impact of allogeneic dental pulp stem cell injection on tissue regeneration in periodontitis: a multicenter ra
+      stored: 'Author information: (1)Laboratory of Tissue Regeneration and Immunology and Department of Periodontics, Beijing Key Laboratory of Tooth Regeneration a'
+  [affiliation_block] abstract_cache 41954881 len=524
+      title: Dental Pulp Stem Cells for Modelling Osteoarthritis.
+      stored: 'Author information: (1)Regenerative Medicine Laboratory, Dr. D. Y. Patil Dental College and Hospital, Dr. D. Y. Patil Vidyapeeth, Pimpri, Maharashtra,'
+  [affiliation_block] abstract_cache 32318508 len=832
+      title: Massive radicular cyst involving multiple teeth in pediatric mandible- A case report.
+      stored: 'Author information: (1)Department of Oral and Maxillofacial Surgery, Consultant and Private Practitioner DENT-O-FACIAL Multispeciality Clinic, Mira Ro'
+  [affiliation_block] abstract_cache 41919535 len=3576
+      title: [Expert consensus on perioperative management of tooth extraction in patients receiving denosumab therapy].
+      stored: 'Author information: (1)State Key Laboratory of Oral Diseases & National Center for Stomatology & National Clinical Research Center for Oral Diseases &'
+  [affiliation_block] abstract_cache 39301710 len=1224
+      title: A Systematic Review and Meta-analysis of Regenerative Pulpotomy in the Treatment of Vital Primary Teeth.
+      stored: 'Author information: (1)Department of Dental Research, Saveetha Medical College and Hospitals, Saveetha Institute of Medical and Technical Sciences, Sa'
+  [affiliation_block] abstract_cache 28693858 len=721
+      title: Plasma in Dentistry: Brief History and Current Status.
+      stored: 'Author information: (1)Department of Industrial Engineering (DIN), Alma Mater Studiorum - Università di Bologna, Bologna, Italy; Interdepartmental Cen'
+  [affiliation_block] abstract_cache 28050991 len=770
+      title: Laser-based Disinfection of the Root Canal System: An Update.
+      stored: 'Author information: (1)Iranian Center for Endodontic Research, Research Institute of Dental Sciences, Shaheed Beheshti University of Medical Sciences,'
+  [affiliation_block] abstract_cache 40903066 len=268
+      title: [Cemental tear in lower anterior tooth with periapical lesion: a case report with 10-year follow-up].
+      stored: 'Author information: (1)State Key Laboratory of Oral & Maxillofacial Reconstruction and Regeneration, Key Laboratory of Oral Biomedicine Ministry of Ed'
+  [foreign_language] abstract_cache 35088814 len=1900
+      title: Trigeminal nerve injuries. Four years' experience at a single Argentine referral center and a literature revie
+      stored: 'Publisher: El objetivo de este estudio fue describir la etiología y características de las lesiones del nervio trigémino remitidas a un servicio de re'
+  [affiliation_block] abstract_cache 30981748 len=2475
+      title: Pulpotomy for carious pulp exposures in permanent teeth: A systematic review and meta-analysis.
+      stored: 'Author information: (1)State Key Laboratory of Military Stomatology & National Clinical Research Center for Oral Diseases & Shaanxi Key Laboratory of '
+  [affiliation_block] abstract_cache 38878998 len=1665
+      title: Radiographic Evaluation of Regenerative Endodontic Procedures and Apexification Treatments with the Assessment
+      stored: 'Author information: (1)Department of Restorative Dentistry and Biomaterials Sciences, Harvard School of Dental Medicine, Boston, Massachusetts; Depart'
+  [foreign_language] abstract_cache 41142975 len=1841
+      title: Prosthetic reconstruction of a fractured canine tooth in a dog using post and core.
+      stored: 'Publisher: Reconstruction prothétique d’une canine fracturée chez un chien à l’aide d’un tenon et d’un noyauUne chienne caniche stérilisée âgée de 6 a'
+  [affiliation_block] abstract_cache 34068275 len=1283
+      title: Immunomodulatory Expression of Cathelicidins Peptides in Pulp Inflammation and Regeneration: An Update.
+      stored: 'Author information: (1)Department of Conservative Dentistry and Endodontics, A. B. Shetty Memorial Institute of Dental Sciences, NITTE (Deemed to Be) '
+  [affiliation_block] abstract_cache 33683731 len=1218
+      title: Endodontic management of traumatized permanent teeth: a comprehensive review.
+      stored: 'Author information: (1)Department of Conservative Dentistry and Periodontology, Center of Dental Traumatology, University Hospital of Würzburg, Würzbu'
+  [foreign_language] abstract_cache 27430037 len=951
+      title: [Autotransplantation 2.0. Considerations, results and the latest techniques].
+      stored: 'Publisher: Autotransplantatie is een waardevolle techniek die een fysiologische vorm van tandvervanging biedt aan patiënten met missende gebitselement'
+  [affiliation_block] abstract_cache 30644590 len=849
+      title: Third European Society of Endodontology (ESE) research meeting: ACTA, Amsterdam, The Netherlands, 26th October
+      stored: 'Author information: (1)Division of Restorative Dentistry and Periodontology, Dublin Dental University Hospital, Trinity College Dublin, University of '
+  [affiliation_block] abstract_cache 28436043 len=1032
+      title: European Society of Endodontology position statement: the use of antibiotics in endodontics.
+      stored: 'Author information: (1)Department of Endodontics, School of Dentistry, University of Sevilla, Sevilla, Spain. (2)Newcastle upon Tyne Hospitals NHS Fou'
+  [foreign_language] abstract_cache 37315319 len=2015
+      title: Periodontal regeneration by minimally invasive procedures and its influence on pulp status.
+      stored: 'Publisher: La pulpa dental y el periodonto presentan diferentes vías de comunicación. El foramen apical, los conductos accesorios y los túbulos dentin'
+  [affiliation_block] abstract_cache 27912815 len=1783
+      title: Regenerative Endodontics by Cell Homing.
+      stored: 'Author information: (1)Division of Endodontics, Center for Craniofacial Regeneration, Columbia University Medical Center, Columbia University, 630 Wes'
+  [affiliation_block] abstract_cache 26576164 len=433
+      title: Conservative Treatment of an Invaginated Maxillary Lateral Incisor with a C-shaped Canal Using Cone-Beam Compu
+      stored: 'Author information: (1)Dental Materials Research Center, Department of Endodontics, Dental School, Mashhad University of Medical Sciences, Mashhad, Ir'
+  [affiliation_block] abstract_cache 20889058 len=587
+      title: Atypical extraction of maxillary central incisors.
+      stored: 'Author information: (1)Professor and head, Department of Orthodontics, Bauru Dental School, University of São Paulo, Bauru, São Paulo, Brazil. Electro'
+  [affiliation_block] abstract_cache 31550789 len=233
+      title: [Microsurgical endodontic retreatment of a left maxillary first molar with a separated file: a case report].
+      stored: 'Author information: (1)Department of General Dentistry, Capital Medical University School of Stomatology, Beijing 100006, China. (2)Department of Endo'
+  [affiliation_block] abstract_cache 33262877 len=766
+      title: Treatment of apicomarginal defect with periapical surgery: A case report.
+      stored: 'Author information: (1)DDS, PhD. Assistant Professor, Oral Surgery Unit, Department of Stomatology, Faculty of Medicine and Dentistry, University of V'
+  [affiliation_block] abstract_cache 30249737 len=372
+      title: Management of C-shaped root canal configuration in mandibular second molar.
+      stored: 'Author information: (1)Conservative Dentistry and Endodontics, Army Dental Corps, Hyderabad, Telangana, India. (2)Department of Conservative Dentistry'
+  [affiliation_block] abstract_cache 38645605 len=393
+      title: Bilateral dens evaginatus and associated cystic pathology: An unusual case report.
+      stored: 'Author information: (1)Herman Ostrow School of Dentistry University of Southern California Los Angeles California USA. (2)Division of Oral and Maxillo'
+  [affiliation_block] abstract_cache 35152655 len=216
+      title: [Conservative management of Oehlers type Ⅲ dens invaginatus in maxillary lateral incisors with periapical peri
+      stored: 'Author information: (1)Department of Conservative and Endodontic Dentistry, Xiangya School and Hospital of Stomatology, Central South University & Hun'
+  [foreign_language] abstract_cache 26465016 len=1053
+      title: [Endodontics in motion: new concepts, materials and techniques 3. The role of irrigants during root canal trea
+      stored: 'Publisher: Het doel van wortelkanaalirrigatie is het van de wortelkanaalwand en uit het wortelkanaalsysteem chemisch oplossen of verstoren en het mech'
+  [affiliation_block] abstract_cache 34890824 len=755
+      title: Human dental pulp stem cells and hormesis.
+      stored: 'Author information: (1)Department of Environmental Health Sciences, University of Massachusetts, Morrill I, N344, Amherst, MA 01003, USA. Electronic a'
+  [affiliation_block] abstract_cache 37511210 len=304
+      title: Engineering the Future of Dental Health: Exploring Molecular Advancements in Dental Pulp Regeneration.
+      stored: 'Author information: (1)Department of Conservative Dentistry and Periodontology, University Hospital Regensburg, Franz-Josef-Strauß-Allee 11, D-93093 R'
+  [foreign_language] abstract_cache 39376145 len=633
+      title: [Minimal intervention in pulpal and periapical pathology].
+      stored: 'Publisher: Het resultaat van een wortelkanaalbehandeling in geval van pulpitis en parodontitis apicalis is erg gunstig. De belangrijkste uitkomstmaat '
+  [affiliation_block] abstract_cache 39343921 len=1014
+      title: In reply to the letter to the editor regarding "Clinical outcomes of teeth adjacent to the site of mandibuloto
+      stored: 'Author information: (1)Head and Neck Department, School of Dentistry, Fondazione Policlinico Universitario A. Gemelli-IRCCS, Università Cattolica del '
+  [foreign_language] abstract_cache 35262549 len=1106
+      title: Management of periapical lesion with persistent exsudate.
+      stored: 'Publisher: Este relato de caso descreve o tratamento e acompanhamento de um molar inferior em uma jovem de 18 anos com cisto periapical. Assim, torna-'
+  [foreign_language] abstract_cache 39034542 len=1602
+      title: Traditional Versus Advanced Pulp Capping Materials in Primary Teeth.
+      stored: 'Publisher: RésuméDans les situations où une dégénérescence pulpaire et des lésions carieuses peuvent coexister, la thérapie pulpaire est une méthode r'
+  [affiliation_block] abstract_cache 25987383 len=277
+      title: MTA, Formocresol, and Ferric Sulfate Have Significantly Better Clinical and Radiographic Outcomes Than Calcium
+      stored: 'Author information: (1)Diplomat, American Board of Pediatric Dentistry, Assistant Professor and Full Time Faculty, Advanced Specialty Education Progra'
+  [foreign_language] abstract_cache 28139587 len=1686
+      title: [The use of self-adapting system files (SAF) for controlling microbial biofilms of root canals in the treatmen
+      stored: 'Publisher: Цель данного исследования - проведение клинико-лабораторного обоснования и оценки эффективности эндодонтической обработки корневых каналов '
+  [affiliation_block] abstract_cache 39991247 len=1238
+      title: Current trends and research advances on the application of TiO(2) nanoparticles in dentistry: How far are we f
+      stored: 'Author information: (1)School of Materials and Mineral Resources Engineering, Universiti Sains Malaysia, Engineering Campus, Nibong Tebal, 14300, Pena'
+  [affiliation_block] abstract_cache 35332010 len=523
+      title: Surgical enucleation of radicular cyst in endodontically treated primary mandibular molar.
+      stored: 'Author information: (1)Consultant Pediatric and Preventive Dentist, Mumbai, India. (2)Department of Pediatric and Preventive Dentistry, Dr DY Patil De'
+  [affiliation_block] abstract_cache 39028074 len=617
+      title: Endodontic microsurgery and prosthodontic treatment of a permanent anterior concrescence: A case report.
+      stored: 'Author information: (1)Department of Endodontic Dentistry, Hefei Stomatological Clinic College, Anhui Medical University and Hefei Stomatological Hosp'
+  [affiliation_block] abstract_cache 30589016 len=304
+      title: Radicular cyst associated with primary molar: Surgical intervention and space management.
+      stored: 'Author information: (1)Department of Pediatric Dentistry, Gokuldham Medical Center, Mumbai, India. (2)Department of Pediatric and Preventive Dentistry'
+  [affiliation_block] abstract_cache 26884781 len=608
+      title: Regenerative Endodontic Treatment: Report of Two Cases with Different Clinical Management and Outcomes.
+      stored: 'Author information: (1)Assistant Professor, Dental Research Center, Dentistry Research Institute, Tehran University of Medical Sciences, Tehran, Iran;'
+  [affiliation_block] abstract_cache 38595433 len=734
+      title: Lesion Sterilization Tissue Repair: A Review.
+      stored: 'Author information: (1)Department of Orthodontics, Peoples Dental Academy, Deemed University, Bhanpur, Bhopal, Madhya Pradesh, India. (2)BDS, Manipal '
+  [affiliation_block] abstract_cache 39501922 len=250
+      title: Pulpitis of the fingers, it is not always acrylates!
+      stored: 'Author information: (1)Department of Dermatology, Montpellier University Hospital and Montpellier University, Montpellier, France. (2)Department of Oc'
+  [affiliation_block] abstract_cache 38036351 len=451
+      title: A microscopic and ultrasonic approach to manage separated files and calcified root canals in the first mandibu
+      stored: 'Author information: (1)Department of Stomatology, Affiliated Hospital of Jining Medical University, Jining, China. (2)Division of Endodontics, Departm'
+  [affiliation_block] abstract_cache 26485192 len=846
+      title: First case of infectious endocarditis caused by Parvimonas micra.
+      stored: 'Author information: (1)Division of Infectious Diseases and Geographic Medicine, Stanford University School of Medicine, 300 Pasteur Dr, Lane Building '
+  [affiliation_block] abstract_cache 36863567 len=2230
+      title: Assessment of the Prevalence of Middle Mesial Canal in Mandibular First Molar: A Multinational Cross-sectional
+      stored: 'Author information: (1)Department of Endodontics, Nigde Omer Halisdemir University, Niğde, Turkey. (2)Department of Oral Radiology, Faculty of Dentist'
+  [affiliation_block] abstract_cache 37495445 len=3176
+      title: Sickle cell disease: Contributing factors and radiological assessments.
+      stored: 'Author information: (1)Associate Professor, Director Oral Diagnosis and Radiology, Howard University College of Dentistry, Howard University College o'
+  [affiliation_block] abstract_cache 34848251 len=2148
+      title: Worldwide Assessment of the Mandibular First Molar Second Distal Root and Root Canal: A Cross-sectional Study 
+      stored: 'Author information: (1)Department of Endodontics, Faculdade de Medicina Dentária, Universidade de Lisboa, Lisbon, Portugal; Instituto de Implantologia'
+  [affiliation_block] abstract_cache 38129212 len=451
+      title: A novel microsurgical technique for treating symptomatic apical periodontitis in maxillary second molar with a
+      stored: 'Author information: (1)Department of Stomatology, Affiliated Hospital of Jining Medical University, Jining, China. (2)Division of Endodontics, Departm'
+  [affiliation_block] abstract_cache 41622922 len=1701
+      title: Consensus-Based Recommendations on Pulp Therapies in Primary and Permanent Teeth: IAPD Porto Forum.
+      stored: 'Author information: (1)Department of Orthodontics and Pediatric Dentistry, University of Maryland, School of Dentistry, Baltimore, Maryland, USA. (2)S'
+  [affiliation_block] abstract_cache 25884026 len=393
+      title: Oral tissues interactions with lights and matters.
+      stored: 'Author information: (1)Department of Dental Sciences, Faculty of Medicine, University of Liege, Liege, Belgium. (2)Department of Oral and Maxillofacia'
+  [foreign_language] abstract_cache 40231775 len=2012
+      title: Comparative Effectiveness of Paracetamol, Ibuprofen, and their Combination in Managing Post-Endodontic Treatme
+      stored: 'Publisher: CONTEXTE: Bien que le traitement endodontique soit destiné à éliminer la douleur à long terme, une douleur après ce traitement est couramme'
+  [affiliation_block] abstract_cache 34555534 len=497
+      title: The use of antimicrobial photodynamic therapy in the successful management of a nonsurgical complex type II De
+      stored: 'Author information: (1)Department of Dentistry, Pontifícia Universidade Católica de Minas Gerais, Belo Horizonte, Minas Gerais, Brazil. (2)School of M'
+  [affiliation_block] abstract_cache 30051321 len=2082
+      title: Dental Stem Cells and Tooth Regeneration.
+      stored: "Author information: (1)Department of Stomatology, Nanjing General Hospital of Nanjing Military Command, Nanjing, Jiangsu, People's Republic of China. "
+  [foreign_language] abstract_cache 31778493 len=1180
+      title: Economic crisis, austerity and its effects on the financing of oral health and access to public and private se
+      stored: 'Publisher: O presente estudo analisou os efeitos da austeridade e crise econômica sobre o financiamento da saúde bucal, oferta e utilização de serviço'
+  [foreign_language] abstract_cache 41379411 len=1664
+      title: [Clinical outcomes of patients following apical surgery with retrograde root-end filling using two different m
+      stored: 'Publisher: ОБОСНОВАНИЕ: В ряде клинических случаев при невозможности либо неэффективности ортоградного пломбирования хронического апикального периодон'
+  [foreign_language] abstract_cache 42044281 len=1163
+      title: [Clinical prospects of passive ultrasonic disinfection in endodontic practice].
+      stored: 'Publisher: Проведен анализ литературы по клинической значимости пассивной ультразвуковой ирригации (passive ultrasonic irrigation, PUI) как метода пов'
+  [foreign_language] abstract_cache 39862396 len=2199
+      title: Evaluation of Biodentine® and Calcium Hydroxide in the Formation of Dentin Bridge in Deep Carious Lesions.
+      stored: "Publisher: CONTEXTE: Le recouvrement indirect de la pulpe est la principale modalité de traitement de la pulpite réversible. OBJECTIF: Évaluer l'effic"
+  [foreign_language] abstract_cache 35015390 len=1089
+      title: [The unresolved contest between MTA and IRM as apical barrier material in apicoectomies. A retrospective cohor
+      stored: 'Publisher: Wanneer endodontische behandeling van een periapicale ontsteking niet afdoende is, kan als vervolgbehandeling de apexresectie verricht word'
+  [affiliation_block] abstract_cache 35090556 len=1291
+      title: A new direction in managing avulsed teeth: stem cell-based de novo PDL regeneration.
+      stored: 'Author information: (1)Department of Bioscience Research, College of Dentistry, University of Tennessee Health Science Center, Memphis, TN, USA. (2)De'
+  [affiliation_block] abstract_cache 40532949 len=1500
+      title: Feasibility and Clinical Efficacy of Minimally Invasive Straight-Incision Endodontic Microsurgery Guided by 3-
+      stored: 'Author information: (1)Department of Endodontics, School and Hospital of Stomatology, Guangdong Engineering Research Center of Oral Restoration and Re'
+  [affiliation_block] abstract_cache 38007432 len=1261
+      title: Clinical application of calcium silicate-based bioceramics in endodontics.
+      stored: 'Author information: (1)Department of Stomatology, Union Hospital, Tongji Medical College, Huazhong University of Science and Technology, Wuhan, 430022'
+  [affiliation_block] abstract_cache 33444786 len=506
+      title: The use of antimicrobial photodynamic therapy in the successful management of an invasive cervical resorption 
+      stored: 'Author information: (1)Department of Restorative Dentistry, Faculty of Dentistry, Universidade Federal de Minas Gerais, Belo Horizonte, Minas Gerais, '
+  [affiliation_block] abstract_cache 40889700 len=1023
+      title: Managing Perforating Internal Root Resorption in Mature Incisor with Laser-assisted Regenerative Endodontic Pr
+      stored: 'Author information: (1)Fujian Key Laboratory of Oral Diseases & Fujian Provincial Engineering Research Center of Oral Biomaterial & Stomatology Key La'
+  [affiliation_block] abstract_cache 39743567 len=6304
+      title: Expert consensus on apical microsurgery.
+      stored: 'Author information: (1)State Key Laboratory of Oral & Maxillofacial Reconstruction and Regeneration, National Clinical Research Center for Oral Diseas'
+  [affiliation_block] abstract_cache 28174373 len=638
+      title: Lasers in Apicoectomy: A Brief Review.
+      stored: 'Author information: (1)Iranian Center for Endodontic Research, Research Institute of Dental Sciences, Shahid Beheshti University of Medical Sciences, '
+  [affiliation_block] abstract_cache 35018808 len=318
+      title: Acupuncture for the reduction of post-operative pain in a patient with symptomatic irreversible pulpitis: a ca
+      stored: 'Author information: (1)Department of Chinese Medicine, Center for Complementary and Alternative Medicine, International Medical University, Bukit Jali'
+  [affiliation_block] abstract_cache 31277917 len=714
+      title: Computer-aided design-guided endodontic microsurgery for a mandibular molar with hypercementosis.
+      stored: 'Author information: (1)Division of Endodontics and Periodontology, Department of Stomatology, Taipei Veterans General Hospital, Taipei, Taiwan. (2)Div'
+  [affiliation_block] abstract_cache 32781260 len=622
+      title: Antimicrobial photodynamic therapy and guided endodontics: A case report.
+      stored: 'Author information: (1)Department of Restorative Dentistry, Faculty of Dentistry, Universidade Federal de Minas Gerais, Belo Horizonte, Minas Gerais, '
+  [affiliation_block] abstract_cache 35629501 len=278
+      title: Future Trends in Endodontics: How Could Materials Increase the Long-Term Outcome of Root Canal Therapies?
+      stored: 'Author information: (1)Department of Oral and Maxillo-Facial Sciences, Sapienza, University of Rome, 00161 Rome, Italy. (2)Department of Maxillofacial'
+  [affiliation_block] abstract_cache 40410308 len=2985
+      title: Multinational cross-sectional study and meta-analysis on radicular grooves, C-shaped canals, and taurodontism 
+      stored: 'Author information: (1)Department of Endodontics, Recep Tayyip Erdogan University, Rize, Turkey. (2)Department of Oral Radiology, Faculty of Dentistry'
+  [foreign_language] abstract_cache 24581189 len=2652
+      title: [Diabetes mellitus and its influence on the success of endodontic treatment: a retrospective clinical study].
+      stored: 'Publisher: Introdução: A diabetes mellitus é uma doença endócrina onde estão envolvidas as hormonas produzidas pelos ilhéus de Langerhans. A diabetes '
+  [foreign_language] abstract_cache 39436251 len=626
+      title: [Cellular engineering in periodontology].
+      stored: 'Publisher: Представлен обзор различных приемов клеточной инженерии, разрабатываемых для современной консервативной и реконструктивной пародонтологии. '
+  [foreign_language] abstract_cache 39484795 len=1533
+      title: Microtomographic and histological evaluation of two bioceramics as pulp capping agents in vivo.
+      stored: 'Publisher: Mantener la vitalidad pulpar y su función es una de las prioridades de los medicamentos utilizados en la terapia pulpar con la finalidad de'
+  [affiliation_block] abstract_cache 26920931 len=1453
+      title: Rare Root Canal Configuration of Bilateral Maxillary Second Molar Using Cone-beam Computed Tomographic Scannin
+      stored: 'Author information: (1)Department of Operative Dentistry and Endodontics, School and Hospital of Stomatology, Wuhan University, Wuhan, China; State Ke'
+  [foreign_language] abstract_cache 40014817 len=1777
+      title: Twelve-month healing rates after endodontic therapy with foraminal cleaning using 2% chlorhexidine in mandibul
+      stored: 'Publisher: O sucesso do tratamento endodôntico depende da desinfecção eficaz do sistema de canais radiculares e há uma abundância de protocolos de tra'
+  [affiliation_block] abstract_cache 38180467 len=1513
+      title: Clinical Comparison of Three Indirect Pulp Capping Restorative Protocols: A Randomized Controlled Prospective 
+      stored: 'Author information: (1)*Adriana Semprum-Clavier, DDS, MS, clinical associate professor, Department of Restorative Dentistry, College of Dentistry, Uni'
+  [foreign_language] abstract_cache 26019392 len=1580
+      title: Maxillary fungus ball: zinc-oxide endodontic materials as a risk factor.
+      stored: "Publisher: L'obiettivo di questo studio è stato dimostrare la correlazione tra il trattamento endodontico su denti mascellari antrali e il Fungus Ball"
+  [affiliation_block] abstract_cache 32771643 len=654
+      title: First report of hypermucoviscous Klebsiella variicola subsp. variicola causing primary endodontic infection.
+      stored: 'Author information: (1)Postgraduate Program in Environmental Technology, University of Ribeirão Preto, Ribeirão Preto, SP, Brazil. (2)Postgraduate Pro'
+  [affiliation_block] abstract_cache 36011794 len=1187
+      title: Evaluation of Root Anatomy and Canal Configuration of Human Permanent Maxillary First Molar Using Cone-Beam Co
+      stored: 'Author information: (1)Department of Conservative Dentistry & Endodontics, Dr. D.Y. Patil Dental College and Hospital, Dr. D.Y. Patil Vidyapeeth, Pimp'
+  [affiliation_block] abstract_cache 24583892 len=256
+      title: Persistent pain after endodontic therapy.
+      stored: 'Author information: (1)Dr. Khan is an assistant professor, Department of Endodontics and the Regional Center for Neurosensory Disorders, University of'
+  [affiliation_block] abstract_cache 33936681 len=355
+      title: Management of primary molars with irreversible pulpitis employing tampon pulpotomy: Report of three cases with
+      stored: 'Author information: (1)Iranian Center for Endodontic Research Research Institute of Dental Sciences Shahid Beheshti University of Medical Sciences Teh'
+  [affiliation_block] abstract_cache 40754667 len=1962
+      title: Zirconia Preformed Paediatric Crown Versus Stainless Steel Crown in Primary Molars: A Randomized Controlled Sp
+      stored: "Author information: (1)Côte d'Azur University, Faculty of Dental Surgery-Odontology, Paediatric Dentistry, Centre Hospitalier Universitaire de Nice, O"
+  [foreign_language] abstract_cache 31206571 len=2019
+      title: Evaluation of 3Mix-MP and pulpectomies in non-vital primary molars.
+      stored: 'Publisher: Las pulpectomías en molares primarios se ven dificultadas frecuentemente por las características anatómicas y fisiológicas de éstos y por l'
+  [affiliation_block] abstract_cache 26880861 len=660
+      title: Inflammation of the Dental Pulp.
+      stored: 'Author information: (1)Department of Conservative Dentistry, College of Dentistry, Kyung Hee University, Seoul 02447, Republic of Korea. (2)The State '
+  [affiliation_block] abstract_cache 28776717 len=746
+      title: Minimally invasive endodontics: a new diagnostic system for assessing pulpitis and subsequent treatment needs.
+      stored: 'Author information: (1)Center of Dentistry and Oral Hygiene, University Medical Center Groningen, Groningen, The Netherlands. (2)Division of Restorati'
+  [affiliation_block] abstract_cache 34240297 len=1541
+      title: Evolution of endodontic medicine: a critical narrative review of the interrelationship between endodontics and
+      stored: 'Author information: (1)Department of Preventive and Restorative Dentistry, Endodontic Section, School of Dentistry, São Paulo State University (Unesp)'
+  [affiliation_block] abstract_cache 29078364 len=1731
+      title: Clinical validation of a nanodiamond-embedded thermoplastic biomaterial.
+      stored: 'Author information: (1)Division of Oral Biology and Medicine, School of Dentistry, University of California, Los Angeles, CA 90095. (2)The Jane and Je'
+  [affiliation_block] abstract_cache 39094974 len=1903
+      title: An explainable predictive model of direct pulp capping in carious mature permanent teeth.
+      stored: 'Author information: (1)Department of Cariology and Endodontology, Peking University School and Hospital of Stomatology & National Center for Stomatolo'
+  [affiliation_block] abstract_cache 39916892 len=609
+      title: Editorial: Global excellence in dental medicine: South America.
+      stored: 'Author information: (1)Departamento de Odontologia, Faculdade de Ciências de Saúde, Universidade de Brasília, Brasília, Brazil. (2)Pós-graduação em Ci'
+  [affiliation_block] abstract_cache 19505760 len=217
+      title: Human dental pulp as a source of native functional nociceptor pharmacology.
+      stored: 'Author information: (1)Neurosciences Centre of Excellence for Drug Discovery, Pain and Neuroexcitability Discovery Performance Unit, GlaxoSmithKline, '
+  [affiliation_block] abstract_cache 37244714 len=480
+      title: An Adolescent Patient Reports to Dental Office for Pain in Relation to Mandibular Molar with an Incidental Pal
+      stored: 'Author information: (1)Department of Oral Medicine, University of Pennsylvania School of Dental Medicine, 240 South 40th Street, Philadelphia, PA 1910'
+  [affiliation_block] abstract_cache 41500761 len=3993
+      title: American Dental Association and American Academy of Oral and Maxillofacial Radiology patient selection for den
+      stored: 'Author information: (1)Department of Periodontics and Oral Medicine, School of Dentistry, University of Michigan, Ann Arbor, MI. Electronic address: b'
+  [affiliation_block] abstract_cache 33901542 len=2150
+      title: Worldwide Prevalence of a Lingual Canal in Mandibular Premolars: A Multicenter Cross-sectional Study with Meta
+      stored: 'Author information: (1)Department of Endodontics, Faculdade de Medicina Dentária, Universidade de Lisboa, Lisbon, Portugal; Instituto de Implantologia'
+  [foreign_language] abstract_cache 31999678 len=1435
+      title: Selective removal compared to complete removal for deep carious lesions.
+      stored: 'Publisher: INTRODUCCIÓN: La caries dental ha sido convencionalmente manejada mediante la remoción no selectiva del tejido carioso (remoción total), si'
+  [foreign_language] abstract_cache 35766713 len=1849
+      title: Postoperative pain after endodontic reintervention: a randomized clinical trial.
+      stored: 'Publisher: O objetivo deste ensaio clínico randomizado foi comparar a prevalência e a intensidade da dor pós-operatória em casos de retratamento endod'
+  [foreign_language] abstract_cache 32621599 len=1471
+      title: Decontamination of Gutta-percha Cones employed in Endodontics.
+      stored: 'Publisher: Os cones de guta-percha utilizados no tratamento endodôntico são produzidos em condições assépticas e possuem óxido de zinco em sua composi'
+  [foreign_language] abstract_cache 33528958 len=2087
+      title: [Evaluation of the effectiveness of the compression method for infiltration anesthesia of the mandibular molar
+      stored: 'Publisher: ЦЕЛЬ ИССЛЕДОВАНИЯ: Изучение глубины аналгезии и динамики электровозбудимости пульпы зуба при проведении местной анестезии без компрессии и '
+  [foreign_language] abstract_cache 40495427 len=1531
+      title: Clinical and Radiographic Evaluation of Biodentine and Mineral Trioxide Aggregate as Indirect Pulp Capping Age
+      stored: 'Publisher: Résumé Contexte:Le traitement pulpaire indirect (TPI) est une procédure de thérapie pulpaire vitale qui aide à préserver la vitalité de la '
+  [affiliation_block] abstract_cache 31339472 len=363
+      title: Relevance of periodic evaluation of endodontically treated primary teeth.
+      stored: 'Author information: (1)a Pediatric Dentistry, RAK College of Dental Sciences, RAKMHSU , Ras Alkhaimah , UAE. (2)b Orthodontics, RAK College of Dental '
+  [affiliation_block] abstract_cache 37393948 len=2245
+      title: Assessment of the Prevalence of Radix Entomolaris and Distolingual Canal in Mandibular First Molars in 15 Coun
+      stored: 'Author information: (1)Department of Endodontics, Nigde Omer Halisdemir University, Niğde, Turkey. (2)Faculty of Dentistry, Department of Oral Radiolo'
