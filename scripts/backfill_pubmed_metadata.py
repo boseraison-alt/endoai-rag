@@ -212,6 +212,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--apply", action="store_true", help="write changes (default: dry run)")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--since-days", type=int, default=0,
+                    help="only papers added in the last N days. Live write-back "
+                         "is the only thing that adds rows between ingests, so "
+                         "this is how a periodic run backfills the new arrivals "
+                         "without re-fetching the whole 2,350-row library.")
     ap.add_argument("--only-superseded", action="store_true",
                     help="write ONLY the superseded_by column, leaving level_key / "
                          "score / COI columns untouched (safe alongside a "
@@ -223,16 +228,32 @@ def main() -> int:
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     try:
-        cur.execute("""
-            SELECT pmid, title, year, journal, abstract, level_key, is_curated
-            FROM endo_papers_rag
-            WHERE pmid ~ '^[0-9]+$'
-            ORDER BY pmid;
-        """)
+        # `added_at` can be NULL on rows that predate the column. A window
+        # query must not silently include them — "we don't know when this
+        # arrived" is not "it arrived recently" — so the filter is on the
+        # timestamp itself and NULLs fall out.
+        if args.since_days:
+            cur.execute("""
+                SELECT pmid, title, year, journal, abstract, level_key, is_curated
+                FROM endo_papers_rag
+                WHERE pmid ~ '^[0-9]+$'
+                  AND added_at IS NOT NULL
+                  AND added_at >= NOW() - make_interval(days => %s)
+                ORDER BY pmid;
+            """, (args.since_days,))
+        else:
+            cur.execute("""
+                SELECT pmid, title, year, journal, abstract, level_key, is_curated
+                FROM endo_papers_rag
+                WHERE pmid ~ '^[0-9]+$'
+                ORDER BY pmid;
+            """)
         rows = cur.fetchall()
         if args.limit:
             rows = rows[:args.limit]
-        print(f"[pubmed] {len(rows)} papers with numeric PMIDs\n")
+        window = (f" added in the last {args.since_days} day(s)"
+                  if args.since_days else "")
+        print(f"[pubmed] {len(rows)} papers with numeric PMIDs{window}\n")
         if not rows:
             return 0
 
