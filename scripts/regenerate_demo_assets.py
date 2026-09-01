@@ -78,6 +78,11 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--decks", action="store_true",
                     help="also build the laser web deck and pptx")
+    ap.add_argument("--reviews-only", action="store_true",
+                    help="skip the curriculum. Re-warming after a change that "
+                         "only touches Review saves $1.40 and eight minutes, "
+                         "and leaves the cached curriculum exactly as the last "
+                         "run left it — which is what the demo shows.")
     ap.add_argument("--out", default=None, help="write the timing JSON here")
     args = ap.parse_args()
 
@@ -93,14 +98,16 @@ def main() -> int:
         results["review"].append({"question": q, **{k: got[k] for k in
                                   ("wall_s", "cost", "papers", "chars")}})
 
-    print(f"\n=== COLD  [learn] {LEARN_QUESTION}")
-    learn = ask(client, LEARN_QUESTION, "learn")
-    print(f"    {learn['wall_s']}s  ${learn['cost']:.4f}  {learn['papers']} papers")
-    results["learn"] = {"question": LEARN_QUESTION,
-                        **{k: learn[k] for k in ("wall_s", "cost", "papers", "chars")}}
+    learn = None
+    if not args.reviews_only:
+        print(f"\n=== COLD  [learn] {LEARN_QUESTION}")
+        learn = ask(client, LEARN_QUESTION, "learn")
+        print(f"    {learn['wall_s']}s  ${learn['cost']:.4f}  {learn['papers']} papers")
+        results["learn"] = {"question": LEARN_QUESTION,
+                            **{k: learn[k] for k in ("wall_s", "cost", "papers", "chars")}}
 
     # Second pass: what the demo actually shows.
-    for q in REVIEW_QUESTIONS + [LEARN_QUESTION]:
+    for q in REVIEW_QUESTIONS + ([] if args.reviews_only else [LEARN_QUESTION]):
         mode = "learn" if q == LEARN_QUESTION else "review"
         got = ask(client, q, mode)
         served = got["cost"] == 0.0
@@ -109,7 +116,10 @@ def main() -> int:
         results["cached"].append({"question": q, "wall_s": got["wall_s"],
                                   "from_cache": served})
 
-    if args.decks:
+    if args.decks and learn is None:
+        print("\n=== EXPORTS skipped: --decks needs the curriculum, and "
+              "--reviews-only did not build one")
+    elif args.decks:
         for kind, route in (("webdeck", "/generate_webdeck"),
                             ("pptx", "/generate_slides")):
             print(f"\n=== EXPORT {kind} for the laser curriculum")
@@ -126,7 +136,8 @@ def main() -> int:
                   f"{st.get('file_path')}")
             results["exports"][kind] = st
 
-    total = sum(x["cost"] for x in results["review"]) + results["learn"]["cost"]
+    total = (sum(x["cost"] for x in results["review"])
+             + ((results["learn"] or {}).get("cost") or 0.0))
     print(f"\n[demo] total cold cost ${total:.2f}")
     if args.out:
         Path(args.out).write_text(json.dumps(results, indent=2), encoding="utf-8")
