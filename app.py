@@ -2497,12 +2497,85 @@ def _find_narration_audio_id(question: str, length_minutes: int) -> str:
     return ""
 
 
+def build_deck_narration_sections(slides: list) -> list:
+    """One narration section per SPEC slide, in spec order.
+
+    `webdeck.narration.load_narration` arms auto-advance only when the
+    sidecar's segment count equals the spec slide count, so the 1:1 is the
+    whole point and a dropped slide silently disarms it.
+    `narration.synthesize_lecture` discards a section whose text is empty,
+    which is why a slide with no speaker notes falls back to its title and
+    then to a bare placeholder: a slide the deck SHOWS must be spoken for, or
+    the audio and the slides drift by one from that point on.
+    """
+    out = []
+    for i, slide in enumerate(slides or []):
+        title = (slide.get("title") or "").replace("\n", " ").strip()
+        text  = (slide.get("speaker_notes") or "").strip()
+        if not text:
+            text = title or f"Slide {i + 1}."
+        out.append({"title": title or f"Slide {i + 1}", "text": text})
+    return out
+
+
+def _build_synced_narration(audio_id: str, slides: list, question: str,
+                            length_minutes: int, voice: str = None) -> str:
+    """Record narration cut per spec slide. Returns the audio_id, or "".
+
+    Written under the DECK's own id rather than the audio export's: this
+    soundtrack is cut to this spec and is meaningless against any other, and
+    `find_sidecar` refuses to guess which render belongs to which answer.
+
+    Every failure returns "" and the deck falls back to whatever unsynced
+    render exists — §3.3's "graceful without audio". A deck that builds
+    without a soundtrack beats an export that dies.
+    """
+    sections = build_deck_narration_sections(slides)
+    if not sections:
+        return ""
+    out_path = os.path.join(MEDIA_DIR, f"{audio_id}.mp3")
+    try:
+        os.makedirs(MEDIA_DIR, exist_ok=True)
+        summary = narration.synthesize_lecture(
+            "", out_path, audio_id=audio_id,
+            voice=voice, sections=sections, style="deck",
+            function_name="run_generate_webdeck",
+            media_dir=MEDIA_DIR, per_section=True)
+    except Exception as e:
+        print(f"  [webdeck] per-slide narration failed ({e}); "
+              f"falling back to any existing render")
+        return ""
+
+    tmap = summary.get("timestamp_map") or {}
+    got  = len(tmap.get("slides") or [])
+    if got != len(sections):
+        # Not a warning: a map that does not describe these slides is exactly
+        # what auto-advance must not be armed on, and using it would advance
+        # the deck to the wrong slide for the sentence being spoken.
+        print(f"  [webdeck] per-slide map has {got} segment(s) for "
+              f"{len(sections)} slide(s) — not using it")
+        return ""
+    print(f"  [webdeck] narration cut per slide: {got} segment(s), "
+          f"{summary.get('duration_seconds', 0):.1f}s, "
+          f"${summary.get('cost_usd', 0):.4f}")
+    return audio_id
+
+
 @app.route("/generate_webdeck", methods=["POST"])
 def generate_webdeck_endpoint():
     data           = request.json or {}
     job_id         = data.get("job_id", "")
     length_minutes = int(data.get("length_minutes", 10))
     length_minutes = max(5, min(60, length_minutes))
+    # "auto"      — reuse a synced render; otherwise record one per slide.
+    # "reuse"     — the pre-2026-09-01 behaviour: attach whatever render exists
+    #               for this question and leave auto-advance off if it does not
+    #               match. Costs nothing.
+    # "per_slide" — always record, even over a render that already matches.
+    # "off"       — no audio at all.
+    narrate = str(data.get("narrate") or "auto").lower()
+    if narrate not in ("auto", "reuse", "per_slide", "off"):
+        narrate = "auto"
 
     try:
         src_question, src_answer = _resolve_export_source(data)
@@ -2534,7 +2607,7 @@ def generate_webdeck_endpoint():
     thread = threading.Thread(
         target=run_generate_webdeck,
         args=(audio_id, src_answer, src_question, length_minutes, papers,
-              data.get("audio_id") or ""),
+              data.get("audio_id") or "", narrate, data.get("voice") or ""),
         daemon=True,
     )
     thread.start()
@@ -2543,7 +2616,8 @@ def generate_webdeck_endpoint():
 
 def run_generate_webdeck(audio_id: str, answer: str, question: str,
                          length_minutes: int, papers: list,
-                         narration_audio_id: str = ""):
+                         narration_audio_id: str = "",
+                         narrate: str = "auto", voice: str = ""):
     try:
         import slide_spec_cache
         from webdeck import build_web_deck, load_narration
@@ -2573,8 +2647,34 @@ def run_generate_webdeck(audio_id: str, answer: str, question: str,
         # §3.3 — attach an existing narration render for the SAME answer. The
         # sidecar carries no answer identity of its own, so the link is the
         # media index: same question, same length, most recent audio render.
-        narr_id = narration_audio_id or _find_narration_audio_id(
-            question, length_minutes)
+        narr_id = "" if narrate == "off" else (
+            narration_audio_id or _find_narration_audio_id(
+                question, length_minutes))
+
+        # The 13-vs-34 mismatch, closed. A lecture render is cut on the
+        # SCRIPT's own structure — 13 sections for a 10-minute laser answer —
+        # while this spec has 25 slides that the §1.3 body budget renders as
+        # 34 sections. Those 13 boundaries describe nothing on screen, so
+        # auto-advance stayed off and the deck said so. Recording the
+        # narration against THIS spec, one segment per slide, is the only
+        # thing that can arm it; nothing derivable from the lecture sidecar
+        # can, because `char_start` indexes the spoken script and not the
+        # answer.
+        n_spec = len(slides)
+        if narrate in ("auto", "per_slide") and narration.openai_available():
+            existing = load_narration(MEDIA_DIR, narr_id,
+                                      spec_slide_count=n_spec) if narr_id else None
+            already_synced = bool((existing or {}).get("synced"))
+            if narrate == "per_slide" or not already_synced:
+                with audio_jobs_lock:
+                    audio_jobs[audio_id]["status"] = "generating_audio"
+                synced_id = _build_synced_narration(
+                    audio_id, slides, question, length_minutes, voice or None)
+                if synced_id:
+                    narr_id = synced_id
+        elif narrate in ("auto", "per_slide"):
+            print("  [webdeck] no OpenAI TTS backend — keeping the existing "
+                  "render; auto-advance stays off if it does not match")
 
         def _load_narration(spec_slide_count, spec_to_section):
             if not narr_id:

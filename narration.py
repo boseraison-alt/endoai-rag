@@ -229,13 +229,23 @@ def _split_long_text(text: str, limit: int) -> list:
     return parts or [""]
 
 
-def pack_chunks(sections: list, limit: int = CHUNK_CHARS) -> list:
+def pack_chunks(sections: list, limit: int = CHUNK_CHARS,
+                merge: bool = True) -> list:
     """Pack spoken section text into TTS requests on section boundaries.
 
     Packing whole sections into each request (rather than slicing the script
     every `limit` characters) is what makes the timestamp map accurate: each
     request's MP3 is probed individually, so a chunk that holds exactly one
     section gives that section an exact, measured start and end.
+
+    `merge=False` takes that to its conclusion: never put two sections in one
+    request, so EVERY boundary is measured rather than interpolated by
+    character share. That is what a deck needs — the web deck arms
+    auto-advance only when the sidecar has one segment per slide, and a
+    boundary estimated from character count would advance the slide at
+    roughly, not exactly, the sentence that belongs to it. It costs more
+    requests for the same characters, so the bill is unchanged and the wall
+    time is longer.
 
     Returns [{"text": str, "spans": [{"section": i, "chars": n}]}].
     """
@@ -252,9 +262,11 @@ def pack_chunks(sections: list, limit: int = CHUNK_CHARS) -> list:
         text = sec["spoken"]
         if not text.strip():
             continue
-        if len(text) > limit:
+        if len(text) > limit or not merge:
             flush()
-            for piece in _split_long_text(text, limit):
+            pieces = (_split_long_text(text, limit) if len(text) > limit
+                      else [text])
+            for piece in pieces:
                 chunks.append({"text": piece,
                                "spans": [{"section": sec["index"],
                                           "chars": len(piece)}]})
@@ -538,11 +550,20 @@ def synthesize_lecture(script: str, out_path: str, *, audio_id: str,
                        mode: str = "export",
                        function_name: str = "run_generate_audio",
                        media_dir: str = None,
-                       write_sidecar: bool = True) -> dict:
+                       write_sidecar: bool = True,
+                       per_section: bool = False) -> dict:
     """Speak `script` into `out_path` and emit its timestamp map.
 
     `sections` — optional [{"title", "text"}] to pin the map to known slide
     boundaries. Omitted, the script is split on its own structure.
+
+    `per_section` — one TTS request per section, so every boundary in the map
+    is measured rather than interpolated, and the map has exactly one entry
+    per section supplied. This is what makes a sidecar the web deck can
+    auto-advance on: `webdeck.narration.load_narration` arms auto-advance only
+    when the segment count equals the slide count, and refuses to guess
+    otherwise. A caller that wants a per-slide map must therefore pass one
+    section per slide AND set this.
 
     Returns a summary dict: backend, voice, model, duration_seconds,
     characters, cost_usd, timestamp_map, sidecar_path.
@@ -571,7 +592,7 @@ def synthesize_lecture(script: str, out_path: str, *, audio_id: str,
     if not secs:
         raise ValueError("narration script is empty")
 
-    chunks = pack_chunks(secs)
+    chunks = pack_chunks(secs, merge=not per_section)
     total_chars = sum(len(c["text"]) for c in chunks)
 
     backend = ""
