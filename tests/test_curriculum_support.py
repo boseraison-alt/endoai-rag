@@ -442,7 +442,7 @@ class TestEveryModuleCarriesAStatus:
             f"{len(blocks)} status block(s) for {len(SYLLABUS)} modules — a "
             f"module with no block is indistinguishable from one that passed:\n"
             + "\n".join(blocks))
-        assert all("verified" in b for b in blocks), blocks
+        assert all("Citation support: verified" in b for b in blocks), blocks
 
     def test_the_status_sits_inside_the_module_it_describes(self, harness):
         """Not one summary at the bottom — each module's own outcome, in place."""
@@ -524,7 +524,8 @@ class TestSeededUnsupportedClaimIsFlagged:
         """A flag on every module would be a broken check, not a strict one."""
         harness.seeded_module = 1
         answer, _, _ = endo_ai.build_deep_learning_module(QUESTION)
-        assert sum("verified" in b for b in support_blocks(answer)) == 2
+        assert sum("Citation support: verified" in b
+                   for b in support_blocks(answer)) == 2
 
     def test_validate_evidence_mapping_does_not_catch_it(self, harness):
         """Why this check has to exist: the seeded PMID is REAL and RETRIEVED,
@@ -547,7 +548,7 @@ class TestNotAvailableIsExplicit:
 
         blocks = support_blocks(answer)
         assert len(blocks) == len(SYLLABUS)
-        assert all("not available" in b for b in blocks), blocks
+        assert all("Citation support: not available" in b for b in blocks), blocks
         assert "source abstracts unavailable" in answer
         assert not harness.support_payloads, "no judge call should have been made"
         assert not cost_rows(harness.tmp_path, "verify_citation_support")
@@ -558,7 +559,7 @@ class TestNotAvailableIsExplicit:
 
         blocks = support_blocks(answer)
         assert len(blocks) == len(SYLLABUS)
-        assert all("not available" in b for b in blocks), blocks
+        assert all("Citation support: not available" in b for b in blocks), blocks
         assert "disabled by configuration" in answer
 
     def test_a_module_that_was_never_generated_says_so(self, harness, monkeypatch):
@@ -571,8 +572,16 @@ class TestNotAvailableIsExplicit:
         assert "Module not generated" in answer
         blocks = support_blocks(answer)
         assert len(blocks) == len(SYLLABUS)
-        assert all("not available" in b for b in blocks), blocks
+        assert all("Citation support: not available" in b for b in blocks), blocks
         assert "module not generated" in answer
+        # The status travels WITH the gap block, so the post-stitch guarantee
+        # has nothing to restore. If the gap path stopped emitting a status of
+        # its own, the guarantee would paper over it with an appendix instead.
+        assert "## Citation Support by Module" not in answer
+        for mod in SYLLABUS:
+            start = answer.index(f"## Module — {mod['title']}")
+            assert support_blocks(answer[start:start + 1400]), (
+                f"the gap block for '{mod['title']}' carries no status of its own")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -590,7 +599,7 @@ class TestAdvisoryNeverBlocking:
         assert "25 pps" in answer          # module content survived intact
         blocks = support_blocks(answer)
         assert len(blocks) == len(SYLLABUS)
-        assert all("not available" in b for b in blocks), blocks
+        assert all("Citation support: not available" in b for b in blocks), blocks
         assert "check unavailable" in answer
 
     def test_a_flagged_module_is_still_published(self, harness):
