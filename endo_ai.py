@@ -506,10 +506,17 @@ def cost_log_source() -> str:
         return env
     if "pytest" in sys.modules or os.getenv("PYTEST_CURRENT_TEST"):
         return "test"
-    entry = (sys.argv[0] if sys.argv else "") or ""
-    entry = entry.replace("\\", "/").lower()
-    if "/scripts/" in entry or "/eval/" in entry or \
-            entry.endswith("run_eval.py"):
+    # Split into path COMPONENTS rather than substring-matching "/scripts/".
+    # `python scripts/capture_attempt1.py` gives argv[0] = "scripts/..." with
+    # no leading slash, so the substring test missed every script invoked the
+    # ordinary way — and the suite could not catch it, because under pytest the
+    # branch above returns first and the argv branch is never reached. Found by
+    # reading the rows the first script run actually wrote: they said
+    # `product`.
+    entry = ((sys.argv[0] if sys.argv else "") or "").replace("\\", "/").lower()
+    parts = [p for p in entry.split("/") if p]
+    if parts and ("scripts" in parts[:-1] or "eval" in parts[:-1]
+                  or parts[-1] == "run_eval.py"):
         return "script"
     return "product"
 
@@ -3843,11 +3850,13 @@ def _check_recommendation(answer: str) -> dict:
 
     Returns {present, has_citation, names_tier, issues[]}.
     """
-    out = {"present": False, "has_citation": False, "names_tier": False, "issues": []}
+    out = {"present": False, "has_citation": False, "names_tier": False,
+           "text": "", "issues": []}
     for title, body in _split_sections(answer or ""):
         if not title.strip().lower().startswith("clinical recommendation"):
             continue
         out["present"] = True
+        out["text"] = (body or "").strip()
         out["has_citation"] = bool(_PMID_RE.search(body or ""))
         out["names_tier"]   = bool(_TIER_CLAIM_RE.search(body or ""))
         if not out["has_citation"]:
@@ -3961,6 +3970,23 @@ def _log_evidence_mapping(function_name: str, mode: str, attempt: int,
         "gap_sections":        result.get("gap_sections") or [],
         "failure_reason":      result.get("failure_reason"),
     }
+    # The recommendation, in enough detail to diagnose a retry after the fact.
+    # Seven UNTRACEABLE_RECOMMENDATION failures were logged on 2026-09-01, each
+    # costing a full Opus regeneration, and the log said only that the section
+    # had no marker — not what the model actually wrote there, so answering
+    # "was it a citation it could not ground, or a citation it forgot?"
+    # required generating the failures again. The text is what makes the
+    # question answerable from the log.
+    rec = result.get("recommendation") or {}
+    if rec:
+        record["rec"] = {
+            "present":      rec.get("present"),
+            "has_citation": rec.get("has_citation"),
+            "names_tier":   rec.get("names_tier"),
+            # Truncated, because this log is append-only and read by hand. Two
+            # to four sentences is the whole section by construction.
+            "text":         (rec.get("text") or "")[:900],
+        }
     if request_id:
         record["request_id"] = request_id
     try:
@@ -4605,7 +4631,12 @@ Structure every answer exactly like this:
 This section is what the clinician acts on, so it MUST be traceable:
 - State the strength of evidence it rests on, using the literal tier name — e.g. "Based on Level I evidence," / "Cochrane-level evidence supports..." / "Only Level IV evidence addresses this, so treat as provisional:".
 - Carry at least one `[[PMID:N]]` marker on the load-bearing clinical claim. Keep it to the one or two papers the recommendation actually rests on; the full argument belongs in the EVIDENCE SUMMARY below.
-- If the evidence base cannot support a recommendation, say so plainly and name what is missing, still citing the closest available evidence.
+- THE GROUNDING RULE ABOVE APPLIES HERE IN FULL, WITH ONE DIFFERENCE: its third option — writing the sentence with no marker — is NOT available in this section. A recommendation the clinician cannot trace is not a shippable recommendation. Options 1 and 2 remain, and option 2 always terminates: NARROW the recommendation until it states something a paper in the evidence block does state, and cite that paper. A narrower recommendation you can ground beats a broader one you cannot, and both beat a marker you cannot support.
+- IF THE EVIDENCE BASE DOES NOT ADDRESS THE QUESTION, that is a finding, and it is still traceable. Say so plainly, name what is missing, and then cite the evidence base for what it DOES establish that bears on the case — the general principle, the adjacent population, the procedural factor the retrieved papers do cover. Write the guidance you would give from outside the evidence base as explicitly labelled background, never as the marked claim. Worked example of the required shape:
+
+  "The supplied evidence does not address prognosis stratified by crack extent — no review or trial here evaluates cracked teeth. What this evidence base does establish is that single-visit and two-visit protocols heal equivalently in teeth with periapical lesions [[PMID:27905673]], and that outcome tracks lesion size and obturation quality [[PMID:35488883]] — both of which apply when planning treatment on a cracked tooth. Crack-extent-specific prognosis should be confirmed against the cracked-tooth cohort literature, which this search did not return."
+
+  What that example does, and what you must do: it states the gap, it carries markers on the claims it can ground, and it puts the ungrounded clinical guidance where a marker is not implied. What it must never become: a recommendation full of survival percentages with no marker anywhere, on the reasoning that nothing could be cited. If you cannot cite a number, do not give the number.
 
 ---
 

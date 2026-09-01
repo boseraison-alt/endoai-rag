@@ -215,6 +215,30 @@ class TestCostRowsNameTheirSource:
         monkeypatch.setenv("COST_LOG_SOURCE", "prodcut")
         assert endo_ai.cost_log_source() in endo_ai.COST_SOURCES
 
+    @pytest.mark.parametrize("argv0,expected", [
+        ("scripts/capture_attempt1.py",              "script"),
+        (r"scripts\capture_attempt1.py",             "script"),
+        ("C:/Users/x/endo-ai-rag/scripts/rescore.py", "script"),
+        ("eval/run_eval.py",                         "script"),
+        ("run_eval.py",                              "script"),
+        ("app.py",                                   "product"),
+        ("",                                         "product"),
+    ])
+    def test_a_script_is_recognised_however_it_was_invoked(
+            self, argv0, expected, monkeypatch):
+        """`python scripts/x.py` gives argv[0] with NO leading slash, so a
+        substring test for "/scripts/" misses the ordinary invocation — and
+        the rest of this class cannot catch that, because under pytest the
+        detector returns "test" before it ever looks at argv. This is the bug
+        the first real script run exposed by writing rows that said
+        `product`."""
+        monkeypatch.setattr(endo_ai.sys, "argv", [argv0])
+        monkeypatch.delenv("COST_LOG_SOURCE", raising=False)
+        monkeypatch.delenv("PYTEST_CURRENT_TEST", raising=False)
+        monkeypatch.setitem(sys.modules, "pytest", None)
+        monkeypatch.delitem(sys.modules, "pytest")
+        assert endo_ai.cost_log_source() == expected
+
     def test_the_field_is_written(self, tmp_path, monkeypatch):
         monkeypatch.setattr(endo_ai, "_COST_LOG_PATH",
                             str(tmp_path / "cost_log.jsonl"))
