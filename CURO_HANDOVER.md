@@ -10,7 +10,7 @@ auto-compact.
 
 ---
 
-## 1. What Curo is right now (state as of tag `guardrails-v1`)
+## 1. What Curo is right now (state as of tag `case-v2`)
 
 An evidence-graded endodontics assistant: **2,350-paper** curated library (Neon
 Postgres + pgvector) with per-paper provenance (evidence tier incl. in vitro,
@@ -21,11 +21,13 @@ query variance), tier-banded synthesis with a fabrication validator, a
 grounding rule on all three synthesis prompts **reconciled with the
 recommendation-traceability gate**, and a citation-support check on all three
 answer paths that reads the whole abstract and **knows what shape of claim it
-is judging**, streaming answers, Review-mode conversation memory, case
-discussion on the full evidence engine, and five export styles — audio, video,
+is judging**, streaming answers, Review-mode conversation memory, **case
+discussion that tells a diagnostic question from a treatment one and answers
+the first with a ranked, per-candidate-retrieved differential**, and five
+export styles — audio, video,
 slides, podcast and a self-contained reveal.js web deck that auto-advances with
 its own narration — all generated from ONE cached slide-spec in the approved
-dark design. **1,440 tests**, all mutation-checked. **25-case retrieval eval**
+dark design. **1,483 tests**, all mutation-checked. **25-case retrieval eval**
 with a 3-run baseline (`eval/baseline_v6.json`) whose harness measures the
 citation-support flag rate per case, on both routes, and **excludes rows
 written by another process**.
@@ -47,13 +49,29 @@ Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 | longest claim unit on a curriculum | **469 chars**, from 2,403 |
 | abstract excerpt the support judge sees | the whole abstract |
 | retrieval baseline | `eval/baseline_v6.json` — 25 cases x 3 runs, unmoved |
-| tests | **1,440** passing, 39 skipped |
+| tests | **1,483** passing, 44 skipped |
 | **`/health`** | reports the **git hash the process imported**, frozen at import. Check it before trusting any server. |
+| case follow-ups: non-discriminating question rate | **0/20**, from 8/15 = 53% |
+| the same question on the contrast case (68, on alendronate) | **10/10** asked — filtered by relevance, not deleted |
+| diagnostic case answer | **6 candidates, 139 papers, $0.1801** (was 26 papers, $0.0724, no differential) |
+| case eval cases | **2, both passing**, 0 support flags each (`--case-subset`) |
 
 **Which run each rate comes from, because they are not all the same run.**
 The library Review figure is the `grounding-v2` run. **Do not quote 4.3% as
 the library baseline at all**: the same three cases measured 8.2%, 8.9% and
 6.3% across one night, with nothing changed between the first two.
+
+**What changed in `case-v2`.** Read `OVERNIGHT_REPORT_4.md`. A case turn is now
+classified `diagnostic` or `treatment` (failing open to treatment, the measured
+path); a diagnostic turn generates 3-6 candidate CAUSES, retrieves once per
+candidate through the same evidence engine, unions the results, and answers with
+a ranked differential — features for and against each candidate, the cited
+evidence, and a table mapping each discriminating test to the candidates it
+settles — with management last and brief. Candidates with no literature stay in
+the list and say so. The follow-up generator stopped working from a
+treatment-planning checklist: a non-discriminating question in 0 of 20 runs,
+from 8 of 15, while the SAME question is asked in 10 of 10 runs of the
+68-year-old on alendronate. The case path has eval cases for the first time.
 
 **What changed in `guardrails-v1`.** Read `OVERNIGHT_REPORT_3.md` for the whole
 thing. In one paragraph: `/health` now reports the commit the process actually
@@ -122,6 +140,13 @@ last, so the finding was the part that was missing.
     the question, the recommendation states the gap unmarked and cites what the
     evidence base DOES establish. Neither the grounding rule nor
     `_check_recommendation` may be weakened to make a retry go away.
+18. **A diagnostic case turn answers with a differential, and the differential
+    comes first.** "What could the cause be?" is not "what should I do?", and
+    an answer that reaches management before it names a differential has
+    answered a question nobody asked. A candidate with no literature stays in
+    the list and says so — dropping it hides a cause behind the accident of
+    what has been published. The intent router fails open to TREATMENT, which
+    is the measured path.
 
 Recurring bug classes (see `HANDOVER.md`): trusted stored labels, untagged
 PubMed query terms, batch-metadata applied per-paper, fail-open checks that
@@ -136,7 +161,9 @@ actually used.
 (grounding rule, whole-abstract support judge, collapsed-abstract repair,
 web-deck auto-advance, maintenance script) → `guardrails-v1` (`/health` git
 hash, the claim unit, the grounding/traceability reconciliation, `cost_log`
-`source` + `pubmed_audit` pid guard).
+`source` + `pubmed_audit` pid guard) -> `case-v2` (diagnostic vs treatment
+intent, differential-first retrieval, follow-up relevance, the first two case
+eval cases).
 
 Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
@@ -191,11 +218,25 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 - **`ingest_aae_guidelines`'s PubMed harvest is live for the first time.** Its
   abstract fetcher had never returned anything; fixed in `grounding-v2`.
   **Dry-run that script before running it** — nobody has seen what it ingests.
-- **The case path has NO eval cases at all.** `--synthesis-subset` and
-  `--live-subset` contain none, so `ask_case_question` is the one synthesis
-  path whose grounding rule, retry behaviour and support-check outcome are
-  entirely unmeasured. `max_tokens` was raised 2000 → 6000 on a measurement
-  that has never been repeated either. **This is §5's batch.**
+- ~~The case path has NO eval cases at all~~ — **CLOSED (`case-v2`)**. Two
+  cases now, run with `python eval/run_eval.py --case-subset`, and they are a
+  PAIR: the 20-year-old forbids the bisphosphonate follow-up and the
+  68-year-old requires it, so neither can be satisfied by deleting a topic.
+  Both pass with 0 citation-support flags. `max_tokens` at 6000 is still on a
+  measurement that has never been repeated.
+- **A diagnostic case answer can still overreach its source.** One run of the
+  20-year-old case flagged 3 of 16 pairs, every one the same shape: a general
+  clinical claim marked to a foundational 1970s paper. Two later runs flagged
+  0, so it is variance around a real tendency. §5's Item 2 is the same defect
+  on a different claim, and closing it should close this.
+- **A candidate's search topic is generated once and never checked.** A badly
+  named candidate — "Idiopathic or occult cause (including undetected microbial
+  access via extreme attrition)" — hands its retrieval a bad topic, and nothing
+  reports it beyond the answer stating the gap.
+- **The differential is not rendered to the clinician.** It is published on the
+  job as `differential`; no template shows it. The answer carries the content
+  in prose, but a UI showing "searching literature for: dens invaginatus"
+  during the two-minute retrieval would make the wait legible.
 - 8 library rows have an empty `title`, which reaches the prompt as a blank
   line where the paper's subject should be.
 - **A handover that names a command should have run it.**
@@ -261,78 +302,71 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   `scripts/monthly_maintenance.py`, dry-run by default and deliberately
   **NOT scheduled**. Ran end to end clean: backfill 24s, rescore 10s, eval
   686s with 25/25 cases passing. RB decides when it first runs `--apply`.
-## 5. Next batch — "case-v2": diagnostic reasoning in case discussion
+## 5. Next batch — "case-v2.1": the differential leads, and the DE claim is sourced
 
-Autonomous batch on `main`, tag `case-v2` at end. Standing rules from
-`WORKLIST.md` §0/§6 apply in full, **including the every-column backup rule**.
-Commit + push per item; re-bundle after commits.
+Autonomous batch on `main`, tag `case-v2.1` at end. Standing rules from
+`WORKLIST.md` §0/§6 apply in full. Commit + push per item; re-bundle.
 
-**CONTEXT — a real failure, reproduce it first.** Case: *"20-year-old,
-necrotic tooth, no restoration, no caries — what could the cause be?"* The
-actual output centred on endodontic management and AAE guidance, never on the
-etiologic differential (dens invaginatus, unrecognised dental trauma,
-palatal/radicular groove, crack, orthodontic history), and the follow-up
-questions included **bisphosphonate use** — clinically implausible at 20 and
-non-discriminating for this presentation.
+**CONTEXT — a real user-tested case, keep it verbatim as the fixture.**
 
-**ITEM 1 — Reproduce and diagnose.** Run that exact case through
-`/case_chat`. Capture: the composed search query, the esearch/RAG queries, the
-evidence-base tier table, and the follow-up questions asked. Confirm the
-hypothesis — retrieval fetched management literature because the query never
-contained any candidate etiology. Record the trace in the report **before**
-changing anything.
+> 20-year-old, no response to cold testing on tooth #20, well-defined
+> periapical lesion, no filling, no cracks, Asian ethnicity.
 
-**ITEM 2 — Intent split in case mode.** Classify each case turn (Haiku,
-fail-open to treatment): DIAGNOSTIC ("what is the cause / diagnosis / why did
-this happen") vs TREATMENT ("what should I do"). Treatment keeps the current
-path unchanged.
+The current answer correctly raises **dens evaginatus** — but only in Key
+Considerations, AFTER an assessment that opens with "straightforward primary
+RCT indication". And the single citation-support flag lands on the
+load-bearing etiologic claim: *"Thai population data identified DE as the
+leading cause of RCT in premolars presenting without caries"* — an overreach
+of its source, which per its own abstract concerns **immature** teeth.
 
-**ITEM 3 — Differential-first retrieval for DIAGNOSTIC turns.**
-a. Generate a differential: 3–6 candidate causes from the case description
-   (Sonnet), each with the case features supporting it. Clinical-reasoning
-   scaffolding, not final content.
-b. Retrieve PER CANDIDATE: run the existing evidence engine once per candidate
-   (candidate name + case features as the topic), union the evidence bases, tag
-   each paper with its candidate. Cap total cost: candidates share the library
-   gate; live fallback per candidate only when the library is thin for it.
-c. Synthesis prompt for diagnostic answers: ranked differential — for each
-   candidate, the case features for and against, and the cited evidence;
-   most-likely first; explicitly state what examination or imaging would
-   discriminate (CBCT for invaginatus, transillumination for crack, trauma
-   history). Every claim cited; all existing gates (validation,
-   citation-support, grounding) apply unchanged.
-d. The answer must OPEN with the differential, not with management. Management
-   advice may follow only after the differential, briefly.
+**ITEM 1 — Differential leads, treatment follows.** For DIAGNOSTIC-intent case
+turns (the intent split landed in `case-v2`), the answer structure is: (1)
+etiologic differential first — most likely cause with the case features
+supporting it, then alternatives with what argues for and against each and the
+exam/imaging step that would discriminate; (2) treatment recommendation second,
+briefly. The Assessment line must not declare a treatment indication before the
+etiology is discussed. Enforce in the case synthesis prompt; validate with the
+fixture case — its FIRST paragraph must centre on dens evaginatus / etiology,
+not RCT. All existing gates unchanged.
 
-**ITEM 4 — Follow-up question relevance.** The case-followups generator must,
-for each candidate question, check: *given THIS patient's age and presentation,
-would the answer plausibly change the differential or the plan?* Questions
-failing that are dropped. Discriminating questions for this case class (trauma
-history, orthodontic history, tooth type/location, sinus tract, imaging
-available) should surface; checklist questions that do not discriminate
-(bisphosphonates at 20) must not. Keep the never-re-ask rule (invariant 8)
-intact.
+*Note from `case-v2`:* the diagnostic format already mandates
+differential-then-management and the 20-year-old eval case asserts
+`must_precede`. This item is therefore mostly a VALIDATION against a second,
+independent fixture — and tooth #20 is a mandibular second premolar, which is
+the dens evaginatus tooth, so it tests a candidate `case-v2` never exercised as
+the lead.
 
-**ITEM 5 — Pin it.** Add two eval cases:
-(a) this exact case, DIAGNOSTIC — `must_contain`: dens invaginatus AND at least
-    two other candidate causes, differential before management; `must_not`: any
-    bisphosphonate follow-up question;
-(b) a contrast case: *"68-year-old, osteoporosis on alendronate, needs
-    extraction vs RCT decision"* — the bisphosphonate question MUST appear
-    there, proving Item 4 filters by relevance rather than by deleting the
-    topic.
-Mutation-check both.
+**ITEM 2 — Fix the overreaching DE claim at its root.**
+a. Targeted retrieval: dens evaginatus epidemiology and aetiology in
+   mandibular premolars / Asian populations. Synonyms: "central cusp",
+   "tuberculated premolar", "Leong's premolar"; talon cusp EXCLUDED. If the
+   library is thin, go live; write back what clears the floors.
+b. Regenerate the fixture case's answer. The DE claim must now either cite a
+   directly supporting source or be stated at the strength its source supports
+   ("identified as the leading cause of RCT in **immature** premolars", per the
+   cited study). **Target: citation-support 0 flagged on this answer with the
+   claim still present** — the fix is better sourcing or honest phrasing,
+   NEVER dropping the DE discussion and NEVER weakening the checker.
 
-**ITEM 6 — Close.** Full suite; run both new eval cases live; OVERNIGHT-style
-report with the Item 1 trace, before/after transcripts of the 20-year-old case,
-and cost per diagnostic answer (expect higher — multi-candidate retrieval —
-report the number); update this file; bundle; push; tag `case-v2`.
+**ITEM 3 — Pin it in the eval set.** Add the fixture case as a permanent eval
+case, DIAGNOSTIC intent, asserting: the differential (dens evaginatus named)
+appears before any treatment recommendation in the answer body; no
+bisphosphonate follow-up question; citation-support flags == 0. The harness
+gained `must_precede` in `case-v2`, so "X before Y" is already expressible.
+Mutation-check: reverse the prompt's ordering rule and confirm the case fails.
 
-**Carried into this batch from `guardrails-v1`, because they touch the same
-prompts:** nothing. The four P1 prompt/checker findings above (the negative
-claim, the meta claim, the composite principle, `_SUPPORT_MAX_PAIRS`) each
-change a number this batch also moves, and they belong to their own batch.
-Do not fold them in.
+**ITEM 4 — Close.** Full suite; run the fixture case end to end once and
+include its full answer text in the report so RB can read the before/after;
+update this file; commit, push, re-bundle, tag `case-v2.1`.
+
+**REPORT (§8 format):** the fixture answer before → after (ordering and flag
+count), the DE retrieval result (papers found, tier), tests + commits,
+found-not-fixed, cost.
+
+**Carried in from `case-v2`, because Item 2 is the same defect:** one run of
+the 20-year-old case flagged 3 of 16 pairs, all the overreach shape — a general
+clinical claim marked to a foundational 1970s paper. Its eval case caps flags
+at 4 as a blow-up guard; tighten it once Item 2's sourcing work lands.
 
 
 ## 6. What only RB can do

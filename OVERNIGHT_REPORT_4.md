@@ -154,3 +154,159 @@ brief predicted:
    and unaffected by anything retrieval does. → Item 3c/3d.
 
 Trace and both samples committed before any code changed.
+
+---
+
+## Items 2–5 — what changed, and what it measured
+
+| Item | Status | Before → After | Test file | Commit |
+|---|---|---|---|---|
+| 1 · Reproduce and diagnose | DONE | three defects, three mechanisms; only one was the predicted one | — | `ec9412c` |
+| 2 · Intent split | DONE | one pipeline → `diagnostic` / `treatment`, failing open to treatment | `tests/test_case_differential.py` | `860d73e` |
+| 3 · Differential-first retrieval | DONE | 26 → **139** papers, 3 → **12** candidate etiologies in retrieved titles | same | `860d73e` |
+| 4 · Follow-up relevance | DONE | non-discriminating question **53% → 0%**; contrast case **10/10** | same | `860d73e` |
+| 5 · Pin it | DONE | 2 new eval cases, **2/2 passing**, 0 support flags each | `eval/questions.json` | `9ce50a5` |
+| 6 · Close | DONE | suite **1440 → 1483** passing, 44 skipped | — | this report |
+
+---
+
+## The 20-year-old case, before → after
+
+Both runs are the production path through `/case_chat`, same question, verbatim.
+
+| | before | after |
+|---|---|---|
+| intent classified | — (no such step) | **diagnostic** |
+| candidates enumerated | — | **6** |
+| papers retrieved | 26 | **139** |
+| candidate etiologies in retrieved titles | 3 | **12** |
+| answer length | 4,406 chars | **10,208** |
+| first etiology word | char 116 | **char 2** |
+| first management word | char 866 | **char 4,807** |
+| cost | $0.0724 | $0.1742 |
+
+### Before — the answer opened like this
+
+> **Assessment:** A necrotic pulp in a 20-year-old with an intact, unrestored,
+> caries-free tooth strongly points to a traumatic etiology as the primary
+> cause…
+>
+> **Recommendation:** Conduct a thorough trauma history … Once necrosis is
+> confirmed, conventional root canal treatment is the primary indicated
+> intervention.
+
+The etiology is one clause of one sentence. There is no differential, nothing
+argues against anything, and no test is named against the candidate it would
+settle — because the prompt had no section for any of that.
+
+### After — the same question
+
+> **Differential — most likely first**
+>
+> **1. Traumatic injury (luxation, concussion, or crown fracture)**
+> - *Fits because:* A 20-year-old … sits squarely in the peak epidemiological
+>   window for dental trauma … Patients at this age frequently forget or
+>   minimise minor luxation events.
+> - *Argues against:* No trauma history mentioned. If the tooth is a posterior
+>   molar, trauma becomes less likely as the primary mechanism.
+> - *Evidence:* Pulp necrosis risk after luxation is significantly increased in
+>   the presence of concomitant crown fractures (HR 4.0, 95% CI 2.6–6.1) and
+>   intrusion injuries (HR 2.3, 95% CI 1.2–4.1).
+>
+> **2. Dens invaginatus (dens in dente)** …
+> - *Argues against:* … no mandibular involvement was found in a
+>   10,000-patient radiographic study.
+>
+> **3. Dens evaginatus with tubercle attrition or fracture** …
+
+and ends with a table mapping each test to the candidates it settles —
+periapical radiograph, targeted trauma history, transillumination, CBCT, a
+six-point periodontal chart, magnification — ordered by how much each narrows
+the differential per unit of chair time. Management follows, in four sentences.
+
+**Two of the six candidates had no literature at all**, and the answer says so
+rather than dropping them:
+
+> *Evidence:* No paper in this evidence base addresses idiopathic or herpes
+> zoster-related pulp necrosis in this presentation.
+
+That is deliberate. A cause worth considering does not stop being worth
+considering because nobody has published on it, and the alternative — dropping
+it — hides a differential behind the accident of the literature.
+
+Full text of both eval-case answers is committed under
+`eval/logs/case_answers/`.
+
+---
+
+## Cost per diagnostic answer
+
+One full turn of each kind, every logged call attributed:
+
+| | diagnostic (6 candidates) | treatment (single query) |
+|---|---|---|
+| synthesis | $0.1324 | $0.1156 |
+| differential generation | $0.0202 | — |
+| search-term generation | $0.0175 (**six** retrievals) | $0.0029 |
+| citation-support check | $0.0074 | $0.0116 |
+| follow-ups + intent routing | $0.0026 | $0.0028 |
+| **total** | **$0.1801** | **$0.1329** |
+
+**Multi-candidate retrieval is not the cost driver, and the brief expected it
+to be.** All six candidates cleared the library gate, so six retrievals cost
+1.7 cents in term generation and no PubMed traffic at all. The rise is the
+synthesis prompt: 36.8k input tokens against 17.5k, because there are 139
+papers to reason over instead of 26. A diagnostic answer costs about 35% more
+than a treatment answer on the same engine, and about 2.4× the pre-batch case
+answer — which was reasoning over a fifth of the evidence.
+
+---
+
+## Found, not fixed
+
+| severity | finding |
+|---|---|
+| **MEDIUM** | **Overreaching etiologic claims survive into a diagnostic answer.** One run flagged 3 of 16 pairs, all the same shape: a general clinical statement marked to a foundational 1970s paper ("True retrograde pulpal necrosis is uncommon because…" → PMID 269259). Same class `guardrails-v1` catalogued as overreach. Two later runs flagged 0, so it is variance around a real tendency rather than a constant. The eval case caps flags at 4 as a blow-up guard; **`case-v2.1` owns tightening it to 0 by fixing the sourcing.** |
+| **MEDIUM** | **A candidate's search topic is generated once and never checked.** If the differential names a candidate badly — "Idiopathic or occult cause (including undetected microbial access via extreme attrition)" — its retrieval inherits the bad topic. It returned 33 papers here, so nothing failed; nothing would have said so if it had returned 0 either, beyond the answer stating the gap. |
+| **LOW** | **The differential is not shown to the clinician.** It is published on the job as `differential` and the trace reads it, but no template renders it. The answer carries the same content in prose, so nothing is lost — but a UI showing "searching literature for: dens invaginatus" during the two-minute retrieval would make the wait legible. |
+| **LOW** | **`must_precede` matches the first occurrence of a substring, not a heading.** `["differential", "root canal treatment"]` would pass on an answer whose word "differential" merely appears in a treatment paragraph. Adequate while the diagnostic format mandates a `**Differential` heading; brittle if that changes. |
+| **LOW** | Two corrections to my own measurement script in one batch, both in the same direction — a keyword classifier applied to the wrong patient, then applied to a reason clause instead of a question. A keyword list is a blunt instrument and its output has to be read before it is believed. |
+
+---
+
+## Decisions taken, with the alternative rejected
+
+1. **The router fails open to TREATMENT.** *Rejected:* failing open to
+   diagnostic, which would be "safer" in the sense of producing more reasoning.
+   Treatment is the path that shipped and is measured; a Haiku hiccup should not
+   send a routine follow-up down a new and more expensive path.
+2. **One retrieval per candidate, sharing the library gate.** *Rejected:* one
+   widened query naming all the candidates. That is the same single LLM call
+   asked to be luckier, and Item 1 measured what its luck is worth — dens
+   invaginatus in 2 runs of 8.
+3. **A candidate with no literature stays in the differential.** *Rejected:*
+   dropping it. The empty result is information, and it is the difference
+   between "the literature disagrees" and "nobody has studied this".
+4. **The follow-up assertions reuse the existing `clarify` block.** *Rejected:*
+   the parallel `followups_must_*` keys I had already written. Two guards on one
+   property is how the worse one ends up maintained — the same reasoning that
+   deleted a duplicate `prior_pmids` test in `guardrails-v1`.
+5. **The eval answer directory is `case_answers/`, not `answers/`.** *Rejected:*
+   a `!` negation in `.gitignore`. A bare `answers/` matches at any depth, and a
+   negation that has to be understood is worse than a name that does not
+   collide.
+
+---
+
+## Cost
+
+| what | cost |
+|---|---|
+| Item 1 traces and samples (2 traces, 42 follow-up samples, 8 query samples) | ~$0.90 |
+| Items 2–4 validation (after-trace, 3 follow-up sample sets) | ~$0.70 |
+| Item 5, three case-subset eval runs | ~$0.95 |
+| **batch total** | **~$2.55** |
+
+Two of the three eval runs were re-runs after an assertion of mine turned out
+to be wrong. That is the cost of finding out, and it is the reason the harness
+now saves the answers.
