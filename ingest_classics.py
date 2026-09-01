@@ -265,6 +265,10 @@ def score_and_upsert(paper: dict, dry_run: bool = False) -> tuple[int, dict]:
     record = {
         "pmid":            paper["pmid"],
         "title":           paper.get("title", ""),
+        # Whole abstract, uncapped — the sibling ingest scripts all sliced this
+        # field and stored papers that stop before their conclusions. This one
+        # never did; keep it that way. Embedding text is built separately below,
+        # which is the only place a length limit belongs.
         "abstract":        paper.get("abstract", ""),
         "authors":         paper.get("authors", ""),
         "year":            int(paper["year"]) if (paper.get("year") and str(paper["year"]).isdigit()) else None,

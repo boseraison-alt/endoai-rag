@@ -456,6 +456,11 @@ def upsert_paper(paper: dict, embedding: list[float]):
         """, (
             paper.get("pmid"),
             paper.get("title", ""),
+            # Stored WHOLE and deliberately so — never slice the abstract on
+            # its way into the library. Every ingest script used to cap this
+            # field ([:1000]/[:1200]) and left 1,342 rows ending mid-paper,
+            # with the CONCLUSIONS gone; the synthesis prompt reads this column
+            # back verbatim. Length limits belong on EMBEDDING text only.
             paper.get("abstract", ""),
             paper.get("authors", ""),
             paper.get("year"),
