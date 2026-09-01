@@ -1,0 +1,100 @@
+{
+ "case": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
+ "n": 10,
+ "runs_with_non_discriminating": 0,
+ "by_kind": {},
+ "discriminating": {
+  "bisphosphonate": 11,
+  "restorability": 10,
+  "prior endo": 1,
+  "vitality": 1,
+  "sinus tract": 3,
+  "periodontal": 1
+ },
+ "runs": [
+  {
+   "i": 1,
+   "questions": [
+    "How long has she been on alendronate, by what route, and has she had any drug holidays? — this determines whether extraction carries genuine MRONJ risk and therefore whether retaining the tooth is worth the effort.",
+    "Does the tooth have adequate remaining structure and ferrule for a post-and-crown restoration? — this is the pivot between a viable root canal with a good long-term prognosis and an extraction that might have been unavoidable anyway."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 2,
+   "questions": [
+    "How long has she been on alendronate, and has she ever had a drug holiday or switched to intravenous bisphosphonates? — this determines whether extraction carries meaningful MRONJ risk and therefore whether retention is worth the effort.",
+    "Is there adequate remaining coronal tooth structure and ferrule for a post-and-crown restoration after endodontic treatment? — this is the primary determinant of long-term success and survival versus extraction on a lower molar.",
+    "What is the pulp vitality status, and has there been any prior endodontic treatment on this tooth? — this confirms the diagnosis and rules out retreatment as the issue rather than primary treatment."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 3,
+   "questions": [
+    "How long has she been on alendronate, by what route, and has she had any drug holidays? — this determines whether extraction carries a meaningful MRONJ risk and therefore whether retention is worth attempting.",
+    "Is the tooth restorable with adequate ferrule and crown-root ratio after endodontic treatment? — this is the primary factor deciding whether root canal treatment or extraction is the better long-term outcome."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 4,
+   "questions": [
+    "How long has she been taking alendronate, and has she received it intravenously or only orally? — duration and route determine whether extraction carries meaningful MRONJ risk and whether retention is worth attempting.",
+    "Does the tooth have adequate remaining coronal structure and ferrule to support a crown restoration after RCT? — restorability is the primary determinant of whether RCT or extraction offers better long-term outcomes in a patient where both are medically feasible."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 5,
+   "questions": [
+    "How long has she been on alendronate, and has she had any drug holidays or IV dosing? — duration and route determine the actual MRONJ risk from extraction versus the theoretical risk, which directly changes whether retention is worth attempting.",
+    "Is the tooth restorable with adequate ferrule and crown-root ratio? — this is the deciding factor between a successful root canal and a tooth destined to fail, making extraction the better choice if structure is insufficient."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 6,
+   "questions": [
+    "How long has she been on alendronate, and has she had any drug holidays or IV bisphosphonate therapy? — this determines whether extraction carries meaningful MRONJ risk and therefore whether retention is worth pursuing.",
+    "Does the tooth have a sinus tract, swelling, or isolated probing defect that localizes where the infection is draining? — this helps distinguish primary endodontic pathology from a cracked tooth or other diagnosis that would favor extraction.",
+    "Is there adequate ferrule and remaining coronal structure to restore the tooth after root canal treatment? — this is the strongest predictor of long-term success and directly influences whether RCT is realistic."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 7,
+   "questions": [
+    "How long has she been on alendronate, and has she had any drug holidays or switches to other bisphosphonates or antiresorptives? — this determines the actual MRONJ risk if extraction is chosen, and whether retention is medically imperative.",
+    "Is there adequate remaining tooth structure and ferrule for a post-and-core if root canal treatment succeeds? — this is the deciding factor between a treatable tooth and one where extraction may be more realistic despite the medical red flag."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 8,
+   "questions": [
+    "How long has she been on alendronate, and has she had any drug holidays or IV dosing? — this determines whether extraction carries genuine MRONJ risk and therefore whether retention is worth the effort.",
+    "Is the tooth vital or necrotic on testing, and is there a sinus tract or isolated pocket? — this identifies whether the lesion is primary endodontic or secondary to periodontal disease, which changes the prognosis for treatment.",
+    "What is the restorability — is there adequate ferrule and crown-root ratio after endodontic treatment? — this is the deciding factor between a successful long-term outcome and likely failure."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 9,
+   "questions": [
+    "How long has she been taking alendronate, and has she received it intravenously or only orally? — this determines whether extraction carries a clinically significant MRONJ risk and therefore whether retention of the tooth is worth the effort.",
+    "What is the tooth's restorability — does it have adequate ferrule and crown-root ratio for a post-retained restoration? — this is often the deciding factor between successful RCT and eventual extraction anyway.",
+    "Is there a sinus tract, and if so, where is it draining? — this tells us whether the infection is truly from this tooth or whether we are seeing a secondary involvement."
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 10,
+   "questions": [
+    "How long has she been on alendronate, and has she ever had a drug holiday or IV infusions? — this determines whether extraction carries a meaningful MRONJ risk and therefore whether retention is worth the effort.",
+    "Is the tooth restorable with adequate ferrule and crown-root ratio after endodontic treatment? — this is the decisive factor between root canal and extraction when MRONJ risk is present."
+   ],
+   "non_discriminating": []
+  }
+ ]
+}

@@ -1295,6 +1295,131 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     return evidence
 
 
+def build_differential_evidence(job_id: str, case_description: str,
+                                candidates: list, progress_lo: int = 15,
+                                progress_hi: int = 70) -> dict:
+    """One evidence base covering EVERY candidate cause (`case-v2` Item 3b).
+
+    Runs the existing evidence engine once per candidate — the candidate's own
+    search topic joined to the case features — and unions the results, tagging
+    each paper with the candidate that retrieved it. Deliberately the same
+    engine: per-tier quality floors, the retracted/withdrawn/superseded
+    exclusions, the similarity floor and the routing gate all apply to a
+    candidate's papers exactly as they apply to any others. A second retrieval
+    path would be a second place for those to be missing.
+
+    WHY PER CANDIDATE AND NOT ONE BROADER QUERY. Measured in Item 1: one query
+    generation put trauma in 8 runs of 8 and dens invaginatus in 2, the
+    palatogingival groove in 0. Widening the single query does not fix that —
+    it is the same one call, asked to be luckier. Asking per candidate makes
+    coverage a property of the differential rather than of a sample.
+
+    COST. Each candidate is one retrieval, so a 6-candidate differential is up
+    to 6. Two things bound it, and neither is a cap on candidates:
+
+      - the LIBRARY GATE is shared. `build_evidence_base_with_progress` decides
+        per candidate whether the library covers it, so a candidate the library
+        already knows costs embeddings and no PubMed traffic at all.
+      - a candidate that returns nothing is NOT retried and NOT broadened. An
+        empty result is information — it is the difference between "the
+        literature disagrees" and "nobody has studied this in this
+        presentation", and the answer has to be able to say which.
+
+    Returns the usual evidence dict, plus `_differential`:
+      {candidate: {"n_papers": int, "pmids": [...], **the candidate's fields}}
+    and each paper carries `candidates: [names]`.
+    """
+    from endo_ai import (TIER_ORDER, TIER_LABEL, build_synthesis_order,
+                         detect_outliers, apply_currency_tags,
+                         flag_superseded_by_review)
+    # RELEVANCE_GATE is this module's, and reading it here rather than copying
+    # a number is the point: a per-tier cap that drifted between the two paths
+    # would mean a differential answer silently sees more or fewer papers per
+    # tier than an ordinary case answer, with nothing saying so.
+    max_per_tier = RELEVANCE_GATE["max_per_tier"]
+
+    merged: dict = {}
+    by_pmid: dict = {}
+    per_candidate: dict = {}
+    n = max(1, len(candidates))
+
+    for i, cand in enumerate(candidates):
+        name = cand.get("candidate") or ""
+        topic = cand.get("search_topic") or name
+        # The candidate's topic AND the case features, because "dens
+        # invaginatus" alone retrieves the anomaly's treatment literature and
+        # the question is about it as a CAUSE in this presentation.
+        query = f"{topic} — {case_description}"
+        pct = progress_lo + int((progress_hi - progress_lo) * i / n)
+        update_job(job_id, progress=pct,
+                   message=f"Searching literature for: {name} "
+                           f"({i + 1} of {len(candidates)})")
+        print(f"\n[differential] {i + 1}/{len(candidates)} — {name}")
+        try:
+            ev = build_evidence_base_with_progress(job_id, query, mode="case")
+        except Exception as e:
+            print(f"  [differential] retrieval failed for {name!r}: {e}")
+            per_candidate[name] = {**cand, "n_papers": 0, "pmids": [],
+                                   "error": str(e)}
+            continue
+
+        found = []
+        for tier in TIER_ORDER:
+            for p in ((ev.get(tier) or {}).get("scored") or []):
+                pmid = p.get("pmid")
+                if not pmid:
+                    continue
+                found.append(pmid)
+                seen = by_pmid.get(pmid)
+                if seen is None:
+                    paper = dict(p)
+                    paper["candidates"] = [name]
+                    by_pmid[pmid] = paper
+                    merged.setdefault(tier, []).append(paper)
+                elif name not in seen["candidates"]:
+                    # One paper can bear on two candidates. Recording both is
+                    # what lets the answer say so instead of silently
+                    # attributing it to whichever search ran first.
+                    seen["candidates"].append(name)
+        per_candidate[name] = {**cand, "n_papers": len(found),
+                               "pmids": found[:40]}
+        print(f"  [differential] {name}: {len(found)} paper(s)")
+
+    evidence: dict = {}
+    all_scored = []
+    for tier in TIER_ORDER:
+        bucket = merged.get(tier) or []
+        if not bucket:
+            continue
+        bucket.sort(key=lambda x: x.get("score") or 0, reverse=True)
+        bucket = bucket[:max_per_tier]
+        evidence[tier] = {
+            "text":   _scored_to_text(bucket, TIER_LABEL.get(tier, tier.upper())),
+            "ids":    [p["pmid"] for p in bucket],
+            "scored": bucket,
+            "source": "differential",
+        }
+        all_scored.extend(bucket)
+
+    all_scored = detect_outliers(apply_currency_tags(all_scored))
+    flag_superseded_by_review(evidence)
+    avg = (sum(p["score"] for p in all_scored) / len(all_scored)
+           if all_scored else 0)
+    evidence["_summary"] = {
+        "total_scored":    len(all_scored),
+        "avg_score":       round(avg, 1),
+        "all_scored":      sorted(all_scored, key=lambda x: x["score"],
+                                  reverse=True),
+        "synthesis_order": build_synthesis_order(evidence),
+    }
+    evidence["_differential"] = per_candidate
+    covered = sum(1 for v in per_candidate.values() if v["n_papers"])
+    print(f"\n[differential] union: {len(all_scored)} paper(s) across "
+          f"{len(per_candidate)} candidate(s); {covered} candidate(s) have "
+          f"literature, {len(per_candidate) - covered} have none")
+    return evidence
+
+
 def _scored_to_text(scored_papers: list, label: str) -> str:
     """Convert scored paper dicts back to annotated text for Claude context.
 
@@ -2146,25 +2271,65 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
         else:
             search_q = original_q
 
-        update_job(job_id,
-                   message=("Searching literature for this question..."
-                            if is_followup else
-                            "Searching evidence base for this case..."),
-                   progress=10)
-        # mode="case", not the default "review". The review-mode early stop
-        # skips level2-level5 and invitro once cochrane+level1 clear 15 papers,
-        # and those are exactly the tiers a case discussion needs — a case
-        # series is often the only literature on an unusual presentation.
-        # Measured before this: case answers cited a median of 2 papers from a
-        # median-100 evidence base.
-        evidence = build_evidence_base_with_progress(job_id, search_q, mode="case")
+        # ── Is this turn asking WHY, or asking WHAT TO DO? ──
+        # "What could the cause be?" and "how should I manage this?" are
+        # different questions and were being answered by one pipeline.
+        # Fails open to treatment, which is the path that shipped and is
+        # measured; see `classify_case_intent`.
+        from endo_ai import (classify_case_intent, generate_case_differential,
+                             CASE_INTENT_DIAGNOSTIC)
+        intent = classify_case_intent(original_q, latest_user)
+        print(f"\n[case] intent: {intent}")
+        update_job(job_id, case_intent=intent)
+
+        differential, diff_cost = [], 0.0
+        if intent == CASE_INTENT_DIAGNOSTIC:
+            update_job(job_id, message="Working out the differential...",
+                       progress=8)
+            differential, diff_cost = generate_case_differential(original_q,
+                                                                 latest_user)
+            for c in differential:
+                print(f"  [differential] candidate: {c['candidate']}")
+            # Published so the UI can show what is being searched for, and so a
+            # trace can read the differential without re-deriving it. The
+            # CANDIDATES only — never the evidence base. A full evidence base on
+            # the job dict is how `case_convs` came to retain ~277 KB of
+            # annotated abstracts per client-supplied id, and invariant 13 says
+            # abstract text never reaches a browser.
+            update_job(job_id, differential=[
+                {k: c.get(k) for k in
+                 ("candidate", "supports", "against", "discriminator")}
+                for c in differential])
+
+        if differential:
+            # One retrieval per candidate, unioned. The candidates share the
+            # library gate, so a candidate the library already covers costs no
+            # PubMed traffic.
+            evidence = build_differential_evidence(job_id, original_q,
+                                                   differential)
+        else:
+            update_job(job_id,
+                       message=("Searching literature for this question..."
+                                if is_followup else
+                                "Searching evidence base for this case..."),
+                       progress=10)
+            # mode="case", not the default "review". The review-mode early stop
+            # skips level2-level5 and invitro once cochrane+level1 clear 15
+            # papers, and those are exactly the tiers a case discussion needs —
+            # a case series is often the only literature on an unusual
+            # presentation. Measured before this: case answers cited a median
+            # of 2 papers from a median-100 evidence base.
+            evidence = build_evidence_base_with_progress(job_id, search_q,
+                                                         mode="case")
 
         if is_aborted(job_id):
             update_job(job_id, status="aborted", progress=100, message="Cancelled")
             return
 
         from endo_ai import ask_case_question
-        answer, cost = ask_case_question(messages, evidence)
+        answer, cost = ask_case_question(messages, evidence,
+                                         differential=differential)
+        cost += diff_cost
 
         papers = evidence.get("_summary", {}).get("all_scored", [])
         update_job(

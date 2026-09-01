@@ -1048,18 +1048,124 @@ CASE_OPENING_SCAFFOLD = (
     "and their history, and anything already tried."
 )
 
+# ── What KIND of case question is this? ──────────────────
+#
+# "What could the cause be?" and "what should I do?" are different questions
+# and were being answered by the same pipeline. The measurement that made this
+# an item rather than an opinion, from `case-v2` Item 1: on a 20-year-old with
+# a necrotic, unrestored, caries-free tooth, the query generators put trauma in
+# 8 runs of 8 and dens invaginatus in 2 — the palatogingival groove in none —
+# so WHICH candidate causes got any literature at all was a coin flip. And the
+# answer had nowhere to put a differential regardless, because the case prompt
+# mandates Assessment / Recommendation / Evidence / Key Considerations and
+# nothing else.
+#
+# FAIL OPEN TO TREATMENT, always. Treatment is the path that exists today and
+# is measured; a router that fails to "diagnostic" would send a routine
+# follow-up down a new, more expensive path on a Haiku hiccup. Every failure
+# mode here — empty text, malformed JSON, an API error, an unrecognised label —
+# resolves to "treatment", which is exactly the behaviour that shipped before
+# this function existed.
+CASE_INTENT_TREATMENT  = "treatment"
+CASE_INTENT_DIAGNOSTIC = "diagnostic"
+
+CASE_INTENT_PROMPT = """A clinician is discussing a case with an endodontic colleague. Classify what THIS turn is asking for.
+
+CASE (first message):
+\"\"\"{case}\"\"\"
+
+THIS TURN:
+\"\"\"{turn}\"\"\"
+
+Return ONE word, nothing else:
+
+diagnostic — the clinician is asking WHY, or WHAT this is: the cause, the
+  aetiology, the diagnosis, the differential, what explains the finding, what
+  else it could be, why it happened. Examples: "what could the cause be?",
+  "why is this tooth necrotic with no caries?", "what's my differential?",
+  "what am I missing?", "is this endodontic or periodontal in origin?"
+
+treatment — the clinician is asking WHAT TO DO: management, technique,
+  materials, prognosis, referral, sequencing, whether to treat or extract.
+  Examples: "how should I manage this?", "MTA or Biodentine here?", "is this
+  restorable?", "what's the prognosis if I treat it?"
+
+If the turn asks for both, or you are not sure, answer treatment."""
+
+
+def classify_case_intent(case_description: str, turn: str = "") -> str:
+    """`diagnostic` or `treatment` for one case turn. Fails open to treatment.
+
+    `turn` is the message being answered; on the first turn it is the case
+    description itself, so the caller may pass either or both.
+    """
+    text = (turn or case_description or "").strip()
+    if not text:
+        return CASE_INTENT_TREATMENT
+    try:
+        client = anthropic.Anthropic(api_key=_get_api_key())
+        resp = _invoke_claude(
+            client, function_name="classify_case_intent",
+            model      = MODELS["structured_fast"],
+            max_tokens = 8,
+            messages   = [{"role": "user", "content": CASE_INTENT_PROMPT.format(
+                case=(case_description or text)[:4000], turn=text[:4000])}])
+        log_llm_call("classify_case_intent", MODELS["structured_fast"],
+                     resp.usage, mode="case")
+        word = (resp.content[0].text or "").strip().lower()
+        # `startswith`, not equality: a model that answers "diagnostic." or
+        # "diagnostic - the clinician..." despite the instruction is still
+        # telling you the answer, and treating that as a parse failure would
+        # send a diagnostic turn down the treatment path for a full stop.
+        if word.startswith(CASE_INTENT_DIAGNOSTIC):
+            return CASE_INTENT_DIAGNOSTIC
+        return CASE_INTENT_TREATMENT
+    except Exception as e:
+        print(f"  [case] intent classification failed, "
+              f"defaulting to treatment: {e}")
+        return CASE_INTENT_TREATMENT
+
+
 # Facts that genuinely change the differential or the treatment plan. Anything
 # outside this list is interesting but not worth a round trip: the clinician is
 # chairside and every question costs them time.
 _CASE_DECIDING_FACTS = """
+FACTS THAT CHANGE THE DIFFERENTIAL (what is causing this):
+- TRAUMA HISTORY — type of injury, how long ago, apex maturity at the time. A
+  luxation the patient does not think of as an injury is the commonest cause of
+  a necrotic virgin tooth.
+- WHICH TOOTH, and its anatomy — a maxillary lateral incisor raises dens
+  invaginatus and the palatogingival groove; a mandibular premolar raises dens
+  evaginatus; a cracked molar is a different conversation from a cracked
+  incisor.
+- DEVELOPMENTAL ANOMALY on imaging or probing — invagination, evagination, a
+  radicular or palatogingival groove, an isolated deep narrow pocket.
+- CRACK OR INFRACTION — transillumination, a bite test, staining, an isolated
+  probing defect.
+- ORTHODONTIC HISTORY — force, duration, and whether this tooth was moved.
+- DISCOLORATION and when it appeared — it dates the pulp death.
+- SINUS TRACT, swelling or an isolated deep pocket — where the infection is
+  draining tells you where it started.
 - PULP STATUS / vitality testing — separates reversible pulpitis, irreversible
-  pulpitis and necrosis, which have different treatments entirely.
+  pulpitis and necrosis.
 - PERIAPICAL FINDINGS on imaging — presence, size and character of a lesion.
+
+FACTS THAT CHANGE THE PLAN (what to do about it):
 - RESTORABILITY — ferrule, remaining tooth structure, crown-root ratio.
+- PRIOR ENDODONTIC TREATMENT and what specifically failed.
 - MEDICAL RED FLAGS — bisphosphonates/antiresorptives, head-and-neck radiation,
   immunosuppression, uncontrolled diabetes, anticoagulation, endocarditis risk.
-- PRIOR ENDODONTIC TREATMENT and what specifically failed.
-- Trauma: type of injury, time since it happened, apex maturity.
+  **These are only worth asking about when this patient could plausibly have
+  one and the answer would change what you advise.** Ask a 68-year-old facing
+  an extraction about antiresorptives; do not run the list past a 20-year-old
+  with a virgin tooth, where every item is a no and none of them would change
+  anything.
+- WHEN A RED FLAG IS ALREADY NAMED, its DETAIL is the missing fact, and it is
+  usually the highest-value question in the case. "On alendronate" is not the
+  answer — duration, route (oral or intravenous), and any drug holiday are what
+  decide whether extraction carries a real MRONJ risk, and therefore whether
+  the tooth is worth retaining. Treat a named red flag as an open question
+  about its detail, not as a box already ticked.
 """
 
 
@@ -1078,8 +1184,43 @@ already told you reads as not having listened, and wastes their chairside time.
 STEP 2 — Decide which of these decision-changing facts are genuinely MISSING:
 {facts}
 
-STEP 3 — Return only questions for facts that are both missing AND would
-actually change your differential or treatment plan. Fewer is always better.
+STEP 3 — Draft the questions for facts that are missing.
+
+STEP 4 — THE RELEVANCE TEST. Take each drafted question one at a time and ask:
+
+  Given THIS patient's age and THIS presentation, is there a plausible answer
+  to this question that would change the differential or the plan?
+
+Not "is the fact missing" — Step 2 already established that, and almost
+everything is missing from a two-line description. The test is whether the
+ANSWER could matter. If every plausible answer leads to the same differential
+and the same plan, DROP the question. Do not keep it because it is on the list.
+
+Worked example, because this is the failure this step exists to prevent:
+
+  Case: "20-year-old, necrotic tooth, no restoration, no caries."
+  Drafted: "Any history of bisphosphonates, radiation or immunosuppression?"
+  Test:    at 20, with a virgin tooth, every one of those is almost certainly
+           no, and a yes would not change the differential for why the pulp
+           died or the decision to treat it.
+  Verdict: DROP.
+
+  Case: "68-year-old on alendronate for osteoporosis, extraction versus root
+         canal on a lower molar with a large lesion."
+  Drafted: "How long has she been on alendronate, and by what route?"
+  Test:    this patient plausibly has the risk, and the answer moves the
+           decision directly — it is the reason to retain the tooth rather
+           than extract.
+  Verdict: KEEP.
+
+The topic is the same in both. Relevance is not a property of the topic; it is
+a property of the topic AND this patient. Never drop a subject on principle,
+and never ask about one on principle either.
+
+Then weight what survives by what the colleague is ASKING. If they are asking
+what is CAUSING this, the differential facts are what matter and a restorability
+question can wait. If they are asking what to DO, the plan facts lead.
+Fewer is always better.
 
 How many to ask depends on how much the colleague already gave you:
 - If the description already covers pulp/vitality status, periapical findings,
@@ -1136,13 +1277,57 @@ def generate_case_followups(case_description: str) -> list:
         log_llm_call("generate_case_followups", MODELS["structured_fast"],
                      resp.usage, mode="case")
         raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
-        result = json.loads(raw)
-        if isinstance(result, list):
-            return [str(q).strip() for q in result[:3] if str(q).strip()]
+        result = _parse_question_array(raw)
+        if result is not None:
+            return [q for q in result[:3]]
     except Exception as e:
         # Fail open: a clarify step that errors must not block the case answer.
         print(f"  [case] follow-up generation failed, proceeding: {e}")
     return []
+
+
+def _parse_question_array(raw: str):
+    """Parse a JSON array of question strings, tolerantly. None if unparseable.
+
+    These questions contain em dashes, quoted clinical terms and apostrophes,
+    and one run in ten came back with a `"` inside a string that the model did
+    not escape — `Expecting ',' delimiter: line 2 column 57`. Strict
+    `json.loads` returned nothing, the caller failed open, and the clinician
+    got NO clarifying questions at all on a case that needed them. Silence from
+    a parse error is indistinguishable from "the description was sufficient",
+    which is this repo's bug class (d) — a check that fails open and shows
+    nothing — arriving through a JSON delimiter.
+
+    Same tolerance ladder the search-term parser earned in WORKLIST §1.1:
+    strict parse, then the first bracketed array, then line extraction.
+    """
+    if not raw:
+        return None
+    for attempt in (raw, ):
+        try:
+            data = json.loads(attempt)
+            if isinstance(data, list):
+                return [str(q).strip() for q in data if str(q).strip()]
+        except Exception:
+            pass
+    m = re.search(r"\[.*\]", raw, re.S)
+    if m:
+        try:
+            data = json.loads(m.group(0))
+            if isinstance(data, list):
+                return [str(q).strip() for q in data if str(q).strip()]
+        except Exception:
+            pass
+    # Last resort: the model wrote a list of quoted strings that does not
+    # parse. Recover each complete quoted item. Better a question with an
+    # unescaped quote in it than no questions at all.
+    items = re.findall(r'"((?:[^"\\]|\\.){20,600}?)"\s*(?:,|\])', raw, re.S)
+    items = [i.strip() for i in items if i.strip()]
+    if items:
+        print(f"  [case] follow-up JSON was malformed; recovered "
+              f"{len(items)} question(s) by extraction")
+        return items
+    return None
 
 
 def generate_clarifying_questions(question: str, context_block: str = "") -> list:
@@ -5919,14 +6104,185 @@ def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
     return final, total_cost, combined
 
 
+# ── DIFFERENTIAL GENERATION (diagnostic case turns) ──────
+#
+# Clinical-reasoning scaffolding, NOT final content. Nothing this returns
+# reaches the clinician: it becomes retrieval topics, and the synthesis prompt
+# then ranks the candidates against the evidence that came back. A candidate
+# with no literature behind it is a candidate the answer must say it cannot
+# support, which is the whole point of generating them explicitly.
+#
+# WHY IT EXISTS. Measured in `case-v2` Item 1 on the reported case — a
+# 20-year-old with a necrotic, unrestored, caries-free tooth — sampling the
+# search-term generators 8 times:
+#
+#   trauma / luxation / fracture   8/8
+#   crack / infraction             4/8
+#   "developmental anomaly"        4/8
+#   dens invaginatus               2/8
+#   dens evaginatus                1/8
+#   palatogingival groove          0/8
+#
+# The brief's hypothesis was that the query contained no candidate etiology.
+# It contained one — always trauma — and the rest were a coin flip. That is
+# worse than it sounds: a differential the retrieval reaches only 25% of the
+# time is a differential the answer can cite only 25% of the time, and the
+# grounding rule then correctly stops the model asserting the other 75%
+# without a paper. Enumerating candidates first turns a coin flip into a list.
+DIFFERENTIAL_MIN = 3
+DIFFERENTIAL_MAX = 6
+
+DIFFERENTIAL_PROMPT = """You are an endodontist reasoning about what is CAUSING a clinical finding — not yet about what to do.
+
+CASE:
+\"\"\"{case}\"\"\"
+
+THIS TURN ASKS:
+\"\"\"{turn}\"\"\"
+
+List the {lo}-{hi} candidate CAUSES worth considering, most likely first. Reason from the specific features of THIS case — the patient's age, the state of the tooth, what is present and what is conspicuously absent.
+
+Rules:
+- A candidate is an AETIOLOGY or a DIAGNOSIS, never a treatment. "Dens invaginatus" is a candidate; "root canal treatment" is not.
+- Name what in THIS case supports it, and what would argue against it. Use the case's own words where you can.
+- Include candidates the case's ABSENCES point to. A necrotic tooth with no caries and no restoration is a different differential from a necrotic tooth with a deep filling, and the absence is the informative part.
+- Do not omit an uncommon cause that fits the presentation well. A differential that lists only the common things is not a differential.
+- Name the single examination, test or image that would most cheaply confirm or exclude each candidate.
+
+Return ONLY a JSON array, no prose and no markdown fence:
+[
+  {{"candidate": "short name of the cause",
+    "supports": "the case features that fit it",
+    "against": "the case features that do not, or 'nothing in this case argues against it'",
+    "discriminator": "the single test, sign or image that settles it",
+    "search_topic": "a literature search topic for this candidate in this presentation"}}
+]"""
+
+
+def generate_case_differential(case_description: str, turn: str = "") -> tuple:
+    """Return (candidates, cost) for a diagnostic case turn.
+
+    `candidates` is a list of dicts with keys candidate / supports / against /
+    discriminator / search_topic, capped at DIFFERENTIAL_MAX.
+
+    Fails to an EMPTY list, never to an invented one. An empty differential
+    sends the caller back to the ordinary case path — the same answer it would
+    have produced before this function existed — whereas a fabricated
+    differential would drive retrieval with topics no clinician proposed.
+    """
+    text = (turn or case_description or "").strip()
+    if not text:
+        return [], 0.0
+    cost = 0.0
+    try:
+        client = anthropic.Anthropic(api_key=_get_api_key())
+        resp = _invoke_claude(
+            client, function_name="generate_case_differential",
+            # Sonnet, not Haiku: this is the clinical-reasoning step, and the
+            # thing it has to get right is remembering the uncommon cause that
+            # fits. Tier 2 is where that lives.
+            model      = MODELS["reasoning_standard"],
+            max_tokens = 1500,
+            messages   = [{"role": "user", "content": DIFFERENTIAL_PROMPT.format(
+                case=(case_description or text)[:6000], turn=text[:6000],
+                lo=DIFFERENTIAL_MIN, hi=DIFFERENTIAL_MAX)}])
+        cost = log_llm_call("generate_case_differential",
+                            MODELS["reasoning_standard"], resp.usage,
+                            mode="case")
+        raw = re.sub(r"```json|```", "", resp.content[0].text or "").strip()
+        # Tolerant of a prose wrapper, for the same reason the search-term
+        # parser is: a JSON-only instruction is followed almost always, and
+        # "almost" is what put +/-50% noise under every eval number once.
+        m = re.search(r"\[.*\]", raw, re.S)
+        data = json.loads(m.group(0) if m else raw)
+        out = []
+        for item in (data if isinstance(data, list) else []):
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get("candidate") or "").strip()
+            if not name:
+                continue
+            out.append({
+                "candidate":     name[:120],
+                "supports":      str(item.get("supports") or "").strip()[:400],
+                "against":       str(item.get("against") or "").strip()[:400],
+                "discriminator": str(item.get("discriminator") or "").strip()[:240],
+                "search_topic":  (str(item.get("search_topic") or "").strip()
+                                  or name)[:240],
+            })
+        return out[:DIFFERENTIAL_MAX], cost
+    except Exception as e:
+        print(f"  [case] differential generation failed, falling back to the "
+              f"ordinary case path: {e}")
+        return [], cost
+
+
+# The shape a TREATMENT turn answers in. Unchanged from before `case-v2`:
+# treatment is the measured path and this batch does not touch it.
+_CASE_FORMAT_TREATMENT = """Format every response exactly like this:
+
+**Assessment:** 1-2 sentences on your clinical interpretation.
+
+**Recommendation:** Clear, actionable recommendation with rationale.
+
+**Evidence:** the studies that actually bear on THIS case, cited as Author et al. (Year) [[PMID:XXXXXXXX]]. Draw across the tiers you were given — a systematic review for the general question, a cohort or case series for the specific presentation — rather than stopping at the first one or two. You are typically given 40-150 papers; citing two of them wastes evidence the clinician is relying on you to have read. Cite as many as genuinely support the advice and no more: breadth that is real, never padding.
+
+**Key Considerations:** Any caveats, red flags, alternative approaches, or follow-up plan."""
+
+_MARKERS_TREATMENT = ("- Do NOT add markers to the **Assessment** sentence "
+                      "(which is your interpretation, not an evidence-derived "
+                      "claim) or to general transitions. Markers belong on "
+                      "**Recommendation**, **Evidence**, and any **Key "
+                      "Considerations** that cite literature.")
+
+# The shape a DIAGNOSTIC turn answers in. The clinician asked what is CAUSING
+# this; an answer that opens with management has answered a question they did
+# not ask, and `case-v2` Item 1 found the old prompt had nowhere else to put
+# the reasoning — Assessment was one sentence and Recommendation was a plan.
+_CASE_FORMAT_DIAGNOSTIC = """The clinician is asking what is CAUSING this, not what to do about it. Answer the question they asked, in this order and no other:
+
+**Differential — most likely first**
+
+One block per candidate cause, in descending order of likelihood FOR THIS PATIENT. For each:
+
+**1. <Candidate cause>**
+- *Fits because:* the features of THIS case that support it — the age, the tooth, what is present, and what is conspicuously absent.
+- *Argues against:* the features that do not fit, or "nothing in this case argues against it".
+- *Evidence:* what the literature says about this cause in this presentation, with markers. If the evidence base contains nothing on this candidate, say exactly that — "no paper in this evidence base addresses X in this presentation" — and keep the candidate in the list. A cause worth considering does not stop being worth considering because nobody has published on it, and an unmarked candidate the clinician can see is worth more than a candidate you dropped.
+
+**What would discriminate**
+
+The examinations, tests or images that would separate these candidates, each named against the candidate it settles — a transillumination test for a crack, CBCT for an invagination or a radicular groove, a trauma history for a prior luxation. Order them by how much they narrow the differential per unit of chair time.
+
+**Then, briefly: management**
+
+Two to four sentences, no more, and only after the differential. What to do first, and what the plan would become under each of the top candidates. Do not turn this into the answer — if the management section is longer than the differential, you have written the wrong answer.
+
+Do not open with management, a treatment plan, or a guideline. The first thing on the page is the differential."""
+
+_MARKERS_DIAGNOSTIC = ("- Markers belong on the *Evidence:* line of each "
+                       "candidate and on any discriminator whose usefulness "
+                       "you are asserting from literature. Do NOT mark the "
+                       "*Fits because:* and *Argues against:* lines — those "
+                       "are your reading of THIS case, not claims about a "
+                       "paper, and a marker on them asserts something no "
+                       "paper says.")
+
+
 # ── CASE DISCUSSION ───────────────────────────────────────
-def ask_case_question(messages: list, evidence: dict) -> tuple:
+def ask_case_question(messages: list, evidence: dict,
+                      differential: list = None) -> tuple:
     """
     Clinical case discussion / chat mode.
     messages: conversation history [{"role": "user"|"assistant", "content": str}]
+    `differential` — when non-empty, this is a DIAGNOSTIC turn: the answer is
+    formatted as a ranked differential and the candidates are supplied to the
+    model as reasoning scaffolding. Omitted or empty means the treatment path,
+    byte-identical to what shipped before `case-v2`.
     Returns (answer, cost).
     """
     client = anthropic.Anthropic(api_key=_get_api_key())
+    diagnostic = bool(differential)
 
     system_prompt = """═══════════════════════════════════════════════════════════════
 MANDATORY CITATION FORMAT — NON-NEGOTIABLE
@@ -5944,22 +6300,14 @@ You are a senior endodontist providing real-time clinical consultation on a case
 
 The clinician has described their case. Use the peer-reviewed evidence to give direct, practical advice.
 
-Format every response exactly like this:
-
-**Assessment:** 1-2 sentences on your clinical interpretation.
-
-**Recommendation:** Clear, actionable recommendation with rationale.
-
-**Evidence:** the studies that actually bear on THIS case, cited as Author et al. (Year) [[PMID:XXXXXXXX]]. Draw across the tiers you were given — a systematic review for the general question, a cohort or case series for the specific presentation — rather than stopping at the first one or two. You are typically given 40-150 papers; citing two of them wastes evidence the clinician is relying on you to have read. Cite as many as genuinely support the advice and no more: breadth that is real, never padding.
-
-**Key Considerations:** Any caveats, red flags, alternative approaches, or follow-up plan.
+__CASE_FORMAT__
 
 INLINE PROVENANCE (REQUIRED for clinician verifiability):
 Every standalone clinical claim — a recommendation, statistic, treatment success rate, comparative finding, or factual statement supported by literature — MUST be followed immediately by `[[PMID:nnnnnnn]]` markers, one per supporting paper. Use the EXACT format `[[PMID:12345678]]` (double brackets, no space after the colon). Place markers at the END of the sentence the claim appears in.
 - Example: "MTA outperforms calcium hydroxide in vital pulp therapy [[PMID:31543236]] [[PMID:34234567]]."
 - Multiple supporting papers can be cited (space-separated markers).
 - If a claim summarises a systematic review's pooled estimate, cite the SR's PMID, not the underlying primary trials.
-- Do NOT add markers to the **Assessment** sentence (which is your interpretation, not an evidence-derived claim) or to general transitions. Markers belong on **Recommendation**, **Evidence**, and any **Key Considerations** that cite literature.
+__MARKER_PLACEMENT__
 - The double-bracket format `[[PMID:N]]` is what powers the click-through source-abstract side panel in the UI. Do NOT use the single-bracket form `[PMID: N]` anywhere in your response — the UI will not recognise it as a verifiability marker.
 
 __GROUNDING_RULE__
@@ -5980,10 +6328,44 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
     # synthesis path with a known mechanism for a decorative citation, to keep
     # a measurement tidy, is the worse trade.
     system_prompt = system_prompt.replace("__GROUNDING_RULE__", _GROUNDING_RULE)
+    system_prompt = system_prompt.replace(
+        "__CASE_FORMAT__",
+        _CASE_FORMAT_DIAGNOSTIC if diagnostic else _CASE_FORMAT_TREATMENT)
+    system_prompt = system_prompt.replace(
+        "__MARKER_PLACEMENT__",
+        _MARKERS_DIAGNOSTIC if diagnostic else _MARKERS_TREATMENT)
 
     # Build evidence context — strict tier order (Cochrane → L5),
     # same builder as review/learn modes
     context = _build_evidence_context(evidence)
+
+    # The candidates reach the model as SCAFFOLDING, explicitly labelled as a
+    # working list rather than a conclusion. It is a starting point it is told
+    # to revise: a differential the model cannot argue with is a differential
+    # the retrieval step has quietly made final, and the retrieval step never
+    # read the papers.
+    scaffold = ""
+    if diagnostic:
+        lines = ["\n\n---\n\nWORKING DIFFERENTIAL (a first pass, generated "
+                 "BEFORE the literature below was read — revise it against "
+                 "the evidence, reorder it, drop a candidate the papers rule "
+                 "out, and add one they suggest):\n"]
+        for i, c in enumerate(differential, 1):
+            lines.append(
+                f"{i}. {c.get('candidate', '')}\n"
+                f"   fits because: {c.get('supports', '')}\n"
+                f"   argues against: {c.get('against', '')}\n"
+                f"   discriminator: {c.get('discriminator', '')}")
+        diff_meta = (evidence.get("_differential") or {})
+        empties = [n for n, v in diff_meta.items() if not v.get("n_papers")]
+        if empties:
+            lines.append(
+                "\nThe evidence base below contains NO papers retrieved for: "
+                + "; ".join(empties)
+                + ". Keep these candidates in the differential and say plainly "
+                  "that the evidence base does not address them — do not drop "
+                  "them, and do not attach a marker to them.")
+        scaffold = "\n".join(lines)
 
     # Inject evidence only into the first user message
     api_messages = []
@@ -5993,7 +6375,7 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
                 "role": "user",
                 "content": (
                     f"Evidence base for this consultation:\n{context}\n\n"
-                    f"---\n\nCase: {msg['content']}"
+                    f"---\n\nCase: {msg['content']}{scaffold}"
                 )
             })
         else:

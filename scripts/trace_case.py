@@ -142,21 +142,55 @@ def main():
         print(f"  - {m}")
     print()
 
-    # 4 + 5. The real retrieval the case path performs -------------------
+    # 4 + 5 + 6. THE PRODUCTION PATH, through /case_chat --------------
+    #
+    # Not `build_evidence_base_with_progress` plus `ask_case_question` called
+    # side by side, which is what the first version of this script did. That
+    # bypasses `run_case_chat`, and `run_case_chat` is where the intent split
+    # and the per-candidate retrieval live — so the "after" trace would have
+    # measured the old path and reported no change. The brief says run it
+    # through `/case_chat`; run it through `/case_chat`.
     import app as app_mod
     off = _audit_offset()
-    evidence = app_mod.build_evidence_base_with_progress(
-        "trace-case", args.case, mode="case")
-    trace["esearch"] = _esearch_since(off)
+    client = app_mod.app.test_client()
+    r = client.post("/case_chat", json={
+        "messages": [{"role": "user", "content": args.case}],
+        "skip_clarify": True})
+    if r.status_code != 200:
+        raise SystemExit(f"/case_chat {r.status_code}: {r.data[:300]}")
+    job_id = r.get_json()["job_id"]
+    deadline = time.time() + 1800
+    while time.time() < deadline:
+        st = client.get(f"/status/{job_id}").get_json()
+        if st.get("status") in ("complete", "error", "aborted"):
+            break
+        time.sleep(2)
+    if st.get("status") != "complete":
+        raise SystemExit(f"case run {st.get('status')}: {st.get('error')}")
 
+    trace["esearch"] = _esearch_since(off)
+    trace["intent"] = st.get("case_intent")
+    trace["differential"] = st.get("differential")
+    if trace["differential"]:
+        print(f"--- INTENT: {trace['intent']} ---")
+        print(f"--- DIFFERENTIAL ({len(trace['differential'])} candidates) ---")
+        for i, c in enumerate(trace["differential"], 1):
+            print(f"  {i}. {c.get('candidate')}")
+            print(f"       discriminator: {c.get('discriminator', '')[:110]}")
+        print()
+
+    # Papers come from /status, which is where `_safe_papers` runs. Reading
+    # them off the job dict directly would be reading past the one enforcement
+    # point that keeps abstract text out of a client (invariant 13), in a
+    # script whose whole output is meant to be pasted into a report.
     tiers = {}
-    for key in endo_ai.TIER_ORDER:
-        block = evidence.get(key) or {}
-        scored = block.get("scored") or []
-        if scored:
-            tiers[key] = [{"pmid": p.get("pmid"), "title": (p.get("title") or "")[:110],
-                           "year": p.get("year"), "score": p.get("score")}
-                          for p in scored]
+    for p in (st.get("papers") or []):
+        tiers.setdefault(p.get("level_key") or "unknown", []).append(
+            {"pmid": p.get("pmid"), "title": (p.get("title") or "")[:110],
+             "year": p.get("year"), "score": p.get("score"),
+             "candidates": p.get("candidates")})
+    tiers = {k: tiers[k] for k in endo_ai.TIER_ORDER if k in tiers} | \
+            {k: v for k, v in tiers.items() if k not in endo_ai.TIER_ORDER}
     trace["tiers"] = tiers
     print("--- EVIDENCE BASE BY TIER ---")
     for key, papers in tiers.items():
@@ -175,9 +209,8 @@ def main():
           f"  {trace['etiology_in_titles'] or 'NONE'}\n")
 
     # 6. The answer ------------------------------------------------------
-    from endo_ai import ask_case_question
-    answer, cost = ask_case_question([{"role": "user", "content": args.case}],
-                                     evidence)
+    answer = st.get("answer") or ""
+    cost = float(st.get("cost_usd") or 0.0)
     trace["answer"] = answer
     trace["cost"] = cost
     trace["elapsed"] = round(time.perf_counter() - t0, 1)

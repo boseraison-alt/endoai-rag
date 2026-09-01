@@ -48,34 +48,67 @@ ELDERLY_CASE = ("68-year-old with osteoporosis on alendronate, needs a "
                 "decision between extraction and root canal treatment on a "
                 "lower molar with a large periapical lesion")
 
-# Non-discriminating for a 20-year-old with no caries and no restoration.
-IRRELEVANT = {
-    "bisphosphonate": r"bisphosphonate|alendronate|antiresorptive|denosumab|zoledron",
-    "radiation":      r"head[- ]and[- ]neck radiation|radiotherapy",
-    "immunosuppress": r"immunosuppress|immunocompromis",
-    "anticoagulation": r"anticoagul|warfarin|apixaban",
-    "diabetes":       r"\bdiabet",
-    "endocarditis":   r"endocarditis",
-    "restorability":  r"ferrule|restorab|crown[- ]root ratio",
-    "prior endo":     r"previous(ly)? root[- ]?filled|prior endodontic|retreat",
+# RELEVANCE IS A PROPERTY OF THE TOPIC *AND THIS PATIENT*, so the classifier is
+# per case. The first version of this script used one IRRELEVANT set for both
+# and reported the 68-year-old at 90% non-discriminating — because restorability
+# and prior-endodontic-treatment, the two questions that actually decide
+# extraction versus retreatment at 68, were on a list written for a 20-year-old
+# with a virgin tooth. The measurement was wrong, not the product. Encoding the
+# distinction is also exactly what the contrast case exists to prove.
+PROFILES = {
+    "young": {
+        # 20-year-old, caries-free, unrestored. Every medical red flag is a
+        # near-certain no, and restorability is not in question on a virgin
+        # tooth.
+        "irrelevant": {
+            "bisphosphonate": r"bisphosphonate|alendronate|antiresorptive|denosumab|zoledron",
+            "radiation":      r"head[- ]and[- ]neck radiation|radiotherapy",
+            "immunosuppress": r"immunosuppress|immunocompromis",
+            "anticoagulation": r"anticoagul|warfarin|apixaban",
+            "diabetes":       r"\bdiabet",
+            "endocarditis":   r"endocarditis",
+            "restorability":  r"ferrule|restorab|crown[- ]root ratio|post and core|post-core",
+        },
+        "discriminating": {
+            "trauma":      r"trauma|injur|luxat|avuls|concussion|blow|impact",
+            "orthodontic": r"orthodontic|braces|aligner",
+            "tooth id":    r"which tooth|tooth (number|type)|anterior|incisor|premolar|molar|position",
+            "sinus tract": r"sinus tract|fistula|swelling|draining|isolated deep|narrow pocket",
+            "imaging":     r"radiograph|cbct|imaging|x-ray|periapical film",
+            "vitality":    r"vitality|cold test|ept|pulp test|sensibilit",
+            "anomaly":     r"invaginat|evaginat|groove|talon|anomal|developmental|unusual anatomy",
+            "discoloration": r"discolo|darken",
+        },
+    },
+    "elderly": {
+        # 68-year-old on alendronate, extraction versus root canal. Here
+        # restorability, prior treatment and the antiresorptive DETAIL are the
+        # deciding facts; the young-tooth developmental differential is not.
+        "irrelevant": {
+            "orthodontic":   r"orthodontic|braces|aligner",
+            "anomaly":       r"invaginat|evaginat|talon|dens in dente",
+            "apex maturity": r"open apex|immature apex|apexogenesis",
+        },
+        "discriminating": {
+            "bisphosphonate": r"bisphosphonate|alendronate|antiresorptive|denosumab|zoledron|mronj|drug holiday",
+            "restorability":  r"ferrule|restorab|crown[- ]root ratio|post and core|post-core|remaining (coronal )?(tooth )?structure",
+            "prior endo":     r"previous(ly)? root[- ]?filled|prior endodontic|retreat|treated endodontically|virgin tooth",
+            "periodontal":    r"periodont|bone (loss|support)|mobility|furcation",
+            "sinus tract":    r"sinus tract|fistula|swelling|draining|isolated deep|narrow pocket",
+            "lesion":         r"lesion size|how large|extent of the lesion",
+            "vitality":       r"vitality|cold test|ept|pulp test|sensibilit",
+        },
+    },
 }
-# Questions that genuinely narrow the differential for this presentation.
-DISCRIMINATING = {
-    "trauma":      r"trauma|injur|luxat|avuls|concussion|blow|impact",
-    "orthodontic": r"orthodontic|braces|aligner",
-    "tooth id":    r"which tooth|tooth (number|type)|anterior|incisor|premolar|molar|position",
-    "sinus tract": r"sinus tract|fistula|swelling|draining",
-    "imaging":     r"radiograph|cbct|imaging|x-ray|periapical film",
-    "vitality":    r"vitality|cold test|ept|pulp test|sensibilit",
-    "anomaly":     r"invaginat|evaginat|groove|talon|anomal|developmental",
-    "discoloration": r"discolo|darken",
-}
+
+PROFILE = {"name": "young"}
 
 
 def classify(question: str) -> tuple:
+    prof = PROFILES[PROFILE["name"]]
     low = (question or "").lower()
-    bad = [k for k, pat in IRRELEVANT.items() if re.search(pat, low)]
-    good = [k for k, pat in DISCRIMINATING.items() if re.search(pat, low)]
+    bad = [k for k, pat in prof["irrelevant"].items() if re.search(pat, low)]
+    good = [k for k, pat in prof["discriminating"].items() if re.search(pat, low)]
     return bad, good
 
 
@@ -89,7 +122,8 @@ def main():
     args = ap.parse_args()
 
     case = ELDERLY_CASE if args.contrast else args.case
-    print(f"CASE: {case}\n")
+    PROFILE["name"] = "elderly" if args.contrast else "young"
+    print(f"CASE [{PROFILE['name']}]: {case}\n")
 
     runs = []
     bad_runs = 0
