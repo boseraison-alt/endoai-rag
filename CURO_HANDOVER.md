@@ -10,7 +10,7 @@ auto-compact.
 
 ---
 
-## 1. What Curo is right now (state as of tag `case-v2`)
+## 1. What Curo is right now (state as of tag `case-v2.1`)
 
 An evidence-graded endodontics assistant: **2,350-paper** curated library (Neon
 Postgres + pgvector) with per-paper provenance (evidence tier incl. in vitro,
@@ -27,7 +27,7 @@ the first with a ranked, per-candidate-retrieved differential**, and five
 export styles — audio, video,
 slides, podcast and a self-contained reveal.js web deck that auto-advances with
 its own narration — all generated from ONE cached slide-spec in the approved
-dark design. **1,483 tests**, all mutation-checked. **25-case retrieval eval**
+dark design. **1,495 tests**, all mutation-checked. **25-case retrieval eval**
 with a 3-run baseline (`eval/baseline_v6.json`) whose harness measures the
 citation-support flag rate per case, on both routes, and **excludes rows
 written by another process**.
@@ -49,17 +49,33 @@ Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 | longest claim unit on a curriculum | **469 chars**, from 2,403 |
 | abstract excerpt the support judge sees | the whole abstract |
 | retrieval baseline | `eval/baseline_v6.json` — 25 cases x 3 runs, unmoved |
-| tests | **1,483** passing, 44 skipped |
+| tests | **1,495** passing, 44 skipped |
 | **`/health`** | reports the **git hash the process imported**, frozen at import. Check it before trusting any server. |
 | case follow-ups: non-discriminating question rate | **0/20**, from 8/15 = 53% |
 | the same question on the contrast case (68, on alendronate) | **10/10** asked — filtered by relevance, not deleted |
 | diagnostic case answer | **6 candidates, 139 papers, $0.1801** (was 26 papers, $0.0724, no differential) |
-| case eval cases | **2, both passing**, 0 support flags each (`--case-subset`) |
+| case eval cases | **3, all passing** (`--case-subset`) |
+| the dens evaginatus fixture | DE is candidate **1 of 6**, management at char 1,277 (was char 323); **0/16** support flags |
 
 **Which run each rate comes from, because they are not all the same run.**
 The library Review figure is the `grounding-v2` run. **Do not quote 4.3% as
 the library baseline at all**: the same three cases measured 8.2%, 8.9% and
 6.3% across one night, with nothing changed between the first two.
+
+**What changed in `case-v2.1`.** Read `OVERNIGHT_REPORT_5.md`. Three things,
+and the first was a defect `case-v2` had reintroduced: the differential
+generator's `max_tokens` was too small for six candidates, the JSON truncated,
+the parser returned nothing, and the turn fell back to the treatment path with
+no error anywhere — so the fixture answered "Proceed with non-surgical root
+canal treatment" on code that was supposed to have fixed exactly that. Second,
+the differential now treats the TOOTH and the patient's demographics as priors,
+which is what makes dens evaginatus the lead candidate on a mandibular premolar
+instead of the third. Third, the synthesis scaffold lists which PMIDs were
+retrieved for which candidate, which took the fixture's citation-support flags
+from 1-3 to 0-2: without it a paper about cystic lesions carried three dens
+invaginatus prevalence claims. The overreaching "leading cause of RCT in
+premolars presenting without caries" is now stated at the strength its source
+supports, "the predominant etiology in immature teeth (32.1%)".
 
 **What changed in `case-v2`.** Read `OVERNIGHT_REPORT_4.md`. A case turn is now
 classified `diagnostic` or `treatment` (failing open to treatment, the measured
@@ -147,6 +163,15 @@ last, so the finding was the part that was missing.
     the list and says so — dropping it hides a cause behind the accident of
     what has been published. The intent router fails open to TREATMENT, which
     is the measured path.
+19. **A differential ranks by THIS tooth and THIS patient, not by base rate.**
+    A tooth number tells you which anomalies are even possible — dens
+    invaginatus in maxillary laterals, dens evaginatus in mandibular premolars
+    — and a candidate that is common overall must not crowd out one that is
+    common in this tooth. And a paper retrieved for one candidate is not
+    evidence for another: the synthesis scaffold states which PMIDs came from
+    which candidate, because without it a paper about cystic lesions carried
+    three dens invaginatus prevalence claims with counts that appear nowhere
+    in it.
 
 Recurring bug classes (see `HANDOVER.md`): trusted stored labels, untagged
 PubMed query terms, batch-metadata applied per-paper, fail-open checks that
@@ -163,7 +188,8 @@ web-deck auto-advance, maintenance script) → `guardrails-v1` (`/health` git
 hash, the claim unit, the grounding/traceability reconciliation, `cost_log`
 `source` + `pubmed_audit` pid guard) -> `case-v2` (diagnostic vs treatment
 intent, differential-first retrieval, follow-up relevance, the first two case
-eval cases).
+eval cases) -> `case-v2.1` (the tooth as a prior, per-candidate paper
+attribution, targeted dens evaginatus ingest, the ordering pinned).
 
 Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
@@ -224,11 +250,16 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   68-year-old requires it, so neither can be satisfied by deleting a topic.
   Both pass with 0 citation-support flags. `max_tokens` at 6000 is still on a
   measurement that has never been repeated.
-- **A diagnostic case answer can still overreach its source.** One run of the
-  20-year-old case flagged 3 of 16 pairs, every one the same shape: a general
-  clinical claim marked to a foundational 1970s paper. Two later runs flagged
-  0, so it is variance around a real tendency. §5's Item 2 is the same defect
-  on a different claim, and closing it should close this.
+- **A diagnostic case answer can still overreach its source.** Improved in
+  `case-v2.1` by listing which PMIDs were retrieved for which candidate — the
+  dens evaginatus fixture went from 1-3 flags to 0-2 — but the residual is the
+  `artifact_negative` class, which is §5 Item 3.
+- **`fetch_papers` broadens a zero-hit query into a DIFFERENT topic.** 23 of 48
+  papers in the first dens evaginatus dry run did not mention the anomaly. The
+  ingest script gates its write-back; the live path does not. §5 Item 1.
+- **A `max_tokens` cap can silently disable a feature.** The differential
+  returned `[]` on a truncated reply and the turn was answered on the treatment
+  path with no error. Fixed there; the shape is generic. §5 Item 2.
 - **A candidate's search topic is generated once and never checked.** A badly
   named candidate — "Idiopathic or occult cause (including undetected microbial
   access via extreme attrition)" — hands its retrieval a bad topic, and nothing
@@ -302,71 +333,88 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   `scripts/monthly_maintenance.py`, dry-run by default and deliberately
   **NOT scheduled**. Ran end to end clean: backfill 24s, rescore 10s, eval
   686s with 25/25 cases passing. RB decides when it first runs `--apply`.
-## 5. Next batch — "case-v2.1": the differential leads, and the DE claim is sourced
+## 5. Next batch — "retrieval-honesty-v1" (paste-ready for the fresh session)
 
-Autonomous batch on `main`, tag `case-v2.1` at end. Standing rules from
-`WORKLIST.md` §0/§6 apply in full. Commit + push per item; re-bundle.
+Autonomous batch on `main`, tag `retrieval-honesty-v1` at end. Standing rules
+from `WORKLIST.md` §0/§6 apply in full, including the every-column backup rule.
+Commit + push per item; re-bundle after commits.
 
-**CONTEXT — a real user-tested case, keep it verbatim as the fixture.**
+**The theme.** Three of the last four batches ended with the same shape in
+found-not-fixed: a step that silently substitutes something for what was asked
+for, and nothing downstream can tell. Each is now measurable, and none has been
+measured.
 
-> 20-year-old, no response to cold testing on tooth #20, well-defined
-> periapical lesion, no filling, no cracks, Asian ethnicity.
+**ITEM 1 — A zero-hit query is broadened into a different topic.**
+`fetch_papers` broadens once when a tier returns nothing. On an ordinary
+question that widens the net; on a narrow one it changes the subject. Measured
+incidentally in `case-v2.1`: a targeted dens evaginatus ingest cleared 48
+papers through the quality floors and **23 of them did not mention the anomaly
+at all** — "Single versus multiple visits for endodontic treatment", "Systemic
+antibiotics for symptomatic apical periodontitis", "Materials for retrograde
+filling in root canal therapy".
 
-The current answer correctly raises **dens evaginatus** — but only in Key
-Considerations, AFTER an assessment that opens with "straightforward primary
-RCT indication". And the single citation-support flag lands on the
-load-bearing etiologic claim: *"Thai population data identified DE as the
-leading cause of RCT in premolars presenting without caries"* — an overreach
-of its source, which per its own abstract concerns **immature** teeth.
+The ingest script gates its own write-back on relevance. **The live path does
+not**, so a rare-presentation question can be answered out of general
+endodontics with nothing saying the query changed.
 
-**ITEM 1 — Differential leads, treatment follows.** For DIAGNOSTIC-intent case
-turns (the intent split landed in `case-v2`), the answer structure is: (1)
-etiologic differential first — most likely cause with the case features
-supporting it, then alternatives with what argues for and against each and the
-exam/imaging step that would discriminate; (2) treatment recommendation second,
-briefly. The Assessment line must not declare a treatment indication before the
-etiology is discussed. Enforce in the case synthesis prompt; validate with the
-fixture case — its FIRST paragraph must centre on dens evaginatus / etiology,
-not RCT. All existing gates unchanged.
+Measure first: over the eval set plus a set of deliberately narrow questions,
+how often does a broadened query return papers that do not contain the
+distinctive term of the original? Then decide — a relevance gate on the
+broadened result, or a badge on the tier saying "broadened; these papers may
+be about the general topic", or both. Do not simply disable broadening: it was
+added because thin tiers returned nothing at all.
 
-*Note from `case-v2`:* the diagnostic format already mandates
-differential-then-management and the 20-year-old eval case asserts
-`must_precede`. This item is therefore mostly a VALIDATION against a second,
-independent fixture — and tooth #20 is a mandibular second premolar, which is
-the dens evaginatus tooth, so it tests a candidate `case-v2` never exercised as
-the lead.
+**ITEM 2 — A `max_tokens` cap that silently disables a feature.**
+`generate_case_differential` returned `[]` for a whole class of case because
+its reply was truncated mid-JSON, and the turn was then answered on the
+treatment path with no error anywhere. Fixed there — bigger cap, a parser that
+salvages complete objects, a loud retry — but the shape is generic.
 
-**ITEM 2 — Fix the overreaching DE claim at its root.**
-a. Targeted retrieval: dens evaginatus epidemiology and aetiology in
-   mandibular premolars / Asian populations. Synonyms: "central cusp",
-   "tuberculated premolar", "Leong's premolar"; talon cusp EXCLUDED. If the
-   library is thin, go live; write back what clears the floors.
-b. Regenerate the fixture case's answer. The DE claim must now either cite a
-   directly supporting source or be stated at the strength its source supports
-   ("identified as the leading cause of RCT in **immature** premolars", per the
-   cited study). **Target: citation-support 0 flagged on this answer with the
-   claim still present** — the fix is better sourcing or honest phrasing,
-   NEVER dropping the DE discussion and NEVER weakening the checker.
+Sweep every JSON-returning generator: `generate_search_terms`,
+`generate_multi_search_terms`, `generate_curriculum_syllabus`,
+`generate_case_followups`, `classify_question_intent`, the slide-spec builder.
+For each, ask two questions and answer them with a measurement, not a reading:
+what is the observed output-token distribution against its cap, and what does
+the caller do with a truncated reply? Anything that degrades to empty rather
+than partial is bug class (d) with a token budget. Add the tolerant parse and
+a one-line warning that names the function and the stop reason.
 
-**ITEM 3 — Pin it in the eval set.** Add the fixture case as a permanent eval
-case, DIAGNOSTIC intent, asserting: the differential (dens evaginatus named)
-appears before any treatment recommendation in the answer body; no
-bisphosphonate follow-up question; citation-support flags == 0. The harness
-gained `must_precede` in `case-v2`, so "X before Y" is already expressible.
-Mutation-check: reverse the prompt's ordering rule and confirm the case fails.
+**ITEM 3 — The negative claim, and the judge's fourth verdict.**
+This is the top P1 item and has been for two batches. A claim of the form "X
+et al. did not report a final apical size", or "no paper in this evidence base
+addresses Y", is TRUE, names the right paper, and **cannot pass the
+citation-support check**, because an abstract cannot state what it omits. Seven
+of the sixteen remaining Deep Learning flags are this, and it is the largest
+class in the metric now that the claim-unit artifact is gone.
 
-**ITEM 4 — Close.** Full suite; run the fixture case end to end once and
-include its full answer text in the report so RB can read the before/after;
-update this file; commit, push, re-bundle, tag `case-v2.1`.
+`_GROUNDING_RULE` explicitly asks for the move ("take the number from the paper
+that reports it, or state that the cited study did not report it"), so the rule
+and the checker disagree. Fix the CHECKER, not the rule: teach the judge a
+fourth verdict — `negative_claim`, where the claim asserts the paper does NOT
+report something, supported if and only if the abstract indeed does not.
+Measure on the Deep Learning subset before and after with the artifact split
+hand-judged, the way `eval/logs/dl_flag_verdicts_guardrails.json` was. Do NOT
+weaken the checker in any other direction to make the number move.
 
-**REPORT (§8 format):** the fixture answer before → after (ordering and flag
-count), the DE retrieval result (papers found, tier), tests + commits,
-found-not-fixed, cost.
+**ITEM 4 — `_SUPPORT_MAX_PAIRS = 30`.**
+It binds on every curriculum module and harder than it used to: the last live
+run measured `total_pairs` 43 / 37 / 33 / 34 against `checked` 30 — **27 pairs
+of 147, 18%, never looked at**. The rendered block names the remainder, so it
+is honest rather than silent. Nobody has measured what raising it would find.
+It costs Haiku calls (~$0.005 per 30 extra pairs) and nothing else. Raise it to
+cover a full module, re-measure the Deep Learning flag rate, and report whether
+the unchecked tail flags at the same rate as the checked head — if it does not,
+the cap has been biasing the metric as well as limiting it.
 
-**Carried in from `case-v2`, because Item 2 is the same defect:** one run of
-the 20-year-old case flagged 3 of 16 pairs, all the overreach shape — a general
-clinical claim marked to a foundational 1970s paper. Its eval case caps flags
-at 4 as a blow-up guard; tighten it once Item 2's sourcing work lands.
+**ITEM 5 — Close.** Full suite; `--case-subset` and `--synthesis-subset`;
+report in §8 format; update this file; bundle; push; tag.
+
+**Not in this batch, deliberately.** The Review path's composite-principle
+residual (2 of 10 recommendations cite a general principle assembled across two
+papers) needs the retry comparison first — generate the retries the OLD prompt
+would have produced and check whether they were better or the same. That is a
+~$3 experiment and its own small piece of work; folding it in here would put a
+third change on the citation-support metric in one batch.
 
 
 ## 6. What only RB can do
