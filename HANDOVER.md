@@ -647,6 +647,50 @@ the corrective-retry message ("Add markers from the evidence base, OR
 rephrase") pushed the same way. `_GROUNDING_RULE` is now one constant spliced
 into all three synthesis prompts. See the next section for what it did.
 
+## Decisions taken (RB, 2026-09-01) — do not re-litigate
+
+Three questions the `grounding-v2` report put to RB, answered. Each is closed
+with its reasoning, so the next session does not re-open it from first
+principles the way the ~$0.70 library answer nearly was.
+
+**1. The claim-unit fix is APPROVED, and it runs as its OWN batch.**
+`_extract_claim_citation_pairs` treats a curriculum's `IF / THEN / BECAUSE`
+decision tree and its Clinical Protocol Summary table as ordinary prose, so a
+seven-branch tree becomes ONE claim carrying seven markers — 13 of the 37
+hand-judged Deep Learning flags, the largest single remaining cause in this
+metric. It is worth doing because the difference is between a guardrail that
+means something on a curriculum and one that cries wolf four times in five.
+
+*Why alone:* the last change to that splitter reversed its expected direction
+(merged claims were flagged LESS, 37.6% vs 50.8%, p=0.002, because a longer
+blob gives the judge more surface on which to find something supported).
+Sharing a batch with anything else that touches synthesis would make the
+result unattributable. Queued as `guardrails-v1` Item 1.
+*Rejected:* folding it in with the retry-tension work, which also changes
+synthesis behaviour and would confound both.
+
+**2. `narrate: auto` STAYS ON for the web deck.**
+The deck records its own per-slide narration by default, which costs ~$0.25
+and ~2 minutes per export it did not spend before, and is the only thing that
+arms auto-advance — `load_narration` refuses to advance 34 slides against 13
+unrelated boundaries, correctly, and no sidecar derivable from a lecture
+render can satisfy it. `DEMO_RUNBOOK.md` carries the new timing.
+*Rejected:* defaulting to `narrate: reuse` and leaving auto-advance off unless
+asked. The whole point of the item was to turn it on; a flag that is off by
+default does not. `reuse` remains one request field away if demo timing ever
+matters more than the feature.
+
+**3. `monthly_maintenance.py` first runs `--apply` AFTER the demo.**
+It is built, tested, dry-run end to end (backfill 24s, rescore 10s, eval 686s
+with 25/25 passing) and deliberately unscheduled. The first `--apply` run
+should have its one-page report read by hand.
+*Why after:* it rescores, and a rescore DELETEs `query_cache` — the demo's
+warm answers are the asset, and rebuilding them costs ~$6.40 and eight
+minutes. Running it before the demo would pay that twice for no gain.
+*Rejected:* scheduling it now. When it runs is a judgement about the demo
+calendar and the credit balance, and belongs to RB rather than to a cron line
+added by the script that wrote itself.
+
 ## The grounding rule, and the three-way measurement it needed
 
 `_GROUNDING_RULE` (endo_ai.py, one constant, three prompts) says a

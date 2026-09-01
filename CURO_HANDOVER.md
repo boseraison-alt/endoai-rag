@@ -34,16 +34,28 @@ Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 | | |
 |---|---|
 | citation-support flag rate, LIVE Review path | **0.0%** (0/51), from 20.6% (7/34) — p = 0.0011 |
-| citation-support flag rate, library Review path | **6.3%** (3/48); it measured 8.2% the same night before any change |
-| citation-support flag rate, Deep Learning | **13.0%** (31/239) — of which 81% is checker artifact, see below |
-| Deep Learning genuinely-unsupported rate, hand-judged | **3.0%** (7/234) |
+| citation-support flag rate, library Review path | **~8.9%** (4/45) — quote this, not 4.3%; see the note below |
+| citation-support flag rate, Deep Learning | **13.3%** (32/240) — **a regression, under investigation**, from 8.5% before the grounding rule |
+| Deep Learning genuinely-unsupported rate, hand-judged | **3.0%** (7/234) — 81% of what the checker flags is artifact |
 | abstract excerpt the support judge sees | the **whole abstract** (was the first 1,200 chars) |
 | stored rows whose "abstract" was not an abstract | **179 found, 124 healed**; 40 left are records PubMed has no abstract for |
 | library abstracts still truncated | **1** — PMID 25231145, whose PubMed abstract genuinely is 1,200 characters |
 | mean stored abstract length | **1,631** chars (was 1,182) |
 | retrieval baseline | `eval/baseline_v6.json` — 25 cases x 3 runs |
-| web-deck auto-advance | **on** — 21 segments == 21 slides, verified with ffprobe |
+| web-deck auto-advance | **ON** — 21 segments == 21 slides, verified with ffprobe |
+| maintenance script | **built, dry-run end to end, NOT scheduled** — RB decides when it first runs `--apply` |
 | tests | **1,377** passing, 39 skipped |
+| **stale process** | **PID 35820 is still serving `grounding-v1` code.** Restart before trusting anything it serves or writes. Item 0 of the next batch. |
+
+**Which run each rate comes from, because they are not all the same run.**
+The library and Deep Learning figures above are the **grounding-rule** run,
+which is the one that isolates the change RB approved. A later single run that
+also carried the whole-abstract fix measured library **6.3%** (3/48) and DL
+**13.0%** (31/239). Neither pair is significant on its own — library
+before-vs-after is p = 1.0 and DL p = 0.11 — so the conservative figures are in
+the table and the later ones are here. **Do not quote 4.3% as the library
+baseline at all**: the same three cases measured 8.2%, 8.9% and 6.3% across one
+night, with nothing changed between the first two.
 
 **What changed in `grounding-v2`.** Read `OVERNIGHT_REPORT_2.md` for the whole
 thing. In one paragraph: the synthesis prompts got a grounding rule saying what
@@ -118,6 +130,12 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
 ### P1 (correctness / trust)
 
+- **P0 / Item 0 of the next batch — the running server is on stale code.**
+  PID **35820** has been up since before `grounding-v2` and has the
+  `grounding-v1` `endo_ai` imported; `endo-ai-noreload` does not pick up code
+  changes by design. Anything it serves or writes back is pre-batch. There is
+  no way to tell from the outside, which is the actual defect: **`/health`
+  should report the git hash it is running.** Restart first, every time.
 - **The grounding rule and the recommendation-traceability gate pull in
   opposite directions, and every collision costs a full retry.** The Review
   prompt requires the CLINICAL RECOMMENDATION to carry a `[[PMID:N]]` on its
@@ -159,6 +177,32 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   `cost_log.jsonl` currently holds **$5.70 of imaginary spend** from stubbed
   TTS in the test suite; the suite no longer writes there, and the rows were
   left in place rather than editing an append-only log.
+- **The Deep Learning grounding regression is unexplained.** 8.5% -> 13.3%
+  after the rule (p = 0.11, not significant, not dismissible either). The
+  whole-abstract fix was expected to reverse it and moved it to 13.0%. Two
+  candidates remain and neither is tested: the rule makes claims more numeric
+  and more specific, so they cite deeper into abstracts; or the curriculum's
+  claim UNIT amplifies each marker into several flags, so the same behaviour
+  costs more flags here than on Review. Re-measure after the claim-unit fix
+  before theorising further.
+- **The case path has NO eval cases at all.** `--synthesis-subset` and
+  `--live-subset` contain none, so `ask_case_question` is the one synthesis
+  path whose grounding rule, retry behaviour and support-check outcome are
+  entirely unmeasured. `max_tokens` was raised 2000 -> 6000 on a measurement
+  that has never been repeated either.
+- **Live-path PMID seeding.** `prior_pmids` seeds the candidate set only
+  AFTER the routing gate has decided, and that ordering is the safety
+  property — seeding before it would let a thread's earlier papers drag the
+  route. It is correct today and load-bearing, and it is written down in one
+  docstring and asserted nowhere. Needs a test that fails if the two are
+  reordered.
+- **`cost_log.jsonl` has no `source` field**, so a stubbed row and a real one
+  are indistinguishable after the fact. The test suite wrote **$5.70 of
+  imaginary spend** into it before `tests/conftest.py` redirected the path,
+  and those rows are still there and still counted by `/admin/costs`. Adding
+  `source` (`product` / `test` / `script`) lets the reader filter instead of
+  requiring the log to be edited — an append-only audit log should not be
+  rewritten after the fact.
 - 8 library rows have an empty `title`, which reaches the prompt as a blank
   line where the paper's subject should be.
 
@@ -191,66 +235,147 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 - Multi-user: auth, per-user history, the admin secret model.
 - PHI/X-ray path stays OFF until a BAA exists (decision recorded).
 - Second literature database (Embase/Scopus).
-- Monthly maintenance loop: provenance backfill + rescore + eval.
-## 5. Next batch — "overnight-3" (paste-ready for the fresh session)
+- Monthly maintenance loop — **BUILT (`grounding-v2`)**,
+  `scripts/monthly_maintenance.py`, dry-run by default and deliberately
+  **NOT scheduled**. Ran end to end clean: backfill 24s, rescore 10s, eval
+  686s with 25/25 cases passing. RB decides when it first runs `--apply`.
+## 5. Next batch — "guardrails-v1" (paste-ready for the fresh session)
 
-Autonomous batch on `main`, tag `claims-v1` at end. Standing rules from
-`WORKLIST.md` §0/§6 apply in full, including the every-column backup rule.
-Work on `main` (§6's "never commit to `main`" is superseded, as it was for the
-last four batches).
+Autonomous batch on `main`, tag `guardrails-v1` at end. Standing rules from
+`WORKLIST.md` §0/§6 apply in full, **including the every-column backup rule**.
+Work on `main` (§6's "never commit to `main`" is superseded, as it has been for
+the last five batches).
 
-**The baseline to beat, so nobody has to go looking for it.** Measured
+**The baselines to beat, so nobody has to go looking for them.** Measured
 2026-09-01 with the answer cache bypassed, `python eval/run_eval.py
---synthesis-subset` and `--live-subset`:
+--synthesis-subset` and `--live-subset`. The harness prints these per case now.
 
-| stratum | rate |
-|---|---|
-| Review, live-pinned (5 cases) | **0/51 = 0.0%** |
-| Review, library-pinned (3 cases) | **3/48 = 6.3%** |
-| Deep Learning (2 laser curricula) | **31/239 = 13.0%** |
+| stratum | rate | note |
+|---|---|---|
+| Review, live-pinned (5 cases) | **0/51 = 0.0%** | do not regress this |
+| Review, library-pinned (3 cases) | **4/45 = 8.9%** | 6.3% on a later single run |
+| Deep Learning (2 laser curricula) | **32/240 = 13.3%** | was 8.5%; Item 3 |
 
-The harness prints these per case now. **Do not quote 4.3% as the library
-baseline** — the same three cases measured 8.2% and 8.9% and 6.3% on three
-runs of one night with no change between the first two.
+**Do not quote 4.3% as the library baseline.** The same three cases measured
+8.2%, 8.9% and 6.3% across one night with nothing changed between the first
+two.
 
-**[A] The claim unit — the last big one, and it must run alone.**
+**Sequencing.** Item 0 first and alone. Items 1 and 2 both change measured
+behaviour and must NOT share a run — 1 before 2, each with its own
+before/after. Item 3 is a re-measurement that depends on Item 1 having landed.
+Item 4 is independent and can run alongside anything (it owns the `cost_log`
+plumbing and a test file, nothing else). Item 5 closes.
+
+---
+
+**ITEM 0 — Restart the server, and make it impossible to be fooled again.**
+
+PID **35820** has been serving `grounding-v1` code throughout the whole of
+`grounding-v2`; `endo-ai-noreload` does not pick up changes by design, and
+nothing about the running process says which commit it is. Kill it, restart
+it, and then close the actual defect: **`/health` must report the git hash it
+is running** — resolved at import time, not per request. A request-time
+shell-out reports the WORKING TREE, which is the opposite of what you want to
+know. Add a test that the field is present and non-empty.
+
+Five minutes, and it retires a whole class of "was that answer from the new
+code?" that has now cost two batches.
+
+**ITEM 1 — The claim unit. Runs alone.**
+
 `_extract_claim_citation_pairs` treats a curriculum's `IF / THEN / BECAUSE`
-decision tree and its Clinical Protocol Summary table as ordinary prose, so a
-seven-branch tree becomes ONE claim carrying seven papers' markers and every
-one of them is judged against the whole blob. That is **13 of the 37**
-hand-judged Deep Learning flags (`eval/logs/dl_flag_verdicts.json` has the
-per-flag reasoning; `scripts/classify_dl_flags.py` regenerates it).
+decision tree and its `### Clinical Protocol Summary` table as ordinary prose,
+so a seven-branch tree becomes ONE claim carrying seven papers' markers and
+every one of them is judged against the whole blob. That is **13 of the 37**
+hand-judged Deep Learning flags — the largest single remaining cause in this
+metric. `eval/logs/dl_flag_verdicts.json` holds the per-flag reasoning;
+`scripts/classify_dl_flags.py` regenerates the evidence.
 
-Teach the splitter about the two shapes: a decision-tree branch ends at the
-next `**IF**`, and a table cell is its own claim. Then re-run
-`--synthesis-subset` before and after. **This is the item that must not share
-a batch with anything else**: the last change to this splitter reversed its
-expected direction (merged claims were flagged LESS, p=0.002, because a longer
-blob gives the judge more surface on which to find something supported), so a
-confounded run teaches nothing. Report the split by shape — decision tree,
-table cell, prose — not just the total.
+Teach the splitter two shapes: a decision-tree branch ends at the next
+`**IF**`, and a table row is its own claim. Measure with `--synthesis-subset`
+before and after, and **report the split by shape** — decision tree, table
+cell, prose — not just the total.
 
-**[B] `_SUPPORT_MAX_PAIRS`.** It is 30, it binds on three of four curriculum
-modules, and the block now says so out loud. Measure what the unchecked tail
-contains before deciding: run one curriculum with the cap at 100, and report
-the flag rate of pairs 31+ separately from pairs 1-30. If the tail flags at the
-same rate, raise the cap; if it flags higher, that is a finding about where in
-a module the weak citations are.
+**This item must not share a batch with anything else that touches synthesis.**
+The last change to this splitter reversed its expected direction: merged claims
+were flagged LESS, 37.6% vs 50.8%, p=0.002, because a longer blob gives the
+judge more surface on which to find something supported. A confounded run
+teaches nothing.
 
-**[C] The 108 unexplained efetch misses**, still open from `grounding-v1`.
-Classify them (book record / withdrawn / bad id / fetch bug) and fix whichever
-is a bug. Backfill the 8 empty titles while you are there.
+**ITEM 2 — Reconcile the grounding rule with the traceability gate.**
 
-**[D] Guard the other two shared logs.** `evidence_mapping.jsonl` now carries a
-pid on every citation-support record, because a concurrent pytest run put nine
-rows inside an eval case's measurement window and turned 16/119 into 16/146.
-`pubmed_audit.jsonl` and `cost_log.jsonl` have the same shape and no guard.
-While there: `cost_log.jsonl` holds ~$5.70 of imaginary spend from stubbed TTS
-rows the suite wrote before `tests/conftest.py` redirected it. Decide whether
-`/admin/costs` should filter them or whether the log gets a one-off correction
-row — do not silently edit an append-only log.
+The Review prompt requires the CLINICAL RECOMMENDATION to carry a `[[PMID:N]]`
+on its load-bearing claim. `_GROUNDING_RULE` says do not attach one you cannot
+ground. When both apply, the model leaves it unmarked,
+`validate_evidence_mapping` fails the answer `UNTRACEABLE_RECOMMENDATION`, and
+a whole answer is regenerated at ~$0.34. **6 of 8 attempt-1 failures after the
+rule are that reason, against 0 of 2 before** (0/35 vs 6/89, p = 0.18 —
+directional, not proven). It is the main reason a demo Review answer went from
+~$0.79 to ~$1.28.
 
-Report in §8 format; refresh bundle; tag `claims-v1`.
+Decide it as a question about the PRODUCT, not about the metric: should a
+clinical recommendation ALWAYS be traceable to a paper? If yes, the retry is
+the system working and the cost is the price — write that in `HANDOVER.md` and
+close the item. If no, the recommendation needs a way to say "this rests on the
+evidence base as a whole" that the validator accepts and the renderer shows.
+**Measure the retry rate and the cost per answer before and after, either way.**
+Do not weaken the validator to make the retry go away.
+
+**ITEM 3 — Re-measure the Deep Learning regression.**
+
+8.5% → 13.3% after the grounding rule (p = 0.11: not significant, not
+dismissible either). The whole-abstract fix was expected to reverse it and
+moved it only to 13.0%. Two untested candidates remain: the rule makes claims
+more numeric and more specific so they cite deeper into abstracts, or the
+curriculum's claim UNIT amplifies one marker into several flags.
+
+**Item 1 tests the second directly**, so run this AFTER it lands: regenerate
+both laser curricula and report the rate with the artifact/genuine split,
+hand-judged the way `eval/logs/dl_flag_verdicts.json` was. If it is still ~13%
+with the claim unit fixed, the first candidate is what is left — and that is a
+prompt question, not a checker question.
+
+**ITEM 4 — A `source` field on `cost_log.jsonl`, and the last shared log gets
+its contamination guard.**
+
+A stubbed test row and a real product call are indistinguishable in that file
+after the fact. The suite wrote **$5.70 of imaginary spend** into it before
+`tests/conftest.py` redirected the path, and those rows are still there and
+still counted by `/admin/costs`. Add `source` (`product` / `test` / `script`),
+defaulting to `product`, and have `/admin/costs` show `product` by default
+while still able to show everything. **Do not edit the historical rows** — an
+append-only audit log is not rewritten after the fact. Rows without the field
+read as `product`, and the $5.70 is documented in `OVERNIGHT_REPORT_2.md` §7.
+
+Then close the class. `evidence_mapping.jsonl` carries a writer `pid` on every
+citation-support record because a concurrent pytest run corrupted an eval
+measurement through it. `pubmed_audit.jsonl` has the same shape and no guard.
+Give it the same treatment, and add the test that would have caught the
+original: a foreign-pid row inside a case's window must be excluded, and four
+curriculum modules landing in the same second must NOT be.
+
+While there: `prior_pmids` seeds the live candidate set only AFTER the routing
+gate has decided, and that ordering IS the safety property — seeding first
+would let a thread's earlier papers drag the route. It is correct today,
+load-bearing, written down in one docstring and asserted nowhere. Add the test
+that fails if the two are reordered.
+
+**ITEM 5 — Close.**
+
+Full suite. Re-warm SELECTIVELY: Items 1–3 change what Review and the
+curriculum serve, so if any of them lands, run `python
+scripts/regenerate_demo_assets.py --reviews-only` (~$6.40, ~8 min), and
+regenerate the laser curriculum ONLY if Item 1 or Item 3 changed it. Items 0
+and 4 change nothing that is served — do not pay for a re-warm on their
+account. Then `OVERNIGHT_REPORT_3.md` in §8 format, update this file, refresh
+the bundle, verify it, push, tag `guardrails-v1`.
+
+**Not in this batch, deliberately.** The case path has no eval cases at all,
+so `ask_case_question` is the one synthesis path whose grounding rule, retry
+behaviour and support-check outcome are entirely unmeasured. Adding cases means
+writing them, pinning them and baselining them — its own piece of work, and it
+would confound every measurement above if done alongside. It is the first item
+of the batch after this one.
 
 ### Environment notes the fresh session will otherwise rediscover the hard way
 
@@ -307,17 +432,9 @@ Report in §8 format; refresh bundle; tag `claims-v1`.
    without it.
 5. Session hygiene: start new agent sessions from this file; `/compact` only at
    committed boundaries.
-6. Decide whether to chase the last of the citation-support flag rate. The
-   LIVE Review path is **0/51** and the library path **3/48**; the remaining
-   headroom is on the Deep Learning path, where 81% of what the checker flags
-   is an artifact of how a claim is extracted rather than a bad citation.
-   §5[A] is that item. Recommendation: yes, once, as its own batch — it is the
-   difference between a guardrail that means something on a curriculum and one
-   that cries wolf four times in five.
-7. Decide whether the web deck should keep recording its own narration by
-   default (`narrate: auto`). It buys auto-advance for ~$0.25 and ~2 minutes
-   per export. Recommendation: yes; `narrate: reuse` restores the old
-   behaviour in one request field if the demo timing matters more.
-8. Decide when `scripts/monthly_maintenance.py` first runs in `--apply` mode.
-   It is built, tested and deliberately unscheduled. Recommendation: after the
-   demo, with the one-page report read by hand the first time.
+6. **Three questions that used to sit here are now DECIDED** — the claim-unit
+   fix as its own batch, `narrate: auto` staying on, and
+   `monthly_maintenance.py` first running `--apply` after the demo. They are
+   recorded with their reasoning in `HANDOVER.md`, "Decisions taken (RB,
+   2026-09-01)", and queued as §5 Items 1 and 5 above. Do not re-open them
+   without a reason that is not already in that entry.
