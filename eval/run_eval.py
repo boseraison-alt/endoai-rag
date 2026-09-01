@@ -55,11 +55,31 @@ def _esearch_hits_since(offset):
     count taken there just shadows the final paper count and tells you nothing
     about whether the QUERY was broken.
 
-    Returns (total_returned, n_queries, n_empty_queries).
+    Returns (total_returned, n_queries, n_empty_queries, n_terms, n_failed).
+
+    CONTAMINATION, and why the pid is the answer here too. This window belongs
+    to one case, and `pubmed_audit.jsonl` is one file shared by every process
+    on the machine, so anything else fetching from PubMed while the eval runs
+    lands in this case's hit count. That is not hypothetical: the identical
+    bug through `evidence_mapping.jsonl` put nine foreign rows inside one
+    curriculum's window and turned 16/119 into 16/146.
+
+    A foreign-pid row is EXCLUDED rather than guessed at. Rows written before
+    the field existed have no pid and are counted — "we cannot tell" has to
+    mean "in the window", or every historical comparison silently loses rows.
+
+    What must NOT be excluded: four curriculum modules retrieving in parallel.
+    They are threads in this process, share this pid, and are the eval's own
+    work. A timing heuristic cannot tell them from contamination — the real
+    contaminating burst was 1.3 s apart, which is what a thread pool finishing
+    looks like — which is exactly why this is a pid check and not a clock one.
     """
     if not AUDIT_LOG.exists():
         return None, 0, 0, 0, 0
+    import os
+    mine = os.getpid()
     total = n = empty = terms = failed = 0
+    foreign = foreign_returned = 0
     with AUDIT_LOG.open("r", encoding="utf-8") as fh:
         fh.seek(offset)
         for line in fh:
@@ -69,6 +89,11 @@ def _esearch_hits_since(offset):
             try:
                 rec = json.loads(line)
             except json.JSONDecodeError:
+                continue
+            pid = rec.get("pid")
+            if pid is not None and int(pid) != mine:
+                foreign += 1
+                foreign_returned += int(rec.get("n_returned") or 0)
                 continue
             # http_status 0 = the request never got a response (DNS/network).
             # These are NOT empty results and must not be counted as queries:
@@ -88,6 +113,11 @@ def _esearch_hits_since(offset):
             # ±50% noise source) without needing a new field in the pipeline.
             if rec.get("level_key") == "level1":
                 terms += 1
+
+    if foreign:
+        print(f"  NOTE: {foreign} esearch call(s) ({foreign_returned} PMIDs) "
+              f"in this window were made by another process and are EXCLUDED. "
+              f"Something else is hitting PubMed while the eval runs.")
     return total, n, empty, terms, failed
 
 

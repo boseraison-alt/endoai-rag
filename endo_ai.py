@@ -473,6 +473,47 @@ def tier2_invoke(function_name: str, mode: str, **create_kwargs):
     return sonnet_resp, sonnet_cost  # last resort
 
 
+# ── WHO SPENT THIS: product, test, or script ─────────────
+# `cost_log.jsonl` currently holds $5.70 of imaginary spend — stubbed TTS from
+# a test suite that used to write into the product's own record, and which
+# `/admin/costs` still counts. Those rows are staying: an append-only audit log
+# is not rewritten after the fact, and rewriting it is how you lose the ability
+# to tell what the log said at the time. What was missing was the field that
+# lets a reader FILTER instead.
+#
+# Resolved per write, not cached, and not passed in by the caller. Passing it
+# in means every call site can forget it, and the call sites that would forget
+# are exactly the ones inside a test. Detection asks what the process IS:
+#
+#   COST_LOG_SOURCE env var   — explicit override, for a script that knows
+#                               better (a re-warm is arguably product spend).
+#   pytest in sys.modules     — a test. This is the case that actually
+#                               happened, and it must not depend on anyone
+#                               remembering to set anything.
+#   argv[0] under scripts/ or eval/ — a script or a measurement run.
+#   otherwise                 — product.
+#
+# Rows written before this field existed have no `source` and READ as product,
+# which is what they mostly were; the $5.70 of stubbed TTS is the documented
+# exception (OVERNIGHT_REPORT_2.md §7).
+COST_SOURCES = ("product", "test", "script")
+
+
+def cost_log_source() -> str:
+    """Which kind of process is spending this. See the note above."""
+    env = (os.getenv("COST_LOG_SOURCE") or "").strip().lower()
+    if env in COST_SOURCES:
+        return env
+    if "pytest" in sys.modules or os.getenv("PYTEST_CURRENT_TEST"):
+        return "test"
+    entry = (sys.argv[0] if sys.argv else "") or ""
+    entry = entry.replace("\\", "/").lower()
+    if "/scripts/" in entry or "/eval/" in entry or \
+            entry.endswith("run_eval.py"):
+        return "script"
+    return "product"
+
+
 def log_llm_call(function_name: str, model: str, usage, mode: str = "shared",
                  request_id: str = None) -> float:
     """Log a Claude API call to cost_log.jsonl and return its USD cost.
@@ -497,6 +538,7 @@ def log_llm_call(function_name: str, model: str, usage, mode: str = "shared",
         "input_tokens":  in_tok,
         "output_tokens": out_tok,
         "cost_usd":      round(cost, 6),
+        "source":        cost_log_source(),
     }
     if request_id:
         record["request_id"] = request_id
@@ -553,6 +595,7 @@ def log_tts_call(function_name: str, model: str, characters: int,
         "input_tokens":  0,
         "output_tokens": 0,
         "cost_usd":      round(cost, 6),
+        "source":        cost_log_source(),
         "kind":          "tts",
         "characters":    chars,
         "rate_usd_per_1m_chars": rate,
@@ -2669,6 +2712,12 @@ _PMID_FORMAT_RE = re.compile(r"^\d{1,9}$")
 # in the proof-of-fetch log destroys exactly the record that proves a PMID came
 # from NCBI rather than from a model.
 _PUBMED_AUDIT_LOCK = _cost_thread.Lock()
+# Module-level so `tests/conftest.py` can redirect it, the way it already
+# redirects the cost and evidence-mapping logs. The path used to be built
+# inside the writer, which made it the one audit log a test run could not
+# be kept out of.
+_PUBMED_AUDIT_LOG_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "pubmed_audit.jsonl")
 
 
 def _pubmed_audit_log(label: str, level_key: str, search_term: str,
@@ -2678,9 +2727,26 @@ def _pubmed_audit_log(label: str, level_key: str, search_term: str,
     latency. This is the audit trail showing PMIDs came from a live NCBI
     response — not synthesised. Stored in pubmed_audit.jsonl.
 
-    Thread-safe: serialised on _PUBMED_AUDIT_LOCK."""
+    Thread-safe: serialised on _PUBMED_AUDIT_LOCK.
+
+    `pid` is the writer's process id, and it is the third file in this repo to
+    need one. `run_eval._esearch_hits_since` measures a case's retrieval as a
+    BYTE-OFFSET WINDOW into this file — and this file is one file shared by
+    every process on the machine, so anything else fetching from PubMed while
+    an eval is in flight lands inside that case's numerator. It happened
+    through `evidence_mapping.jsonl` first: nine rows from a concurrent pytest
+    run turned 16/119 into 16/146. This log has the same shape and had no
+    guard.
+
+    A TIMING heuristic was written for that incident and thrown away, and the
+    reason generalises here: the contaminating burst was 1.3 s apart, which is
+    also exactly what four curriculum modules finishing on a thread pool look
+    like. Threads share a pid; separate processes do not. The pid is the only
+    signal that separates the two cases, so it is the one recorded.
+    """
     rec = {
         "ts":           datetime.now().isoformat(),
+        "pid":          os.getpid(),
         "label":        label,
         "level_key":    level_key,
         "search_term":  search_term[:600],
@@ -2690,11 +2756,9 @@ def _pubmed_audit_log(label: str, level_key: str, search_term: str,
         "latency_ms":   ms,
     }
     try:
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            "pubmed_audit.jsonl")
         line = json.dumps(rec) + "\n"
         with _PUBMED_AUDIT_LOCK:
-            with open(path, "a", encoding="utf-8") as fh:
+            with open(_PUBMED_AUDIT_LOG_PATH, "a", encoding="utf-8") as fh:
                 fh.write(line)
     except Exception as e:
         print(f"    [pubmed_audit] write failed: {e}")

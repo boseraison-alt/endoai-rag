@@ -1693,7 +1693,21 @@ def admin_costs():
     """Aggregate Claude API cost data over the last N days.
 
     Optional query params:
-      ?days=7    window length (default 7)
+      ?days=7       window length (default 7)
+      ?source=      which writer's rows to count. DEFAULT `product`, so this
+                    endpoint answers "what did the product spend?" — which is
+                    the question it is asked. `test`, `script`, or `all` for
+                    the others. A row with no `source` reads as `product`,
+                    because that is what the rows written before the field
+                    existed mostly were.
+
+                    This is here because the suite used to append to this log
+                    and put $5.70 of stubbed TTS into it. Those rows are still
+                    there and are NOT edited — an append-only audit log is not
+                    rewritten after the fact — so the reader filters instead.
+                    `?source=all` reproduces the old, contaminated number, and
+                    `excluded_calls` below says how many rows the filter
+                    dropped so a silent filter cannot look like a clean log.
 
     Returns:
       total_cost_usd
@@ -1714,9 +1728,14 @@ def admin_costs():
         days = 7
     cutoff = datetime.now() - timedelta(days=days)
 
+    want_source = (request.args.get("source") or "product").strip().lower()
+    if want_source not in ("product", "test", "script", "all"):
+        want_source = "product"
+
     if not os.path.exists(_COST_LOG_PATH):
         return jsonify({
             "total_cost_usd": 0.0, "total_calls": 0, "window_days": days,
+            "source": want_source, "excluded_calls": 0, "by_source": {},
             "by_mode": {}, "by_model": {}, "by_function": {},
             "avg_cost_per_request_by_mode": {},
             "note": "cost_log.jsonl does not exist yet — no Claude calls logged.",
@@ -1725,8 +1744,10 @@ def admin_costs():
     by_mode:     dict = {}
     by_model:    dict = {}
     by_function: dict = {}
+    by_source:   dict = {}
     total_cost   = 0.0
     total_calls  = 0
+    excluded     = 0
 
     with open(_COST_LOG_PATH, encoding="utf-8") as fh:
         for line in fh:
@@ -1742,6 +1763,14 @@ def admin_costs():
                 continue
 
             cost = float(rec.get("cost_usd", 0.0))
+            # A row written before `source` existed reads as product.
+            src  = (rec.get("source") or "product").strip().lower()
+            b = by_source.setdefault(src, {"calls": 0, "total_cost": 0.0})
+            b["calls"] += 1; b["total_cost"] += cost
+            if want_source != "all" and src != want_source:
+                excluded += 1
+                continue
+
             mode = rec.get("mode", "unknown")
             mdl  = rec.get("model", "unknown")
             fn   = rec.get("function", "unknown")
@@ -1769,6 +1798,8 @@ def admin_costs():
             v["avg_cost_per_call"] = round(v["total_cost"] / max(v["calls"], 1), 6)
     for k, v in by_model.items():
         v["total_cost"] = round(v["total_cost"], 4)
+    for k, v in by_source.items():
+        v["total_cost"] = round(v["total_cost"], 4)
 
     # Approximate "cost per user-initiated request" by mode.
     # Each mode has a designated "primary" function whose call count proxies
@@ -1794,6 +1825,9 @@ def admin_costs():
 
     return jsonify({
         "window_days":                  days,
+        "source":                       want_source,
+        "excluded_calls":               excluded,
+        "by_source":                    by_source,
         "total_calls":                  total_calls,
         "total_cost_usd":               round(total_cost, 4),
         "by_mode":                      by_mode,
@@ -1803,7 +1837,10 @@ def admin_costs():
         "note": (
             "avg_cost_per_request_by_mode uses a primary-function heuristic: "
             "for Deep Learning, request count = stitch_curriculum calls "
-            "(each Learn request fires 1 syllabus + 4 modules + 1 stitch)."
+            "(each Learn request fires 1 syllabus + 4 modules + 1 stitch). "
+            "Totals cover source=" + want_source + "; by_source counts EVERY "
+            "row in the window, filtered or not, so a filter can never look "
+            "like an empty log."
         ),
     })
 

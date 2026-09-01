@@ -41,12 +41,18 @@ def _audit_logs_stay_out_of_the_repo(tmp_path_factory):
 
     The cost log goes the same way: a suite run was adding rows to the record
     of what the product spent.
+
+    `pubmed_audit.jsonl` is the third, added in `guardrails-v1`. It has the
+    same shape — `run_eval._esearch_hits_since` reads a byte-offset window of
+    it — and it had no guard at all: not this redirect, because the writer
+    built its path inline, and not a writer pid. Both now exist.
     """
     import endo_ai
 
     d = tmp_path_factory.mktemp("audit")
     endo_ai._EVMAP_LOG_PATH = str(d / "evidence_mapping.jsonl")
     endo_ai._COST_LOG_PATH = str(d / "cost_log.jsonl")
+    endo_ai._PUBMED_AUDIT_LOG_PATH = str(d / "pubmed_audit.jsonl")
     yield
 
 
