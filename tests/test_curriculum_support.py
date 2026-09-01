@@ -249,7 +249,14 @@ MODULE_SOURCE = [LAI_MECHANISM, ERYAG_PARAMS, ESE_REVIEW]
 def module_body(idx: int, seeded: bool = False) -> str:
     """A module written from real curriculum sentences about this module's topic.
 
-    `seeded` swaps in the mis-cited sentence. Everything else is verbatim.
+    `seeded` prepends the mis-cited sentence. Everything else is verbatim.
+
+    The seeded module therefore carries the SAME sentence twice — once behind
+    the fungal-prevalence PMID and once behind the paper that actually reports
+    it. That is deliberate: it makes the check's job discriminating the
+    citation, not the prose. Run live once against Haiku (2026-08-31), the real
+    judge flagged the fungal copy and passed the correct one, at $0.0024 for
+    the module's four pairs.
     """
     pmid  = MODULE_SOURCE[idx]
     lines = [s for s in SENTS[pmid] if len(s) > 100][:3]

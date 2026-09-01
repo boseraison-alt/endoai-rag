@@ -4484,7 +4484,10 @@ function buildTrustChips(job) {
     flagged      += +mm[1];
     totalChecked += +mm[2];
   }
-  var verifiedRe = /Citation support:\s*verified\.\*\*\s*Each of the (\d+) cited/gi;
+  // Matches the current renderer ("verified.** Each of the N cited claims…")
+  // and the older phrasing still sitting in cached answers on disk
+  // ("verified** for the N cited claims").
+  var verifiedRe = /Citation support:\s*verified[^\n]*?(?:Each of the|for the)\s+(\d+)\s+cited/gi;
   while ((mm = verifiedRe.exec(answerText)) !== null) {
     totalChecked += +mm[1];
   }
