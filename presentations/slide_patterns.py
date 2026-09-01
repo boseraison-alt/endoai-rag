@@ -51,7 +51,7 @@ from presentations.slide_helpers import (
     estimate_height_in, resolve_color, sanitize, extract_pmids,
 )
 from presentations.text_budget import (
-    split_bullets, split_rows, split_cards, continuation_eyebrow,
+    split_rows, split_cards, continuation_eyebrow, bullet_cost,
 )
 from presentations import chart_data, charts
 
@@ -401,9 +401,28 @@ def content_slide(prs, *, title: str, eyebrow: str = "",
 
     Overflows the body budget by splitting onto continuation slides; returns a
     list when it does.
+
+    Pagination applies TWO budgets, because they catch different overflows:
+
+      * the WORD budget (§1.3: at most 5 bullets of ~25 words), which knows
+        nothing about the frame the bullets will be drawn into;
+      * the HEIGHT actually available on the page — `avail`, which
+        `_content_frame` computes from where the title wrapped and whether a
+        lead was drawn.
+
+    The word budget alone let `cascade_slide` overflow the footer rule: five
+    steps of under 25 words each cost five slots and fit, but each renders as
+    a bold header line PLUS a body paragraph, so the drawn body ran to 7.385in
+    against a 7.000in rule (spec 01e071f7 slide 9). `avail` was already being
+    returned by `_content_frame` and simply never consulted. Text is never
+    truncated to fit — a bullet that does not fit starts the next page.
     """
-    pages = split_bullets(bullets or [])
     body_w = _CW * (0.56 if figure_png else 1.0)
+    avail_first, avail_rest = _body_capacity(
+        title=title, eyebrow=eyebrow, tier=tier, lead=lead,
+        citations=citations,
+        title_width=body_w if figure_png else None)
+    pages = _paginate(bullets or [], body_w, avail_first, avail_rest)
     out = []
 
     for i, page in enumerate(pages):
@@ -431,8 +450,91 @@ def content_slide(prs, *, title: str, eyebrow: str = "",
     return out if len(out) > 1 else out[0]
 
 
-def _draw_bullet(slide, item, x, y, w) -> float:
-    """One bullet. A {header, body} bullet renders as bold lead + body line."""
+def _body_capacity(**frame_kw) -> tuple[float, float]:
+    """Body height available on the first page and on a continuation page.
+
+    Measured by painting the real furniture — the title wrap and the lead are
+    what move this number, and both are text-dependent — into a THROWAWAY
+    presentation, which is then dropped. Nothing is added to `prs`.
+    """
+    lead = frame_kw.pop("lead", None)
+    probe = new_presentation()
+    _, _, first = _content_frame(probe, right_label=CURO_LABEL, lead=lead,
+                                 **frame_kw)
+    _, _, rest = _content_frame(probe, right_label=CURO_LABEL, lead=None,
+                                **frame_kw)
+    return first, rest
+
+
+def _paginate(bullets: list, w: float, avail_first: float,
+              avail_rest: float) -> list[list]:
+    """Pages that satisfy the word budget AND fit the frame, balanced.
+
+    Enforces the word budget's caps (`bullet_cost`, `max_bullets`) and the
+    frame's height, then spreads the bullets over the pages it is forced onto
+    anyway — the same anti-orphan rule `text_budget.split_bullets` applies in
+    word-space. Never drops or truncates a bullet.
+    """
+    items = list(bullets or [])
+    if not items:
+        return [[]]
+    heights = [_bullet_height(it, w) for it in items]
+
+    # 1. How many pages the frame forces when each is filled to the brim.
+    tight = _pack_by_height(items, heights, None, avail_first, avail_rest)
+    if len(tight) <= 1:
+        return tight
+
+    # 2. Spread the same bullets over the same number of pages. An exactly
+    #    even target usually needs one page MORE than the tight packing
+    #    (greedy filling to an average always spills), so the target is
+    #    relaxed until the page count comes back down to where it was. This
+    #    is the height-space version of what `split_bullets` does in
+    #    word-space with `max(target, max(costs))`.
+    target = sum(heights) / float(len(tight))
+    for _ in range(80):
+        balanced = _pack_by_height(items, heights, target, avail_first, avail_rest)
+        if len(balanced) <= len(tight):
+            return balanced
+        target *= 1.05
+    return tight
+
+
+def _pack_by_height(items, heights, target, avail_first, avail_rest):
+    """Greedy fill, hard-capped by the real frame. `target` may be None.
+
+    The word budget's per-page caps are enforced here too — dropping them
+    would let a page of short bullets grow past the 5-bullet rule just because
+    the pixels happened to fit.
+    """
+    max_bullets = BODY_BUDGET["max_bullets"]
+    costs = [bullet_cost(_bullet_text_of(it)) for it in items]
+    pages, page, used, slots = [], [], 0.0, 0
+    for item, h, c in zip(items, heights, costs):
+        cap = avail_first if not pages else avail_rest
+        # A single bullet taller than the whole frame still gets a page: the
+        # alternative is cutting clinical text.
+        over = (used + h > cap
+                or (target is not None and used + h > target)
+                or slots + c > max_bullets or len(page) >= max_bullets)
+        if page and over:
+            pages.append(page)
+            page, used, slots = [], 0.0, 0
+        page.append(item)
+        used += h
+        slots += c
+    if page:
+        pages.append(page)
+    return pages
+
+
+def _bullet_text_of(item) -> str:
+    header, body = _bullet_parts(item)
+    return " ".join(p for p in (header, body) if p)
+
+
+def _bullet_parts(item) -> tuple[str, str]:
+    """(header, body) for a bullet in whatever shape it arrived in."""
     if isinstance(item, dict):
         header = sanitize(item.get("header") or item.get("heading")
                           or item.get("label") or "")
@@ -441,8 +543,34 @@ def _draw_bullet(slide, item, x, y, w) -> float:
         number = sanitize(str(item.get("number") or ""))
         if number and header:
             header = f"{number} · {header}"
-    else:
-        header, body, number = sanitize(str(item)), "", ""
+        return header, body
+    return sanitize(str(item)), ""
+
+
+def _bullet_height(item, w: float) -> float:
+    """Height `_draw_bullet` will consume, INCLUDING the gap after it.
+
+    Shares `_bullet_parts` and the same `estimate_height_in` calls as the
+    drawing code so the prediction cannot drift from what is drawn.
+    """
+    header, body = _bullet_parts(item)
+    d = LAYOUT["bullet_dot_in"]
+    text_w = w - (d + px_in(14))
+    if header and body:
+        h1 = estimate_height_in(header, SIZES["bullet"], text_w,
+                                line_height=LINE_HEIGHT["bullet"])
+        h2 = estimate_height_in(body, SIZES["bullet"], text_w,
+                                line_height=LINE_HEIGHT["bullet"])
+        return h1 + h2 + px_in(4) + px_in(16)
+    h = estimate_height_in(header or body, SIZES["bullet"], text_w,
+                           line_height=LINE_HEIGHT["bullet"])
+    h = max(h, (SIZES["bullet"] * LINE_HEIGHT["bullet"]) / 72.0)
+    return h + px_in(16)
+
+
+def _draw_bullet(slide, item, x, y, w) -> float:
+    """One bullet. A {header, body} bullet renders as bold lead + body line."""
+    header, body = _bullet_parts(item)
 
     if header and body:
         d = LAYOUT["bullet_dot_in"]
@@ -1041,13 +1169,36 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
                secondary_label: str | None = None, eyebrow: str = "",
                callout: str | None = None, citation: str | None = None,
                _source_text: str | None = None, **kw):
-    """Big numbers. A chart ONLY if the values are verbatim in the source."""
+    """Big numbers. A chart ONLY if the values are verbatim in the source.
+
+    THREE OR MORE ARMS. `primary_stat`/`secondary_stat` can only hold two, so
+    a three-concentration or four-wavelength comparison — the laser deck's
+    best chart — had nowhere to go: the spec dict assembled here listed only
+    the two-arm keys, so `categories`/`values` never reached
+    `detect_chartable` and `_from_explicit_chart` never fired. `arms` is the
+    generator-facing shape ([{label, stat}, ...]); it is mapped onto the
+    categories/values the detector already understands, and it passes exactly
+    the same gates as the two-arm path (every value verbatim in the source
+    text, one quantity, one unit, no ranges, PMIDs into the footer).
+    """
+    arms = [a for a in (kw.get("arms") or []) if isinstance(a, dict)]
+    categories = kw.get("categories") or [a.get("label") or a.get("name") or ""
+                                          for a in arms]
+    arm_values = kw.get("values") or [a.get("stat") for a in arms]
+    categories = [c for c in (categories or [])]
+    arm_values = [v for v in (arm_values or [])]
+
     spec = {
         "title": title, "primary_stat": primary_stat,
         "primary_label": primary_label, "secondary_stat": secondary_stat,
         "secondary_label": secondary_label, "citation": citation or "",
         "callout": callout or "",
     }
+    if len(categories) >= 2 and len(categories) == len(arm_values):
+        spec["categories"] = categories
+        spec["values"] = arm_values
+        if kw.get("unit"):
+            spec["unit"] = kw["unit"]
     chart = chart_data.detect_chartable(spec, _source_text)
     if chart is not None:
         return chart_slide(prs, title=title, eyebrow=eyebrow, chart=chart,
@@ -1057,8 +1208,12 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
     # No verified chart. The values still belong on the slide — they are the
     # slide's content — they are simply not plotted, because plotting them
     # would assert a comparison the source text does not support.
+    # Arms are content whether or not they could be plotted: a refused chart
+    # must not silently delete the numbers the slide is about.
     pairs = [(primary_stat, primary_label), (secondary_stat, secondary_label)]
-    pairs = [(sanitize(str(s)), sanitize(l or "")) for s, l in pairs if s]
+    if len(categories) >= 2 and len(categories) == len(arm_values):
+        pairs = list(zip(arm_values, categories))
+    pairs = [(sanitize(str(s)), sanitize(str(l or ""))) for s, l in pairs if s]
 
     # The generator does not always put a NUMBER in a "stat" field; real decks
     # come back with "Lowest" or "Lab only". A word is not a numeral, and
@@ -1096,13 +1251,30 @@ def evidence_summary(prs, *, title: str = "",
         return chart_slide(prs, title=title, eyebrow=eyebrow, chart=chart,
                            citations=_citation_fields(spec), **_page_kw(kw))
 
-    headers = ["Tier", "What the studies are", "Reported"]
+    # "stat" is optional per row, and the generator is told to omit it rather
+    # than write a verdict word there — so a whole evidence hierarchy with no
+    # comparable number in it is the NORMAL outcome, not an edge case (all six
+    # evidence_summary slides in the cached specs are stat-free). Keeping the
+    # column then printed a "Reported" header over four or five blank cells,
+    # which reads as "these studies reported nothing" rather than "this deck
+    # is not quoting a number here". Drop the column instead, and give its
+    # width to the description.
     rows = []
+    any_stat = False
     for row in (hierarchy_rows or []):
         if not isinstance(row, dict):
             continue
-        rows.append([row.get("tier_label", ""), row.get("description", ""),
-                     row.get("stat", "")])
+        stat = sanitize(str(row.get("stat") or "")).strip()
+        any_stat = any_stat or bool(stat)
+        rows.append([row.get("tier_label", ""), row.get("description", ""), stat])
+
+    if any_stat:
+        headers = ["Tier", "What the studies are", "Reported"]
+        col_spans = [3, 6, 3]
+    else:
+        headers = ["Tier", "What the studies are"]
+        col_spans = [3, 9]
+        rows = [r[:2] for r in rows]
 
     # Measure the trap notice FIRST and reserve its band, so the table is laid
     # out above it rather than under it.
@@ -1123,7 +1295,7 @@ def evidence_summary(prs, *, title: str = "",
                 line_height=LINE_HEIGHT["card"]) + px_in(76)
 
     result = table_slide(prs, title=title, eyebrow=eyebrow, headers=headers,
-                         rows=rows, col_spans=[3, 6, 3],
+                         rows=rows, col_spans=col_spans,
                          citations=_citation_fields(spec),
                          reserve_bottom=notice_h + px_in(20) if notice_h else 0.0,
                          **_page_kw(kw))

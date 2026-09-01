@@ -224,7 +224,17 @@ def _from_explicit_chart(spec: dict, source_text: str) -> ChartSpec | None:
     verified = _verified_pairs(pairs, source_text)
     if not verified:
         return None
-    unit = (chart or spec).get("unit", "") or _unit_of(str(values[0]))
+    # The same two gates the other detectors apply. This path had neither,
+    # which was survivable only while nothing reached it: it is the detector a
+    # 3+ arm comparison uses, so a multi-arm chart would otherwise have been
+    # the one chart in the deck allowed to mix units or plot a range.
+    if any(is_range(raw) for _, raw in pairs):
+        return None          # a span cannot be one bar — see is_range()
+    declared = (chart or spec).get("unit", "")
+    unit = consistent_unit([raw for _, raw in pairs])
+    if unit is None:
+        return None          # mixed units — see consistent_unit()
+    unit = declared or unit
     vals = [v for _, _, v in verified]
     kind, note = _choose_kind(vals, unit)
     return ChartSpec(
