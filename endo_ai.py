@@ -3423,18 +3423,232 @@ _SENTENCE_SPLIT_RE = re.compile(
 _PSEUDO_HEADING_RE = re.compile(
     r"^[ \t]*\*\*[^*\n]{2,120}\*\*[ \t]*:?[ \t]*$", re.MULTILINE)
 
+# ── The three shapes a curriculum writes that prose splitting cannot see ──
+#
+# `_PSEUDO_HEADING_RE` above closed the case where the bold run IS the whole
+# line. A Deep Learning module writes three more shapes that the sentence
+# splitter also cannot break, for the same two reasons every time: the line
+# does not end in `.!?`, and the next line starts with `*` or `|` rather than
+# [A-Z\d]. Each one fuses a whole structure into ONE "claim" carrying every
+# marker in it, and every marker is then judged against the whole blob.
+#
+# Measured, by hand, over all 37 Deep Learning citation flags
+# (`eval/logs/dl_flag_verdicts.json`): 13 of the 37 — the largest single
+# remaining cause in this metric — are this. The mechanism, from the
+# worksheet:
+#
+#   1. DECISION TREE. `#### 4b. Decision Tree` emits
+#        **IF** <condition>
+#        **THEN** <action>
+#        **BECAUSE** <evidence> [[PMID:a]] [[PMID:b]]
+#      repeated. A seven-branch tree is one claim carrying seven papers'
+#      markers, so a marker on the postoperative-pain branch is judged
+#      against the radiographic-healing branch too (flag 12 in the worksheet).
+#      A branch ends where the next `**IF**` begins — that is the unit,
+#      condition through justification, because the BECAUSE is only a claim
+#      in the presence of the THEN it justifies.
+#
+#   2. TABLE ROW. `#### Clinical Protocol Summary` and
+#      `#### 4c. Materials & Instrumentation` are markdown pipe tables whose
+#      rows each carry their own citation. The whole table was one claim.
+#      A row is a claim; the separator row and a header row that cites
+#      nothing are not.
+#
+#   3. INLINE BOLD LABEL. `**KTP laser (532 nm):** Ayhan et al. found ...` —
+#      a bold label at the START of a line with its content following ON THE
+#      SAME LINE. `_PSEUDO_HEADING_RE` requires the bold run to be the entire
+#      line, so it does not match, and three sub-points fused (flags 17, 33,
+#      34, 37). This is the pseudo-heading rule finishing its own job.
+#
+#   4. LIST ITEM. Found while measuring the first three, not from the
+#      worksheet:
+#        - **Heterogeneity of protocols**: ... [[PMID:36156804]]
+#        - **Irrigant extrusion risk**: ... [[PMID:40287048]]
+#      Four bullets, four different papers, ONE claim of 1,438 characters. The
+#      existing code strips the bullet MARKER (`^\s*[-*•]\s+`) and then never
+#      splits on it, so the marker's only effect was to hide the boundary it
+#      marks. A list item is a claim; that is what a list is for.
+#
+# DIRECTION OF THE FIX, stated because the last change to this splitter
+# reversed its expected direction: un-merging makes the checker STRICTER.
+# Merged pairs were flagged at 37.6% against 50.8% for clean ones (p=0.002)
+# — a long blob gives the judge more surface on which to find something the
+# abstract does support, so a bad citation hides in a merge. Splitting cannot
+# be a way of moving the flag rate down by giving the judge less to object to;
+# it moves it down only by removing pairs that were never one claim.
+_DTREE_OPEN_RE   = re.compile(r"^[ \t]*\*\*\s*IF\s*\*\*", re.IGNORECASE)
+_TABLE_ROW_RE    = re.compile(r"^[ \t]*\|.*\|[ \t]*$")
+_TABLE_SEP_RE    = re.compile(r"^[ \t]*\|[\s:|\-]+\|[ \t]*$")
+_ATX_HEADING_RE  = re.compile(r"^[ \t]*#{1,6}[ \t]+\S")
+# A bold label opening a line, with content after it on the same line. The
+# negative lookahead keeps the decision-tree keywords out: they are handled by
+# the branch rule above, which must not be cut into three by this one.
+_INLINE_LABEL_RE = re.compile(
+    r"^[ \t]*\*\*(?!\s*(?:IF|THEN|BECAUSE)\s*\*\*)[^*\n]{2,100}\*\*[ \t]*:?[ \t]*\S",
+    re.IGNORECASE)
+# `*` needs the trailing space to be a bullet: `**bold**` is not a list.
+_LIST_ITEM_RE = re.compile(r"^[ \t]*(?:[-•+]|\*(?!\*)|\d{1,2}[.)])[ \t]+\S")
 
-def _split_claim_units(body: str) -> list:
-    """Split a section body into claim-sized units.
+# Shape names, used in the audit record and in the before/after reporting.
+SHAPE_PROSE  = "prose"
+SHAPE_DTREE  = "decision_tree"
+SHAPE_TABLE  = "table_row"
+SHAPE_LABEL  = "bold_label"
+SHAPE_LIST   = "list_item"
+CLAIM_SHAPES = (SHAPE_PROSE, SHAPE_DTREE, SHAPE_TABLE, SHAPE_LABEL, SHAPE_LIST)
+
+
+def _flatten_table_row(line: str) -> str:
+    """`| aPDT laser | Diode, 660 nm · 100 mW |` -> `aPDT laser — Diode, ...`.
+
+    The pipes are layout. The judge is asked whether a paper supports a
+    proposition, and `| a | b |` is not one — the cells joined by an em dash
+    are, and the marker stays inside the cell it was written in.
+    """
+    cells = [c.strip() for c in line.strip().strip("|").split("|")]
+    cells = [c for c in cells if c]
+    return " — ".join(cells)
+
+
+def _segment_body(body: str):
+    """Yield (shape, text) for a section body, before sentence splitting.
+
+    Line-driven rather than regex-split, because these three shapes are
+    defined by what a LINE starts with and a split on any one of them loses
+    the boundaries of the other two.
+    """
+    lines = (body or "").split("\n")
+    prose, dtree = [], []
+    prose_shape = [SHAPE_PROSE]   # list so the closures can rebind it
+
+    def flush_prose():
+        if prose:
+            chunk = "\n".join(prose)
+            shape = prose_shape[0]
+            prose.clear()
+            prose_shape[0] = SHAPE_PROSE
+            if chunk.strip():
+                return (shape, chunk)
+        return None
+
+    def flush_dtree():
+        if dtree:
+            chunk = "\n".join(dtree)
+            dtree.clear()
+            if chunk.strip():
+                return (SHAPE_DTREE, chunk)
+        return None
+
+    for line in lines:
+        opens_branch = bool(_DTREE_OPEN_RE.match(line))
+        is_table     = bool(_TABLE_ROW_RE.match(line))
+        is_heading   = bool(_ATX_HEADING_RE.match(line))
+        is_item      = bool(_LIST_ITEM_RE.match(line))
+        # A bullet whose text opens with a bold label is a list item first —
+        # the bullet is the boundary, the label is decoration inside it.
+        is_label     = bool(_INLINE_LABEL_RE.match(line)) and not is_item
+
+        if dtree:
+            # Inside a branch. It ends at the next **IF**, or at any structure
+            # that cannot be part of it: a table, a heading, a bold pseudo-
+            # heading on its own line. THEN/BECAUSE and their continuations
+            # stay attached, which is the whole point of the branch unit.
+            if opens_branch or is_table or is_heading or \
+                    _PSEUDO_HEADING_RE.match(line):
+                seg = flush_dtree()
+                if seg:
+                    yield seg
+            else:
+                dtree.append(line)
+                continue
+
+        if opens_branch:
+            seg = flush_prose()
+            if seg:
+                yield seg
+            dtree.append(line)
+            continue
+
+        if is_table:
+            seg = flush_prose()
+            if seg:
+                yield seg
+            if not _TABLE_SEP_RE.match(line):
+                flat = _flatten_table_row(line)
+                if flat:
+                    yield (SHAPE_TABLE, flat)
+            continue
+
+        if is_item or is_label:
+            # A list item or a bold label starts a new sub-point; whatever
+            # came before it is finished. A continuation line matches neither
+            # and so stays with the item it wraps from.
+            seg = flush_prose()
+            if seg:
+                yield seg
+            prose_shape[0] = SHAPE_LIST if is_item else SHAPE_LABEL
+
+        prose.append(line)
+
+    seg = flush_dtree()
+    if seg:
+        yield seg
+    seg = flush_prose()
+    if seg:
+        yield seg
+
+
+def _split_claim_units_tagged(body: str) -> list:
+    """Split a section body into [(shape, claim_unit), ...].
 
     A bold pseudo-heading on its own line is a hard boundary — it is a
-    heading, never part of a claim — and inside each block the sentence split
-    respects abbreviations. Deliberately NOT folded into `_split_sections`:
-    that would also change which sections `_is_exempt_section` skips and how
-    `_detect_gap_sections` counts, and neither of those is the defect here.
-    Widening `_HEADING_RE` would additionally make a `**Key Takeaways**`
-    pseudo-heading EXEMPT and so reduce what the guardrail checks, which is
-    the wrong direction for a safety gate.
+    heading, never part of a claim — and inside each prose block the sentence
+    split respects abbreviations. Deliberately NOT folded into
+    `_split_sections`: that would also change which sections
+    `_is_exempt_section` skips and how `_detect_gap_sections` counts, and
+    neither of those is the defect here. Widening `_HEADING_RE` would
+    additionally make a `**Key Takeaways**` pseudo-heading EXEMPT and so
+    reduce what the guardrail checks, which is the wrong direction for a
+    safety gate.
+
+    A decision-tree branch and a table row are returned WHOLE: they are
+    already claim-sized, and running the sentence splitter over a branch would
+    strand `**BECAUSE** ...` away from the `**THEN** ...` it justifies.
+    """
+    out = []
+    for shape, chunk in _segment_body(body or ""):
+        if shape in (SHAPE_DTREE, SHAPE_TABLE):
+            out.append((shape, chunk))
+            continue
+        # A bold-label run is still prose inside; the label only says where it
+        # STARTED, which is what the reporting needs in order to attribute a
+        # flag to the shape that used to merge it.
+        for block in _PSEUDO_HEADING_RE.split(chunk):
+            cleaned = re.sub(r"^\s*[-*•]\s+", "", block, flags=re.MULTILINE)
+            out.extend((shape, s) for s in _SENTENCE_SPLIT_RE.split(cleaned))
+    return out
+
+
+def _split_claim_units(body: str) -> list:
+    """PROSE-ONLY claim units — what `_detect_unattributed_claims` still uses.
+
+    Deliberately NOT `_split_claim_units_tagged` minus the shapes, and the
+    difference is a scoping decision rather than an oversight.
+
+    `_detect_unattributed_claims` feeds `validate_evidence_mapping`, which
+    FAILS an answer and buys a full Opus regeneration. Under the shape-aware
+    split, a materials-table row like `| Irrigant | 2.5% NaOCl · 60 sec |`
+    stops being part of a blob that cites something and becomes a unit of its
+    own with a numeric parameter and no marker — a new UNATTRIBUTED_CLAIMS
+    finding, on rows that today are silently absorbed. That may well be right:
+    an uncited numeric protocol row is exactly what invariant 6 exists for.
+    But it changes the retry rate, and the retry rate is what the very next
+    item in this batch measures. Two changes to the same number in one batch
+    is the confound this item was split out to avoid.
+
+    So: the CHECKER sees the real claim units (it only annotates), and the
+    VALIDATOR keeps the unit it had (it can reject). Recorded in
+    OVERNIGHT_REPORT_3.md as found-not-fixed with the measurement it needs.
     """
     out = []
     for block in _PSEUDO_HEADING_RE.split(body or ""):
@@ -3793,18 +4007,24 @@ _SUPPORT_MAX_PAIRS     = 30     # pairs checked per answer (see the note below)
 _SUPPORT_BATCH_CHARS = 60000    # abstract characters per Haiku request
 
 
-def _extract_claim_citation_pairs(answer: str) -> list:
-    """Return [(claim_sentence_without_markers, pmid), ...] in document order.
+def _extract_claim_citation_pairs(answer: str, with_shape: bool = False) -> list:
+    """Return [(claim_unit_without_markers, pmid), ...] in document order.
 
-    A sentence citing two papers yields two pairs (each pmid is checked against
+    A claim citing two papers yields two pairs (each pmid is checked against
     the claim independently). Exempt sections (References, Clinical
     Recommendation, ...) are skipped — same exemption set as the validator.
+
+    `with_shape=True` returns 3-tuples `(claim, pmid, shape)` where shape is
+    one of `prose` / `decision_tree` / `table_row`. The default arity is
+    unchanged because `verify_citation_support` and four test files unpack
+    2-tuples, and because a shape is reporting, not behaviour: nothing
+    downstream judges a decision-tree branch differently from a sentence.
     """
     pairs = []
     for title, body in _split_sections(answer or ""):
         if _is_exempt_section(title):
             continue
-        for sent in _split_claim_units(body):
+        for shape, sent in _split_claim_units_tagged(body):
             s = sent.strip()
             if len(s) < 20:
                 continue
@@ -3812,9 +4032,18 @@ def _extract_claim_citation_pairs(answer: str) -> list:
             if not pmids:
                 continue
             claim = _PMID_RE.sub("", s).strip()
-            claim = re.sub(r"\s{2,}", " ", claim)
+            if shape == SHAPE_DTREE:
+                # A branch is three lines that mean three different things.
+                # Collapsing them onto one line the way a prose sentence is
+                # collapsed would hand the judge `IF ... THEN ... BECAUSE ...`
+                # as a run-on. Normalise horizontal space only, and keep the
+                # line breaks that carry the structure.
+                claim = re.sub(r"[ \t]{2,}", " ", claim)
+                claim = re.sub(r"\n{2,}", "\n", claim)
+            else:
+                claim = re.sub(r"\s{2,}", " ", claim)
             for pid in pmids:
-                pairs.append((claim, pid))
+                pairs.append((claim, pid, shape) if with_shape else (claim, pid))
     return pairs
 
 
@@ -3836,7 +4065,15 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
         out["detail"] = "no answer text"
         return out
     try:
-        all_pairs = _extract_claim_citation_pairs(answer)
+        # Shapes come along for the ride so the audit record can say WHICH
+        # claim shape each flag sat on — the question Item 3 has to answer
+        # from the log rather than by hand-judging 37 flags again. Normalised
+        # rather than assumed: a caller that replaces this extractor (the
+        # before/after replay in `scripts/measure_claim_units.py` does) may
+        # still hand back the 2-tuples this function has always taken.
+        all_pairs = [(p[0], p[1], p[2] if len(p) > 2 else SHAPE_PROSE)
+                     for p in _extract_claim_citation_pairs(answer,
+                                                            with_shape=True)]
         pairs = all_pairs[:_SUPPORT_MAX_PAIRS]
         # How many pairs EXIST, not just how many were looked at. A curriculum
         # module routinely produces more than 30 and the cap binds silently:
@@ -3849,16 +4086,17 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
             return out
 
         from rag import get_cached_abstracts_bulk
-        abstracts = get_cached_abstracts_bulk(sorted({p for _, p in pairs}))
+        abstracts = get_cached_abstracts_bulk(sorted({p for _c, p, _s in pairs}))
 
         items = []
-        for i, (claim, pmid) in enumerate(pairs):
+        for i, (claim, pmid, shape) in enumerate(pairs):
             ab = (abstracts.get(pmid) or {}).get("abstract") or ""
             if not ab.strip():
                 continue   # nothing cached to judge against — cannot assess
             items.append({
                 "i":        i,
                 "pmid":     pmid,
+                "shape":    shape,
                 "claim":    claim[:400],
                 # WHOLE abstract. See _SUPPORT_BATCH_CHARS above for why the
                 # 1,200-character excerpt was the last truncation in the
@@ -3932,8 +4170,18 @@ Return ONLY a JSON array, no prose, no markdown fence:
                 out["flags"].append({
                     "pmid":    by_index[i]["pmid"],
                     "claim":   by_index[i]["claim"],
+                    "shape":   by_index[i]["shape"],
                     "verdict": verdict,
                 })
+        # Denominator per shape, not just numerator: "3 decision-tree flags"
+        # means nothing without how many decision-tree pairs there were.
+        out["by_shape"] = {}
+        for it in items:
+            s = out["by_shape"].setdefault(it["shape"], {"checked": 0, "flagged": 0})
+            s["checked"] += 1
+        for f in out["flags"]:
+            out["by_shape"].setdefault(f["shape"], {"checked": 0, "flagged": 0})
+            out["by_shape"][f["shape"]]["flagged"] += 1
 
         # Audit trail — same JSONL stream as the fabrication validator. ONE
         # record per invocation regardless of how many requests it took, so a
@@ -3954,7 +4202,13 @@ Return ONLY a JSON array, no prose, no markdown fence:
                 "total_pairs": out["total_pairs"],
                 "n_requests": len(batches),
                 "n_flagged": len(out["flags"]),
-                "flags":     [{"pmid": f["pmid"], "claim": f["claim"][:160]} for f in out["flags"]],
+                # Which claim SHAPE each flag sat on, with its denominator.
+                # 13 of 37 Deep Learning flags were a merged decision tree or
+                # table, and establishing that took a hand-judgement of every
+                # flag. Recording it makes the next such question a query.
+                "by_shape":  out["by_shape"],
+                "flags":     [{"pmid": f["pmid"], "shape": f["shape"],
+                               "claim": f["claim"][:160]} for f in out["flags"]],
             }
             with _EVMAP_LOG_LOCK:
                 with open(_EVMAP_LOG_PATH, "a", encoding="utf-8") as fh:

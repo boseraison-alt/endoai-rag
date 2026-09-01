@@ -1,0 +1,403 @@
+{
+ "arm": "after",
+ "cap": 100000,
+ "repeat": 3,
+ "sources": [
+  "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+  "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json"
+ ],
+ "total_checked": 714,
+ "total_flagged": 35,
+ "per_run": {
+  "0": [
+   12,
+   238
+  ],
+  "1": [
+   12,
+   238
+  ],
+  "2": [
+   11,
+   238
+  ]
+ },
+ "by_shape": {
+  "prose": [
+   5,
+   156
+  ],
+  "list_item": [
+   23,
+   219
+  ],
+  "decision_tree": [
+   1,
+   63
+  ],
+  "table_row": [
+   6,
+   15
+  ],
+  "bold_label": [
+   0,
+   261
+  ]
+ },
+ "results": [
+  {
+   "source": "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "after",
+   "pairs": 114,
+   "checked": 114,
+   "flagged": 9,
+   "cost": 0.074901,
+   "status": "verified",
+   "by_shape": {
+    "prose": 19,
+    "list_item": 47,
+    "decision_tree": 15,
+    "table_row": 5,
+    "bold_label": 28
+   },
+   "flagged_by_shape": {
+    "prose": 1,
+    "list_item": 6,
+    "decision_tree": 0,
+    "table_row": 2,
+    "bold_label": 0
+   },
+   "flags": [
+    {
+     "pmid": "36156804",
+     "shape": "list_item",
+     "claim": "**Diode lasers (810–980 nm):** absorbed primarily by melanin and haemoglobin; exert photothermal bactericidal effects at the canal wall",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "2. **Final NaOCl flush.** Deliver 2.5% NaOCl via side-vented needle placed 1 mm short of working length; irrigate for 60 seconds per canal .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "Most evidence favours same-visit obturation after single-visit aPDT ; multi-visit with calcium hydroxide dressing remains acceptable when heavy infection burden is present — no RCT in this evidence base directly compares these options.",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40565094",
+     "shape": "table_row",
+     "claim": "**Nd:YAG (if used)** — 1,064 nm · photothermal protocol; exact parameters not standardised in included evidence — Fiegler-Rudol et al. 2025 did not report a single validated setting",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "table_row",
+     "claim": "Irrigant contact time — Per canal, per cycle — 60 seconds",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37981598",
+     "shape": "list_item",
+     "claim": "Quintana et al. did not report a single standardized energy dose — select per manufacturer protocol; ensure activation covers the full working length .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37849444",
+     "shape": "list_item",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "list_item",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "Irrigate continuously with 2.5%–3% NaOCl throughout shaping .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "after",
+   "pairs": 124,
+   "checked": 124,
+   "flagged": 3,
+   "cost": 0.088673,
+   "status": "verified",
+   "by_shape": {
+    "prose": 33,
+    "bold_label": 59,
+    "list_item": 26,
+    "decision_tree": 6
+   },
+   "flagged_by_shape": {
+    "prose": 2,
+    "bold_label": 0,
+    "list_item": 1,
+    "decision_tree": 0
+   },
+   "flags": [
+    {
+     "pmid": "38340037",
+     "shape": "prose",
+     "claim": "This curriculum equips the clinician to understand the physical mechanisms by which three laser families — photothermal (Nd:YAG), photoacoustic/cavitation (Er:YAG, Er,Cr:YSGG), and photodynamic (diode + photosensitiser) — interact with infected root canal systems, and to apply evidence-graded protocols at the chairside .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "This curriculum equips the clinician to understand the physical mechanisms by which three laser families — photothermal (Nd:YAG), photoacoustic/cavitation (Er:YAG, Er,Cr:YSGG), and photodynamic (diode + photosensitiser) — interact with infected root canal systems, and to apply evidence-graded protocols at the chairside .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "6. **Final NaOCl rinse** — Irrigate with 5.25% NaOCl; aspirate completely before drying .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "after",
+   "pairs": 114,
+   "checked": 114,
+   "flagged": 10,
+   "cost": 0.074911,
+   "status": "verified",
+   "by_shape": {
+    "prose": 19,
+    "list_item": 47,
+    "decision_tree": 15,
+    "table_row": 5,
+    "bold_label": 28
+   },
+   "flagged_by_shape": {
+    "prose": 1,
+    "list_item": 7,
+    "decision_tree": 0,
+    "table_row": 2,
+    "bold_label": 0
+   },
+   "flags": [
+    {
+     "pmid": "36156804",
+     "shape": "list_item",
+     "claim": "**Diode lasers (810–980 nm):** absorbed primarily by melanin and haemoglobin; exert photothermal bactericidal effects at the canal wall",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "2. **Final NaOCl flush.** Deliver 2.5% NaOCl via side-vented needle placed 1 mm short of working length; irrigate for 60 seconds per canal .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "Most evidence favours same-visit obturation after single-visit aPDT ; multi-visit with calcium hydroxide dressing remains acceptable when heavy infection burden is present — no RCT in this evidence base directly compares these options.",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40565094",
+     "shape": "table_row",
+     "claim": "**Nd:YAG (if used)** — 1,064 nm · photothermal protocol; exact parameters not standardised in included evidence — Fiegler-Rudol et al. 2025 did not report a single validated setting",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "table_row",
+     "claim": "Irrigant contact time — Per canal, per cycle — 60 seconds",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40135760",
+     "shape": "list_item",
+     "claim": "Run 3 × 20-second activation cycles per canal under continuous irrigation with 3 mL per 20-second cycle .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37981598",
+     "shape": "list_item",
+     "claim": "Quintana et al. did not report a single standardized energy dose — select per manufacturer protocol; ensure activation covers the full working length .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37849444",
+     "shape": "list_item",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "list_item",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "Irrigate continuously with 2.5%–3% NaOCl throughout shaping .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "after",
+   "pairs": 124,
+   "checked": 124,
+   "flagged": 2,
+   "cost": 0.088663,
+   "status": "verified",
+   "by_shape": {
+    "prose": 33,
+    "bold_label": 59,
+    "list_item": 26,
+    "decision_tree": 6
+   },
+   "flagged_by_shape": {
+    "prose": 0,
+    "bold_label": 0,
+    "list_item": 1,
+    "decision_tree": 1
+   },
+   "flags": [
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "6. **Final NaOCl rinse** — Irrigate with 5.25% NaOCl; aspirate completely before drying .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38878107",
+     "shape": "decision_tree",
+     "claim": "**IF** the tooth has apical periodontitis in a single-rooted permanent tooth and the primary goal is periapical healing\n**THEN** perform thorough chemo-mechanical preparation with NaOCl as the primary irrigant; LAI or aPDT may be added but should not be substituted for standard preparation\n**BECAUSE** Meire et al., 2023 found insufficient evidence that any adjunct laser therapy improves healing of",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "after",
+   "pairs": 114,
+   "checked": 114,
+   "flagged": 10,
+   "cost": 0.074911,
+   "status": "verified",
+   "by_shape": {
+    "prose": 19,
+    "list_item": 47,
+    "decision_tree": 15,
+    "table_row": 5,
+    "bold_label": 28
+   },
+   "flagged_by_shape": {
+    "prose": 1,
+    "list_item": 7,
+    "decision_tree": 0,
+    "table_row": 2,
+    "bold_label": 0
+   },
+   "flags": [
+    {
+     "pmid": "36156804",
+     "shape": "list_item",
+     "claim": "**Diode lasers (810–980 nm):** absorbed primarily by melanin and haemoglobin; exert photothermal bactericidal effects at the canal wall",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "2. **Final NaOCl flush.** Deliver 2.5% NaOCl via side-vented needle placed 1 mm short of working length; irrigate for 60 seconds per canal .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "Most evidence favours same-visit obturation after single-visit aPDT ; multi-visit with calcium hydroxide dressing remains acceptable when heavy infection burden is present — no RCT in this evidence base directly compares these options.",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40565094",
+     "shape": "table_row",
+     "claim": "**Nd:YAG (if used)** — 1,064 nm · photothermal protocol; exact parameters not standardised in included evidence — Fiegler-Rudol et al. 2025 did not report a single validated setting",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "table_row",
+     "claim": "Irrigant contact time — Per canal, per cycle — 60 seconds",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40135760",
+     "shape": "list_item",
+     "claim": "Run 3 × 20-second activation cycles per canal under continuous irrigation with 3 mL per 20-second cycle .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37981598",
+     "shape": "list_item",
+     "claim": "Quintana et al. did not report a single standardized energy dose — select per manufacturer protocol; ensure activation covers the full working length .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37849444",
+     "shape": "list_item",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "list_item",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "Irrigate continuously with 2.5%–3% NaOCl throughout shaping .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "after",
+   "pairs": 124,
+   "checked": 124,
+   "flagged": 1,
+   "cost": 0.08865300000000001,
+   "status": "verified",
+   "by_shape": {
+    "prose": 33,
+    "bold_label": 59,
+    "list_item": 26,
+    "decision_tree": 6
+   },
+   "flagged_by_shape": {
+    "prose": 0,
+    "bold_label": 0,
+    "list_item": 1,
+    "decision_tree": 0
+   },
+   "flags": [
+    {
+     "pmid": "31301436",
+     "shape": "list_item",
+     "claim": "6. **Final NaOCl rinse** — Irrigate with 5.25% NaOCl; aspirate completely before drying .",
+     "verdict": "not_supported"
+    }
+   ]
+  }
+ ]
+}

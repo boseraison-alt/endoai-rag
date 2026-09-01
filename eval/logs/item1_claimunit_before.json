@@ -1,0 +1,549 @@
+{
+ "arm": "before",
+ "cap": 100000,
+ "repeat": 3,
+ "sources": [
+  "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+  "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json"
+ ],
+ "total_checked": 714,
+ "total_flagged": 69,
+ "per_run": {
+  "0": [
+   21,
+   238
+  ],
+  "1": [
+   23,
+   238
+  ],
+  "2": [
+   25,
+   238
+  ]
+ },
+ "by_shape": {
+  "prose": [
+   69,
+   714
+  ]
+ },
+ "results": [
+  {
+   "source": "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "before",
+   "pairs": 114,
+   "checked": 114,
+   "flagged": 13,
+   "cost": 0.07598200000000001,
+   "status": "verified",
+   "by_shape": {
+    "prose": 114
+   },
+   "flagged_by_shape": {
+    "prose": 13
+   },
+   "flags": [
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "2. **Final NaOCl flush.** Deliver 2.5% NaOCl via side-vented needle placed 1 mm short of working length; irrigate for 60 seconds per canal .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "Most evidence favours same-visit obturation after single-visit aPDT ; multi-visit with calcium hydroxide dressing remains acceptable when heavy infection burden is present — no RCT in this evidence base directly compares these options.",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the canal anatomy is complex (C-shaped, severely curved, lateral canals confirmed on CBCT) and conventional irrigant penetration is likely insufficient\n**THEN** select Er:YAG LAI (PIPS or SWEEPS mode) as the activation adjunct\n**BECAUSE** photoacoustic cavitation drives irrigant into lateral anatomy beyond passive or syringe delivery --- **IF** primary endodontic infection with necrotic pul",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41692102",
+     "shape": "prose",
+     "claim": "**IF** the canal anatomy is complex (C-shaped, severely curved, lateral canals confirmed on CBCT) and conventional irrigant penetration is likely insufficient\n**THEN** select Er:YAG LAI (PIPS or SWEEPS mode) as the activation adjunct\n**BECAUSE** photoacoustic cavitation drives irrigant into lateral anatomy beyond passive or syringe delivery --- **IF** primary endodontic infection with necrotic pul",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40565094",
+     "shape": "prose",
+     "claim": "| Category | Specification |\n|---|---|\n| **Irrigant — primary** | 2.5% NaOCl · minimum 2 mL/canal/cycle · 60 sec contact · side-vented needle, 1 mm short of WL |\n| **Irrigant — chelation** | 17% EDTA · 60 sec contact · delivered after NaOCl, before aPDT |\n| **Photosensitiser (aPDT)** | Methylene blue · 1.56 µM/mL · flood canal via thin cannula · 3-min pre-irradiation time |\n| **aPDT laser** | Diod",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37849444",
+     "shape": "prose",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "prose",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37981598",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38340037",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37195228",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "Irrigate continuously with 2.5%–3% NaOCl throughout shaping .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "before",
+   "pairs": 124,
+   "checked": 124,
+   "flagged": 8,
+   "cost": 0.090365,
+   "status": "verified",
+   "by_shape": {
+    "prose": 124
+   },
+   "flagged_by_shape": {
+    "prose": 8
+   },
+   "flags": [
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "6. **Final NaOCl rinse** — Irrigate with 5.25% NaOCl; aspirate completely before drying .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40287048",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38878107",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38425318",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "27759881",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "before",
+   "pairs": 114,
+   "checked": 114,
+   "flagged": 13,
+   "cost": 0.07598200000000001,
+   "status": "verified",
+   "by_shape": {
+    "prose": 114
+   },
+   "flagged_by_shape": {
+    "prose": 13
+   },
+   "flags": [
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "2. **Final NaOCl flush.** Deliver 2.5% NaOCl via side-vented needle placed 1 mm short of working length; irrigate for 60 seconds per canal .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "Most evidence favours same-visit obturation after single-visit aPDT ; multi-visit with calcium hydroxide dressing remains acceptable when heavy infection burden is present — no RCT in this evidence base directly compares these options.",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the canal anatomy is complex (C-shaped, severely curved, lateral canals confirmed on CBCT) and conventional irrigant penetration is likely insufficient\n**THEN** select Er:YAG LAI (PIPS or SWEEPS mode) as the activation adjunct\n**BECAUSE** photoacoustic cavitation drives irrigant into lateral anatomy beyond passive or syringe delivery --- **IF** primary endodontic infection with necrotic pul",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41692102",
+     "shape": "prose",
+     "claim": "**IF** the canal anatomy is complex (C-shaped, severely curved, lateral canals confirmed on CBCT) and conventional irrigant penetration is likely insufficient\n**THEN** select Er:YAG LAI (PIPS or SWEEPS mode) as the activation adjunct\n**BECAUSE** photoacoustic cavitation drives irrigant into lateral anatomy beyond passive or syringe delivery --- **IF** primary endodontic infection with necrotic pul",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40565094",
+     "shape": "prose",
+     "claim": "| Category | Specification |\n|---|---|\n| **Irrigant — primary** | 2.5% NaOCl · minimum 2 mL/canal/cycle · 60 sec contact · side-vented needle, 1 mm short of WL |\n| **Irrigant — chelation** | 17% EDTA · 60 sec contact · delivered after NaOCl, before aPDT |\n| **Photosensitiser (aPDT)** | Methylene blue · 1.56 µM/mL · flood canal via thin cannula · 3-min pre-irradiation time |\n| **aPDT laser** | Diod",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37849444",
+     "shape": "prose",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "prose",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37981598",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38340037",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37195228",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "Irrigate continuously with 2.5%–3% NaOCl throughout shaping .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "before",
+   "pairs": 124,
+   "checked": 124,
+   "flagged": 10,
+   "cost": 0.09038500000000001,
+   "status": "verified",
+   "by_shape": {
+    "prose": 124
+   },
+   "flagged_by_shape": {
+    "prose": 10
+   },
+   "flags": [
+    {
+     "pmid": "41833582",
+     "shape": "prose",
+     "claim": "In one RCT in primary teeth, methylene blue at 0.005% concentration was applied for 3 minutes via sterile paper cone, followed by 660 nm laser light at 100 mW, 4 J/cm², for 40 seconds; the combined aPDT + conventional group achieved 99% bacterial load reduction versus 93% for conventional treatment alone — a difference that was not statistically significant . **The literature is currently divided ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40135760",
+     "shape": "prose",
+     "claim": "The concentration of 5.25% NaOCl was used as the primary irrigant in Coelho et al., 2019 ; Kolberg-Babrzyńska et al., 2025 used 2% NaOCl during LAI activation specifically .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "6. **Final NaOCl rinse** — Irrigate with 5.25% NaOCl; aspirate completely before drying .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40287048",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38878107",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38425318",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "27759881",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "before",
+   "pairs": 114,
+   "checked": 114,
+   "flagged": 13,
+   "cost": 0.07598200000000001,
+   "status": "verified",
+   "by_shape": {
+    "prose": 114
+   },
+   "flagged_by_shape": {
+    "prose": 13
+   },
+   "flags": [
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "2. **Final NaOCl flush.** Deliver 2.5% NaOCl via side-vented needle placed 1 mm short of working length; irrigate for 60 seconds per canal .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "Most evidence favours same-visit obturation after single-visit aPDT ; multi-visit with calcium hydroxide dressing remains acceptable when heavy infection burden is present — no RCT in this evidence base directly compares these options.",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the canal anatomy is complex (C-shaped, severely curved, lateral canals confirmed on CBCT) and conventional irrigant penetration is likely insufficient\n**THEN** select Er:YAG LAI (PIPS or SWEEPS mode) as the activation adjunct\n**BECAUSE** photoacoustic cavitation drives irrigant into lateral anatomy beyond passive or syringe delivery --- **IF** primary endodontic infection with necrotic pul",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the canal anatomy is complex (C-shaped, severely curved, lateral canals confirmed on CBCT) and conventional irrigant penetration is likely insufficient\n**THEN** select Er:YAG LAI (PIPS or SWEEPS mode) as the activation adjunct\n**BECAUSE** photoacoustic cavitation drives irrigant into lateral anatomy beyond passive or syringe delivery --- **IF** primary endodontic infection with necrotic pul",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40565094",
+     "shape": "prose",
+     "claim": "| Category | Specification |\n|---|---|\n| **Irrigant — primary** | 2.5% NaOCl · minimum 2 mL/canal/cycle · 60 sec contact · side-vented needle, 1 mm short of WL |\n| **Irrigant — chelation** | 17% EDTA · 60 sec contact · delivered after NaOCl, before aPDT |\n| **Photosensitiser (aPDT)** | Methylene blue · 1.56 µM/mL · flood canal via thin cannula · 3-min pre-irradiation time |\n| **aPDT laser** | Diod",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37849444",
+     "shape": "prose",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "prose",
+     "claim": "Do not activate intracanally at these low-power settings .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37981598",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38340037",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "37195228",
+     "shape": "prose",
+     "claim": "**IF** the case presents with symptomatic apical periodontitis in a mature permanent tooth undergoing single-visit root canal treatment\n**THEN** add LAI (Er:YAG, 50 mJ/25 Hz/300 μs) plus postoperative external LLLT (635–810 nm, 100 mW, 4 J/point)\n**BECAUSE** combined LAI + LLLT produced the lowest VAS scores and least analgesic use across 14 days in a 202-patient RCT --- **IF** the case involves e",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38013016",
+     "shape": "prose",
+     "claim": "Irrigate continuously with 2.5%–3% NaOCl throughout shaping .",
+     "verdict": "not_supported"
+    }
+   ]
+  },
+  {
+   "source": "learn_history/20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "arm": "before",
+   "pairs": 124,
+   "checked": 124,
+   "flagged": 12,
+   "cost": 0.090405,
+   "status": "verified",
+   "by_shape": {
+    "prose": 124
+   },
+   "flagged_by_shape": {
+    "prose": 12
+   },
+   "flags": [
+    {
+     "pmid": "41833582",
+     "shape": "prose",
+     "claim": "In one RCT in primary teeth, methylene blue at 0.005% concentration was applied for 3 minutes via sterile paper cone, followed by 660 nm laser light at 100 mW, 4 J/cm², for 40 seconds; the combined aPDT + conventional group achieved 99% bacterial load reduction versus 93% for conventional treatment alone — a difference that was not statistically significant . **The literature is currently divided ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "31301436",
+     "shape": "prose",
+     "claim": "6. **Final NaOCl rinse** — Irrigate with 5.25% NaOCl; aspirate completely before drying .",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40818665",
+     "shape": "prose",
+     "claim": "**IF** the tooth has apical periodontitis in a single-rooted permanent tooth and the primary goal is periapical healing\n**THEN** perform thorough chemo-mechanical preparation with NaOCl as the primary irrigant; LAI or aPDT may be added but should not be substituted for standard preparation\n**BECAUSE** Meire et al., 2023 found insufficient evidence that any adjunct laser therapy improves healing of",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "41063319",
+     "shape": "prose",
+     "claim": "**IF** the tooth has apical periodontitis in a single-rooted permanent tooth and the primary goal is periapical healing\n**THEN** perform thorough chemo-mechanical preparation with NaOCl as the primary irrigant; LAI or aPDT may be added but should not be substituted for standard preparation\n**BECAUSE** Meire et al., 2023 found insufficient evidence that any adjunct laser therapy improves healing of",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "42482547",
+     "shape": "prose",
+     "claim": "**IF** the tooth has apical periodontitis in a single-rooted permanent tooth and the primary goal is periapical healing\n**THEN** perform thorough chemo-mechanical preparation with NaOCl as the primary irrigant; LAI or aPDT may be added but should not be substituted for standard preparation\n**BECAUSE** Meire et al., 2023 found insufficient evidence that any adjunct laser therapy improves healing of",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "40287048",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38878107",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "38425318",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "27759881",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    },
+    {
+     "pmid": "36156804",
+     "shape": "prose",
+     "claim": "For endodontic retreatment, Kolberg-Babrzyńska et al. (2025, n = 40, 6-month CBCT) reported significantly smaller periapical lesion size in the Er:YAG LAI + photobiomodulation group (mean 1.55 ± 0.51 mm) versus conventional treatment (1.95 ± 0.71 mm; p < 0.05), with laser parameters of 50 mJ, 25 Hz, 1 W, 300-μs pulse, 300-μm tip, fluence 71.4 J/cm², power density 1,428.6 W/cm² . **Key limitations ",
+     "verdict": "not_supported"
+    }
+   ]
+  }
+ ]
+}
