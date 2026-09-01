@@ -1,0 +1,155 @@
+{
+ "case": "20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?",
+ "n": 8,
+ "coverage": {
+  "trauma": 8,
+  "orthodontic": 2,
+  "crack": 4,
+  "anomaly (generic)": 4,
+  "dens invaginatus": 2,
+  "dens evaginatus": 1
+ },
+ "runs": [
+  {
+   "i": 1,
+   "primary": "(\"root canal\" OR endodontic* OR pulp necrosis) AND (trauma* OR \"dental injury\" OR \"crown fracture\" OR \"root fracture\" OR \"enamel fracture\" OR iatrogenic OR orthodontic* OR \"pulp exposure\") AND (etiology OR etio* OR cause* OR pathogenesis OR mechanism*)",
+   "multi": [
+    "(\"root canal\" OR endodontic* OR pulp necrosis) AND (trauma* OR \"dental injury\" OR \"crown fracture\" OR \"root fracture\" OR \"enamel fracture\" OR iatrogenic OR orthodontic* OR \"pulp exposure\") AND (etiology OR etio* OR cause* OR pathogenesis OR mechanism*)",
+    "(pulp necrosis OR pulp death OR pulp vitality loss OR avascular pulp) AND (occult trauma OR micro-trauma OR repetitive injury OR orthodontic movement OR tooth mobility) AND (young adult OR adolescent OR teenager)",
+    "(nonvital tooth OR dead tooth OR necrotic pulp) AND (idiopathic OR spontaneous OR undetermined etiology OR obscure cause) AND (diagnosis OR differential diagnosis OR clinical presentation)",
+    "(pulp vitality OR vital status OR sensibility testing) AND (false negative OR vascular compromise OR ischemia OR thrombosis OR internal hemorrhage) AND (young patient OR juvenile)",
+    "(infected root canal OR endodontic infection) AND (hematogenous spread OR bacteremia OR systemic disease OR immunocompromised OR viral infection) AND (etiology OR origin)",
+    "(tooth discoloration OR darkened tooth OR gray tooth) AND (necrotic pulp OR pulp degeneration) AND (trauma history OR subclinical injury OR previous incident)",
+    "(apical periodontitis OR periapical lesion OR radiolucency) AND (asymptomatic tooth OR no symptoms OR silent disease) AND (caries-free OR unrestored OR intact surface)"
+   ],
+   "etiologies": [
+    "trauma",
+    "orthodontic"
+   ]
+  },
+  {
+   "i": 2,
+   "primary": "(trauma* OR \"traumatic injury\" OR \"crown fracture\" OR \"root fracture\" OR \"enamel fracture\" OR luxation OR avulsion OR concussion OR \"mechanical injury\" OR impact* OR \"blunt force\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital tooth\" OR \"devital*\" OR \"tooth discolor*\" OR darkening) AND (etiology OR etiopathogen* OR \"causes of\" OR pathophysiology OR mechanism*)",
+   "multi": [
+    "(trauma* OR \"traumatic injury\" OR \"crown fracture\" OR \"root fracture\" OR \"enamel fracture\" OR luxation OR avulsion OR concussion OR \"mechanical injury\" OR impact* OR \"blunt force\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital tooth\" OR \"devital*\" OR \"tooth discolor*\" OR darkening) AND (etiology OR etiopathogen* OR \"causes of\" OR pathophysiology OR mechanism*)",
+    "(\"pulp necrosis\" OR \"pulpal death\" OR \"tooth necrosis\" OR nonvital* OR devitali*) AND (\"internal resorption\" OR \"external resorption\" OR resorptive OR idiopathic OR spontaneous OR \"no obvious cause\")",
+    "(darkening OR discolor* OR \"color change\" OR pigment* OR \"grey tooth\" OR \"brown tooth\") AND (young adult OR adolescent* OR \"20 year*\" OR teenager) AND (etiology OR \"root cause\" OR \"underlying cause\" OR pathogenesis)",
+    "(\"pulp vitality\" OR \"vitality loss\" OR \"vitality test*\" OR \"cold test\" OR EPT OR \"electric pulp test\") AND (negative OR absent OR loss) AND (fracture* OR crack* OR exposure OR trauma OR ischemia OR vascular)",
+    "(necrotic OR nonvital OR \"dead tooth\" OR devital*) AND (occult OR hidden OR unapparent OR \"no visible\" OR \"no obvious\") AND (fracture OR crack OR trauma OR injury OR damage OR etiology)",
+    "(\"pulp death\" OR \"pulp necrosis\" OR \"pulpal obliteration\" OR \"calcific metamorphosis\") AND (periodontal OR \"periodontal disease\" OR periodontitis OR \"apical pathology\" OR \"periapical lesion\" OR abscess) AND (relationship OR association OR relationship* OR secondary)",
+    "(intact OR \"unrestored tooth\" OR \"no restoration\" OR \"sound tooth\" OR \"unbroken crown\") AND (necrotic OR devital* OR nonvital OR \"pulp death\") AND (idiopathic OR spontaneous OR \"unknown cause\" OR cryptic OR \"no trauma\")"
+   ],
+   "etiologies": [
+    "trauma",
+    "crack"
+   ]
+  },
+  {
+   "i": 3,
+   "primary": "(trauma* OR \"traumatic injury\" OR luxation OR avulsion OR \"vertical root fracture\" OR VRF OR \"horizontal root fracture\" OR \"root resorption\" OR idiopathic OR \"developmental anomal*\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital tooth\" OR \"dead tooth\" OR necrotic) AND (etiology OR etiology OR pathogenesis OR \"root cause\" OR diagnosis)",
+   "multi": [
+    "(trauma* OR \"traumatic injury\" OR luxation OR avulsion OR \"vertical root fracture\" OR VRF OR \"horizontal root fracture\" OR \"root resorption\" OR idiopathic OR \"developmental anomal*\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital tooth\" OR \"dead tooth\" OR necrotic) AND (etiology OR etiology OR pathogenesis OR \"root cause\" OR diagnosis)",
+    "(\"pulp vitality\" OR \"pulp testing\" OR \"sensibility test*\" OR \"electric pulp test*\" OR EPT OR \"cold test\" OR \"thermal test*\") AND (\"young adult*\" OR \"adolescent*\" OR \"permanent tooth\" OR \"intact tooth\") AND (necrosis OR devital* OR \"loss of vitality\")",
+    "(\"internal resorption\" OR \"external resorption\" OR \"cervical resorption\" OR odontoclast* OR \"root resorption\") AND (\"spontaneous\" OR \"idiopathic\" OR \"asymptomatic\" OR \"incidental finding*\") AND (\"young patient*\" OR \"age* 20\" OR \"second decade\")",
+    "(\"microbial contamination\" OR \"bacterial infection\" OR \"polymicrobial\" OR \"anaerobic bacteria\" OR \"caries-free\") AND (\"pulp death\" OR \"pulpal death\" OR \"pulpal infection\") AND (\"no caries\" OR \"non-carious\" OR \"intact surface*\")",
+    "(\"developmental defect*\" OR \"enamel defect*\" OR \"dentin dysplasia\" OR \"amelogenesis imperfect*\" OR \"dentinogenesis imperfect*\") AND (\"pulp exposure\" OR \"pulp compromise\" OR \"pulp health\") AND (necrosis OR vitality loss)",
+    "(\"occult fracture*\" OR \"crack detection\" OR \"micro-fracture*\" OR \"stress fracture*\" OR \"undetectable fracture\") AND (\"radiograph*\" OR \"CBCT\" OR \"cone beam\") AND (\"necrotic pulp\" OR \"pulp death\" OR \"non-vital\")",
+    "(\"vascular insufficienc*\" OR \"vasculitis\" OR \"thrombosis\" OR \"ischemia*\" OR \"hemodynamic\") AND (\"young tooth\" OR \"young patient*\" OR \"adolescent dentition\") AND (\"pulp necrosis\" OR \"asymptomatic tooth\" OR \"no clinical sign*\")"
+   ],
+   "etiologies": [
+    "trauma",
+    "crack",
+    "anomaly (generic)"
+   ]
+  },
+  {
+   "i": 4,
+   "primary": "(trauma* OR \"mechanical injury\" OR \"dental trauma\" OR luxation OR avulsion OR fracture* OR \"occlusal trauma\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital*\" OR necrotic) AND (\"root canal\" OR endodontic* OR pulp)",
+   "multi": [
+    "(trauma* OR \"mechanical injury\" OR \"dental trauma\" OR luxation OR avulsion OR fracture* OR \"occlusal trauma\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital*\" OR necrotic) AND (\"root canal\" OR endodontic* OR pulp)",
+    "(\"pulp vitality\" OR \"loss of vitality\" OR \"pulpal death\" OR devitalization) AND (\"idiopathic\" OR \"no caries\" OR \"no restoration\" OR \"intact tooth\" OR \"sound tooth\") AND (etiology OR etiolgy OR pathogenesis OR \"root cause\")",
+    "(inflammation OR inflammatory OR \"pulpitis progression\") AND (\"young adult\" OR adolescent* OR \"permanent dentition\") AND (\"spontaneous necrosis\" OR \"asymptomatic necrosis\" OR \"silent pulp death\")",
+    "(\"occlusal interference\" OR \"prematurities\" OR \"bite force\" OR bruxism OR clenching) AND (\"pulpal injury\" OR \"pulp damage\" OR \"pulp degeneration\") AND (young OR juvenile OR \"20-year\" OR \"teenager\")",
+    "(\"internal resorption\" OR \"root resorption\" OR \"inflammatory resorption\") AND (necrotic OR \"non-vital\" OR dead) AND (\"absence of caries\" OR \"no cavity\" OR \"caries-free\")",
+    "(hypomineralization OR amelogenesis OR \"enamel defect*\" OR \"developmental defect*\") AND (\"pulp necrosis\" OR pulpal AND necrosis) AND (susceptibility OR risk OR predisposition)",
+    "(periodontal OR \"periapical\" OR infection OR bacterial) AND (\"secondary necrosis\" OR \"ascending infection\" OR \"retrograde pulpitis\") AND (\"clinically sound\" OR \"no primary cavity\" OR \"no obvious lesion\")"
+   ],
+   "etiologies": [
+    "trauma",
+    "anomaly (generic)"
+   ]
+  },
+  {
+   "i": 5,
+   "primary": "(necrotic* OR pulp* necrosis OR \"pulp death\") AND (\"root canal\" OR endodontic*) AND (trauma* OR injury OR fracture* OR \"dens invaginatus\" OR \"dens in dente\" OR developmental OR anatomical OR idiopathic)",
+   "multi": [
+    "(necrotic* OR pulp* necrosis OR \"pulp death\") AND (\"root canal\" OR endodontic*) AND (trauma* OR injury OR fracture* OR \"dens invaginatus\" OR \"dens in dente\" OR developmental OR anatomical OR idiopathic)",
+    "(pulp vitality loss OR pulpal necrosis OR non-vital* tooth) AND (occult fracture* OR crack* OR \"stress fracture\" OR micro-fracture*) AND (young adult* OR adolescent* OR \"20 year*\")",
+    "(dead tooth OR devitali* OR necrotic pulp) AND (resorption OR internal resorption OR external resorption OR root resorption) AND (idiopathic OR spontaneous OR etiology unknown)",
+    "(pulp necrosis OR pulp death OR non-vital*) AND (dens invaginatus OR dens in dente OR \"invaginated odontodentine\" OR palatal pit) AND (diagnosis OR detection OR radiograph*)",
+    "(endodontic treatment indication* OR tooth vitality test* OR sensibility test*) AND (caries-free OR \"caries free\" OR \"no caries\") AND (young patient* OR teenager* OR \"second decade\")",
+    "(necrotic pulp OR pulpal death OR devitali*) AND (hemoglobin degradation OR heme breakdown OR discoloration OR darkening OR coronal discolor*) AND (etiology OR cause* OR origin)",
+    "(non-vital tooth OR pulp necrosis) AND (previous trauma history OR history of injury OR asymptomatic OR silent OR latent) AND (assessment OR evaluation OR clinical finding*)"
+   ],
+   "etiologies": [
+    "dens invaginatus",
+    "trauma",
+    "crack",
+    "anomaly (generic)"
+   ]
+  },
+  {
+   "i": 6,
+   "primary": "(traumat* OR \"pulp necrosis\" OR \"pulpal necrosis\" OR ischemi* OR \"internal resorption\" OR \"external resorption\" OR idiopathic) AND (\"root canal\" OR endodontic* OR pulp) AND (etiology OR etiopathogen* OR \"causes of\" OR pathogenesis OR \"risk factor*\")",
+   "multi": [
+    "(traumat* OR \"pulp necrosis\" OR \"pulpal necrosis\" OR ischemi* OR \"internal resorption\" OR \"external resorption\" OR idiopathic) AND (\"root canal\" OR endodontic* OR pulp) AND (etiology OR etiopathogen* OR \"causes of\" OR pathogenesis OR \"risk factor*\")",
+    "(\"pulp vitality\" OR \"vital bleaching\" OR \"devitalization\" OR \"tooth discoloration\" OR \"darkened tooth\") AND (\"young adult*\" OR adolescent* OR \"permanent dentition\") AND (etiology OR \"underlying cause*\" OR pathogenesis)",
+    "(crack* OR fracture* OR \"vertical root fracture\" OR \"longitudinal root fracture\" OR \"craze line*\") AND (necrotic OR \"non-vital\" OR \"pulp death\") AND (detection OR diagnosis OR \"clinical presentation\")",
+    "(\"idiopathic pulp necrosis\" OR IPNec OR \"asymptomatic necrosis\" OR \"silent pulp death\") AND (prevalence OR incidence OR epidemiology OR \"case report*\")",
+    "(caries-free OR \"caries resistant\" OR \"absence of caries\" OR \"sound tooth structure\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR devitalization) AND (\"non-carious\" OR \"non-traumatic\" OR spontaneous)",
+    "(hemocyanin OR \"pulpal hemorrhage\" OR \"internal bleeding\" OR ischemia OR \"vascular occlusion\") AND (\"pulp tissue\" OR \"pulp chamber\") AND (necrosis OR degeneration OR death)",
+    "(\"systemic disease*\" OR medication* OR drug* OR \"genetic condition*\" OR connective tissue disorder*) AND (\"pulp necrosis\" OR \"tooth vitality\" OR \"pulpal degeneration\") AND (young OR juvenile OR adolescent*)"
+   ],
+   "etiologies": [
+    "trauma",
+    "crack"
+   ]
+  },
+  {
+   "i": 7,
+   "primary": "(\"root canal\" OR endodontic* OR pulp) AND (necrosis OR necrotic OR \"pulp death\" OR \"pulpal necrosis\") AND (trauma OR \"traumatic injury\" OR fracture OR \"developmental anomaly\" OR \"dens invaginatus\" OR \"dens evaginatus\" OR idiopathic OR etiology OR \"etiology\" OR cause*)",
+   "multi": [
+    "(\"root canal\" OR endodontic* OR pulp) AND (necrosis OR necrotic OR \"pulp death\" OR \"pulpal necrosis\") AND (trauma OR \"traumatic injury\" OR fracture OR \"developmental anomaly\" OR \"dens invaginatus\" OR \"dens evaginatus\" OR idiopathic OR etiology OR \"etiology\" OR cause*)",
+    "(pulp vitality OR \"vital signs\" OR sensibility OR responsiveness) AND (loss OR absent OR negative OR failed) AND (young adult* OR adolescent* OR \"20 year*\" OR \"second decade\")",
+    "(internal resorption OR \"pink tooth\" OR \"inflammatory resorption\") AND (asymptomatic OR \"no symptom*\" OR incidental finding*) AND (etiology OR pathogenesis OR mechanism*)",
+    "(orthodontic* OR \"tooth movement\" OR bruxism OR parafunct* OR \"occlusal trauma\") AND (pulp OR endodontic*) AND (viability OR vitality OR necrosis)",
+    "(\"dens in dente\" OR \"dens invaginatus\" OR \"dens evaginatus\" OR gemination OR fusion OR dilaceration) AND (pulp degeneration OR pulp death OR endodontic involvement)",
+    "(herpes simplex OR HSV OR CMV OR viral infection* OR \"systemic disease*\") AND (pulp necrosis OR endodontic pathology) AND (young patient* OR pediatric*)",
+    "(\"apical periodontitis\" OR \"periapical lesion*\" OR \"apical radiolucency\") AND (vital tooth OR non-vital OR necrotic pulp) AND (diagnosis OR differential OR etiology)"
+   ],
+   "etiologies": [
+    "dens invaginatus",
+    "trauma",
+    "orthodontic",
+    "dens evaginatus",
+    "anomaly (generic)"
+   ]
+  },
+  {
+   "i": 8,
+   "primary": "(trauma OR \"traumatic injury\" OR \"crown fracture\" OR \"root fracture\" OR \"enamel fracture\" OR luxation OR intrusion OR extrusion OR avulsion OR \"mechanical injury\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital tooth\" OR \"dead tooth\" OR necrotic) AND (\"root canal\" OR endodontic* OR pulp)",
+   "multi": [
+    "(trauma OR \"traumatic injury\" OR \"crown fracture\" OR \"root fracture\" OR \"enamel fracture\" OR luxation OR intrusion OR extrusion OR avulsion OR \"mechanical injury\") AND (\"pulp necrosis\" OR \"pulpal necrosis\" OR \"non-vital tooth\" OR \"dead tooth\" OR necrotic) AND (\"root canal\" OR endodontic* OR pulp)",
+    "(\"pulp vitality\" OR \"loss of vitality\" OR \"devitalization\" OR \"pulpal death\" OR avirulent) AND (\"idiopathic\" OR \"spontaneous\" OR \"asymptomatic necrosis\" OR \"etiology unknown\") AND (young OR adolescent OR \"young adult\")",
+    "(\"internal resorption\" OR \"inflammatory resorption\" OR \"replacement resorption\" OR \"physiologic resorption\") AND (necrotic OR non-vital OR \"pulp death\") AND (\"anterior tooth\" OR incisor OR canine)",
+    "(\"apical periodontitis\" OR \"periapical pathology\" OR \"apical lesion\" OR granuloma OR cyst) AND (\"vital signs\" OR vitality OR \"sensibility test*\") AND (\"differential diagnosis\" OR etiology)",
+    "(\"bacterial infection\" OR polymicrobial OR \"anaerobic bacteria\" OR Enterococcus OR Propionibacterium) AND (\"endodontic infection\" OR \"root canal infection\" OR \"intracanal bacteria\") AND (asymptomatic OR latent OR chronic)",
+    "(\"systemic disease\" OR \"metabolic disorder\" OR medication* OR chemotherapy OR radiation) AND (\"pulp necrosis\" OR \"pulpal death\" OR devital*) AND (iatrogenic OR secondary OR induced)",
+    "(\"caries risk\" OR \"caries susceptibility\" OR \"hidden caries\" OR \"occult lesion\") AND (necrotic OR non-vital OR avirulent) AND (radiograph* OR \"cone beam\" OR CBCT OR imaging)"
+   ],
+   "etiologies": [
+    "trauma"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,217 @@
+{
+ "label": "before",
+ "case": "20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?",
+ "followups": [
+  "Was there a history of trauma to this tooth, and if so how long ago? — trauma is the leading cause of pulp necrosis in young patients with no caries or restoration",
+  "What do periapical radiographs show—is there a periapical lesion, and if so what is its size and character? — this confirms necrosis and guides prognosis and treatment urgency",
+  "Does the tooth test non-vital on vitality testing? — this confirms pulp death and rules out reversible or irreversible pulpitis, which require different management"
+ ],
+ "search_term": "(\"root canal\" OR endodontic* OR pulp) AND (necrosis OR necrotic OR \"pulp death\" OR \"pulpal necrosis\") AND (trauma OR \"dental trauma\" OR injury OR \"crown fracture\" OR \"root fracture\" OR dens invaginatus OR \"dens in dente\" OR developmental OR anatomic* OR idiopathic)",
+ "multi_terms": [
+  "(\"root canal\" OR endodontic* OR pulp) AND (necrosis OR necrotic OR \"pulp death\" OR \"pulpal necrosis\") AND (trauma OR \"dental trauma\" OR injury OR \"crown fracture\" OR \"root fracture\" OR dens invaginatus OR \"dens in dente\" OR developmental OR anatomic* OR idiopathic)",
+  "(pulp vitality OR \"pulp viability\" OR vitality loss OR devitalization) AND (young adult OR adolescent OR \"20 year*\" OR teenager) AND (occult trauma OR microtrauma OR \"non-obvious injury\" OR \"previous trauma\")",
+  "(pulpal inflammation OR pulpitis OR \"inflammatory resorption\") AND (internal resorption OR \"root resorption\" OR \"progressive resorption\") AND (idiopathic OR etiology unknown OR \"no apparent cause\")",
+  "(\"dens invaginatus\" OR \"dens in dente\" OR invagination OR coronal invagination) AND (pulp necrosis OR pulpal death OR \"non-vital tooth\" OR \"dead tooth\")",
+  "(apical periodontitis OR \"periapical pathology\" OR \"apical abscess\" OR \"apical lesion\") AND (vital status OR vitality testing OR \"pulp testing\" OR EPT) AND (young patient* OR juvenile OR adolescent*)",
+  "(\"internal bleaching\" OR hemoglobin OR porphyrin* OR chromogen*) AND (discoloration OR darkening OR staining) AND (necrotic pulp OR pulp death OR non-vital*)",
+  "(calcification OR \"pulp calcification\" OR dystrophic calcif* OR \"canal obliteration\") AND (aging OR aging-like OR degeneration) AND (young patient* OR premature OR accelerated)"
+ ],
+ "esearch": [],
+ "tiers": {
+  "cochrane": [
+   {
+    "pmid": "27759881",
+    "title": "Endodontic procedures for retreatment of periapical lesions.",
+    "year": "2016",
+    "score": 73.3
+   }
+  ],
+  "level1": [
+   {
+    "pmid": "AAE-PS-diagnosis",
+    "title": "AAE Position Statement: Endodontic Diagnosis",
+    "year": "2009",
+    "score": 90.0
+   },
+   {
+    "pmid": "AAE-PS-vital-pulp",
+    "title": "AAE Position Statement: Vital Pulp Therapy",
+    "year": "2021",
+    "score": 90.0
+   },
+   {
+    "pmid": "37815804",
+    "title": "Outcome of single-visit root canal treatment with or without MTAD: A randomized controlled clinical trial.",
+    "year": "2024",
+    "score": 80.0
+   },
+   {
+    "pmid": "41339865",
+    "title": "Partial pulpotomy for carious pulp exposure in adult mature permanent teeth: a systematic review and meta-anal",
+    "year": "2025",
+    "score": 78.5
+   },
+   {
+    "pmid": "38878107",
+    "title": "Association between the irrigation-agitation techniques and Periapical Healing of large periapical lesions: a ",
+    "year": "2024",
+    "score": 78.1
+   },
+   {
+    "pmid": "41390055",
+    "title": "Untreated Apical Periodontitis and the Risk of Medication-related Osteonecrosis of the Jaws (MRONJ): A Systema",
+    "year": "2026",
+    "score": 74.8
+   },
+   {
+    "pmid": "38576393",
+    "title": "Risk of pulp necrosis and related complications in the permanent anterior teeth with lateral luxation: A syste",
+    "year": "2024",
+    "score": 74.8
+   },
+   {
+    "pmid": "38615249",
+    "title": "Systematic review of surgical regenerative treatment for apicomarginal lesions in periapical surgery.",
+    "year": "2024",
+    "score": 74.8
+   },
+   {
+    "pmid": "42001923",
+    "title": "Does the use of laser therapy enhance healing and reduce the size of periapical lesions? A systematic review a",
+    "year": "2026",
+    "score": 74.8
+   },
+   {
+    "pmid": "38504243",
+    "title": "Pulpotomy versus pulpectomy in carious vital pulp exposure in primary incisors: a randomized controlled trial.",
+    "year": "2024",
+    "score": 73.5
+   },
+   {
+    "pmid": "39789544",
+    "title": "Healing potentiality of blood clot, S-PRF and A-PRF as scaffold in treatment of non-vital mature single rooted",
+    "year": "2025",
+    "score": 71.2
+   },
+   {
+    "pmid": "26898567",
+    "title": "Periapical Bone Healing after Apicectomy with and without Retrograde Root Filling with Mineral Trioxide Aggreg",
+    "year": "2016",
+    "score": 70.0
+   },
+   {
+    "pmid": "40057596",
+    "title": "Apicoectomy versus apical curettage in combination with or without L-PRF application: a randomized clinical tr",
+    "year": "2025",
+    "score": 68.9
+   },
+   {
+    "pmid": "36135595",
+    "title": "Patient-centric outcome assessment of endodontic microsurgery using periapical radiography versus cone beam co",
+    "year": "2023",
+    "score": 68.9
+   },
+   {
+    "pmid": "33420674",
+    "title": "What is the best long-term treatment modality for immature permanent teeth with pulp necrosis and apical perio",
+    "year": "2021",
+    "score": 67.8
+   },
+   {
+    "pmid": "32381409",
+    "title": "Does the Etiology of Pulp Necrosis Affect Regenerative Endodontic Treatment Outcomes? A Systematic Review and ",
+    "year": "2020",
+    "score": 66.7
+   },
+   {
+    "pmid": "35348216",
+    "title": "Vital pulp treatment for traumatized permanent teeth: A systematic review.",
+    "year": "2022",
+    "score": 65.9
+   },
+   {
+    "pmid": "29397215",
+    "title": "Treatment Outcomes of 4 Vital Pulp Therapies in Mature Molars.",
+    "year": "2018",
+    "score": 64.4
+   },
+   {
+    "pmid": "30788777",
+    "title": "Direct pulp capping versus pulpotomy with MTA for carious primary molars: a randomised clinical trial.",
+    "year": "2019",
+    "score": 64.4
+   }
+  ],
+  "classic": [
+   {
+    "pmid": "2047103",
+    "title": "Clinical, radiographic, and histologic study of endodontic treatment failures",
+    "year": "1991",
+    "score": 67.3
+   },
+   {
+    "pmid": "3460803",
+    "title": "Relationship between pulp dimensions and development of pulp necrosis after luxation injuries in the permanent",
+    "year": "1986",
+    "score": 62.9
+   },
+   {
+    "pmid": "4404999",
+    "title": "Dental vitality tests and pulp status",
+    "year": "1973",
+    "score": 62.9
+   }
+  ],
+  "level3a": [
+   {
+    "pmid": "38430349",
+    "title": "A retrospective cohort study of pulp prognosis in luxated permanent teeth: a competing risk analysis.",
+    "year": "2024",
+    "score": 66.5
+   },
+   {
+    "pmid": "42663720",
+    "title": "Analysis of failure factors in vital pulp therapy and construction of a \"three-circle intersection\" framework:",
+    "year": "2026",
+    "score": 63.1
+   }
+  ],
+  "level3b": [
+   {
+    "pmid": "38267594",
+    "title": "Outcomes and predictive factors of vital pulp therapy in a large-scale retrospective cohort study over 10 year",
+    "year": "2024",
+    "score": 60.6
+   }
+  ]
+ },
+ "n_papers": 26,
+ "etiology_in_titles": [
+  "luxation",
+  "etiolog",
+  "trauma"
+ ],
+ "answer": "**Assessment:** A necrotic pulp in a 20-year-old with an intact, unrestored, caries-free tooth strongly points to a traumatic etiology as the primary cause, with the injury potentially having occurred years prior and gone unrecognized or unreported.\n\n**Recommendation:** Conduct a thorough trauma history — including childhood dental injuries the patient may not recall or consider significant — combined with a full diagnostic workup (cold testing, EPT, percussion, palpation, periodontal probing, and periapical radiograph, with CBCT if anatomy or lesion extent is unclear). The most likely diagnoses are pulp necrosis secondary to a prior luxation injury or crown fracture. A dental anomaly (dens invaginatus, dens evaginatus) or rarely an isolated vascular event should also be ruled out clinically and radiographically. Once necrosis is confirmed, conventional root canal treatment is the primary indicated intervention [[PMID:AAE-PS-diagnosis]].\n\n**Evidence:**\n\n- Traumatic luxation injuries are a well-established cause of pulp necrosis in intact young teeth; the pooled prevalence of pulp necrosis following lateral luxation in mature permanent teeth is approximately 58% (95% CI: 42–73%) [[PMID:38576393]], and pulp dimensions (wider apical foramen in younger teeth conferring some protection) influence whether necrosis develops [[PMID:3460803]].\n\n- In a retrospective cohort of 427 luxated permanent teeth, pulp necrosis occurred in 28.1% overall, with the risk significantly increased by concomitant crown fractures (HR 4.0, 95% CI 2.6–6.1) and intrusion injuries (HR 2.3, 95% CI 1.2–4.1), while open apices were protective (HR 0.62, 95% CI 0.4–0.96) [[PMID:38430349]].\n\n- Dental anomalies such as dens evaginatus can present as spontaneous pulp necrosis in young patients with otherwise intact dentition; regenerative endodontic outcome data confirm dens evaginatus as a recognized non-traumatic etiology for necrosis in young teeth, with a pooled success rate of 93.1% for subsequent RET [[PMID:32381409]].\n\n- Reliable sensibility testing (cold/EPT) combined with clinical and radiographic findings is essential to confirm necrosis and establish a periapical diagnosis before committing to treatment; cold testing (Endo Ice) is the most reliable sensibility test, supplemented by EPT [[PMID:AAE-PS-diagnosis]].\n\n- Lin et al. demonstrated that 57% of endodontic failures (including necrosis) are asymptomatic, underscoring that absence of symptoms does not exclude long-standing pulp death — consistent with an old, unrecognized traumatic episode [[PMID:2047103]].\n\n**Key Considerations:**\n\n- **Ask specifically about childhood trauma** — falls from bicycles, sports injuries, or playground accidents between ages 7–14 are common and frequently forgotten by patients. Concussion, subluxation, and intrusion in particular can cause delayed necrosis that manifests years later.\n- **Rule out dens invaginatus** radiographically before initiating access; this anomaly creates a closed microbiological niche that mimics trauma-related necrosis in young, otherwise intact teeth.\n- **Check for crown discoloration** (grey-yellow hue) and subtle infraocclusion, which may indicate an earlier luxation with subsequent pulp necrosis and internal/external resorption.\n- **Periodontal probing** is important: a narrow, isolated deep pocket in an otherwise periodontally healthy patient may indicate a vertical root fracture (uncommon at 20 years with no restoration but worth excluding) or a draining sinus of endodontic origin.\n- **CBCT** should be considered if periapical radiography reveals a large lesion, unclear anatomy, or if there is suspicion of resorption, as it reduces operative time and may improve pre-surgical planning if surgery is ultimately required [[PMID:36135595]].\n- If apical periodontitis is present and the patient is on or planned for antiresorptive therapy at any point, timely endodontic treatment is particularly important, as untreated apical periodontitis may increase the risk of MRONJ [[PMID:41390055]].\n\n---\n\n> ⚠ **Citation support: 1 of 7 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:\n>\n> - [[PMID:3460803]] cited for: \"Traumatic luxation injuries are a well-established cause of pulp necrosis in intact young teeth; the pooled prevalence of pulp necrosis foll\"",
+ "cost": 0.072353,
+ "elapsed": 55.4,
+ "first_etiology": [
+  "trauma",
+  116
+ ],
+ "first_management": [
+  "root canal treatment",
+  866
+ ],
+ "etiology_terms_in_answer": [
+  "trauma",
+  "traumatic",
+  "etiolog",
+  "periodontal",
+  "luxation",
+  "fracture",
+  "dens invaginatus",
+  "invaginatus",
+  "dens evaginatus",
+  "concussion"
+ ]
+}

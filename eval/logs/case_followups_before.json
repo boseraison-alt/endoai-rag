@@ -1,0 +1,219 @@
+{
+ "case": "20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?",
+ "n": 15,
+ "runs_with_non_discriminating": 8,
+ "by_kind": {
+  "bisphosphonate": 7,
+  "radiation": 4,
+  "immunosuppress": 7,
+  "diabetes": 1,
+  "restorability": 1
+ },
+ "discriminating": {
+  "trauma": 15,
+  "imaging": 15,
+  "vitality": 4
+ },
+ "runs": [
+  {
+   "i": 1,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so, how long ago? — this is the most common cause of pulp necrosis without caries or restoration in a young patient",
+    "What does periapical imaging show — is there a periapical lesion, and if so, what is its size and character? — this confirms necrosis and guides whether root resorption or other pathology is present"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 2,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so when did it occur? — this is the most common cause of pulp necrosis in an unrestored, caries-free young tooth and changes the treatment urgency and prognosis.",
+    "What does periapical imaging show — is there a periapical lesion, and if so how large? — this confirms necrosis and guides treatment timing and prognosis.",
+    "Are there any medical factors such as bisphosphonates, head-and-neck radiation, or immunosuppression? — these significantly alter treatment planning and healing expectations."
+   ],
+   "non_discriminating": [
+    {
+     "q": "Are there any medical factors such as bisphosphonates, head-and-neck radiation, or immunosuppression? — these significantly alter treatment planning and healing expectations.",
+     "why": [
+      "bisphosphonate",
+      "radiation",
+      "immunosuppress"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so, how long ago? — pulp necrosis in a young patient with no caries or restoration is classically traumatic, and timing affects prognosis and treatment planning",
+    "What does the periapical radiograph show — is there a periapical lesion, and does the apex appear open or closed? — this confirms necrosis, guides prognosis, and determines whether apexification or standard obturation is needed"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 4,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so, how long ago? — this is the most common cause of pulp necrosis in a young patient with no caries or restoration",
+    "What are the periapical findings on imaging? — this confirms necrosis and guides whether treatment is feasible or extraction is indicated",
+    "Is there any medical history of bisphosphonates, head-and-neck radiation, or immunosuppression? — these substantially alter treatment planning and prognosis"
+   ],
+   "non_discriminating": [
+    {
+     "q": "Is there any medical history of bisphosphonates, head-and-neck radiation, or immunosuppression? — these substantially alter treatment planning and prognosis",
+     "why": [
+      "bisphosphonate",
+      "radiation",
+      "immunosuppress"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so, how long ago? — trauma is the leading cause of pulp necrosis in young patients with no caries or restoration",
+    "What are the periapical findings on imaging? — presence and size of apical pathology determines treatment urgency and prognosis",
+    "Does the tooth respond to vitality testing, and what is the apex maturity status? — confirms necrosis versus irreversible pulpitis and affects treatment approach in a young patient"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 6,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so when and what type? — trauma is the most common cause of pulp necrosis in young teeth without caries or restorations",
+    "What do periapical radiographs show—is there evidence of a periapical lesion, and if so what is its size and character? — this confirms necrosis and guides treatment urgency and prognosis",
+    "Does the tooth respond to vitality testing, and what type of testing was used? — this definitively establishes pulp status and rules out reversible pulpitis"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 7,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so when did it occur? — pulpal necrosis without caries or restoration is most commonly explained by prior trauma.",
+    "What does the periapical radiograph show — is there a periapical lesion, and what is its size and character? — this confirms necrosis and guides prognosis and urgency.",
+    "Does the patient have any medical history of bisphosphonates, head-and-neck radiation, or immunosuppression? — these alter treatment planning and prognosis fundamentally."
+   ],
+   "non_discriminating": [
+    {
+     "q": "Does the patient have any medical history of bisphosphonates, head-and-neck radiation, or immunosuppression? — these alter treatment planning and prognosis fundamentally.",
+     "why": [
+      "bisphosphonate",
+      "radiation",
+      "immunosuppress"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "questions": [
+    "Was there any history of trauma to this tooth, and if so when did it occur? — trauma is the leading cause of pulp necrosis in young patients with no caries or restoration",
+    "What does the periapical radiograph show regarding the apex and any periapical pathology? — this confirms necrosis and reveals whether the apex is open or closed, which fundamentally changes prognosis and treatment approach"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 9,
+   "questions": [
+    "Was there any history of trauma to this tooth, and if so, when did it occur? — trauma is the leading cause of pulp necrosis in young vital teeth without caries or restoration",
+    "What do periapical radiographs show — is there a periapical radiolucency, and if so, what is its size and character? — this confirms necrosis and guides prognosis and treatment urgency",
+    "Are there any relevant medical factors such as bisphosphonate use, radiation history, immunosuppression, or uncontrolled diabetes? — these significantly alter endodontic prognosis and healing potential"
+   ],
+   "non_discriminating": [
+    {
+     "q": "Are there any relevant medical factors such as bisphosphonate use, radiation history, immunosuppression, or uncontrolled diabetes? — these significantly alter endodontic prognosis and healing potential",
+     "why": [
+      "bisphosphonate",
+      "immunosuppress",
+      "diabetes"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 10,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so, when did it occur? — trauma is the leading cause of pulp necrosis in young patients with no caries or restorations",
+    "What are the periapical findings on imaging — is there an existing lesion, and if so, how large? — this confirms necrosis and reveals the timeline and severity of the pathology",
+    "Does the patient have any history of bisphosphonates, head-and-neck radiation, or immunosuppression? — these alter both the urgency and feasibility of treatment"
+   ],
+   "non_discriminating": [
+    {
+     "q": "Does the patient have any history of bisphosphonates, head-and-neck radiation, or immunosuppression? — these alter both the urgency and feasibility of treatment",
+     "why": [
+      "bisphosphonate",
+      "radiation",
+      "immunosuppress"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 11,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so when and what type? — trauma is the leading cause of pulp necrosis in young patients with no caries or restoration",
+    "What do periapical radiographs show regarding bone loss or a periapical lesion? — this confirms necrosis and guides treatment urgency and prognosis",
+    "Does the tooth respond to vitality testing, and what is the response pattern? — this confirms true necrosis versus a false-negative response that might indicate partial pulp vitality"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 12,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so when and what type? — trauma is the leading cause of pulp necrosis in young patients with no caries or restoration",
+    "What do periapical radiographs show — is there a periapical lesion, and if so how large? — this confirms necrosis and affects treatment urgency and prognosis",
+    "Does the tooth respond to vitality testing, and what is the response character? — confirms pulp necrosis versus irreversible pulpitis, which changes treatment approach"
+   ],
+   "non_discriminating": []
+  },
+  {
+   "i": 13,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so when did it occur? — pulp necrosis in a young patient with no caries or restoration strongly suggests traumatic etiology, which changes prognosis and treatment approach.",
+    "What does periapical imaging show — is there a periapical lesion, and what is its size and character? — this confirms necrosis and guides whether standard endodontics or surgical intervention may be needed.",
+    "Is the tooth restorable with adequate ferrule after endodontic treatment? — this is the deciding factor between treatment and extraction in a young patient."
+   ],
+   "non_discriminating": [
+    {
+     "q": "Is the tooth restorable with adequate ferrule after endodontic treatment? — this is the deciding factor between treatment and extraction in a young patient.",
+     "why": [
+      "restorability"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 14,
+   "questions": [
+    "Was there a history of trauma to this tooth, and if so, how long ago? — trauma is the most common cause of pulp necrosis in young patients without caries or restorations",
+    "What do the periapical radiographs show regarding bone loss or a periapical lesion? — this confirms necrosis and guides prognosis and treatment urgency",
+    "Does the patient have any relevant medical history such as bisphosphonate use, radiation, or immunosuppression? — these alter treatment planning and healing expectations significantly"
+   ],
+   "non_discriminating": [
+    {
+     "q": "Does the patient have any relevant medical history such as bisphosphonate use, radiation, or immunosuppression? — these alter treatment planning and healing expectations significantly",
+     "why": [
+      "bisphosphonate",
+      "immunosuppress"
+     ]
+    }
+   ]
+  },
+  {
+   "i": 15,
+   "questions": [
+    "Was there any history of trauma to this tooth, and if so, how long ago? — trauma is the leading cause of pulp necrosis in young patients without caries or restorations",
+    "What do periapical radiographs show—is there a periapical lesion, and if so what is its size and character? — this confirms necrosis and guides whether root resorption or other pathology is present",
+    "Does the patient have any systemic conditions or take medications affecting bone metabolism or immune function? — bisphosphonates, antiresorptives, radiation, or immunosuppression would materially change management"
+   ],
+   "non_discriminating": [
+    {
+     "q": "Does the patient have any systemic conditions or take medications affecting bone metabolism or immune function? — bisphosphonates, antiresorptives, radiation, or immunosuppression would materially change management",
+     "why": [
+      "bisphosphonate",
+      "immunosuppress"
+     ]
+    }
+   ]
+  }
+ ]
+}
