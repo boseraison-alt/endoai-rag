@@ -1009,3 +1009,71 @@ class TestInTheBrowser:
         assert got["disabled"] is True
         assert got["pressed"] == "false"
         assert "sections" in got["why"] and "slides" in got["why"]
+
+
+# ── Multi-arm comparisons reach BOTH exports (CURO_HANDOVER §5[D]) ──────────
+
+class TestMultiArmOnTheWebDeck:
+    """Invariant 9: both deck exports consume the same slide spec. `arms` was
+    read by neither until this batch, and adding it to the PPTX side alone
+    would have produced a chart there and an empty slide here from one spec."""
+
+    SOURCE = ("1% NaOCl achieved 78.4% reduction, 2.5% NaOCl achieved 88.1% "
+              "reduction, and 5.25% NaOCl achieved 96.2% reduction.")
+    ARMS = [{"label": "1% NaOCl", "stat": "78.4%"},
+            {"label": "2.5% NaOCl", "stat": "88.1%"},
+            {"label": "5.25% NaOCl", "stat": "96.2%"}]
+
+    def _plan(self, arms, source=None):
+        from webdeck.plan import adapt
+        slide = {"pattern": "stat_panel", "title": "Bacterial reduction",
+                 "arms": arms,
+                 "citation": "Vertucci et al. 2024 [[PMID:12345678]]"}
+        return adapt(slide, {}, source or self.SOURCE)
+
+    def test_three_arms_plan_a_three_series_chart(self):
+        planned = self._plan(self.ARMS)
+        charts = [p for p in planned if p.get("layout") == "chart"]
+        assert charts, "a verified three-arm comparison must plot on the web deck"
+        assert len(charts[0]["_series"]) == 3
+        assert [lit for _n, _v, lit in charts[0]["_series"]] == \
+            ["78.4%", "88.1%", "96.2%"]
+
+    def test_an_uncited_arm_kills_the_whole_chart(self):
+        """All-or-nothing: one unsourced bar inherits the credibility of the
+        sourced bars beside it."""
+        arms = self.ARMS + [{"label": "6% NaOCl", "stat": "99.9%"}]
+        planned = self._plan(arms)
+        assert not [p for p in planned if p.get("layout") == "chart"]
+        blob = json.dumps(planned)
+        assert "99.9%" in blob, "the refused value is still slide content"
+
+    def test_mixed_units_produce_no_chart(self):
+        arms = self.ARMS[:2] + [{"label": "contact time", "stat": "30 min"}]
+        planned = self._plan(arms, self.SOURCE + " Contact time was 30 min.")
+        assert not [p for p in planned if p.get("layout") == "chart"]
+
+    def test_a_range_arm_produces_no_chart(self):
+        """Same unit throughout, so the unit gate cannot mask the range gate."""
+        arms = self.ARMS[:2] + [{"label": "pooled", "stat": "80-90%"}]
+        planned = self._plan(arms, self.SOURCE + " Pooled spanned 80-90%.")
+        assert not [p for p in planned if p.get("layout") == "chart"]
+
+    def test_the_two_arm_path_still_charts(self):
+        """The gates added here must not have suppressed charting outright."""
+        from webdeck.plan import adapt
+        planned = adapt({"pattern": "stat_panel", "title": "T",
+                         "primary_stat": "86.9%", "primary_label": "Laser",
+                         "secondary_stat": "74.5%", "secondary_label": "Control"},
+                        {}, "86.9% with laser versus 74.5% control")
+        assert [p for p in planned if p.get("layout") == "chart"]
+
+    def test_a_unitless_two_arm_pair_no_longer_charts(self):
+        """The hole this closes on the web side: a P-score of 0.993 beside an
+        SMD of 0.58 measure nothing in common, and both are unitless."""
+        from webdeck.plan import adapt
+        planned = adapt({"pattern": "stat_panel", "title": "T",
+                         "primary_stat": "0.993", "primary_label": "P-score",
+                         "secondary_stat": "0.58", "secondary_label": "SMD"},
+                        {}, "a P-score of 0.993 and an SMD of 0.58")
+        assert not [p for p in planned if p.get("layout") == "chart"]

@@ -172,14 +172,40 @@ def adapt(s: dict, papers: dict, source_text: str) -> list[dict]:
 def _plan_stat(s, title, papers, source_text):
     """§1.5: a stat panel becomes a chart ONLY if every plotted number appears
     verbatim in the source text. Otherwise it renders as text — an uncited
-    number must never acquire the authority of a plotted mark."""
-    pairs = [(s.get("primary_label"), s.get("primary_stat")),
-             (s.get("secondary_label"), s.get("secondary_stat"))]
+    number must never acquire the authority of a plotted mark.
+
+    THREE OR MORE ARMS. `arms` is the generator's shape for a comparison the
+    source measured across more than two groups. Both deck exports read the
+    SAME spec (invariant 9), so a spec this reader ignored would render as a
+    chart in the PPTX and an empty slide on the web.
+
+    The unit and range gates come from `presentations.chart_data` rather than
+    being restated here. They were missing from this reader entirely, so the
+    two failures they were written for — a standardised mean difference plotted
+    beside an I², a 24-48h span plotted as one bar — were caught in the PPTX
+    and drawn on the web from the same spec.
+    """
+    from presentations.chart_data import consistent_unit, is_range
+
+    arms = [a for a in (s.get("arms") or []) if isinstance(a, dict)]
+    if arms:
+        pairs = [(a.get("label") or a.get("name"), a.get("stat")) for a in arms]
+    else:
+        pairs = [(s.get("primary_label"), s.get("primary_stat")),
+                 (s.get("secondary_label"), s.get("secondary_stat"))]
     pairs = [(strip_markers(str(lbl or "")), str(v)) for lbl, v in pairs if v]
 
     plottable = [(lbl or "value", L._as_float(v), strip_markers(v))
                  for lbl, v in pairs
                  if L.value_is_cited(v, source_text) and L._as_float(v) is not None]
+
+    # All-or-nothing, as in chart_data: one unsourced bar inherits the
+    # credibility of the sourced ones beside it.
+    if len(plottable) != len(pairs):
+        plottable = []
+    elif any(is_range(raw) for _lbl, raw in pairs) or \
+            consistent_unit([raw for _lbl, raw in pairs]) is None:
+        plottable = []
 
     if len(plottable) >= 2:
         return [{"layout": "chart", "title": title, "_series": plottable,

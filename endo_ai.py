@@ -5487,7 +5487,7 @@ AVAILABLE PATTERNS — use the one whose structure best matches the content:
    {"pattern":"three_route_grid","eyebrow":"MODULE X · OPTIONS","title":"Short title","routes":[{"color":"accent_teal","icon":"repeat","name":"Route Name","tagline":"When to use","when":"Indication sentence.","how":"Technique sentence.","citation":"Author, Journal Year"}],"speaker_notes":"..."}
    color options: accent_teal, accent_coral, accent_gold
 
-8. stat_panel  (ONE quantity measured across TWO arms — a like-for-like comparison)
+8. stat_panel  (ONE quantity measured across TWO OR MORE arms — a like-for-like comparison)
    {"pattern":"stat_panel","eyebrow":"MODULE X · OUTCOMES","title":"Short title","primary_stat":"86.9%","primary_label":"Laser-activated irrigation","secondary_stat":"74.5%","secondary_label":"Conventional irrigation","callout":"Insight sentence about the comparison.","citation":"Author et al., Journal Year [[PMID:N]]","speaker_notes":"..."}
    primary_stat and secondary_stat MUST be the SAME quantity in the SAME unit, copied
    digit-for-digit from the evidence report (86.9%, not "approximately 87%").
@@ -5496,6 +5496,17 @@ AVAILABLE PATTERNS — use the one whose structure best matches the content:
    Put every supporting [[PMID:N]] in "citation".
    Omit secondary_stat/secondary_label only when the slide is a single headline number
    with no counterpart in the source — see the comparison rules below.
+
+   THREE OR MORE ARMS — use "arms" INSTEAD OF primary/secondary, never both:
+   {"pattern":"stat_panel","eyebrow":"MODULE X · OUTCOMES","title":"Short title","arms":[{"label":"1% NaOCl","stat":"78.4%"},{"label":"2.5% NaOCl","stat":"88.1%"},{"label":"5.25% NaOCl","stat":"96.2%"}],"callout":"Insight sentence.","citation":"Author et al., Journal Year [[PMID:N]]","speaker_notes":"..."}
+   Use "arms" for a dose-response ladder, three or more wavelengths, or any
+   comparison the source measured across more than two groups — those were
+   previously impossible to state and had to be flattened to a pair or written
+   as prose. 2-8 arms. Every rule above still applies to EVERY arm: one
+   quantity, one unit, each value digit-for-digit from the evidence report. If
+   any single arm's number is not in the source, or one arm carries a different
+   unit or a range, the whole comparison is refused — so do not pad a ladder
+   with an arm you are unsure of.
 
 9. evidence_summary  (evidence hierarchy + insight callout)
    {"pattern":"evidence_summary","eyebrow":"MODULE X · EVIDENCE","title":"Short title","hierarchy_rows":[{"tier_label":"PRIMARY","description":"What studies","stat":"96.1%","color":"accent_teal"}],"trap_callout":{"heading":"THE TRAP","body":"Why headline figure misleads.","stat":"61%","stat_label":"What the real number is","color":"accent_coral"},"speaker_notes":"..."}
@@ -5519,6 +5530,8 @@ PATTERN SELECTION RULES:
 - Decision rules (finding → action) → decision_table
 - Exactly 3 parallel paths → three_route_grid
 - Two arms measured on the SAME outcome (success rate, reduction %, healing %) → stat_panel
+- THREE OR MORE arms on the same outcome (a concentration ladder, several wavelengths,
+  three materials) → stat_panel with "arms". Do not flatten it to the best two.
 - Evidence quality hierarchy → evidence_summary
 - Learning goals → objectives_slide
 - NEVER use the same pattern twice in a row
@@ -5543,7 +5556,9 @@ COMPARISON RULES (these decide whether a slide's numbers can be plotted — read
 - When presenting a comparison, give two or more values of the SAME quantity in the SAME unit
   across arms or groups — success rate % for single-visit vs multiple-visit, lesion volume
   reduction % for laser vs control, bacterial reduction % per wavelength — with the [[PMID:N]]
-  for that comparison in the slide's "citation" field.
+  for that comparison in the slide's "citation" field. Two arms go in
+  primary_stat/secondary_stat; three or more go in "arms" (pattern 8). The
+  number of arms is whatever the source measured — do not drop one to fit a pair.
 - A single value pairs with nothing. NEVER pair different quantities: an effect size beside a
   heterogeneity statistic (SMD −0.551 vs I² 23.89%), a duration beside a count (24–48 h vs 0
   adverse events), an outcome beside a device setting (86.9% vs 2940 nm · 75–100 mJ). Those are

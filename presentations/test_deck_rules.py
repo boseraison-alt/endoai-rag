@@ -743,3 +743,26 @@ class TestMultiArmComparison:
         rendered = " ".join(_texts(slide))
         assert "12345678" in rendered
         assert not has_raw_marker(rendered)
+
+
+class TestMultiArmSurvivesTheWholeBuilder:
+    """`stat_panel` is reached through `build_deck_from_specs`, which passes
+    the spec on with `**spec`. Testing the pattern function directly would not
+    notice a builder that filtered the key out before the call."""
+
+    SOURCE = ("1% NaOCl achieved 78.4% reduction, 2.5% NaOCl achieved 88.1% "
+              "reduction, and 5.25% NaOCl achieved 96.2% reduction.")
+
+    def test_an_arms_spec_becomes_a_chart_through_build_deck(self):
+        deck = {"title": "D", "footer": "F", "slides": [{
+            "pattern": "stat_panel", "title": "Bacterial reduction",
+            "arms": [{"label": "1% NaOCl", "stat": "78.4%"},
+                     {"label": "2.5% NaOCl", "stat": "88.1%"},
+                     {"label": "5.25% NaOCl", "stat": "96.2%"}],
+            "citation": "Vertucci et al. 2024 [[PMID:12345678]]",
+            "speaker_notes": "notes",
+        }]}
+        prs, queue = build_deck_from_specs(deck, source_text=self.SOURCE)
+        slide = queue[0][0]
+        assert [sh for sh in slide.shapes if sh.shape_type == 13], \
+            "the arms never reached the pattern through the builder"
