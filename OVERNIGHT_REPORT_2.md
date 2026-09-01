@@ -505,7 +505,7 @@ fixtures-from-real-data rule paying for itself.
 
 Beside the counts, as the rule requires: those calls produced **nine eval
 passes** (three synthesis subsets, four live subsets, one 25-case retrieval
-eval, one maintenance dry run) covering **1,175 claim–citation pairs checked**
+eval, one maintenance dry run) covering **1,182 claim–citation pairs checked**
 across 26 Review answers and six curricula, plus the five demo answers
 re-warmed at $6.39.
 
