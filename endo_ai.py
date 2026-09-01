@@ -2415,6 +2415,45 @@ _SCORE_WEIGHTS_DESC = (
 )
 
 
+# ── The grounding rule ────────────────────────────────────
+#
+# Every synthesis prompt in this file mandates a [[PMID:N]] marker on every
+# standalone clinical claim, and until now none of them said what to do when
+# no retrieved paper supports one. `_build_corrective_message` pushed the same
+# way ("Add markers from the evidence base, OR rephrase"). That is a prompt
+# that asks for a marker on every claim and never gives permission to omit
+# one, which is the remaining known mechanism for a decorative citation — and
+# unlike the missing-abstracts bug fixed in `grounding-v1`, it applies on the
+# LIVE path too, where abstracts were never missing.
+#
+# ONE constant spliced into all three prompts, not three copies: the rule is
+# the same on every path and three copies drift. `verify_citation_support`
+# asks exactly the question this rule tells the model to ask itself first, so
+# the two must not be able to disagree about what a marker means.
+#
+# What it deliberately does NOT do: relax the marker mandate. An evidence-
+# derived claim still needs a marker. The rule adds the third option the
+# prompt was missing — say less, or say it unmarked — so the model is not
+# forced to choose between an unmarked claim and a wrong citation.
+_GROUNDING_RULE = """GROUNDING — WHAT A CITATION MARKER ASSERTS (read before attaching one):
+A `[[PMID:N]]` marker is itself a factual claim ABOUT PAPER N: it asserts that this paper's own text, as supplied to you in the evidence block, states or directly implies the sentence the marker is attached to. It is not a topic label, not a nod to a related paper, and not a way to satisfy the attribution requirement.
+
+Before you write a marker, locate the specific language in that paper's title or abstract that carries the claim — the sentence you could quote or paraphrase to a clinician who asked "where does it say that?". If you cannot find it, you have exactly three correct moves:
+1. Cite a DIFFERENT paper in the evidence block that does state it.
+2. WEAKEN the sentence to what the paper actually states — its population, its numbers, its wording — and cite it for that.
+3. Write the sentence with NO marker as background, or drop it.
+
+An unmarked sentence is a correct outcome when the evidence base does not support one. A marker on a paper that does not carry the claim is worse than no marker: it passes every check that only asks whether the PMID is real, it cannot be verified by the clinician who clicks it, and it is indistinguishable from a citation you did read. Never attach one to reach a citation density.
+
+Specific traps, because these are the ones that actually occur:
+- A MECHANISM or physics claim cited to an outcomes review that reports only results. If the abstract does not describe the mechanism, it does not support the mechanism.
+- A NUMERIC parameter — a concentration, an energy, a time, a tip size — cited to a paper that does not report that number. Take the number from the paper that reports it, or state that the cited study did not report it.
+- An ARGUMENT FROM SILENCE ("no included study reported X") presented as the paper's finding. A review that does not mention X has not stated anything about X.
+- A claim GENERALISED past the paper's scope ("no difference for any modality" when the review pooled only one).
+
+If the evidence base genuinely does not address something the answer needs, say so in the answer."""
+
+
 def score_citations_velocity(citations: int, year) -> float:
     """
     Citation velocity = citations per year since publication.
@@ -3623,11 +3662,20 @@ def _build_corrective_message(result: dict) -> str:
     if result.get("unattributed_claims"):
         ua = result["unattributed_claims"]
         sample = "\n   - ".join(c["sentence"] for c in ua[:5])
+        # The rephrase option leads, and the marker option carries the
+        # grounding condition. The previous wording — "Add markers from the
+        # evidence base, OR rephrase" — read as an instruction to find a PMID,
+        # with rephrasing as the fallback, on a message the model receives
+        # AFTER being told its answer failed validation. That is the moment a
+        # decorative citation is cheapest to add and hardest to notice.
         parts.append(
             f"\n2. **UNATTRIBUTED CLAIMS** — {len(ua)} sentence(s) make clinical/numeric claims with no "
-            f"[[PMID:N]] marker. Add markers from the evidence base, OR rephrase the sentence so it does not "
-            f"assert an evidence-derived fact (avoid percentages, success rates, comparative claims like "
-            f"'superior to', or recommendations like 'is indicated' without attribution). Examples:\n   - {sample}"
+            f"[[PMID:N]] marker. For each one, prefer to REPHRASE it so it no longer asserts an "
+            f"evidence-derived fact (drop the percentage, the success rate, the comparative claim like "
+            f"'superior to', or the recommendation like 'is indicated'), or delete it. Add a marker ONLY "
+            f"where a paper in the evidence block actually states that sentence — a marker asserts the "
+            f"cited paper says this, and adding one to clear this warning is a worse answer than the "
+            f"unmarked sentence you started with. Examples:\n   - {sample}"
         )
 
     rec = result.get("recommendation") or {}
@@ -3651,7 +3699,10 @@ def _build_corrective_message(result: dict) -> str:
     parts.append(
         "\n\nReturn the FULL corrected response in the same format as before. Do not include this critique in "
         "your output. Do not invent PMIDs to satisfy the markers — only use PMIDs you can see in the evidence "
-        "block. If the evidence base genuinely lacks coverage for a point, say so explicitly."
+        "block. And do not MOVE a marker onto a claim its paper does not state: a citation that exists in the "
+        "evidence block but does not support the sentence it is attached to clears this validator and fails "
+        "the reader, which is the worse of the two failures. If the evidence base genuinely lacks coverage "
+        "for a point, say so explicitly."
     )
     return "".join(parts)
 
@@ -4067,6 +4118,8 @@ Every standalone clinical claim — a recommendation, statistic, treatment succe
 - Do NOT add markers to introductory sentences, transitions, or general background statements that are NOT specific evidence-derived claims.
 - This INLINE format is DIFFERENT from the final REFERENCES list which uses single brackets `[PMID: 12345]` — do not confuse the two.
 
+__GROUNDING_RULE__
+
 When referencing key papers in the evidence summary, use author surnames only — not PMIDs or scores.
 
 Structure every answer exactly like this:
@@ -4115,7 +4168,10 @@ Rules:
 - NEVER end your response with a question. NEVER ask the clinician for more information. If key clinical details are missing, state what information would change the recommendation — but do not pose questions."""
 
     # Splice in the active scoring-weight description (impact factor on/off)
+    # and the grounding rule, which is one constant shared with the curriculum
+    # and case prompts so the three cannot drift on what a marker means.
     system_prompt = system_prompt.replace("__SCORE_WEIGHTS__", _SCORE_WEIGHTS_DESC)
+    system_prompt = system_prompt.replace("__GROUNDING_RULE__", _GROUNDING_RULE)
 
     # Build context — feed papers in strict tier order (Cochrane → L5),
     # not cross-tier sorted by score
@@ -4621,6 +4677,9 @@ Hard rules:
 - VISUAL SCANNABILITY: use bulleted lists (3-7 items) specifically when listing inclusion / exclusion criteria, diagnostic indicators or red flags, step-by-step procedural sequences, decision-tree branch points, or comparative material properties. Continuous prose is still required for mechanism, rationale, and evidence synthesis — bullets are for enumerable clinical content only.
 - CONTRADICTION SURFACING: if the top 3 systematic reviews / RCTs in the evidence block for THIS module reach opposing conclusions on the same clinical question, do not paper over the disagreement. Open the relevant subsection with the literal phrase "**The literature is currently divided on this topic.**" and explain both positions before stating which the higher-quality / more recent / larger studies favour. Genuine disagreement among high-quality sources must be flagged, not flattened.
 - INLINE PROVENANCE (REQUIRED): every standalone clinical claim, statistic, or evidence-derived statement MUST be followed by `[[PMID:nnnnnnn]]` markers (double brackets, no space, multiple space-separated). Place at end of sentence. Example: "MTA outperforms calcium hydroxide [[PMID:31543236]] [[PMID:34234567]]." Do NOT mark transitions, background prose, or general teaching statements. The stitcher will compile the final REFERENCES list separately — your job is just inline `[[PMID:N]]` markers on claims.
+
+{_GROUNDING_RULE}
+
 - Use **bold subheadings** for sub-points. Mix prose paragraphs with bulleted lists per the rule above.
 - Do NOT write an introduction, conclusion, or transition to the next module — those are added later by the stitcher.
 - NEVER end with a question.
@@ -5400,6 +5459,8 @@ Every standalone clinical claim — a recommendation, statistic, treatment succe
 - Do NOT add markers to the **Assessment** sentence (which is your interpretation, not an evidence-derived claim) or to general transitions. Markers belong on **Recommendation**, **Evidence**, and any **Key Considerations** that cite literature.
 - The double-bracket format `[[PMID:N]]` is what powers the click-through source-abstract side panel in the UI. Do NOT use the single-bracket form `[PMID: N]` anywhere in your response — the UI will not recognise it as a verifiability marker.
 
+__GROUNDING_RULE__
+
 Keep responses concise and focused. Build naturally on prior messages in the conversation.
 Never fabricate PMIDs or invent studies.
 NEVER end your response with a question to the clinician. NEVER ask for more information. If missing details would change your recommendation, list what those details are — but do not pose questions.
@@ -5408,6 +5469,14 @@ UNIVERSAL NUMBERING SYSTEM — always use the correct tooth name when a number i
 Upper (R→L): 1=Mx R 3rd molar, 2=Mx R 2nd molar, 3=Mx R 1st molar, 4=Mx R 2nd premolar, 5=Mx R 1st premolar, 6=Mx R canine, 7=Mx R lateral incisor, 8=Mx R central incisor, 9=Mx L central incisor, 10=Mx L lateral incisor, 11=Mx L canine, 12=Mx L 1st premolar, 13=Mx L 2nd premolar, 14=Mx L 1st molar, 15=Mx L 2nd molar, 16=Mx L 3rd molar
 Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 2nd premolar, 21=Mn L 1st premolar, 22=Mn L canine, 23=Mn L lateral incisor, 24=Mn L central incisor, 25=Mn R central incisor, 26=Mn R lateral incisor, 27=Mn R canine, 28=Mn R 1st premolar, 29=Mn R 2nd premolar, 30=Mn R 1st molar, 31=Mn R 2nd molar, 32=Mn R 3rd molar
 (Mx=Maxillary, Mn=Mandibular)"""
+
+    # Same shared rule as the Review and curriculum prompts. NOT measured this
+    # batch: neither eval subset contains a case, so the change here rests on
+    # the Review and Deep Learning before/after numbers and on the fact that
+    # the defect it addresses is identical in all three prompts. Leaving one
+    # synthesis path with a known mechanism for a decorative citation, to keep
+    # a measurement tidy, is the worse trade.
+    system_prompt = system_prompt.replace("__GROUNDING_RULE__", _GROUNDING_RULE)
 
     # Build evidence context — strict tier order (Cochrane → L5),
     # same builder as review/learn modes
