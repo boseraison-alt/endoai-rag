@@ -1,0 +1,10 @@
+[rescore] USE_IMPACT_FACTOR = False
+[rescore] 2337 papers eligible for faithful rescoring (unlabelled + curated entries are preserved)
+[rescore] changed: 2   unchanged: 2335
+[rescore] delta  min +8.1 / median +11.1 / max +11.1 / mean +9.6
+[rescore] papers moving up:   2
+[rescore] papers moving down: 0
+[rescore] reviews (SR/MA/Cochrane): none changed
+[rescore] primary studies        : n=2 median +11.1 mean +9.6 (up 2 / down 0)
+
+[rescore] DRY RUN — re-run with --apply to write these scores.

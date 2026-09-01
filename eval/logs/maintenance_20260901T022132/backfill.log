@@ -1,0 +1,28 @@
+RAG table ready.
+[pubmed] 467 papers with numeric PMIDs added in the last 35 day(s)
+
+    [pubmed_xml] 3 paper(s) with corrections, 13 with registry entries
+  fetched 200/467
+    [pubmed_xml] 4 paper(s) with corrections, 23 with registry entries
+  fetched 400/467
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+  fetched 467/467
+
+[pubmed] signal distribution:
+      241   coi:no_statement
+      225   coi:declared_none
+       62   pre-registered
+       17   not MEDLINE-indexed
+        7   correction / expression of concern
+        1   coi:declared_conflict
+
+[pubmed] registries:
+       31   ClinicalTrials.gov
+       28   PROSPERO
+        1   ChiCTR
+        1   ISRCTN
+        1   ReBec
+
+[pubmed] rows to update: 467
+
+[pubmed] DRY RUN — re-run with --apply to write.

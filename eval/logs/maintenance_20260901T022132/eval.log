@@ -1,0 +1,1862 @@
+mode: RETRIEVAL-ONLY  (no answers generated; must_contain / banner / modules_non_empty are NOT evaluated)
+
+======================================================================
+laser-root-canal-disinfection-live   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)'
+  Multi-term search: ['(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)', '(photoacoustic OR photothermal OR "light-activated" OR photoactivated) AND ("root canal" OR "endodontic treatment" OR "canal system") AND (microorganism* OR pathogen* OR bacterial load OR microbial reduction)', '(laser* OR "Er,Cr:YSGG" OR "Nd:YAG" OR diode OR CO2) AND ("intracanal medicament" OR "calcium hydroxide" OR "chlorhexidine" OR "triple antibiotic paste") AND (efficacy OR antimicrobial OR sterilization)', '("laser-assisted" OR "laser-enhanced" OR "laser activation") AND ("smear layer removal" OR "dentin surface" OR "intraradicular" OR "apical region") AND (infection OR contamination OR cleanliness)', '(PIPS OR SWEEPS OR "passive ultrasonic irrigation" OR "photon-induced photoacoustic streaming") AND ("Enterococcus faecalis" OR "polymicrobial biofilm" OR "endodontic pathogens") AND (eradication OR elimination OR susceptibility)', '(photodynamic OR "light energy" OR "radiant exposure") AND ("canal wall" OR "dentinal tubule*" OR "lateral canal*" OR "apical third") AND (penetration OR efficacy OR viability OR survival)', '("laser disinfection" OR "photothermal disinfection" OR "photo-activation") AND (success rate* OR "clinical outcome*" OR "healing" OR "periapical status") AND ("follow-up" OR "radiographic" OR "longitudinal study")']
+  Searching Cochrane for: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 1 PMIDs in 661ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 1 hits, broadening once
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKCochrane Reviews (PubMed): 1 papers -- top score 81.1/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 793ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 7 PMIDs in 921ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 25 PMIDs in 958ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 991ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 2 PMIDs in 1092ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 2 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1143ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 7 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 16 PMIDs in 808ms
+    Fetching metadata for 25 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 4 PMIDs in 961ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 909ms
+    Fetching metadata for 16 papers...
+    Fetching metadata for 4 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 7 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 74.8/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 677ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    [abstract_cache] persisted 4 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 4 papers -- top score 74.8/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 1375ms
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 16 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 11 of 16 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 16 papers -- top score 78.5/100
+    [abstract_cache] persisted 25 abstracts from this batch
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 25 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 25 papers -- top score 75.6/100
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 9 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 78.5/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 74.8/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 9 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 8 PMIDs in 779ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 866ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 917ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 1 PMIDs in 948ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 1 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 7 PMIDs in 1089ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 5 PMIDs in 1295ms (HTTP 200)
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 37 PMIDs in 882ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 5 papers...
+    Fetching metadata for 7 papers...
+    Fetching metadata for 37 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 8 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 8 papers -- top score 49.3/100
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 5 papers -- top score 59.3/100
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 7 papers -- top score 59.3/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 648ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 14 PMIDs in 688ms (HTTP 200)
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 569ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    Fetching metadata for 14 papers...
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 50 PMIDs in 1027ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 4 PMIDs in 814ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 4 hits, broadening once
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 15 PMIDs in 676ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 15 papers...
+    [abstract_cache] persisted 37 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 9 of 37 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 37 papers -- top score 70.0/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 622ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 14 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 10 of 14 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 14 papers -- top score 66.1/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 9 PMIDs in 708ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 701ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    Fetching metadata for 9 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 70.4/100
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 684ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 761ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 15 PMIDs in 618ms
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 2 pre-registered, 1 with corrections/retractions
+    [quality] kept 13 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 65.3/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 50 PMIDs in 1067ms
+    Fetching metadata for 15 papers...
+    [abstract_cache] persisted 15 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 7 of 15 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 15 papers -- top score 63.1/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 4 PMIDs in 681ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 4 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 614ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 3 of 9 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 9 papers -- top score 66.1/100
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 2 PMIDs in 741ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 2 hits, broadening once
+    Fetching metadata for 4 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 549ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 4 PMIDs in 653ms
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 3 PMIDs in 722ms
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 4 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 3 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 75.8/100
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 4 papers -- top score 60.3/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 638ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 4 papers -- top score 57.3/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 606ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 15 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 15 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 15 papers -- top score 59.8/100
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel IIIb — Case-Control: 3 papers -- top score 60.3/100
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 755ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 6 PMIDs in 780ms
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 36 PMIDs in 870ms (HTTP 200)
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 1 PMIDs in 697ms (HTTP 200)
+  ~~ Level IV — Case Series: 1 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 4 PMIDs in 767ms (HTTP 200)
+  ~~ Level IV — Case Series: 4 hits, broadening once
+    Fetching metadata for 6 papers...
+    Fetching metadata for 36 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 50 PMIDs in 1185ms
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 9 PMIDs in 573ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 1 papers...
+    Fetching metadata for 9 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 6 abstracts from this batch
+    [quality] kept 3 of 6 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 6 papers -- top score 54.0/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IV — Case Series: 1 papers -- top score 28.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 735ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 10 of 50 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 50 papers -- top score 69.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 916ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 21 PMIDs in 639ms
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 4 of 9 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 9 papers -- top score 45.3/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 1 PMIDs in 570ms (HTTP 200)
+  ~~ Level IV — Case Series: 1 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 2 PMIDs in 514ms
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 665ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    Fetching metadata for 21 papers...
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 13 PMIDs in 717ms
+    Fetching metadata for 2 papers...
+    Fetching metadata for 13 papers...
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 50 PMIDs in 1171ms
+    [abstract_cache] persisted 36 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [quality] kept 4 of 36 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 36 papers -- top score 47.4/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 712ms (HTTP 200)
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IV — Case Series: 2 papers -- top score 45.3/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 10 PMIDs in 588ms (HTTP 200)
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 10 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIb — Case-Control — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 50 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 50 papers -- top score 70.3/100
+    [abstract_cache] persisted 13 abstracts from this batch
+    [quality] kept 4 of 13 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 13 papers -- top score 43.1/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 14 PMIDs in 851ms (HTTP 200)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 646ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 1 hits, broadening once
+    Fetching metadata for 14 papers...
+    [abstract_cache] persisted 21 abstracts from this batch
+    [quality] kept 4 of 21 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 21 papers -- top score 51.1/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 45 PMIDs in 551ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 650ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 1 hits, broadening once
+    [abstract_cache] persisted 10 abstracts from this batch
+    [quality] kept 3 of 10 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 10 papers -- top score 39.8/100
+    Fetching metadata for 45 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 8 PMIDs in 623ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 668ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 50 PMIDs in 730ms
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 14 abstracts from this batch
+    [quality] kept 4 of 14 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 14 papers -- top score 48.3/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 863ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 1 hits, broadening once
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Coltène' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 48.9/100
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 8 papers -- top score 49.4/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 50 PMIDs in 1255ms
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 49.4/100
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 45 abstracts from this batch
+    [quality] kept 4 of 45 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 45 papers -- top score 50.6/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 50.9/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 52.3/100
+  [PRISMA dedup] flagged 50 primary studies as already synthesised in newer SR (PMID 41837388, 2026; cutoff ≤ 2024)
+  WARNING: 11 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 194   {'cochrane': 1, 'level1': 87, 'level2': 35, 'level3a': 27, 'level3b': 11, 'level4': 20, 'level5': 13}
+  esearch  962 hits over 73 queries = 13.2/query (22 returned nothing, 11 search terms)
+  vs stale point baseline in questions.json: 103 -> 194 (+91) — use --diff for the tracked range
+  PASS
+
+======================================================================
+laser-root-canal-disinfection-library   [pinned: library]
+======================================================================
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)'
+  Loading embedding model (first run only)...
+  Embedding model ready.
+  [rag] 8 queries -> 254 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 81 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 2 primary studies as already synthesised in newer SR (PMID 41833582, 2026; cutoff ≤ 2024)
+  route  library
+  papers 32   {'cochrane': 1, 'level1': 25, 'classic': 1, 'level2': 4, 'level3a': 1}
+  vs stale point baseline in questions.json: 26 -> 32 (+6) — use --diff for the tracked range
+  PASS
+
+======================================================================
+single-vs-multiple-visit   [pinned: library]
+======================================================================
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("single-visit" OR "single visit" OR "one-visit" OR "one visit" OR "same-day" OR RCT-SV) AND ("multiple-visit" OR "multi-visit" OR "multi visit" OR "two-visit" OR conventional) AND (necrotic OR "pulp necrosis" OR "apical periodontitis" OR AP OR "periapical lesion*")'
+  [rag] 8 queries -> 199 distinct papers (best similarity kept per PMID)
+  [rag_gate] 199 hits, 124 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 41815050, 2026; cutoff ≤ 2024)
+  route  library
+  papers 41   {'cochrane': 5, 'level1': 25, 'classic': 4, 'level2': 4, 'level3a': 3}
+  vs stale point baseline in questions.json: 10 -> 41 (+31) — use --diff for the tracked range
+  PASS
+
+======================================================================
+mta-vs-biodentine-pulpotomy   [pinned: library]
+======================================================================
+  [search_terms] capped to 3 AND-groups, dropped: ("irreversible pulpitis" OR "symptomatic pulpitis")
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR Biodentine OR "calcium silicate" OR "silicate cement") AND (pulpotomy OR "pulp amputation") AND ("permanent teeth" OR "mature teeth" OR "adult teeth")'
+  [rag] 8 queries -> 217 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 114 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 3 primary studies as already synthesised in newer SR (PMID 40991160, 2026; cutoff ≤ 2024)
+  route  library
+  papers 37   {'cochrane': 3, 'level1': 25, 'classic': 1, 'level2': 5, 'level3a': 2, 'level3b': 1}
+  vs stale point baseline in questions.json: 30 -> 37 (+7) — use --diff for the tracked range
+  PASS
+
+======================================================================
+naocl-concentration   [pinned: library]
+======================================================================
+  Smart search terms: '("sodium hypochlorite" OR NaOCl OR "sodium hypochlorite solution") AND ("root canal treatment" OR "root canal therapy" OR endodontic* OR "primary teeth" OR "deciduous teeth") AND (concentration OR "low concentration" OR "high concentration" OR efficacy OR outcome* OR success OR "treatment outcome")'
+  [rag] 8 queries -> 292 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 45 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 1 primary studies as already synthesised in newer SR (PMID 41733459, 2026; cutoff ≤ 2024)
+  route  library
+  papers 37   {'cochrane': 3, 'level1': 25, 'classic': 7, 'level2': 1, 'level3a': 1}
+  vs stale point baseline in questions.json: 21 -> 37 (+16) — use --diff for the tracked range
+  PASS
+
+======================================================================
+cbct-vs-periapical   [pinned: library]
+======================================================================
+  Smart search terms: '(CBCT OR "cone beam computed tomography" OR "cone-beam CT" OR CBCT) AND ("periapical radiograph*" OR "intraoral radiograph*" OR "conventional radiograph*" OR "2D radiograph*") AND ("apical periodontitis" OR "periapical lesion*" OR "periapical pathology" OR "apical pathology")'
+  [rag] 8 queries -> 279 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 36 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 41510689, 2026; cutoff ≤ 2024)
+  route  library
+  papers 35   {'level1': 25, 'classic': 4, 'level3a': 2, 'level3': 2, 'level3b': 2}
+  vs stale point baseline in questions.json: 17 -> 35 (+18) — use --diff for the tracked range
+  PASS
+
+======================================================================
+bioceramic-vs-resin-sealer   [pinned: library]
+======================================================================
+  Smart search terms: '("calcium silicate" OR bioceramic* OR "epoxy resin" OR AH Plus OR Gutta Flow OR "BC Sealer" OR "EndoSequence BC" OR "iRoot SP") AND ("root canal" OR endodontic* OR obturation OR sealer*) AND (outcome* OR efficacy OR success OR periapical OR healing OR "treatment outcome*")'
+  [rag] 8 queries -> 210 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 81 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 6 primary studies as already synthesised in newer SR (PMID 42512863, 2026; cutoff ≤ 2024)
+  route  library
+  papers 40   {'cochrane': 2, 'level1': 25, 'classic': 3, 'level2': 3, 'level3a': 4, 'level3': 3}
+  vs stale point baseline in questions.json: 32 -> 40 (+8) — use --diff for the tracked range
+  PASS
+
+======================================================================
+retreatment-vs-microsurgery   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory periapical lesion" OR "treatment failure" OR "persistent periapical pathology")'
+  Multi-term search: ['("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory periapical lesion" OR "treatment failure" OR "persistent periapical pathology")', '("root canal retreatment" OR "endodontic retreatment" OR "re-treatment") AND ("microsurgical apicoectomy" OR "guided tissue regeneration" OR "periapical surgery") AND ("failed root canal" OR "endodontic failure" OR "persistent lesion*")', '("retreatment outcome*" OR "treatment success rate*" OR "clinical efficacy") AND ("surgical versus nonsurgical" OR "comparative study" OR "head-to-head") AND ("apical periodontitis" OR "chronic periapical lesion*" OR "periapical patholog*")', '("coronal leakage" OR "bacterial contamination" OR "secondary infection") AND ("surgical intervention" OR "apicoectomy" OR "retrograde filling") AND ("periapical healing" OR "lesion resolution" OR "bone fill")', '("obturation quality" OR "gutta-percha removal" OR "canal reclean*") AND ("apical microsurgery" OR "endodontic surgery" OR "trans-alveolar approach") AND ("refractory apical periodontitis" OR "resistant periapical disease" OR "non-healing lesion*")', '("mineral trioxide aggregate" OR "MTA" OR "calcium silicate") AND ("surgical retreatment" OR "periapical surgery" OR "apicoectomy") AND ("persistent apical patholog*" OR "treatment resistant" OR "failed endodontic*")', '("cone beam computed tomography" OR "CBCT" OR "radiographic assessment") AND ("retreatment versus surgery" OR "nonsurgical versus surgical") AND ("apical periodontitis outcome*" OR "periapical lesion* resolution" OR "endodontic prognosis")']
+  Searching Cochrane for: '("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory periapical lesion" OR "treatment failure" OR "persistent periapical pathology")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 548ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 767ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 866ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 906ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 970ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1139ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1258ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 6 PMIDs in 674ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 5 PMIDs in 712ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 778ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 6 papers...
+    Fetching metadata for 5 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 891ms (HTTP 200)
+    Fetching metadata for 1 papers...
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 30 PMIDs in 1087ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 30 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [abstract_cache] persisted 6 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 6 papers -- top score 79.4/100
+    [abstract_cache] persisted 1 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 79.4/100
+    [abstract_cache] persisted 5 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 5 papers -- top score 70.0/100
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 78.1/100
+    [abstract_cache] persisted 30 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 30 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 30 papers -- top score 79.4/100
+  [early_stop] 41 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 15 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 41   {'level1': 41}
+  esearch  95 hits over 17 queries = 5.6/query (9 returned nothing, 15 search terms)
+  vs stale point baseline in questions.json: 58 -> 41 (-17) — use --diff for the tracked range
+  PASS
+
+======================================================================
+direct-pulp-capping   [pinned: library]
+======================================================================
+  Smart search terms: '("vital pulp therapy" OR "direct pulp capping" OR "pulp capping" OR DPC) AND ("permanent teeth" OR "permanent tooth" OR "mature tooth" OR "mature teeth") AND (carious* OR "caries exposure" OR "carious exposure" OR "carious pulp exposure")'
+  [rag] 8 queries -> 187 distinct papers (best similarity kept per PMID)
+  [rag_gate] 187 hits, 115 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 5 primary studies as already synthesised in newer SR (PMID 40991160, 2026; cutoff ≤ 2024)
+  route  library
+  papers 39   {'cochrane': 4, 'level1': 25, 'classic': 2, 'level2': 2, 'level3a': 4, 'level3b': 2}
+  vs stale point baseline in questions.json: 30 -> 39 (+9) — use --diff for the tracked range
+  PASS
+
+======================================================================
+preemptive-nsaid   [pinned: library]
+======================================================================
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '(postoperative pain OR "post-operative pain" OR posttreatment pain OR "post-treatment pain") AND (NSAID* OR "nonsteroidal anti-inflammatory" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR diclofenac) AND (placebo OR control OR preemptive OR preventive)'
+  [rag] 8 queries -> 228 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 58 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 2 primary studies as already synthesised in newer SR (PMID 41733459, 2026; cutoff ≤ 2024)
+  route  library
+  papers 37   {'cochrane': 1, 'level1': 25, 'classic': 5, 'level2': 5, 'level3a': 1}
+  vs stale point baseline in questions.json: 33 -> 37 (+4) — use --diff for the tracked range
+  PASS
+
+======================================================================
+regenerative-immature   [pinned: library]
+======================================================================
+  [search_terms] capped to 3 AND-groups, dropped: ("necrotic pulp" OR "pulp necrosis" OR "non-vital tooth" OR 
+  Smart search terms: '("regenerative endodontic*" OR "revitalization" OR "revascularization" OR "apical papilla" OR "apical neoformation" OR "periapical healing") AND ("immature tooth" OR "immature teeth" OR "open apex" OR "incomplete root formation" OR "blunderbuss apex") AND (success* OR survival OR outcome* OR efficacy OR "clinical outcome")'
+  [rag] 8 queries -> 243 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 122 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 40991160, 2026; cutoff ≤ 2024)
+  route  library
+  papers 39   {'cochrane': 3, 'level1': 25, 'classic': 2, 'level2': 4, 'level3a': 5}
+  vs stale point baseline in questions.json: 28 -> 39 (+11) — use --diff for the tracked range
+  PASS
+
+======================================================================
+cracked-tooth-prognosis   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR "endodontic" OR "root canal treatment" OR R
+  Smart search terms: '("cracked tooth" OR "tooth crack" OR "vertical root fracture" OR VRF OR "longitudinal root fracture") AND (prognosis OR "treatment outcome" OR "long-term outcome" OR "clinical outcome" OR success* OR failure* OR survival) AND ("crack extent" OR "crack depth" OR "fracture extent" OR "fracture depth" OR "crack propagation" OR "fracture line")'
+  Multi-term search: ['("cracked tooth" OR "tooth crack" OR "vertical root fracture" OR VRF OR "longitudinal root fracture") AND (prognosis OR "treatment outcome" OR "long-term outcome" OR "clinical outcome" OR success* OR failure* OR survival) AND ("crack extent" OR "crack depth" OR "fracture extent" OR "fracture depth" OR "crack propagation" OR "fracture line")', '("radicular fracture" OR "root fracture" OR "split root" OR "incomplete fracture") AND ("clinical success" OR "periapical healing" OR "bone regeneration" OR "radiographic outcome") AND (severity OR extent OR classification OR depth OR length)', '("fractured tooth" OR "tooth fracture" OR "root crack*" OR "radix fracture") AND ("long-term survival" OR "tooth retention" OR "extraction rate" OR "tooth loss") AND ("fracture pattern*" OR "crack morphology" OR "fracture line characterization" OR "damage assessment")', '("dentinal crack" OR "enamel crack*" OR "incomplete tooth fracture" OR "stress fracture") AND (prognosis OR predictability OR "prognostic factor*" OR outcome*) AND ("micro-computed tomography" OR "cone beam CT" OR CBCT OR "radiographic assessment" OR imaging)', '("split tooth" OR "cracked tooth syndrome" OR CTS OR "tooth splitting") AND ("root canal treatment" AND (success* OR failure* OR "treatment outcome") AND ("quantitative assessment" OR "measurement" OR "dimension*" OR "size determination"))', '("longitudinal fracture" OR "vertical fracture" OR "oblique fracture") AND ("endodontic treatment" AND ("clinical result*" OR "therapeutic outcome" OR "post-treatment complication*" OR "success rate*")) AND ("fracture size" OR "crack width" OR "defect size" OR "lesion dimension*")', '("root splitting" OR "split-root tooth" OR "segmented fracture") AND (prognosis OR outcome* OR "predictive value" OR "prognostic indicator*") AND ("cone-beam computed tomography" OR "digital radiography" OR "micro-CT" OR "three-dimensional imaging" OR "morphologic assessment")']
+  Searching Cochrane for: '("cracked tooth" OR "tooth crack" OR "vertical root fracture" OR VRF OR "longitudinal root fracture") AND (prognosis OR "treatment outcome" OR "long-term outcome" OR "clinical outcome" OR success* OR failure* OR survival) AND ("crack extent" OR "crack depth" OR "fracture extent" OR "fracture depth" OR "crack propagation" OR "fracture line")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 595ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 602ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 763ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 846ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1002ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1190ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1307ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 48 PMIDs in 768ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 930ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 2933ms
+    Fetching metadata for 3 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 570ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 28 PMIDs in 2933ms
+    Fetching metadata for 48 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 786ms
+    Fetching metadata for 28 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 5 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 2 with registry entries
+    [abstract_cache] persisted 3 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 63.6/100
+    [pubmed_xml] 0 paper(s) with corrections, 5 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 48 abstracts from this batch
+    [provenance] 5 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 48 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 48 papers -- top score 80.0/100
+    [abstract_cache] persisted 28 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [COI] 1 of 28 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 5 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 28 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 28 papers -- top score 80.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 7 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 6 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 78.1/100
+  [early_stop] 65 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 15 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 65   {'level1': 65}
+  esearch  179 hits over 17 queries = 10.5/query (12 returned nothing, 15 search terms)
+  vs stale point baseline in questions.json: 83 -> 65 (-18) — use --diff for the tracked range
+  PASS
+
+======================================================================
+apdt-primary-molars   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("photodynamic therapy" OR aPDT OR PDT OR "antimicrobial photodynamic" OR photoactivated) AND ("primary molar*" OR "deciduous molar*" OR "primary tooth" OR "deciduous tooth" OR "primary dentin*" OR "baby tooth") AND ("necrotic pulp" OR "pulp necrosis" OR "non-vital" OR "dead pulp")'
+  Multi-term search: ['("photodynamic therapy" OR aPDT OR PDT OR "antimicrobial photodynamic" OR photoactivated) AND ("primary molar*" OR "deciduous molar*" OR "primary tooth" OR "deciduous tooth" OR "primary dentin*" OR "baby tooth") AND ("necrotic pulp" OR "pulp necrosis" OR "non-vital" OR "dead pulp")', '("light-activated disinfection" OR "photoactivated disinfection" OR "light activation" OR "optical disinfection") AND ("primary molar*" OR "deciduous molar*" OR "primary tooth" OR "baby tooth") AND ("pulp necrosis" OR "necrotic pulp*" OR "devital*" OR "non-vital pulp")', '(PDT OR aPDT OR "antimicrobial photodynamic" OR "photon-induced" OR "light-mediated antimicrobial") AND ("primary dentin*" OR "deciduous dentin*" OR "primary tooth structure*" OR "pediatric dentin") AND ("endodontic infection*" OR "root canal infection*" OR "pulpal infection*" OR "pulp pathology")', '("methylene blue" OR tolonium OR "rose bengal" OR porphyrin* OR "photosensitizing agent*") AND ("primary molar*" OR "deciduous molar*" OR "mixed dentition") AND ("necrotic pulp" OR "pulp death" OR "pulpal necrosis" OR "infected pulp")', '("laser-activated" OR "diode laser" OR "LED phototherapy" OR "light-emitting diode") AND ("primary tooth" OR "deciduous tooth" OR "baby molar*" OR "young child dentin") AND ("pulp necrosis" OR "non-vital" OR "devitalized pulp" OR "dead tissue pulp")', '(photodynamic OR "photochemical disinfection" OR "photooxidative therapy" OR "light-based antimicrobial") AND ("primary dentin*" OR "deciduous dentin*" OR "primary pulp chamber") AND ("bacterial elimination" OR "microbial reduction" OR "infection control" OR "disinfection efficacy")', '(aPDT OR "antimicrobial PDT" OR "photon therapy" OR "activated light therapy") AND ("primary molar*" OR "deciduous molar*" OR "primary tooth treatment") AND ("polymicrobial infection*" OR "endodontic pathogen*" OR "root canal microbiota" OR "pulpal microorganism*")']
+  Searching Cochrane for: '("photodynamic therapy" OR aPDT OR PDT OR "antimicrobial photodynamic" OR photoactivated) AND ("primary molar*" OR "deciduous molar*" OR "primary tooth" OR "deciduous tooth" OR "primary dentin*" OR "baby tooth") AND ("necrotic pulp" OR "pulp necrosis" OR "non-vital" OR "dead pulp")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 632ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 2 PMIDs in 708ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 2 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 749ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1036ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1084ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1092ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1182ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 555ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 23 PMIDs in 669ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 33 PMIDs in 742ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 9 PMIDs in 783ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 829ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 3 papers...
+    Fetching metadata for 23 papers...
+    Fetching metadata for 33 papers...
+    Fetching metadata for 1 papers...
+    Fetching metadata for 9 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 685ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 872ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 3 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 78.5/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 65.9/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 51.5/100
+    [abstract_cache] persisted 9 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 9 papers -- top score 78.5/100
+    [abstract_cache] persisted 23 abstracts from this batch
+    [COI] 'Coltene' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 23 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 23 papers -- top score 77.8/100
+    [abstract_cache] persisted 33 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 33 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 33 papers -- top score 78.5/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 1 PMIDs in 937ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 1 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 992ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1151ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1217ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1340ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1446ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 8 PMIDs in 644ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 42 PMIDs in 711ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 4 PMIDs in 710ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 37 PMIDs in 754ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 717ms
+    Fetching metadata for 1 papers...
+    Fetching metadata for 8 papers...
+    Fetching metadata for 4 papers...
+    Fetching metadata for 42 papers...
+    Fetching metadata for 1 papers...
+    Fetching metadata for 37 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 49.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 43.7/100
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 580ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 4 papers -- top score 67.0/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 651ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 600ms
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 8 papers -- top score 67.0/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 551ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  -- Level IIIa — Retrospective Cohort: 0 results found
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 713ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 30 PMIDs in 739ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 719ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  -- Level IIIa — Retrospective Cohort: 0 results found
+    Fetching metadata for 30 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 573ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 616ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 34 PMIDs in 723ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 2 PMIDs in 640ms
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 43.7/100
+    Fetching metadata for 2 papers...
+    Fetching metadata for 34 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 828ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    [abstract_cache] persisted 37 abstracts from this batch
+    [COI] 'Coltene' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 37 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 37 papers -- top score 70.0/100
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 709ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 2640ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1724ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 2 papers -- top score 54.3/100
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 7 PMIDs in 650ms
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 542ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 42 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 42 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 42 papers -- top score 65.6/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 623ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    Fetching metadata for 7 papers...
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 549ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 10 PMIDs in 706ms
+    [abstract_cache] persisted 30 abstracts from this batch
+    [COI] 'Coltene' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 9 of 30 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 30 papers -- top score 63.1/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 635ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+    Fetching metadata for 10 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 669ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 828ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 1 PMIDs in 817ms
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 593ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 17 PMIDs in 701ms
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 2 PMIDs in 716ms
+    Fetching metadata for 17 papers...
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 34 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 10 of 34 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 34 papers -- top score 60.6/100
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 7 papers -- top score 57.3/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 680ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 768ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    [abstract_cache] persisted 10 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level IIIb — Case-Control — evaluating per paper
+    [quality] kept 3 of 10 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 10 papers -- top score 54.7/100
+  -- Level IV — Case Series: 0 results found
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IV — Case Series: 1 papers -- top score 28.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 642ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 31 PMIDs in 718ms
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 654ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 818ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 1 hits, broadening once
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IV — Case Series: 2 papers -- top score 41.1/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 4 PMIDs in 784ms
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 1 PMIDs in 2450ms
+    [abstract_cache] persisted 17 abstracts from this batch
+    [quality] kept 4 of 17 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 17 papers -- top score 49.6/100
+  -- Level IV — Case Series: 0 results found
+    Fetching metadata for 31 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 2757ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 686ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 612ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 4 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 5 PMIDs in 619ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 15 PMIDs in 753ms
+  -- Level V — Expert Opinion / Reviews: 0 results found
+    Fetching metadata for 5 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 795ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 15 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IV — Case Series: 1 papers -- top score 32.2/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 21 PMIDs in 908ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 791ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 1 hits, broadening once
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 4 papers -- top score 44.3/100
+    Fetching metadata for 21 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 8 PMIDs in 988ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 1033ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 2 PMIDs in 1414ms
+    [abstract_cache] persisted 31 abstracts from this batch
+    [quality] kept 4 of 31 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 31 papers -- top score 48.9/100
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 5 papers -- top score 50.9/100
+    [abstract_cache] persisted 15 abstracts from this batch
+    [quality] kept 4 of 15 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 15 papers -- top score 39.8/100
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 4 of 8 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 8 papers -- top score 44.3/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 2 papers -- top score 28.9/100
+    [abstract_cache] persisted 21 abstracts from this batch
+    [quality] kept 4 of 21 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 21 papers -- top score 50.9/100
+  [PRISMA dedup] flagged 21 primary studies as already synthesised in newer SR (PMID 41207884, 2026; cutoff ≤ 2024)
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 82   {'level1': 42, 'level2': 8, 'level3a': 12, 'level4': 10, 'level5': 10}
+  esearch  359 hits over 86 queries = 4.2/query (53 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 11 -> 82 (+71) — use --diff for the tracked range
+  PASS
+
+======================================================================
+bisphosphonates   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR RANKL OR "bone resorption inhibitor*") AND ("root canal" OR endodontic* OR "apical periodontitis" OR "periapical pathology") AND (manage* OR treat* OR therap* OR protocol* OR guideline* OR complication* OR osteonecrosis OR "medication related osteonecrosis" OR MRONJ OR "bisphosphonate related osteonecrosis" OR BRONJ)'
+  Multi-term search: ['(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR RANKL OR "bone resorption inhibitor*") AND ("root canal" OR endodontic* OR "apical periodontitis" OR "periapical pathology") AND (manage* OR treat* OR therap* OR protocol* OR guideline* OR complication* OR osteonecrosis OR "medication related osteonecrosis" OR MRONJ OR "bisphosphonate related osteonecrosis" OR BRONJ)', '("medication related osteonecrosis of the jaw" OR MRONJ OR "bisphosphonate related osteonecrosis" OR BRONJ OR ONJ OR "osteonecrosis of the jaw") AND ("root canal therap*" OR "endodontic treatment" OR "pulpal debridement" OR "vital pulp therap*")', '(alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR zoledron* OR alendr* OR risedron*) AND ("apical periodontitis" OR "periapical lesion*" OR "periradicular disease" OR "apical pathosis") AND (extract* OR "tooth removal" OR exodontia OR dentin*)', '("antiresorptive therap*" OR "antiresorptive medication*" OR "bone resorption inhibitor*" OR "osteoclast inhibitor*") AND ("endodontic outcome*" OR "treatment success" OR "healing rate*" OR "tooth survival" OR "treatment failure*") AND ("adverse event*" OR complication* OR risk factor*)', '(bisphosphonate* OR denosumab OR RANKL) AND ("intracanal medicament*" OR "root canal medicament*" OR "calcium hydroxide" OR "chlorhexidine" OR "triple antibiotic paste" OR TAP OR "apical plug*") AND (efficacy OR biocompatibility OR cytotoxicity OR resorption)', '("long-term bisphosphonate*" OR "chronic antiresorptive use" OR "prolonged denosumab") AND ("pulpal necrosis" OR "pulpitis" OR "pulpal inflammation*" OR "inflammatory root resorption*" OR "internal resorption") AND (pathophysiology OR mechanism* OR etiology OR risk assessment)', '(nitrogen-containing bisphosphonate* OR "N-BP" OR aminobisphosphonate* OR non-nitrogen bisphosphonate*) AND ("endodontic surgery" OR "periapical surgery" OR apicoectomy OR "surgical endodontic*") AND ("bone healing" OR "osseous healing" OR osteogenesis OR "wound healing")']
+  Searching Cochrane for: '(bisphosphonate* OR antiresorptive* OR "antiresorptive agent*" OR alendronate OR risedronate OR zoledronate OR pamidronate OR ibandronate OR denosumab OR RANKL OR "bone resorption inhibitor*") AND ("root canal" OR endodontic* OR "apical periodontitis" OR "periapical pathology") AND (manage* OR treat* OR therap* OR protocol* OR guideline* OR complication* OR osteonecrosis OR "medication related osteonecrosis" OR MRONJ OR "bisphosphonate related osteonecrosis" OR BRONJ)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 762ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 722ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 899ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 6 PMIDs in 990ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1063ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1085ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1244ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 5 PMIDs in 613ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 6 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 924ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 961ms
+    Fetching metadata for 1 papers...
+    Fetching metadata for 5 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 665ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 41 PMIDs in 783ms
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    Fetching metadata for 41 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 74.8/100
+    [pubmed_xml] 1 paper(s) with corrections, 2 with registry entries
+    [abstract_cache] persisted 6 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 6 papers -- top score 75.1/100
+    [pubmed_xml] 0 paper(s) with corrections, 5 with registry entries
+    [abstract_cache] persisted 5 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 5 papers -- top score 74.8/100
+    [pubmed_xml] 3 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 41 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 2 pre-registered, 3 with corrections/retractions
+    [quality] kept 18 of 41 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 41 papers -- top score 78.9/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [provenance] 6 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 49 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 82.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 12 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 82.8/100
+  [early_stop] 62 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 62   {'level1': 62}
+  esearch  156 hits over 16 queries = 9.8/query (7 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 47 -> 62 (+15) — use --diff for the tracked range
+  PASS
+
+======================================================================
+pregnancy   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR "pulp therapy")
+  Smart search terms: '(pregnancy OR pregnant OR "pregnant women" OR prenatal OR trimester*) AND (timing OR "emergency treatment" OR urgency OR scheduling OR "second trimester") AND ("local anesthetic*" OR lidocaine OR prilocaine OR articaine OR anesthetic choice OR "vasoconstrictor*")'
+  Multi-term search: ['(pregnancy OR pregnant OR "pregnant women" OR prenatal OR trimester*) AND (timing OR "emergency treatment" OR urgency OR scheduling OR "second trimester") AND ("local anesthetic*" OR lidocaine OR prilocaine OR articaine OR anesthetic choice OR "vasoconstrictor*")', '("periapical infection" OR "endodontic emergency" OR "acute pulpitis" OR "dental infection") AND (gestation OR "maternal health" OR "fetal safety" OR teratogen*) AND (infiltration OR "inferior alveolar block" OR "regional anesthesia" OR topical)', '(obstetric* OR "obstetrical patient*" OR "perinatal care" OR gravid*) AND ("pain management" OR analges* OR "anxiety control" OR sedation) AND (epinephrine OR vasopressor* OR "systemic absorption" OR pharmacokinetic*)', '("infected tooth" OR "tooth abscess" OR "cyst* formation" OR granulom*) AND (trimester OR "gestational age" OR "labor risk" OR "preterm birth") AND ("topical anesthetic*" OR benzocaine OR "spray anesthetic" OR surface anesthesia)', '("emergency dental treatment" OR "urgent endodontic*" OR "symptomatic tooth" OR "acute exacerbation") AND (pregnancy OR "pregnant patient*" OR maternal OR fetal) AND (bupivacaine OR ropivacaine OR mepivacaine OR "long-acting anesthetic*")', '("odontogenic infection" OR endodontic* OR "root patholog*" OR peridontal) AND ("first trimester" OR "third trimester" OR "all trimesters" OR "safe period*") AND ("needle insertion" OR "block technique" OR "direct infiltration" OR "conduction anesthesia")', '(pregnancy OR "pregnant women" OR maternal) AND ("dental pain management" OR "restorative urgency" OR "treatment deferral" OR "conservative management") AND ("local anesthetic toxicity" OR "fetal exposure" OR "placental transfer" OR "drug safety")']
+  Searching Cochrane for: '(pregnancy OR pregnant OR "pregnant women" OR prenatal OR trimester*) AND (timing OR "emergency treatment" OR urgency OR scheduling OR "second trimester") AND ("local anesthetic*" OR lidocaine OR prilocaine OR articaine OR anesthetic choice OR "vasoconstrictor*")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 716ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 736ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 778ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 897ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 990ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1137ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1160ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 5 PMIDs in 633ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 27 PMIDs in 821ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 5 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 744ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 27 papers...
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    [pubmed_xml] 1 paper(s) with corrections, 2 with registry entries
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 5 papers -- top score 67.0/100
+    [abstract_cache] persisted 27 abstracts from this batch
+    [provenance] 3 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 27 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 27 papers -- top score 78.5/100
+  [early_stop] 21 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 15 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 21   {'level1': 21}
+  esearch  32 hits over 17 queries = 1.9/query (15 returned nothing, 15 search terms)
+  vs stale point baseline in questions.json: 3 -> 21 (+18) — use --diff for the tracked range
+  PASS
+
+======================================================================
+pips-vs-ultrasonic   [pinned: library]
+======================================================================
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*) | (irrigat* OR activation)
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND (ultrasonic* OR "sonic activation" OR "passive ultrasonic irrigation" OR PUI) AND ("periapical healing" OR "periapical lesion" OR "bone healing" OR radiographic OR outcome*)'
+  [rag] 8 queries -> 237 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 96 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 41833582, 2026; cutoff ≤ 2024)
+  route  library
+  papers 39   {'cochrane': 3, 'level1': 25, 'classic': 2, 'level2': 4, 'level3a': 4, 'level5': 1}
+  vs stale point baseline in questions.json: 26 -> 39 (+13) — use --diff for the tracked range
+  PASS
+
+======================================================================
+intentional-replantation   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("intentional replantation" OR "intentional tooth replantation" OR ITR OR "surgical exodontia" OR "surgical extraction") AND ("unsuitable for surgery" OR "surgical contraindication*" OR "cannot be treated" OR "not amenable to surgical treatment" OR "periapical pathology" OR "refractory lesion*" OR "persistent apical pathology")'
+  Multi-term search: ['("intentional replantation" OR "intentional tooth replantation" OR ITR OR "surgical exodontia" OR "surgical extraction") AND ("unsuitable for surgery" OR "surgical contraindication*" OR "cannot be treated" OR "not amenable to surgical treatment" OR "periapical pathology" OR "refractory lesion*" OR "persistent apical pathology")', '("tooth replantation" OR "replanted teeth" OR "autotransplantation" OR "auto-transplantation") AND ("apical surgery alternative*" OR "non-surgical retreatment fail*" OR "failed root canal therapy" OR "treatment-resistant" OR "refractory periapical")', '("extraction and replantation" OR "exodontia and reimplantation" OR "tooth removal and reinsertion") AND ("systemic contraindication*" OR "medically compromised" OR "unfit for operative procedure*" OR "surgical risk factor*")', '("intentional tooth removal" OR "planned extraction" OR "elective exodontia") AND ("extraoral debridement" OR "root surface treatment" OR "apicoectomy alternative*" OR "lesion curettage")', '("replantation outcome*" OR "replanted tooth success" OR "tooth survival after replantation") AND ("periapical healing" OR "bone regeneration" OR "osseous integration" OR "inflammatory resolution")', '("tooth repositioning" OR "tooth reimplantation" OR "dental autograft*") AND ("surgical endodontic alternative*" OR "avoiding apicoectomy" OR "endodontic management challenge*" OR "complex apical pathology")', '("intentional replantation" OR "ITR procedure*") AND ("immunocompromised patient*" OR "anticoagulation therap*" OR "bisphosphonate" OR "radiation therap*" OR "diabetes" OR "anatomic constraint*")']
+  Searching Cochrane for: '("intentional replantation" OR "intentional tooth replantation" OR ITR OR "surgical exodontia" OR "surgical extraction") AND ("unsuitable for surgery" OR "surgical contraindication*" OR "cannot be treated" OR "not amenable to surgical treatment" OR "periapical pathology" OR "refractory lesion*" OR "persistent apical pathology")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 1 PMIDs in 768ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 1 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed) [broadened]: 4 PMIDs in 677ms
+    Fetching metadata for 4 papers...
+    [abstract_cache] persisted 4 abstracts from this batch
+  OKCochrane Reviews (PubMed): 4 papers -- top score 73.7/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 623ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 2 PMIDs in 872ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 2 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1022ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1156ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1256ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1513ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 1030ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 29 PMIDs in 880ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 7 PMIDs in 756ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 690ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 821ms
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 758ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 7 papers...
+    Fetching metadata for 29 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 26 PMIDs in 880ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 26 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 4 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 6 of 7 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 70.4/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 29 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 29 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 29 papers -- top score 82.0/100
+    [abstract_cache] persisted 26 abstracts from this batch
+    [provenance] 2 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 26 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 26 papers -- top score 78.5/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 7 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 79.4/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 13 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 82.0/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 7 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 49 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 82.0/100
+  [early_stop] 93 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 15 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 93   {'cochrane': 4, 'level1': 89}
+  esearch  220 hits over 17 queries = 12.9/query (7 returned nothing, 15 search terms)
+  vs stale point baseline in questions.json: 59 -> 93 (+34) — use --diff for the tracked range
+  PASS
+
+======================================================================
+sdf-pulp-outcomes   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("silver diamine fluoride" OR SDF)
+  Smart search terms: '("pulp" OR "pulpal" OR "vital pulp" OR vitality) AND ("deep caries" OR "deep carious lesion*" OR "caries management" OR "arrested caries") AND (adult* OR permanent teeth OR mature teeth)'
+  Multi-term search: ['("pulp" OR "pulpal" OR "vital pulp" OR vitality) AND ("deep caries" OR "deep carious lesion*" OR "caries management" OR "arrested caries") AND (adult* OR permanent teeth OR mature teeth)', '("silver diamine fluoride" OR "SDF" OR "silver fluoride" OR "diamine silver fluoride") AND ("pulp vitality" OR "pulp survival" OR "pulp inflammation" OR "inflammatory response") AND (adult* OR mature teeth OR permanent dentition)', '("silver diamine fluoride" OR "SDF" OR "Riva Star" OR "Saforide") AND ("dentin remineralization" OR "caries arrest" OR "caries control" OR "lesion arrest") AND (adult* OR aging OR older adult*)', '("silver diamine fluoride" OR "SDF") AND ("tooth sensitivity" OR "post-operative pain" OR "adverse effect*" OR "cytotoxicity") AND (deep caries OR carious lesion* OR caries proximity)', '("fluoride varnish" OR "silver nitrate" OR "potassium iodide" OR "remineralizing agent*") AND ("pulp exposure risk" OR "pulp necrosis" OR "pulp degeneration") AND (deep caries OR secondary caries OR carious dentin)', '("atraumatic restorative treatment" OR "ART" OR "minimally invasive" OR "MI approach") AND ("pulp health" OR "pulp preservation" OR "vital pulp therapy") AND (deep lesion* OR advanced caries OR adult* caries)', '("silver fluoride" OR "antimicrobial agent*" OR "chemomechanical caries removal") AND ("histological finding*" OR "tissue response" OR "pulpal change*" OR "dentinal tubule*") AND (deep carious OR caries-affected OR caries-infected dentin)']
+  Searching Cochrane for: '("pulp" OR "pulpal" OR "vital pulp" OR vitality) AND ("deep caries" OR "deep carious lesion*" OR "caries management" OR "arrested caries") AND (adult* OR permanent teeth OR mature teeth)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 2 PMIDs in 856ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 2 hits, broadening once
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+  OKCochrane Reviews (PubMed): 2 papers -- top score 73.6/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 795ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 822ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1005ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1014ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1123ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 3 PMIDs in 1304ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 3 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 613ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 9 PMIDs in 857ms
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 809ms
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 18 PMIDs in 932ms
+    Fetching metadata for 1 papers...
+    Fetching metadata for 3 papers...
+    Fetching metadata for 9 papers...
+    Fetching metadata for 18 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 7 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 63.7/100
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 1 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 82.0/100
+    [abstract_cache] persisted 3 abstracts from this batch
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 69.2/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 599ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 652ms
+    [abstract_cache] persisted 9 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [quality] kept 8 of 9 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 9 papers -- top score 78.1/100
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 18 abstracts from this batch
+    [COI] 'Ivoclar' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 18 papers -- top score 82.0/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 75.6/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 9 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 82.8/100
+  [early_stop] 47 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 47   {'cochrane': 1, 'level1': 46}
+  esearch  93 hits over 16 queries = 5.8/query (5 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 6 -> 47 (+41) — use --diff for the tracked range
+  PASS
+
+======================================================================
+sonic-vs-ultrasonic   [pinned: library]
+======================================================================
+  [search_terms] capped to 3 AND-groups, dropped: (irrigat* OR activation)
+  Smart search terms: '(sonic* OR ultrasonic* OR "passive ultrasonic irrigation" OR PUI OR "acoustic streaming" OR cavitation) AND ("root canal" OR endodontic* OR intracanal) AND (bacterial OR bacteria* OR biofilm OR disinfect* OR CFU OR "colony forming unit")'
+  [rag] 8 queries -> 393 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 16 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 1 primary studies as already synthesised in newer SR (PMID 41514415, 2026; cutoff ≤ 2024)
+  route  library
+  papers 16   {'level1': 10, 'classic': 3, 'level2': 2, 'invitro': 1}
+  vs stale point baseline in questions.json: 13 -> 16 (+3) — use --diff for the tracked range
+  PASS
+
+======================================================================
+dens-invaginatus   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("dens invaginatus" OR "dens in dente" OR "invaginated odontoid") AND ("type III" OR "class III" OR "complicated invagination") AND (management OR treatment OR clinical OR therapeutic OR diagnosis)'
+  Multi-term search: ['("dens invaginatus" OR "dens in dente" OR "invaginated odontoid") AND ("type III" OR "class III" OR "complicated invagination") AND (management OR treatment OR clinical OR therapeutic OR diagnosis)', '("dens invaginatus" OR "invaginated tooth" OR "tooth invagination" OR "odontoid invagination") AND ("deep invagination" OR "severe invagination" OR "complex morphology") AND (complic* OR challenge* OR difficult* OR comorbid*)', '("dens in dente" OR "invaginated odontoid" OR "invaginated dentoid") AND ("apical pathology" OR "periapical lesion*" OR "pulpal necrosis" OR "endodontic infection") AND (interven* OR strateg* OR approach* OR protocol*)', '("dens invaginatus" OR "dens in dente") AND ("cone beam CT" OR "CBCT" OR "micro-CT" OR "three-dimensional imaging" OR "3D imaging") AND (classify* OR grade* OR assess* OR evaluat* OR morphologic*)', '("invaginated odontoid" OR "dens invaginatus" OR "invagination defect") AND ("coronal seal*" OR "restoration" OR "resin composite" OR "filling material*" OR "obturation") AND (success* OR outcome* OR efficacy OR prognos*)', '("dens in dente" OR "tooth invagination" OR "invaginated tooth structure") AND ("anatomic* variation*" OR "developmental anomaly" OR "morphological variant") AND (complication* OR sequelae OR consequence* OR associat* pathology)', '("dens invaginatus" OR "dens in dente" OR "complex tooth morphology") AND ("surgical access" OR "endodontic microsurg*" OR "apicoectomy" OR "retreatment") AND (indication* OR decision* OR case selection OR outcome*)']
+  Searching Cochrane for: '("dens invaginatus" OR "dens in dente" OR "invaginated odontoid") AND ("type III" OR "class III" OR "complicated invagination") AND (management OR treatment OR clinical OR therapeutic OR diagnosis)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 879ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 619ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 726ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 848ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1138ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1138ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1383ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 7 PMIDs in 763ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 906ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 1023ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 824ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 843ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 1248ms
+    Fetching metadata for 7 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 2 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 995ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 84.0/100
+    [abstract_cache] persisted 7 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [quality] kept 5 of 7 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 68.1/100
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 13 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 4 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 79.4/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Ivoclar' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 3 outdated version(s) whose current version is in the same batch
+    [provenance] 11 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 47 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [provenance] 8 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 49 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+  [early_stop] 64 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 15 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 64   {'level1': 64}
+  esearch  210 hits over 17 queries = 12.4/query (10 returned nothing, 15 search terms)
+  vs stale point baseline in questions.json: 74 -> 64 (-10) — use --diff for the tracked range
+  PASS
+
+======================================================================
+diabetes-outcomes   [pinned: library]
+======================================================================
+  Smart search terms: '(diabetes OR diabetic) AND ("root canal" OR endodontic* OR "apical periodontitis") AND (heal* OR outcome* OR success OR prognosis OR treatment response)'
+  [rag] 8 queries -> 253 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 68 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [PRISMA dedup] flagged 4 primary studies as already synthesised in newer SR (PMID 42288014, 2026; cutoff ≤ 2024)
+  route  library
+  papers 33   {'cochrane': 2, 'level1': 25, 'classic': 2, 'level2': 1, 'level3a': 3}
+  vs stale point baseline in questions.json: 16 -> 33 (+17) — use --diff for the tracked range
+  PASS
+
+======================================================================
+case-opening-sparse   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(tooth OR dental OR molar) AND (pain OR ache OR discomfort OR sensitivity) AND (diagnosis OR etiology OR cause)'
+  Multi-term search: ['(tooth OR dental OR molar) AND (pain OR ache OR discomfort OR sensitivity) AND (diagnosis OR etiology OR cause)', '(tooth #36 OR "tooth 36" OR mandibular right molar) AND (inflam* OR pulp* OR periapical)', '(dental pain OR odontalgia OR dentine hypersensitivity) AND (differential diagnos* OR clinical assessment)', '(molar OR posterior tooth) AND (caries OR fracture OR crack) AND (radiograph* OR imaging OR CBCT)', '(tooth sensitivity OR referred pain OR myofascial pain) AND (tempor* OR masticatory OR TMD)', '(endodontic* OR root canal OR apical periodontitis) AND (symptom* OR clinical presentation OR diagnostic criteria)', '(bacterial OR microbial OR endotoxin) AND (tooth pain OR dental infection) AND (pathophysiology OR mechanism)']
+  Searching Cochrane for: '(tooth OR dental OR molar) AND (pain OR ache OR discomfort OR sensitivity) AND (diagnosis OR etiology OR cause)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 15 PMIDs in 656ms (HTTP 200)
+    Fetching metadata for 15 papers...
+    [abstract_cache] persisted 15 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Cochrane Reviews (PubMed) — evaluating per paper
+    [superseded] dropped 8 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 15 papers carry an industry-funder mention — 15% penalty applied to those only
+  OKCochrane Reviews (PubMed): 15 papers -- top score 92.2/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 660ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1156ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 3 PMIDs in 1187ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 3 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1200ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1243ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 970ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1732ms (HTTP 200)
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 989ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 8 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 12 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 4 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 13 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.4/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 6 PMIDs in 801ms (HTTP 200)
+    Fetching metadata for 6 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 14 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 89.9/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Coltène' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 7 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 6 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 82.2/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [COI] 2 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 10 pre-registered, 1 with corrections/retractions
+    [quality] kept 18 of 49 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.4/100
+    [abstract_cache] persisted 6 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 6 papers -- top score 79.5/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 10 pre-registered, 0 with corrections/retractions
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 86.3/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 739ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1075ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 12 PMIDs in 1154ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1175ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1248ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1681ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 50 PMIDs in 990ms
+    Fetching metadata for 12 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 10 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 11 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 9 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 12 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 3 of 12 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 12 papers -- top score 68.9/100
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 20 PMIDs in 976ms (HTTP 200)
+    Fetching metadata for 20 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 10 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 70.4/100
+    [abstract_cache] persisted 20 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 8 of 20 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 20 papers -- top score 57.0/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 541ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 50 PMIDs in 1051ms (HTTP 200)
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 50 PMIDs in 881ms
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 11 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 81.7/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 50 PMIDs in 786ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 11 pre-registered, 1 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 75.8/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 50 PMIDs in 842ms (HTTP 200)
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 5 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Sirona' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 75.8/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 20 PMIDs in 599ms (HTTP 200)
+    [pubmed_xml] 1 paper(s) with corrections, 5 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 73.5/100
+    Fetching metadata for 20 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 50 PMIDs in 946ms (HTTP 200)
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 10 of 50 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 50 papers -- top score 72.8/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 14 PMIDs in 690ms (HTTP 200)
+    [abstract_cache] persisted 20 abstracts from this batch
+    [quality] kept 7 of 20 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 20 papers -- top score 66.5/100
+    Fetching metadata for 14 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 10 of 50 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 50 papers -- top score 73.9/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 50 PMIDs in 1018ms (HTTP 200)
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 10 of 50 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 50 papers -- top score 72.8/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 469ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 50 PMIDs in 791ms (HTTP 200)
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 50 PMIDs in 1043ms
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 10 of 50 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 50 papers -- top score 70.6/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 50 PMIDs in 660ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 14 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 5 of 14 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 14 papers -- top score 55.4/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 10 of 50 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 50 papers -- top score 66.5/100
+    [pubmed_xml] 1 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 13 PMIDs in 976ms (HTTP 200)
+    Fetching metadata for 13 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 50 PMIDs in 1016ms (HTTP 200)
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 13 abstracts from this batch
+    [quality] kept 3 of 13 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 13 papers -- top score 60.6/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 7 PMIDs in 806ms (HTTP 200)
+    Fetching metadata for 7 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 6 of 50 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 50 papers -- top score 62.5/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 50 PMIDs in 1060ms (HTTP 200)
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 50 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 50 papers -- top score 63.6/100
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 7 papers -- top score 49.5/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 535ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Ivoclar' mentioned somewhere in Level IIIb — Case-Control — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 50 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 50 papers -- top score 61.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 50 PMIDs in 783ms (HTTP 200)
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIb — Case-Control — evaluating per paper
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 50 PMIDs in 891ms
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 50 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 50 papers -- top score 70.3/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 50 PMIDs in 997ms (HTTP 200)
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 23 PMIDs in 810ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 23 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 6 of 50 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 50 papers -- top score 70.3/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 50 PMIDs in 1053ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 23 abstracts from this batch
+    [quality] kept 4 of 23 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 23 papers -- top score 47.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 11 PMIDs in 977ms (HTTP 200)
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 48.9/100
+    Fetching metadata for 11 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 1221ms (HTTP 200)
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 48.9/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 48.9/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 539ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 939ms (HTTP 200)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 50 PMIDs in 1060ms
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 49.6/100
+    [abstract_cache] persisted 11 abstracts from this batch
+    [quality] kept 4 of 11 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 11 papers -- top score 33.7/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 43 PMIDs in 1029ms (HTTP 200)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 7 PMIDs in 999ms (HTTP 200)
+    Fetching metadata for 7 papers...
+    Fetching metadata for 43 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 51.1/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 1237ms (HTTP 200)
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 7 papers -- top score 38.6/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 800ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 57.2/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 49 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 57.2/100
+    [abstract_cache] persisted 43 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 43 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 43 papers -- top score 48.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 54.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 54.3/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 42.0/100
+  [PRISMA dedup] flagged 57 primary studies as already synthesised in newer SR (PMID 42625582, 2026; cutoff ≤ 2024)
+  route  live
+  papers 210   {'cochrane': 7, 'level1': 90, 'level2': 36, 'level3a': 30, 'level3b': 15, 'level4': 23, 'level5': 9}
+  esearch  1744 hits over 50 queries = 34.9/query (6 returned nothing, 9 search terms)
+  PASS
+
+======================================================================
+case-opening-full   [pinned: live]
+======================================================================
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(retreatment OR "non-surgical retreatment" OR "nonsurgical retreatment" OR "secondary root canal" OR reendodontic*) AND ("MB2" OR "second mesiobuccal" OR "second MB canal" OR "missed canal*" OR "untreated canal*") AND (maxillar* OR "maxillary molar*" OR "tooth 26" OR "upper first molar*")'
+  [search_terms] capped to 3 AND-groups, dropped: (maxillary OR molar*)
+  [search_terms] capped to 3 AND-groups, dropped: ("molar tooth" OR maxillary)
+  Multi-term search: ['(retreatment OR "non-surgical retreatment" OR "nonsurgical retreatment" OR "secondary root canal" OR reendodontic*) AND ("MB2" OR "second mesiobuccal" OR "second MB canal" OR "missed canal*" OR "untreated canal*") AND (maxillar* OR "maxillary molar*" OR "tooth 26" OR "upper first molar*")', '("root canal treatment failure*" OR "failed endodontic*" OR "persistent periapical patholog*") AND ("anatomical variation*" OR "canal morpholog*" OR "additional canal*") AND ("maxillary first molar*" OR "upper molar*" OR "tooth 16 OR 26")', '("periapical lesion*" OR "apical patholog*" OR "persistent apical radiolucenc*") AND ("canal location" OR "canal detection" OR "missed canal*" OR "canal anatomy") AND ("maxillar* molar*" OR "first molar*")', '("nonsurgical management" OR "conservative treatment" OR "repeat endodontic*") AND ("radiolucent lesion*" OR "apical radiolucenc*") AND ("mesiobuccal root" OR "maxillar* posterior*")', '("retreatment outcome*" OR "success rate*" OR "clinical outcome*" AND retreatment*) AND ("canal identification" OR "apical anatomy" OR "root morpholog*") AND (maxillar* OR molar*)', '("healing" OR "resolution" OR "reminerali*") AND (periapical OR "apical region*") AND ("root canal retreatment*" OR "endodontic revision*")', '("antimicrobial therapy" OR "antibiotic adjunct*" OR "medicament*") AND ("persistent infection*" OR "resistant pathogen*") AND (retreatment* OR "endodontic failure*")']
+  Searching Cochrane for: '(retreatment OR "non-surgical retreatment" OR "nonsurgical retreatment" OR "secondary root canal" OR reendodontic*) AND ("MB2" OR "second mesiobuccal" OR "second MB canal" OR "missed canal*" OR "untreated canal*") AND (maxillar* OR "maxillary molar*" OR "tooth 26" OR "upper first molar*")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 530ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 765ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 984ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 987ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1184ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1221ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 7 PMIDs in 1300ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 6 PMIDs in 739ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 905ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 7 papers...
+    Fetching metadata for 6 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 764ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 4 PMIDs in 746ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 4 papers...
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 7 papers -- top score 76.7/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 74.8/100
+    [abstract_cache] persisted 6 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+  OKLevel I — RCTs and Systematic Reviews: 6 papers -- top score 74.8/100
+    [abstract_cache] persisted 4 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 4 papers -- top score 68.1/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 784ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 919ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 946ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 5 PMIDs in 1087ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1134ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 9 PMIDs in 1200ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 11 PMIDs in 764ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 866ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 2 PMIDs in 921ms
+    Fetching metadata for 5 papers...
+  -- Level II — Prospective Studies: 0 results found
+    Fetching metadata for 9 papers...
+    Fetching metadata for 11 papers...
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 823ms (HTTP 200)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 11 PMIDs in 821ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 11 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 45.9/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel II — Prospective Studies: 2 papers -- top score 62.2/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 10 PMIDs in 760ms (HTTP 200)
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 4 of 5 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 5 papers -- top score 59.3/100
+    Fetching metadata for 10 papers...
+    [abstract_cache] persisted 9 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 8 of 9 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 9 papers -- top score 67.8/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 1 PMIDs in 681ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 1 hits, broadening once
+    [abstract_cache] persisted 11 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [quality] kept 4 of 11 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 11 papers -- top score 64.8/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1536ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 785ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 5 PMIDs in 785ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 592ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 14 PMIDs in 831ms
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  -- Level IIIa — Retrospective Cohort: 0 results found
+    Fetching metadata for 5 papers...
+    Fetching metadata for 14 papers...
+    [abstract_cache] persisted 11 abstracts from this batch
+    [quality] kept 5 of 11 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 11 papers -- top score 60.4/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 20 PMIDs in 686ms (HTTP 200)
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 684ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 8 PMIDs in 789ms (HTTP 200)
+    Fetching metadata for 20 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 3 PMIDs in 745ms
+    [abstract_cache] persisted 10 abstracts from this batch
+    [quality] kept 8 of 10 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 10 papers -- top score 66.5/100
+    Fetching metadata for 3 papers...
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 681ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 5 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 5 papers -- top score 60.9/100
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 12 PMIDs in 647ms
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 1 PMIDs in 649ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 1 hits, broadening once
+    Fetching metadata for 12 papers...
+    [abstract_cache] persisted 14 abstracts from this batch
+    [quality] kept 9 of 14 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 14 papers -- top score 66.5/100
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 4 PMIDs in 663ms
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 3 papers -- top score 40.9/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 636ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    Fetching metadata for 4 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 676ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 8 papers -- top score 60.6/100
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 9 PMIDs in 577ms (HTTP 200)
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 877ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 11 PMIDs in 927ms (HTTP 200)
+    Fetching metadata for 9 papers...
+    [abstract_cache] persisted 20 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 10 of 20 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 20 papers -- top score 66.5/100
+  -- Level IIIb — Case-Control: 0 results found
+    Fetching metadata for 11 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 1 PMIDs in 813ms (HTTP 200)
+  ~~ Level IV — Case Series: 1 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 1 PMIDs in 609ms (HTTP 200)
+  ~~ Level IV — Case Series: 1 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 50 PMIDs in 707ms
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 4 papers -- top score 55.1/100
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 12 PMIDs in 728ms
+    [abstract_cache] persisted 12 abstracts from this batch
+    [quality] kept 5 of 12 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 12 papers -- top score 60.6/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 696ms (HTTP 200)
+    Fetching metadata for 50 papers...
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    Fetching metadata for 12 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 1 PMIDs in 673ms (HTTP 200)
+  ~~ Level IV — Case Series: 1 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 2 PMIDs in 726ms
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 6 of 9 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 9 papers -- top score 60.6/100
+    Fetching metadata for 1 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 22 PMIDs in 773ms (HTTP 200)
+    [abstract_cache] persisted 11 abstracts from this batch
+    [COI] 'Coltene' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [quality] kept 4 of 11 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 11 papers -- top score 47.4/100
+    Fetching metadata for 22 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1325ms (HTTP 200)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IV — Case Series: 2 papers -- top score 35.9/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IV — Case Series: 1 papers -- top score 43.7/100
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 11 PMIDs in 570ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 2 PMIDs in 718ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 2 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 596ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    [abstract_cache] persisted 12 abstracts from this batch
+    [COI] 'Coltene' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 12 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 12 papers -- top score 42.4/100
+    Fetching metadata for 11 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 5 PMIDs in 675ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 20 PMIDs in 669ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 561ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 5 papers...
+    Fetching metadata for 20 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 9 PMIDs in 675ms
+    Fetching metadata for 9 papers...
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 5 papers -- top score 39.7/100
+    [abstract_cache] persisted 22 abstracts from this batch
+    [quality] kept 4 of 22 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 22 papers -- top score 47.4/100
+    [abstract_cache] persisted 11 abstracts from this batch
+    [quality] kept 4 of 11 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 11 papers -- top score 45.3/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 546ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 556ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 8 PMIDs in 624ms (HTTP 200)
+  -- Level V — Expert Opinion / Reviews: 0 results found
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 1 PMIDs in 587ms
+    Fetching metadata for 8 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 4 of 9 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 9 papers -- top score 43.1/100
+    [quality] kept 4 of 50 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 50 papers -- top score 44.4/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 715ms (HTTP 200)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 8 PMIDs in 599ms
+    [abstract_cache] persisted 20 abstracts from this batch
+    [quality] kept 4 of 20 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 20 papers -- top score 48.3/100
+    Fetching metadata for 8 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 1 papers -- top score 42.0/100
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 8 papers -- top score 49.4/100
+    [abstract_cache] persisted 8 abstracts from this batch
+    [COI] 'Fkg Dentaire' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [quality] kept 4 of 8 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 8 papers -- top score 49.4/100
+  [PRISMA dedup] flagged 33 primary studies as already synthesised in newer SR (PMID 40325295, 2025; cutoff ≤ 2023)
+  WARNING: 13 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 98   {'level1': 19, 'level2': 13, 'level3a': 30, 'level4': 19, 'level5': 17}
+  esearch  310 hits over 76 queries = 4.1/query (38 returned nothing, 13 search terms)
+  PASS
+
+======================================================================
+review-followup-immature-teeth   [pinned: library]
+======================================================================
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("immature tooth" OR "immature teeth" OR "immature root" OR "open apex" OR "apical development" OR regenerative OR revascularization) AND (disinfect* OR antibacterial OR biofilm OR "E. faecalis")'
+  [search_terms] capped to 3 AND-groups, dropped: (root canal treatment OR endodontic therapy)
+  [search_terms] capped to 3 AND-groups, dropped: (sealing ability OR apical healing)
+  [search_terms] capped to 3 AND-groups, dropped: (follow-up OR longitudinal OR outcomes)
+  [rag] 8 queries -> 271 distinct papers (best similarity kept per PMID)
+  [rag_gate] 200 hits, 23 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [context] seeded 1 paper(s) cited by the earlier answer; 0 cleared the 0.55 floor for this question
+  [PRISMA dedup] flagged 1 primary studies as already synthesised in newer SR (PMID 41833582, 2026; cutoff ≤ 2024)
+  route  library
+  papers 23   {'level1': 18, 'classic': 1, 'level2': 2, 'level3a': 2}
+  PASS
+
+======================================================================
+review-newtopic-reset   [pinned: library]
+======================================================================
+  Smart search terms: '(sodium hypochlorite OR NaOCl OR "sodium hypochlorite concentration" OR chlorhexidine) AND ("root canal" OR endodontic* OR primary teeth OR deciduous OR "primary dentition") AND (disinfect* OR irrigat* OR antibacterial OR efficacy OR concentration)'
+  [search_terms] capped to 3 AND-groups, dropped: ("primary dentition" OR "young patient*" OR "pediatric patie
+  [rag] 8 queries -> 194 distinct papers (best similarity kept per PMID)
+  [rag_gate] 194 hits, 38 above similarity 0.55, high-tier=True, newest=2026 (age 0y, stale=False) -> LIBRARY
+  [context] seeded 2 paper(s) cited by the earlier answer; 0 cleared the 0.55 floor for this question
+  route  library
+  papers 34   {'cochrane': 2, 'level1': 25, 'classic': 6, 'level2': 1}
+  PASS
+
+======================================================================
+DIFF vs baseline_v6.json  (25 case(s) run)
+======================================================================
+  case                                   metric               baseline   this run
+  laser-root-canal-disinfection-live     papers                156-182        194  ABOVE
+  laser-root-canal-disinfection-live     search_terms              7-9         11  ABOVE
+  laser-root-canal-disinfection-library  papers                  33-34         32  BELOW
+  mta-vs-biodentine-pulpotomy            papers                  34-35         37  ABOVE
+  direct-pulp-capping                    papers                  35-35         39  ABOVE
+  preemptive-nsaid                       papers                  40-43         37  BELOW
+  pips-vs-ultrasonic                     papers                  29-35         39  ABOVE
+  intentional-replantation               papers                  24-68         93  ABOVE
+  intentional-replantation               hits_per_query        2.1-8.4    12.9412  ABOVE
+  sdf-pulp-outcomes                      papers                  26-29         47  ABOVE
+  sdf-pulp-outcomes                      hits_per_query        1.9-3.8     5.8125  ABOVE
+  sonic-vs-ultrasonic                    papers                  19-36         16  BELOW
+  dens-invaginatus                       papers                  82-83         64  BELOW
+  dens-invaginatus                       search_terms            12-13         15  ABOVE
+  dens-invaginatus                       hits_per_query      18.3-25.4    12.3529  BELOW
+  case-opening-sparse                    search_terms              7-8          9  ABOVE
+  case-opening-full                      hits_per_query       4.5-10.7    4.07895  BELOW
+
+  17 metric(s) outside the baseline range. Ranges spot drift; they do not gate — the exit code comes from the floors.
+
+25/25 cases passed  [RETRIEVAL-ONLY]
+NOTE: answer-level assertions (must_contain, must_not_contain, banner, modules_non_empty, max_unsourced_numeric_modules) were NOT evaluated. Run --synthesis-subset for those.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 6623.33it/s]

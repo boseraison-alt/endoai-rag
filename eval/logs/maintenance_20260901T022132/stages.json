@@ -1,0 +1,35 @@
+[
+  {
+    "label": "BACKFILL provenance for recent write-backs",
+    "argv": [
+      "scripts/backfill_pubmed_metadata.py",
+      "--since-days",
+      "35"
+    ],
+    "exit": 0,
+    "seconds": 23.7,
+    "log": "C:\\Users\\boser\\endo-ai-rag\\eval\\logs\\maintenance_20260901T022132\\backfill.log"
+  },
+  {
+    "label": "RESCORE the library",
+    "argv": [
+      "scripts/rescore_library.py"
+    ],
+    "exit": 0,
+    "seconds": 10.5,
+    "log": "C:\\Users\\boser\\endo-ai-rag\\eval\\logs\\maintenance_20260901T022132\\rescore.log"
+  },
+  {
+    "label": "EVAL retrieval, one pass",
+    "argv": [
+      "eval/run_eval.py",
+      "--cheap",
+      "--diff",
+      "--baseline",
+      "baseline_v6.json"
+    ],
+    "exit": 0,
+    "seconds": 686.5,
+    "log": "C:\\Users\\boser\\endo-ai-rag\\eval\\logs\\maintenance_20260901T022132\\eval.log"
+  }
+]

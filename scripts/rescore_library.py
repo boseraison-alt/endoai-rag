@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import sys
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -151,6 +152,31 @@ def main() -> int:
             return 0
 
         if updates:
+            # Back up EVERY column this writes, not just the one the script is
+            # about. `sample_size` is re-extracted from the abstract here, so a
+            # rescore after an abstract repair changes it too — and the
+            # standing rule exists because the last repair backed up the
+            # abstracts it was thinking about and not the embeddings it also
+            # overwrote. Both columns are derivable, which is an argument for
+            # the backup being cheap, not for skipping it: derivable from WHAT
+            # the row held at the time is the part that stops being true.
+            run_id = f"rescore_{datetime.now().strftime('%Y%m%dT%H%M%S')}"
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS endo_papers_rag_score_backup (
+                    pmid TEXT, score REAL, sample_size INTEGER,
+                    run_id TEXT, backed_up_at TIMESTAMP DEFAULT NOW()
+                );""")
+            psycopg2.extras.execute_batch(cur, """
+                INSERT INTO endo_papers_rag_score_backup
+                    (pmid, score, sample_size, run_id)
+                SELECT pmid, score, sample_size, %s
+                FROM endo_papers_rag WHERE pmid = %s;""",
+                [(run_id, u[2]) for u in updates], page_size=500)
+            conn.commit()
+            print(f"[rescore] backed up {len(updates)} row(s) (score, "
+                  f"sample_size) -> endo_papers_rag_score_backup, "
+                  f"run_id={run_id}")
+
             psycopg2.extras.execute_batch(
                 cur,
                 "UPDATE endo_papers_rag SET score = %s, sample_size = %s WHERE pmid = %s;",

@@ -1,0 +1,78 @@
+======================================================================
+library maintenance   20260901T022132
+DRY RUN — no writes
+provenance window: 35 days
+output: C:\Users\boser\endo-ai-rag\eval\logs\maintenance_20260901T022132
+======================================================================
+
+======================================================================
+BACKFILL provenance for recent write-backs
+======================================================================
+  $ scripts/backfill_pubmed_metadata.py --since-days 35
+           62   pre-registered
+           17   not MEDLINE-indexed
+            7   correction / expression of concern
+            1   coi:declared_conflict
+    [pubmed] registries:
+           31   ClinicalTrials.gov
+           28   PROSPERO
+            1   ChiCTR
+            1   ISRCTN
+            1   ReBec
+    [pubmed] rows to update: 467
+    [pubmed] DRY RUN — re-run with --apply to write.
+  -> exit 0 in 24s, full output in C:\Users\boser\endo-ai-rag\eval\logs\maintenance_20260901T022132\backfill.log
+
+======================================================================
+RESCORE the library
+======================================================================
+  $ scripts/rescore_library.py
+    [rescore] USE_IMPACT_FACTOR = False
+    [rescore] 2337 papers eligible for faithful rescoring (unlabelled + curated entries are preserved)
+    [rescore] changed: 2   unchanged: 2335
+    [rescore] delta  min +8.1 / median +11.1 / max +11.1 / mean +9.6
+    [rescore] papers moving up:   2
+    [rescore] papers moving down: 0
+    [rescore] reviews (SR/MA/Cochrane): none changed
+    [rescore] primary studies        : n=2 median +11.1 mean +9.6 (up 2 / down 0)
+    [rescore] DRY RUN — re-run with --apply to write these scores.
+  -> exit 0 in 11s, full output in C:\Users\boser\endo-ai-rag\eval\logs\maintenance_20260901T022132\rescore.log
+
+======================================================================
+EVAL retrieval, one pass
+======================================================================
+  $ eval/run_eval.py --cheap --diff --baseline baseline_v6.json
+      sonic-vs-ultrasonic                    papers                  19-36         16  BELOW
+      dens-invaginatus                       papers                  82-83         64  BELOW
+      dens-invaginatus                       search_terms            12-13         15  ABOVE
+      dens-invaginatus                       hits_per_query      18.3-25.4    12.3529  BELOW
+      case-opening-sparse                    search_terms              7-8          9  ABOVE
+      case-opening-full                      hits_per_query       4.5-10.7    4.07895  BELOW
+      17 metric(s) outside the baseline range. Ranges spot drift; they do not gate — the exit code comes from the floors.
+    25/25 cases passed  [RETRIEVAL-ONLY]
+    NOTE: answer-level assertions (must_contain, must_not_contain, banner, modules_non_empty, max_unsourced_numeric_modules) were NOT evaluated. Run --synthesis-sub
+    Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+    Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]
+    Loading weights: 100%|██████████| 103/103 [00:00<00:00, 6623.33it/s]
+  -> exit 0 in 686s, full output in C:\Users\boser\endo-ai-rag\eval\logs\maintenance_20260901T022132\eval.log
+
+======================================================================
+# Library maintenance — 20260901T022132
+
+**Mode:** DRY RUN — no writes  
+**Provenance window:** 35 days  
+**Logs:** `C:\Users\boser\endo-ai-rag\eval\logs\maintenance_20260901T022132`
+
+| stage | exit | wall | what it found |
+|---|---|---|---|
+| BACKFILL provenance for recent write-backs | 0 | 24s | 467 papers examined; 1 declared COI |
+| RESCORE the library | 0 | 10s | 2337 papers rescored; 2 scores changing |
+| EVAL retrieval, one pass | 0 | 686s | 25/25 cases passed; 17 metrics off baseline |
+
+## Outcome
+
+Every stage exited 0.
+
+This was a DRY RUN. Nothing was written. Re-run with `--apply` to make the changes the table above describes.
+======================================================================
+report -> C:\Users\boser\endo-ai-rag\eval\logs\maintenance_20260901T022132\report.md
