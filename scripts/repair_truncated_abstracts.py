@@ -106,6 +106,54 @@ def fetch_abstracts(pmids: list[str]) -> dict[str, str]:
     return out
 
 
+def reembed_from_backup() -> int:
+    """Re-embed every row this repair changed. Idempotent and resumable.
+
+    The changed set is exactly the backup table's contents, so this needs no
+    state of its own: running it twice produces the same vectors. It
+    reconnects on a dropped connection because a 1,355-row embed loop on a
+    serverless Postgres is long enough for one to happen, and it did.
+    """
+    from rag import embed
+
+    conn = get_conn()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute(f"""SELECT r.pmid, r.title, r.abstract
+                    FROM endo_papers_rag r
+                    JOIN {BACKUP_TABLE} b ON b.pmid = r.pmid
+                    WHERE b.run_id = %s""", (RUN_ID,))
+    rows = cur.fetchall()
+    print(f"[reembed] {len(rows)} rows changed by run_id={RUN_ID}")
+
+    done = 0
+    for row in rows:
+        vec = embed(f"{row['title'] or ''}\n{row['abstract'] or ''}")
+        for attempt in (1, 2, 3):
+            try:
+                cur.execute("UPDATE endo_papers_rag SET embedding = %s::vector "
+                            "WHERE pmid = %s", (vec, row["pmid"]))
+                break
+            except Exception as e:
+                print(f"  [reembed] {row['pmid']} attempt {attempt}: "
+                      f"{type(e).__name__} — reconnecting")
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+                conn = get_conn()
+                cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        done += 1
+        if done % 100 == 0:
+            conn.commit()
+            print(f"  [reembed] {done}/{len(rows)}")
+    conn.commit()
+    cur.close()
+    print(f"[reembed] re-embedded {done} rows "
+          f"({'MATCHES' if done == len(rows) else 'MISMATCH against'} "
+          f"{len(rows)} changed rows)")
+    return 0 if done == len(rows) else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--apply", action="store_true",
@@ -113,7 +161,15 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=None,
                     help="only consider the first N rows (for a smoke run)")
     ap.add_argument("--samples", type=int, default=10)
+    ap.add_argument("--reembed-only", action="store_true",
+                    help="skip the fetch; re-embed every row this repair "
+                         "changed, read from the backup table. Idempotent, so "
+                         "it is the resume path after a dropped connection — "
+                         "Neon closed one mid-run at ~1000 of 1355 rows.")
     args = ap.parse_args()
+
+    if args.reembed_only:
+        return reembed_from_backup()
 
     conn = get_conn()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
