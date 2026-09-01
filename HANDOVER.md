@@ -839,15 +839,23 @@ successor only; the library backfill resolves chains to the terminal version
   for claim support. `validate_evidence_mapping` does run there, so a
   curriculum cannot cite a fabricated PMID; whether the cited abstract supports
   the claim is unasked.
-- **749 library rows carry an abstract truncated at exactly 1200 characters,**
-  and 366 more are under 1000. The corpus builders do it at ingest —
-  `fetch_open_sources.py:334`, `fetch_pmc_corpus.py:330` and
-  `ingest_aae_guidelines.py:438` all store `abstract[:1200]`, and
-  `repair_abstracts.py:163` stores `abstract[:1000]`. Structured abstracts put
-  RESULTS and CONCLUSIONS last, so for a third of the library the part that
-  states the finding is the part that was cut. This limits both the
-  citation-support checker and, now that the library block carries abstracts,
-  the synthesis itself. Fixing it is a re-ingest, not a code change.
+- **1342 of 2342 library abstracts — 57% — are hard-truncated at ingest,**
+  749 at exactly 1200 characters and 593 at exactly 1000. Five call sites do
+  it: `build_library.py:166` and `repair_abstracts.py:163` store
+  `abstract[:1000]`; `fetch_open_sources.py:334`, `fetch_pmc_corpus.py:330`
+  and `ingest_aae_guidelines.py:438` store `abstract[:1200]`. The live path
+  applies no cap at all.
+
+  Structured abstracts put RESULTS and CONCLUSIONS last, and the measurement
+  shows exactly that: only **7.2%** of the truncated rows still contain the
+  word "conclusion", against **39.3%** of the untruncated ones — a 5.5x drop.
+  Tails cut mid-word (`...'or proportio'`, `...'udies were i'`).
+
+  This limits the citation-support checker, and it qualifies the fix above:
+  for 57% of library papers the synthesis now gets a plausible-looking
+  abstract that stops before the findings, which is better than nothing but is
+  not the same as being shown the paper. Fixing it is a re-ingest, not a code
+  change.
 - **`_extract_claim_citation_pairs` has two input defects, neither of which
   drives the flag rate.** Measured before assuming: pairs whose claim spans a
   bold pseudo-heading are flagged at 50.0% against 52.9% for clean ones, so
@@ -866,6 +874,29 @@ successor only; the library backfill resolves chains to the terminal version
   but did not skip the pair — `verify_citation_support` only skips when the
   field is EMPTY. A non-empty field that is not an abstract fails closed into a
   flag.
+- **`_unit_of` can pick the wrong quantity's unit.** `_unit_of("12 mm at 3
+  months")` returns `"months"`, because the `month` token test runs before the
+  `mm` match, while `parse_number` returns `12` — the mm value. Two such arms
+  therefore agree on a unit computed from a number nobody plotted, and the
+  chart is axis-labelled with the wrong one. Mislabelling, not invention (both
+  numbers are verbatim in the source), and pre-existing on all three
+  detectors. Left alone because reordering `_unit_of` shifts behaviour under
+  every chart in the product and there was no budget to re-verify them.
+- **`case_convs` (`app.py:258`) is written and never read.** grep finds the
+  declaration and one assignment (`app.py:2036`) and no reader anywhere. It has
+  no cap either, unlike `review_threads` (`REVIEW_THREADS_MAX = 500`), so it
+  accumulates a full evidence base per case conversation for the life of the
+  process — ~277 KB each now that the library block carries abstracts. Either
+  wire it up or delete it.
+- **`content_slide`'s no-overflow guarantee has one exception.** A SINGLE
+  bullet taller than the whole frame still gets its own page and runs off it
+  (a 500-word bullet renders 8.3in tall on a 7.5in slide). That is deliberate —
+  the alternative is splitting a clinical sentence — but the guarantee is "no
+  overflow unless one bullet alone exceeds the frame", not "no overflow". No
+  cached spec triggers it.
+- **`arms` has no real-data coverage yet.** No spec in `slide_specs/` contains
+  the key, because the generator prompt only started offering it in this batch.
+  Every multi-arm test is synthetic until a deck is generated that uses one.
 
 ## Commit-history notes
 

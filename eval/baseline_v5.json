@@ -1,14 +1,17 @@
 {
   "_README": [
-    "Baseline: case-v1 (75e74f4) \u2014 case engine + review-mode conversation memory; retrieval-only, 3 runs 2026-08-31",
-    "Folded from 3 run log(s): run1.log, run2.log, run3.log.",
+    "Baseline: case-v1 + 5[B] library-block fix \u2014 21 cases x3 runs, 4 new conversational/case cases x1 run (2026-08-31)",
+    "Folded from 4 run log(s): v5_run1.log, v5_run2.log, v5_run3.log, v5_newcases_run1.log.",
+    "",
+    "NOT ALL CASES HAVE THE SAME NUMBER OF RUNS. These four were added in this batch and have ONE observation each, which is not a baseline: case-opening-full, case-opening-sparse, review-followup-immature-teeth, review-newtopic-reset.",
+    "Their `runs` lists show it. Give them two more runs before treating any of their numbers as a range.",
     "",
     "Retrieval-only \u2014 no answers were generated, so must_contain, banner, modules_non_empty and max_unsourced_numeric_modules were NOT evaluated. A green run here is not evidence that they hold.",
     "",
     "Search terms are LLM-generated: live-route counts move up to 3x between runs on the same question. Compare shape, not digits."
   ],
-  "label": "case-v1 (75e74f4) \u2014 case engine + review-mode conversation memory; retrieval-only, 3 runs 2026-08-31",
-  "n_runs": 3,
+  "label": "case-v1 + 5[B] library-block fix \u2014 21 cases x3 runs, 4 new conversational/case cases x1 run (2026-08-31)",
+  "n_runs": 4,
   "provisional": false,
   "cases": {
     "laser-root-canal-disinfection-live": {
@@ -1206,6 +1209,208 @@
           "level3a": 6
         }
       ]
+    },
+    "review-followup-immature-teeth": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          33
+        ],
+        "min": 33,
+        "max": 33
+      },
+      "esearch_hits": {
+        "runs": [
+          100
+        ],
+        "min": 100,
+        "max": 100
+      },
+      "esearch_queries": {
+        "runs": [
+          2
+        ],
+        "min": 2,
+        "max": 2
+      },
+      "esearch_empty": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "hits_per_query": {
+        "runs": [
+          50.0
+        ],
+        "min": 50.0,
+        "max": 50.0
+      },
+      "search_terms": {
+        "runs": [
+          0
+        ],
+        "min": 0,
+        "max": 0
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 4,
+          "level2": 1,
+          "level3a": 2
+        }
+      ]
+    },
+    "review-newtopic-reset": {
+      "force_route": "library",
+      "routes_observed": [
+        "library"
+      ],
+      "papers": {
+        "runs": [
+          34
+        ],
+        "min": 34,
+        "max": 34
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 1,
+          "level1": 25,
+          "classic": 6,
+          "level2": 1,
+          "level3a": 1
+        }
+      ]
+    },
+    "case-opening-sparse": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          193
+        ],
+        "min": 193,
+        "max": 193
+      },
+      "esearch_hits": {
+        "runs": [
+          1914
+        ],
+        "min": 1914,
+        "max": 1914
+      },
+      "esearch_queries": {
+        "runs": [
+          60
+        ],
+        "min": 60,
+        "max": 60
+      },
+      "esearch_empty": {
+        "runs": [
+          9
+        ],
+        "min": 9,
+        "max": 9
+      },
+      "hits_per_query": {
+        "runs": [
+          31.9
+        ],
+        "min": 31.9,
+        "max": 31.9
+      },
+      "search_terms": {
+        "runs": [
+          10
+        ],
+        "min": 10,
+        "max": 10
+      },
+      "per_tier_runs": [
+        {
+          "cochrane": 6,
+          "level1": 79,
+          "level2": 34,
+          "level3a": 29,
+          "level3b": 12,
+          "level4": 22,
+          "level5": 11
+        }
+      ]
+    },
+    "case-opening-full": {
+      "force_route": "live",
+      "routes_observed": [
+        "live"
+      ],
+      "papers": {
+        "runs": [
+          63
+        ],
+        "min": 63,
+        "max": 63
+      },
+      "esearch_hits": {
+        "runs": [
+          329
+        ],
+        "min": 329,
+        "max": 329
+      },
+      "esearch_queries": {
+        "runs": [
+          89
+        ],
+        "min": 89,
+        "max": 89
+      },
+      "esearch_empty": {
+        "runs": [
+          53
+        ],
+        "min": 53,
+        "max": 53
+      },
+      "hits_per_query": {
+        "runs": [
+          3.7
+        ],
+        "min": 3.7,
+        "max": 3.7
+      },
+      "search_terms": {
+        "runs": [
+          15
+        ],
+        "min": 15,
+        "max": 15
+      },
+      "per_tier_runs": [
+        {
+          "level1": 2,
+          "level2": 12,
+          "level3a": 21,
+          "level3b": 1,
+          "level4": 18,
+          "level5": 9
+        }
+      ]
     }
-  }
+  },
+  "cases_with_one_run": [
+    "case-opening-full",
+    "case-opening-sparse",
+    "review-followup-immature-teeth",
+    "review-newtopic-reset"
+  ]
 }
