@@ -186,10 +186,16 @@ def _plan_stat(s, title, papers, source_text):
     and drawn on the web from the same spec.
     """
     from presentations.chart_data import consistent_unit, is_range
+    from presentations.slide_patterns import _arms_of
 
-    arms = [a for a in (s.get("arms") or []) if isinstance(a, dict)]
+    # ONE reader for the arm shapes, shared with `slide_patterns.stat_panel`,
+    # so the two exports cannot disagree about what the arms ARE. This used to
+    # be a local `isinstance(a, dict)` comprehension that raised TypeError on a
+    # non-list `arms` and silently dropped an arm whose `stat` was missing —
+    # both of which the PPTX path handled differently.
+    arms, pairing_ok = _arms_of(s)
     if arms:
-        pairs = [(a.get("label") or a.get("name"), a.get("stat")) for a in arms]
+        pairs = [(lbl, v) for lbl, v in arms]
     else:
         pairs = [(s.get("primary_label"), s.get("primary_stat")),
                  (s.get("secondary_label"), s.get("secondary_stat"))]
@@ -200,8 +206,10 @@ def _plan_stat(s, title, papers, source_text):
                  if L.value_is_cited(v, source_text) and L._as_float(v) is not None]
 
     # All-or-nothing, as in chart_data: one unsourced bar inherits the
-    # credibility of the sourced ones beside it.
-    if len(plottable) != len(pairs):
+    # credibility of the sourced ones beside it. `pairing_ok` is False for a
+    # categories/values pair of unequal length — the values stay as content,
+    # but nothing is plotted from a pairing nobody can verify.
+    if len(plottable) != len(pairs) or not pairing_ok:
         plottable = []
     elif any(is_range(raw) for _lbl, raw in pairs) or \
             consistent_unit([raw for _lbl, raw in pairs]) is None:

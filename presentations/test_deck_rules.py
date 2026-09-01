@@ -766,3 +766,174 @@ class TestMultiArmSurvivesTheWholeBuilder:
         slide = queue[0][0]
         assert [sh for sh in slide.shapes if sh.shape_type == 13], \
             "the arms never reached the pattern through the builder"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 7. Defects found verifying §5[D], each one a way a chart lied
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestTheSignIsPartOfTheNumber:
+    """`verbatim_in` stripped the leading minus before searching, so a spec
+    claiming -0.551 passed against a source that says 0.551 — and the chart
+    drew a bar BELOW zero for a quantity the paper reported above it. Every
+    plotted value must appear verbatim, and -0.551 is not 0.551."""
+
+    SRC = "Root resorption of 0.551 mm and 0.552 mm was measured."
+
+    def test_a_negated_literal_is_not_verbatim(self):
+        assert not verbatim_in("-0.551", self.SRC)
+
+    def test_the_unsigned_literal_still_is(self):
+        assert verbatim_in("0.551", self.SRC)
+
+    # NOTE the shape: `detect_chartable` reads categories/values, not `arms` —
+    # `stat_panel` is what maps one onto the other. Written with `arms` here,
+    # both of these passed for the wrong reason (no chartable keys at all).
+    SPEC = {"categories": ["A", "B"], "values": ["-0.551 mm", "-0.552 mm"]}
+
+    def test_a_negative_comparison_draws_no_chart(self):
+        assert detect_chartable(dict(self.SPEC), self.SRC) is None
+
+    def test_a_genuinely_negative_source_still_charts(self):
+        """The gate must reject the invented sign, not negative numbers."""
+        src = "Mean differences were -0.551 mm and -0.552 mm."
+        assert detect_chartable(dict(self.SPEC), src) is not None
+
+    def test_a_unicode_minus_in_the_source_still_matches(self):
+        """What the strip looked like it was for. `_norm` handles it on both
+        sides, which is why the strip was never needed."""
+        assert verbatim_in("-0.551", "an SMD of −0.551 was reported")
+
+
+class TestArmsAreAuthoritativeOncePresent:
+    """`arms` and `primary_stat`/`secondary_stat` both reaching the detector
+    let the PPTX fall through to `_from_stat_panel` when the arms failed a
+    gate, charting the two-arm keys — while the web deck let arms shadow them
+    and rendered text. One spec, two exports, two different slides."""
+
+    SRC = "Success was 12.5% and 13.5%."
+    SPEC = {"title": "T", "primary_stat": "12.5%", "primary_label": "P",
+            "secondary_stat": "13.5%", "secondary_label": "S",
+            "arms": [{"label": "A", "stat": "99.9%"},
+                     {"label": "B", "stat": "98.8%"}]}
+
+    def _pptx(self, spec, src):
+        from presentations.slide_patterns import stat_panel
+        prs = new_presentation()
+        out = stat_panel(prs, _source_text=src,
+                         **{k: v for k, v in spec.items() if k != "pattern"})
+        slide = out[0] if isinstance(out, list) else out
+        return bool([sh for sh in slide.shapes if sh.shape_type == 13]), slide
+
+    def _web(self, spec, src):
+        from webdeck.plan import adapt
+        planned = adapt({"pattern": "stat_panel", **spec}, {}, src)
+        return bool([p for p in planned if p.get("layout") == "chart"]), planned
+
+    def test_unverified_arms_do_not_fall_back_to_the_two_arm_keys(self):
+        charted, _ = self._pptx(self.SPEC, self.SRC)
+        assert not charted, "the refused arms were replaced by another chart"
+
+    def test_both_exports_agree_on_that_spec(self):
+        assert self._pptx(self.SPEC, self.SRC)[0] == self._web(self.SPEC, self.SRC)[0]
+
+    def test_both_exports_agree_when_an_arm_carries_a_different_unit(self):
+        spec = {"title": "T", "arms": [{"label": "A", "stat": "88.2%"},
+                                       {"label": "B", "stat": "24 months"}]}
+        src = "88.2% at 24 months."
+        assert self._pptx(spec, src)[0] == self._web(spec, src)[0] is False
+
+
+class TestNoArmIsSilentlyDeleted:
+    """A refused chart must not delete the numbers the slide is about — the
+    function's own docstring. An arm with no `stat`, a single arm, a list of
+    bare strings and a mismatched categories/values pair all used to fall back
+    to the UNSET two-arm keys and render a title with nothing under it."""
+
+    def _texts_of(self, spec, src=""):
+        from presentations.slide_patterns import stat_panel
+        prs = new_presentation()
+        out = stat_panel(prs, _source_text=src,
+                         **{k: v for k, v in spec.items() if k != "pattern"})
+        slides = out if isinstance(out, list) else [out]
+        return " ".join(t for s in slides for t in _texts(s))
+
+    def test_an_arm_with_no_stat_does_not_delete_its_neighbours(self):
+        body = self._texts_of({"title": "T", "arms": [
+            {"label": "A", "stat": "88.2%"}, {"label": "B"},
+            {"label": "C", "stat": "79.6%"}]}, "A 88.2% and C 79.6%.")
+        assert "88.2%" in body and "79.6%" in body
+
+    def test_a_single_arm_still_renders(self):
+        body = self._texts_of({"title": "T",
+                               "arms": [{"label": "Arm A", "stat": "88.2%"}]})
+        assert "88.2%" in body and "Arm A" in body
+
+    def test_bare_string_arms_still_render(self):
+        body = self._texts_of({"title": "T", "arms": ["88.2%", "91.4%"]})
+        assert "88.2%" in body and "91.4%" in body
+
+    def test_mismatched_categories_and_values_still_render(self):
+        body = self._texts_of({"title": "T", "categories": ["A", "B", "C"],
+                               "values": ["88.2%", "91.4%"]})
+        assert "88.2%" in body and "91.4%" in body
+
+    def test_a_malformed_arms_value_does_not_raise(self):
+        for bad in (5, "not a list", {"label": "A"}, None):
+            self._texts_of({"title": "T", "primary_stat": "1%",
+                            "primary_label": "P", "arms": bad})
+
+    def test_the_web_deck_survives_the_same_malformed_value(self):
+        """`arms=5` raised an uncaught TypeError here while the PPTX builder
+        merely warned and dropped the slide."""
+        from webdeck.plan import adapt
+        for bad in (5, "not a list", {"label": "A"}, None):
+            adapt({"pattern": "stat_panel", "title": "T", "primary_stat": "1%",
+                   "primary_label": "P", "arms": bad}, {}, "1%")
+
+
+class TestTheWebDeckUsesTheSameVerbatimRule:
+    """`value_is_cited` was an unanchored substring test, so "96" matched
+    inside "961 canals" and the web deck charted a number the source never
+    states — from the same spec the PPTX correctly refused."""
+
+    def test_a_number_inside_a_longer_number_is_not_cited(self):
+        from webdeck.layouts import value_is_cited
+        assert not value_is_cited("96%", "961 canals were treated")
+
+    def test_a_standalone_number_still_is(self):
+        from webdeck.layouts import value_is_cited
+        assert value_is_cited("96%", "96% of canals were treated")
+
+    def test_both_exports_refuse_the_substring_match(self):
+        from presentations.slide_patterns import stat_panel
+        from webdeck.plan import adapt
+        spec = {"title": "T", "arms": [{"label": "A", "stat": "96%"},
+                                       {"label": "B", "stat": "88%"}]}
+        src = "961 canals were treated across 882 teeth."
+        prs = new_presentation()
+        out = stat_panel(prs, _source_text=src, **spec)
+        slide = out[0] if isinstance(out, list) else out
+        pptx_charted = bool([sh for sh in slide.shapes if sh.shape_type == 13])
+        web_charted = bool([p for p in adapt({"pattern": "stat_panel", **spec},
+                                             {}, src)
+                            if p.get("layout") == "chart"])
+        assert pptx_charted is False and web_charted is False
+
+
+class TestChartLabelsAreTrimmedOnEveryPath:
+    """`_from_explicit_chart` was the one detector not trimming axis labels,
+    and it is the path that carries the longest ones — a multi-arm ladder
+    names every arm."""
+
+    def test_a_long_arm_label_is_trimmed(self):
+        src = "Group one 88.2% and group two 79.6%."
+        long_label = ("sodium hypochlorite five point two five percent with "
+                      "ultrasonic activation for sixty seconds per canal")
+        chart = detect_chartable(
+            {"arms": [{"label": long_label, "stat": "88.2%"},
+                      {"label": "control", "stat": "79.6%"}],
+             "categories": [long_label, "control"],
+             "values": ["88.2%", "79.6%"]}, src)
+        assert chart is not None
+        assert len(chart.labels[0]) < len(long_label)

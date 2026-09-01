@@ -571,3 +571,69 @@ class TestGuardrailsRunOnTheRealPath:
         p = next(x for x in job["papers"] if x["pmid"] == "1001")
         for field in ("coi_status", "registry", "has_retraction", "medline_indexed"):
             assert field in p, f"{field} was stripped before reaching the client"
+
+
+class TestNoRouteLeaksAbstractText:
+    """"Abstract text stays server-side" is a product rule with exactly one
+    enforcement point — `app._safe_papers`, a field whitelist — and it has to
+    be applied at EVERY exit, not at the ones that happen to be tested.
+
+    `/history/<cache_id>` was the one route that serialised paper dicts without
+    it. That was harmless only by accident: nothing in `query_cache.papers` had
+    ever carried an abstract, because the live path keeps abstracts in a side
+    map and never in the scored dict. The moment the library path started
+    carrying them (CURO_HANDOVER §5[B]), every library answer cached from then
+    on would have handed full abstract text to any client that opened it from
+    history.
+    """
+
+    ABSTRACT = "RESULTS: bacteria fell by 78.4% against 62.1% for the control."
+    PAPER = {"pmid": "40259146", "title": "Er:YAG laser-activated irrigation",
+             "authors": "Kaya Dadas F", "year": "2025", "journal": "Int Endod J",
+             "level_key": "level1", "score": 70.0, "abstract": ABSTRACT}
+
+    def test_history_does_not_return_the_abstract(self, monkeypatch):
+        import app as app_mod
+
+        class _Cur:
+            def execute(self, *a, **k):
+                pass
+            def fetchone(self):
+                return ("[review] a question", "an answer", [dict(self_paper)])
+            def close(self):
+                pass
+
+        self_paper = self.PAPER
+        monkeypatch.setattr("rag.get_conn",
+                            lambda: type("C", (), {"cursor": lambda s: _Cur(),
+                                                   "close": lambda s: None})())
+        body = app_mod.app.test_client().get("/history/1").get_json()
+        blob = json.dumps(body)
+        assert self.ABSTRACT not in blob, "an abstract reached the client"
+        assert body["papers"][0]["pmid"] == "40259146", "the paper vanished too"
+        assert body["papers"][0]["title"], "the title is allowed and useful"
+
+    def test_the_whitelist_drops_abstract_but_keeps_the_metadata(self):
+        import app as app_mod
+        out = app_mod._safe_papers([dict(self.PAPER)])[0]
+        assert "abstract" not in out
+        for keep in ("pmid", "title", "authors", "year", "journal",
+                     "level_key", "score"):
+            assert keep in out, f"{keep} was stripped"
+
+    def test_every_route_that_serialises_papers_uses_the_whitelist(self):
+        """A structural check, because the next route to be added is the next
+        one to forget. Any `"papers":` in a jsonify payload must be either an
+        empty literal or a `_safe_papers(...)` call."""
+        import inspect
+        import re
+        src = inspect.getsource(__import__("app"))
+        offenders = []
+        for line in src.splitlines():
+            if re.search(r'"papers":\s*', line) and "_safe_papers" not in line:
+                stripped = line.strip()
+                if re.search(r'"papers":\s*\[\s*\]', stripped):
+                    continue          # an empty literal cannot leak
+                offenders.append(stripped)
+        assert not offenders, (
+            "these serialise papers without the whitelist: " + str(offenders))

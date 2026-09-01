@@ -72,11 +72,18 @@ def verbatim_in(literal: str, source_text: str) -> bool:
 
     Guards both ends so `96` cannot match inside `961` or `96.1`, and `1.5`
     cannot match inside `21.53`.
+
+    THE SIGN IS PART OF THE NUMBER. This used to `lstrip("-")` the literal
+    before searching, so a spec claiming `-0.551` passed against a source that
+    says `0.551` — and the chart then drew a bar below zero for a quantity the
+    paper reported above it. Nothing needs the strip: `_norm` already maps the
+    unicode minus signs onto ASCII on both sides, which is what the strip
+    looked like it was for.
     """
     if not literal or not source_text:
         return False
     src = _norm(source_text)
-    pattern = r"(?<![\d.])" + re.escape(literal.lstrip("-")) + r"(?![\d.])"
+    pattern = r"(?<![\d.])" + re.escape(_norm(literal)) + r"(?![\d.])"
     return bool(re.search(pattern, src))
 
 
@@ -239,7 +246,10 @@ def _from_explicit_chart(spec: dict, source_text: str) -> ChartSpec | None:
     kind, note = _choose_kind(vals, unit)
     return ChartSpec(
         kind=kind,
-        labels=[lbl for lbl, _, _ in verified],
+        # Trimmed like every other detector's labels. This path carries the
+        # LONGEST labels in practice — a multi-arm ladder names each arm — and
+        # was the one detector not trimming them.
+        labels=[_short_label(lbl) for lbl, _, _ in verified],
         values=vals,
         literals=[lit for _, lit, _ in verified],
         unit=unit,

@@ -518,6 +518,121 @@ the validator runs with a retry. Reporting that plainly matters more than
 confirming the guess — a fix aimed at retrieval would have changed nothing
 visible, because retrieval was already returning a hundred papers.
 
+## The library evidence block had no evidence in it
+
+Written after hand-judging 20 flagged claim–citation pairs (CURO_HANDOVER
+§5[B]). The citation-support checker was flagging around half of all pairs on
+real answers, and the open question was whether the checker was too strict.
+
+**It was not. The checker is right and the synthesis was the guilty side.**
+
+### What the hand-judgement found
+
+20 pairs, sampled deterministically from the 187 flags recorded on 2026-08-30
+and -31, read with the FULL claim sentence recovered from the stored answer
+(`evidence_mapping.jsonl` truncates the claim at 160 characters, and 271 of 313
+flags were truncated) beside the abstract the checker actually saw:
+
+| verdict | n |
+|---|---|
+| the claim is genuinely not supported by the cited paper | 16 |
+| the checker was too strict, or its input was malformed | 3 |
+| the cached "abstract" was a title only, so nothing could be judged | 1 |
+
+15 of the 20 cite a paper whose TITLE is about a different subject, which takes
+no judgement to see: a claim about MTA vs Biodentine pulpotomy in mature teeth
+cited to a network meta-analysis of regenerative scaffolds in immature necrotic
+teeth; a claim about PIPS/SWEEPS smear-layer removal cited to a systematic
+review of photodynamic therapy in primary teeth; a claim about antiresorptive
+therapy cited to a review of nonsurgical retreatment outcomes.
+
+### Three structural hypotheses, all killed by measurement
+
+Each looked obviously causal. None survives:
+
+| hypothesis | flag rate when true | when false |
+|---|---|---|
+| the claim was merged across a bold pseudo-heading | 50.0% (101/202) | 52.9% (190/359) |
+| the abstract was truncated at 1200 chars for the checker | 49–53% | 55.6% (whole abstract seen) |
+| the answer was library-routed rather than live | 52.1% (147/282) | 52.4% (166/317) |
+
+~52% in every stratum. That uniformity IS the finding: nothing about the
+checker's input predicts a flag, which is what you see when the claims
+themselves are the problem. **Measure the strata before fixing the obvious
+thing** — all three of these would have been fixed on sight, and all three
+would have moved nothing.
+
+### Why the model wrote findings the paper does not report
+
+`rag.rag_results_to_scored` built the library's paper dicts without `title` or
+`abstract`, though `rag.search` selects both columns. `app._scored_to_text`
+therefore rendered one metadata line per paper, and that was the whole library
+evidence block:
+
+```
+[Level I]
+PMID: 1 | Authors: A B | Year: 2024 | Citations: 3 | n=60 | 12mo follow-up | IF=4.0 | Evidence Score: 70.0/100
+```
+
+That paper is titled "Er:YAG laser-activated irrigation in immature teeth". The
+word "laser" appears nowhere in what Claude was given. The prompt then asks for
+a 3–6 sentence paragraph per tier on what the evidence shows, with authors
+cited inline and a `[[PMID:N]]` marker on every clinical claim.
+
+In 9 of the 10 flagged pairs checked, the author name in the claim matched the
+cited paper's actual author field — and the year and the sample size were right
+too. **The model invented only the finding, because the finding was the one
+thing it was not given.**
+
+### The measurement
+
+Three library-pinned Review cases, run through the full `/ask` path with the
+answer cache bypassed, before and after:
+
+| case | before | after |
+|---|---|---|
+| single-vs-multiple-visit | 7/18 flagged (39%) | 1/11 (9%) |
+| naocl-concentration | 14/21 (67%) | 4/18 (22%) |
+| pips-vs-ultrasonic | 5/27 (19%) | 0/30 (0%) |
+| **total** | **26/66 — 39.4%** | **5/59 — 8.5%** |
+
+All three moved down; all six runs passed their answer-level assertions.
+
+**The cost, which belongs beside that number and not on its own:** the library
+prompt went from ~7k input tokens to ~31k (7188/7593/5814 → 34080/26793/31954),
+and an answer from ~$0.36 to ~$0.70. That is the size of the hole — a
+library-served answer was being written from about a fifth of the input a
+live-served one got.
+
+Two caveats. One before/after pair per case, on a metric whose per-case spread
+was 19–67% beforehand, is a direction and not an effect size. And the fix
+supplies whatever the library STORED: 749 rows hold an abstract truncated at
+1200 characters (see Known open items), so for a third of the library the model
+still does not see the conclusions.
+
+### The detector
+
+**Any evidence assembled for a model on one retrieval path and asserted to
+match another. Test the BLOCK, not the renderer.** The parity test in
+`tests/test_coi_scoping.py` compared the two metadata LINES and passed
+throughout — the line was never the difference. `_scored_to_text`'s own
+docstring says it shares the live path's renderer "so provenance badges appear
+identically", and the change that added the badges is where the abstract
+stopped being included. Guarded now by
+`TestTheLibraryBlockContainsThePaper`, which asserts on the assembled block.
+
+### Not fixed, deliberately
+
+The prompt still mandates a `[[PMID:N]]` marker on every standalone clinical
+claim and gives no explicit instruction for what to do when no retrieved paper
+supports one; the corrective-retry message ("Add markers from the evidence
+base, OR rephrase") pushes the same way. That is a second, independent
+mechanism for a decorative citation, and it is the one that would still apply
+on the LIVE path — which flags at the same rate and where abstracts were never
+missing. It was left alone so this measurement attributes cleanly to one
+change. **Recommended next: add a grounding rule to the synthesis prompt and
+re-run these three cases plus a live-pinned one.**
+
 ## The deck: two budgets, and only one of them was consulted
 
 `content_slide` is handed `avail` — the body height its frame actually has,

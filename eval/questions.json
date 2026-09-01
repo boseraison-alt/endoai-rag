@@ -978,7 +978,16 @@
         "would pass while the block was being assembled and dropped.",
         "",
         "Thread fixture shared with tests/test_review_context.py",
-        "(LASER_EXCHANGE / FOLLOW_UP)."
+        "(LASER_EXCHANGE / FOLLOW_UP).",
+        "",
+        "HISTORY: this assertion FAILED when it was written, and the failure",
+        "was real. rag_results_to_scored dropped title and abstract, so the",
+        "library evidence block held only metadata lines and no retrieved",
+        "paper mentioned lasers ANYWHERE in what Claude was given -- while",
+        "the generated search terms were full of laser synonyms, so the",
+        "context had reached the generator perfectly well. The case was",
+        "measuring the block, which is what it should measure, and the block",
+        "was empty of text. It passes since that fix (CURO_HANDOVER 5[B])."
       ]
     },
     {

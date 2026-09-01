@@ -1181,12 +1181,7 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
     the same gates as the two-arm path (every value verbatim in the source
     text, one quantity, one unit, no ranges, PMIDs into the footer).
     """
-    arms = [a for a in (kw.get("arms") or []) if isinstance(a, dict)]
-    categories = kw.get("categories") or [a.get("label") or a.get("name") or ""
-                                          for a in arms]
-    arm_values = kw.get("values") or [a.get("stat") for a in arms]
-    categories = [c for c in (categories or [])]
-    arm_values = [v for v in (arm_values or [])]
+    ARMS, PAIRING_OK = _arms_of(kw)
 
     spec = {
         "title": title, "primary_stat": primary_stat,
@@ -1194,11 +1189,21 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
         "secondary_label": secondary_label, "citation": citation or "",
         "callout": callout or "",
     }
-    if len(categories) >= 2 and len(categories) == len(arm_values):
-        spec["categories"] = categories
-        spec["values"] = arm_values
-        if kw.get("unit"):
-            spec["unit"] = kw["unit"]
+    # `arms` is AUTHORITATIVE once present, and the two-arm keys are dropped
+    # from the spec entirely. Leaving them in let `detect_chartable` fall
+    # through to `_from_stat_panel` when the arms failed a gate, so a spec
+    # whose arms were refused for mixed units still charted
+    # primary_stat/secondary_stat — while the web deck, which lets arms shadow
+    # the two-arm keys outright, rendered text. One spec, two exports, two
+    # different slides: invariant 9.
+    if ARMS:
+        spec.pop("primary_stat", None)
+        spec.pop("secondary_stat", None)
+        if len(ARMS) >= 2 and PAIRING_OK:
+            spec["categories"] = [lbl for lbl, _v in ARMS]
+            spec["values"] = [v for _l, v in ARMS]
+            if kw.get("unit"):
+                spec["unit"] = kw["unit"]
     chart = chart_data.detect_chartable(spec, _source_text)
     if chart is not None:
         return chart_slide(prs, title=title, eyebrow=eyebrow, chart=chart,
@@ -1208,11 +1213,17 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
     # No verified chart. The values still belong on the slide — they are the
     # slide's content — they are simply not plotted, because plotting them
     # would assert a comparison the source text does not support.
-    # Arms are content whether or not they could be plotted: a refused chart
-    # must not silently delete the numbers the slide is about.
-    pairs = [(primary_stat, primary_label), (secondary_stat, secondary_label)]
-    if len(categories) >= 2 and len(categories) == len(arm_values):
-        pairs = list(zip(arm_values, categories))
+    #
+    # Every arm survives to here, including a single arm, an arm whose `stat`
+    # is missing and a malformed `arms` value. An earlier version required
+    # two-or-more well-formed arms before it looked at them at all and
+    # otherwise fell back to the UNSET two-arm keys, which rendered a slide
+    # with a title and nothing else — content silently deleted by a guard
+    # meant to protect a chart.
+    if ARMS:
+        pairs = [(v, l) for l, v in ARMS]
+    else:
+        pairs = [(primary_stat, primary_label), (secondary_stat, secondary_label)]
     pairs = [(sanitize(str(s)), sanitize(str(l or ""))) for s, l in pairs if s]
 
     # The generator does not always put a NUMBER in a "stat" field; real decks
@@ -1229,6 +1240,50 @@ def stat_panel(prs, *, title: str = "", primary_stat: str = "",
     return content_slide(prs, title=title, eyebrow=eyebrow, bullets=bullets,
                          lead=sanitize(callout or ""),
                          citations=_citation_fields(spec), **_page_kw(kw))
+
+
+def _arms_of(kw: dict) -> tuple[list, list]:
+    """Normalise every shape the generator might emit into [(label, stat), ...].
+
+    Shared by `stat_panel` and, through `webdeck.plan`, by the web deck, so the
+    two exports cannot disagree about what the arms of a comparison ARE before
+    they even get to disagreeing about whether to plot them.
+
+    Accepts: `arms=[{label, stat}, ...]`, the raw `categories`/`values` pair,
+    a list of bare stat strings, and one arm. Returns ([], True) for anything
+    it cannot read — an int, a string, a dict — rather than raising, because
+    `webdeck.plan` had no guard at all and `arms=5` raised TypeError there
+    while `build_deck_from_specs` merely warned and dropped the slide.
+
+    Returns (pairs, pairing_is_trustworthy). The flag is False only for a
+    categories/values pair of unequal length: the values are still returned,
+    because they are the slide's content, but no chart may be drawn from a
+    pairing nobody can verify.
+    """
+    raw = kw.get("arms")
+    out: list[tuple[str, object]] = []
+    if isinstance(raw, (list, tuple)):
+        for i, a in enumerate(raw):
+            if isinstance(a, dict):
+                out.append((str(a.get("label") or a.get("name") or ""),
+                            a.get("stat")))
+            elif isinstance(a, (str, int, float)):
+                # A bare value with no label of its own still names an arm.
+                out.append((f"Arm {i + 1}", a))
+    mismatched = False
+    if not out:
+        cats = kw.get("categories")
+        vals = kw.get("values")
+        if isinstance(cats, (list, tuple)) and isinstance(vals, (list, tuple)):
+            # Unequal lengths are a malformed spec with no correct pairing, so
+            # the CHART is refused (see the caller) — but the values are still
+            # the slide's content and are kept. Returning nothing here rendered
+            # a title with an empty body under it.
+            mismatched = len(cats) != len(vals)
+            out = [(str(c), v) for c, v in zip(cats, vals)]
+            out += [(f"Arm {i + 1}", v)
+                    for i, v in enumerate(vals[len(cats):], start=len(cats))]
+    return out, (not mismatched)
 
 
 def _is_numeric_stat(text: str) -> bool:

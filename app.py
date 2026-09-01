@@ -1252,14 +1252,22 @@ def _scored_to_text(scored_papers: list, label: str) -> str:
     emitted no badges at all, so library-served evidence reached Claude
     stripped of every integrity signal.
 
-    The title and abstract follow that line, exactly as they do on the live
-    path (`endo_ai.build_evidence_base`, annotated-text loop). They did not,
-    for as long as this function has existed: sharing the metadata RENDERER
-    was mistaken for sharing the BLOCK, and the parity test in
-    `tests/test_coi_scoping.py` compared the two lines and passed throughout.
-    The result was a prompt that named a paper and never said what it found,
-    while instructing the model to write a paragraph on what the evidence shows
-    and to put a [[PMID:N]] marker on every clinical claim.
+    The title and abstract follow that line. They did not, for as long as this
+    function has existed: sharing the metadata RENDERER was mistaken for
+    sharing the BLOCK, and the parity test in `tests/test_coi_scoping.py`
+    compared the two LINES and passed throughout. The result was a prompt that
+    named a paper and never said what it found, while instructing the model to
+    write a paragraph on what the evidence shows and to put a [[PMID:N]] marker
+    on every clinical claim.
+
+    ONE ASYMMETRY REMAINS, deliberately. The live path
+    (`endo_ai.build_evidence_base`, annotated-text loop) emits the abstract OR,
+    failing that, the title — never both. This emits both, so a library-served
+    paper reaches Claude with about 100 more characters of title than a
+    live-served one. The 2026-08-31 before/after measurement of the
+    citation-support flag rate (39.4% -> 8.5%) was taken with both present, so
+    aligning the two paths means re-measuring, and the sensible direction is to
+    give the LIVE path the title as well rather than take it away here.
     """
     from endo_ai import format_paper_context_line
     text = f"\n[{label}]\n"
@@ -1957,7 +1965,16 @@ def history_detail(cache_id: int):
             "question": question,
             "mode":     mode_tag,
             "answer":   answer or "",
-            "papers":   papers or [],
+            # THE WHITELIST BELONGS HERE TOO. This was the one route that
+            # serialised paper dicts without it, and it was harmless only by
+            # accident: nothing in `query_cache.papers` had ever carried an
+            # abstract, because the live path keeps abstracts in a side map
+            # and never in the scored dict. The moment the library path
+            # started carrying them, every library answer cached from then on
+            # would have handed full abstract text to any client opening it
+            # from history. "Abstracts stay server-side" has to be enforced at
+            # every exit, not at the ones that happened to be tested.
+            "papers":   _safe_papers(papers or []),
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500

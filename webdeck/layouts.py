@@ -95,12 +95,20 @@ def value_is_cited(value: str, source_text: str) -> bool:
     "Verbatim" is checked on the NUMBER, not the whole label: the spec writes
     "96.1%" where the answer may write "96.1 %" or "96.1% of cases". Anything
     with no number in it is not plottable at all.
+
+    Delegates to `presentations.chart_data.verbatim_in` so the two deck
+    exports apply ONE rule. This used to be `all(n in haystack ...)` — an
+    unanchored substring test — so "96" matched inside "961 canals" and the
+    web deck charted a number the source never states while the PPTX
+    (which has always used the anchored form) correctly refused the same spec.
+    It also missed the thousands-separator and unicode-minus normalisation
+    `chart_data._norm` does on both sides.
     """
+    from presentations.chart_data import verbatim_in
     nums = _NUM.findall(str(value or ""))
     if not nums:
         return False
-    haystack = source_text or ""
-    return all(n in haystack for n in nums)
+    return all(verbatim_in(n, source_text or "") for n in nums)
 
 
 def _as_float(value):

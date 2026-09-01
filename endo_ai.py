@@ -4616,10 +4616,16 @@ HARD LENGTH CAP: Your entire response must not exceed 2,000 words. Budget approx
 Write the module content now."""
 
     print(f"\n[curriculum] Step C.{idx}/{total} — writing module: '{title}'")
-    # Routed to Sonnet — evidence context is now per-PMID filtered (< 25K tokens)
-    # so Opus's extra context window isn't needed. Validation+retry provides the
+    # Routed to Sonnet — the per-module evidence context is small enough that
+    # Opus's extra context window isn't needed. Validation+retry provides the
     # quality safety net. 5× cheaper than Opus with equivalent synthesis quality
     # at the density targets here (~650 words + evidence table).
+    #
+    # The bound this comment used to state ("< 25K tokens") no longer holds:
+    # the library evidence block now carries titles and abstracts, so a 47-paper
+    # module measured ~36K tokens at the worst case (2026-08-31). Sonnet's 200K
+    # window is still far from the limit, so the ROUTING stands — but do not
+    # quote 25K as a constraint when deciding anything else.
     convo = [{"role": "user", "content": user_message}]
     resp = _invoke_claude(client, function_name=f"write_curriculum_module[{idx}/{total}]",
         model=MODELS["reasoning_standard"],
