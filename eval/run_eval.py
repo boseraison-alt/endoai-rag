@@ -144,6 +144,16 @@ def run_case_with_synthesis(case):
     app_mod.build_evidence_base_with_progress = _pinned_builder
     app_mod.get_cached_answer = lambda *a, **k: None
     app_mod.save_query_cache = lambda *a, **k: None
+
+    # `force_route` reaches synthesis through `build_evidence_base_with_progress`
+    # and nothing else. Learn mode does not go through it: /ask hands the whole
+    # question to `build_deep_learning_module`, which does its own per-module
+    # retrieval. So a learn case's pin is inert, and the two laser cases —
+    # identical questions pinned live and library — run the same pipeline.
+    if case.get("mode") == "learn" and pinned:
+        print(f"  NOTE: mode=learn ignores force_route={pinned!r}. The curriculum "
+              f"builder does its own retrieval and never calls the pinned "
+              f"builder, so this case is NOT route-pinned under --synthesis-subset.")
     try:
         client = app_mod.app.test_client()
         r = client.post("/ask", json={"question": case["question"],
@@ -215,7 +225,12 @@ def run_case_with_synthesis(case):
             failures.append(f"{unsourced} section(s) state numeric clinical "
                             f"parameters with no citation (max {cap})")
 
-    return {"route": pinned or "?", "papers": len(st.get("papers") or []),
+    # `route` is None, NOT the pin. It used to be `pinned or "?"`, which echoed
+    # the REQUESTED route back into a field named like a measurement — and the
+    # printed line "route library" was then read as evidence that the case had
+    # been served from the library. HANDOVER's rule is that routes are
+    # measured, not assumed; this path cannot measure one, so it reports that.
+    return {"route": None, "papers": len(st.get("papers") or []),
             "per_tier": {}, "esearch_queries": 0, "esearch_hits": 0,
             "esearch_empty": 0, "esearch_hits_per_query": None,
             "search_terms_used": 0, "answer_chars": len(answer),
@@ -532,8 +547,11 @@ def _diff_case(cid, measured, base):
             continue
         rows.append((cid, base_key, f"{lo:g}-{hi:g}", f"{got:g}",
                      "ABOVE" if got > hi else "BELOW"))
+    # `route` is None when the run could not measure one (synthesis mode).
+    # Comparing that against the baseline would report every synthesis case as
+    # a route change, which is noise, not drift.
     routes = base.get("routes_observed") or []
-    if routes and measured.get("route") not in routes:
+    if routes and measured.get("route") is not None             and measured.get("route") not in routes:
         rows.append((cid, "route", "|".join(routes), str(measured.get("route")),
                      "CHANGED"))
     return rows
@@ -624,8 +642,15 @@ def main():
 
         base = case.get("baseline") or {}
         if base.get("papers") is not None:
+            # A POINT from whenever --update-baseline last ran, which for most
+            # cases is long before the current baseline_v* file. Labelled as
+            # such: read on its own it says "10 -> 39 (+29)" for a case whose
+            # tracked range is 37-41. --diff is the comparison that means
+            # something.
             delta = measured["papers"] - base["papers"]
-            print(f"  vs baseline: {base['papers']} -> {measured['papers']} ({delta:+d})")
+            print(f"  vs stale point baseline in questions.json: "
+                  f"{base['papers']} -> {measured['papers']} ({delta:+d}) "
+                  f"— use --diff for the tracked range")
 
         if failures:
             n_fail += 1

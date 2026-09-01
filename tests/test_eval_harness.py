@@ -667,3 +667,61 @@ class TestSynthesisBypassesTheAnswerCache:
     def test_a_paid_answer_is_not_flagged(self, monkeypatch):
         _seen, _m, failures, _app = self._run(monkeypatch, cost=0.42)
         assert not any("no synthesis happened" in f for f in failures)
+
+
+class TestSynthesisModeDoesNotInventARoute:
+    """`measured["route"]` was `pinned or "?"` — the REQUESTED route echoed
+    back into a field named like a measurement, printed as "route  library".
+    Read as evidence the case had been served from the library, it was only
+    evidence that the case had ASKED to be. HANDOVER: routes are measured, not
+    assumed."""
+
+    def _run(self, monkeypatch, case):
+        import app as app_mod
+        import endo_ai
+
+        class _Resp:
+            status_code = 200
+            data = b""
+            def get_json(self):
+                return self._j
+
+        class _Client:
+            def post(self, *a, **k):
+                r = _Resp(); r._j = {"job_id": "j1"}; return r
+            def get(self, *a, **k):
+                r = _Resp()
+                r._j = {"status": "complete", "answer": "text",
+                        "papers": [{"pmid": "1"}], "cost_usd": 0.5}
+                return r
+
+        monkeypatch.setattr(app_mod.app, "test_client", lambda: _Client())
+        monkeypatch.setattr(endo_ai, "LIBRARY_WRITE_BACK", True, raising=False)
+        return run_eval.run_case_with_synthesis(case)
+
+    def test_the_pin_is_not_reported_as_the_route(self, monkeypatch):
+        measured, _f = self._run(monkeypatch, {
+            "id": "c", "question": "q", "mode": "review",
+            "force_route": "library", "expect": {}})
+        assert measured["route"] is None, \
+            "the requested route was reported as the measured one"
+
+    def test_an_unmeasured_route_is_not_diffed(self):
+        """None must not read as 'the route changed' against every baseline."""
+        base = {"routes_observed": ["library"], "papers": {"min": 1, "max": 9}}
+        rows = run_eval._diff_case("c", {"route": None, "papers": 5}, base)
+        assert not any(r[1] == "route" for r in rows)
+
+    def test_a_learn_case_says_its_pin_is_inert(self, monkeypatch, capsys):
+        """/ask sends learn mode to build_deep_learning_module, which does its
+        own per-module retrieval and never calls the pinned builder. The two
+        laser cases — same question, pinned live and library — therefore run
+        the identical pipeline under --synthesis-subset."""
+        self._run(monkeypatch, {"id": "c", "question": "q", "mode": "learn",
+                                "force_route": "library", "expect": {}})
+        assert "ignores force_route" in capsys.readouterr().out
+
+    def test_a_review_case_gets_no_such_note(self, monkeypatch, capsys):
+        self._run(monkeypatch, {"id": "c", "question": "q", "mode": "review",
+                                "force_route": "library", "expect": {}})
+        assert "ignores force_route" not in capsys.readouterr().out
