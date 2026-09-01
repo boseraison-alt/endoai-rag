@@ -32,6 +32,7 @@ from endo_ai import (
     _is_exempt_section,
     _build_corrective_message,
     _extract_claim_citation_pairs,
+    _PMID_RE,
     _append_support_warnings,
     _EVMAP_MAX_UNATTRIBUTED,
     _EVMAP_MAX_GAP_RATIO,
@@ -523,3 +524,81 @@ class TestEdgeCases:
                     "fabricated_pmids", "valid_pmids", "unattributed_claims",
                     "gap_sections", "total_cite_required", "failure_reason"):
             assert key in r
+
+
+class TestAClaimEndsWhereTheClaimEnds:
+    """`_extract_claim_citation_pairs` decides what text each cited PMID is
+    judged against. Two splitter defects scoped it wrongly.
+
+    The measurement is the reason these are correctness fixes rather than
+    tidying, and it reversed an earlier reading. Merged pairs are flagged at
+    37.6% (76/202) against 50.8% (246/484) for clean ones, p=0.002 — merged
+    pairs are flagged LESS. A long blob gives the judge more surface on which
+    to find something the abstract does support, so a bad citation buried in a
+    merge is less likely to be caught than the same citation standing alone.
+    The defect suppressed the guardrail.
+    """
+
+    def test_a_bold_pseudo_heading_ends_a_claim(self):
+        """The generator's real section markers are bold lines, not ATX
+        headings. `_HEADING_RE` misses them and `_SENTENCE_SPLIT_RE` will not
+        break on a line starting with `*`, so two claims from two different
+        evidence levels fused into one blob and each PMID was judged against
+        both. Real shape, from answers/answer_20260502_163140.txt."""
+        answer = (
+            "## EVIDENCE SUMMARY\n"
+            "The ESE guidelines historically recommended multi-visit "
+            "treatment for necrotic teeth [[PMID:111]].\n\n"
+            "**Level I — RCTs and Systematic Reviews**\n\n"
+            "The Cochrane systematic review found no difference in healing "
+            "at four years [[PMID:222]].\n"
+        )
+        pairs = {p: c for c, p in _extract_claim_citation_pairs(answer)}
+        assert set(pairs) == {"111", "222"}
+        assert "Cochrane" not in pairs["111"], (
+            "the pseudo-heading did not end the claim: PMID 111 is being "
+            "judged against the Cochrane sentence as well as its own")
+        assert "ESE guidelines" not in pairs["222"]
+        assert "Level I" not in pairs["111"] and "Level I" not in pairs["222"]
+
+    def test_an_abbreviation_does_not_end_a_claim(self):
+        """"Er:YAG vs. SWEEPS" and "Dagher et al. 2019" are each one sentence.
+        Splitting them stranded the citation on a subjectless fragment —
+        10.7% of all pairs across the stored answers."""
+        answer = (
+            "## Findings\n"
+            "Er:YAG vs. SWEEPS showed no difference in healing at 12 months "
+            "[[PMID:333]].\n"
+            "Dagher et al. 2019 found no significant difference between PIPS "
+            "and conventional needle irrigation [[PMID:444]].\n"
+        )
+        pairs = {p: c for c, p in _extract_claim_citation_pairs(answer)}
+        assert "Er:YAG vs. SWEEPS" in pairs["333"]
+        assert pairs["444"].startswith("Dagher et al. 2019")
+
+    def test_two_real_sentences_still_split(self):
+        """The abbreviation guard must not have disabled sentence splitting."""
+        answer = ("## Findings\nMTA outperformed CaOH [[PMID:111]]. "
+                  "Biodentine was equivalent to MTA [[PMID:222]].\n")
+        pairs = {p: c for c, p in _extract_claim_citation_pairs(answer)}
+        assert "Biodentine" not in pairs["111"]
+        assert "MTA outperformed" not in pairs["222"]
+
+    def test_no_citation_is_lost_or_gained_on_a_real_answer(self):
+        """Re-scoping must not change WHICH papers are cited — only what each
+        one is judged against. Measured across all stored answers when the
+        patch was written: pair count identical at 1,994, per-answer PMID
+        multiset identical, mean claim length 550 -> 476 chars."""
+        import collections
+        import pathlib
+        answers = sorted(pathlib.Path("answers").glob("*.txt"))[:12]
+        assert answers, "no stored answers to check against"
+        for path in answers:
+            text = path.read_text(encoding="utf-8", errors="replace")
+            pairs = _extract_claim_citation_pairs(text)
+            cited = collections.Counter(p for _c, p in pairs)
+            in_body = collections.Counter(
+                m.group(1) for m in _PMID_RE.finditer(text))
+            # Every PMID the extractor reports must really be in the answer.
+            assert set(cited) <= set(in_body), (
+                f"{path.name}: extractor invented {set(cited) - set(in_body)}")

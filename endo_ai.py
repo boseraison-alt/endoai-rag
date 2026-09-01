@@ -3298,7 +3298,61 @@ _CLAIM_PATTERNS = [
 
 _PMID_RE          = re.compile(r"\[\[PMID:\s*(\d+)\s*\]\]")
 _HEADING_RE       = re.compile(r"^(#{2,4})\s+(.+?)\s*$", re.MULTILINE)
-_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z\d])")
+
+# A period inside an abbreviation is not a sentence end. Each lookbehind is
+# fixed-width on its own, which is what `re` requires; chaining them is how a
+# variable-width guard is spelled without pulling in `regex`.
+#
+# Measured on the 77 stored answers: 10.7% of claim-citation pairs sat on a
+# piece cut at one of these. "Er:YAG vs. SWEEPS" broke in two, and — far more
+# often — "Dagher et al. 2019" put the author on one side of the cut and the
+# citation on the other, leaving the PMID judged against a subjectless
+# fragment.
+_SENT_ABBREV_GUARD = (
+    r"(?<!\bvs\.)(?<!\bcf\.)(?<!\bDr\.)(?<!\bSt\.)(?<!\bNo\.)(?<!\bFig\.)"
+    r"(?<!\bet al\.)(?<!\be\.g\.)(?<!\bi\.e\.)(?<!\bapprox\.)"
+    r"(?<!\bInc\.)(?<!\bLtd\.)(?<!\bJr\.)(?<!\bSr\.)(?<!\bResp\.)"
+    r"(?<!\bmin\.)(?<!\bsec\.)(?<!\bmo\.)(?<!\bwk\.)(?<!\byr\.)"
+)
+_SENTENCE_SPLIT_RE = re.compile(
+    _SENT_ABBREV_GUARD + r"(?<=[.!?])\s+(?=[A-Z\d])")
+
+# The generator's REAL section markers are bold pseudo-headings, not ATX
+# headings: `**Level II — Prospective Studies**` on a line of its own.
+# `_HEADING_RE` does not match them, so `_split_sections` does not split there;
+# `_SENTENCE_SPLIT_RE` does not either, because the line starts with `*` and
+# not [A-Z\d]. Everything from the previous sentence through the heading and
+# into the next paragraph therefore fused into ONE "sentence" carrying several
+# claims and several PMIDs — 32% of all claim-citation pairs — and each PMID
+# was judged against all of them.
+#
+# The measurement that matters, and it reverses an earlier "no effect" reading:
+# merged pairs are flagged 37.6% of the time against 50.8% for clean ones
+# (p=0.002). Merged pairs are flagged LESS. A long blob gives the judge more
+# surface on which to find something the abstract does support, so a bad
+# citation buried in a merge is less likely to be caught than the same citation
+# on its own sentence. This defect SUPPRESSES the guardrail.
+_PSEUDO_HEADING_RE = re.compile(
+    r"^[ \t]*\*\*[^*\n]{2,120}\*\*[ \t]*:?[ \t]*$", re.MULTILINE)
+
+
+def _split_claim_units(body: str) -> list:
+    """Split a section body into claim-sized units.
+
+    A bold pseudo-heading on its own line is a hard boundary — it is a
+    heading, never part of a claim — and inside each block the sentence split
+    respects abbreviations. Deliberately NOT folded into `_split_sections`:
+    that would also change which sections `_is_exempt_section` skips and how
+    `_detect_gap_sections` counts, and neither of those is the defect here.
+    Widening `_HEADING_RE` would additionally make a `**Key Takeaways**`
+    pseudo-heading EXEMPT and so reduce what the guardrail checks, which is
+    the wrong direction for a safety gate.
+    """
+    out = []
+    for block in _PSEUDO_HEADING_RE.split(body or ""):
+        cleaned = re.sub(r"^\s*[-*•]\s+", "", block, flags=re.MULTILINE)
+        out.extend(_SENTENCE_SPLIT_RE.split(cleaned))
+    return out
 
 
 def _extract_evidence_pmids(evidence: dict) -> set:
@@ -3377,8 +3431,7 @@ def _detect_unattributed_claims(answer: str) -> list:
         if _is_exempt_section(title):
             continue
         # Strip markdown bullets/headings before splitting into sentences
-        cleaned = re.sub(r"^\s*[-*•]\s+", "", body, flags=re.MULTILINE)
-        for sent in _SENTENCE_SPLIT_RE.split(cleaned):
+        for sent in _split_claim_units(body):
             s = sent.strip()
             if len(s) < 20:
                 continue
@@ -3629,8 +3682,7 @@ def _extract_claim_citation_pairs(answer: str) -> list:
     for title, body in _split_sections(answer or ""):
         if _is_exempt_section(title):
             continue
-        cleaned = re.sub(r"^\s*[-*•]\s+", "", body or "", flags=re.MULTILINE)
-        for sent in _SENTENCE_SPLIT_RE.split(cleaned):
+        for sent in _split_claim_units(body):
             s = sent.strip()
             if len(s) < 20:
                 continue

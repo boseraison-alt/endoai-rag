@@ -254,10 +254,6 @@ jobs_lock = threading.Lock()
 audio_jobs      = {}
 audio_jobs_lock = threading.Lock()
 
-# ── Case conversation evidence store ─────────────────────
-case_convs      = {}   # conv_id → {"evidence": dict}
-case_convs_lock = threading.Lock()
-
 # ── Review-mode conversation memory ──────────────────────
 # thread_id → [{question, recommendation, pmids}], oldest first.
 #
@@ -2021,6 +2017,28 @@ def case_chat():
 
 
 def run_case_chat(job_id: str, messages: list, conv_id: str):
+    """`conv_id` is the CLIENT's conversation identity and is deliberately
+    unused here.
+
+    There used to be a `case_convs[conv_id] = {"evidence": evidence}` store
+    below. Nothing ever read it, and nothing usefully could:
+
+    - the whole conversation arrives in `messages` on every turn, and the
+      client re-sends it in full (`templates/index.html`, `caseMessages`), so
+      the server has no conversation state to remember;
+    - the evidence base is rebuilt per turn from a query that combines the case
+      with the LATEST follow-up, so a cached turn-1 evidence base would answer
+      turn 3 from the wrong literature — the value was not merely unread, it
+      would have been wrong to read;
+    - the one plausible consumer, a sources panel, is already served by
+      `update_job(..., papers=...)` below, which the case poller already
+      fetches, exactly as Review mode does it.
+
+    Meanwhile it retained a full evidence base — annotated abstracts included,
+    ~277 KB — per CLIENT-SUPPLIED `conv_id`, with no cap and no eviction,
+    unlike `review_threads` (`REVIEW_THREADS_MAX`). Deleted rather than wired
+    up. The parameter and the API field stay: the client owns that identifier.
+    """
     try:
         original_q = messages[0]["content"] if messages else ""
         # Latest user message drives THIS turn's literature search
@@ -2047,10 +2065,6 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
         # Measured before this: case answers cited a median of 2 papers from a
         # median-100 evidence base.
         evidence = build_evidence_base_with_progress(job_id, search_q, mode="case")
-
-        # Persist the most recent evidence for this conversation
-        with case_convs_lock:
-            case_convs[conv_id] = {"evidence": evidence}
 
         if is_aborted(job_id):
             update_job(job_id, status="aborted", progress=100, message="Cancelled")
