@@ -606,9 +606,27 @@ live-served one got.
 
 Two caveats. One before/after pair per case, on a metric whose per-case spread
 was 19–67% beforehand, is a direction and not an effect size. And the fix
-supplies whatever the library STORED: 749 rows hold an abstract truncated at
-1200 characters (see Known open items), so for a third of the library the model
-still does not see the conclusions.
+supplies whatever the library STORED — which is what the abstract repair below
+went on to address.
+
+### DECISION (RB, 2026-08-31): the ~$0.70 library answer is the permanent default
+
+Full titles and abstracts in the synthesis context are approved as the standing
+behaviour, at roughly double the previous per-answer cost (~$0.36 → ~$0.70;
+~7k → ~31k input tokens).
+
+**The rationale is not that the answers got better in the abstract. It is that
+the $0.36 path was writing clinical answers without the papers' content.** The
+model was given each paper's authors, year, citations, sample size, follow-up,
+impact factor and a score — and no sentence of what the paper found — and was
+then asked to write a paragraph per tier on what the evidence shows, with a
+`[[PMID:N]]` marker on every claim. It did what that prompt makes inevitable:
+it got the author, the year and the n right and invented the finding. The
+cheaper number was never the price of the same product.
+
+Do not re-litigate this to save tokens. If cost has to come down, take it out of
+paper COUNT or tier caps — decisions about which evidence to send — not out of
+whether the evidence sent has any content in it.
 
 ### The detector
 
@@ -632,6 +650,57 @@ on the LIVE path — which flags at the same rate and where abstracts were never
 missing. It was left alone so this measurement attributes cleanly to one
 change. **Recommended next: add a grounding rule to the synthesis prompt and
 re-run these three cases plus a live-pinned one.**
+
+## Healing the abstracts, and two ways to write a paper onto the wrong row
+
+The library's abstracts were cut at ingest — 1,342 of 2,350 rows (57%) at
+exactly 1,000 or 1,200 characters, across six call sites. Fixed at the source
+(`build_library.py` ×2, `fetch_open_sources.py`, `fetch_pmc_corpus.py`,
+`ingest_aae_guidelines.py`, `repair_abstracts.py`) and healed in place by
+`scripts/repair_truncated_abstracts.py`.
+
+| | before | after |
+|---|---|---|
+| mean abstract length | 1,182 chars | 1,631 |
+| rows with the truncation signature | 1,342 | 1 |
+| abstracts containing "conclusion" | 7.2% truncated / 39.3% whole | 54.7% |
+| rows PubMed holds no abstract for | 8 | 4 |
+
+The remaining signature row is PMID 25231145, whose PubMed abstract genuinely
+IS 1,200 characters and ends on a complete sentence; the four empty rows were
+confirmed abstract-less by a targeted re-fetch rather than assumed. 1,355 rows
+re-embedded, matching the changed-row count exactly.
+
+**Fetch the XML, not the text dump.** The live path parses
+`rettype=abstract&retmode=text` with a "longest paragraph ≥ 200 chars"
+heuristic. That is the wrong tool when fidelity is the whole point: efetch XML
+gives `<AbstractText>` as tagged elements WITH their section labels, so a
+structured abstract arrives as "BACKGROUND: … RESULTS: … CONCLUSIONS: …"
+rather than as whichever paragraph happened to be longest.
+
+### Two bugs in the fetcher, both of which would have written one paper's abstract onto another's row
+
+Worth recording because each one produced plausible output and neither is
+obvious from reading the code:
+
+1. **`.//PMID` matched the wrong PMID.** A PubMed record's
+   `CommentsCorrectionsList` contains `<PMID>` children of its own — the ids of
+   the papers it corrects or updates. A descendant search picks up whichever
+   comes first, and on some records that is not the article's own id. Observed
+   returning PMID 2019, which is not in this library at all. Use the explicit
+   `MedlineCitation/PMID` (and `BookDocument/PMID` for book records).
+2. **`find(a) or find(b)` silently discarded a valid element.** An ElementTree
+   element with no children is FALSY, so `<PMID>12345</PMID>` — a childless
+   element with text — evaluates false and the `or` falls through to the
+   fallback path. This turned 2,241 successfully fetched abstracts into 72
+   usable ones, and the failure looked exactly like PubMed not answering.
+   **Never truth-test an Element. `is None`, always.**
+
+The first bug crashed on a KeyError, which is why it was found. It is worth
+noticing that it crashed only because the stray id was absent from the library:
+had it been a PMID the library DOES hold, the run would have written one
+paper's abstract onto another's row and reported success. The script now
+guards on membership as well as using the explicit path.
 
 ## The deck: two budgets, and only one of them was consulted
 
@@ -856,10 +925,31 @@ successor only; the library backfill resolves chains to the terminal version
   abstract that stops before the findings, which is better than nothing but is
   not the same as being shown the paper. Fixing it is a re-ingest, not a code
   change.
-- **`_extract_claim_citation_pairs` has two input defects, neither of which
-  drives the flag rate.** Measured before assuming: pairs whose claim spans a
-  bold pseudo-heading are flagged at 50.0% against 52.9% for clean ones, so
-  fixing them would move nothing. They are still wrong, and both are cheap:
+- ~~**`_extract_claim_citation_pairs` has two input defects, neither of which
+  drives the flag rate.**~~ **CORRECTED, and the correction reverses the
+  conclusion.** The first measurement (50.0% merged vs 52.9% clean — "no
+  effect") did not reproduce. A second pass matched every
+  `verify_citation_support` record to the stored answer written within 600s of
+  it, kept only records whose re-derived pair count equals `checked` exactly,
+  and dropped one record whose stored answer had been rewritten after the
+  check — 36 usable records, 686 pairs, all 322 flags matched back to a derived
+  pair. Result: **merged 37.6% (76/202) vs clean 50.8% (246/484), p=0.002.**
+  The clean rate reproduces the original 52.9% almost exactly; the merged rate
+  does not, and the dropped record accounts for it.
+
+  **The direction is the uncomfortable one.** Merged pairs are flagged LESS
+  often. A long blob gives the judge more surface on which to find something
+  the abstract does support, so a bad citation buried in a merged claim is
+  *less* likely to be caught than the same citation on its own sentence. The
+  defect suppresses the guardrail rather than blurring it — which makes it a
+  correctness fix for a safety gate, not the cosmetic cleanup the first
+  measurement made it look like.
+
+  Two lessons worth more than the fix: a null result deserves the same scrutiny
+  as a positive one (the first pass matched flags to claims loosely and never
+  checked that its derived pair count agreed with the `checked` the run
+  recorded), and "no effect" is the easiest finding to get wrong, because
+  nothing about it demands explanation. The defects:
   - `_HEADING_RE` only matches ATX headings (`## …`), so the `**Level II —
     Prospective Studies**` pseudo-headings the generator actually emits do not
     split a section. `_SENTENCE_SPLIT_RE` then does not split there either
@@ -894,9 +984,15 @@ successor only; the library backfill resolves chains to the terminal version
   the alternative is splitting a clinical sentence — but the guarantee is "no
   overflow unless one bullet alone exceeds the frame", not "no overflow". No
   cached spec triggers it.
-- **`arms` has no real-data coverage yet.** No spec in `slide_specs/` contains
-  the key, because the generator prompt only started offering it in this batch.
-  Every multi-arm test is synthetic until a deck is generated that uses one.
+- **The "longest paragraph" abstract heuristic loses paragraphs.**
+  `ingest_classics.py:219-232` builds a paper's abstract by keeping the longest
+  paragraph of the fetched text, and `app.py`'s `/api/abstract` duplicates the
+  same collapse. A multi-paragraph abstract therefore loses every paragraph but
+  one — conclusions included. Same data-loss class as the truncation fixed
+  above, different mechanism, and it survives that fix untouched because it is
+  a selection rather than a slice. Found by Lane A while removing the caps;
+  deliberately left for its own item because it needs a parser change and a
+  re-ingest of whatever it has already mangled.
 
 ## Commit-history notes
 
