@@ -4468,22 +4468,54 @@ function buildTrustChips(job) {
 
   var answerText = job.answer || '';
 
-  // Citation-support chip
+  // Citation-support chip.
+  //
+  // Review and Case answers carry ONE status block. A Deep Learning curriculum
+  // carries one PER MODULE, because each module is written and checked against
+  // its own evidence base. So every occurrence is counted and the chip reports
+  // the totals — with one block that is exactly the old behaviour, and with N
+  // it is the only honest summary. Matching just the first block would report
+  // module 1's result as if it were the whole curriculum's.
   var supportChip;
-  var m = answerText.match(/Citation support:\s*(\d+)\s+of\s+(\d+)\s+flagged/i);
-  if (m) {
-    var flagged = +m[1], total = +m[2];
-    supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract; flagged claims are listed at the end of the answer">' +
-      '⚠ Checked against abstracts: ' + (total - flagged) + '/' + total + ' consistent</span>';
-  } else if (/Citation support:\s*verified/i.test(answerText)) {
-    var vm = answerText.match(/the (\d+) cited claims/i);
-    // "verified" would over-claim what an abstract-level check can establish.
+  var flagged = 0, totalChecked = 0, unavailable = 0, mm;
+
+  var flaggedRe = /Citation support:\s*(\d+)\s+of\s+(\d+)\s+flagged/gi;
+  while ((mm = flaggedRe.exec(answerText)) !== null) {
+    flagged      += +mm[1];
+    totalChecked += +mm[2];
+  }
+  var verifiedRe = /Citation support:\s*verified\.\*\*\s*Each of the (\d+) cited/gi;
+  while ((mm = verifiedRe.exec(answerText)) !== null) {
+    totalChecked += +mm[1];
+  }
+  var naRe = /Citation support:\s*not available/gi;
+  while ((mm = naRe.exec(answerText)) !== null) {
+    unavailable += 1;
+  }
+  // Older answers said "verified" without the countable sentence shape above.
+  if (totalChecked === 0 && flagged === 0 && /Citation support:\s*verified/i.test(answerText)) {
     supportChip = '<span class="atag atag-ok" title="Each cited claim was compared with its source abstract">' +
-      '✓ Checked against abstracts: ' + (vm ? vm[1] + '/' + vm[1] : 'all') + ' consistent</span>';
+      '✓ Checked against abstracts: all consistent</span>';
+  } else if (totalChecked > 0) {
+    // Any module whose check could not run is named in the chip too — a
+    // partial count presented as a whole-document pass is the same fail-open
+    // shape from a different angle.
+    var naNote = unavailable
+      ? ' · ' + unavailable + ' section' + (unavailable === 1 ? '' : 's') + ' not checked'
+      : '';
+    if (flagged > 0) {
+      supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract; flagged claims are listed in the answer">' +
+        '⚠ Checked against abstracts: ' + (totalChecked - flagged) + '/' + totalChecked +
+        ' consistent' + naNote + '</span>';
+    } else {
+      supportChip = '<span class="atag atag-ok" title="Each cited claim was compared with its source abstract">' +
+        '✓ Checked against abstracts: ' + totalChecked + '/' + totalChecked +
+        ' consistent' + naNote + '</span>';
+    }
   } else {
-    // Anything without an explicit pass/fail marker — "not available"
-    // answers, older cached answers, Deep Learning reports — must say the
-    // check didn't run rather than silently rendering no chip.
+    // Nothing was checked — "not available" answers, older cached answers,
+    // and curricula where every module's check was unavailable. Say the check
+    // didn't run rather than silently rendering no chip.
     supportChip = '<span class="atag atag-neutral" title="Whether each cited source supports its claim was not verified for this answer">' +
       '○ Citation check: not available</span>';
   }
@@ -4503,9 +4535,24 @@ function buildTrustChips(job) {
   return validationChip + supportChip;
 }
 
-function _stripSupportBlockquote(answerText) {
-  return String(answerText || '').replace(
-    /\n*-{3,}\s*\n+>\s*[✓○]\s*\*\*Citation support:\s*(?:verified|not available)[\s\S]*$/i, '');
+// Move (not copy) the pass / not-available blockquote into the header chip.
+//
+// `keepAll` is set for Deep Learning, where the blocks are PER MODULE and sit
+// inside the document next to the module they describe — a single header chip
+// cannot say which module was checked, so those blocks stay in the body.
+//
+// The pattern is deliberately bounded to the blockquote's own lines
+// (`(?:\n>.*)*`) and anchored to the end of the text. It used to end in
+// `[\s\S]*$`, which was harmless while there was exactly one block at the very
+// bottom of a Review answer, but would delete everything from the FIRST block
+// onwards the moment a document carried more than one.
+var _SUPPORT_BLOCKQUOTE_RE =
+  /\n*-{3,}[ \t]*\n+>[ \t]*[✓○][^\n]*\*\*Citation support:[ \t]*(?:verified|not available)[^\n]*(?:\n>[^\n]*)*\s*$/i;
+
+function _stripSupportBlockquote(answerText, keepAll) {
+  var text = String(answerText || '');
+  if (keepAll) return text;
+  return text.replace(_SUPPORT_BLOCKQUOTE_RE, '');
 }
 
 // ── Incremental render while the answer streams ──────
@@ -4620,7 +4667,11 @@ function showResult(question, job) {
   // moved, not copied, so strip it from the body. The FLAGGED block stays in
   // the body: it names the specific suspect claim-citation pairs, which the
   // chip cannot carry.
-  var bodyText = _stripSupportBlockquote(answerText);
+  //
+  // Deep Learning keeps ALL of its blocks: they are per-module, and which
+  // module was checked (or could not be) is information a single chip cannot
+  // represent.
+  var bodyText = _stripSupportBlockquote(answerText, mode === 'learn');
 
   var tagsHtml =
     '<span class="atag ' + (mode === 'learn' ? 'atag-learn' : 'atag-review') + '">' +

@@ -3796,6 +3796,73 @@ def _append_support_warnings(answer: str, support: dict) -> str:
     )
 
 
+def _support_not_run(detail: str) -> dict:
+    """A citation-support result for a path that never reached the checker.
+
+    Same shape verify_citation_support returns, so _append_support_warnings
+    renders it with the SAME vocabulary. A module that was never written still
+    has to say so out loud — "no block" reads as "passed".
+    """
+    return {"flags": [], "checked": 0, "cost": 0.0,
+            "status": "not_run", "detail": detail}
+
+
+def _support_status_block(support: dict) -> str:
+    """The shared renderer's status block on its own, with no answer attached.
+
+    Rendering through _append_support_warnings (rather than re-writing the
+    wording here) is the point: there is exactly ONE citation-support
+    vocabulary in this codebase and this is how the curriculum path borrows it.
+    """
+    return _append_support_warnings("", support).strip()
+
+
+def _ensure_curriculum_support_blocks(final: str, entries: list) -> str:
+    """Guarantee every module's citation-support status survived the stitcher.
+
+    Each module's block is appended to its script BEFORE stitching, and the
+    stitcher is instructed to reproduce module bodies verbatim — but "the model
+    was told to" is not a guarantee, and a status block that silently
+    evaporates is the fail-open bug this whole check exists to avoid. So after
+    stitching we count, deterministically, how many of each block actually
+    made it through, and restate the missing ones in an appendix.
+    """
+    text = final or ""
+    expected = {}          # block text -> [titles], in module order
+    order    = []
+    for i, e in enumerate(entries or []):
+        support = (e or {}).get("citation_support")
+        if not support:
+            continue
+        block = _support_status_block(support)
+        title = (e or {}).get("title") or f"Module {i + 1}"
+        if block not in expected:
+            expected[block] = []
+            order.append(block)
+        expected[block].append(title)
+
+    missing = []
+    for block in order:
+        titles  = expected[block]
+        present = text.count(block)
+        for title in titles[present:]:
+            missing.append((title, block))
+
+    if not missing:
+        return text
+
+    print(f"  [citation_support] {len(missing)} module status block(s) did not "
+          f"survive stitching — restated in an appendix")
+    out = [text.rstrip(),
+           "\n\n---\n\n## Citation Support by Module\n\n",
+           "The stitched curriculum did not carry every module's "
+           "citation-support outcome through verbatim. Those outcomes are "
+           "restated here so none of them is silently missing.\n"]
+    for title, block in missing:
+        out.append(f"\n**{title}**\n\n{block}\n")
+    return "".join(out)
+
+
 # ──────────────────────────────────────────────────────────
 # INTENT ROUTER (Haiku)
 # ──────────────────────────────────────────────────────────
@@ -4674,6 +4741,33 @@ Write the module content now."""
         # Don't prepend a banner inside a curriculum module — the stitcher
         # would propagate it awkwardly. Failure is logged for review instead.
 
+    # ── The v2 guardrail, now on the Deep Learning path too ──
+    # validate_evidence_mapping above proves every cited PMID was actually
+    # retrieved for this module. It does NOT ask whether the cited abstract
+    # SUPPORTS the sentence it is attached to — that is the separate question
+    # that catches a real-but-irrelevant citation. It ran on Review and on
+    # Case, but not here, which left the longest and most citation-dense
+    # document the product emits as the one output nothing checked.
+    #
+    # Per module, against that module's OWN evidence base: a module only ever
+    # cites papers its own retrieval found, and one Haiku call per module is
+    # noise next to the Sonnet call that wrote it. Fail-open and advisory,
+    # exactly as at the other two call sites — the shared renderer appends the
+    # outcome (including "not available") and nothing here can block or rewrite
+    # the module.
+    support = verify_citation_support(answer, evidence)
+    cost   += support.get("cost", 0.0)
+    answer  = _append_support_warnings(answer, support)
+    # Hand the structured outcome back to the orchestrator without changing
+    # this function's (script, cost) contract, which the parallel-module tests
+    # stub against. `module` is the syllabus entry that _curriculum_module_body
+    # spreads into the stitched entry, so the post-stitch guarantee
+    # (_ensure_curriculum_support_blocks) can see what each module reported.
+    try:
+        module["citation_support"] = support
+    except Exception:
+        pass
+
     return answer, cost
 
 
@@ -5034,6 +5128,7 @@ def _curriculum_module_body(idx: int, mod: dict, question: str, total: int,
         # produce, and a disclaimer does not redeem it.
         print(f"  [module {num}] SKIPPED — {n_papers} paper(s), below minimum "
               f"{MIN_MODULE_PAPERS}")
+        support = _support_not_run("module not generated — no evidence retrieved")
         return {
             "index":   idx,
             "evidence": ev,
@@ -5041,9 +5136,12 @@ def _curriculum_module_body(idx: int, mod: dict, question: str, total: int,
             "elapsed": _time.perf_counter() - started,
             "entry": {
                 **mod,
-                "script": _module_not_generated_block(
-                    title, n_papers, mod.get("search_query", "")),
-                "not_generated": True,
+                "script": _append_support_warnings(
+                    _module_not_generated_block(
+                        title, n_papers, mod.get("search_query", "")),
+                    support),
+                "not_generated":    True,
+                "citation_support": support,
             },
         }
 
@@ -5055,6 +5153,8 @@ def _curriculum_module_body(idx: int, mod: dict, question: str, total: int,
     verdict = validate_module_output(script, ev)
     if not verdict["ok"]:
         print(f"  [module {num}] REJECTED — {verdict['reason']}")
+        support = _support_not_run("module not generated — failed the "
+                                   "evidence-anchoring gate")
         return {
             "index":   idx,
             "evidence": ev,
@@ -5062,12 +5162,19 @@ def _curriculum_module_body(idx: int, mod: dict, question: str, total: int,
             "elapsed": _time.perf_counter() - started,
             "entry": {
                 **mod,
-                "script": _module_not_generated_block(
-                    title, n_papers, mod.get("search_query", "")),
-                "not_generated": True,
+                "script": _append_support_warnings(
+                    _module_not_generated_block(
+                        title, n_papers, mod.get("search_query", "")),
+                    support),
+                "not_generated":    True,
+                "citation_support": support,
             },
         }
 
+    # write_curriculum_module ran the citation-support check and recorded the
+    # outcome on `mod` (see the note at its call to verify_citation_support).
+    # Spreading mod carries it into the entry, where the post-stitch guarantee
+    # in build_deep_learning_module can find it.
     return {"index": idx, "evidence": ev, "cost": cost,
             "elapsed": _time.perf_counter() - started,
             "entry": {**mod, "script": script}}
@@ -5165,12 +5272,17 @@ def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
             # Shrinking the curriculum silently is the wrong failure: render the
             # same explicit gap block the evidence floor renders.
             mod = syllabus[i]
+            support = _support_not_run("module not generated — the module "
+                                       "worker produced no output")
             modules_with_scripts.append({
                 **mod,
-                "script": _module_not_generated_block(
-                    mod.get("title", f"Module {i+1}"), 0,
-                    mod.get("search_query", "")),
-                "not_generated": True,
+                "script": _append_support_warnings(
+                    _module_not_generated_block(
+                        mod.get("title", f"Module {i+1}"), 0,
+                        mod.get("search_query", "")),
+                    support),
+                "not_generated":    True,
+                "citation_support": support,
             })
             continue
         per_module_evidence.append(res["evidence"])
@@ -5182,6 +5294,12 @@ def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
     combined = merge_evidence_bases(per_module_evidence)
     final, c = stitch_curriculum(question, modules_with_scripts, combined)
     total_cost += c
+
+    # The stitcher is an LLM told to reproduce module bodies verbatim. If it
+    # drops a citation-support block anyway, the reader sees a module with no
+    # status — indistinguishable from a module that passed. Restate whatever
+    # did not survive, deterministically.
+    final = _ensure_curriculum_support_blocks(final, modules_with_scripts)
 
     progress.tick(95, "Finalising...")
     return final, total_cost, combined
