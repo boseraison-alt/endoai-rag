@@ -57,10 +57,36 @@ RUNS = {
         "to":     "2026-08-31T23:19:18",
         "answer": "learn_history/20260831_232314_use_of_lasers_in_root_canal_disinfection.json",
     },
+    # guardrails-v1 Item 3 — the same two eval cases re-run after the
+    # claim-unit fix. 9/120 and 7/118, against 14/120 and 18/120 on the
+    # grounding-rule run these replace.
+    "C": {
+        "label":  "curriculum C, live-pinned — 9/120 = 7.5%",
+        "from":   "2026-09-01T13:24:00",
+        "to":     "2026-09-01T13:27:00",
+        "pid":    32464,
+        "answer": "learn_history/20260901_133022_use_of_lasers_in_root_canal_disinfection.json",
+    },
+    "D": {
+        "label":  "curriculum D, library-pinned — 7/118 = 5.9%",
+        "from":   "2026-09-01T13:32:00",
+        "to":     "2026-09-01T13:35:00",
+        "pid":    32744,
+        "answer": "learn_history/20260901_133830_use_of_lasers_in_root_canal_disinfection.json",
+    },
 }
 
 
-def _support_records(lo, hi):
+def _support_records(lo, hi, pid=None):
+    """Support records inside a time window, optionally from ONE writer.
+
+    The pid filter is not optional in spirit. This script reads the same
+    shared `evidence_mapping.jsonl` that `run_eval._support_since` reads as a
+    byte-offset window, and it has the same exposure: the very run this was
+    written to judge picked up 13 pairs from a stale app server that happened
+    to be up, which the eval harness excluded and this script did not. Give a
+    run its writer's pid and the window stops being a guess.
+    """
     out = []
     with EVMAP.open("r", encoding="utf-8") as fh:
         for line in fh:
@@ -72,6 +98,9 @@ def _support_records(lo, hi):
             except json.JSONDecodeError:
                 continue
             if rec.get("function") != "verify_citation_support":
+                continue
+            if (pid is not None and rec.get("pid") is not None
+                    and int(rec["pid"]) != int(pid)):
                 continue
             if lo <= rec.get("ts", "")[:19] <= hi:
                 out.append(rec)
@@ -156,7 +185,7 @@ def main():
         return 1
     for key in wanted:
         run = RUNS[key]
-        recs = _support_records(run["from"], run["to"])
+        recs = _support_records(run["from"], run["to"], run.get("pid"))
         checked = sum(int(r.get("checked") or 0) for r in recs)
         flagged = sum(int(r.get("n_flagged") or 0) for r in recs)
         print(f"{run['label']}: {len(recs)} module checks, "

@@ -691,6 +691,89 @@ minutes. Running it before the demo would pay that twice for no gain.
 calendar and the credit balance, and belongs to RB rather than to a cron line
 added by the script that wrote itself.
 
+## Should a clinical recommendation always be traceable? Yes — and the retry was not the price of saying so
+
+DECIDED (`guardrails-v1`, 2026-09-01). The question the `grounding-v2` report
+put to RB was framed as a trade: either a clinical recommendation must always
+carry a `[[PMID:N]]` marker, in which case the retry is the system working and
+~$0.34 an answer is what it costs, or it must not, in which case the validator
+needs a way to accept "this rests on the evidence base as a whole".
+
+**It is the first — a recommendation the clinician cannot trace is not a
+shippable recommendation — and the trade was false.** The retry was not buying
+traceability. It was buying the same answer twice.
+
+**The diagnosis, which is narrower than the report's "6 of 8".** Correlating
+every attempt-1 failure back to its eval case: all six UNTRACEABLE "no
+citation" failures came from ONE question — `cracked-tooth-prognosis`, a
+live-pinned case in a literature the library does not cover — across four
+separate runs. It is a reproducer, not a diffuse property of the Review path.
+Ten attempt-1 syntheses of it with the evidence base pinned:
+
+| outcome | n |
+|---|---|
+| passed | 3 |
+| failed UNTRACEABLE_RECOMMENDATION | 5 |
+| failed GAP_SECTIONS, with `n_cited = 0` for the whole answer | 2 |
+
+All ten reached the **same correct conclusion** — this evidence base does not
+address prognosis by crack extent. Only what they did next differed, and **not
+one failure violates the grounding rule; every one of them obeys it.** Two of
+them obey it so hard they cite nothing anywhere, which is the worse failure and
+was hiding behind the more visible one.
+
+The three passes already contained the answer. They say what the evidence base
+*does* establish that bears on the case, and cite that. The prompt never told
+the model that was the required move, so it found it three times in ten.
+
+**The fix is wording, and it lives in the Review prompt only.** Option 3 of the
+grounding rule ("write it unmarked") is withdrawn in the CLINICAL
+RECOMMENDATION section, and the gap case is given an explicit three-move shape:
+state the gap unmarked — it is a claim about the evidence base, not about a
+paper — put the markers on what this evidence base does establish, and label
+guidance from outside the evidence base as such, with no marker.
+`_GROUNDING_RULE` itself is byte-identical, deliberately: it feeds the
+curriculum and case prompts too, and changing it would have confounded the
+Deep Learning re-measurement running in the same batch.
+
+| | before | after |
+|---|---|---|
+| attempt-1 pass, `cracked-tooth-prognosis` × 10 | 3/10 | **10/10** (Fisher p = 0.0031) |
+| UNTRACEABLE_RECOMMENDATION | 5/10 | 0/10 (p = 0.0325) |
+| cost per SERVED answer | $0.9306 | **$0.5596** (−40%) |
+| control: well-covered library question × 3 | — | 3/3 pass |
+
+**The check that mattered more than the pass rate.** The cheapest way to make
+this retry disappear is to attach a marker the paper does not support: it
+clears the validator, fails the reader, and looks like success on every number
+above. So the citations were judged. `verify_citation_support` over the answers
+that PASS validation: **15.2% (5/33) before, 21.3% (23/108) after, Fisher
+p = 0.62** — no detectable difference. The after arm cites three times as much,
+which is where the denominator went. Watch the denominator: a rate that falls
+because the answer stopped citing is not an improvement, and here the rate held
+while the citing tripled.
+
+**Residual, named rather than closed.** Two of ten after-arm recommendations
+put a marker on a general principle composed across two papers — "outcome is
+governed by preoperative periapical status, coronal seal and restoration
+timing" cited to a retreatment review and a single-visit review, neither of
+which states the composite. A clause forbidding exactly that did not remove it.
+The support-check block renders the flag to the clinician, so it is surfaced
+rather than silent. The open question is whether the retry the old prompt paid
+for produced a *better* shipped answer or the same composite — the before arm's
+retries were never generated, so nobody knows. That is the next measurement on
+this path, and it is small.
+
+**Method note worth keeping.** The first version of this fix quoted a worked
+example containing two real PMIDs, lifted from a passing answer to the same
+question being measured. It scored 10/10 — and the model reproduced those two
+PMIDs 27 times across 10 answers. An example that names the evidence is an
+example the model can copy instead of reason from, and on a single-question
+measurement that is indistinguishable from success. The shipped prompt names no
+PMID and describes the shape instead; the contaminated run is kept as
+`eval/logs/item2_attempt1_after_repro_v1_contaminated.json` so the difference
+stays visible.
+
 ## The grounding rule, and the three-way measurement it needed
 
 `_GROUNDING_RULE` (endo_ai.py, one constant, three prompts) says a

@@ -1,0 +1,122 @@
+{
+ "_README": [
+  "Hand judgement of all 16 citation-support flags from the two laser curricula",
+  "re-run in `guardrails-v1` Item 3, after the claim-unit fix landed. Not a",
+  "sample: 16 is the whole population of flags from those two runs (9/120 and",
+  "7/118 = 16/238 = 6.7%), so there is no sampling question.",
+  "",
+  "Companion to dl_flag_verdicts.json, which judged all 37 flags from the",
+  "2026-08-31 pair. Regenerate the evidence with",
+  "  python scripts/classify_dl_flags.py --runs C D",
+  "Row order is the order the flags appear in evidence_mapping.jsonl.",
+  "",
+  "THE VERDICT SET HAS CHANGED, and the changes are the finding.",
+  "",
+  "  artifact_tail  is GONE as a category. The judge is shown the whole",
+  "                 abstract now, so a supporting sentence cannot sit past a",
+  "                 cut. It was 17 of the previous 37.",
+  "  artifact_unit  has nearly gone: 13 of the previous 37, 2 of these 16, and",
+  "                 both survivors are one list item carrying TWO assertions",
+  "                 about two different papers rather than a whole decision",
+  "                 tree carrying seven.",
+  "",
+  "  artifact_negative is NEW, and it is now the largest class: 7 of 16. The",
+  "                 claim is of the form 'X et al. did not report <parameter>'",
+  "                 or 'no adverse events were reported in the reviewed RCTs'.",
+  "                 The claim is TRUE and the marker names the right paper.",
+  "                 It cannot be verified from an abstract, because an abstract",
+  "                 cannot state what it omits. `_GROUNDING_RULE` explicitly",
+  "                 asks for this move -- 'take the number from the paper that",
+  "                 reports it, OR state that the cited study did not report",
+  "                 it' -- so the rule and the checker disagree about whether a",
+  "                 negative carries a marker. That is a prompt question, and",
+  "                 it is the same SHAPE of collision Item 2 resolved for the",
+  "                 recommendation.",
+  "  artifact_meta  is also new, 2 of 16: the claim is about the EVIDENCE BASE",
+  "                 ('the evidence base does not specify a minimum canal",
+  "                 diameter'), not about the cited paper, and carries a marker",
+  "                 anyway.",
+  "",
+  "  unsupported    5 of 16 = 2.1% of the 238 checked pairs, against 3.0%",
+  "                 (7/234) on the previous pair. Two are a mechanism claim",
+  "                 cited to a review that reports outcomes, one is a bare",
+  "                 procedural directive, one cites an SR's finding to an RCT,",
+  "                 and one -- the best catch in the set -- justifies a",
+  "                 recommendation for SMALL lesions (PAI <= 2) with a trial",
+  "                 that enrolled PAI >= 3. Every one of those is a trap",
+  "                 `_GROUNDING_RULE` names by name."
+ ],
+ "totals": {
+  "checked": 238,
+  "flagged": 16,
+  "rate": "6.7%",
+  "artifact": 11,
+  "genuinely_unsupported": 5,
+  "genuine_rate_of_checked": "2.1%"
+ },
+ "verdicts": [
+  {"n": 1, "run": "C", "module": 1, "pmid": "36978686", "shape": "prose",
+   "verdict": "unsupported",
+   "why": "A MECHANISM claim -- diode wavelengths absorbed by chromophores in pigmented bacteria and soft tissue rather than water or enamel -- cited to a 1,896-character narrative review of laser APPLICATIONS. The review lists device types and says it discusses 'different wavelengths'; it does not state the absorption target. Grounding-rule trap 1, verbatim."},
+
+  {"n": 2, "run": "C", "module": 1, "pmid": "39888502", "shape": "list_item",
+   "verdict": "unsupported",
+   "why": "'Irrigate with 5.25% NaOCl after each file sequence' is a bare procedural directive carrying a marker to an in vitro dye-penetration and microhardness study of PIPS/SWEEPS. The paper's protocol is not this protocol, and a step instruction is not a finding of any paper."},
+
+  {"n": 3, "run": "C", "module": 2, "pmid": "36156804", "shape": "bold_label",
+   "verdict": "artifact_negative",
+   "why": "'No serious adverse events were reported in the RCTs reviewed by Meire et al.' The word adverse, harm and safety appear nowhere in the 3,015-character abstract -- checked. The claim is an argument from silence, which is TRUE of the abstract and unverifiable from it."},
+
+  {"n": 4, "run": "C", "module": 2, "pmid": "41833582", "shape": "list_item",
+   "verdict": "artifact_meta",
+   "why": "'the evidence base does not specify a minimum canal diameter' is a claim about the evidence base as a whole, attached to one umbrella review. No single paper can support or refute it."},
+
+  {"n": 5, "run": "C", "module": 2, "pmid": "35267110", "shape": "list_item",
+   "verdict": "artifact_negative",
+   "why": "'Erkan et al. did not report exact exposure duration per cycle.' Correct paper, correct statement, unverifiable shape."},
+
+  {"n": 6, "run": "C", "module": 2, "pmid": "41388259", "shape": "list_item",
+   "verdict": "artifact_negative",
+   "why": "'Das et al. did not standardize photosensitizer concentration or irradiation time across included studies.' Same shape."},
+
+  {"n": 7, "run": "C", "module": 3, "pmid": "36156804", "shape": "list_item",
+   "verdict": "artifact_meta",
+   "why": "'the evidence base for adjunctive laser disinfection is concentrated in this diagnosis' -- again a statement about the corpus, marked to one member of it."},
+
+  {"n": 8, "run": "C", "module": 3, "pmid": "36512807", "shape": "list_item",
+   "verdict": "artifact_unit",
+   "why": "One list item, two assertions, two papers. The half carrying THIS marker -- single-visit RoCT shows higher one-week pain, RR 1.55 (95% CI 1.14-2.09), moderate certainty -- is VERBATIM in this Cochrane abstract, checked. The half that is not supported belongs to Meire et al., whose marker is flag 9. The list-item rule did not split a semicolon."},
+
+  {"n": 9, "run": "C", "module": 3, "pmid": "36156804", "shape": "list_item",
+   "verdict": "artifact_unit",
+   "why": "The other marker on the same compound list item as flag 8."},
+
+  {"n": 10, "run": "D", "module": 1, "pmid": "38340037", "shape": "list_item",
+   "verdict": "unsupported",
+   "why": "Diode absorption by haemoglobin and melanin, cited to a 1,520-character narrative review whose subject is cavitation in laser-ACTIVATED IRRIGATION. Neither chromophore is in it. Grounding-rule trap 1 again, and the same wavelength-mechanism sentence as flag 1 -- the module writes this claim and reaches for whichever laser review is nearest."},
+
+  {"n": 11, "run": "D", "module": 1, "pmid": "38403667", "shape": "list_item",
+   "verdict": "artifact_negative",
+   "why": "'Fahim et al. did not report a specific final apical instrument size.'"},
+
+  {"n": 12, "run": "D", "module": 1, "pmid": "17804322", "shape": "list_item",
+   "verdict": "artifact_negative",
+   "why": "'Wang et al. did not report a specific cycle duration for Er,Cr:YSGG.'"},
+
+  {"n": 13, "run": "D", "module": 1, "pmid": "38403667", "shape": "list_item",
+   "verdict": "artifact_negative",
+   "why": "'Fahim et al. did not specify final rinse volume.' Third of three in one module, all the same shape, all the same instruction being followed."},
+
+  {"n": 14, "run": "D", "module": 3, "pmid": "41063319", "shape": "bold_label",
+   "verdict": "unsupported",
+   "why": "A 2025 PROSPERO-registered systematic review of aPDT -- 11 studies, meta-analysis of 5 -- cited to a single-centre RCT of an 810 nm semiconductor laser in 202 patients. The marker names a paper of the wrong design for the claim it carries."},
+
+  {"n": 15, "run": "D", "module": 3, "pmid": "27759881", "shape": "bold_label",
+   "verdict": "artifact_negative",
+   "why": "Two halves: the Cochrane review's LLLT finding, which it does state, and 'reported no thermal or soft-tissue adverse events in included RCTs', which is again an argument from silence. The unverifiable half is what carries the flag."},
+
+  {"n": 16, "run": "D", "module": 3, "pmid": "38878107", "shape": "decision_tree",
+   "verdict": "unsupported",
+   "why": "THE BEST CATCH IN THE SET, and it is on a decision-tree branch that the old splitter would have buried in a seven-branch blob. The branch recommends LAI for a SMALL periapical lesion, PAI <= 2, and justifies it with this trial -- which enrolled 'periapical lesions ... and a periapical index score of 3 or higher' and is titled for LARGE lesions. Checked in the abstract. A recommendation generalised past the cited paper's population is grounding-rule trap 4, and un-merging the tree is what made it visible."}
+ ]
+}
