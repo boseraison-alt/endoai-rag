@@ -702,6 +702,53 @@ had it been a PMID the library DOES hold, the run would have written one
 paper's abstract onto another's row and reported success. The script now
 guards on membership as well as using the explicit path.
 
+### v5 → v6: ten moves, and what each one was
+
+Ten metrics left their v5 range. **Six of them are on the four cases that had
+ONE observation in v5** — `case-opening-full`, `case-opening-sparse`,
+`review-followup-immature-teeth` — where a single point was being compared with
+a three-run range. All 25 cases now have three runs and that class of noise is
+gone for good.
+
+The two real ones, and neither is a regression:
+
+**`sdf-pulp-outcomes` (live), papers 32-46 → 26-29.** The v5 range was inflated
+by one atypical run: its per-tier shape was `{level1:8, level2:15, level3a:8,
+level3b:1, level4:6, level5:8}` — the early stop did not fire and it swept
+every tier — against `{level1:33}` and `{cochrane:6, level1:26}` for the other
+two. v6's three runs are all level1-dominated and tightly clustered. This is a
+LIVE-pinned case, so nothing done to the library can reach it; the mechanism is
+the early stop plus PubMed term variance on a genuinely thin topic (HANDOVER's
+own coverage table gives SDF one library hit above 0.55).
+
+**`direct-pulp-capping` (library), papers 38-39 → 35-35.** Three causes were
+checked and two eliminated by measurement:
+
+- *Not the similarity floor.* 325 library papers clear 0.55 for this question.
+- *Not the tier quality floor.* Exactly 6 papers crossed a floor after the
+  rescore, and 4 of them crossed UPWARD (net +2).
+- *It is the candidate pool.* `multi_query_search(..., limit=100)` takes a
+  fixed top-100 KNN per query. Re-embedded rows now rank HIGHER — median
+  similarity 0.6175 against 0.6130 for untouched rows, and 69 against 28 in the
+  top 300 above 0.65 — so they occupy more of those 100 slots and displace
+  papers that used to fill the smaller tiers. `level1` is cap-bound at 25 and
+  absorbs none of it, which is why the whole loss lands in level2 / level3a /
+  classic, exactly where it does.
+
+That is precision bought with a little recall: the papers displaced were the
+lower-similarity ones. The case passes every floor in all three runs. Worth
+knowing rather than worth reverting — but if a future change wants that recall
+back, `limit=100` is the dial, not the floor.
+
+**One thing I did not back up and should have.** The repair backed up the old
+ABSTRACTS but not the old EMBEDDINGS, so the pre-repair vectors are gone. That
+is the same mistake this file already records about the first Cochrane
+migration. It is only *mostly* recoverable — the old vectors could be rebuilt
+from the backed-up abstracts, but the corpus builders used several different
+embedding-text conventions (`title + abstract[:400]`, `topic + …[:400]`,
+`text[:600]`), so a reconstruction would not be faithful row by row. **Back up
+the column you are about to overwrite, not the column you are thinking about.**
+
 ## The deck: two budgets, and only one of them was consulted
 
 `content_slide` is handed `avail` — the body height its frame actually has,
