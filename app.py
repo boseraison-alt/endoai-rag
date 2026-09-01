@@ -117,6 +117,44 @@ from rag import (setup_query_cache, get_cached_answer, save_query_cache,
 setup_query_cache()
 setup_abstract_cache()
 
+# ── Which commit is this process actually running? ───────
+# Resolved ONCE, at import time, and never again. That is the whole point:
+# `endo-ai-noreload` does not pick up code changes by design, so a process
+# can serve a commit that is weeks behind the working tree and nothing about
+# it says so. PID 35820 served `grounding-v1` code throughout the whole of
+# `grounding-v2` and two batches paid for the confusion.
+#
+# A REQUEST-time shell-out would report the working tree — i.e. the code on
+# disk right now, which is exactly the thing you already know and exactly not
+# the thing you are asking about. Import time answers "what did this process
+# load?", which is the question.
+#
+# Failure is not fatal: a deployment from a tarball has no .git, and the app
+# must still serve. The field then reads "unknown" rather than being absent,
+# so a caller can tell "no git here" from "field not implemented".
+def _resolve_git_revision():
+    import subprocess
+    here = os.path.dirname(os.path.abspath(__file__))
+    def _git(*args):
+        return subprocess.run(("git", "-C", here) + args,
+                              capture_output=True, text=True, timeout=10)
+    try:
+        r = _git("rev-parse", "--short", "HEAD")
+        if r.returncode != 0:
+            return "unknown", False
+        rev = (r.stdout or "").strip() or "unknown"
+        d = _git("status", "--porcelain", "--untracked-files=no")
+        dirty = bool((d.stdout or "").strip()) if d.returncode == 0 else False
+        return rev, dirty
+    except Exception:
+        return "unknown", False
+
+
+GIT_REVISION, GIT_DIRTY = _resolve_git_revision()
+IMPORT_TIME = datetime.now().isoformat(timespec="seconds")
+print(f"  Serving git {GIT_REVISION}{'+dirty' if GIT_DIRTY else ''} "
+      f"(imported {IMPORT_TIME})")
+
 app = Flask(__name__)
 
 # ── Admin authentication ─────────────────────────────────
@@ -373,6 +411,24 @@ def index():
 @app.route("/tos")
 def tos():
     return render_template("tos.html")
+
+
+@app.route("/health")
+def health():
+    """Liveness plus the commit this PROCESS loaded.
+
+    `git_revision` is resolved at import and frozen there, so a stale
+    no-reload server reports the commit it is actually running rather than
+    whatever is checked out now. Compare it against `git rev-parse --short
+    HEAD` before trusting anything this server serves or writes.
+    """
+    return jsonify({
+        "status":       "ok",
+        "git_revision": GIT_REVISION,
+        "git_dirty":    GIT_DIRTY,
+        "imported_at":  IMPORT_TIME,
+        "pid":          os.getpid(),
+    })
 
 
 @app.route("/clarify", methods=["POST"])
