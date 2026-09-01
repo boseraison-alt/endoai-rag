@@ -387,3 +387,77 @@ class TestCOIBlocklistBasics:
 
     def test_empty_text_is_safe(self):
         assert check_coi_blocklist("")[0] is False
+
+
+# ── The library evidence block carries the paper, not just its label ─────────
+
+class TestTheLibraryBlockContainsThePaper:
+    """`rag_results_to_scored` dropped `title` and `abstract`, although
+    `rag.search` selects both, so `_scored_to_text` rendered one metadata line
+    per paper and nothing else. A paper titled "Er:YAG laser-activated
+    irrigation in immature teeth" reached Claude as authors, year, citations,
+    n, follow-up, IF and a score — the word "laser" appeared nowhere. The
+    prompt then asks for a paragraph on what the evidence shows, with authors
+    cited inline and a [[PMID:N]] marker on every claim.
+
+    Hand-judging 20 flagged claim-citation pairs put 16 of them in "the claim
+    is genuinely not supported by the cited paper", and in 9 of 10 checked the
+    model had the author, the year and the sample size RIGHT. It invented only
+    the finding, which was the one thing it was not given.
+    """
+
+    ROW = {
+        "pmid": "40259146",
+        "title": "Er:YAG laser-activated irrigation in immature teeth",
+        "abstract": "RESULTS: laser irrigation reduced intracanal bacteria by "
+                    "78.4% versus 62.1% for needle irrigation.",
+        "authors": "Kaya Dadas F", "year": 2025, "journal": "Int Endod J",
+        "impact_factor": 4.5, "sample_size": 68, "followup_months": 12,
+        "citations": 3, "level_key": "level1", "score": 70.0,
+        "similarity": 0.7, "is_curated": False, "coi_flag": False,
+        "coi_funder": "", "coi_status": "no_statement", "registry": "",
+        "has_erratum": False, "has_retraction": False, "medline_indexed": True,
+    }
+
+    def _block(self, row=None):
+        from rag import rag_results_to_scored
+        import app as app_mod
+        paper = rag_results_to_scored([dict(self.ROW, **(row or {}))])[0]
+        return paper, app_mod._scored_to_text([paper], "Level I")
+
+    def test_the_scored_paper_carries_the_text(self):
+        paper, _ = self._block()
+        assert paper["title"] == self.ROW["title"]
+        assert paper["abstract"] == self.ROW["abstract"]
+
+    def test_the_block_contains_the_abstract(self):
+        _, block = self._block()
+        assert self.ROW["abstract"] in block, \
+            "Claude cannot ground a claim in a paper it was not shown"
+
+    def test_the_block_contains_the_title(self):
+        _, block = self._block()
+        assert self.ROW["title"] in block
+
+    def test_a_paper_with_no_abstract_still_shows_its_title(self):
+        """8 library rows have no abstract. A title is not nothing."""
+        _, block = self._block({"abstract": ""})
+        assert self.ROW["title"] in block
+
+    def test_the_metadata_line_is_still_the_shared_renderer(self):
+        """The badges must not have been lost re-plumbing this."""
+        from endo_ai import format_paper_context_line
+        paper, block = self._block({"coi_flag": True, "coi_funder": "Dentsply",
+                                    "coi_status": "declared_conflict",
+                                    "registry": "ClinicalTrials.gov"})
+        assert format_paper_context_line(paper).strip() in block
+        assert "INDUSTRY CONFLICT DECLARED" in block
+        assert "PRE-REGISTERED" in block
+
+    def test_the_two_paths_now_show_Claude_the_same_KIND_of_thing(self):
+        """The old parity test compared the two metadata LINES and passed
+        throughout, because the line was never the difference — the live path
+        appended the abstract after it and the library path did not. Parity has
+        to be asserted on the BLOCK."""
+        paper, block = self._block()
+        assert paper["abstract"] in block and paper["title"] in block

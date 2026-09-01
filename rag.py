@@ -646,6 +646,19 @@ def rag_results_to_scored(rows: list[dict]) -> list[dict]:
             "coi_status":      r.get("coi_status") or "no_statement",
             "level_key":       r.get("level_key", "") or "",
             "pmid":            r.get("pmid", ""),
+            # THE PAPER ITSELF. `search()` selects both columns and this
+            # function used to drop them, so `app._scored_to_text` had nothing
+            # to render but the metadata line: a library-served paper reached
+            # Claude as authors, year, citations, n, follow-up, IF and a score,
+            # with not one word of what it says. Asked for a paragraph on what
+            # the evidence shows, the model got the author, the year and the
+            # sample size right and invented the finding — 16 of 20 flagged
+            # claim-citation pairs, hand-judged 2026-08-31.
+            #
+            # `_safe_papers` whitelists what leaves the server, so the abstract
+            # stops at the prompt and never reaches the browser.
+            "title":           r.get("title", "") or "",
+            "abstract":        r.get("abstract", "") or "",
             "year":            str(r.get("year", "Unknown")),
             "citations":       r.get("citations", 0),
             "authors":         r.get("authors", ""),

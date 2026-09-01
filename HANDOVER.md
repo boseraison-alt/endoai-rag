@@ -394,6 +394,45 @@ runs", but **"whether the single most authoritative paper on the question
 reaches the clinician depends on which query the generator happened to emit."**
 Retrieval-only runs cannot see this — the count looked fine.
 
+**Read the cost line in that paragraph again: $1.0541 across 13 LLM calls, for
+five cases each expected to cost about $1.** See the next section.
+
+### A synthesis eval that measured stored answers
+
+`--synthesis-subset` printed "3/5 cases passed [SYNTHESIS]" on 2026-08-31
+having generated exactly ONE answer. The other four were served out of
+`query_cache` from rows written the day before, so every answer-level
+assertion — `must_contain`, the banner, the unsourced-numeric-module cap — was
+evaluated against text the code under test never produced. Each of those four
+cases finished in seconds, cost $0, and printed the same shape of output as a
+clean run.
+
+It was noticed only by coincidence: two cases in the subset share a question
+string, so the second was served the first's freshly written row and reported
+an identical paper count for a differently-pinned case.
+
+`run_case_with_synthesis` now neutralises `get_cached_answer` AND
+`save_query_cache` for the duration of each case. The reasoning is the same one
+behind `LIBRARY_WRITE_BACK = False` and `force_route`: **an eval must not
+measure a stored artefact of an earlier run, and must not leave one behind for
+a clinician to be served.** A case whose answer cost $0 is now reported as a
+FAILURE, because that is the signature.
+
+Two more things the same investigation turned up in this harness:
+
+- `measured["route"]` was `pinned or "?"` — the REQUESTED route echoed back
+  into a field named like a measurement and printed as `route  library`. It is
+  now `None` in synthesis mode, because this path cannot measure a route.
+- **`force_route` is inert in learn mode.** `/ask` hands a learn question to
+  `build_deep_learning_module`, which does its own per-module retrieval and
+  never calls the pinned builder — so the two laser cases, the same question
+  pinned `live` and `library`, run the identical pipeline under
+  `--synthesis-subset`. The harness now says so out loud per case.
+
+- `--diff` had been declared with argparse and never read: it ran an ordinary
+  eval, printed no table and exited 0. Implemented, with the ranges reporting
+  drift and the `expect` floors keeping the exit code.
+
 ### The Cochrane miss: closed, and the root cause was not the query shape
 
 The follow-up diagnosis (Phase A, 2026-08-30) overturned the working
@@ -478,6 +517,42 @@ skipped the validator. Both halves are false: retrieval is the full engine, and
 the validator runs with a retry. Reporting that plainly matters more than
 confirming the guess — a fix aimed at retrieval would have changed nothing
 visible, because retrieval was already returning a hundred papers.
+
+## The deck: two budgets, and only one of them was consulted
+
+`content_slide` is handed `avail` — the body height its frame actually has,
+after the title wrapped and the lead was drawn — by `_content_frame`, and never
+used it. Pagination was done entirely by `text_budget.split_bullets`, which
+counts WORDS. Five cascade steps of under 25 words each cost five slots and
+"fit", while each one renders as a bold header line PLUS a body paragraph: real
+spec `01e071f7` slide 9 drew its body to 7.385in against a 7.000in footer rule,
+in a single un-split page.
+
+Neither budget is redundant. The word budget is a house style (§1.3: at most
+five bullets of ~25 words); the height budget is physics. `_paginate` now
+applies both and balances the result, because filling page one to the brim and
+letting the remainder fall onto page two produces the four-then-one orphan
+`split_bullets` was already written to avoid. Text is never truncated to fit —
+a bullet that does not fit starts the next page.
+
+**The guard is parametrised over every `cascade_slide` in `slide_specs/`** —
+real generator output. A hand-written fixture would not have produced the
+shape: the steps have to be short enough to pass the word budget and tall
+enough to overflow the frame, which is a coincidence of real clinical prose.
+
+Two more from the same pass, both the "a check that shows nothing" class:
+
+- `evidence_summary` drew a `REPORTED` column header over an entirely blank
+  column whenever no hierarchy row carried a stat — which is every
+  `evidence_summary` in every cached spec, because the generator is correctly
+  told to omit `stat` rather than put a verdict word in it. A blank column
+  under that header reads as "these studies reported nothing".
+- `_from_explicit_chart` in `chart_data` was the one detector with no
+  `is_range` and no `consistent_unit` gate. It was unreachable, so it did not
+  matter — until multi-arm comparisons started using it. The web deck's
+  `_plan_stat` had neither gate either, on a path that WAS reachable: the SMD
+  beside an I², and the 24-48h span as one bar, were both caught in the PPTX
+  and drawn on the web from the same spec.
 
 ## Cost
 
@@ -641,6 +716,41 @@ successor only; the library backfill resolves chains to the terminal version
   admin routes require `X-Admin-Token`, because the sidebar delete button calls
   it without a header. Gating it needs a UI change.
 - The eval harness does not evaluate answer-level assertions (see above).
+- **`verify_citation_support` never runs on the Deep Learning path.** There are
+  exactly two call sites: `ask_clinical_question` (Review) and
+  `ask_case_question` (Case). `ask_learn_question` and the curriculum path
+  (`write_curriculum_module` / `stitch_curriculum`) have none — so the longest
+  and most citation-dense output the product makes is the one nothing checks
+  for claim support. `validate_evidence_mapping` does run there, so a
+  curriculum cannot cite a fabricated PMID; whether the cited abstract supports
+  the claim is unasked.
+- **749 library rows carry an abstract truncated at exactly 1200 characters,**
+  and 366 more are under 1000. The corpus builders do it at ingest —
+  `fetch_open_sources.py:334`, `fetch_pmc_corpus.py:330` and
+  `ingest_aae_guidelines.py:438` all store `abstract[:1200]`, and
+  `repair_abstracts.py:163` stores `abstract[:1000]`. Structured abstracts put
+  RESULTS and CONCLUSIONS last, so for a third of the library the part that
+  states the finding is the part that was cut. This limits both the
+  citation-support checker and, now that the library block carries abstracts,
+  the synthesis itself. Fixing it is a re-ingest, not a code change.
+- **`_extract_claim_citation_pairs` has two input defects, neither of which
+  drives the flag rate.** Measured before assuming: pairs whose claim spans a
+  bold pseudo-heading are flagged at 50.0% against 52.9% for clean ones, so
+  fixing them would move nothing. They are still wrong, and both are cheap:
+  - `_HEADING_RE` only matches ATX headings (`## …`), so the `**Level II —
+    Prospective Studies**` pseudo-headings the generator actually emits do not
+    split a section. `_SENTENCE_SPLIT_RE` then does not split there either
+    (the line starts with `*`, not `[A-Z\d]`), so one "sentence" can carry
+    several claims and several PMIDs, and each PMID is judged against all of
+    them. 36% of all claim-citation pairs are such blobs.
+  - `_SENTENCE_SPLIT_RE` splits after any `.` followed by a capital, so
+    "Er:YAG vs. SWEEPS" breaks mid-sentence and the citation lands on a
+    fragment ("SWEEPS pulse modes) limits pooled effect estimation").
+- **One cached "abstract" is a title.** PMID 6594419's `abstract` column holds
+  only the paper's title, so the support checker had nothing to judge against
+  but did not skip the pair — `verify_citation_support` only skips when the
+  field is EMPTY. A non-empty field that is not an abstract fails closed into a
+  flag.
 
 ## Commit-history notes
 

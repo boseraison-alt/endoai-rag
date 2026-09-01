@@ -1251,11 +1251,26 @@ def _scored_to_text(scored_papers: list, label: str) -> str:
     which retrieval path answered. Previously this built its own line and
     emitted no badges at all, so library-served evidence reached Claude
     stripped of every integrity signal.
+
+    The title and abstract follow that line, exactly as they do on the live
+    path (`endo_ai.build_evidence_base`, annotated-text loop). They did not,
+    for as long as this function has existed: sharing the metadata RENDERER
+    was mistaken for sharing the BLOCK, and the parity test in
+    `tests/test_coi_scoping.py` compared the two lines and passed throughout.
+    The result was a prompt that named a paper and never said what it found,
+    while instructing the model to write a paragraph on what the evidence shows
+    and to put a [[PMID:N]] marker on every clinical claim.
     """
     from endo_ai import format_paper_context_line
     text = f"\n[{label}]\n"
     for p in scored_papers:
         text += format_paper_context_line(p)
+        title = (p.get("title") or "").strip()
+        abstract = (p.get("abstract") or "").strip()
+        if title:
+            text += title + "\n"
+        if abstract:
+            text += abstract + "\n"
     return text
 
 
