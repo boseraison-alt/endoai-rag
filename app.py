@@ -2288,6 +2288,23 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
                        progress=8)
             differential, diff_cost = generate_case_differential(original_q,
                                                                  latest_user)
+            if not differential:
+                # LOUD, and retried once. An empty differential on a turn the
+                # router called DIAGNOSTIC silently produces a treatment-shaped
+                # answer — which is the failure this whole path exists to fix,
+                # arriving through the back door. It happened for real: a
+                # `max_tokens` truncation returned [], and the fixture case was
+                # answered "Proceed with non-surgical root canal treatment".
+                print("  [differential] EMPTY on a diagnostic turn — retrying "
+                      "once before falling back to the treatment path")
+                retry, retry_cost = generate_case_differential(original_q,
+                                                               latest_user)
+                diff_cost += retry_cost
+                differential = retry
+                if not differential:
+                    print("  [differential] STILL EMPTY — this turn will be "
+                          "answered on the treatment path, which is not what "
+                          "the clinician asked for")
             for c in differential:
                 print(f"  [differential] candidate: {c['candidate']}")
             # Published so the UI can show what is being searched for, and so a

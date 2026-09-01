@@ -2,81 +2,84 @@
 
 > 20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?
 
-intent: diagnostic  |  papers: 49  |  cost: $0.16
+intent: diagnostic  |  papers: 50  |  cost: $0.1594
 
 ---
 **Differential — most likely first**
 
 ---
 
-**1. Traumatic injury (luxation, concussion, or crown fracture with pulp necrosis)**
+**1. Traumatic injury (luxation or concussion with pulp necrosis)**
 
-- *Fits because:* A 20-year-old with a necrotic, unrestored, caries-free tooth sits squarely in the peak epidemiological window for dental trauma. Anterior teeth are overwhelmingly the most common site. Patients at this age frequently forget or minimise minor luxation events, particularly if pain resolved spontaneously weeks after the incident.
-- *Argues against:* No trauma history mentioned. If the tooth is a posterior molar, trauma becomes less likely as the primary mechanism, though not impossible.
-- *Evidence:* Pulp necrosis risk after luxation is significantly increased in the presence of concomitant crown fractures (HR 4.0, 95% CI 2.6–6.1) and intrusion injuries (HR 2.3, 95% CI 1.2–4.1); closed apices further elevate necrosis risk compared to open apices [[PMID:38430349]]. Pulp dimensions at the time of injury are a recognised determinant of necrosis after luxation in the permanent dentition [[PMID:3460803]]. Micro-organisms consistent with those found in infected root canal systems have been cultured from the necrotic pulps of traumatised teeth [[PMID:4155793]].
+- *Fits because:* Twenty years old is the peak demographic for dental trauma; the complete absence of caries and any restoration means bacterial ingress via decay or iatrogenic exposure is eliminated, leaving trauma as the single most parsimonious local explanation. Pulp necrosis following luxation can occur weeks to years after the event with no visible crown fracture and no crown discolouration in early stages. Patients frequently fail to volunteer or recall a traumatic event.
+- *Argues against:* No trauma history is documented — though this is common with under-reporting. If the periodontal ligament and radiographic root contour are entirely normal, an isolated concussion without displacement becomes harder to confirm retrospectively.
+- *Evidence:* Pulp necrosis risk after luxation injury increases significantly with complete root development, with concurrent crown fracture, and with intrusion-type displacement [[PMID:38430349]]. The probability of pulp necrosis in teeth with uncomplicated crown fracture is higher when concurrent luxation is present, and in teeth with complete root formation [[PMID:24571370]]. Pulp canal obliteration — a marker of surviving-but-injured pulp — is also associated with lateral/extrusive luxations, confirming that the pulp-trauma relationship spans a spectrum of outcomes [[PMID:38430349]].
 
 ---
 
 **2. Dens invaginatus (dens in dente)**
 
-- *Fits because:* This is a textbook scenario — a young patient, clinically intact crown, no caries, no restoration, yet pulp necrosis. The invagination creates a direct bacterial pathway from the oral cavity to the pulp through what appears on inspection to be a normal tooth. Maxillary lateral incisors are the predominant site (65.8% of affected teeth in a large radiographic survey), and bilateral occurrence is not uncommon, so the contralateral tooth warrants examination.
-- *Argues against:* Diagnosis requires the tooth in question to be an invagination-prone tooth, overwhelmingly the maxillary lateral incisor. Posterior teeth or mandibular teeth make this diagnosis far less likely; no mandibular involvement was found in a 10,000-patient radiographic study [[PMID:41184566]].
-- *Evidence:* Dens invaginatus has a prevalence of ~7% in screened populations, with Type I most common (88.6%), but Types II and III carry the highest risk of early pulp necrosis because the invagination creates an epithelium-lined channel communicating with the periodontal ligament or apex [[PMID:41184566]]. The complex anatomy makes endodontic treatment of affected teeth technically demanding [[PMID:10332241]] [[PMID:269901]]. Guided access preparation targeting only the invagination while preserving pulp vitality of the main canal has been reported in Type IIIa cases with 3-year radiographic success [[PMID:41454423]]. The morphological variation and frequent lack of clinical symptoms prior to necrosis mean the diagnosis is often missed without careful radiographic scrutiny [[PMID:10379279]].
+- *Fits because:* The classic presentation is a structurally anomalous tooth — most often a maxillary lateral incisor — that develops pulp necrosis and periapical pathosis early in life without any carious lesion or restorative history. The invagination provides a direct or near-direct channel from the oral environment to the pulp that is not visible on clinical inspection and not disclosed by probing of the crown. A 20-year-old with a necrotic, unrestored, caries-free tooth and a periapical lesion is the textbook scenario.
+- *Argues against:* Depends heavily on which tooth is affected. If the tooth is a posterior molar or mandibular premolar, probability falls substantially. Bilateral occurrence is possible but not invariable.
+- *Evidence:* Dens invaginatus is a developmental malformation in which enamel and dentine fold into the pulp, most commonly affecting maxillary lateral incisors, and it frequently results in early pulp necrosis due to the complex anatomy creating a pathway for bacterial ingress [[PMID:10332241]]. The complex anatomy makes conventional endodontic treatment difficult and often necessitates combined surgical and non-surgical approaches [[PMID:10379279]]. Guided access techniques that selectively treat the invagination channel while preserving pulp vitality in the true canal have been reported with successful 3-year outcomes in immature teeth, underscoring that the invagination and the main canal may be separately accessible [[PMID:41454423]].
 
 ---
 
-**3. Dens evaginatus with tubercle attrition or fracture**
+**3. Dens evaginatus with tubercle fracture**
 
-- *Fits because:* An evaginated pulp horn extension (talon cusp, Leong's premolar tubercle) contains a direct pulp extension that becomes exposed and infected once the tubercle wears or fractures from occlusal loading — entirely without caries or any restoration. The patient is in exactly the right age bracket for this to have progressed from silent tubercle loss to established necrosis.
-- *Argues against:* Significantly more prevalent in East and Southeast Asian populations. A tubercle that has completely worn away may leave no visible trace, making it easy to overlook. Less likely if the tooth is an anterior tooth without a palatal or occlusal protrusion.
-- *Evidence:* Dens evaginatus is a recognised cause of bilateral periapical pathology in caries-free, unrestored premolars — the presentation of necrosis in a clinically intact tooth in a young patient is its hallmark [[PMID:4528501]]. No paper in this evidence base provides population-level prevalence data for dens evaginatus specifically.
-
----
-
-**4. Cracked tooth with bacterial ingress**
-
-- *Fits because:* An incomplete vertical crack in an unrestored, caries-free tooth can permit microbial penetration to the pulp, particularly under cyclic loading from parafunction (bruxism) or sport. A 20-year-old is not an unusual age for this if there is a history of nighttime grinding or contact sport. The complete absence of caries and restorations actually draws attention to the crack as an alternative portal of entry.
-- *Argues against:* Full pulp necrosis from a crack alone in a 20-year-old without any restorative history is less common than trauma or invagination. The crack may be hairline and invisible on plain radiographs, making definitive diagnosis difficult without directed examination. Cracks are most prevalent in mandibular first molars of middle-aged adults.
-- *Evidence:* Cracked tooth syndrome is recognised to produce variable symptoms and the AAE recommends transillumination, dye staining, and bite testing as primary diagnostic tools, with CBCT when clinical findings are equivocal [[PMID:AAE-PS-cracked-tooth]]. In a retrospective cohort, preoperative probing depth was the strongest predictor of survival after endodontic treatment of cracked teeth, with teeth having no preoperative probing depths ≥4 mm achieving 76% survival at 10 years and 64% at 15 years [[PMID:41276249]]. Cracks involving the distal marginal ridge were the most common anatomical pattern and carried the highest failure rate in a 561-patient cohort [[PMID:41887497]].
+- *Fits because:* In dens evaginatus, a pulp horn extends into an anomalous occlusal cusp or tubercle; fracture of that tubercle — from occlusal wear or minor trauma — exposes the pulp directly without any carious process. The result is a caries-free, unrestored tooth with pulp necrosis. A 20-year-old patient, particularly of East or Southeast Asian ancestry, presenting with a mandibular premolar is the most common scenario; prevalence in second mandibular premolars is notably high.
+- *Argues against:* Less probable if the tooth in question is not a premolar or if the patient has no relevant ethnic background. The fractured tubercle may not be immediately obvious on clinical examination if wear has been gradual.
+- *Evidence:* Dens evaginatus in premolars with a pulpal extension in the occlusal tubercle has been documented as a cause of bilateral periapical pathology in caries-free premolars [[PMID:4528501]]. Retrospective data on 303 DE premolars confirm the highest prevalence in second mandibular premolars, with a 50.9% contralateral occurrence rate, supporting the value of checking the opposite side [[PMID:35413305]]. Prophylactic prep-and-fill of the tubercle achieved a 95.8% success rate versus 80.8% for reinforcement alone, confirming the clinical significance of the pulpal extension within the tubercle [[PMID:35413305]].
 
 ---
 
-**5. Sickle cell disease or other haematological condition causing pulp infarction**
+**4. Palatogingival groove (radicular lingual groove) with bacterial ingress**
 
-- *Fits because:* Vaso-occlusive ischaemia in sickle cell disease can produce pulp necrosis in multiple intact, unrestored, caries-free teeth in a young patient. The very absence of any local odontogenic cause — no caries, no restoration, no obvious trauma — is exactly the pattern that should prompt systemic enquiry, especially if more than one tooth is affected.
-- *Argues against:* Typically involves multiple teeth simultaneously rather than a single isolated tooth. If only one tooth is necrotic and a systemic diagnosis has not been raised previously, this moves down the list — but should not be dropped entirely, particularly if the patient is of African, Mediterranean, or Middle-Eastern heritage.
-- *Evidence:* Sickle cell anaemia causes haemolytic anaemia, vaso-occlusive pain crises, and multi-organ ischaemia through sickling of red blood cells [[PMID:29489205]]. No paper in this evidence base directly addresses pulp infarction in sickle cell disease; if this candidate rises clinically (multiple necrotic intact teeth, relevant heritage, systemic symptoms), haematological referral is warranted on clinical grounds independent of the dental literature.
+- *Fits because:* A developmental groove running from the cingulum apically along the root surface of a maxillary incisor creates a plaque-retentive periodontal-endodontic channel that is entirely external to the crown. The tooth may appear caries-free and unrestored while harbouring a narrow, deep periodontal pocket and localised bacterial contamination tracking to or toward the apex. Age and clinical presentation are fully consistent.
+- *Argues against:* A localised narrow periodontal defect with deep probing on the palatal surface is the expected accompanying sign; if the periodontium appears completely normal on probing, this candidate becomes less probable.
+- *Evidence:* No paper in this evidence base directly addresses the palatogingival groove as a cause of pulp necrosis in unrestored caries-free teeth. The AAE diagnostic framework underscores that accurate diagnosis requires integration of periodontal probing, sensibility testing, and radiographic assessment — tools directly applicable to detecting this groove [[PMID:AAE-PS-diagnosis]].
 
 ---
 
-**6. Pulp canal obliteration with secondary ischaemic necrosis (post-traumatic, unrecognised)**
+**5. Sickle cell disease or haemoglobinopathy (pulp infarction)**
 
-- *Fits because:* Remote, forgotten trauma can initiate progressive pulp canal obliteration; in a minority of cases this progresses to ischaemic pulp necrosis. The tooth may appear amber or yellow clinically — a useful diagnostic clue in a young patient.
-- *Argues against:* True bacterially infected necrosis from calcification alone is debated; the pulp space is more commonly calcified but sterile unless secondary infection occurs. This is a diagnosis of exclusion and sits lowest in the differential for a single tooth.
-- *Evidence:* Pulp canal obliteration developed in 12.9% of luxated teeth in a retrospective cohort, more commonly after lateral and extrusive luxations and in teeth with open apices [[PMID:38430349]]. No paper in this evidence base addresses the natural history from obliteration to frank necrosis independently of an initial traumatic event.
+- *Fits because:* Vaso-occlusive crises in sickle cell disease can cause ischaemic necrosis of the dental pulp — a mechanism that produces a necrotic tooth in a young patient with no local bacterial aetiology. The absence of all local causes (caries, restoration, groove, anomaly) makes a systemic vascular mechanism worth considering, particularly in a patient of African, Mediterranean, or Middle Eastern background.
+- *Argues against:* A known haematological diagnosis would ordinarily already be established by age 20. This cause is rare and would be accompanied by other systemic features. No demographic information is provided to raise the prior probability.
+- *Evidence:* No paper in this evidence base directly addresses sickle cell disease as a cause of pulp necrosis. The AAE diagnostic framework identifies pulp necrosis as a diagnostic category requiring the exclusion of all other local explanations before systemic causes are invoked [[PMID:AAE-PS-diagnosis]].
+
+---
+
+**6. Idiopathic/calcification-induced pulp necrosis**
+
+- *Fits because:* Calcific obliteration of the pulp space can compromise microcirculation and lead to aseptic necrosis. When no external cause is identifiable after full workup, this becomes a residual explanation.
+- *Argues against:* True necrosis from calcification alone — in the absence of a precipitating traumatic event — is uncommon; most cases of pulp canal obliteration without necrosis maintain vitality indefinitely. This category substantially overlaps with the trauma category (post-trauma obliteration is the most common driver), so it should be listed last.
+- *Evidence:* Pulp canal obliteration is a recognised post-luxation healing pattern that can, in a minority of cases, progress to pulp necrosis [[PMID:38430349]] [[PMID:2699588]]. The evidence base does not contain a paper specifically establishing spontaneous calcification-to-necrosis without a prior precipitating event.
 
 ---
 
 **What would discriminate**
 
-1. **Directed trauma history + crown colour assessment** — screens for candidates 1 and 6; amber/yellow discolouration suggests obliteration; a positive trauma history immediately elevates candidate 1 and 6; rules nothing else out but is the highest-yield, zero-chair-time step. Settles: candidates 1 and 6.
+1. **Periapical radiograph** — first and fastest: identifies the tooth's morphology (invagination = "tooth within a tooth" opacity; evaginated tubercle projection; widened PDL or periapical rarefaction consistent with post-luxation necrosis; root contour irregularity suggesting a groove). Settles candidates 1, 2, 3, and 4 partially. One image narrows the entire differential.
 
-2. **Periapical radiograph** — identifies the 'tooth-within-a-tooth' radiopaque invagination of dens invaginatus (candidate 2), worn or absent occlusal tubercle radiolucency for evaginatus (candidate 3), pulp canal obliteration (candidate 6), widened PDL or root resorption post-trauma (candidate 1), and periapical pathology confirming necrosis. First radiographic step for every candidate. Settles: candidates 1, 2, 3, 6.
+2. **Detailed trauma history** (patient + parent/carer interview, dental records) — settles candidate 1. Ask specifically about any blow to the face, sport injury, or fall; many patients do not volunteer this spontaneously.
 
-3. **Clinical inspection of the crown surface (palatal pit, tubercle, crack)** — a palatal pit or foramen caecum enlargement on a maxillary lateral incisor points to dens invaginatus; a worn or fractured central cusp on a premolar points to evaginatus; a hairline crack under loupe magnification points to candidate 4. Zero chair-time beyond a 30-second look. Settles: candidates 2, 3, 4.
+3. **Clinical inspection under magnification** of occlusal surface (for a worn/fractured central cusp → DE, candidate 3) and of the palatal cingulum/root surface (for a groove → candidate 4), combined with careful circumferential probing — narrows between candidates 3, 4 and the others with no chair-time cost beyond magnification.
 
-4. **Transillumination + Tooth Slooth bite test** — identifies crack propagation not visible on inspection or radiograph. Settles: candidate 4.
+4. **CBCT** — definitive for dens invaginatus morphology and type [[PMID:10332241]], for radicular groove extent, and for the three-dimensional periapical lesion [[PMID:40877646]]; indicated if the periapical radiograph is equivocal or if invagination treatment planning is required [[PMID:41454423]].
 
-5. **CBCT** — differentiates dens invaginatus type (Oehlers I/II/III), maps crack extent and depth, and assesses periapical bone more sensitively than periapical radiograph [[PMID:AAE-PS-cracked-tooth]] [[PMID:ESE-PS-VPT-2019]]. Indicated when radiograph and clinical exam do not explain the necrosis. Settles: candidates 2 and 4 definitively.
-
-6. **Medical and social history (haemoglobinopathy screen)** — full blood count and haemoglobin electrophoresis if multiple caries-free, unrestored teeth are necrotic or if ethnic background is relevant. Settles: candidate 5.
+5. **Medical history and haemoglobin electrophoresis** — settles candidate 5; ordered only after local causes have been excluded by the above steps.
 
 ---
 
 **Management (brief)**
 
-Establish the cause before committing to a treatment pathway: obtain a periapical radiograph, examine the crown closely under magnification, and take a directed trauma and medical history at the same visit. If trauma is confirmed with no periapical pathology, monitor with serial radiographs and sensibility testing. If dens invaginatus is identified, treatment ranges from sealing the invagination in early cases to guided or conventional root canal treatment of the invagination channel (with possible preservation of the main canal pulp as in [[PMID:41454423]]) in established necrosis. If a crack is responsible, prognosis depends on depth and probing depths — cuspal coverage before endodontic access is advisable [[PMID:AAE-PS-cracked-tooth]] [[PMID:41276249]]. Regardless of cause, once necrosis with periapical pathology is confirmed, non-surgical root canal treatment is the primary intervention, with the specific anatomy guiding the technical approach.
+Obtain a periapical radiograph and perform a thorough clinical examination under magnification before committing to any pathway. If the radiograph shows a dens invaginatus, CBCT is warranted to classify the type and plan selective or combined access [[PMID:41454423]]; if a fractured evaginated tubercle is identified on a premolar, conventional root canal treatment is indicated for the necrotic tooth [[PMID:4528501]]. For a post-traumatic necrosis with a mature apex, non-surgical root canal treatment is the primary intervention, with success rates exceeding 86% when periapical pathosis is present [[PMID:2084204]]; if the apex is immature, a regenerative or apical plug approach should be considered. A palatogingival groove with a localised defect requires combined periodontal-endodontic management of both pathways.
 
 ---
 
-> ✓ **Citation support: verified.** Each of the 16 cited claims was checked against its source abstract.
+> ⚠ **Citation support: 4 of 17 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
+>
+> - [[PMID:38430349]] cited for: "*Evidence:* Pulp canal obliteration is a recognised post-luxation healing pattern that can, in a minority of cases, progress to pulp necrosi"
+> - [[PMID:10332241]] cited for: "4. **CBCT** — definitive for dens invaginatus morphology and type, for radicular groove extent, and for the three-dimensional periapical le"
+> - [[PMID:40877646]] cited for: "4. **CBCT** — definitive for dens invaginatus morphology and type, for radicular groove extent, and for the three-dimensional periapical le"
+> - [[PMID:4528501]] cited for: "If the radiograph shows a dens invaginatus, CBCT is warranted to classify the type and plan selective or combined access; if a fractured ev"

@@ -200,6 +200,38 @@ NUMERIC_PARAM_RE = re.compile(
     re.IGNORECASE)
 
 
+def check_precedence(answer, pairs):
+    """"X before Y" over an answer. Returns a list of failure strings.
+
+    ORDERING was not expressible before `case-v2`, and it is the whole
+    assertion for a diagnostic case: an answer that names a differential
+    somewhere BELOW its treatment plan has still led with management, and
+    every `must_contain` in questions.json would pass on it.
+
+    A TOP-LEVEL FUNCTION rather than four lines inline, because the test that
+    proves it can fail has to be able to call it. The first version of that
+    test re-implemented the comparison locally and passed happily while the
+    harness's own copy was mutated to `elif False:` — which is this repo's
+    documented bug class of a test that asserts on a private copy instead of
+    the code actually used.
+
+    Absence is a failure, not a pass: an answer that never names the cause has
+    not put it first.
+    """
+    failures = []
+    low = (answer or "").lower()
+    for pair in pairs or []:
+        first, second = pair[0].lower(), pair[1].lower()
+        i, j = low.find(first), low.find(second)
+        if i < 0:
+            failures.append(f"must_precede: {pair[0]!r} absent from the answer")
+        elif 0 <= j < i:
+            failures.append(
+                f"must_precede: {pair[1]!r} appears at character {j}, before "
+                f"{pair[0]!r} at {i} — the answer leads with the wrong thing")
+    return failures
+
+
 def run_case_with_synthesis(case):
     """Run the FULL production path — retrieval plus LLM synthesis — through
     the Flask test client, so the answer-level assertions are evaluated against
@@ -349,20 +381,24 @@ def run_case_with_synthesis(case):
         if phrase.lower() in answer.lower():
             failures.append(f"must_not_contain {phrase!r} present in the answer")
 
-    # ORDERING. "X before Y" was not expressible, and it is the whole
-    # assertion for a diagnostic case: an answer that names a differential
-    # somewhere below its treatment plan has still led with management, and
-    # every must_contain in this file would pass on it.
     low = answer.lower()
-    for pair in exp.get("must_precede", []):
-        first, second = pair[0].lower(), pair[1].lower()
-        i, j = low.find(first), low.find(second)
-        if i < 0:
-            failures.append(f"must_precede: {pair[0]!r} absent from the answer")
-        elif 0 <= j < i:
+    failures.extend(check_precedence(answer, exp.get("must_precede", [])))
+
+    # "X, and at least N of these others." A differential is stochastic in its
+    # membership and firm in its shape, so listing three specific causes as
+    # must_contain asserts a ranking the model is entitled to vary — the
+    # 20-year-old case named dens invaginatus, trauma, dens evaginatus, the
+    # palatogingival groove, sickle-cell and calcific metamorphosis, an
+    # excellent differential, and failed on the absence of the word "crack".
+    at_least = exp.get("must_contain_at_least") or {}
+    if at_least:
+        want = int(at_least.get("n") or 1)
+        pool = at_least.get("any_of") or []
+        seen = [t for t in pool if t.lower() in low]
+        if len(seen) < want:
             failures.append(
-                f"must_precede: {pair[1]!r} appears at character {j}, before "
-                f"{pair[0]!r} at {i} — the answer leads with the wrong thing")
+                f"must_contain_at_least: found {len(seen)} of {want} required "
+                f"from {pool} — only {seen}")
 
     # Follow-up questions are asserted through the SAME `clarify` block the
     # retrieval-only case cases already use — `_check_clarify` below. A second
@@ -712,6 +748,10 @@ SYNTHESIS_SUBSET = [
 CASE_SUBSET = [
     "necrotic-virgin-tooth-young-adult-diagnostic",
     "bisphosphonate-extraction-vs-rct-treatment",
+    # case-v2.1. The third is not a third of a kind: the first two differ in
+    # INTENT, and this one differs in what the case GIVES you — it names a
+    # tooth, and the lead candidate is only derivable from that.
+    "dens-evaginatus-premolar-diagnostic",
 ]
 
 LIVE_SUBSET = [

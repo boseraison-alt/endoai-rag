@@ -1,0 +1,615 @@
+{
+ "label": "de-fixture-final",
+ "case": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
+ "followups": [
+  "Any history of trauma to this tooth, even minor impact the patient might not have connected to the tooth problem? — trauma is the commonest cause of pulp necrosis in a virgin tooth at this age, and the timing would date when the pulp died.",
+  "Is there discoloration of the crown, and if so when did it appear? — discoloration timing confirms pulp death and can suggest the mechanism.",
+  "Any history of orthodontic treatment, and was tooth #20 moved? — orthodontic force can cause pulp necrosis, especially if the tooth was young when moved."
+ ],
+ "search_term": "(\"cold test*\" OR vitality test* OR sensibility test*) AND (\"periapical lesion*\" OR \"periapical radioluency\" OR \"apical periodontitis\") AND (necrosis OR necrotic OR \"pulp death\" OR devitali*)",
+ "multi_terms": [
+  "(\"cold test*\" OR vitality test* OR sensibility test*) AND (\"periapical lesion*\" OR \"periapical radioluency\" OR \"apical periodontitis\") AND (necrosis OR necrotic OR \"pulp death\" OR devitali*)",
+  "(\"pulp vitality\" OR \"vital signs\" OR responsiveness OR \"nerve response\") AND (\"apical pathology\" OR \"periapical radiolucency\" OR \"bone loss\" OR \"apical rarefaction\") AND (irreversible OR diagnosis OR assessment)",
+  "(percussion OR palpation OR \"thermal test*\" OR EPT OR \"electric pulp test*\") AND (\"tooth #20\" OR \"maxillary right molar\" OR \"first molar\" OR \"M16\") AND (diagnosis OR differential OR \"clinical finding*\")",
+  "(\"pulpal status\" OR \"pulp diagnosis\" OR \"tooth vitality\" OR devitali*) AND (periapical OR \"periradicular lesion*\" OR granuloma OR cyst) AND (radiograph* OR imaging OR \"cone beam\" OR CBCT)",
+  "(necrotic OR \"pulp necrosis\" OR \"tissue death\" OR nonvital*) AND (\"apical infection\" OR \"endodontic infection\" OR \"bacterial load\") AND (polymerase chain reaction OR PCR OR culture OR microbiolog*)",
+  "(\"asymptomatic tooth\" OR \"no pain\" OR \"tooth pain absent\") AND (periapical OR apical OR root) AND (lesion* OR patholog* OR finding* OR abscess*)",
+  "(ethnicity OR genetics OR \"risk factor*\" OR susceptibility) AND (\"pulp necrosis\" OR \"pulpal death\" OR endodontic* OR apical) AND (epidemiology OR prevalence OR incidence OR association*)"
+ ],
+ "esearch": [],
+ "intent": "diagnostic",
+ "differential": [
+  {
+   "against": "The case does not explicitly mention a central tubercle or its remnant on the occlusal surface, but its absence from the description does not exclude it — it may have already been lost.",
+   "candidate": "Dens evaginatus with pulp necrosis",
+   "discriminator": "Periapical radiograph (or CBCT) showing a radiopaque projection from the occlusal surface or its remnant, combined with direct clinical inspection of the occlusal surface for a worn or fractured tubercle scar.",
+   "supports": "Tooth #20 is a mandibular second premolar — the classic site for dens evaginatus. East/Southeast Asian ethnicity is the highest-risk demographic. No caries, no restoration, no cracks reported: an intact-looking tooth with necrosis and a periapical lesion is the hallmark presentation when an evagination tubercle has worn or fractured, exposing the pulp horn within it. Age 20 is entirely consistent "
+  },
+  {
+   "against": "The case specifically states 'no cracks'; however, craze lines and early vertical fractures are frequently missed on visual inspection without transillumination or dye. Dens evaginatus is a far more parsimonious explanation given the demographic.",
+   "candidate": "Caries-independent pulp necrosis from occult craze line or microfracture",
+   "discriminator": "Transillumination, methylene blue dye staining, and wedge test (biting stick) to reveal a fracture line not apparent on routine inspection.",
+   "supports": "No filling, no visible cracks, young patient with a necrotic premolar — a subtle incomplete fracture not visible on routine examination could allow bacterial microleakage without overt caries. The absence of the usual aetiological suspects (caries, restorations) makes a hidden structural defect worth considering."
+  },
+  {
+   "against": "Tooth #20 is a mandibular premolar, a rare site for dens invaginatus. The dens evaginatus candidate is far more epidemiologically appropriate for this tooth in this patient. Age and ethnicity do not specifically elevate this risk.",
+   "candidate": "Dens invaginatus (Type I–II) of the premolar",
+   "discriminator": "Periapical radiograph or CBCT showing a radiopaque enamel-lined invagination within the root canal system.",
+   "supports": "Although classically associated with maxillary lateral incisors, dens invaginatus can occur rarely in premolars. No caries or restoration is present — an invagination creates a direct or near-direct pathway for bacteria without conventional caries. Well-defined periapical lesion with an intact crown is consistent."
+  },
+  {
+   "against": "Tooth #20 (mandibular second premolar) is an uncommon site for dental trauma compared to maxillary incisors. No history of trauma is mentioned, though it is not explicitly excluded. Dens evaginatus remains more parsimonious for this tooth in this demographic.",
+   "candidate": "Trauma-induced pulp necrosis",
+   "discriminator": "Detailed trauma history and clinical examination for mobility, PDL widening on radiograph, and crown discolouration or infraposition relative to adjacent teeth.",
+   "supports": "A 20-year-old with a necrotic tooth, no caries, no restoration, and a well-defined (chronic) periapical lesion is consistent with a history of trauma that may have been forgotten or unreported. Concussion, subluxation, or lateral luxation can devascularize a pulp without fracturing the crown. The well-defined (sclerotic-bordered) lesion suggests a longstanding, slowly developing process."
+  },
+  {
+   "against": "The tooth is non-vital (no cold response), which makes a true endodontic periapical cyst the most coherent interpretation; a coincidental cyst of non-endodontic origin would be expected adjacent to a vital tooth. Nothing in the case suggests a large or cortex-expanding lesion.",
+   "candidate": "Radicular cyst or keratocystic odontogenic tumour mimicking a periapical inflammatory lesion",
+   "discriminator": "CBCT to assess lesion morphology, cortical expansion, and precise relationship to the root apex; vitality confirmed with electric pulp test on adjacent teeth. Biopsy of the lesion at time of surgical exploration if non-surgical treatment fa",
+   "supports": "A well-defined periapical radiolucency in a young patient with a non-vital tooth could represent a radicular cyst driven by pulp necrosis, but the 'well-defined' descriptor also raises the question of whether the lesion is truly of endodontic origin or is a coincidental odontogenic cyst or tumour. At age 20, odontogenic keratocysts and dentigerous variants are within the differential for jaw lesio"
+  },
+  {
+   "against": "Tooth #20 is a single-rooted premolar without a true furcation; lateral canal pathology more classically produces a lateral (mid-root) radiolucency rather than a periapical one. The periapical location makes a straight-forward apical terminus explanation more likely.",
+   "candidate": "Lateral canal or accessory canal-related periodontitis mistaken for primary periapical pathology",
+   "discriminator": "High-resolution CBCT to localise the radiolucency precisely — apical versus lateral/mid-root position relative to root anatomy — distinguishing true periapical from lateral canal or accessory foramen origin.",
+   "supports": "A well-defined lesion in a young patient with no obvious aetiology could reflect an accessory or lateral canal opening in the furcation or lateral root surface, allowing pulpal bacteria to reach periradicular tissue. Mandibular premolars can have complex root canal anatomy. This accounts for the no-caries, no-restoration presentation."
+  }
+ ],
+ "tiers": {
+  "cochrane": [
+   {
+    "pmid": "38712714",
+    "title": "Systemic antibiotics for symptomatic apical periodontitis and acute apical abscess in adults.",
+    "year": "2024",
+    "score": 82.6,
+    "candidates": null
+   },
+   {
+    "pmid": "34647617",
+    "title": "Materials for retrograde filling in root canal therapy.",
+    "year": "2021",
+    "score": 76.7,
+    "candidates": null
+   },
+   {
+    "pmid": "36512807",
+    "title": "Single versus multiple visits for endodontic treatment of permanent teeth.",
+    "year": "2022",
+    "score": 73.7,
+    "candidates": null
+   },
+   {
+    "pmid": "27759881",
+    "title": "Endodontic procedures for retreatment of periapical lesions.",
+    "year": "2016",
+    "score": 73.3,
+    "candidates": null
+   },
+   {
+    "pmid": "29852056",
+    "title": "Pulp treatment for extensive decay in primary teeth.",
+    "year": "2018",
+    "score": 72.2,
+    "candidates": null
+   }
+  ],
+  "level1": [
+   {
+    "pmid": "AAE-PS-diagnosis",
+    "title": "AAE Position Statement: Endodontic Diagnosis",
+    "year": "2009",
+    "score": 90.0,
+    "candidates": null
+   },
+   {
+    "pmid": "AAE-PS-cbct",
+    "title": "AAE Position Statement: Use of Cone-Beam Computed Tomography in Endodontics",
+    "year": "2021",
+    "score": 90.0,
+    "candidates": null
+   },
+   {
+    "pmid": "AAE-PS-retreatment",
+    "title": "AAE Position Statement: Endodontic Retreatment",
+    "year": "2016",
+    "score": 90.0,
+    "candidates": null
+   },
+   {
+    "pmid": "AAE-PS-obturation",
+    "title": "AAE Position Statement: Obturation of Root Canal Systems",
+    "year": "2019",
+    "score": 90.0,
+    "candidates": null
+   },
+   {
+    "pmid": "AAE-PS-vital-pulp",
+    "title": "AAE Position Statement: Vital Pulp Therapy",
+    "year": "2021",
+    "score": 90.0,
+    "candidates": null
+   },
+   {
+    "pmid": "AAE-PS-cracked-tooth",
+    "title": "AAE Position Statement: Cracked Teeth",
+    "year": "2019",
+    "score": 90.0,
+    "candidates": null
+   },
+   {
+    "pmid": "ESE-QG-2023",
+    "title": "ESE Position Statement: Quality Guidelines for Endodontic Treatment — 2023 Update",
+    "year": "2023",
+    "score": 87.0,
+    "candidates": null
+   },
+   {
+    "pmid": "ESE-PS-VPT-2019",
+    "title": "ESE Position Statement: Outcome of Primary Root Canal Treatment",
+    "year": "2019",
+    "score": 87.0,
+    "candidates": null
+   },
+   {
+    "pmid": "35579093",
+    "title": "Effectiveness of revitalization in treating apical periodontitis: A systematic review and meta-analysis.",
+    "year": "2023",
+    "score": 84.0,
+    "candidates": null
+   },
+   {
+    "pmid": "40898413",
+    "title": "Outcome Following Complete and Partial Pulpotomy in Managing Cariously Exposed Mature Permanent Molars With Sy",
+    "year": "2025",
+    "score": 82.8,
+    "candidates": null
+   },
+   {
+    "pmid": "38813933",
+    "title": "Post-operative pain in non-surgical root canal treatment after sealer-based obturation versus warm vertical co",
+    "year": "2024",
+    "score": 82.0,
+    "candidates": null
+   },
+   {
+    "pmid": "38880472",
+    "title": "Sodium Hypochlorite Concentration and Postendodontic Pain - Unveiling the Optimal Balance: A Systematic Review",
+    "year": "2024",
+    "score": 82.0,
+    "candidates": null
+   },
+   {
+    "pmid": "38145805",
+    "title": "Outcome of root canal retreatment filled with gutta-percha techniques: A systematic review and meta-analysis.",
+    "year": "2024",
+    "score": 81.7,
+    "candidates": null
+   },
+   {
+    "pmid": "40375218",
+    "title": "Clinical outcomes of nonsurgical root canal treatment using C-root SP combined with different obturation techn",
+    "year": "2025",
+    "score": 81.1,
+    "candidates": null
+   },
+   {
+    "pmid": "40653156",
+    "title": "Pulp Survival of Cracked Teeth with Normal Pulp or Reversible Pulpitis After External Splinting: A Systematic ",
+    "year": "2025",
+    "score": 81.1,
+    "candidates": null
+   },
+   {
+    "pmid": "35762859",
+    "title": "Non-surgical root canal treatment and retreatment versus apical surgery in treating apical periodontitis: A sy",
+    "year": "2023",
+    "score": 80.9,
+    "candidates": null
+   },
+   {
+    "pmid": "41288117",
+    "title": "Three-Year Clinical and Economic Evaluation of Selective Caries Removal and Full Pulpotomy for Extensive Carie",
+    "year": "2026",
+    "score": 80.5,
+    "candidates": null
+   },
+   {
+    "pmid": "37815804",
+    "title": "Outcome of single-visit root canal treatment with or without MTAD: A randomized controlled clinical trial.",
+    "year": "2024",
+    "score": 80.0,
+    "candidates": null
+   },
+   {
+    "pmid": "40533920",
+    "title": "Vital Pulp Therapy in Permanent Teeth: A Systematic Review and Meta-Analyses.",
+    "year": "2025",
+    "score": 80.0,
+    "candidates": null
+   },
+   {
+    "pmid": "38449041",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth 2024.",
+    "year": "2024",
+    "score": 80.0,
+    "candidates": null
+   },
+   {
+    "pmid": "40297278",
+    "title": "Effects of intracanal cryotherapy on postoperative pain in necrotic teeth with symptomatic apical periodontiti",
+    "year": "2025",
+    "score": 79.5,
+    "candidates": null
+   },
+   {
+    "pmid": "39442480",
+    "title": "Pulp survival and postoperative treatment needs following selective vs. total caries removal in mature permane",
+    "year": "2024",
+    "score": 79.4,
+    "candidates": null
+   },
+   {
+    "pmid": "40117109",
+    "title": "Management strategies for pulpitis in vital permanent teeth in children and adolescents: a systematic review a",
+    "year": "2025",
+    "score": 78.9,
+    "candidates": null
+   },
+   {
+    "pmid": "38583758",
+    "title": "Outcome and Prognostic Factors for Partial and Full Pulpotomy in the Management of Spontaneous Symptomatic Pul",
+    "year": "2024",
+    "score": 78.9,
+    "candidates": null
+   },
+   {
+    "pmid": "40146481",
+    "title": "Effectiveness of root canal therapy in auto-transplanted third molars: a systematic review, meta-analysis and ",
+    "year": "2025",
+    "score": 78.5,
+    "candidates": null
+   }
+  ],
+  "classic": [
+   {
+    "pmid": "2084204",
+    "title": "Factors affecting the long-term results of endodontic treatment",
+    "year": "1990",
+    "score": 74.0,
+    "candidates": null
+   },
+   {
+    "pmid": "10379279",
+    "title": "Complex treatment of dens invaginatus type III in maxillary lateral incisor",
+    "year": "1999",
+    "score": 68.1,
+    "candidates": null
+   },
+   {
+    "pmid": "6951246",
+    "title": "Influence on periapical tissues of indigenous oral bacteria and necrotic pulp tissue in monkeys",
+    "year": "1981",
+    "score": 67.3,
+    "candidates": null
+   },
+   {
+    "pmid": "2047103",
+    "title": "Clinical, radiographic, and histologic study of endodontic treatment failures",
+    "year": "1991",
+    "score": 67.3,
+    "candidates": null
+   },
+   {
+    "pmid": "4528501",
+    "title": "Dens evaginatus in the etiology of bilateral periapical pathologic involvement in caries-free premolars. Abbre",
+    "year": "1974",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "10332241",
+    "title": "Dens invaginatus: aetiology, classification, prevalence, diagnosis, and treatment considerations",
+    "year": "1997",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "269901",
+    "title": "Nonrecognition and subsequent endodontic treatment of dens invaginatus",
+    "year": "1977",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "2689355",
+    "title": "Odontiatrogenic tooth fracture",
+    "year": "1989",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "4404999",
+    "title": "Dental vitality tests and pulp status",
+    "year": "1973",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "3462297",
+    "title": "Mandibular premolars with more than one root canal in different race groups",
+    "year": "1986",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "8225641",
+    "title": "Radicular cyst affecting a root-filled human tooth: a long-term post-treatment follow-up",
+    "year": "1993",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "4500261",
+    "title": "Mesiodistal and buccolingual roentgenographic investigation of 7,275 root canals",
+    "year": "1972",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "9823141",
+    "title": "Root canal treatment of mandibular second premolar with four root canals: a case report",
+    "year": "1998",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "9768425",
+    "title": "Nonsurgical root canal therapy treatment with apparent indications for root-end surgery",
+    "year": "1998",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "4517107",
+    "title": "Patent accessory canals: incidence in molar furcation region",
+    "year": "1973",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "6574990",
+    "title": "The effect of canal preparation on periapical disease",
+    "year": "1983",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "3529472",
+    "title": "[Prefabricated root canal posts]",
+    "year": "1986",
+    "score": 62.9,
+    "candidates": null
+   },
+   {
+    "pmid": "9198442",
+    "title": "Lateral condensation of small, curved root canals: comparison of two types of accessory cones",
+    "year": "1996",
+    "score": 62.9,
+    "candidates": null
+   }
+  ],
+  "level2": [
+   {
+    "pmid": "40491343",
+    "title": "Clinical efficacy of root canal treatment at 2 years using a new ready-to-use injectable calcium silicate-base",
+    "year": "2025",
+    "score": 75.8,
+    "candidates": null
+   },
+   {
+    "pmid": "39805491",
+    "title": "Long-term success and survival of post-endodontic restorations without posts after up to 18 years: A practice-",
+    "year": "2025",
+    "score": 74.4,
+    "candidates": null
+   },
+   {
+    "pmid": "40713650",
+    "title": "Prognosis of intentional replantation for periapical periodontitis teeth: a systematic review and meta-analysi",
+    "year": "2025",
+    "score": 70.4,
+    "candidates": null
+   },
+   {
+    "pmid": "38795077",
+    "title": "A retrospective clinical study to compare the ability of cone-beam computed tomographic images and periapical ",
+    "year": "2024",
+    "score": 63.7,
+    "candidates": null
+   },
+   {
+    "pmid": "40899082",
+    "title": "Evaluation of the morphology of anterior permanent mandibular teeth in a population of adolescents from Kraków",
+    "year": "2024",
+    "score": 63.7,
+    "candidates": null
+   },
+   {
+    "pmid": "40509944",
+    "title": "2D versus 3D radiographic assessment of asymptomatic persistent endodontic lesions.",
+    "year": "2025",
+    "score": 63.7,
+    "candidates": null
+   },
+   {
+    "pmid": "36295597",
+    "title": "The Changes in Size of Periapical Lesions after Root Canal Treatments Assessed by Digital Periapical Radiograp",
+    "year": "2022",
+    "score": 62.2,
+    "candidates": null
+   },
+   {
+    "pmid": "39704628",
+    "title": "Radiomic Parameters in Periapical Lesions: A CBCT Analysis Evaluating Volumetric Size, Cortical Expansion, Ero",
+    "year": "2024",
+    "score": 59.3,
+    "candidates": null
+   }
+  ],
+  "level3a": [
+   {
+    "pmid": "38243912",
+    "title": "Factors associated with the outcome of root canal treatment-A cohort study conducted in a private practice.",
+    "year": "2024",
+    "score": 73.9,
+    "candidates": null
+   },
+   {
+    "pmid": "36683563",
+    "title": "What ultimately matters in root canal treatment success and tooth preservation: A 25-year cohort study.",
+    "year": "2023",
+    "score": 72.8,
+    "candidates": null
+   },
+   {
+    "pmid": "39810326",
+    "title": "Pulp sensibility responses following complete and partial pulpotomy in mature permanent molars with carious pu",
+    "year": "2025",
+    "score": 69.4,
+    "candidates": null
+   },
+   {
+    "pmid": "39440805",
+    "title": "Time-Dependent Morphological Changes in Traumatic Immature Teeth With Necrotic Pulps Following Regenerative En",
+    "year": "2025",
+    "score": 67.2,
+    "candidates": null
+   },
+   {
+    "pmid": "41168040",
+    "title": "The importance of histopathologic diagnosis in the treatment of periapical lesions: a retrospective study.",
+    "year": "2026",
+    "score": 66.5,
+    "candidates": null
+   },
+   {
+    "pmid": "40877646",
+    "title": "Impact of apical foramen diameter on periapical lesion volume and sphericity: a retrospective cone-beam comput",
+    "year": "2026",
+    "score": 66.5,
+    "candidates": null
+   },
+   {
+    "pmid": "38430349",
+    "title": "A retrospective cohort study of pulp prognosis in luxated permanent teeth: a competing risk analysis.",
+    "year": "2024",
+    "score": 66.5,
+    "candidates": null
+   },
+   {
+    "pmid": "37642034",
+    "title": "Cysts of the jaws: A multicentre study.",
+    "year": "2024",
+    "score": 66.5,
+    "candidates": null
+   },
+   {
+    "pmid": "31211862",
+    "title": "Prognosis of root canal treatment in teeth with preoperative apical periodontitis: a study with cone-beam comp",
+    "year": "2019",
+    "score": 66.1,
+    "candidates": null
+   },
+   {
+    "pmid": "37543187",
+    "title": "Retrospective Evaluation of Periradicular Biopsies: An 18-Year Study.",
+    "year": "2023",
+    "score": 62.0,
+    "candidates": null
+   },
+   {
+    "pmid": "41454423",
+    "title": "Guided Cavity Preparation to Access an Invagination and Preserve Pulp Vitality of an Immature Maxillary Latera",
+    "year": "2026",
+    "score": 60.6,
+    "candidates": null
+   },
+   {
+    "pmid": "37635610",
+    "title": "Prevalence of odontogenic cysts in a group of Libyan population: A retrospective study.",
+    "year": "2023",
+    "score": 59.8,
+    "candidates": null
+   },
+   {
+    "pmid": "36309924",
+    "title": "Outcome and associated predictors for nonsurgical management of large cyst-like periapical lesions: A CBCT-bas",
+    "year": "2023",
+    "score": 59.4,
+    "candidates": null
+   },
+   {
+    "pmid": "32843680",
+    "title": "Accuracy for diagnosis of periapical cystic lesions.",
+    "year": "2020",
+    "score": 58.7,
+    "candidates": null
+   },
+   {
+    "pmid": "21915706",
+    "title": "Glandular odontogenic cyst: analysis of 46 cases with special emphasis on microscopic criteria for diagnosis.",
+    "year": "2011",
+    "score": 57.2,
+    "candidates": null
+   }
+  ],
+  "level3b": [
+   {
+    "pmid": "36375647",
+    "title": "Outcome of Direct Pulp Capping Using Calcium Hydroxide: A Long-term Retrospective Study.",
+    "year": "2023",
+    "score": 70.3,
+    "candidates": null
+   }
+  ]
+ },
+ "n_papers": 72,
+ "etiology_in_titles": [
+  "crack",
+  "dens invaginatus",
+  "invaginatus",
+  "dens evaginatus",
+  "etiolog",
+  "aetiolog",
+  "fracture",
+  "trauma",
+  "traumatic"
+ ],
+ "answer": "**Differential — most likely first**\n\n---\n\n**1. Dens evaginatus with pulp necrosis**\n\n- *Fits because:* Tooth #20 is a mandibular second premolar — the single most common site for dens evaginatus. The patient is 20 years old and of Asian ethnicity, the highest-risk demographic for this anomaly. The crown is intact with no caries, no restoration, and no reported cracks: this is the textbook presentation when an occlusal tubercle has worn flat or fractured years earlier, exposing the pulp horn within it, allowing progressive pulp necrosis and a slowly developing, well-defined periapical lesion. The well-defined (corticated) border indicates a chronic, longstanding process — entirely consistent with a tubercle fractured in the mid-teens.\n- *Argues against:* The case does not explicitly mention an occlusal tubercle or its scar. However, once the tubercle has been fully worn or fractured and the surrounding enamel has smoothed over, it may not be apparent to a clinician who is not specifically looking for it, and its absence from the case description does not exclude it.\n- *Evidence:* Dens evaginatus — an occlusal tubercle containing a pulp horn extension — is documented as a cause of bilateral periapical pathology in caries-free premolars [[PMID:4528501]]. The AAE diagnostic position statement identifies cold testing (Endo Ice) as the most reliable sensibility test, and an absent cold response combined with a periapical radiolucency in a non-restored tooth is the diagnostic signature of pulp necrosis with apical periodontitis [[PMID:AAE-PS-diagnosis]]. Infection of the root canal system — not necrotic tissue per se — is what drives periapical inflammation, meaning that once the pulp horn within the tubercle is breached and bacteria gain access, apical periodontitis is an expected and inevitable sequela [[PMID:6951246]].\n\n---\n\n**2. Trauma-induced pulp necrosis**\n\n- *Fits because:* A 20-year-old with a necrotic premolar, no caries, no restoration, and a well-defined periapical lesion is entirely consistent with a prior dental injury — concussion, subluxation, or lateral luxation — that devascularised the pulp without fracturing the crown. The well-defined, corticated border suggests a chronic, slowly progressing lesion, consistent with trauma occurring years earlier and now presenting incidentally or with mild symptoms.\n- *Argues against:* Tooth #20 (mandibular second premolar) is a low-frequency site for dental trauma compared to maxillary anterior teeth. No trauma history is reported, though it is not explicitly excluded. Dens evaginatus remains a far more parsimonious single explanation for this tooth in this ethnic demographic.\n- *Evidence:* A history of injury was among the strongest preoperative predictors of unsuccessful root canal treatment outcome in a large private-practice cohort (OR 0.05, 95% CI 0.01–0.24), underscoring how frequently trauma-related necrosis is only identified retrospectively [[PMID:38243912]]. Type of luxation, apical foramen diameter, and concomitant crown fractures are the main determinants of pulp prognosis after luxation injuries [[PMID:38430349]]. The AAE diagnostic framework requires integration of trauma history with sensibility tests and radiographic findings to classify the pulpal condition correctly [[PMID:AAE-PS-diagnosis]].\n\n---\n\n**3. Dens invaginatus (Type I–II) in a premolar**\n\n- *Fits because:* Although maxillary lateral incisors are the classic site, dens invaginatus can occur in premolars. The invagination creates a direct or near-direct conduit for bacteria without conventional caries, producing a necrotic tooth with an intact clinical crown — the same presentation as this case. A well-defined periapical lesion with no restoration is consistent.\n- *Argues against:* Premolars are a rare site for dens invaginatus. Asian ethnicity raises risk for dens evaginatus, not dens invaginatus. The two anomalies can co-occur, but dens evaginatus is overwhelmingly the more probable cause for this specific tooth and demographic.\n- *Evidence:* Dens invaginatus is a developmental infolding of enamel and dentine from the foramen caecum, most commonly affecting maxillary lateral incisors; bilateral occurrence and early pulp necrosis due to the complex anatomy are documented features [[PMID:10332241]]. Failure to recognise invaginatus before initiating standard root canal treatment leads to inadequate debridement because the anatomy is not anticipated [[PMID:269901]]. Combined non-surgical and surgical treatment of a Oehlers Type III invagination in a lateral incisor produced periapical healing at 3.5-year follow-up, illustrating that complex anatomy requires a tailored approach [[PMID:10379279]].\n\n---\n\n**4. Coincidental odontogenic cyst or keratocyst (non-endodontic aetiology)**\n\n- *Fits because:* A well-defined, corticated periapical radiolucency in a 20-year-old warrants consideration of a developmental odontogenic cyst — particularly odontogenic keratocyst (OKC), which peaks in the second and third decades, favours the mandible, and can displace or appear adjacent to tooth roots. The \"well-defined\" descriptor is a radiographic feature shared by both periapical cysts of endodontic origin and developmental odontogenic lesions.\n- *Argues against:* The tooth is non-vital on cold testing, which makes a true endodontic aetiology highly likely; a coincidental non-endodontic cyst would ordinarily be adjacent to a vital tooth. Radicular cysts are the most prevalent odontogenic cyst across all age groups and are directly driven by pulp necrosis [[PMID:37642034]]. Histopathological data confirm that non-endodontic lesions account for approximately 8% of periradicular biopsies, and even in clinically reported non-vital teeth, 1–3% of biopsies prove non-endodontic [[PMID:37543187]].\n- *Evidence:* Radicular cysts are the most prevalent odontogenic cyst, followed by dentigerous cysts and keratocysts; in younger patients the OKC proportion is relatively higher [[PMID:37642034]]. A retrospective study of periradicular biopsies found that non-endodontic lesions comprise ~8% of periradicular tissue submissions, and misdiagnosis has led to inappropriate endodontic treatment in cases where vitality testing of the associated tooth was not performed [[PMID:41168040]]. The diagnostic accuracy of clinical diagnosis for radicular cysts versus non-endodontic cysts was approximately 92% in one biopsy series — meaning a meaningful minority of non-endodontic lesions are clinically misclassified [[PMID:32843680]].\n\n---\n\n**5. Occult craze line or incomplete fracture with bacterial microleakage**\n\n- *Fits because:* A subtle, incomplete fracture not visible without transillumination or dye could allow bacterial ingress and pulp necrosis in a young patient with no caries or restorations. The AAE cracked tooth framework recognises that symptoms are highly variable and that clinical examination without adjunctive tests misses many fractures.\n- *Argues against:* The case explicitly states \"no cracks.\" While craze lines and early cracks are routinely missed on visual inspection, dens evaginatus and prior trauma are each individually more probable single causes for this tooth in this patient. An intact, non-restored mandibular premolar in an Asian 20-year-old with necrosis is more convincingly explained by dens evaginatus than by an occult fracture.\n- *Evidence:* The AAE cracked tooth position statement identifies transillumination, dye staining, and bite testing as necessary adjuncts because visual inspection alone is insufficient [[PMID:AAE-PS-cracked-tooth]]. CBCT imaging detects bone loss patterns associated with longitudinal tooth fractures significantly better than periapical radiographs (71% vs 42% of cases), and is particularly valuable when a fracture is suspected but not confirmed clinically [[PMID:38795077]]. Odontiatrogenic (procedure-related) fractures are an additional consideration in a previously treated tooth, but this tooth is unrestored [[PMID:2689355]].\n\n---\n\n**What would discriminate**\n\n1. **Careful occlusal inspection under magnification + transillumination** — settles Candidates 1 and 5. A worn, flattened, or fractured tubercle scar on the occlusal surface of tooth #20 confirms dens evaginatus; a fracture line visible under transillumination supports Candidate 5. This takes under two minutes and costs nothing.\n\n2. **Detailed trauma history** — settles Candidate 2. Direct questioning about falls, sports injuries, or prior dental trauma, plus examination for crown discolouration, mobility, and PDL space widening on the periapical radiograph, distinguishes traumatic from anomaly-related necrosis.\n\n3. **Electric pulp test (EPT) on adjacent teeth** — settles Candidate 4. Confirming that teeth adjacent to the lesion are vital rules out a non-endodontic cyst displacing the lesion apically from a different root, and verifies the radiolucency is genuinely periapical rather than coincidental [[PMID:AAE-PS-diagnosis]].\n\n4. **Periapical radiograph (angled views)** — settles Candidates 1, 3, and 4. A radiopaque occlusal projection or its remnant confirms dens evaginatus; an enamel-lined invagination within the root confirms dens invaginatus; a lesion not centred on the root apex, or with multilocular or scalloped borders, shifts suspicion toward a non-endodontic lesion [[PMID:AAE-PS-cbct]].\n\n5. **Limited field-of-view CBCT** — settles Candidates 1, 3, 4, and 5. CBCT reveals: the residual enamel projection or radicular extension of a dens evaginatus tubercle; an invaginated enamel channel of dens invaginatus; lesion morphology (unilocular corticated = likely endodontic; scalloped, multilocular, or root-displacing = raises non-endodontic suspicion); and bone-loss patterns consistent with a longitudinal fracture. CBCT is recommended when clinical examination and conventional imaging are insufficient to characterise the anatomy [[PMID:AAE-PS-cbct]]. CBCT detected bone-loss patterns associated with fractures in 71% of cases versus 42% by periapical radiography [[PMID:38795077]], and demonstrated missed canals and lesion dimensions more accurately than 2D radiographs in persistent endodontic lesions [[PMID:40509944]].\n\n---\n\n**Management**\n\nProceed in this order: inspect the occlusal surface of tooth #20 under magnification for a tubercle scar before touching anything else, and take a targeted periapical radiograph with a steep vertical angulation to profile the occlusal anatomy. If dens evaginatus is confirmed (Candidate 1), conventional single-rooted root canal treatment is appropriate; access must account for the pulp horn extension into the former tubercle, and obturation to within 0–2 mm of the radiographic apex is the target [[PMID:AAE-PS-obturation]]. If trauma is the cause (Candidate 2), the same endodontic treatment plan applies, with prognosis tempered by any pre-existing periapical lesion size — larger lesions and higher PAI scores are associated with lower success rates [[PMID:2084204]] [[PMID:38243912]]. If the lesion does not respond to non-surgical treatment, or if radiographic features suggest a non-endodontic aetiology, surgical exploration with biopsy submission is indicated, as histopathological confirmation is the only reliable method to exclude a non-endodontic lesion [[PMID:41168040]].\n\n---\n\n> ✓ **Citation support: verified.** Each of the 19 cited claims was checked against its source abstract.",
+ "cost": 0.215,
+ "elapsed": 178.0,
+ "first_etiology": [
+  "differential",
+  2
+ ],
+ "first_management": [
+  "aae ",
+  1277
+ ],
+ "etiology_terms_in_answer": [
+  "differential",
+  "dens evaginatus",
+  "crack",
+  "fracture",
+  "trauma",
+  "concussion",
+  "luxation",
+  "dens invaginatus",
+  "invaginatus",
+  "aetiolog",
+  "etiolog",
+  "cracked tooth",
+  "traumatic"
+ ]
+}

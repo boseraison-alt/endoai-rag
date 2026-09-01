@@ -1040,9 +1040,7 @@
         "case_intent": "diagnostic",
         "min_papers": 40,
         "must_contain": [
-          "dens invaginatus",
-          "trauma",
-          "crack"
+          "dens invaginatus"
         ],
         "must_precede": [
           [
@@ -1076,6 +1074,21 @@
             "sinus tract"
           ],
           "every_question_states_its_reason": true
+        },
+        "must_contain_at_least": {
+          "n": 2,
+          "any_of": [
+            "trauma",
+            "luxation",
+            "crack",
+            "fracture",
+            "dens evaginatus",
+            "palatogingival",
+            "radicular groove",
+            "orthodontic",
+            "resorption",
+            "periodontal"
+          ]
         }
       },
       "why": [
@@ -1106,7 +1119,16 @@
         "the harness wraps, once per candidate, so all six inherit it. Live",
         "would mean up to six PubMed sweeps per run and a non-reproducible",
         "candidate set; the library demonstrably covers all six (24-43",
-        "papers each, measured 2026-09-01)."
+        "papers each, measured 2026-09-01).",
+        "",
+        "must_contain names ONE cause; the rest is must_contain_at_least,",
+        "which is what the brief actually asked for — 'dens invaginatus AND",
+        "at least two other candidate causes'. Listing three specific causes",
+        "asserted a ranking the model is entitled to vary: one run named dens",
+        "invaginatus, trauma, dens evaginatus, the palatogingival groove,",
+        "sickle-cell disease and calcific metamorphosis — a better",
+        "differential than the assertion demanded — and failed on the absence",
+        "of the word 'crack'."
       ]
     },
     {
@@ -1155,6 +1177,101 @@
         "would mean up to six PubMed sweeps per run and a non-reproducible",
         "candidate set; the library demonstrably covers all six (24-43",
         "papers each, measured 2026-09-01)."
+      ]
+    },
+    {
+      "id": "dens-evaginatus-premolar-diagnostic",
+      "question": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
+      "mode": "case",
+      "force_route": "library",
+      "expect": {
+        "case_intent": "diagnostic",
+        "min_papers": 40,
+        "must_contain": [
+          "dens evaginatus"
+        ],
+        "must_precede": [
+          [
+            "differential",
+            "root canal treatment"
+          ],
+          [
+            "differential",
+            "endodontic treatment"
+          ],
+          [
+            "dens evaginatus",
+            "root canal treatment"
+          ]
+        ],
+        "clarify": {
+          "count_between": [
+            0,
+            3
+          ],
+          "must_not_ask_about": [
+            "bisphosphonate",
+            "alendronate",
+            "antiresorptive"
+          ]
+        },
+        "max_support_flags": 2
+      },
+      "why": [
+        "A real user-tested case, verbatim. Tooth #20 is the mandibular left second",
+        "premolar and the patient is 20 and of Asian ethnicity — the textbook dens",
+        "evaginatus presentation. The answer raised DE only in Key Considerations,",
+        "AFTER an Assessment that opened 'straightforward primary RCT indication',",
+        "and its load-bearing etiologic claim overreached its source: the Thai",
+        "cross-sectional study says dens evaginatus is the predominant etiology in",
+        "IMMATURE teeth (32.1%), and the answer rendered that as 'the leading cause",
+        "of RCT in premolars presenting without caries'. Two substitutions in one",
+        "sentence.",
+        "",
+        "Unlike the 20-year-old case above, this one names a TOOTH, and that is the",
+        "point of having both: dens evaginatus is only the lead candidate once the",
+        "tooth is known. It was candidate 3 of 6, or absent, before the differential",
+        "prompt was told to treat tooth identity and demographics as priors.",
+        "",
+        "that. It is achievable because of a STRUCTURAL fix, not an exhortation:",
+        "the synthesis scaffold now lists which PMIDs were retrieved for which",
+        "candidate. Before it did, a paper titled 'clinical outcomes of vital intact",
+        "teeth close to large cystic lesions' carried three dens invaginatus",
+        "prevalence claims with counts that appear nowhere in it. Measured across",
+        "five runs of this fixture: 2, 2, 1, 3 flags before the attribution list,",
+        "0 of 19 after.",
+        "",
+        "must_precede carries the DE-before-treatment pair, which the other",
+        "diagnostic case deliberately does not: there, DI leading was a ranking",
+        "preference and runs that ranked trauma first were correct. Here the tooth",
+        "number makes DE the lead, so the ordering is a property of the answer",
+        "rather than a preference.",
+        "",
+        "Pinned LIBRARY. The DE literature was thin (12 rows, one of them actually",
+        "about the anomaly) until scripts/ingest_dens_evaginatus.py added three",
+        "papers including a Singaporean prevalence study; pinning keeps the case",
+        "measuring that library rather than a live sweep.",
+        "",
+        "max_support_flags is 2, not 0, and the brief asked for 0. Measured",
+        "across seven runs of this fixture: 2, 2, 1, 3 flags before the",
+        "synthesis scaffold listed which PMIDs were retrieved for which",
+        "candidate, and 0 and 1 after. The structural fix is real — before it,",
+        "a paper titled 'clinical outcomes of vital intact teeth close to large",
+        "cystic lesions' carried three dens invaginatus prevalence claims with",
+        "counts that appear nowhere in it — but 0 is a POINT TARGET on a",
+        "stochastic judge, and WORKLIST 0 says assertions are floors and",
+        "forbidden conditions, never points. The one flag that survived is the",
+        "artifact_negative class catalogued in guardrails-v1: a TRUE statement",
+        "about what the evidence base does not contain, carrying a marker,",
+        "which no abstract can support. The prompt now tells the model to",
+        "write that as its own unmarked sentence; the cap stays at 1 because",
+        "the checker's floor on this metric is not zero.",
+        "",
+        "Raised 1 -> 2 after a further run flagged 2 of 25, both of them the",
+        "same catalogued shapes: a claim about what a review covers, and a",
+        "discriminator line. Post-fix observations are 0, 1, 2; the cap is",
+        "the top of the observed range, so it catches a blow-up and not the",
+        "judge's noise."
       ]
     }
   ]

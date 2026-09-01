@@ -6154,6 +6154,7 @@ Rules:
 - A candidate is an AETIOLOGY or a DIAGNOSIS, never a treatment. "Dens invaginatus" is a candidate; "root canal treatment" is not.
 - Name what in THIS case supports it, and what would argue against it. Use the case's own words where you can.
 - Include candidates the case's ABSENCES point to. A necrotic tooth with no caries and no restoration is a different differential from a necrotic tooth with a deep filling, and the absence is the informative part.
+- WHICH TOOTH IT IS, and who the patient is, are strong priors — use them explicitly. A tooth number or name tells you which developmental anomalies are even possible: dens invaginatus concentrates in maxillary lateral incisors, dens evaginatus in mandibular premolars, the palatogingival groove in maxillary laterals, and a mandibular premolar in a patient of East or Southeast Asian ancestry is the classic dens evaginatus presentation. Where the case gives you a tooth or a demographic, say in `supports` what it makes MORE likely, and do not let a candidate that is common overall crowd out one that is common in THIS tooth.
 - Do not omit an uncommon cause that fits the presentation well. A differential that lists only the common things is not a differential.
 - Name the single examination, test or image that would most cheaply confirm or exclude each candidate.
 
@@ -6165,6 +6166,60 @@ Return ONLY a JSON array, no prose and no markdown fence:
     "discriminator": "the single test, sign or image that settles it",
     "search_topic": "a literature search topic for this candidate in this presentation"}}
 ]"""
+
+
+def _parse_candidate_array(raw: str):
+    """Parse the differential's JSON array, tolerantly. None if nothing parses.
+
+    Three rungs, and the third is the one that matters:
+
+      1. the whole reply as JSON;
+      2. the first bracketed array in it, for a prose wrapper;
+      3. OBJECT BY OBJECT, for a reply the model did not finish.
+
+    Rung 3 exists because a truncated list is not an empty list. When the
+    reply stops at `max_tokens` mid-string, the first four or five candidate
+    objects are complete and perfectly usable — and the alternative, returning
+    nothing, drops a diagnostic turn onto the treatment path where it produces
+    the very answer this feature was built to replace. Losing the last
+    candidate is a smaller error than losing the differential.
+    """
+    if not raw:
+        return None
+    for attempt in (raw, ):
+        try:
+            data = json.loads(attempt)
+            if isinstance(data, list):
+                return data
+        except Exception:
+            pass
+    m = re.search(r"\[.*\]", raw, re.S)
+    if m:
+        try:
+            data = json.loads(m.group(0))
+            if isinstance(data, list):
+                return data
+        except Exception:
+            pass
+    decoder = json.JSONDecoder()
+    out, i = [], 0
+    while True:
+        i = raw.find("{", i)
+        if i < 0:
+            break
+        try:
+            obj, end = decoder.raw_decode(raw, i)
+        except ValueError:
+            i += 1
+            continue
+        if isinstance(obj, dict):
+            out.append(obj)
+        i = end
+    if out:
+        print(f"  [case] differential JSON was incomplete; recovered "
+              f"{len(out)} candidate(s) object by object")
+        return out
+    return None
 
 
 def generate_case_differential(case_description: str, turn: str = "") -> tuple:
@@ -6190,7 +6245,15 @@ def generate_case_differential(case_description: str, turn: str = "") -> tuple:
             # thing it has to get right is remembering the uncommon cause that
             # fits. Tier 2 is where that lives.
             model      = MODELS["reasoning_standard"],
-            max_tokens = 1500,
+            # 1500 -> 3000. Six candidates x five prose fields does not fit in
+            # 1500 output tokens: the reply stopped at `max_tokens` mid-string,
+            # `json.loads` raised "Unterminated string", this function returned
+            # [], and the caller fell back to the ordinary case path — so a
+            # DIAGNOSTIC turn was answered with a treatment-shaped answer that
+            # opened "Proceed with non-surgical root canal treatment". That is
+            # the exact failure `case-v2.1` exists to fix, reintroduced by a
+            # token cap. Measured: 1,500 output tokens, stop_reason max_tokens.
+            max_tokens = 3000,
             messages   = [{"role": "user", "content": DIFFERENTIAL_PROMPT.format(
                 case=(case_description or text)[:6000], turn=text[:6000],
                 lo=DIFFERENTIAL_MIN, hi=DIFFERENTIAL_MAX)}])
@@ -6198,11 +6261,9 @@ def generate_case_differential(case_description: str, turn: str = "") -> tuple:
                             MODELS["reasoning_standard"], resp.usage,
                             mode="case")
         raw = re.sub(r"```json|```", "", resp.content[0].text or "").strip()
-        # Tolerant of a prose wrapper, for the same reason the search-term
-        # parser is: a JSON-only instruction is followed almost always, and
-        # "almost" is what put +/-50% noise under every eval number once.
-        m = re.search(r"\[.*\]", raw, re.S)
-        data = json.loads(m.group(0) if m else raw)
+        data = _parse_candidate_array(raw)
+        if data is None:
+            raise ValueError("no candidate object could be parsed")
         out = []
         for item in (data if isinstance(data, list) else []):
             if not isinstance(item, dict):
@@ -6268,13 +6329,23 @@ Two to four sentences, no more, and only after the differential. What to do firs
 
 Do not open with management, a treatment plan, or a guideline. The first thing on the page is the differential."""
 
-_MARKERS_DIAGNOSTIC = ("- Markers belong on the *Evidence:* line of each "
-                       "candidate and on any discriminator whose usefulness "
-                       "you are asserting from literature. Do NOT mark the "
-                       "*Fits because:* and *Argues against:* lines — those "
-                       "are your reading of THIS case, not claims about a "
-                       "paper, and a marker on them asserts something no "
-                       "paper says.")
+_MARKERS_DIAGNOSTIC = (
+    "- Markers belong on the *Evidence:* line of each candidate. Do NOT mark "
+    "the *Fits because:* and *Argues against:* lines — those are your reading "
+    "of THIS case, not claims about a paper, and a marker on them asserts "
+    "something no paper says.\n"
+    "- In the discriminator section, a marker goes on a test ONLY where the "
+    "cited paper itself evaluated that test. A line that merely says which "
+    "candidate a test settles — \"also evaluates canal obliteration for "
+    "candidate 5\", \"confirms this candidate\" — is your clinical reasoning "
+    "and takes NO marker. It is not a proposition a paper can support, and a "
+    "marker there is a citation the clinician cannot check.\n"
+    "- A statement about what the evidence base does NOT contain — \"no "
+    "literature here evaluates this sign in isolation\" — is a true and useful "
+    "thing to write and takes NO marker, because no abstract can state what it "
+    "omits. Write it as its own sentence. If you then want to say something "
+    "positive that a paper does support, that is a SECOND sentence, and the "
+    "marker goes there.")
 
 
 # ── CASE DISCUSSION ───────────────────────────────────────
@@ -6365,6 +6436,24 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
                 f"   argues against: {c.get('against', '')}\n"
                 f"   discriminator: {c.get('discriminator', '')}")
         diff_meta = (evidence.get("_differential") or {})
+        # WHICH CANDIDATE EACH PAPER CAME FROM. Without this the evidence block
+        # is one undifferentiated pool and every PMID in it looks equally
+        # available to every candidate — which is how a paper titled "clinical
+        # outcomes of vital intact teeth close to large cystic lesions" came to
+        # carry three claims about dens invaginatus prevalence, complete with
+        # counts ("93/170", "134/136") that appear nowhere in it. Three real
+        # flags in one answer, all the same mechanism: a real PMID from the
+        # block attached to a fact the model knew from somewhere else.
+        with_papers = [(n, v) for n, v in diff_meta.items() if v.get("pmids")]
+        if with_papers:
+            lines.append(
+                "\nWHICH PAPERS WERE RETRIEVED FOR WHICH CANDIDATE. A paper "
+                "retrieved for one candidate is not evidence for another just "
+                "because it is in the block below — check that the paper's own "
+                "subject is the candidate you are citing it for:")
+            for name, v in with_papers:
+                lines.append(f"  - {name}: "
+                             + ", ".join(str(p) for p in v["pmids"][:25]))
         empties = [n for n, v in diff_meta.items() if not v.get("n_papers")]
         if empties:
             lines.append(
