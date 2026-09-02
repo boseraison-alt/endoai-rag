@@ -2224,7 +2224,9 @@ def history():
     cur  = conn.cursor()
     try:
         cur.execute("""
-            SELECT id, question_text, created_at, hit_count
+            SELECT id, question_text, created_at, hit_count,
+                   CASE WHEN jsonb_typeof(papers) = 'array'
+                        THEN jsonb_array_length(papers) ELSE 0 END AS paper_count
             FROM query_cache
             ORDER BY created_at DESC
             LIMIT 50;
@@ -2250,6 +2252,11 @@ def history():
                 "mode":       mode_tag,
                 "created_at": r[2].isoformat() if r[2] else None,
                 "hit_count":  r[3] or 0,
+                # A19e — the drawer row shows what tells two entries apart.
+                # The cost of a Review answer is not stored on the cache row,
+                # so the count goes out alone rather than beside a made-up
+                # figure; curricula carry their own measured cost.
+                "paper_count": r[4] or 0,
             })
         return jsonify(items)
     except Exception as e:

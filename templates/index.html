@@ -6,7 +6,7 @@
 <!-- The admin token is deliberately NOT in this page (WORKLIST C4): admin
      actions authenticate via POST /admin/login, which sets a signed HttpOnly
      session cookie. Page source stays secret-free. -->
-<title>Curo — Evidence-Based Clinical Assistant</title>
+<title>Curo — Evidence-Based Dental Educator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
 
 body {
   font-family: var(--font-sans);
-  background: #e8ecf2;
+  background: #ebedf4;
   color: #1e2840;
   height: 100vh;
   display: flex;
@@ -1735,7 +1735,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 .suggest-stay:hover { text-decoration: underline; }
 
 /* A15b — Case needs room to describe a patient. */
-#qInput.mode-case-input { min-height: 92px; }
+/* A19c raises the Case field to ~118px; see the rule in the A19 block. */
 
 /* A15d — ONE history list, badged, four rows, then "All N". */
 .hist-badge {
@@ -3114,132 +3114,342 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   margin-top: 20px;
 }
 .profile-save-btn:hover { background: #1e40af; }
+
+/* == A19 - UI v2, built to the Curo Search Modes canvas =====================
+   RB hand-sketched this. A15's mode architecture (the MODES table and the one
+   `modeShows` predicate) is unchanged - this is arrangement, not architecture.
+   Every value below is lifted from an artboard rather than invented.        */
+
+/* A19a - thin top bar. History far left, Case Assessment and the avatar far
+   right. There is no tab strip: the modes live inside the composer now. */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px; flex-shrink: 0; background: transparent;
+}
+.topbar-hist {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: #ffffff; border: 1px solid #dfe3ec; color: #5b6885;
+  font: 600 13px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  padding: 8px 15px; border-radius: 9px; cursor: pointer;
+  transition: border-color .14s, color .14s;
+}
+.topbar-hist:hover { border-color: #c8cfdd; color: #253451; }
+.topbar-hist svg { width: 15px; height: 15px; }
+.topbar-right { display: flex; gap: 20px; align-items: center; }
+.topbar-link {
+  background: none; border: none; cursor: pointer;
+  font: 400 13px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #5b6885; padding: 6px 2px;
+}
+.topbar-link:hover { color: #16264d; }
+.topbar-link.active { color: #1e4fa3; font-weight: 600; }
+.topbar-avatar {
+  width: 30px; height: 30px; border-radius: 999px;
+  background: #ffffff; border: 1px solid #dfe3ec; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  font: 700 11px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #1e4fa3;
+}
+.topbar-avatar.active { background: #e7eefb; border-color: #cddcf5; }
+
+/* A19f - the landing screen is the lockup, the composer, the promise line and
+   the three cards. Nothing else competes with the question box. */
+.center-col { width: 100%; max-width: 820px; margin: 0 auto; }
+
+.lockup { display: flex; flex-direction: column; align-items: center;
+          padding-top: 52px; }
+.lockup-row { display: flex; align-items: center; gap: 18px; margin-bottom: 10px; }
+.lockup-mark { height: 54px; width: auto; flex-shrink: 0; border-radius: 10px; display: block; }
+.lockup-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 62px; line-height: 1; color: #16264d; letter-spacing: 0.02em;
+}
+.lockup-tag {
+  font-size: 15px; color: #6b7994; letter-spacing: 0.03em; margin-bottom: 46px;
+}
+
+/* A19c - ONE composer. The chips are docked along its lower edge, inside the
+   card, rather than floating above it as a strip of their own. */
+.input-card {
+  background: #ffffff; border: 1px solid #cddcf5; border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(22,38,77,0.07);
+  overflow: hidden; padding: 0; margin: 0;
+}
+.input-card.m-case  { border-color: #a9dcc2; }
+.input-card.m-learn { border-color: #c8bcee; }
+.input-card textarea {
+  display: block; width: 100%; box-sizing: border-box;
+  padding: 22px 24px 6px 24px; min-height: 74px;
+  border: none; outline: none; resize: none; background: transparent;
+  font: 400 17px/1.5 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #16264d;
+}
+#qInput.mode-case-input { min-height: 118px; }
+.input-card textarea::placeholder { color: #9aa1ac; }
+.composer-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px 14px 20px; gap: 12px;
+}
+.ask-btn {
+  width: 38px; height: 38px; padding: 0; flex-shrink: 0;
+  border: none; border-radius: 10px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #1e4fa3;
+}
+.ask-btn svg { width: 17px; height: 17px; }
+.ask-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* The promise line sits UNDER the card on the canvas, not inside it. */
+.mode-promise {
+  border-top: none; padding-top: 0; margin: 12px 0 0; padding-left: 4px;
+  gap: 8px; font-size: 13px; color: #6b7994;
+}
+.promise-dot { width: 5px; height: 5px; }
+.promise-sep { color: #aab2c2; }
+.promise-when { color: #8a94a8; }
+
+/* A19d - three cards, changing per mode. Every claim on them is checkable
+   against the engine (A17): this is the surface that used to tell the
+   clinician papers are ranked by "citations & impact factor". */
+.what-title {
+  font: 700 11px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.11em; color: #9aa3b4;
+  margin: 46px 0 11px; padding: 0; border: none; text-transform: uppercase;
+}
+.what-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px;
+  margin: 0; max-width: none;
+}
+/* RB — smaller, and a step duller than the composer. The composer is the one
+   thing on the screen the clinician acts on; these three sit behind it in the
+   same way the panel-header token sits behind a surface. */
+.what-card {
+  background: #f4f6fa; border: 1px solid #e3e7f0; border-radius: 10px;
+  padding: 13px 15px;
+}
+.what-card-title {
+  font: 700 12.5px/1.3 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #354566; margin-bottom: 5px;
+}
+.what-card-text { font-size: 12px; line-height: 1.5; color: #7b8598; }
+
+/* The running clock on the progress card. Tabular figures so the digits do
+   not jitter as the seconds tick over. */
+.progress-eta {
+  font-size: 12px; color: #5b6885; white-space: nowrap; flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.progress-eta.over { color: #8a5510; }
+
+/* A19e - History is a DRAWER. Closed by default; opening slides it over the
+   left of the page. The landing screen no longer carries a recent list. */
+.hist-drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 380px;
+  background: #ffffff; border-right: 1px solid #dfe3ec;
+  box-shadow: 2px 0 12px rgba(22,38,77,0.06);
+  display: flex; flex-direction: column;
+  transform: translateX(-100%); transition: transform .18s ease;
+  z-index: 60;
+}
+.hist-drawer.open { transform: translateX(0); }
+.hist-scrim {
+  position: fixed; inset: 0; background: rgba(22,38,77,0.18);
+  opacity: 0; pointer-events: none; transition: opacity .18s; z-index: 55;
+}
+.hist-scrim.open { opacity: 1; pointer-events: auto; }
+.hist-drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; border-bottom: 1px solid #eef1f6;
+}
+.hist-drawer-title {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: #16264d; font: 700 14px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+.hist-drawer-title svg { width: 15px; height: 15px; }
+.hist-drawer-count { color: #8a94a8; font-weight: 400; }
+.hist-drawer-close {
+  background: none; border: none; cursor: pointer; padding: 2px;
+  display: inline-flex; color: #8a94a8;
+}
+.hist-drawer-close svg { width: 16px; height: 16px; }
+.hist-filter { display: flex; gap: 6px; padding: 12px 16px 10px; }
+.hist-filter-chip {
+  font: 600 12px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #6b7994; background: none; border: none; cursor: pointer;
+  padding: 5px 11px; border-radius: 999px;
+}
+.hist-filter-chip:hover { color: #16264d; }
+.hist-filter-chip.active { color: #16264d; background: #eef1f6; }
+.hist-drawer-list {
+  display: flex; flex-direction: column; padding: 0 10px 16px;
+  overflow-y: auto; flex: 1;
+}
+/* Rows carry what DISTINGUISHES them - the two laser curricula differ only by
+   paper count and cost, and that is exactly what the meta line shows. */
+.hist-row {
+  display: block; padding: 12px; border-radius: 9px; border: none;
+  cursor: pointer;
+}
+.hist-row:hover { background: #f7f8fb; }
+.hist-row-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.hist-badge {
+  font: 700 9px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.06em; padding: 3px 7px; border-radius: 4px; border: none;
+}
+.hist-badge.b-case  { color: #1b7a45; }
+.hist-badge.b-learn { color: #6d4bb8; }
+.hist-row-meta { font-size: 11px; color: #8a94a8; }
+.hist-row-title {
+  display: block; font-size: 13px; line-height: 1.45; color: #16264d;
+  max-width: none; overflow: hidden; text-overflow: ellipsis;
+}
+.hist-drawer-empty { padding: 18px 12px; font-size: 13px; color: #8a94a8; }
+
+/* The chips carry a dot only when active, as on the artboards; the icons
+   they used to carry belonged to a strip that is now inside the composer. */
+.mode-chip { padding: 7px 15px; }
+.chip-dot { width: 6px; height: 6px; border-radius: 999px; display: none; flex-shrink: 0; }
+.mode-chip.active .chip-dot { display: inline-block; }
+.mode-chip.m-case.active  { color: #176b3d; }
+
+/* The mode row and the old always-open sidebar are gone: the chips live in
+   the composer and Case Assessment / Profile live in the top bar. */
+.mode-bar, .sidebar, .sidebar-toggle { display: none !important; }
 </style>
 </head>
 <body>
 <div class="app-layout">
 
-<!-- Sidebar -->
-<nav class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-tabs">
-      <div class="sidebar-tab active" id="sidebarTabHistory" onclick="switchSidebarTab('history')">📋 History</div>
-      <div class="sidebar-tab"        id="sidebarTabMedia"   onclick="switchSidebarTab('media')">🎬 Media</div>
-    </div>
+<!-- A19e — History is a collapsed DRAWER, not a panel. Nothing on the landing
+     screen competes with the question box, so the recent list leaves the main
+     view entirely and slides in over the left when the tab is clicked. -->
+<div class="hist-scrim" id="histScrim" onclick="closeHistDrawer()"></div>
+<aside class="hist-drawer" id="histDrawer" aria-hidden="true">
+  <div class="hist-drawer-head">
+    <span class="hist-drawer-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+      History <span class="hist-drawer-count" id="learnHistCount"></span>
+    </span>
+    <button class="hist-drawer-close" onclick="closeHistDrawer()" aria-label="Close history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
   </div>
-  <div class="history-list" id="historyList">
-    <div class="sidebar-empty">No history yet.<br>Your queries will appear here.</div>
+  <div class="hist-filter" id="histFilter">
+    <button class="hist-filter-chip active" id="histFilterAll"    onclick="setHistFilter('all')">All</button>
+    <button class="hist-filter-chip"        id="histFilterReview" onclick="setHistFilter('review')">Literature</button>
+    <button class="hist-filter-chip"        id="histFilterCase"   onclick="setHistFilter('case')">Case</button>
+    <button class="hist-filter-chip"        id="histFilterLearn"  onclick="setHistFilter('learn')">Curriculum</button>
   </div>
-  <div class="media-list" id="mediaList">
-    <div class="media-empty">No saved media yet.<br>Generate a podcast, lecture,<br>video, or slides to see it here.</div>
+  <div class="hist-drawer-list" id="learnHistList">
+    <div class="hist-drawer-empty">Loading&hellip;</div>
   </div>
-</nav>
+</aside>
 
 <!-- Main panel -->
 <div class="main-panel">
 
-<!-- Header -->
-<header class="header">
-  <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle history">☰</button>
-  <div class="brand">
-    <img class="brand-logo" src="/static/curo-mark-small.png" alt="Curo">
-    <span class="brand-name">Curo</span>
-    <span class="brand-tag">Evidence-Based Clinical Assistant</span>
+<!-- A19a — a thin top bar and nothing else. The three modes are chips docked
+     inside the composer (A19c); Case Assessment and Profile are not modes of
+     the search bar and sit far right. -->
+<header class="topbar">
+  <button class="topbar-hist" id="histTab" onclick="toggleHistDrawer()" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
+    History
+  </button>
+  <div class="topbar-right">
+    <button class="topbar-link" id="tabAssess" onclick="setMode('assess')"
+            title="AAE difficulty score + treat/refer decision">Case Assessment</button>
+    <button class="topbar-avatar" id="tabProfile" onclick="setMode('profile')"
+            title="Preferences, videos, deep-learning history">RB</button>
   </div>
 </header>
-
-<!-- A15a — ONE search surface, three mode chips. Case Assessment and Profile
-     are not modes of the search bar and have moved to the top-right nav. -->
-<div class="mode-bar">
-  <div class="mode-chips" role="tablist" aria-label="Search mode">
-    <button class="mode-chip m-review active" id="tabReview" role="tab"
-            aria-selected="true" onclick="setMode('review')">
-      <span class="mode-chip-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span>Literature</span>
-    </button>
-    <button class="mode-chip m-case" id="tabCase" role="tab"
-            aria-selected="false" onclick="setMode('case')">
-      <span class="mode-chip-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 3v6a5 5 0 0 0 10 0V3"/><circle cx="18.5" cy="16" r="2.5"/><path d="M9.5 14v1.5a6 6 0 0 0 6.5 6"/></svg></span><span>Case</span>
-    </button>
-    <button class="mode-chip m-learn" id="tabLearn" role="tab"
-            aria-selected="false" onclick="setMode('learn')">
-      <span class="mode-chip-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4-9-4z"/><path d="M7 10.5V16c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-5.5"/></svg></span><span>Curriculum</span>
-    </button>
-  </div>
-  <div class="mode-nav">
-    <button class="nav-btn" id="tabAssess" onclick="setMode('assess')"
-            title="AAE difficulty score + treat/refer decision">
-      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span><span>Case Assessment</span>
-    </button>
-    <button class="nav-btn" id="tabProfile" onclick="setMode('profile')"
-            title="Preferences, videos, deep-learning history">
-      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></svg></span><span>Profile</span>
-    </button>
-  </div>
-</div>
 
 <!-- Scrollable content -->
 <div class="content-scroll">
 <div class="content">
 
-  <!-- Input -->
-  <div class="input-card">
-    <div class="input-context">
-      <div class="context-dot dot-review" id="ctxDot"></div>
-      <div class="context-label" id="ctxLabel">Literature</div>
+<div class="center-col" id="landingCol">
+
+  <!-- A19a/A19f — bigger lockup, centred. The landing screen holds this, the
+       composer, the promise line and the three cards. Nothing else. -->
+  <div class="lockup" id="lockup">
+    <div class="lockup-row">
+      <img class="lockup-mark" src="/static/curo-mark-small.png" alt="Curo">
+      <span class="lockup-name">Curo</span>
     </div>
+    <div class="lockup-tag">Evidence-Based Dental Educator</div>
+  </div>
+
+  <!-- A19c — ONE composer: the input on top, and along its lower edge a
+       toolbar carrying the three mode chips on the left and submit on the
+       right. The chips are INSIDE the card, not floating above it. -->
+  <div class="input-card" id="inputCard">
     <textarea
       id="qInput"
       rows="2"
-      placeholder="e.g. What is the evidence for MTA vs calcium hydroxide in vital pulp therapy?"
+      placeholder="Ask your question&hellip;"
       onkeydown="handleKey(event)"
       oninput="autoResize(this); maybeSuggestCaseMode()"
     ></textarea>
-    <!-- A15c — say what the wait buys BEFORE the click. The three modes
-         differ ~3x in cost and ~50x in time; one stored curriculum cost
-         $6.51, and nothing on the old screen said so. -->
-    <div class="mode-promise" id="modePromise">
-      <span class="promise-dot" id="promiseDot"></span>
-      <span class="promise-what" id="promiseWhat"></span>
-      <span class="promise-sep">&middot;</span>
-      <span class="promise-when" id="promiseWhen"></span>
-    </div>
-
-    <!-- A15e — a SUGGESTION. Nothing here may switch a mode that costs $2.50. -->
-    <div class="mode-suggest" id="modeSuggest" style="display:none">
-      <span class="suggest-text" id="modeSuggestText"></span>
-      <button class="suggest-go" id="modeSuggestGo">Switch to Case</button>
-      <button class="suggest-stay" onclick="dismissModeSuggestion()">Stay in Literature</button>
-    </div>
-
-    <div class="input-card-footer">
-      <div class="input-hint">Enter to submit &middot; Shift+Enter for new line</div>
-      <button class="ask-btn" id="askBtn" onclick="submitQuestion()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Search literature
-      </button>
-    </div>
-
-    <!-- Clarify panel — shown automatically when Claude detects a case question -->
-    <div class="clarify-panel" id="clarifyPanel">
-      <div class="clarify-loading" id="clarifyLoading">
-        <div class="clarify-spinner"></div>
-        <span style="color:#1d4ed8;font-size:12px;">A few quick questions to tailor the answer to your case...</span>
+    <div class="composer-bar">
+      <div class="mode-chips" role="tablist" aria-label="Search mode">
+    <button class="mode-chip m-review active" id="tabReview" role="tab"
+            aria-selected="false" onclick="setMode('review')">
+      <span class="chip-dot" style="background:#1e4fa3"></span><span>Literature</span>
+    </button>
+    <button class="mode-chip m-case" id="tabCase" role="tab"
+            aria-selected="false" onclick="setMode('case')">
+      <span class="chip-dot" style="background:#17803f"></span><span>Case</span>
+    </button>
+    <button class="mode-chip m-learn" id="tabLearn" role="tab"
+            aria-selected="false" onclick="setMode('learn')">
+      <span class="chip-dot" style="background:#5b3ca6"></span><span>Curriculum</span>
+    </button>
       </div>
-      <div id="clarifyQs"></div>
-      <div class="clarify-submit-row" id="clarifySubmitRow" style="display:none">
-        <button class="clarify-skip-btn" onclick="submitWithContext(true)">Skip — search now</button>
-        <button class="clarify-submit-btn" onclick="submitWithContext(false)">
-          Search with my answers →
-        </button>
-      </div>
+      <button class="ask-btn" id="askBtn" onclick="submitQuestion()"
+              title="Search literature" aria-label="Search literature"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>
     </div>
   </div>
 
-  <!-- Progress -->
+  <!-- A15c — say what the wait buys BEFORE the click. -->
+  <div class="mode-promise" id="modePromise">
+    <span class="promise-dot" id="promiseDot"></span>
+    <span class="promise-what" id="promiseWhat"></span>
+    <span class="promise-sep">&middot;</span>
+    <span class="promise-when" id="promiseWhen"></span>
+  </div>
+
+  <!-- A15e — a SUGGESTION. Nothing here may switch a mode that costs $2.50. -->
+  <div class="mode-suggest" id="modeSuggest" style="display:none">
+    <span class="suggest-text" id="modeSuggestText"></span>
+    <button class="suggest-go" id="modeSuggestGo">Switch to Case</button>
+    <button class="suggest-stay" onclick="dismissModeSuggestion()">Stay in Literature</button>
+  </div>
+
+  <!-- Clarify panel — shown when the server asks for case context -->
+  <div class="clarify-panel" id="clarifyPanel">
+    <div class="clarify-loading" id="clarifyLoading">
+      <div class="clarify-spinner"></div>
+      <span style="color:#1d4ed8;font-size:12px;">A few quick questions to tailor the answer to your case...</span>
+    </div>
+    <div id="clarifyQs"></div>
+    <div class="clarify-submit-row" id="clarifySubmitRow" style="display:none">
+      <button class="clarify-skip-btn" onclick="submitWithContext(true)">Skip — search now</button>
+      <button class="clarify-submit-btn" onclick="submitWithContext(false)">
+        Search with my answers →
+      </button>
+    </div>
+  </div>
+
+    <!-- Progress -->
   <div class="progress-card" id="progressCard">
     <div class="progress-top">
       <div class="spinner"></div>
       <div class="progress-question" id="progressQuestion"></div>
+      <!-- RB — two things the bar alone does not say: that it is still alive,
+           and roughly how much longer. The clock ticks once a second, which is
+           faster than the 1.5s poll, so movement never depends on the network. -->
+      <span class="progress-eta" id="progressEta"></span>
       <button class="abort-btn" id="abortBtn" onclick="abortQuestion()">Cancel</button>
     </div>
     <div class="progress-msg" id="progressMsg">Starting...</div>
@@ -3525,23 +3735,12 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 
   <!-- Welcome / prompts -->
   <!-- Deep Learning history panel — visible in learn mode only -->
-  <div class="learn-hist-panel" id="learnHistoryPanel">
-    <div class="learn-hist-header" onclick="toggleLearnHistory()">
-      <span class="learn-hist-title">Recent</span>
-      <span class="learn-hist-count" id="learnHistCount"></span>
-      <span class="learn-hist-chevron" id="learnHistChevron">▾</span>
-    </div>
-    <div class="learn-hist-list" id="learnHistList">
-      <div class="profile-list-empty">Loading…</div>
-    </div>
-  </div>
-
   <div id="welcomeSection">
-    <div class="prompts-header" id="promptsTitle">Common questions</div>
-    <div class="prompts-grid" id="promptsGrid"></div>
     <div class="what-title" id="whatTitle">What you get</div>
     <div class="what-grid" id="whatGrid"></div>
   </div>
+
+  </div><!-- /center-col -->
 
   <!-- Case Discussion -->
   <div class="case-section" id="caseSection">
@@ -4242,38 +4441,6 @@ var _lastAssessData    = null;   // full /api/assess response
 var _lastXrayFindings  = null;   // AI radiograph flag strings
 var _lastReasonsToRefer = [];    // exceeds_comfort list from last assessment
 var audioJobId   = null;
-var sidebarOpen  = true;
-
-var reviewPrompts = [
-  { icon:'⚖️', text:'MTA vs calcium hydroxide in vital pulp therapy' },
-  { icon:'📅', text:'Single vs multi-visit root canal treatment outcomes' },
-  { icon:'🧪', text:'Bioceramic vs epoxy resin sealers' },
-  { icon:'🔄', text:'Rotary vs reciprocating instrumentation in curved canals' },
-  { icon:'📐', text:'Apical patency during root canal treatment' },
-  { icon:'💊', text:'Antibiotics in endodontic infections — current evidence' },
-];
-
-var learnPrompts = [
-  { icon:'🦷', text:'How do I perform a root canal treatment?' },
-  { icon:'💉', text:'How do I do a direct pulp capping?' },
-  { icon:'📏', text:'How do I determine working length?' },
-  { icon:'🩺', text:'How do I manage a cracked tooth?' },
-  { icon:'🔧', text:'How do I create a glide path?' },
-  { icon:'🧲', text:'How do I obturate a root canal?' },
-];
-
-var reviewWhat = [
-  { icon:'✦', cls:'bullet-blue',  title:'Clinical recommendation', text:'Concise, actionable bottom line based on best available evidence' },
-  { icon:'≡', cls:'bullet-blue',  title:'Evidence summary',        text:'Organised by study design: Cochrane → RCTs → Prospective → Case series' },
-  { icon:'🔗', cls:'bullet-blue', title:'Scored references',       text:'Papers ranked 0–100 by design, sample size, recency, citations and follow-up' },
-];
-
-var learnWhat = [
-  { icon:'🎓', cls:'bullet-green', title:'Overview & background',   text:'Anatomy, pathophysiology, and concepts to understand first' },
-  { icon:'📋', cls:'bullet-green', title:'Step-by-step procedure',  text:'Numbered chairside instructions with checkpoints and pitfalls' },
-  { icon:'📚', cls:'bullet-green', title:'Evidence & best practices', text:'What the literature recommends for each step, with citations' },
-  { icon:'✅', cls:'bullet-green', title:'Key takeaways',            text:'3–5 bullet summary of the most important clinical points' },
-];
 
 var stepMap = {
   'cache':    'step-cache',
@@ -4291,53 +4458,6 @@ var stepMap = {
 };
 
 // ── Sidebar ───────────────────────────────────────────
-function toggleSidebar() {
-  sidebarOpen = !sidebarOpen;
-  document.getElementById('sidebar').classList.toggle('collapsed', !sidebarOpen);
-}
-
-// ── History ───────────────────────────────────────────
-function loadHistory() {
-  fetch('/history')
-    .then(function(r) { return r.json(); })
-    .then(function(items) {
-      var list = document.getElementById('historyList');
-      if (!items || !items.length) {
-        list.innerHTML = '<div class="sidebar-empty">No history yet.<br>Your queries will appear here.</div>';
-        return;
-      }
-      // Group by date
-      var groups = {};
-      items.forEach(function(item) {
-        var d = item.created_at ? new Date(item.created_at) : new Date();
-        var today = new Date(); today.setHours(0,0,0,0);
-        var yesterday = new Date(today); yesterday.setDate(today.getDate()-1);
-        var label;
-        if (d >= today) label = 'Today';
-        else if (d >= yesterday) label = 'Yesterday';
-        else label = d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
-        if (!groups[label]) groups[label] = [];
-        groups[label].push(item);
-      });
-      var html = '';
-      Object.keys(groups).forEach(function(label) {
-        html += '<div class="history-group-label">' + label + '</div>';
-        groups[label].forEach(function(item) {
-          var badgeCls = 'hbadge-' + item.mode;
-          var badgeLbl = item.mode === 'learn' ? '🎓 Deep Learning' : item.mode === 'case' ? '🩺 Case' : '🔬 Review';
-          html += '<div class="history-item" data-q="' + escHtml(item.question) + '" data-mode="' + escHtml(item.mode) + '" ' +
-            'onclick="loadHistoryItem(' + item.id + ',\'' + item.mode + '\', this)">' +
-            '<div class="history-item-q">' + escHtml(item.question) + '</div>' +
-            '<div class="history-item-meta"><span class="history-mode-badge ' + badgeCls + '">' + badgeLbl + '</span>' +
-            (item.hit_count > 0 ? '<span>' + item.hit_count + ' hits</span>' : '') +
-            '</div></div>';
-        });
-      });
-      list.innerHTML = html;
-    })
-    .catch(function() {});
-}
-
 function loadHistoryItem(id, itemMode, el) {
   fetch('/history/' + id)
     .then(function(r) { return r.json(); })
@@ -4406,20 +4526,40 @@ var MODES = {
   review: {
     id: 'review', label: 'Literature', badge: 'LIT', chip: 'tabReview',
     accent: '#1e4fa3',
-    placeholder: 'Ask a clinical literature question\u2026',
+    placeholder: 'Ask your question\u2026',
     button: 'Search literature',
     promiseWhat: 'A graded answer with citations, every claim checked against its abstract',
     promiseWhen: 'about 15 seconds',
+    etaSeconds: 15,
     slow: false, tall: false,
+    // A19d — every claim on these is checkable against the engine. The card
+    // they replace said papers are ranked by "citations & impact factor".
+    what: [
+      { title: 'Graded by study design',
+        text: 'Cochrane, trial, cohort, bench \u2014 never by journal or impact factor.' },
+      { title: 'Every claim checked',
+        text: 'Each cited claim is verified against its abstract, and anything unsourced is marked as such.' },
+      { title: 'Sources you can open',
+        text: 'Full bibliography with PMIDs.' },
+    ],
   },
   case: {
     id: 'case', label: 'Case', badge: 'CASE', chip: 'tabCase',
     accent: '#17803f',
     placeholder: 'Describe the patient and the tooth \u2014 age, symptoms, findings, what you have already done\u2026',
     button: 'Start case',
-    promiseWhat: 'A differential and a plan \u2014 and it asks back only what would change the answer',
+    promiseWhat: 'A differential and a plan \u2014 it asks back only what would change the answer',
     promiseWhen: 'about 30 seconds',
+    etaSeconds: 30,
     slow: false, tall: true,
+    what: [
+      { title: 'Differential first',
+        text: 'What else this could be, before what to do about it.' },
+      { title: 'Only questions that matter',
+        text: 'It asks back only where the answer would actually change \u2014 and never re-asks what you already said.' },
+      { title: 'Cited like a review',
+        text: 'The same evidence engine and the same checks as a literature answer.' },
+    ],
   },
   learn: {
     id: 'learn', label: 'Curriculum', badge: 'CURRIC', chip: 'tabLearn',
@@ -4428,7 +4568,19 @@ var MODES = {
     button: 'Build curriculum',
     promiseWhat: 'Four modules with a full graded bibliography',
     promiseWhen: 'takes several minutes \u2014 you can leave the page',
+    // No number here on purpose: measured curricula run from well under a
+    // minute to $6.51-worth of minutes, and a countdown would be a promise
+    // the engine cannot keep. A18 is the item that measures this properly.
+    etaSeconds: null,
     slow: true, tall: false,
+    what: [
+      { title: 'Four modules',
+        text: 'Built to teach from, not to skim \u2014 roughly 12,000 words.' },
+      { title: 'A graded bibliography',
+        text: 'Every paper cited in the text, banded by study design, with conflicts of interest flagged.' },
+      { title: 'Slides and audio',
+        text: 'Export the same content as a deck, a narrated video or a podcast.' },
+    ],
   },
 };
 var SEARCH_MODES = ['review', 'case', 'learn'];
@@ -4447,11 +4599,14 @@ function modeShows(m, panel) {
                                 caseMessages.length > 0;
     case 'assess':      return m === 'assess';
     case 'profile':     return m === 'profile';
-    // The prompt cards and "what you get" panel describe a literature answer
-    // and a curriculum. The Case screen has its own thread and must not show
-    // them; that was the five-tab shell leaking one mode's content into
-    // another, which is the whole reason this predicate exists.
-    case 'welcome':     return m === 'review' || m === 'learn';
+    // A19d — the three cards belong to EVERY search mode and are read from
+    // that mode's own MODES entry, so a mode can no longer show another's
+    // copy (the leak this predicate exists to prevent). They step aside once
+    // a Case thread exists, because from then on the thread is the screen.
+    case 'welcome':     return SEARCH_MODES.indexOf(m) !== -1 &&
+                               !(m === 'case' &&
+                                 typeof caseMessages !== 'undefined' &&
+                                 caseMessages.length > 0);
     case 'history':     return SEARCH_MODES.indexOf(m) !== -1;
     case 'suggestion':  return m === 'review';
     default:            return false;
@@ -4506,30 +4661,39 @@ function setMode(m) {
     el.style.display = pair[1] ? 'flex' : 'none';
   });
 
-  var welcome = document.getElementById('welcomeSection');
-  if (welcome) welcome.style.display =
-    (modeShows(m, 'welcome') && !currentJob) ? 'block' : 'none';
+  // A19f — the lockup and the cards are the landing screen and travel
+  // together; one call so neither can be left behind by the other.
+  setLandingVisible(modeShows(m, 'welcome') && !currentJob);
 
-  _show('learnHistoryPanel', modeShows(m, 'history'));
-  if (modeShows(m, 'history')) loadUnifiedHistory();
+  // A19e — History is a drawer reached from the top bar, and the bar itself
+  // belongs to the search modes; Assessment and Profile are their own pages.
+  _show('histTab', modeShows(m, 'history'));
+  if (!modeShows(m, 'history')) closeHistDrawer();
 
   // the bar itself
   if (cfg) {
-    var dot = document.getElementById('ctxDot');
-    var lbl = document.getElementById('ctxLabel');
     var btn = document.getElementById('askBtn');
     var inp = document.getElementById('qInput');
-    if (dot) { dot.className = 'context-dot'; dot.style.background = cfg.accent; }
-    if (lbl) lbl.textContent = cfg.label;
+    if (inputCard) {
+      inputCard.classList.remove('m-review', 'm-case', 'm-learn');
+      inputCard.classList.add('m-' + cfg.id);
+    }
     if (inp) {
       inp.placeholder = cfg.placeholder;
       inp.classList.toggle('mode-case-input', !!cfg.tall);
     }
     if (btn) {
-      btn.className = 'ask-btn';
+      // The canvas submit is an icon, so the mode's verb has to survive as the
+      // accessible name rather than as a visible label.
       btn.style.background = cfg.accent;
-      btn.textContent = cfg.button;
+      btn.title = cfg.button;
+      btn.setAttribute('aria-label', cfg.button);
     }
+    SEARCH_MODES.forEach(function (k) {
+      var el = document.getElementById(MODES[k].chip);
+      var dot = el && el.querySelector('.chip-dot');
+      if (dot) dot.style.background = MODES[k].accent;
+    });
     var pd = document.getElementById('promiseDot');
     var pw = document.getElementById('promiseWhat');
     var pn = document.getElementById('promiseWhen');
@@ -4541,35 +4705,31 @@ function setMode(m) {
   }
 
   dismissModeSuggestion();
-  if (modeShows(m, 'welcome')) renderPrompts();
+  if (modeShows(m, 'welcome')) renderWhatCards();
 }
 
-function renderPrompts() {
-  var prompts = mode === 'learn' ? learnPrompts : reviewPrompts;
-  var what    = mode === 'learn' ? learnWhat    : reviewWhat;
-
-  document.getElementById('promptsTitle').textContent = mode === 'learn' ? 'What do you want to deep learn?' : 'Common questions';
-
-  document.getElementById('promptsGrid').innerHTML = prompts.map(function(p) {
-    return '<div class="prompt-card" onclick="fillQ(this)">' +
-      '<div class="prompt-card-icon">' + p.icon + '</div>' +
-      '<div class="prompt-card-text">' + p.text + '</div>' +
-      '</div>';
-  }).join('');
-
-  document.getElementById('whatTitle').textContent = 'What you get';
-  document.getElementById('whatGrid').innerHTML = what.map(function(w) {
-    return '<div class="what-item">' +
-      '<div class="what-bullet ' + w.cls + '">' + w.icon + '</div>' +
-      '<div class="what-text"><strong>' + w.title + '</strong>' + w.text + '</div>' +
-      '</div>';
-  }).join('');
+// A19f — the lockup and the "what you get" cards are one surface. They were
+// two elements toggled in eight places, which is the shape that produced the
+// panel-left-behind bug in the first place.
+function setLandingVisible(on) {
+  var ws = document.getElementById('welcomeSection');
+  var lk = document.getElementById('lockup');
+  if (ws) ws.style.display = on ? 'block' : 'none';
+  if (lk) lk.style.display = on ? 'flex' : 'none';
 }
 
-function fillQ(card) {
-  document.getElementById('qInput').value = card.querySelector('.prompt-card-text').textContent;
-  autoResize(document.getElementById('qInput'));
-  document.getElementById('qInput').focus();
+// A19d — the cards are read from the active mode's own MODES entry, so a mode
+// cannot render another mode's copy.
+function renderWhatCards() {
+  var cfg  = MODES[mode] || MODES.review;
+  var grid = document.getElementById('whatGrid');
+  if (!grid) return;
+  grid.innerHTML = (cfg.what || []).map(function (w) {
+    return '<div class="what-card">' +
+      '<div class="what-card-title">' + w.title + '</div>' +
+      '<div class="what-card-text">' + w.text + '</div>' +
+      '</div>';
+  }).join('');
 }
 
 // ── Submit ───────────────────────────────────────────
@@ -4652,11 +4812,10 @@ function _postAsk(q, context, skipClarify) {
 function _showClarifyPanel(q, questions) {
   try {
     // Hide other sections
-    var ws = document.getElementById('welcomeSection');
     var ac = document.getElementById('answerCard');
     var ec = document.getElementById('errorCard');
     var pc = document.getElementById('progressCard');
-    if (ws) ws.style.display = 'none';
+    setLandingVisible(false);
     if (ac) ac.style.display = 'none';
     if (ec) ec.style.display = 'none';
     if (pc) pc.style.display = 'none';
@@ -4738,8 +4897,62 @@ function submitWithContext(skip) {
   _postAsk(q, context, true);  // skip_clarify=true so server goes straight to search
 }
 
+// ── RB — the progress clock ───────────────────────────
+// Two complaints it answers: "is it stuck?" and "how much longer?". It ticks
+// on its own timer rather than on the poll, so a slow or dropped poll cannot
+// make the page look dead. The estimate is the SAME figure the promise line
+// quoted before the click; if they ever diverge, one of them is lying.
+var _etaTimer = null;
+var _etaStart = 0;
+var _etaBudget = null;
+
+function _fmtClock(sec) {
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function _etaTick() {
+  var card = document.getElementById('progressCard');
+  var el   = document.getElementById('progressEta');
+  // Self-terminating: every path that finishes, errors or cancels hides the
+  // card, so the ticker does not need a stop call at each of those sites.
+  if (!card || !el || card.style.display === 'none') { _stopEtaClock(); return; }
+  var elapsed = Math.max(0, Math.round((Date.now() - _etaStart) / 1000));
+  var txt = 'elapsed ' + _fmtClock(elapsed);
+  var over = false;
+  if (_etaBudget) {
+    var left = _etaBudget - elapsed;
+    if (left > 0) {
+      txt += ' \u00b7 about ' + left + 's left';
+    } else {
+      // Never count into negative numbers, and never claim it is nearly done.
+      txt += ' \u00b7 longer than usual \u2014 still working';
+      over = true;
+    }
+  } else {
+    txt += ' \u00b7 usually several minutes';
+  }
+  el.textContent = txt;
+  el.classList.toggle('over', over);
+}
+
+function _startEtaClock() {
+  var cfg = MODES[mode] || MODES.review;
+  _etaBudget = cfg.etaSeconds || null;
+  _etaStart  = Date.now();
+  if (_etaTimer) clearInterval(_etaTimer);
+  _etaTick();
+  _etaTimer = setInterval(_etaTick, 1000);
+}
+
+function _stopEtaClock() {
+  if (_etaTimer) { clearInterval(_etaTimer); _etaTimer = null; }
+  var el = document.getElementById('progressEta');
+  if (el) { el.textContent = ''; el.classList.remove('over'); }
+}
+
 function _startPollJob(q, job_id) {
-  document.getElementById('welcomeSection').style.display = 'none';
+  setLandingVisible(false);
   document.getElementById('answerCard').style.display     = 'none';
   document.getElementById('errorCard').style.display      = 'none';
   document.getElementById('progressCard').style.display   = 'block';
@@ -4747,6 +4960,7 @@ function _startPollJob(q, job_id) {
   document.getElementById('progressMsg').textContent      = 'Starting...';
   document.getElementById('progressFill').style.width     = '0%';
   document.querySelectorAll('.step-pill').forEach(function(el) { el.className = 'step-pill'; });
+  _startEtaClock();
   _streamActive = false;
   currentJob = job_id;
   pollTimer  = setInterval(function() { pollStatus(q); }, 1500);
@@ -4781,7 +4995,7 @@ function pollStatus(question) {
       currentJob = null;
       document.getElementById('progressCard').style.display   = 'none';
       document.getElementById('answerCard').style.display     = 'none';
-      document.getElementById('welcomeSection').style.display = 'block';
+      setLandingVisible(true);
       document.getElementById('askBtn').disabled              = false;
     } else if (job.partial_answer) {
       // Synthesis has started producing text. Swap the progress bar for the
@@ -5154,9 +5368,8 @@ function showResult(question, job) {
     document.getElementById('papersSection').style.display = 'none';
   }
 
-  // Refresh history sidebar
-  loadHistory();
-  if (mode === 'learn') loadLearnModeHistory();
+  // A19e — the drawer's list is what history means now.
+  loadUnifiedHistory();
 
   // Append per-answer AI disclaimer
   var tpl = document.getElementById('answerDisclaimerTpl');
@@ -5932,8 +6145,6 @@ function maybeSuggestCaseMode() {
 }
 
 // ══ A15d — ONE history list, badged, four rows ════════════════════════════
-var HIST_VISIBLE = 4;
-var _histExpanded = false;
 var _histItems = [];
 
 function _histAge(iso) {
@@ -5942,35 +6153,80 @@ function _histAge(iso) {
   return d <= 0 ? 'today' : d === 1 ? '1d ago' : d + 'd ago';
 }
 
+// ── A19e — the History drawer ─────────────────────────
+// Closed by default. The recent list is no longer part of the landing screen,
+// so nothing above the composer competes with the question box.
+var _histFilter = 'all';
+
+function openHistDrawer() {
+  var d = document.getElementById('histDrawer');
+  var k = document.getElementById('histScrim');
+  var t = document.getElementById('histTab');
+  if (d) { d.classList.add('open'); d.setAttribute('aria-hidden', 'false'); }
+  if (k) k.classList.add('open');
+  if (t) t.setAttribute('aria-expanded', 'true');
+  loadUnifiedHistory();
+}
+
+function closeHistDrawer() {
+  var d = document.getElementById('histDrawer');
+  var k = document.getElementById('histScrim');
+  var t = document.getElementById('histTab');
+  if (d) { d.classList.remove('open'); d.setAttribute('aria-hidden', 'true'); }
+  if (k) k.classList.remove('open');
+  if (t) t.setAttribute('aria-expanded', 'false');
+}
+
+function histDrawerOpen() {
+  var d = document.getElementById('histDrawer');
+  return !!(d && d.classList.contains('open'));
+}
+
+function toggleHistDrawer() {
+  if (histDrawerOpen()) closeHistDrawer(); else openHistDrawer();
+}
+
+// The filter is over the STORED mode, not the current one: the drawer is a
+// record of what has been asked, not a view of where you happen to be.
+function setHistFilter(f) {
+  _histFilter = (f === 'review' || f === 'case' || f === 'learn') ? f : 'all';
+  ['all', 'review', 'case', 'learn'].forEach(function (k) {
+    var el = document.getElementById('histFilter' +
+      k.charAt(0).toUpperCase() + k.slice(1));
+    if (el) el.classList.toggle('active', k === _histFilter);
+  });
+  renderUnifiedHistory();
+}
+
+function histVisibleItems() {
+  // Fail open, not closed: an unrecognised filter shows everything rather
+  // than showing an empty drawer over a history that is really there.
+  if (SEARCH_MODES.indexOf(_histFilter) === -1) return _histItems;
+  return _histItems.filter(function (it) { return it.mode === _histFilter; });
+}
+
 function renderUnifiedHistory() {
   var list  = document.getElementById('learnHistList');
   var count = document.getElementById('learnHistCount');
   if (!list) return;
+  var items = histVisibleItems();
   if (count) count.textContent = _histItems.length ? '(' + _histItems.length + ')' : '';
-  if (!_histItems.length) {
-    list.innerHTML = '<div class="profile-list-empty">Nothing yet.</div>';
+  if (!items.length) {
+    list.innerHTML = '<div class="hist-drawer-empty">' +
+      (_histItems.length ? 'Nothing in this mode yet.' : 'Nothing yet.') + '</div>';
     return;
   }
-  var shown = _histExpanded ? _histItems : _histItems.slice(0, HIST_VISIBLE);
-  var html = shown.map(function (it) {
+  list.innerHTML = items.map(function (it) {
     var cfg = MODES[it.mode] || MODES.review;
-    return '<div class="hist-row" onclick="' + _citeEsc(it.open) + '">' +
-      '<span class="hist-badge b-' + it.mode + '">' + cfg.badge + '</span>' +
+    return '<div class="hist-row" onclick="closeHistDrawer();' + _citeEsc(it.open) + '">' +
+      '<div class="hist-row-head">' +
+        '<span class="hist-badge b-' + it.mode + '">' + cfg.badge + '</span>' +
+        '<span class="hist-row-meta">' + _citeEsc(it.meta) + '</span>' +
+      '</div>' +
       '<span class="hist-row-title" title="' + _citeEsc(it.title) + '">' +
         _citeEsc(it.title) + '</span>' +
-      '<span class="hist-row-meta">' + _citeEsc(it.meta) + '</span>' +
     '</div>';
   }).join('');
-  if (_histItems.length > HIST_VISIBLE) {
-    html += '<button class="hist-more" onclick="toggleUnifiedHistory()">' +
-      (_histExpanded ? 'Show fewer' : 'All ' + _histItems.length + ' \u25be') + '</button>';
-  }
-  list.innerHTML = html;
-}
-
-function toggleUnifiedHistory() {
-  _histExpanded = !_histExpanded;
-  renderUnifiedHistory();
 }
 
 function loadUnifiedHistory() {
@@ -5988,8 +6244,8 @@ function loadUnifiedHistory() {
       items.push({
         mode: r.mode === 'case' ? 'case' : 'review',
         title: r.question || 'Untitled',
-        meta: [r.hit_count ? r.hit_count + ' hits' : null, _histAge(r.created_at)]
-                .filter(Boolean).join(' \u00b7 '),
+        meta: [r.paper_count ? r.paper_count + ' papers' : null,
+               _histAge(r.created_at)].filter(Boolean).join(' · '),
         when: r.created_at || '',
         open: "loadHistoryItem(" + Number(r.id) + ", '" + r.mode + "', this)",
       });
@@ -6026,7 +6282,7 @@ function abortQuestion() {
   // unchecked — leaving it up after Cancel would be the worst possible
   // combination: unvalidated text with no chip left saying so.
   document.getElementById('answerCard').style.display     = 'none';
-  document.getElementById('welcomeSection').style.display = 'block';
+  setLandingVisible(true);
   document.getElementById('askBtn').disabled              = false;
 }
 
@@ -6035,7 +6291,7 @@ function abortQuestion() {
 function showError(msg) {
   document.getElementById('progressCard').style.display  = 'none';
   document.getElementById('askBtn').disabled             = false;
-  document.getElementById('welcomeSection').style.display = 'block';
+  setLandingVisible(true);
   var el = document.getElementById('errorCard');
   el.style.display = 'block';
   el.textContent   = 'Error: ' + msg;
@@ -6999,39 +7255,6 @@ function _loadSettings() {
   }).catch(function(){});
 }
 
-// ── Sidebar tab switcher ──────────────────────────────
-var _sidebarTab = 'history';
-function switchSidebarTab(tab) {
-  _sidebarTab = tab;
-  document.getElementById('sidebarTabHistory').classList.toggle('active', tab === 'history');
-  document.getElementById('sidebarTabMedia').classList.toggle('active', tab === 'media');
-  document.getElementById('historyList').style.display = tab === 'history' ? '' : 'none';
-  var ml = document.getElementById('mediaList');
-  if (tab === 'media') {
-    ml.style.display = 'block';
-    loadMediaLibrary();
-  } else {
-    ml.style.display = 'none';
-  }
-}
-
-// ── Media Library ─────────────────────────────────────
-function loadMediaLibrary() {
-  var list = document.getElementById('mediaList');
-  fetch('/api/media')
-    .then(function(r){ return r.json(); })
-    .then(function(items) {
-      if (!items || !items.length) {
-        list.innerHTML = '<div class="media-empty">No saved media yet.<br>Generate a podcast, lecture,<br>video, or slides to see it here.</div>';
-        return;
-      }
-      list.innerHTML = items.map(renderMediaItem).join('');
-    })
-    .catch(function() {
-      list.innerHTML = '<div class="media-empty">Could not load media library.</div>';
-    });
-}
-
 function renderMediaItem(item) {
   var icons = { conversation:'🎙', lecture:'📖', video:'🎬', slides:'📊', webdeck:'🌐' };
   var icon  = icons[item.style] || '🎵';
@@ -7094,23 +7317,14 @@ function deleteMediaItem(id) {
       if (data.success) {
         var el = document.getElementById('mi-' + id);
         if (el) el.remove();
-        var list = document.getElementById('mediaList');
-        if (list && !list.querySelector('.media-item')) {
-          list.innerHTML = '<div class="media-empty">No saved media yet.<br>Generate a podcast, lecture,<br>video, or slides to see it here.</div>';
-        }
       }
     });
 }
 
 // Auto-refresh media list when a new item completes
 function _notifyMediaReady() {
-  if (_sidebarTab === 'media') loadMediaLibrary();
-  // Flash the Media tab to signal something new
-  var tab = document.getElementById('sidebarTabMedia');
-  if (tab) {
-    tab.style.color = '#12885a';
-    setTimeout(function(){ tab.style.color = ''; }, 2000);
-  }
+  // The media library lives on Profile now; the sidebar that used to mirror
+  // it is gone, so there is nothing here to refresh.
 }
 
 // ── Init ─────────────────────────────────────────────
@@ -7118,7 +7332,7 @@ function _notifyMediaReady() {
 // come from MODES via setMode, so the page must enter a mode on load
 // rather than relying on the markup's defaults.
 setMode(mode);
-loadHistory();
+loadUnifiedHistory();
 _loadSettings();
 
 // ── CASE ASSESSMENT ───────────────────────────────────────
@@ -8153,11 +8367,10 @@ setMode = function(m) {
     if (assessTab) { assessTab.classList.add('active'); assessTab.style.borderBottomColor = '#a16207'; }
     // Hide other panels
     var inputCard  = document.querySelector('.input-card');
-    var welcomeSec = document.getElementById('welcomeSection');
     var answerCard = document.getElementById('answerCard');
     var caseSec    = document.getElementById('caseSection');
     if (inputCard)  inputCard.style.display  = 'none';
-    if (welcomeSec) welcomeSec.style.display = 'none';
+    setLandingVisible(false);
     if (answerCard) answerCard.style.display = 'none';
     if (caseSec)    caseSec.classList.remove('active');
     // Show profile modal if first time
@@ -8186,12 +8399,11 @@ setMode = function(m) {
     if (profileTab) { profileTab.classList.add('active'); profileTab.style.borderBottomColor = '#2563eb'; }
     // Hide every other panel
     var ic = document.querySelector('.input-card');
-    var ws = document.getElementById('welcomeSection');
     var ac = document.getElementById('answerCard');
     var cs = document.getElementById('caseSection');
     var as = document.getElementById('assessSection');
     if (ic) ic.style.display = 'none';
-    if (ws) ws.style.display = 'none';
+    setLandingVisible(false);
     if (ac) ac.style.display = 'none';
     if (cs) cs.classList.remove('active');
     if (as) as.classList.remove('active');
@@ -8461,63 +8673,6 @@ function closeLearnViewer() {
   document.getElementById('ppLearnViewer').classList.remove('open');
 }
 
-// ── Deep Learning tab — inline history panel ──────────
-// Which modes show the report list. One place, so a new mode cannot silently
-// inherit Deep Learning's panel the way `case` did.
-function learnHistoryVisible(m) {
-  return m === 'learn';
-}
-
-function loadLearnModeHistory() {
-  var panel = document.getElementById('learnHistoryPanel');
-  var list  = document.getElementById('learnHistList');
-  var count = document.getElementById('learnHistCount');
-  if (!panel || !list) return;
-  list.innerHTML = '<div class="profile-list-empty">Loading…</div>';
-  fetch('/learn_history')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var items = data.items || [];
-      count.textContent = items.length ? '(' + items.length + ')' : '';
-      if (!items.length) {
-        list.innerHTML = '<div class="profile-list-empty">No reports yet — your Deep Learning sessions will appear here.</div>';
-        return;
-      }
-      var ttl = data.ttl_days || 7;
-      list.innerHTML = items.map(function(it) {
-        var ageLbl = it.age_days === 0 ? 'today' : (it.age_days + 'd ago');
-        var pillCls = it.in_ttl_window ? '' : ' stale';
-        var pillTxt = it.in_ttl_window ? ('Cached · ' + ageLbl) : ageLbl;
-        var paperLbl = it.total_papers ? (it.total_papers + ' papers') : '';
-        var costLbl  = it.cost_usd ? ('$' + Number(it.cost_usd).toFixed(2)) : '';
-        var meta = [paperLbl, costLbl].filter(Boolean).join(' · ');
-        var safeQ  = _ppEscape(it.question || 'Untitled');
-        var safeFn = _ppEscape(it.file);
-        return '<div class="learn-hist-item" data-q="' + safeQ + '" data-mode="learn" ' +
-          'onclick="openLearnHistoryItem(\'' + safeFn + '\', this)">' +
-          '<div class="learn-hist-item-icon">🎓</div>' +
-          '<div class="learn-hist-item-body">' +
-            '<div class="learn-hist-item-q">' + safeQ + '</div>' +
-            '<div class="learn-hist-item-meta">' +
-              '<span class="pill' + pillCls + '">' + pillTxt + '</span>' +
-              meta +
-            '</div>' +
-          '</div>' +
-          '<button class="learn-hist-delete-btn" title="Delete report" ' +
-            'onclick="event.stopPropagation();deleteLearnReport(\'' + safeFn + '\',this)">×</button>' +
-        '</div>';
-      }).join('');
-    })
-    .catch(function() {
-      list.innerHTML = '<div class="profile-list-empty">Could not load history.</div>';
-    });
-}
-
-function toggleLearnHistory() {
-  var panel = document.getElementById('learnHistoryPanel');
-  if (panel) panel.classList.toggle('collapsed');
-}
-
 // Admin authentication (WORKLIST C4): the token is no longer rendered into
 // page source. The gated routes accept a signed session cookie instead,
 // established ONCE via POST /admin/login — the operator pastes the token into
@@ -8601,7 +8756,7 @@ function _sendLearnDelete(filename, btnEl, mayLogin) {
       var item = btnEl.closest('.learn-hist-item') || btnEl.closest('.profile-list-item');
       if (item) item.remove();
       // Refresh both panels so counts stay correct
-      loadLearnModeHistory();
+      loadUnifiedHistory();
       var ppList = document.getElementById('ppLearnList');
       if (ppList) profileLoadLearnHistory();
     })
@@ -8634,7 +8789,7 @@ function _showLearnReportGone(el) {
   var ps = document.getElementById('papersSection');
   if (ps) ps.style.display = 'none';
   // Drop the dangling entry: the list rebuilds from the archive directory.
-  loadLearnModeHistory();
+  loadUnifiedHistory();
 }
 
 function openLearnHistoryItem(filename, el) {
@@ -8645,7 +8800,7 @@ function openLearnHistoryItem(filename, el) {
   // Show loading state in answer card
   document.getElementById('progressCard').style.display = 'none';
   document.getElementById('errorCard').textContent = '';
-  document.getElementById('welcomeSection').style.display = 'none';
+  setLandingVisible(false);
 
   var answerCard = document.getElementById('answerCard');
   answerCard.style.display = 'block';

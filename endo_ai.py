@@ -10123,7 +10123,7 @@ def save_answer(question, answer, evidence):
 # ── MAIN ─────────────────────────────────────────────────
 if __name__ == "__main__":
     print("\n" + "=" * 60)
-    print("  ENDO AI -- Evidence-Based Clinical Assistant")
+    print("  ENDO AI -- Evidence-Based Dental Educator")
     print("  Powered by PubMed + Cochrane + Claude")
     print("=" * 60)
     print("\nType your clinical question and press Enter.")

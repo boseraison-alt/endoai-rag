@@ -89,13 +89,16 @@ class TestTheOnePredicate:
 
     def test_the_curriculum_list_never_appears_on_the_case_screen(self):
         """The bug the old shell had, kept as an assertion. It reported 22
-        report cards above the case composer."""
+        report cards above the case composer.
+
+        A19e moved the list off the landing screen altogether and into a
+        drawer, so the invariant now reads: the list is shared and badged
+        rather than belonging to one mode, and it is reachable from every
+        search mode and from neither of the two full-page surfaces."""
         g = self._grid()
         assert g["case"]["history"] is True, "the unified list is not per-mode"
-        # what must NOT happen is a Deep-Learning-only panel on Case; the list
-        # is now shared and badged, so the invariant is that no mode gets a
-        # panel belonging to another.
-        assert g["case"]["welcome"] is False
+        assert g["review"]["history"] is True
+        assert g["learn"]["history"] is True
         assert g["assess"]["history"] is False
         assert g["profile"]["history"] is False
 
@@ -128,14 +131,27 @@ class TestTheOnePredicate:
         for m in ALL_MODES:
             assert g[m]["caseThread"] is (m == "case"), m
 
-    def test_the_literature_welcome_is_not_shown_on_the_case_screen(self):
-        """Its prompt cards describe a literature answer. Showing them on Case
-        is one mode's content leaking into another — the same class as the
-        original bug."""
+    def test_the_landing_cards_belong_to_every_search_mode(self):
+        """A19d — Case gets three cards of its own. What the five-tab shell
+        could not do was keep them DIFFERENT; they are read from the mode's
+        own MODES entry now, so one mode cannot render another's copy. That
+        half of the invariant is asserted in TestTheWhatYouGetCards."""
         g = self._grid()
-        assert g["case"]["welcome"] is False
-        assert g["review"]["welcome"] is True
-        assert g["learn"]["welcome"] is True
+        assert [g[m]["welcome"] for m in SEARCH_MODES] == [True, True, True]
+        assert g["assess"]["welcome"] is False
+        assert g["profile"]["welcome"] is False
+
+    def test_the_cards_step_aside_once_a_case_thread_exists(self):
+        """From the first turn on, the thread IS the Case screen. This is the
+        same boundary `caseComposer` reads from the other side."""
+        empty, started = run_node(
+            "var caseMessages = [];"
+            "var a = modeShows('case','welcome');"
+            "caseMessages = [{role:'user',content:'x'}];"
+            "var b = modeShows('case','welcome');"
+            "console.log(JSON.stringify([[a, b]]));", names=SHELL)[0]
+        assert empty is True, "the Case landing screen has no cards"
+        assert started is False, "the cards sit above a live case thread"
 
     def test_the_suggestion_belongs_to_literature_alone(self):
         g = self._grid()
@@ -161,7 +177,7 @@ class TestSetModeRoutesThroughThePredicate:
     def _set_mode(self):
         src = INDEX_HTML.read_text(encoding="utf-8")
         i = src.index("function setMode(m) {")
-        j = src.index("\n}", src.index("renderPrompts();", i))
+        j = src.index("\n}", src.index("renderWhatCards();", i))
         return src[i:j]
 
     @pytest.mark.parametrize("panel", ["searchBar", "caseThread", "caseComposer",
