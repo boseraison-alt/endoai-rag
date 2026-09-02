@@ -10,7 +10,7 @@ auto-compact.
 
 ---
 
-## 1. What Curo is right now (state as of tag `case-v3`)
+## 1. What Curo is right now (state as of tag `case-v3`, plus unreleased `dl-quality-v1` work)
 
 An evidence-graded endodontics assistant: **2,350-paper** curated library (Neon
 Postgres + pgvector) with per-paper provenance (evidence tier incl. in vitro,
@@ -50,7 +50,7 @@ Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 | longest claim unit on a curriculum | **469 chars**, from 2,403 |
 | abstract excerpt the support judge sees | the whole abstract |
 | retrieval baseline | `eval/baseline_v6.json` — 25 cases x 3 runs, unmoved |
-| tests | **1,464** passing, 46 skipped (1,510 collected) |
+| tests | **1,567** passing, 51 skipped |
 | **`/health`** | reports the **git hash the process imported**, frozen at import. Check it before trusting any server. |
 | case follow-ups: non-discriminating question rate | **0/20**, from 8/15 = 53% |
 | the same question on the contrast case (68, on alendronate) | **10/10** asked — filtered by relevance, not deleted |
@@ -266,6 +266,27 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
 ### P1 (correctness / trust)
 
+- **A RAW `[[PMID:N]]` MARKER REACHES THE READER when the identifier is not
+  numeric.** Invariant 3, failing in production, captured in
+  `eval/fixtures/review_apixaban_apicectomy.md`: the Level I paragraph ends
+  `...guidance on DOAC management [[PMID:ESE-QG-2023]]` in double brackets
+  while every other citation in the same answer rendered as a pill. The
+  renderer evidently matches digits, and curated non-PubMed entries (ESE / AAE
+  position statements) do not have them.
+
+  Worse than cosmetic for two reasons. The affected row is scored **87/100,
+  the highest in that answer** — above the Cochrane review at 73.3 — so the one
+  source the renderer cannot draw is the one the reader sees ranked first. And
+  the marker is what the verifiability side panel keys on, so that citation is
+  not clickable either.
+
+  Fix is small (widen the marker pattern past `\d+`) but must be measured: how
+  many curated non-numeric IDs exist in the library, and does anything else
+  parse `[[PMID:...]]` assuming digits — `_extract_cited_pmids`,
+  `validate_evidence_mapping`'s fabrication check, and the claim-unit splitter
+  all touch it, and a fabrication check that starts accepting non-numeric IDs
+  is a gate being widened, which needs its own test.
+
 - **A true "the cited study did not report X" claim cannot pass the
   citation-support check.** 7 of the 16 remaining Deep Learning flags, and the
   largest single class now that the claim-unit artifact is gone.
@@ -409,15 +430,133 @@ because two of them depend on artefacts the earlier ones produce.
 
 | | batch | status | depends on |
 |---|---|---|---|
-| §5 | `dl-quality-v1` | Items 1-4 DONE, Item 5 (regenerate) in flight | — |
-| §5b | `classics-v1` | [B1] and [C] DONE; [B2]-[B4] outstanding | — |
+| §5a | `dl-quality-v1` | **Items 1-5 DONE and committed. NOT TAGGED — the §8 report is the only thing left.** | — |
+| §5b | `classics-v1` | [A] answered, [B1] [B2] and [C] DONE; **[B3]/[B4] blocked on one decision — see below** | — |
 | §5c | `dl-quality-v2` | not started | the REGENERATED anesthesia curriculum, from `dl-quality-v1` Item 5 / `classics-v1` [B4] |
-| §5e | `citation-audit-v1` | not started | `eval/fixtures/second_opinion_anesthesia_2026.md`, which exists |
+| §5e | `citation-audit-v1` | not started; [L1] scoped | `eval/fixtures/second_opinion_anesthesia_2026.md` — **exists** |
 | §5d | `retrieval-honesty-v1` | not started | displaced three times; still current |
 
 `citation-audit-v1` has no dependency on the other three and could run at any
 point. It is placed after `dl-quality-v2` only because it shares the anesthesia
 subject matter and the deck pipeline, not because anything blocks it.
+
+---
+
+### WHERE THIS SESSION STOPPED (2026-09-02 08:40)
+
+Working tree clean, everything pushed, HEAD `959844e`. Suite **1,567 passed /
+51 skipped**. Server on 5003 restarted and verified against HEAD.
+
+**`dl-quality-v1` is functionally complete and deliberately UNTAGGED.** Items
+1-5 are all committed. What is missing is the §8 report — every number it needs
+is already measured and stored in
+`eval/fixtures/curricula/laser_disinfection_regen_metrics.json`, so writing it
+requires no re-runs and no further spend. Tag after the report.
+
+**Item 1 turned out to be four stacked defects, not one**, each found only by
+fixing the one before it. This is the single most useful thing to carry
+forward, because the shape recurs:
+
+| layer | evidence | fix |
+|---|---|---|
+| module writer capped at 3,200 | 164 of 190 calls ever logged | `CURRICULUM_MODULE_MAX_TOKENS = 6000` |
+| stitcher capped at 11,640 | **23 of 26 calls ever logged** | budget computed from text length |
+| SDK rejects long non-streaming calls | crashed on first real run | both stitch calls stream |
+| mid-stream connection drop escaped the retry | crashed after paying for 4 modules | `httpx.TransportError` added to the retry |
+
+The stitcher was the one that produced the REPORTED symptom. "Module 4 ends
+mid-sentence" is what a reader sees when the stitcher runs out of output partway
+through the last module it is copying — not, as I first wrote, transition
+paragraphs masking cuts in modules 1-3.
+
+**Item 5 result, laser curriculum:**
+
+| | before | after |
+|---|---|---|
+| modules | 4 | 4 (attempt 1 produced **3**) |
+| **words** | **5,653** | **12,555** |
+| truncated modules | 1 | 0 |
+| unchecked claims | 13 | 0 |
+| malformed BECAUSE | 1 | 0 |
+| cited PMIDs | 39 | 41 |
+| consistency annotations | 0 | 5 |
+
+The word count is the headline: the old pipeline was **delivering less than half
+of what it generated**. Everything else is downstream of that.
+
+Cost of Item 5: **$4.76 in three crashed attempts** (two died after paying for
+all four modules) plus **$2.51** for the clean run. Each crash was a real defect,
+so the spend bought findings rather than retries — but it is real spend and the
+report should say so.
+
+### THE ONE DECISION BLOCKING `classics-v1` [B3]/[B4]
+
+**No DB writes have happened.** The ingest script exists and is dry-run ready.
+
+[B2] measured TWO independent causes, and only the first is what the item
+anticipated:
+
+| | |
+|---|---|
+| OSU canon papers in the library | **5 of 124** |
+| never ingested | 119 |
+| carrying the `classic` tier (exemption fired) | **0 of 5** |
+| **excluded by `ENDO_DOMAIN_FILTER`** | **48 of 124** |
+
+The second row is the blocker. Those 48 are the 1987-1997 PDL / intraosseous /
+IANB-volume trials — indexed under dental *anesthesia*, not endodontics — so
+`fetch_papers` cannot reach them at all, because it ANDs `ENDO_DOMAIN_FILTER`
+into every query. **An ingest alone therefore recovers 76 of 124, not 124.**
+
+Three options, none taken:
+
+1. Widen `ENDO_DOMAIN_FILTER` globally. Correct in principle, but it is on
+   every query on every path, and changing it unmeasured is exactly the kind of
+   move `WORKLIST.md` §0 forbids. Needs its own before/after on the eval set.
+2. Give the targeted ingest its own permissive filter, as
+   `ingest_dens_evaginatus.py` does for relevance. Recovers all 124, changes
+   nothing for other topics, and is the smallest correct step.
+3. Ingest the reachable 76 now and report the 48 as found-not-fixed.
+
+RB's call. Option 2 is what the DE precedent supports and what I would do, but
+it is a judgement about scope rather than a fact from the measurement.
+
+A SECOND finding from [B2] worth carrying: the recency term gives a 1998 paper
+**1.0 of 15**, so even ingested, the pre-2010 canon scores in the 30s and falls
+below `learn_from_live_results`' flat write-back floor of 50 — the same wall
+`case-v2.1` hit on dens evaginatus. The `classic` tier exempts a paper from
+recency, but it is a CURATION label (San Antonio Guide) and no OSU paper carries
+it. Whether these RCTs should is a clinical question, not a code one.
+
+### THE TWO FIXTURES FIVE STAGES DEPEND ON
+
+Both committed. `answers/` is gitignored, which is how two curricula were nearly
+lost earlier in this session, so anything captured from the running app belongs
+under `eval/fixtures/` immediately.
+
+| file | what it is |
+|---|---|
+| `eval/fixtures/second_opinion_anesthesia_2026.md` | a general-purpose model's SR/MA-only answer on SIP mandibular-molar anesthesia. ~47 citation instances, **no PMIDs or DOIs** — venue + year + a statistic. The fixture for `citation-audit-v1`. |
+| `eval/fixtures/review_apixaban_apicectomy.md` | Curo's own Review answer on apixaban before apicectomy — banner, body, references, full bibliography, disclaimer, score table. |
+
+**The apixaban fixture captures a live invariant-3 violation.** The Level I
+paragraph renders `[[PMID:ESE-QG-2023]]` raw, in double brackets, while every
+other citation in the same answer became a pill. The cause is visible in the
+fixture: the identifier is not numeric and the renderer matches digits. The same
+row is scored **87/100, the highest in the answer** — above the Cochrane review
+at 73.3 — so the one paper the renderer cannot draw is the one the reader sees
+ranked first. That deserves its own item; it was NOT fixed, and the fixture was
+not quietly corrected.
+
+Also in that fixture: a stray `not applicable.` orphaned at the end of the third
+paragraph, and a banner reading "CHECKED AGAINST ABSTRACTS: 9/9 CONSISTENT"
+where 9 is the claim-citation PAIR count against 29 retrieved and 7 cited papers
+— easy to misread as a paper count.
+
+Two other curricula are stored under `eval/fixtures/curricula/` as before-states:
+`laser_disinfection_20260901_before.txt` and `anesthesia_20260901_before.txt`.
+The anesthesia one was generated on `f23e8c8` with `git_dirty: true`, BEFORE any
+`dl-quality-v1` work — it is a before-state, not evidence that the gate failed.
 
 ---
 
