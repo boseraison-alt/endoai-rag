@@ -1804,7 +1804,18 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
    NOTHING checked. It sits inside the chip so the two numbers cannot be
    separated, and it is deliberately louder than its host: the failure mode
    this exists to prevent is a reader taking the pair for a pass. */
+/* A3c — the sentences the banner is counting, marked in the answer itself. */
+.uncited-claim {
+  background: #fdf3e3;
+  border-bottom: 2px solid #f0a868;
+  color: inherit;
+  padding: 1px 0;
+  border-radius: 2px;
+}
+.uncited-claim-flash { background: #fbdca6; transition: background .4s ease; }
+
 .atag-uncited {
+  cursor: pointer;
   font-weight: 700;
   color: #9a3412;
   border-bottom: 2px solid #f0a868;
@@ -4643,7 +4654,9 @@ function buildTrustChips(job) {
   // cannot be separated by a layout change, and styled as a warning so a
   // glance cannot read the pair as a pass.
   var uncitedHalf = uncited
-    ? ' · <span class="atag-uncited">' + uncited + ' claim' + (uncited === 1 ? '' : 's') +
+    ? ' · <span class="atag-uncited" onclick="jumpToUncited()" ' +
+      'title="Show the first unsourced claim in the answer">' +
+      uncited + ' claim' + (uncited === 1 ? '' : 's') +
       ' not from the evidence base</span>'
     : '';
   // With directive uncited claims present, no branch below may use atag-ok:
@@ -4862,11 +4875,16 @@ function showResult(question, job) {
   // synthesis. Deep Learning keeps its own structure (it ends with The Final
   // Verdict, which already does this job).
   window._lastJob = job; window._lastQuestion = question;
+  // A3c — the flagged claims are highlighted in the answer itself, so the
+  // banner's second number points at the sentences it is counting.
+  var _uncitedQuotes = _uncitedClaimQuotes(answerText);
   if (mode === 'learn') {
-    document.getElementById('answerContent').innerHTML = renderAnswer(bodyText);
+    document.getElementById('answerContent').innerHTML =
+      markUncitedClaims(renderAnswer(bodyText), _uncitedQuotes);
   } else {
     var parts = renderAnswerWithBox(bodyText);
-    document.getElementById('answerContent').innerHTML = parts.box + parts.body;
+    document.getElementById('answerContent').innerHTML =
+      markUncitedClaims(parts.box + parts.body, _uncitedQuotes);
   }
 
   // Full bibliography — the papers this answer CITED, generated from data.
@@ -5270,6 +5288,44 @@ function _stashUnverifiedBlocks(text, stash) {
   });
 }
 
+// ── A3c: the count must point at text, not just count it ──
+//
+// "A number alone is a nag; a number that points at text is a tool." The status
+// block already quotes the flagged claims verbatim as `> - "…"` lines, so the
+// renderer has the list without a new server field.
+//
+// Each quoted claim is located in the rendered answer and wrapped in a marker
+// the reader can see and the banner can scroll to. Matching is on the QUOTED
+// PREFIX rather than the whole sentence, because `_quote_claim` truncates at
+// 140 characters and strips citation markers.
+function _uncitedClaimQuotes(answerText) {
+  var out = [], m;
+  var re = /^>\s*-\s*"([^"]{20,})"\s*$/gm;
+  while ((m = re.exec(String(answerText || ''))) !== null) out.push(m[1].trim());
+  return out;
+}
+
+// Escape for use inside a RegExp, so a claim containing (, ), * or ? still
+// matches itself rather than throwing or matching the wrong span.
+function _reEscape(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function markUncitedClaims(html, quotes) {
+  (quotes || []).forEach(function (q, i) {
+    // The rendered HTML has citation pills spliced in, so match a prefix that
+    // is long enough to be unique and short enough to survive that splicing.
+    var probe = q.slice(0, 60).replace(/\s+/g, ' ').trim();
+    if (probe.length < 20) return;
+    var re = new RegExp('(' + _reEscape(probe).replace(/ /g, '\\s+') + ')');
+    if (!re.test(html)) return;
+    html = html.replace(re,
+      '<mark class="uncited-claim" id="uncited-' + i + '" ' +
+      'title="Not from the evidence base — no citation, so nothing was checked against it">$1</mark>');
+  });
+  return html;
+}
+
 function renderAnswer(text) {
   var _uvStash = [];
   return String(text == null ? '' : text)
@@ -5589,6 +5645,17 @@ function _renderRetrievedNotCited(papers) {
   document.getElementById('notCitedList').innerHTML = html;
   document.getElementById('notCitedCount').textContent = papers.length;
   sec.style.display = 'block';
+}
+
+// A3c. Clicking the banner's second half takes the reader to the first claim
+// it is counting. Without this the number is a nag: it says six sentences are
+// unsourced and leaves the reader to find them in 2,000 words.
+function jumpToUncited() {
+  var first = document.querySelector('.uncited-claim');
+  if (!first) return;
+  first.scrollIntoView({block: 'center', behavior: 'smooth'});
+  first.classList.add('uncited-claim-flash');
+  setTimeout(function () { first.classList.remove('uncited-claim-flash'); }, 1600);
 }
 
 // ── Abort ────────────────────────────────────────────

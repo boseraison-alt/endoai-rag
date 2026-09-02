@@ -4674,6 +4674,51 @@ def assemble_bibliography(answer: str, papers: list) -> dict:
     return {"cited": cited, "uncited": uncited, "cited_pmids": cited_ids}
 
 
+# Answers written before Q1 carry a citation-support block with only the FIRST
+# number in it. `finalise_answer_text` runs on the cache-hit path, so those
+# answers get their impact factors stripped and their out-of-domain content
+# quarantined — and then render "CHECKED AGAINST ABSTRACTS: 9/9 CONSISTENT" as
+# a clean tick over the five uncited directives the quarantine block was just
+# built around.
+#
+# Found by asking the apixaban question through the restarted server: the block
+# rendered, the count did not, and the banner was the pre-Q1 tick. That is the
+# exact defect Q1 exists to fix, surviving on the one path that does not
+# regenerate the answer.
+_UNCITED_HALF_RE = re.compile(
+    r"\d+\s+claims?\s+not\s+from\s+the\s+evidence\s+base", re.IGNORECASE)
+_SUPPORT_BLOCK_RE = re.compile(
+    r"^>\s*[\u2713\u26a0\u25cb][^\n]*\*\*Citation support:", re.MULTILINE)
+
+
+def ensure_uncited_half(answer: str) -> str:
+    """Add the banner's second number to an answer that predates it.
+
+    A no-op when the answer already carries the count, when it has no
+    citation-support block to attach to, or when there is nothing to report.
+    """
+    if not answer or _UNCITED_HALF_RE.search(answer):
+        return answer or ""
+    m = _SUPPORT_BLOCK_RE.search(answer)
+    if not m:
+        return answer
+    found = _detect_uncited_directive_claims(answer)
+    if not found:
+        return answer
+    support = {"flags": [], "checked": 0, "status": "silent",
+               "uncited_directive": len(found), "uncited_directive_claims": found}
+    # Reuse the one renderer, so a cached answer and a fresh one word the
+    # second half identically.
+    half = _append_support_warnings("", support)
+    marker = "\n>\n> \u26a0"
+    half = half[half.index(marker):] if marker in half else ""
+    if not half:
+        return answer
+    end = answer.find("\n\n", m.end())
+    end = len(answer) if end == -1 else end
+    return answer[:end] + half + answer[end:]
+
+
 def finalise_answer_text(answer: str):
     """Everything a finished answer goes through before anything renders it.
 
@@ -4688,7 +4733,9 @@ def finalise_answer_text(answer: str):
     Returns `(answer, quarantined_blocks)`.
     """
     answer = strip_impact_factor(answer)
-    return quarantine_unsourced_content(answer)
+    answer, blocks = quarantine_unsourced_content(answer)
+    # Last, so it counts the quarantined content the step above just created.
+    return ensure_uncited_half(answer), blocks
 
 
 def _strip_quarantine_blocks(answer: str) -> str:
@@ -4890,15 +4937,105 @@ _DRUG_VOCAB_RE = re.compile(
     re.IGNORECASE)
 
 
+# ── WHAT IS NOT A CLINICAL DIRECTIVE (A3b) ────────────────
+#
+# Hand-adjudicating 40 flagged claims (25 DL, 15 Review, seed 20260902) put the
+# detector's precision at 62.5% TRUE / 30% NARRATIVE / 7.5% CITED ELSEWHERE —
+# and the over-reach was not spread evenly:
+#
+#   deontic     n=13   TRUE  4   NARRATIVE  9   (69%)
+#   quantity    n=21   TRUE 15   NARRATIVE  3   (14%)
+#   imperative  n=6    TRUE  6   NARRATIVE  0   ( 0%)
+#
+# An imperative verb opening a sentence is always an instruction. The other two
+# fire on sentences ABOUT the evidence rather than sentences instructing a
+# clinician — two distinct shapes, both excluded below.
+#
+# This is accuracy, not leniency (standing rule §1.6). Nothing here lowers a
+# bar: every one of the 25 TRUE claims in the sample still flags, and
+# `tests/test_uncited_directives.py` pins that in both directions.
+
+# (1) The modal governs an INTERPRETATION, not an action. "This should not be
+#     interpreted as mandating a switch" tells the reader how to read a finding;
+#     "Omit the morning dose" tells them what to do to a patient.
+_EPISTEMIC_DIRECTIVE_RE = re.compile(
+    r"\b(?:should|must|may|can)\s+(?:not\s+|therefore\s+|then\s+)*"
+    r"(?:be\s+)?(?:interpret(?:ed)?|frame[d]?|read|understood|regarded|construed"
+    r"|taken\s+as|treated\s+as|distinguish(?:ed)?|recogni[sz]e[d]?|appreciate[d]?"
+    r"|note[d]?|remember(?:ed)?|be\s+aware)\b"
+    r"|\b(?:is|are)\s+necessary\s+but\s+not\s+sufficient\b"
+    r"|\bwhether\s+\w+(?:\s+\w+)?\s+is\s+indicated\b"
+    r"|\b(?:RCTs?|trials?|studies|research|evidence)\b[^.]{0,60}?"
+    r"\b(?:are|is)\s+(?:required|needed|warranted)\b",
+    re.IGNORECASE)
+
+# (2) The sentence DESCRIBES the evidence base rather than instructing. Its
+#     numbers are study counts, follow-up windows and effect sizes — the
+#     furniture of a literature summary, not parameters a clinician sets.
+# NOTE the two phrases deliberately ABSENT: "evidence base" and "the
+# literature". Those are the UNSOURCED-LABEL vocabulary — "not from the
+# retrieved evidence base", "from the wider literature" — and Q1's whole design
+# is that a labelled directive is still counted, because the label is the thing
+# the banner is reporting. Including them here vetoed
+#
+#   "From the wider literature, not from the retrieved evidence base: the drug
+#    should not be routinely interrupted."
+#
+# which is a drug directive with a label on it, and is exactly what this
+# detector exists to find. Caught by `test_the_unsourced_label_does_not_exempt_
+# a_claim_here`, which Q1 wrote for precisely this confusion.
+_EVIDENCE_DESCRIPTION_RE = re.compile(
+    r"\b(?:systematic\s+reviews?|meta-?analys[ie]s|RCTs?|randomi[sz]ed\s+trials?"
+    r"|included\s+(?:studies|trials)|prospective\s+stud(?:y|ies)|cohort\s+stud"
+    r"|evidence\s+gap|these\s+(?:studies|trials)"
+    r"|represents?\s+Level\s+[IVX0-9]+\s+evidence|GRADE\s+(?:rating|certainty)"
+    r"|both\s+sources|sources?\s+converge|remarkably\s+concordant)\b",
+    re.IGNORECASE)
+
+
+# (3) …but a sentence can be ABOUT the evidence and still instruct, and the
+#     first cut of the veto above threw four real directives away:
+#
+#       "The evidence base does not specify a tolerance value … apply standard
+#        clinical practice (±0.5 mm of the radiographic apex)."
+#       "Delivery method was not specified in either study — use a side-vented
+#        needle and deliver to working length −1 mm."
+#
+#     Both name the evidence gap and then tell the clinician exactly what to do.
+#     Vetoing them is leniency, which standing rule §1.6 forbids. So the veto
+#     only applies when the sentence carries NO clinical action at all.
+#
+#     Deliberately narrow: physical and prescribing verbs. "select", "treat" and
+#     "consider" are excluded because they are as often epistemic as clinical
+#     ("whether laser is indicated and which modality to select", "should be
+#     treated as expert-level awareness").
+_CLINICAL_ACTION_RE = re.compile(
+    r"\b(?:use|using|apply|applies|applied|deposit|deliver|delivered|administer"
+    r"|inject|insert|place|placed|remove|irrigate|activate|flush|schedule"
+    r"|confirm|verify|check|repeat|omit|withhold|discontinue|avoid|prescribe"
+    r"|give|given|set|seal|obturate|prepare|isolate|re-?administer|reinject"
+    r"|reduce|increase|wait|allow)\b",
+    re.IGNORECASE)
+
+
 def _claim_is_directive(sentence: str) -> str:
-    """Which directive shape fired, or "" — see the three patterns above."""
+    """Which directive shape fired, or "" — see the patterns above.
+
+    An imperative opening the sentence is always an instruction. A deontic or a
+    bare clinical quantity is an instruction unless the sentence is talking
+    ABOUT the evidence and asks the clinician to do nothing.
+    """
     s = sentence or ""
     if _DIRECTIVE_IMPERATIVE_RE.search(s):
         return "imperative"
+    about_the_evidence = bool(_EPISTEMIC_DIRECTIVE_RE.search(s)
+                              or _EVIDENCE_DESCRIPTION_RE.search(s))
+    asks_for_an_action = bool(_CLINICAL_ACTION_RE.search(s))
+    meta = about_the_evidence and not asks_for_an_action
     if _DIRECTIVE_DEONTIC_RE.search(s):
-        return "deontic"
+        return "" if meta else "deontic"
     if _CLINICAL_QUANTITY_RE.search(s):
-        return "quantity"
+        return "" if meta else "quantity"
     return ""
 
 

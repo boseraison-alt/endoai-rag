@@ -41,6 +41,8 @@ RENDER_DEPS = [
     "_QUARANTINE_BLOCK_RE_JS", "_unverifiedInline", "_stashUnverifiedBlocks",
     # the renderers themselves
     "renderAnswer", "_recommendationTier", "renderAnswerWithBox",
+    # A3c — the flagged claims are marked in the rendered answer
+    "_uncitedClaimQuotes", "_reEscape", "markUncitedClaims",
 ]
 
 # The trust banner and the blockquote it is built from.
