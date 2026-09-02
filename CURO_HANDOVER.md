@@ -423,7 +423,24 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   `scripts/monthly_maintenance.py`, dry-run by default and deliberately
   **NOT scheduled**. Ran end to end clean: backfill 24s, rescore 10s, eval
   686s with 25/25 cases passing. RB decides when it first runs `--apply`.
-## 5. THE QUEUE, in order
+## 5. THE QUEUE — see `AGENT_QUEUE.md`, which is authoritative
+
+**`AGENT_QUEUE.md` supersedes the ordering below.** It is RB's own execution
+plan, it assigns file ownership between two parallel agents, and it resolves
+questions this file previously recorded as open. Read it first. Opening
+instruction for a fresh session, from its §0:
+
+> Read `AGENT_QUEUE.md`, `CURO_HANDOVER.md`, `HANDOVER.md` and `WORKLIST.md`,
+> then execute `AGENT_QUEUE.md` from §3 in order. Follow §1 standing rules on
+> every item. Stop where a stage says STOP.
+
+Its order is **Stage 1 `trust-surface-v1` → Stage 2 `dl-quality-v2` → Stage 3
+`classics-v1` remainder → Stage 4 `scope-measure-v1` → Stage 5
+`citation-audit-v1`**, which is NOT the order the table below was written in.
+The table is retained because each subsection holds the verbatim batch text and
+the measurements taken against it.
+
+### The old ordering, retained for its detail
 
 RB has queued four batches. They are listed here in the order they must run,
 because two of them depend on artefacts the earlier ones produce.
@@ -431,7 +448,7 @@ because two of them depend on artefacts the earlier ones produce.
 | | batch | status | depends on |
 |---|---|---|---|
 | §5a | `dl-quality-v1` | **Items 1-5 DONE and committed. NOT TAGGED — the §8 report is the only thing left.** | — |
-| §5b | `classics-v1` | [A] answered, [B1] [B2] and [C] DONE; **[B3]/[B4] blocked on one decision — see below** | — |
+| §5b | `classics-v1` | [A] answered, [B1] [B2] and [C] DONE; [B3]/[B4] outstanding — **NOT blocked**, see the correction below | — |
 | §5c | `dl-quality-v2` | not started | the REGENERATED anesthesia curriculum, from `dl-quality-v1` Item 5 / `classics-v1` [B4] |
 | §5e | `citation-audit-v1` | not started; [L1] scoped | `eval/fixtures/second_opinion_anesthesia_2026.md` — **exists** |
 | §5d | `retrieval-honesty-v1` | not started | displaced three times; still current |
@@ -489,7 +506,21 @@ all four modules) plus **$2.51** for the clean run. Each crash was a real defect
 so the spend bought findings rather than retries — but it is real spend and the
 report should say so.
 
-### THE ONE DECISION BLOCKING `classics-v1` [B3]/[B4]
+### `classics-v1` [B3]/[B4] — NOT BLOCKED. I was wrong about this.
+
+**Correction.** An earlier version of this section said [B3] was blocked on
+whether to widen `ENDO_DOMAIN_FILTER`. `AGENT_QUEUE.md` §5 had already decided
+it, and I had not read that file:
+
+> **Do not widen `ENDO_DOMAIN_FILTER` in this stage.** The filter branch is
+> deferred to Stage 4's measurement and RB's decision. If the B2 table shows
+> venue exclusion is the *dominant* cause, say so and stop that branch — do not
+> implement.
+
+So [B3] proceeds on its other three branches (exemption logic, targeted ingest,
+synonym groups) and reports the venue exclusion without acting on it. My
+preferred option — a permissive filter scoped to the one ingest — is exactly the
+branch that is deferred, so it must NOT be taken.
 
 **No DB writes have happened.** The ingest script exists and is dry-run ready.
 
@@ -518,8 +549,15 @@ Three options, none taken:
    nothing for other topics, and is the smallest correct step.
 3. Ingest the reachable 76 now and report the 48 as found-not-fixed.
 
-RB's call. Option 2 is what the DE precedent supports and what I would do, but
-it is a judgement about scope rather than a fact from the measurement.
+**Option 3 is what `AGENT_QUEUE.md` requires**: ingest the reachable 76, report
+the 48 as venue-excluded, and leave the filter to Stage 4. Options 1 and 2 are
+recorded only so Stage 4 has the alternatives in front of it.
+
+One nuance the Stage 4 memo will need: "dominant cause" is not clean here.
+Never-ingested covers 119 of 124 (96%) and venue-exclusion 48 of 124 (39%) — but
+the 48 are a SUBSET of the 119 that no amount of ingesting through the live path
+can reach. Venue exclusion is dominant among the *unreachable*, not overall, and
+the memo should say it that way rather than pick one number.
 
 A SECOND finding from [B2] worth carrying: the recency term gives a 1998 paper
 **1.0 of 15**, so even ingested, the pre-2010 canon scores in the 30s and falls
