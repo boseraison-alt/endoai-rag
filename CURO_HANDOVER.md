@@ -217,6 +217,28 @@ last, so the finding was the part that was missing.
     candidates, after the routing gate — but no evidence base and no answer is
     ever cached or reused across turns.
 
+22. **No journal-identity signal in scoring or ranking. Venue is metadata and
+    Cochrane-verification only. Decided by RB 2026-09-02 (the JOE-vs-IEJ
+    question); the remedy for missing canon papers is retrieval/ingestion
+    fixes, never venue weight.**
+
+    (RB's instruction numbered this 11. It is 22 here because this list has
+    21 entries, and `endo_ai.py` comments and test names already cite
+    "invariant 11" and "invariant 15" by number — renumbering would silently
+    repoint every one of those references. The wording is RB's, verbatim.)
+
+    Guarded by `tests/test_no_journal_weighting.py`, which RUNS the scoring
+    path rather than grepping it: the impact-factor term is swept across its
+    whole range and the score must not move. The positive control in that file
+    is the load-bearing half — it flips `USE_IMPACT_FACTOR` and shows the same
+    sweep DOES move the score, so the invariant is evidence rather than an
+    assertion that would hold against a `score_paper` that ignored its
+    arguments.
+
+    `USE_IMPACT_FACTOR` predates the decision and still exists as an
+    environment flag. It is off, a test asserts it is off, and turning it on
+    is now a violation rather than a configuration choice.
+
 Recurring bug classes (see `HANDOVER.md`): trusted stored labels, untagged
 PubMed query terms, batch-metadata applied per-paper, fail-open checks that
 show nothing, tests that grep source instead of asserting on the prompt/data
