@@ -1700,6 +1700,10 @@ def generate_multi_search_terms(question: str, primary_term: str,
     if len(result) < MIN_SEARCH_TERMS:
         print(f"  [search_terms] WARNING: only {len(result)} search term(s) after retry — "
               f"retrieval breadth is degraded for this run")
+        _log_term_degradation(
+            "thin_term_set", question,
+            f"{len(result)} term(s) after retry, minimum {MIN_SEARCH_TERMS}",
+            " | ".join(result))
     return result
 
 
@@ -2153,9 +2157,63 @@ PubMed boolean query:""",
     if not search_string:
         print(f"  [search_terms] WARNING: could not parse a usable primary query — "
               f"falling back to the raw question")
+        # A13c. The fallback is the raw question, which has no AND-groups — so
+        # A1's coverage condition abstains and the run takes the library route
+        # without that check. Counted, not merely printed.
+        _log_term_degradation("primary_fallback", question,
+                              "no usable primary query after retry", question)
         search_string = question
     print(f"  Smart search terms: '{search_string}'")
     return search_string
+
+# ── TERM-GENERATION DEGRADATION, COUNTED ──────────────────
+#
+# A13c. Both degradation paths below printed a WARNING to stdout and nothing
+# else, so the only record of a degraded run was a console line nobody keeps.
+# A1's abstention then makes a degraded primary term route to the LIBRARY —
+# the less cautious of the two routes — which is a silent decision taken on a
+# silent signal. Standing rule §1.5: a component that discards or downgrades
+# must log and count what it did.
+#
+# A13a measured the rate before this existed, by recovering the generated topic
+# from `pubmed_audit.jsonl` (the search term is stored verbatim on every live
+# esearch):
+#
+#   1,790 distinct generated topics over 155 live runs
+#     healthy (2-3 AND-groups)   1,605   89.7%
+#     DEGRADED (<2 groups)         108    6.0%   <- 92 of them raw prose
+#     over 3 groups (capped)        77    4.3%
+#
+#   PRIMARY terms specifically — the only one A1's condition reads:
+#     0 of 149 runs.  Never, April to September.
+#
+# So the abstention path guards a state that has not occurred in production,
+# and the 6% is entirely in the EXTRA terms, where the cost is retrieval
+# breadth rather than routing. This counter exists so that stays true
+# observably rather than by assumption.
+
+_TERM_DEGRADE_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      "term_degradation.jsonl")
+_TERM_DEGRADE_LOCK = _cost_thread.Lock()
+# Process-lifetime tallies, so a caller can assert on them without reading the
+# file. `kind` is "primary_fallback" or "thin_term_set".
+TERM_DEGRADE_COUNTS = {}
+
+
+def _log_term_degradation(kind: str, question: str, detail: str,
+                          produced: str = "") -> None:
+    """Record one degraded generation. Never raises — this is telemetry."""
+    try:
+        with _TERM_DEGRADE_LOCK:
+            TERM_DEGRADE_COUNTS[kind] = TERM_DEGRADE_COUNTS.get(kind, 0) + 1
+            row = {"ts": datetime.now().isoformat(), "kind": kind,
+                   "question": (question or "")[:300], "detail": detail,
+                   "produced": (produced or "")[:400]}
+            with open(_TERM_DEGRADE_LOG_PATH, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+    except Exception as ex:      # pragma: no cover — telemetry must not break a run
+        print(f"  [search_terms] degradation log failed: {ex}")
+
 
 # ── FETCH METADATA FOR PMIDs ─────────────────────────────
 # PROSPERO is a systematic-review registry and is NOT a PubMed DataBank, so it

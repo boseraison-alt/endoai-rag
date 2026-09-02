@@ -53,6 +53,10 @@ def _audit_logs_stay_out_of_the_repo(tmp_path_factory):
     endo_ai._EVMAP_LOG_PATH = str(d / "evidence_mapping.jsonl")
     endo_ai._COST_LOG_PATH = str(d / "cost_log.jsonl")
     endo_ai._PUBMED_AUDIT_LOG_PATH = str(d / "pubmed_audit.jsonl")
+    # A13c's degradation log, redirected here on the day it was written rather
+    # than after a test run had polluted the production record — which is what
+    # happened to each of the four below.
+    endo_ai._TERM_DEGRADE_LOG_PATH = str(d / "term_degradation.jsonl")
 
     # The fourth, found in `case-v3` by noticing a stray `c.md` in `git status`
     # twice. The eval harness saves every case answer it generates so an

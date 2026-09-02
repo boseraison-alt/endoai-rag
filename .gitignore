@@ -63,3 +63,6 @@ slide_specs/
 # and a bad archival format — the measurements they produced are committed as
 # JSON in eval/logs/ and those are the durable record.
 eval/logs/pinned_evidence/
+
+# A13c degradation telemetry — runtime log, like the other audit trails
+term_degradation.jsonl
