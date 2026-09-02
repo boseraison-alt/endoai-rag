@@ -100,7 +100,9 @@ except ImportError:
     PPTX_AVAILABLE = False
     print("Warning: python-pptx not installed -- run: pip install python-pptx")
 
-from endo_ai import (build_evidence_base, ask_clinical_question, ask_learn_question,
+from endo_ai import (coverage_groups as endo_ai_coverage_groups,
+                     question_coverage as endo_ai_question_coverage,
+                     build_evidence_base, ask_clinical_question, ask_learn_question,
                      build_deep_learning_module, StreamAborted,
                      finalise_answer_text, assemble_bibliography,
                      save_answer, generate_clarifying_questions,
@@ -931,6 +933,17 @@ RELEVANCE_GATE = {
     "min_hits":         20,     # raw KNN hits before relevance is even considered
     "max_topic_age_yr":  3,     # newest on-topic paper older than this -> go live
     "max_per_tier":     25,     # cap per tier, mirrors the live path
+    # A1a. Every condition above is a question about the CORPUS — enough hits,
+    # enough of them similar, at least one high tier, not stale. All four are
+    # satisfiable by the endodontic HALF of a two-part question, which is how
+    # "eliquis in patients who needs apicectomy" scored as well covered while
+    # not one retrieved paper mentioned anticoagulation.
+    #
+    # This one is a question about the QUESTION: each discriminating concept in
+    # the generated query must be REPRESENTED in the candidate set. Chosen from
+    # the measured distribution in `eval/reports/a1_coverage_gate.md`, not from
+    # a cost target (A1c).
+    "min_concept_papers": 3,
 }
 
 
@@ -996,6 +1009,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     MIN_RAG_RELEVANT        = RELEVANCE_GATE["min_relevant"]
     MAX_RAG_PAPERS_PER_TIER = RELEVANCE_GATE["max_per_tier"]
     RAG_MAX_TOPIC_AGE_YEARS = RELEVANCE_GATE["max_topic_age_yr"]
+    MIN_CONCEPT_PAPERS      = RELEVANCE_GATE["min_concept_papers"]
     evidence        = {}
     all_scored      = []
 
@@ -1051,19 +1065,54 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         topic_age = _dt.now().year - newest_year if newest_year else 99
         topic_is_stale = topic_age > RAG_MAX_TOPIC_AGE_YEARS
 
+        # A1a — does the retrieved set address the QUESTION?
+        #
+        # `coverage_groups` returns the top-level AND-groups of the primary
+        # generated query with the generic ones dropped, i.e. the concepts the
+        # query itself treats as hard requirements. If a concept is represented
+        # by fewer than MIN_CONCEPT_PAPERS candidates, the library has not
+        # covered the question and no similarity count may say otherwise.
+        #
+        # A question whose query is ALL generic vocabulary has no discriminating
+        # concept to test; that is a plain endodontic question and the library
+        # is the right route, so the condition abstains rather than blocking.
+        _cov_groups = endo_ai_coverage_groups(smart_topic)
+        coverage    = endo_ai_question_coverage(_cov_groups, relevant)
+        weakest_cov = min([c["hits"] for c in coverage], default=None)
+        covers_concepts = (weakest_cov is None) or (weakest_cov >= MIN_CONCEPT_PAPERS)
+
         library_covers_question = (
             len(rag_results) >= MIN_RAG_RESULTS
             and len(relevant) >= MIN_RAG_RELEVANT
             and has_high_tier
             and not topic_is_stale
+            and covers_concepts
         ) if force_route != "library" else True
         # force_route="library" holds the library path even when coverage is
         # thin, so a library-mode eval case measures what the library actually
         # returns instead of quietly becoming a live-path case.
-        print(f"  [rag_gate] {len(rag_results)} hits, {len(relevant)} above "
-              f"similarity {RAG_SIMILARITY_FLOOR}, high-tier={has_high_tier}, "
-              f"newest={newest_year} (age {topic_age}y, stale={topic_is_stale}) "
-              f"-> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
+        # A1b. Every condition's own verdict, and the coverage terms with their
+        # hit counts. A gate that short-circuits live retrieval silently is
+        # standing rule §1.5 — it discards the entire live candidate pool and
+        # says nothing about having done so.
+        def _v(ok):
+            return "PASS" if ok else "FAIL"
+        print(f"  [rag_gate] hits={len(rag_results)}>={MIN_RAG_RESULTS} "
+              f"{_v(len(rag_results) >= MIN_RAG_RESULTS)} | "
+              f"relevant={len(relevant)}>={MIN_RAG_RELEVANT} "
+              f"{_v(len(relevant) >= MIN_RAG_RELEVANT)} | "
+              f"high_tier={has_high_tier} {_v(has_high_tier)} | "
+              f"newest={newest_year} age={topic_age}y<={RAG_MAX_TOPIC_AGE_YEARS} "
+              f"{_v(not topic_is_stale)} | "
+              f"concepts>={MIN_CONCEPT_PAPERS} {_v(covers_concepts)}")
+        for _c in coverage:
+            print(f"    [rag_gate:coverage] {_c['hits']:>4} paper(s) mention "
+                  f"{_c['terms'][:4]}"
+                  + ("" if _c["hits"] >= MIN_CONCEPT_PAPERS else "   <-- NOT COVERED"))
+        if not _cov_groups:
+            print("    [rag_gate:coverage] no discriminating concept in the query "
+                  "— condition abstains")
+        print(f"  [rag_gate] -> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
 
         if library_covers_question:
             # ── Prior-exchange seeding (Review conversation memory) ──

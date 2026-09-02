@@ -2982,6 +2982,145 @@ def fetch_cochrane(topic, max_results=3):
         print(f"  OK Cochrane:Using PubMed fallback ({e})")
         return ""
 
+# ── DOES THE RETRIEVED SET ADDRESS THE QUESTION? ──────────
+#
+# Addendum A1. The library-first gate asked four questions — enough hits, enough
+# above the similarity floor, at least one high tier, not stale — and every one
+# of them is a question about the CORPUS, not about the QUESTION. On "eliquis in
+# patients who needs apicectomy" all four passed (200 hits, 14 above the floor
+# against a minimum of 12, 11 high-tier, newest 2026) and live PubMed was never
+# attempted. None of those 14 papers mentions anticoagulation anywhere.
+#
+# The gate was measuring similarity to the endodontic corpus. Every one of its
+# conditions is satisfiable by the endodontic HALF of a two-part question, so a
+# question with one foot outside the library scores as well covered.
+#
+# WHAT A CONCEPT IS. `generate_search_terms` emits a PubMed boolean whose
+# top-level AND-groups are exactly the question's concepts:
+#
+#   (apicectomy OR apicoectomy OR "periapical surgery")     <- the procedure
+#   AND (Eliquis OR apixaban OR anticoagulant*)             <- the drug
+#   AND (patient* OR perioperative OR bleeding)             <- the setting
+#
+# Each AND-group is a hard requirement in the query the system would have sent
+# to PubMed. So requiring that each one is REPRESENTED in the candidate set is
+# not a new judgement about the question — it is the query's own structure,
+# applied to what came back.
+#
+# Only the PRIMARY term is used. `generate_multi_search_terms` deliberately
+# generates "different angles", and an angle is allowed to find nothing; the
+# primary term is the one derived from the question itself.
+#
+# Generic groups are dropped. A group of nothing but endodontic vocabulary
+# ("root canal" OR endodontic*) is satisfied by every paper in the library and
+# tests nothing — it is the same tautology the old gate was built on.
+
+# Vocabulary that every paper in an endodontic library carries, plus the
+# connective words a query generator reaches for. A group made only of these
+# cannot discriminate.
+_COVERAGE_GENERIC = {
+    "endodontic", "endodontics", "root canal", "root canals", "dental pulp",
+    "pulp", "pulpal", "pulpitis", "periapical", "periradicular", "tooth",
+    "teeth", "dental", "dentistry", "oral", "canal", "canals",
+    "patient", "patients", "management", "manage", "treatment", "treatments",
+    "therapy", "clinical", "outcome", "outcomes", "efficacy", "effectiveness",
+    "safety", "success", "failure", "study", "studies", "trial", "trials",
+    "adult", "adults", "human", "humans",
+}
+
+_TERM_SPLIT_AND = re.compile(r"\)\s+AND\s+\(")
+_TERM_SPLIT_OR  = re.compile(r"\s+OR\s+", re.IGNORECASE)
+
+
+def _clean_term(t: str) -> str:
+    """One synonym, stripped of quotes, parens and PubMed field tags."""
+    t = (t or "").strip()
+    t = re.sub(r"\[[a-z]+\]\s*$", "", t, flags=re.IGNORECASE)   # [tiab], [mh]
+    t = t.strip().strip("()").strip().strip('"').strip()
+    return t.lower()
+
+
+def parse_search_term_groups(term: str) -> list:
+    """The top-level AND-groups of a generated PubMed boolean, as term lists."""
+    if not term:
+        return []
+    s = term.strip()
+    groups = []
+    for chunk in _TERM_SPLIT_AND.split(s):
+        terms = [_clean_term(x) for x in _TERM_SPLIT_OR.split(chunk)]
+        terms = [t for t in terms if len(t) >= 3]
+        if terms:
+            groups.append(terms)
+    return groups
+
+
+def _group_is_generic(terms: list) -> bool:
+    """True when every synonym in the group is corpus-wide vocabulary."""
+    return all(t.rstrip("*").strip() in _COVERAGE_GENERIC for t in terms)
+
+
+# A generated query has three AND-groups by spec. When generation fails,
+# `generate_search_terms` falls back to the RAW QUESTION — "Single visit versus
+# multiple visit endodontic treatment?" — which parses as one group holding one
+# 60-character string that no title contains. Coverage then scores 0 and the
+# condition routes every degraded run to live PubMed.
+#
+# Caught by `tests/test_end_to_end.py`, which drives the real path with a stubbed
+# Claude and hit the fallback. It is the failure mode A1c exists to bound, and it
+# would have been paid for in latency on every run whose term generation slipped.
+#
+# A fallback string is not a concept decomposition, so the condition abstains
+# rather than failing: fewer than two AND-groups means there is nothing here the
+# query itself treated as a separate requirement.
+_COVERAGE_MIN_GROUPS = 2
+# No paper's title or abstract contains a whole clause. A "synonym" this long is
+# prose that leaked through the parser, not a term to match on.
+_COVERAGE_MAX_TERM_WORDS = 6
+
+
+def coverage_groups(primary_term: str) -> list:
+    """The question's DISCRIMINATING concepts — its AND-groups, generics dropped.
+
+    Returns [] when the query has no boolean structure to read, which makes the
+    gate condition abstain instead of blocking.
+    """
+    parsed = parse_search_term_groups(primary_term)
+    if len(parsed) < _COVERAGE_MIN_GROUPS:
+        return []
+    out = []
+    for g in parsed:
+        g = [t for t in g if len(t.split()) <= _COVERAGE_MAX_TERM_WORDS]
+        if g and not _group_is_generic(g):
+            out.append(g)
+    return out
+
+
+def _term_in_text(term: str, text: str) -> bool:
+    """`apixaban` matches; `anticoagulant*` matches "anticoagulants"."""
+    t = term.rstrip("*").strip()
+    if len(t) < 3:
+        return False
+    return re.search(r"(?<![a-z])" + re.escape(t), text) is not None
+
+
+def question_coverage(groups: list, candidates: list) -> list:
+    """Per concept, how many candidate papers mention any of its synonyms.
+
+    Reads title and abstract. A candidate with neither contributes nothing —
+    which is the honest direction: an unread paper is not evidence that the
+    concept is covered.
+    """
+    blobs = []
+    for c in (candidates or []):
+        blobs.append(((c.get("title") or "") + " " +
+                      (c.get("abstract") or "")).lower())
+    out = []
+    for g in groups:
+        n = sum(1 for b in blobs if any(_term_in_text(t, b) for t in g))
+        out.append({"terms": g, "hits": n})
+    return out
+
+
 # ── FETCH FROM PUBMED ────────────────────────────────────
 # Hybrid endodontic constraint — MeSH OR Title/Abstract free-text.
 # MeSH-only excludes 6-18 months of newly-indexed papers; the [tiab] terms
