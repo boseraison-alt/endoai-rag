@@ -412,7 +412,12 @@ because two of them depend on artefacts the earlier ones produce.
 | §5 | `dl-quality-v1` | Items 1-4 DONE, Item 5 (regenerate) in flight | — |
 | §5b | `classics-v1` | [B1] and [C] DONE; [B2]-[B4] outstanding | — |
 | §5c | `dl-quality-v2` | not started | the REGENERATED anesthesia curriculum, from `dl-quality-v1` Item 5 / `classics-v1` [B4] |
-| §5d | `retrieval-honesty-v1` | not started | displaced twice; still current |
+| §5e | `citation-audit-v1` | not started | `eval/fixtures/second_opinion_anesthesia_2026.md`, which exists |
+| §5d | `retrieval-honesty-v1` | not started | displaced three times; still current |
+
+`citation-audit-v1` has no dependency on the other three and could run at any
+point. It is placed after `dl-quality-v2` only because it shares the anesthesia
+subject matter and the deck pipeline, not because anything blocks it.
 
 ---
 
@@ -641,6 +646,142 @@ concentration conflicts, so they need a detector of their own — the existing
 one compares numbers attached to named agents, not recommendations attached to
 clinical situations.
 
+
+## 5e. Queued fourth — "citation-audit-v1" (RB, queued 2026-09-02, verbatim)
+
+No dependency on the other batches. Its fixture,
+`eval/fixtures/second_opinion_anesthesia_2026.md`, already exists in the repo.
+
+> AUTONOMOUS BATCH — citation-audit-v1
+> Standing rules apply (WORKLIST.md §0/§6): measure before changing; dry-run
+> every DB write and report the delta split before applying; mutation-check
+> every new test; real fixtures only; wip-commit before destructive git; push +
+> refresh the OneDrive bundle at the end. Do NOT weaken any checker or gate
+> during this batch. No journal-identity weighting anywhere (invariant 11).
+> Tag citation-audit-v1.
+>
+> CONTEXT
+> eval/fixtures/second_opinion_anesthesia_2026.md is a clinical answer produced
+> by a general-purpose model with web search, restricted by its prompt to
+> systematic reviews, meta-analyses, network meta-analyses and RCTs. It cites
+> ~45-50 sources but gives NO PMIDs or DOIs — only journal + year + a reported
+> statistic. The purpose of this batch is to run those citations through Curo's
+> existing resolution and validation machinery and report, factually, how many
+> survive. This is a diagnostic AND a demo asset. Build no new clinical content.
+>
+> [L1] EXTRACT THE CITATION MANIFEST
+> Parse the fixture into eval/fixtures/second_opinion_citations.json, one record
+> per citation INSTANCE (the same paper cited twice = two instances, linked by a
+> shared resolved_id once resolved). Each record carries:
+>   claim_text          the sentence the citation supports, verbatim
+>   venue               journal string as written
+>   year                as written
+>   claimed_level       the bracketed tag: NMA / SR-MA / SR-MA+TSA / RCT /
+>                       diagnostic / observational / consensus
+>   reported_stats      every number in the claim, verbatim, with its unit or
+>                       measure type (RR, OR, %, CI, SUCRA, I2, n, P)
+>   self_flagged        true where the document itself flags the evidence as
+>                       below its own stated bar
+> Report the extracted count and the full manifest in the report before doing
+> anything else. Expect roughly 45-50 instances; if the count is far off,
+> stop and report rather than proceeding on a bad parse.
+>
+> [L2] RESOLVE EACH CITATION AGAINST PUBMED
+> For each instance, search PubMed using the venue, year, and distinctive terms
+> from the claim (design + population + intervention). Use the existing
+> retrieval code paths, not ad-hoc queries. Classify every instance into exactly
+> one of:
+>   RESOLVED    a single paper matches venue + year + claim content unambiguously
+>   AMBIGUOUS   plausible candidates exist but none is uniquely determined from
+>               the information given
+>   NOT_FOUND   no paper in that venue and year plausibly matches the claim
+> Record the PMID for RESOLVED, the candidate PMIDs for AMBIGUOUS, and the exact
+> queries tried for NOT_FOUND.
+>
+> CRITICAL METHODOLOGICAL RULE — do not violate this, the whole value of the
+> batch depends on it: AMBIGUOUS AND NOT_FOUND ARE NOT EVIDENCE OF FABRICATION.
+> Journal + year is genuinely insufficient to identify a paper, and Curo's own
+> library coverage is finite. The report must state this explicitly and must
+> never label an unresolved citation "fake", "hallucinated" or "fabricated". The
+> only defensible claim is "not verifiable from the information the document
+> provides". Any output that overstates this is a failed item, not a good
+> finding.
+>
+> [L3] VALUE CHECK ON EVERYTHING THAT RESOLVED
+> For each RESOLVED instance, fetch the full abstract and run the existing
+> verify_citation_support path plus a numeric check. Report per instance:
+>   - Does every number in reported_stats appear verbatim in the abstract, same
+>     quantity and same unit? Apply the existing chart gates as text rules:
+>     no range reported as a scalar, no unitless pair treated as comparable.
+>   - Does the claim sentence describe what the abstract actually reports, or
+>     does it transfer a figure from the whole review to a subgroup (the
+>     n=19,223 misattribution class already seen in Curo's own anesthesia
+>     output)?
+>   - Is claimed_level correct against Curo's tier ladder for that paper,
+>     derived from study design as always — never from the document's own tag?
+> Classify each as SUPPORTED / PARTIAL (claim broader than the abstract) /
+> UNSUPPORTED / NOT_CHECKABLE (abstract too thin to judge).
+>
+> [L4] TARGETED CHECKS ON KNOWN SUSPECTS
+> Report these individually and by name, whatever the aggregate shows:
+>   a. "dexamethasone ... RR 1.80; 95% CI from 1.35" — a confidence interval
+>      with a lower bound and no upper bound is malformed. Determine whether the
+>      source reports a complete interval and what it is.
+>   b. The liposomal bupivacaine claim attributed to "Cochrane" with no review
+>      named — identify which review, or record that it cannot be identified.
+>   c. Every citation dated 2026 (at least: Int Endod J 2026, BMC Anesthesiol
+>      2026) — confirm whether a 2026-dated record exists, including
+>      epub-ahead-of-print.
+>   d. The two distinct "SR/MA, Cureus 2025" citations (cryotherapy; magnesium
+>      sulfate) — confirm they are two different papers, not one reused.
+>   e. The Zanjir NMA 52% / 5,094 figure and the Int Endod J 2021 3.6 mL RR 1.94
+>      (1.07-3.52) — these are load-bearing for the document's protocol; check
+>      them with particular care.
+>
+> [L5] LIBRARY ACTION — additive only
+> Papers that are RESOLVED, pass L3, and are absent from the library: ingest
+> with full provenance (tier from study design, COI tri-state, MEDLINE status,
+> retraction/supersession check). Dry-run with a delta split reported BEFORE
+> applying. Do not ingest anything AMBIGUOUS or NOT_FOUND. Do not ingest on the
+> strength of the document's description alone — only on the fetched record.
+> After ingest, re-run the retrieval eval serially and report deltas against the
+> current baseline; explain any case that moves.
+>
+> [L6] REPORT + DEMO ASSET
+> Write eval/reports/citation_audit_v1.md containing:
+>   - the counts: instances extracted, RESOLVED / AMBIGUOUS / NOT_FOUND, and
+>     among RESOLVED the SUPPORTED / PARTIAL / UNSUPPORTED / NOT_CHECKABLE split
+>   - the full per-instance table
+>   - the five targeted findings from L4
+>   - papers newly ingested, and eval deltas
+>   - a plainly worded limitations paragraph restating the L2 rule
+> Then generate ONE slide into the existing dark deck pipeline via the shared
+> slide_spec_cache (both exports must consume the same spec, content hash
+> asserted): a side-by-side of a single real example — the document's claim as
+> written on the left, Curo's checker output for the same claim on the right.
+> Pick the most defensible example available, in this order of preference:
+> a RESOLVED-but-PARTIAL claim > a RESOLVED-but-UNSUPPORTED claim > an AMBIGUOUS
+> one labelled exactly as "not verifiable from the citation as given". Every
+> value on the slide must appear verbatim in the cited text and obey all chart
+> gates. If no example clears those gates, produce NO slide and say so — a
+> missing slide is a valid outcome and is far better than an overclaiming one.
+>
+> Report in §8 format. Refresh bundle, push, tag citation-audit-v1.
+
+**Note for whoever runs it.** [L2]'s methodological rule is the load-bearing
+part of this batch and it cuts against the instinct the rest of the repo
+builds. Every other batch treats an unresolvable citation as a defect; here an
+unresolvable citation is mostly a fact about what journal-plus-year can
+identify. The existing machinery that comes closest is `verify_citation_support`
+(does the abstract support the claim) and the fabrication half of
+`validate_evidence_mapping` (was the PMID retrieved) — neither answers "does
+this paper exist", and neither should be repurposed to imply it does.
+
+Two pieces of it already exist and should be reused rather than rebuilt: the
+claim-unit splitter (`_split_claim_units`) for [L1], because a citation's
+supporting sentence is exactly a claim unit; and the chart gates
+(invariant 2 — no range as a scalar, no unitless pair treated as comparable)
+for [L3], which the item explicitly asks to apply as text rules.
 
 ## 5d. Queued last — "retrieval-honesty-v1" (paste-ready)
 
