@@ -1735,6 +1735,16 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 /* ── Header trust chips ──────────────────────────────────── */
 .atag-ok      { background: #e3f5ec; color: #0b5f3d; }
 .atag-warn    { background: #faf0dc; color: #854d0e; }
+/* `trust-surface-v1` Q1b — the half of the trust banner that counts claims
+   NOTHING checked. It sits inside the chip so the two numbers cannot be
+   separated, and it is deliberately louder than its host: the failure mode
+   this exists to prevent is a reader taking the pair for a pass. */
+.atag-uncited {
+  font-weight: 700;
+  color: #9a3412;
+  border-bottom: 2px solid #f0a868;
+  padding-bottom: 1px;
+}
 .atag-bad     { background: #fbe5e5; color: #a52a2a; }
 /* "checking…" — deliberately NOT green. While the answer is streaming the
    guardrails have not run, and a chip that looks like a pass would be a lie
@@ -4511,10 +4521,43 @@ function buildTrustChips(job) {
   while ((mm = naRe.exec(answerText)) !== null) {
     unavailable += 1;
   }
+
+  // `trust-surface-v1` Q1b — the SECOND number, and the reason this chip may
+  // no longer render a bare tick.
+  //
+  // The first number counts CITED claims that were compared with their source.
+  // The apixaban answer scored 9/9 on it while an entire paragraph of drug
+  // directives carried no citation and was therefore never looked at. Both
+  // numbers were true; the banner asserted verification over the whole answer.
+  //
+  // Summed across blocks for the same reason the others are: a curriculum
+  // carries one block per module, and reporting module 1's count as the
+  // document's would be the fail-open shape from a third angle.
+  var uncited = 0;
+  var uncitedRe = /(\d+)\s+claims?\s+not\s+from\s+the\s+evidence\s+base/gi;
+  while ((mm = uncitedRe.exec(answerText)) !== null) {
+    uncited += +mm[1];
+  }
+  // The half that is never a tick. Rendered inside the chip so the two numbers
+  // cannot be separated by a layout change, and styled as a warning so a
+  // glance cannot read the pair as a pass.
+  var uncitedHalf = uncited
+    ? ' · <span class="atag-uncited">' + uncited + ' claim' + (uncited === 1 ? '' : 's') +
+      ' not from the evidence base</span>'
+    : '';
+  // With directive uncited claims present, no branch below may use atag-ok:
+  // green over text nothing checked is exactly what this item exists to stop.
+  var okClass = uncited ? 'atag-warn' : 'atag-ok';
+  var okMark  = uncited ? '⚠' : '✓';
+  var uncitedTitle = uncited
+    ? ' Separately, ' + uncited + ' clinically directive claim' +
+      (uncited === 1 ? '' : 's') + ' carry no citation and were never checked.'
+    : '';
+
   // Older answers said "verified" without the countable sentence shape above.
   if (totalChecked === 0 && flagged === 0 && /Citation support:\s*verified/i.test(answerText)) {
-    supportChip = '<span class="atag atag-ok" title="Each cited claim was compared with its source abstract">' +
-      '✓ Checked against abstracts: all consistent</span>';
+    supportChip = '<span class="atag ' + okClass + '" title="Each cited claim was compared with its source abstract.' + uncitedTitle + '">' +
+      okMark + ' Checked against abstracts: all consistent' + uncitedHalf + '</span>';
   } else if (totalChecked > 0) {
     // Any module whose check could not run is named in the chip too — a
     // partial count presented as a whole-document pass is the same fail-open
@@ -4523,20 +4566,21 @@ function buildTrustChips(job) {
       ? ' · ' + unavailable + ' section' + (unavailable === 1 ? '' : 's') + ' not checked'
       : '';
     if (flagged > 0) {
-      supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract; flagged claims are listed in the answer">' +
+      supportChip = '<span class="atag atag-warn" title="Each cited claim was compared with its source abstract; flagged claims are listed in the answer.' + uncitedTitle + '">' +
         '⚠ Checked against abstracts: ' + (totalChecked - flagged) + '/' + totalChecked +
-        ' consistent' + naNote + '</span>';
+        ' consistent' + naNote + uncitedHalf + '</span>';
     } else {
-      supportChip = '<span class="atag atag-ok" title="Each cited claim was compared with its source abstract">' +
-        '✓ Checked against abstracts: ' + totalChecked + '/' + totalChecked +
-        ' consistent' + naNote + '</span>';
+      supportChip = '<span class="atag ' + okClass + '" title="Each cited claim was compared with its source abstract.' + uncitedTitle + '">' +
+        okMark + ' Checked against abstracts: ' + totalChecked + '/' + totalChecked +
+        ' consistent' + naNote + uncitedHalf + '</span>';
     }
   } else {
     // Nothing was checked — "not available" answers, older cached answers,
     // and curricula where every module's check was unavailable. Say the check
     // didn't run rather than silently rendering no chip.
-    supportChip = '<span class="atag atag-neutral" title="Whether each cited source supports its claim was not verified for this answer">' +
-      '○ Citation check: not available</span>';
+    supportChip = '<span class="atag ' + (uncited ? 'atag-warn' : 'atag-neutral') +
+      '" title="Whether each cited source supports its claim was not verified for this answer.' + uncitedTitle + '">' +
+      '○ Citation check: not available' + uncitedHalf + '</span>';
   }
 
   // Evidence-mapping chip. It used to render nothing on a pass, which is the

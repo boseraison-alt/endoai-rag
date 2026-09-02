@@ -4259,6 +4259,157 @@ def _detect_uncited_author_mentions(answer: str) -> list:
     return out
 
 
+# ── UNCITED CLINICAL DIRECTIVES ON THE RENDERED ANSWER ────
+#
+# `trust-surface-v1` Q1. The apixaban Review answer carried the banner
+#
+#     CHECKED AGAINST ABSTRACTS: 9/9 CONSISTENT
+#
+# over a paragraph of drug directives — ">=4 hours after the morning dose",
+# "tranexamic acid 4.8% mouthwash", "CrCl <50 mL/min", "age >75", "omit the
+# morning dose" — carrying no citation at all. Both halves of that are true and
+# together they mislead: `verify_citation_support` examines CITED claims, so an
+# uncited claim is not a claim it disagreed with, it is a claim it never saw.
+# The banner then asserted verification over the whole answer.
+#
+# WHY THE EXISTING GATE DID NOT CATCH IT, measured on the fixture:
+#
+#   `_detect_unattributed_claims` flagged 3, and `_EVMAP_MAX_UNATTRIBUTED` is 3
+#   — it hard-fails ABOVE the limit, so the answer passed by one claim. And two
+#   of the directives were invisible to it in any case:
+#
+#     "Bridging with LMWH is not indicated for apixaban."   no claim pattern
+#     "INR testing is not applicable."                      no claim pattern
+#
+#   Those patterns catch a claim by its NUMBERS. A drug directive can be
+#   entirely uncited, entirely actionable, and contain no statistic at all —
+#   the same shape `case-v3` found chairside, arriving this time as a
+#   prescribing instruction.
+#
+# THIS IS A REPORTER, NOT A GATE. It never blocks or rewrites an answer; it
+# produces the second number the banner is required to show beside the first.
+# That is deliberate: Q2's decision is that Curo MAY answer beyond its evidence
+# base, so the honest handling of a labelled directive is to count it out loud,
+# not to refuse it.
+#
+# TWO DELIBERATE DIFFERENCES FROM `_detect_unattributed_claims`:
+#
+#  1. `_UNSOURCED_LABEL_RE` does NOT exempt a claim here. Over there the label
+#     is an escape hatch and has to count, or the prompt offers "label it", the
+#     model labels it, and the honest answer fails identically to the silent
+#     one. Here the label is the exact thing being counted: "from the wider
+#     literature" is a claim nothing checked, and saying so is the number's
+#     whole purpose. The escape hatch still works — a labelled claim does not
+#     fail the validator — it simply does not vanish from the banner.
+#
+#  2. It reads the RENDERED answer. `_ANY_CITATION_RE` accepts the engine's
+#     `[[PMID:N]]` and both single-bracket forms the browser and the reference
+#     list produce, so the count is identical whether it is computed on the
+#     stored answer or on the text a clinician is looking at. `test_uncited_
+#     directives.py` asserts that equivalence, because the whole point of Q1a
+#     is that the number describes the page, not an intermediate.
+
+# Any inline attribution, in the engine's marker form or in either rendered
+# form. `[PMID 27759881]` (no colon) is what the browser copy path emits.
+_ANY_CITATION_RE = re.compile(
+    r"\[\[PMID:\s*" + _PMID_ID_PAT + r"\s*\]\]"
+    r"|\[PMID:?\s*" + _PMID_ID_PAT + r"\s*\]",
+    re.IGNORECASE)
+
+# ── what makes a claim DIRECTIVE ──
+#
+# A disjunction of three shapes, and drug names are deliberately NOT one of
+# them. "The retrieved endodontic evidence base does not directly address
+# perioperative management of apixaban" names a drug and directs nobody to do
+# anything; it is a statement about coverage. Counting it would inflate the
+# number with the very sentences that are being honest about the gap. The drug
+# vocabulary is still recorded on each finding, because it is what makes a
+# directive consequential, but it cannot fire one on its own.
+
+# (a) Deontic: the claim says what should, must, or must not happen.
+_DIRECTIVE_DEONTIC_RE = re.compile(
+    r"\b(?:should\s+(?:not\s+)?\w+"
+    r"|must\s+(?:not\s+)?\w+"
+    r"|is\s+(?:not\s+)?indicated\b|are\s+(?:not\s+)?indicated\b"
+    r"|is\s+contraindicated\b|are\s+contraindicated\b"
+    r"|is\s+(?:not\s+)?recommended\b|are\s+(?:not\s+)?recommended\b"
+    r"|is\s+(?:not\s+)?(?:applicable|required|necessary|needed|warranted|advised)\b"
+    r"|are\s+(?:not\s+)?(?:applicable|required|necessary|needed|warranted|advised)\b"
+    r"|standard\s+practice\s+is\b|usual\s+practice\s+is\b"
+    r"|consider\s+\w+ing\b"
+    r"|proceed\s+with(?:out)?\b"
+    r"|in\s+consultation\s+with\s+the\s+(?:prescribing|treating)\b)",
+    re.IGNORECASE)
+
+# (b) Imperative: the claim opens with an instruction verb.
+_DIRECTIVE_IMPERATIVE_RE = re.compile(
+    r"^\s*(?:Use|Give|Administer|Prescribe|Avoid|Omit|Stop|Continue|Withhold"
+    r"|Delay|Schedule|Reduce|Increase|Apply|Place|Check|Monitor|Ensure|Refer"
+    r"|Confirm|Repeat|Consider|Discontinue|Resume|Interrupt|Bridge|Screen"
+    r"|Do\s+not|Never|Always)\b")
+
+# (c) A clinical quantity a clinician could act on: a dose, a concentration, an
+#     interval, a measurement, or a threshold. Thresholds matter as much as
+#     doses here — "CrCl <50 mL/min" and "age >75" are the two that decide
+#     which arm of the apixaban directive a patient falls into.
+_CLINICAL_QUANTITY_RE = re.compile(
+    r"\d{1,4}(?:[.,]\d+)?\s*(?:mg|mcg|µg|ug|mmol|mEq|units?|IU"
+    r"|m[lL]|L\b|g\b|kg|mm|cm|µm|um|%"
+    r"|hours?|hrs?|minutes?|mins?|seconds?|secs?|days?|weeks?|months?|years?)\b"
+    r"|[<>≥≤]\s*\d"
+    r"|\b\d{1,4}\s*(?:mL/min|mg/kg|mm\s*Hg|mmHg)\b",
+    re.IGNORECASE)
+
+# Recorded on a finding, never a trigger. Suffix families first (they
+# generalise past any list), then the abbreviations and the agents this
+# specialty actually writes down.
+_DRUG_VOCAB_RE = re.compile(
+    r"\b(?:[A-Za-z]{3,}(?:caine|cillin|azole|xaban|parin|olol|pril|mycin"
+    r"|statin|dipine|sartan|prazole|floxacin|dronate|sone|solone|profen)"
+    r"|LMWH|DOACs?|NOACs?|INR|NSAIDs?|CrCl|MRONJ"
+    r"|warfarin|aspirin|heparin|clopidogrel|tranexamic|paracetamol"
+    r"|acetaminophen|adrenaline|epinephrine|chlorhexidine|NaOCl|EDTA"
+    r"|calcium\s+hydroxide|MTA|corticosteroid)\b",
+    re.IGNORECASE)
+
+
+def _claim_is_directive(sentence: str) -> str:
+    """Which directive shape fired, or "" — see the three patterns above."""
+    s = sentence or ""
+    if _DIRECTIVE_IMPERATIVE_RE.search(s):
+        return "imperative"
+    if _DIRECTIVE_DEONTIC_RE.search(s):
+        return "deontic"
+    if _CLINICAL_QUANTITY_RE.search(s):
+        return "quantity"
+    return ""
+
+
+def _detect_uncited_directive_claims(answer: str) -> list:
+    """Clinically directive claims in `answer` that carry no attribution.
+
+    Returns [{sentence, section, shape, names_drug}] in document order. Uses
+    the same section exemptions and the same claim-unit split as every other
+    checker, so a "claim" means one thing across the whole file.
+    """
+    out = []
+    for title, body in _split_sections(answer or ""):
+        if _is_exempt_section(title):
+            continue
+        for sent in _split_claim_units(body):
+            s = sent.strip()
+            if len(s) < 20:
+                continue
+            if _ANY_CITATION_RE.search(s):
+                continue
+            shape = _claim_is_directive(s)
+            if not shape:
+                continue
+            out.append({"sentence": s[:240], "section": title, "shape": shape,
+                        "names_drug": bool(_DRUG_VOCAB_RE.search(s))})
+    return out
+
+
 def _detect_gap_sections(answer: str) -> list:
     """Subsections with zero [[PMID:N]] markers in their body, excluding exempt ones."""
     gaps = []
@@ -4862,6 +5013,49 @@ def _append_support_warnings(answer: str, support: dict) -> str:
     status  = support.get("status", "not_run")
     checked = support.get("checked", 0)
 
+    # `trust-surface-v1` Q1b. The count of claims this check could not have
+    # covered, because they carry no citation at all. It is computed HERE, from
+    # the answer this block is about to be attached to, so that every surface
+    # which renders the answer — browser, PDF, copy, deck, speaker notes —
+    # carries the second number beside the first without any of them having to
+    # know how to compute it.
+    #
+    # Written back into `support` rather than recomputed by each caller:
+    # `_support_status_block` reproduces this exact string from the stored
+    # result when the post-stitch guarantee restates a module's block, and a
+    # recomputed count on an empty string would make the two disagree and the
+    # restatement fire on every module.
+    if "uncited_directive" not in support:
+        found = _detect_uncited_directive_claims(answer)
+        support["uncited_directive"] = len(found)
+        support["uncited_directive_claims"] = found
+    n_uncited = support.get("uncited_directive") or 0
+    uncited   = support.get("uncited_directive_claims") or []
+
+    def _uncited_block() -> str:
+        """The second half of the banner, in the body text that feeds it.
+
+        Never a tick and never merged into the sentence above it: the two
+        numbers answer different questions, and a reader who sees them joined
+        by "and" reads the second as a refinement of the first.
+        """
+        if not n_uncited:
+            return ""
+        noun  = "claim" if n_uncited == 1 else "claims"
+        verb  = "carries" if n_uncited == 1 else "carry"
+        lines = [
+            f"\n>\n> ⚠ **{n_uncited} {noun} not from the evidence base.** "
+            f"{ 'It' if n_uncited == 1 else 'They' } {verb} no citation, so no "
+            "abstract was checked against "
+            f"{ 'it' if n_uncited == 1 else 'them' } — not part of the count "
+            "above:\n>",
+        ]
+        for c in uncited[:5]:
+            lines.append(f"> - \"{_quote_claim(c['sentence'])}\"")
+        if len(uncited) > 5:
+            lines.append(f"> - …and {len(uncited) - 5} more.")
+        return "\n".join(lines)
+
     # This tail is what made the 30-pair cap findable, and it stays now that
     # the cap is gone. `checked` can still fall short of `total_pairs` when a
     # cited paper's abstract is not in the cache — the pair is skipped rather
@@ -4884,20 +5078,20 @@ def _append_support_warnings(answer: str, support: dict) -> str:
         for f in flags[:5]:
             lines.append(f"> - [[PMID:{f['pmid']}]] cited for: "
                          f"\"{_quote_claim(f['claim'])}\"")
-        return answer + "\n".join(lines)
+        return answer + "\n".join(lines) + _uncited_block()
 
     if status == "verified":
         return answer + (
             f"\n\n---\n\n> ✓ **Citation support: verified.** Each of the {checked} cited "
             f"claims was checked against its source abstract.{tail}"
-        )
+        ) + _uncited_block()
 
     detail = support.get("detail") or "check unavailable"
     return answer + (
         f"\n\n---\n\n> ○ **Citation support: not available** ({detail}). Citations were "
         "confirmed to exist in the retrieved evidence, but whether each source supports "
         "its claim was not verified for this answer."
-    )
+    ) + _uncited_block()
 
 
 def _support_not_run(detail: str) -> dict:
