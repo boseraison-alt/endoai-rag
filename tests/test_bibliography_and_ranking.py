@@ -340,6 +340,35 @@ class TestImpactFactorIsGone:
         assert "impact_factor" not in html, \
             "the template still reads an impact factor onto a surface"
 
+    @pytest.mark.parametrize("line,expected", [
+        ("3. [PMID: 40178589] Sanchez-Herrera G et al. — ceramics in retrograde "
+         "apicectomy. J Clin Med (IF: n/a), 2025. Follow-up: >=6 mo.",
+         "3. [PMID: 40178589] Sanchez-Herrera G et al. — ceramics in retrograde "
+         "apicectomy. J Clin Med, 2025. Follow-up: >=6 mo."),
+        ("7. [PMID: 38243912] Juric R et al. — outcome. J Endod (IF: n/a), 2024. n=304.",
+         "7. [PMID: 38243912] Juric R et al. — outcome. J Endod, 2024. n=304."),
+        ("2. [PMID: 1] X — y. Journal (IF: unknown), 2020.",
+         "2. [PMID: 1] X — y. Journal, 2020."),
+    ])
+    def test_a_NON_NUMERIC_impact_factor_is_stripped_too(self, line, expected):
+        """Found live, on the fourth demo question, by A16d's go/no-go.
+
+        The model no longer receives an impact factor — but the REFERENCES
+        template used to ask for one, so it kept the slot and wrote "n/a" into
+        it. A digits-only pattern walked straight past that, and every existing
+        Q3 test passed because they all used numeric values."""
+        assert strip_impact_factor(line) == expected
+
+    @pytest.mark.parametrize("row", [
+        "IF 4 or more canals are present, THEN allow 45 minutes.",
+        "**IF** the tooth has confirmed irreversible pulpitis **THEN** plan for IANB.",
+        "(IF the canal is calcified, THEN refer)",
+    ])
+    def test_widening_it_does_not_eat_a_decision_tree(self, row):
+        """The accepted non-numeric values are enumerated for this reason: a
+        permissive `[^)]*` would swallow real clinical content."""
+        assert strip_impact_factor(row) == row
+
     def test_a_decision_tree_IF_row_is_not_eaten(self):
         """Standing rule 4's pair, and a real shape: curriculum decision trees
         are written as IF / THEN / BECAUSE rows. A strip aggressive enough to

@@ -1589,6 +1589,13 @@ def get_learn_history_item(filename: str):
     try:
         with open(path, encoding="utf-8") as fh:
             rec = _audit_json.load(fh)
+        # A16b — same reasoning as /history/<cache_id>. Measured on the 22
+        # stored curricula: 13 gain the banner's second half and 18 of 22
+        # render a bibliography of the retrieval pool rather than the
+        # citation set.
+        rec["answer"], _lq = finalise_answer_text(rec.get("answer") or "")
+        rec["cited_pmids"] = assemble_bibliography(
+            rec["answer"], rec.get("papers") or [])["cited_pmids"]
         return jsonify(rec)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -2260,6 +2267,21 @@ def history_detail(cache_id: int):
         if not row:
             return jsonify({"error": "Not found"}), 404
         qt, answer, papers = row
+        papers = papers or []
+        # A16b. A cache is a time capsule of the rendering that produced it,
+        # and this route hands a stored answer straight to the browser. Every
+        # Stage 1 fix that lives server-side — the impact-factor strip (Q3),
+        # the quarantine block (Q2), the banner's second number (Q1/A3c) and
+        # the cited-set bibliography (Q5) — reached /status and stopped here.
+        #
+        # Measured on the real rows: 6 of 10 carry an impact factor, 7 gain the
+        # banner's second half, 1 gains a quarantine block, and 10 of 10 render
+        # a bibliography of the whole retrieval pool instead of the citation
+        # set. Re-rendering at read time is the option A16b prefers, because
+        # every one of those fixes is presentational — nothing about the
+        # stored answer is wrong, only how it was being shown.
+        answer, _hq = finalise_answer_text(answer or "")
+        cited = assemble_bibliography(answer, papers)["cited_pmids"]
         mode_tag = "review"
         question = qt or ""
         for tag in ("learn", "review", "case"):
@@ -2272,6 +2294,7 @@ def history_detail(cache_id: int):
             "question": question,
             "mode":     mode_tag,
             "answer":   answer or "",
+            "cited_pmids": cited,
             # THE WHITELIST BELONGS HERE TOO. This was the one route that
             # serialised paper dicts without it, and it was harmless only by
             # accident: nothing in `query_cache.papers` had ever carried an

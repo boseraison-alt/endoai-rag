@@ -4586,7 +4586,21 @@ def quarantine_unsourced_content(answer: str):
     for title, body in _split_sections(answer):
         rebuilt = []
         for para in _PARAGRAPH_SPLIT_RE.split(body or ""):
-            if not para.strip() or _QUARANTINE_BLOCK_RE.search(para):
+            stripped = para.strip()
+            # A blockquote is ALREADY a delimited block, and the engine's own
+            # blocks are blockquotes: the citation-support status block, the
+            # flagged-claim list, the validation warning, and a quarantine
+            # block itself. Quarantining inside one is never right, and it made
+            # `finalise_answer_text` non-idempotent — the status block quotes
+            # the flagged claims verbatim, those quotes carry the "from the
+            # wider literature" vocabulary, and a second pass wrapped the
+            # banner in the very block it was reporting on.
+            #
+            # Found by `test_re_rendering_is_idempotent`, which A16 needs
+            # because the archive routes now re-render on every read.
+            already_a_block = (stripped.startswith(">")
+                               or bool(_QUARANTINE_BLOCK_RE.search(para)))
+            if not stripped or already_a_block:
                 rebuilt.append(para)
                 continue
             units = _SENTENCE_SPLIT_RE.split(para)
@@ -5690,8 +5704,22 @@ def _quote_claim(claim: str, limit: int = 140) -> str:
 # carries "Cochrane Database Syst Rev (IF: 12.0)" in its reference list. A
 # cached answer is a rendered surface. Matches the parenthesised form the
 # template produced, and the bare "IF 4.5" the popover used.
+# The parenthesised form also has to accept a NON-NUMERIC value. Found on the
+# fourth demo question, live: the model no longer receives an impact factor,
+# but the REFERENCES template used to ask for one, so it kept the slot and
+# filled it in —
+#
+#     "J Clin Med (IF: n/a), 2025. Follow-up: >=6 mo. (Score: 79.4/100)"
+#
+# A digits-only pattern walked straight past that, and A16d's go/no-go caught
+# it because it read the served answer rather than a regenerated one.
+#
+# The accepted non-numeric values are enumerated rather than wildcarded: a
+# permissive `[^)]*` would eat a curriculum decision-tree row like
+# "(IF the canal is calcified, THEN ...)", which is real content.
 _IF_DISPLAY_RE = re.compile(
-    r"\s*\((?:IF|impact\s+factor)[:=]?\s*[0-9]+(?:\.[0-9]+)?\)"
+    r"\s*\((?:IF|impact\s+factor)[:=]?\s*"
+    r"(?:[0-9]+(?:\.[0-9]+)?|n/?a|unknown|none|not\s+available|[-\u2013\u2014?])\)"
     r"|\s*\b(?:IF|impact\s+factor)\s*[:=]\s*[0-9]+(?:\.[0-9]+)?\b",
     re.IGNORECASE)
 

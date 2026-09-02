@@ -8083,7 +8083,10 @@ function profileOpenLearnViewer(filename) {
         rec.cost_usd ? ('$' + Number(rec.cost_usd).toFixed(2)) : null,
       ].filter(Boolean).join(' · ');
       setCitationMeta(rec.papers || []);
-      bodyEl.innerHTML = renderAnswer(rec.answer || '');
+      // A16b — the same marking the live path applies, so a report opened from
+      // history shows the sentences its banner is counting.
+      bodyEl.innerHTML = markUncitedClaims(renderAnswer(rec.answer || ''),
+                                           _uncitedClaimQuotes(rec.answer || ''));
     })
     .catch(function() {
       bodyEl.innerHTML = '<div class="profile-list-empty">Failed to load.</div>';
@@ -8308,7 +8311,9 @@ function openLearnHistoryItem(filename, el) {
         '<span class="atag atag-cache">From history</span>';
       document.getElementById('answerTags').innerHTML = tagsHtml;
       setCitationMeta(rec.papers || []);
-      document.getElementById('answerContent').innerHTML = renderAnswer(rec.answer || '');
+      document.getElementById('answerContent').innerHTML =
+        markUncitedClaims(renderAnswer(rec.answer || ''),
+                          _uncitedClaimQuotes(rec.answer || ''));
       document.getElementById('exportBar').style.display = 'block';
       document.getElementById('exportStatus').textContent = '';
       document.getElementById('audioExportBtn').disabled = false;
@@ -8328,7 +8333,10 @@ function openLearnHistoryItem(filename, el) {
       // share showResult().
       currentJob = null;   // never let a stale live job win
       _exportSource = { question: q, answer: rec.answer || '' };
-      window._lastJob = { papers: rec.papers || [] };   // feeds the evidence-shape card
+      // A16b — carry the cited set too, so the evidence-shape card and the
+      // bibliography describe what the answer cited rather than what the
+      // search returned.
+      window._lastJob = { papers: rec.papers || [], cited_pmids: rec.cited_pmids || [] };
     })
     .catch(function() { _showLearnReportGone(el); });
 }
