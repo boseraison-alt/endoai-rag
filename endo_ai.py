@@ -6061,6 +6061,398 @@ Write the module content now."""
     return answer, cost
 
 
+# ── CROSS-MODULE CONSISTENCY (dl-quality-v1 Item 4) ───────
+#
+# Four module authors write independently from four different evidence bases,
+# and nothing has ever compared their outputs to each other. Measured on the
+# two stored curricula, that produces two kinds of defect a reader hits and
+# the per-module guardrails cannot see, because each module is internally
+# consistent and correctly cited:
+#
+#   NaOCl appears at 2%, 2.5%, 3% and 5.25% across modules 1 and 3 of the
+#   laser curriculum. Every one of those is right for the study it came from.
+#   Together, with nothing saying which is which, they are not a protocol.
+#
+#   220 IF/THEN/BECAUSE branches exist across the stored curricula and 4 of
+#   them have a BECAUSE that contains no reason — two empty, one holding
+#   nothing but `[[PMID:40818665]] [[PMID:41389357]]`. A citation is not a
+#   justification; the branch tells the clinician to do something and then
+#   cites two papers instead of saying why.
+#
+# THE DETECTORS ARE DETERMINISTIC AND THE MODEL IS NOT ASKED TO FIND ANYTHING.
+# It is asked only to WRITE the reconciling sentence for a conflict already
+# found, which is the half a regex cannot do. A model asked to find conflicts
+# finds them whether or not they are there.
+
+# Substances whose concentration is a clinical parameter. Deliberately a
+# closed list: an open one turns every number in the document into a candidate.
+_PARAM_AGENTS = (
+    "NaOCl|sodium hypochlorite|EDTA|chlorhexidine|CHX|calcium hydroxide|"
+    "MTA|Biodentine|epinephrine|adrenaline|lidocaine|lignocaine|articaine|"
+    "mepivacaine|bupivacaine|prilocaine|citric acid|hydrogen peroxide|"
+    "QMix|MTAD|saline|methylene blue|toluidine blue"
+)
+_PARAM_UNITS = r"%|mg/mL|mg"
+
+# "5.25% NaOCl" — no filler word allowed between the value and the agent.
+# Allowing even one admits "17% EDTA and NaOCl", which produced a phantom
+# 17% NaOCl in the first version of this.
+_PARAM_FWD = re.compile(
+    r"(\d+(?:\.\d+)?)\s*(" + _PARAM_UNITS + r")\s+(" + _PARAM_AGENTS + r")\b", re.I)
+# "NaOCl 5.25%" — one filler word allowed ("NaOCl at 5.25%").
+_PARAM_BWD = re.compile(
+    r"\b(" + _PARAM_AGENTS + r")\s+(?:\w+\s+){0,1}(\d+(?:\.\d+)?)\s*("
+    + _PARAM_UNITS + r")", re.I)
+
+# A percentage next to a drug name is usually a SUCCESS RATE, not a
+# concentration, and the two are indistinguishable by shape. Two filters,
+# both from the domain rather than from the text:
+#   - no irrigant or anaesthetic in endodontic use is above 20% (EDTA at 17%
+#     is the strongest of them);
+#   - a rate word just before the number means it is a rate.
+_PARAM_MAX_PCT   = 20.0
+_PARAM_RATE_WORD = re.compile(
+    r"\b(success|rate|efficac\w*|prevalence|incidence|reduction|CI|"
+    r"P\s*[=<>]|versus|vs\.?|achiev\w*|compared)\b", re.I)
+
+# Used to disown a value that belongs to the NEXT agent: in
+# "2.5% NaOCl with 17% EDTA", the backward form matches "NaOCl with 17%"
+# and would file EDTA's concentration under NaOCl.
+#
+# The word boundary is written as an explicit escape rather than a literal
+# "\b" because this line reached the file through a shell heredoc once and
+# arrived as a BACKSPACE character (0x08), which silently matches nothing.
+# A regex that cannot match is a filter that never fires.
+_PARAM_AGENT_HEAD = re.compile(chr(92) + "s*(?:" + _PARAM_AGENTS + ")", re.I)
+
+_BECAUSE_RE = re.compile(
+    r"\*\*BECAUSE\*\*(.*?)(?=\n\s*\n|\n\s*\*\*IF\*\*|\Z)", re.S | re.I)
+
+
+def extract_numeric_parameters(text: str) -> list:
+    """[{agent, value, unit, sentence}] for every clinical concentration.
+
+    Concentrations only — not doses, not volumes, not success rates. See the
+    two filters above for why that distinction has to be made by domain
+    knowledge rather than by pattern.
+    """
+    out = []
+    for sent in re.split(r"(?<=[.;])\s+", text or ""):
+        for m in list(_PARAM_FWD.finditer(sent)) + list(_PARAM_BWD.finditer(sent)):
+            g = m.groups()
+            if g[0][0].isdigit():
+                value, unit, agent = g[0], g[1], g[2]
+            else:
+                agent, value, unit = g[0], g[1], g[2]
+            try:
+                num = float(value)
+            except ValueError:      # pragma: no cover — regex guarantees it
+                continue
+            if unit == "%" and num > _PARAM_MAX_PCT:
+                continue
+            # The window includes the MATCH ITSELF, not just the text before
+            # it. For the backward form the rate word sits between the agent
+            # and the number — "articaine success 12%" — so a window ending at
+            # m.start() sees an empty string and the filter never fires. Found
+            # by a mutation run: disabling this filter changed nothing,
+            # because the only test exercising it was being caught by the
+            # 20% ceiling instead.
+            if _PARAM_RATE_WORD.search(sent[max(0, m.start() - 40):m.end()]):
+                continue
+            # "2.5% NaOCl with 17% EDTA" — the backward form matches
+            # "NaOCl with 17%" and attributes EDTA's concentration to NaOCl.
+            # When a value is immediately followed by an agent, it belongs to
+            # THAT agent and the forward form has already recorded it.
+            if not g[0][0].isdigit() and _PARAM_AGENT_HEAD.match(sent[m.end():]):
+                continue
+            out.append({"agent": agent.lower(), "value": num,
+                        "unit": unit.lower(), "sentence": sent.strip()})
+    return out
+
+
+def detect_parameter_conflicts(modules: list) -> list:
+    """Where two modules state different concentrations of the same agent.
+
+    `modules` is [(title, text), ...]. A conflict needs BOTH more than one
+    value AND more than one module: one module listing 2% and 5.25% NaOCl is
+    usually a deliberate contrast within a single passage, and flagging it
+    would annotate a document that is already clear.
+
+    A conflict is NOT an error. Different trials use different concentrations
+    and each module is citing its own correctly. What is missing is the one
+    sentence saying which study used which, and that is what gets added.
+    """
+    by_key = {}
+    for title, text in modules or []:
+        for p in extract_numeric_parameters(text):
+            key = (p["agent"], p["unit"])
+            by_key.setdefault(key, {}).setdefault(p["value"], []).append(
+                {"module": title, "sentence": p["sentence"]})
+    out = []
+    for (agent, unit), values in sorted(by_key.items()):
+        mods = {o["module"] for occs in values.values() for o in occs}
+        if len(values) < 2 or len(mods) < 2:
+            continue
+        out.append({
+            "agent": agent,
+            "unit":  unit,
+            "values": [
+                {"value": v,
+                 "modules": sorted({o["module"] for o in values[v]}),
+                 "example": values[v][0]["sentence"][:220]}
+                for v in sorted(values)
+            ],
+        })
+    return out
+
+
+def detect_malformed_because(text: str) -> list:
+    """IF/THEN/BECAUSE branches whose BECAUSE gives no reason.
+
+    [{because, reason}] — `because` is the raw clause. A BECAUSE holding only
+    `[[PMID:N]]` markers is the shape this exists for: the branch tells the
+    clinician to do something and cites two papers instead of saying why.
+    Measured across the stored curricula: 220 branches, 4 like this.
+    """
+    out = []
+    for m in _BECAUSE_RE.finditer(text or ""):
+        body = m.group(1)
+        stripped = re.sub(r"\[\[PMID:[^\]]*\]\]", "", body)
+        stripped = re.sub(r"[\s.;,:\-—()\[\]]+", "", stripped)
+        if len(stripped) < 12:
+            reason = ("empty" if not body.strip()
+                      else "contains only citations, no reason")
+            out.append({"because": body.strip()[:200], "reason": reason})
+    return out
+
+
+def _claim_lines(text: str) -> set:
+    """Every line carrying a citation marker, normalised for whitespace.
+
+    This is the unit the consistency guard protects: a line with a
+    `[[PMID:N]]` on it is a line asserting something about the literature, and
+    the annotation pass may not touch one.
+    """
+    return {" ".join(l.split()) for l in (text or "").split("\n")
+            if "[[PMID:" in l and l.strip()}
+
+
+def consistency_guard(before: str, after: str, repairable: list = None) -> tuple:
+    """(ok, reason) — did the annotation pass stay inside its mandate?
+
+    THE MANDATE IS NARROW ON PURPOSE. The pass annotates and repairs
+    formatting; it must not rewrite evidence claims. So:
+
+      - every `[[PMID:N]]` marker present before must still be present, with
+        the same multiplicity. Dropping one deletes a citation; adding one
+        attaches a paper to a sentence no module author chose it for.
+      - every line carrying a marker must survive VERBATIM, except lines the
+        detectors flagged as repairable (a malformed BECAUSE).
+
+    It FAILS CLOSED. A guard that cannot verify the pass discards the pass and
+    keeps the unannotated document, because an annotation is a convenience and
+    a rewritten evidence claim is a defect.
+    """
+    before_marks = sorted(re.findall(r"\[\[PMID:\d+\]\]", before or ""))
+    after_marks  = sorted(re.findall(r"\[\[PMID:\d+\]\]", after or ""))
+    if before_marks != after_marks:
+        lost  = [m for m in before_marks if before_marks.count(m) > after_marks.count(m)]
+        added = [m for m in after_marks if after_marks.count(m) > before_marks.count(m)]
+        return False, (f"citation markers changed — lost {sorted(set(lost))}, "
+                       f"added {sorted(set(added))}")
+
+    exempt = {" ".join(r.split()) for r in (repairable or [])}
+    missing = []
+    after_lines = _claim_lines(after)
+    for line in _claim_lines(before):
+        if line in after_lines:
+            continue
+        if any(e and e in line for e in exempt):
+            continue
+        missing.append(line[:120])
+    if missing:
+        return False, (f"{len(missing)} cited line(s) were rewritten, e.g. "
+                       f"{missing[0]!r}")
+    return True, ""
+
+
+CONSISTENCY_PROMPT = """You are the consistency editor for a finished endodontic teaching curriculum on "__QUESTION__".
+
+Four module authors wrote independently from four different evidence bases. Each module is internally consistent and correctly cited. Your job is the one thing none of them could do: reconcile what they say to EACH OTHER.
+
+YOU MAY ONLY ADD SENTENCES AND REPAIR MALFORMED BRANCHES. You may not rewrite, reword, shorten, re-order or re-source any existing claim, and you may not move, add or delete a [[PMID:N]] marker. This is enforced mechanically — output that touches an existing cited sentence is discarded in full, and the curriculum ships unannotated.
+
+__DETECTED__
+
+YOUR TASKS
+
+1. PARAMETER CONFLICTS. For each conflict listed above, write ONE sentence that says which value goes with which study or clinical situation. A conflict is NOT an error — different trials use different concentrations and each module cites its own correctly. What is missing is the sentence that lets a clinician tell them apart. Anchor it to the module that introduces the parameter first. If the sources listed do not let you say which is which, say exactly that instead of guessing: "The evidence base does not establish which concentration is preferred."
+
+2. CROSS-MODULE RECOMMENDATION TENSIONS. If two modules recommend incompatible actions for the same clinical situation, add ONE sentence naming the tension. Reconcile it ONLY if the evidence quoted in those modules settles it — higher tier, larger n, more recent. If it does not, say the tension is unresolved and name what would settle it. Never resolve a tension by asserting something neither module cites. If you find no genuine tension, return no annotation for this task; a manufactured tension is worse than a missed one.
+
+3. MALFORMED BRANCHES. Each BECAUSE listed above contains no reason — only citations, or nothing. Write the reason, drawn ONLY from what the branch's own THEN and the cited papers in that module already state. A BECAUSE justifies a clinical instruction; a list of PMIDs is not a justification. Keep every existing [[PMID:N]] marker in your replacement text.
+
+OUTPUT — return ONLY this JSON object, no fence, no commentary:
+
+{
+  "annotations": [
+    {"anchor": "<a line copied VERBATIM from the curriculum, after which your sentence is inserted>",
+     "text": "<your one sentence, plain markdown, may carry [[PMID:N]] markers that already appear in that module>",
+     "kind": "parameter" | "tension"}
+  ],
+  "repairs": [
+    {"because": "<the malformed BECAUSE body, copied VERBATIM from the list above>",
+     "text": "<the replacement body: the reason, followed by the same [[PMID:N]] markers>"}
+  ]
+}
+
+An anchor that does not appear verbatim in the curriculum is dropped, so copy it exactly. Return empty lists rather than inventing work."""
+
+
+def _consistency_findings_block(conflicts: list, malformed: list) -> str:
+    """The detected items, as the prompt sees them.
+
+    The model is told WHAT was found and asked only to write the sentence. It
+    is never asked to search for conflicts itself: a model asked to find
+    conflicts finds them whether or not they are there, and this pass edits a
+    document that has already passed every other guardrail.
+    """
+    parts = []
+    if conflicts:
+        parts.append("PARAMETER CONFLICTS DETECTED (deterministically, by "
+                     "comparing modules — these are real):")
+        for c in conflicts:
+            parts.append(f"\n  {c['agent']} ({c['unit']}):")
+            for v in c["values"]:
+                mods = ", ".join(m.replace("## ", "") for m in v["modules"])
+                parts.append(f"    - {v['value']}{c['unit']} in {mods}")
+                parts.append(f"      e.g. \"{v['example']}\"")
+    else:
+        parts.append("PARAMETER CONFLICTS DETECTED: none.")
+
+    if malformed:
+        parts.append("\nMALFORMED BECAUSE CLAUSES DETECTED:")
+        for m in malformed:
+            parts.append(f"    - [{m['reason']}] {m['because'] or '(empty)'}")
+    else:
+        parts.append("\nMALFORMED BECAUSE CLAUSES DETECTED: none.")
+    return "\n".join(parts)
+
+
+def _apply_consistency_edits(text: str, payload: dict, malformed: list) -> tuple:
+    """Apply the model's insertions and repairs PROGRAMMATICALLY.
+
+    (new_text, applied_counts). The model never returns the document — it
+    returns anchors and sentences, and this function does the editing. That
+    makes "annotate only, never rewrite" a structural property rather than
+    something a guard has to catch after the fact, and it keeps the model's
+    output small enough that the pass cannot itself be truncated: returning a
+    40,000-character document from a model with an output cap is how Item 1's
+    defect got into the modules in the first place.
+    """
+    applied = {"annotations": 0, "repairs": 0, "dropped_anchor": 0,
+               "dropped_because": 0}
+
+    for rep in (payload.get("repairs") or []):
+        body, new = rep.get("because") or "", rep.get("text") or ""
+        if not body or not new:
+            continue
+        if body not in text:
+            applied["dropped_because"] += 1
+            continue
+        text = text.replace(body, new, 1)
+        applied["repairs"] += 1
+
+    for ann in (payload.get("annotations") or []):
+        anchor, sentence = ann.get("anchor") or "", ann.get("text") or ""
+        if not anchor or not sentence:
+            continue
+        if anchor not in text:
+            applied["dropped_anchor"] += 1
+            continue
+        text = text.replace(anchor, anchor + "\n\n" + sentence, 1)
+        applied["annotations"] += 1
+
+    return text, applied
+
+
+def annotate_curriculum_consistency(final_md: str, modules: list,
+                                    parent_question: str) -> tuple:
+    """One pass over the ASSEMBLED curriculum. (text, cost, report).
+
+    `modules` is [(title, text), ...] — the module bodies as written, which is
+    what the parameter comparison needs; the BECAUSE scan runs on the assembled
+    document, because that is where the branches live after stitching.
+
+    FAILS CLOSED, in three separate places. If the detectors find nothing, no
+    call is made. If the model's reply will not parse, the document is returned
+    unchanged. If `consistency_guard` says an existing cited line moved, the
+    whole pass is discarded — an annotation is a convenience and a rewritten
+    evidence claim is a defect, so there is never a reason to keep a pass that
+    might have done the second to buy the first.
+    """
+    conflicts = detect_parameter_conflicts(modules)
+    malformed = detect_malformed_because(final_md)
+    report = {"conflicts": len(conflicts), "malformed": len(malformed),
+              "applied": False, "reason": "", "counts": {}}
+
+    if not conflicts and not malformed:
+        report["reason"] = "nothing detected"
+        print("  [consistency] no parameter conflicts, no malformed branches")
+        return final_md, 0.0, report
+
+    print(f"  [consistency] {len(conflicts)} parameter conflict(s), "
+          f"{len(malformed)} malformed BECAUSE clause(s)")
+
+    client = anthropic.Anthropic(api_key=_get_api_key())
+    system = (CONSISTENCY_PROMPT
+              .replace("__QUESTION__", parent_question)
+              .replace("__DETECTED__",
+                       _consistency_findings_block(conflicts, malformed)))
+    try:
+        resp = _invoke_claude(
+            client, function_name="curriculum_consistency",
+            model=MODELS["reasoning_standard"],
+            max_tokens=3000,
+            system=system,
+            messages=[{"role": "user",
+                       "content": "The assembled curriculum:\n\n" + final_md}],
+        )
+        cost = log_llm_call("curriculum_consistency",
+                            MODELS["reasoning_standard"], resp.usage,
+                            mode="learn")
+    except Exception as e:                        # pragma: no cover
+        report["reason"] = f"call failed: {type(e).__name__}: {e}"
+        print(f"  [consistency] {report['reason']} — leaving the curriculum alone")
+        return final_md, 0.0, report
+
+    raw = resp.content[0].text
+    try:
+        payload = json.loads(_strip_json_fence(raw))
+    except Exception as e:
+        report["reason"] = f"unparseable reply ({type(e).__name__})"
+        print(f"  [consistency] {report['reason']} — leaving the curriculum alone")
+        return final_md, cost, report
+
+    annotated, counts = _apply_consistency_edits(final_md, payload, malformed)
+    report["counts"] = counts
+
+    ok, why = consistency_guard(final_md, annotated,
+                                repairable=[m["because"] for m in malformed])
+    if not ok:
+        report["reason"] = f"guard rejected the pass: {why}"
+        print(f"  [consistency] REJECTED — {why}")
+        print("  [consistency] shipping the curriculum unannotated")
+        return final_md, cost, report
+
+    report["applied"] = True
+    print(f"  [consistency] applied {counts['annotations']} annotation(s), "
+          f"{counts['repairs']} repair(s); dropped "
+          f"{counts['dropped_anchor']} bad anchor(s), "
+          f"{counts['dropped_because']} bad because-match(es)")
+    return annotated, cost, report
+
+
 def stitch_curriculum(parent_question: str, modules_with_scripts: list,
                       all_evidence: dict) -> tuple:
     """
@@ -6625,6 +7017,19 @@ def build_deep_learning_module(question: str, progress_cb=None) -> tuple:
     # status — indistinguishable from a module that passed. Restate whatever
     # did not survive, deterministically.
     final = _ensure_curriculum_support_blocks(final, modules_with_scripts)
+
+    # ── CROSS-MODULE CONSISTENCY (dl-quality-v1 Item 4) ──
+    # AFTER assembly and after the support blocks are restored, because it
+    # annotates the document a reader actually receives. It runs last for a
+    # second reason: every other guardrail has already passed by this point,
+    # so anything this pass changes is a change to output that was otherwise
+    # ready to ship — which is why it may only insert, and why it discards
+    # itself entirely rather than risk touching a cited sentence.
+    progress.tick(93, "Checking cross-module consistency...")
+    final, c, _consistency = annotate_curriculum_consistency(
+        final, [(m["title"], m["script"]) for m in modules_with_scripts],
+        question)
+    total_cost += c
 
     progress.tick(95, "Finalising...")
     return final, total_cost, combined
