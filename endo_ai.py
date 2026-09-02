@@ -4733,6 +4733,39 @@ def ensure_uncited_half(answer: str) -> str:
     return answer[:end] + half + answer[end:]
 
 
+# ── A QUESTION'S TITLE IS THE QUESTION, NOT THE TRANSCRIPT ──
+#
+# A15f.1. When the clinician answers the clarifying questions, `/ask` builds
+#
+#     f"{question}\n\nAdditional clinical context provided by the clinician:\n{context}"
+#
+# and everything downstream — the cache key, the learn-history record, the
+# history sidebar — stores THAT as the question. So the report list reads
+#
+#   "vital pulp therapy in adults Additional clinical context provided by the
+#    clinician: Q1: Are you asking about a specific patient case (e.g.,
+#    traumatized tooth, carious exposure, asym…"
+#
+# The context belongs to the answer; it is not the title.
+#
+# `query_cache.question_text` is load-bearing — it is the semantic lookup key,
+# so the stored string must keep the context or a follow-up would collide with
+# its own parent. That is why this truncates at DISPLAY time for cache rows,
+# while `save_learn_output` stores the clean question outright: fix it at the
+# source where there is a free field, truncate where there is not.
+_TITLE_CONTEXT_MARKER = "Additional clinical context provided by the clinician"
+
+
+def display_title(question: str, limit: int = 160) -> str:
+    """The clinician's own question, without the appended clarification block."""
+    q = (question or "").strip()
+    i = q.find(_TITLE_CONTEXT_MARKER)
+    if i > 0:
+        q = q[:i].rstrip(" \n:\u2014-")
+    q = " ".join(q.split())
+    return q if len(q) <= limit else q[:limit - 1].rstrip() + "\u2026"
+
+
 def finalise_answer_text(answer: str):
     """Everything a finished answer goes through before anything renders it.
 

@@ -105,6 +105,7 @@ from endo_ai import (coverage_groups as endo_ai_coverage_groups,
                      build_evidence_base, ask_clinical_question, ask_learn_question,
                      build_deep_learning_module, StreamAborted,
                      finalise_answer_text, assemble_bibliography,
+                     display_title,
                      save_answer, generate_clarifying_questions,
                      classify_question_intent,
                      analyze_radiograph, _analysis_to_prefill,
@@ -771,7 +772,10 @@ def run_question(job_id: str, question: str, mode: str = "review",
         # under learn_history/. The 7-day re-use window is enforced via the
         # query_cache age filter above; this folder is the durable record.
         if mode == "learn":
-            save_learn_output(question, answer, evidence, cost)
+            # A15f.1 — the record's `question` is a TITLE, so it stores the
+            # clinician's own words rather than the question plus the
+            # clarification transcript appended to it.
+            save_learn_output(display_title(question), answer, evidence, cost)
 
         update_job(
             job_id,
@@ -1589,6 +1593,7 @@ def get_learn_history_item(filename: str):
     try:
         with open(path, encoding="utf-8") as fh:
             rec = _audit_json.load(fh)
+        rec["question"] = display_title(rec.get("question", ""))
         # A16b — same reasoning as /history/<cache_id>. Measured on the 22
         # stored curricula: 13 gain the banner's second half and 18 of 22
         # render a bibliography of the retrieval pool rather than the
@@ -1640,7 +1645,7 @@ def list_learn_history():
             age_days = (datetime.now() - ts).days
             items.append({
                 "file":           fn,
-                "question":       rec.get("question", ""),
+                "question":       display_title(rec.get("question", "")),
                 "timestamp":      rec.get("timestamp", ""),
                 "age_days":       age_days,
                 "in_ttl_window":  age_days <= LEARN_HISTORY_TTL_DAYS,
@@ -2239,7 +2244,9 @@ def history():
                     break
             items.append({
                 "id":         r[0],
-                "question":   question,
+                # A15f.1 — the stored string keeps the clarification block
+                # because it is the semantic cache key; the TITLE does not.
+                "question":   display_title(question),
                 "mode":       mode_tag,
                 "created_at": r[2].isoformat() if r[2] else None,
                 "hit_count":  r[3] or 0,
@@ -2291,7 +2298,7 @@ def history_detail(cache_id: int):
                 question = question[len(prefix):]
                 break
         return jsonify({
-            "question": question,
+            "question": display_title(question),
             "mode":     mode_tag,
             "answer":   answer or "",
             "cited_pmids": cited,
