@@ -2387,11 +2387,18 @@ def format_paper_context_line(paper: dict) -> str:
     ss   = f"n={paper['sample_size']}" if paper.get("sample_size") else "n=unknown"
     fu   = (f"{paper['followup_months']}mo follow-up"
             if paper.get("followup_months") else "follow-up unknown")
-    jif  = f"IF={paper['impact_factor']}" if paper.get("impact_factor") else "IF=unknown"
     auth = paper.get("authors", "") or "Unknown author"
+    # Impact factor is NOT in this line (`trust-surface-v1` Q3, invariant 11).
+    # It was, as `IF=12.0`, and that is how it reached the rendered reference
+    # list: the number was in the model's context, the REFERENCES template
+    # asked for "Journal (IF: X.X)", and the model dutifully wrote it. Curo's
+    # stated method — and its pitch — is that journal identity carries no
+    # weight; showing the number next to a score contradicts that on the one
+    # surface a clinician reads it. Handing it to the model at all is the
+    # mechanism, so the fix starts here rather than at the renderer.
     return (
         f"\nPMID: {paper['pmid']} | Authors: {auth} | Year: {paper.get('year')} | "
-        f"Citations: {paper.get('citations', 0)} | {ss} | {fu} | {jif} | "
+        f"Citations: {paper.get('citations', 0)} | {ss} | {fu} | "
         f"Evidence Score: {paper.get('score')}/100{format_provenance_badges(paper)}\n"
     )
 
@@ -2777,7 +2784,7 @@ _SCORE_WEIGHTS_DESC = (
 - Recency (17%)
 - Citation velocity / citations per year (16%) — papers ≤2 years old receive a baseline score and are NOT penalised for being new
 - Follow-up period (11%)
-(Journal impact factor is shown for reference only — it is EXCLUDED from the score.)"""
+(Journal impact factor is not used and is not shown. Journal identity carries no weight anywhere in this system — PRISMA and Cochrane both advise against screening by journal. Never write an impact factor into an answer.)"""
 )
 
 
@@ -4423,6 +4430,70 @@ def quarantine_unsourced_content(answer: str):
     return "\n\n".join(parts).strip(), blocks
 
 
+# ── THE BIBLIOGRAPHY IS THE CITATION SET ──────────────────
+#
+# `trust-surface-v1` Q5. The apixaban Review answer listed 29 papers under
+# "FULL BIBLIOGRAPHY" and cited 7 of them — including Sjögren 1990, which is
+# the same uncited boilerplate seen in the anesthesia curriculum. That
+# confirms the defect is STRUCTURAL rather than a truncation artifact, and
+# that it affects Review as well as Deep Learning.
+#
+# The cause: the browser's bibliography was built from `job.papers`, which is
+# `evidence["_summary"]["all_scored"]` — the RETRIEVAL CANDIDATE POOL. A
+# bibliography is a list of what an answer drew on. A list of what a search
+# returned is a different document, and presenting one as the other inflates
+# the apparent evidence base by 4x and puts papers the answer never read under
+# a heading that says it did.
+#
+# The deck path already had this right (`webdeck.plan.build_reference_slides`
+# takes `cited_pmids`), which is why the defect was visible on one surface and
+# not the other. This is that logic, lifted to where both can share it.
+#
+# The pool is NOT hidden — it is disclosed separately, under a heading that
+# says what it is. Q5 allows that explicitly; what it forbids is calling it a
+# bibliography.
+def assemble_bibliography(answer: str, papers: list) -> dict:
+    """Split a retrieval pool into what the answer cited and what it did not.
+
+    Returns {"cited": [...], "uncited": [...], "cited_pmids": [...]} with the
+    pool's own ordering preserved inside each list. `cited_pmids` includes
+    every id the answer cites, in first-seen order, INCLUDING any the pool
+    does not contain — a citation to a paper missing from the payload is a
+    finding, not something to drop silently.
+    """
+    # IN-TEXT markers only. The final numbered REFERENCES list is deliberately
+    # NOT a source here, even though it uses a PMID key of its own: that list
+    # is supposed to BE the citation set, so treating it as an input would let
+    # a padded reference list re-inflate the bibliography it is meant to
+    # mirror — the same defect, one layer along. A mutation run found this:
+    # dropping the in-text scan entirely changed nothing, because the
+    # reference list alone reproduced all seven ids.
+    cited_ids = list(dict.fromkeys(_extract_cited_pmids(answer)))
+    cited_set = set(cited_ids)
+    cited, uncited = [], []
+    for paper in (papers or []):
+        pid = str((paper or {}).get("pmid") or "").strip()
+        (cited if pid and pid in cited_set else uncited).append(paper)
+    return {"cited": cited, "uncited": uncited, "cited_pmids": cited_ids}
+
+
+def finalise_answer_text(answer: str):
+    """Everything a finished answer goes through before anything renders it.
+
+    ONE list, in one place. These normalisations have to happen on every path
+    that produces an answer AND on the path that serves a cached one, and a
+    convention spread over six call sites is how a surface gets missed — which
+    is the shape of most of `trust-surface-v1`.
+
+    Order matters: the impact factor is stripped first, so a reference line
+    inside a quarantined span cannot carry one past the block boundary.
+
+    Returns `(answer, quarantined_blocks)`.
+    """
+    answer = strip_impact_factor(answer)
+    return quarantine_unsourced_content(answer)
+
+
 def _strip_quarantine_blocks(answer: str) -> str:
     """The answer with every quarantine block removed.
 
@@ -5233,6 +5304,27 @@ def _quote_claim(claim: str, limit: int = 140) -> str:
     return re.sub(r"\s+([.,;:!?])", r"\1", text).rstrip()
 
 
+# `trust-surface-v1` Q3 / invariant 11. Belt and braces: the prompt no longer
+# asks for an impact factor and the model is no longer shown one, but every
+# answer already in the query cache was written under the old template and
+# carries "Cochrane Database Syst Rev (IF: 12.0)" in its reference list. A
+# cached answer is a rendered surface. Matches the parenthesised form the
+# template produced, and the bare "IF 4.5" the popover used.
+_IF_DISPLAY_RE = re.compile(
+    r"\s*\((?:IF|impact\s+factor)[:=]?\s*[0-9]+(?:\.[0-9]+)?\)"
+    r"|\s*\b(?:IF|impact\s+factor)\s*[:=]\s*[0-9]+(?:\.[0-9]+)?\b",
+    re.IGNORECASE)
+
+
+def strip_impact_factor(text: str) -> str:
+    """Remove any rendered impact factor, leaving the reference readable."""
+    if not text:
+        return text or ""
+    out = _IF_DISPLAY_RE.sub("", text)
+    # "Int Endod J , 2023" — the space the removed parenthetical left behind.
+    return re.sub(r"\s+([,.;:])", r"\1", out)
+
+
 def _append_support_warnings(answer: str, support: dict) -> str:
     """Append the citation-support outcome — including when it did NOT run.
 
@@ -5586,7 +5678,7 @@ Organized by evidence level, top-down. For each level write a short paragraph (3
 ## REFERENCES
 
 List the papers you cited in the text above. Numbered list:
-1. [PMID: 12345678] Author AB, Author CD et al. — Brief description. Journal (IF: X.X), Year. Follow-up: X months. n=XX. (Score: XX/100)
+1. [PMID: 12345678] Author AB, Author CD et al. — Brief description. Journal, Year. Follow-up: X months. n=XX. (Score: XX/100)
 
 ---
 
@@ -5678,7 +5770,7 @@ Clinical Question: {question}""",
     # Every downstream consumer (validator, support check, cache, export,
     # narration) sees the normalised text, so the block cannot be a browser
     # decoration that a PDF or a slide quietly drops.
-    answer, _quarantined = quarantine_unsourced_content(answer)
+    answer, _quarantined = finalise_answer_text(answer)
     if _quarantined:
         print(f"  [quarantine] {len(_quarantined)} span(s) labelled outside "
               f"the evidence base, lifted into their own block")
@@ -5708,7 +5800,7 @@ Clinical Question: {question}""",
                                   retry.usage, mode="review")
         cost += retry_cost
         retry_answer = retry.content[0].text
-        retry_answer, _rq = quarantine_unsourced_content(retry_answer)
+        retry_answer, _rq = finalise_answer_text(retry_answer)
         retry_result = validate_evidence_mapping(retry_answer, evidence)
         _log_evidence_mapping("ask_clinical_question", "review", attempt=2, result=retry_result)
         print(f"  Retry mapping:    passed={retry_result['passed']} score={retry_result['score']} "
@@ -5824,7 +5916,7 @@ Write 3-5 short paragraphs (2-3 sentences each), each covering one key point. St
 ## REFERENCES
 
 List the papers you cited in the text above. Numbered list:
-1. [PMID: 12345678] Author AB et al. — Brief description. Journal (IF: X.X), Year. n=XX. (Score: XX/100)
+1. [PMID: 12345678] Author AB et al. — Brief description. Journal, Year. n=XX. (Score: XX/100)
 
 ---
 
@@ -6489,7 +6581,7 @@ Write the module content now."""
     # Every downstream consumer (validator, support check, cache, export,
     # narration) sees the normalised text, so the block cannot be a browser
     # decoration that a PDF or a slide quietly drops.
-    answer, _quarantined = quarantine_unsourced_content(answer)
+    answer, _quarantined = finalise_answer_text(answer)
     if _quarantined:
         print(f"  [quarantine] {len(_quarantined)} span(s) labelled outside "
               f"the evidence base, lifted into their own block")
@@ -6517,7 +6609,7 @@ Write the module content now."""
                                   retry.usage, mode="learn")
         cost += retry_cost
         retry_answer = retry.content[0].text
-        retry_answer, _rq = quarantine_unsourced_content(retry_answer)
+        retry_answer, _rq = finalise_answer_text(retry_answer)
         retry_result = validate_evidence_mapping(retry_answer, evidence)
         _log_evidence_mapping(f"write_curriculum_module[{idx}/{total}]", "learn",
                               attempt=2, result=retry_result)
@@ -8174,7 +8266,7 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
     # Every downstream consumer (validator, support check, cache, export,
     # narration) sees the normalised text, so the block cannot be a browser
     # decoration that a PDF or a slide quietly drops.
-    answer, _quarantined = quarantine_unsourced_content(answer)
+    answer, _quarantined = finalise_answer_text(answer)
     if _quarantined:
         print(f"  [quarantine] {len(_quarantined)} span(s) labelled outside "
               f"the evidence base, lifted into their own block")
@@ -8201,7 +8293,7 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
         )
         cost += retry_cost
         retry_answer = retry_resp.content[0].text
-        retry_answer, _rq = quarantine_unsourced_content(retry_answer)
+        retry_answer, _rq = finalise_answer_text(retry_answer)
         retry_result = validate_evidence_mapping(retry_answer, evidence)
         _log_evidence_mapping("ask_case_question", "case", attempt=2, result=retry_result)
         print(f"  Retry mapping:    passed={retry_result['passed']} score={retry_result['score']} "

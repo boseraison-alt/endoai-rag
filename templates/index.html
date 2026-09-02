@@ -1735,6 +1735,25 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 /* ── Header trust chips ──────────────────────────────────── */
 .atag-ok      { background: #e3f5ec; color: #0b5f3d; }
 .atag-warn    { background: #faf0dc; color: #854d0e; }
+/* `trust-surface-v1` Q5 — the retrieval pool, disclosed and clearly not the
+   bibliography: collapsed, muted, and captioned with what it is. */
+.biblio-notcited { margin-top: 14px; border-top: 1px solid #e6ebf2; padding-top: 10px; }
+.biblio-notcited-head {
+  cursor: pointer; font-size: 12px; color: #536176;
+  display: flex; align-items: center; gap: 6px;
+}
+.biblio-notcited-chevron { font-size: 10px; color: #8a95a8; }
+.biblio-notcited-note {
+  font-size: 11px; color: #6b7688; margin: 8px 0 6px; line-height: 1.55;
+}
+
+/* `trust-surface-v1` Q6 — the score column may not be read as a ranking
+   across tiers, so the table says so where the number is. */
+.papers-subtitle {
+  font-size: 11px; color: #6b7688; line-height: 1.55; margin: -2px 0 10px;
+}
+.th-qual { font-weight: 400; font-size: 9px; color: #8a95a8; letter-spacing: .04em; }
+
 /* ── `trust-surface-v1` Q2a — the unverified block ───────────────────────
    Out-of-domain content gets its own container, and it is deliberately the
    only DARK element in a light answer: the requirement is that a clinician
@@ -3304,7 +3323,7 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
     </div>
     <div class="biblio-section" id="biblioSection" style="display:none">
       <div class="biblio-title">
-        Full Bibliography
+        Bibliography — papers cited in this answer
         <span class="biblio-count" id="biblioCount"></span>
       </div>
       <ol class="biblio-list" id="biblioList"></ol>
@@ -3314,19 +3333,43 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
         check the source before acting on a specific statistic. Evidence is drawn
         from PubMed/MEDLINE and Cochrane only.
       </div>
+      <!-- `trust-surface-v1` Q5. The rest of the retrieval pool, named for
+           what it is. Collapsed by default: it is a disclosure, not a
+           bibliography, and it must never read as one. -->
+      <div class="biblio-notcited" id="biblioNotCited" style="display:none">
+        <div class="biblio-notcited-head" onclick="toggleNotCited()">
+          <span class="biblio-notcited-chevron" id="notCitedChevron">▸</span>
+          Papers retrieved but <strong>not cited</strong> in this answer
+          <span class="biblio-tier-count" id="notCitedCount"></span>
+        </div>
+        <div class="biblio-notcited-body" id="notCitedBody" style="display:none">
+          <div class="biblio-notcited-note">
+            These were returned by the search and scored, and the answer did not
+            draw on them. They are listed for transparency about what was
+            considered — they are not part of the bibliography above.
+          </div>
+          <ol class="biblio-list" id="notCitedList"></ol>
+        </div>
+      </div>
     </div>
     <div class="papers-section" id="papersSection" style="display:none">
-      <div class="papers-title">Top Papers by Evidence Score</div>
+      <div class="papers-title">Papers Retrieved — grouped by evidence tier</div>
+      <div class="papers-subtitle">
+        Every paper this search returned, strongest tier first. The score ranks
+        papers <strong>within</strong> a tier and never across tiers — a higher
+        score in a weaker tier is not stronger evidence.
+      </div>
       <table class="paper-table">
         <thead>
           <tr>
             <th>PMID</th>
+            <th>Tier</th>
             <th>Year</th>
             <th>Authors</th>
             <th>Journal</th>
             <th>n</th>
             <th>Follow-up</th>
-            <th>Score</th>
+            <th title="Ranks papers within their evidence tier only">Score<br><span class="th-qual">within tier</span></th>
           </tr>
         </thead>
         <tbody id="paperTableBody"></tbody>
@@ -4749,6 +4792,10 @@ function showResult(question, job) {
   // Tags
   var papers   = job.papers || [];
   setCitationMeta(papers);   // author-style inline citations need the metadata map
+
+  var _split       = citedPapersFor(job);
+  var citedPapers  = _split.cited;
+  var uncitedPapers = _split.uncited;
   var fromCache = (job.message || '').indexOf('cache') !== -1;
   var answerText = job.answer || '';
 
@@ -4759,7 +4806,11 @@ function showResult(question, job) {
   // Group by the RAW tier key — an unknown key (e.g. a newly added tier like
   // "invitro") renders generically instead of being silently folded into
   // level5, so new engine tiers appear here with zero UI changes.
-  var counts = _tierCounts(papers);
+  // Counted over the CITED set, not the pool — the chip's own tooltip says
+  // "study designs behind this answer", and the designs behind an answer are
+  // the ones it cited. It also has to agree with the bibliography, which
+  // `_assertShapeMatchesBiblio` checks in the DOM.
+  var counts = _tierCounts(citedPapers);
   var shapeOrder = TIER_DISPLAY.map(function(t){ return t[0]; });
   Object.keys(counts).forEach(function(k){
     if (shapeOrder.indexOf(k) === -1) shapeOrder.push(k);
@@ -4788,7 +4839,7 @@ function showResult(question, job) {
     '</span>' +
     trustChips +
     '<span class="atag atag-neutral" title="Study designs behind this answer">' +
-      (shape || papers.length + ' papers') + '</span>' +
+      (shape || citedPapers.length + ' papers') + '</span>' +
     (fromCache ? '<span class="atag atag-cache">Cached</span>' : '') +
     (SHOW_COST && job.cost_usd != null
       ? '<span class="atag atag-cost">$' + (fromCache ? '0.0000' : job.cost_usd.toFixed(4)) + '</span>'
@@ -4806,8 +4857,11 @@ function showResult(question, job) {
     document.getElementById('answerContent').innerHTML = parts.box + parts.body;
   }
 
-  // Full bibliography — always shown, all papers, generated from data
-  renderBibliography(papers);
+  // Full bibliography — the papers this answer CITED, generated from data.
+  renderBibliography(citedPapers);
+  // The rest of the pool is disclosed separately and named for what it is.
+  // Q5 permits the transparency; what it forbids is calling it a bibliography.
+  _renderRetrievedNotCited(uncitedPapers);
 
   // Drift guard: the evidence-shape chip and the bibliography must agree.
   // Compares the chip's per-tier counts against the rows actually rendered
@@ -4829,7 +4883,7 @@ function showResult(question, job) {
     document.getElementById('exportBar').style.display = 'none';
   }
 
-  // Paper table
+  // Paper table — the retrieval pool, ranked WITHIN tier (Q6).
   if (papers.length) {
     renderPaperTable(papers);
     document.getElementById('papersSection').style.display = 'block';
@@ -4903,12 +4957,13 @@ function openProvenancePanel(pmid) {
       if (d.authors) meta.push(_provEscape(d.authors));
       if (d.journal) meta.push(_provEscape(d.journal));
       if (d.year)    meta.push(_provEscape(d.year));
-      // Impact factor lives HERE and only here (§5 decision: excluded from
-      // scoring, shown as reference metadata in the popover, never on
-      // reference lines). Comes from the answer's paper payload, not the
-      // abstract endpoint.
+      // Impact factor is deliberately NOT here (`trust-surface-v1` Q3,
+      // invariant 11). It used to be, on the reasoning that a popover is
+      // "reference metadata only" — but a number rendered beside an evidence
+      // score reads as an input to it, and journal identity is an input to
+      // nothing in this system. The one surface where a clinician inspects a
+      // single paper is the worst place to imply otherwise.
       var pm = pmidMeta[String(pmid)];
-      if (pm && pm.impact_factor) meta.push('IF ' + _provEscape(pm.impact_factor));
       var badges = pm ? provenanceBadges(pm) : '';
       var html =
         '<h4>' + _provEscape(d.title || 'Untitled') + '</h4>' +
@@ -5244,15 +5299,41 @@ function renderAnswer(text) {
     .replace(/<p>\s*<\/p>/g, '');
 }
 
+// `trust-surface-v1` Q6. This table used to render the pool in whatever order
+// the server sent it, which is by score — so the ESE position statement at 87.0
+// sat above the Cochrane review at 73.3, and the strongest evidence in the
+// answer appeared sixth. Invariant 1: a score ranks only WITHIN a tier. The
+// engine has always been right about this; the presentation was not, and a
+// table is a ranking claim whatever the column header says.
+//
+// The bibliography has grouped by tier since the same inversion was fixed
+// there (a case series at 91 above a Cochrane review at 88). This is that fix,
+// on the surface that kept the flat sort.
+function _tierRank(p) {
+  var k = (p && p.level_key) || 'level5';
+  for (var i = 0; i < TIER_DISPLAY.length; i++) {
+    if (TIER_DISPLAY[i][0] === k) return i;
+  }
+  return TIER_DISPLAY.length;      // an unknown tier sorts last, not first
+}
+function sortPapersByTierThenScore(papers) {
+  return (papers || []).slice().sort(function(a, b) {
+    var d = _tierRank(a) - _tierRank(b);
+    if (d) return d;
+    return (b.score || 0) - (a.score || 0);
+  });
+}
+
 function renderPaperTable(papers) {
   var tbody = document.getElementById('paperTableBody');
   tbody.innerHTML = '';
-  papers.forEach(function(p) {
+  sortPapersByTierThenScore(papers).forEach(function(p) {
     var scoreColor    = p.score >= 70 ? '#12885a' : p.score >= 50 ? '#b45309' : '#d05252';
     var scoreBarColor = scoreColor;
     var row = document.createElement('tr');
     row.innerHTML =
       '<td>' + pmidRefHtml(p.pmid) + '</td>' +
+      '<td style="font-size:11px">' + _citeEsc(tierShortLabel(p.level_key || 'level5')) + '</td>' +
       '<td>' + (p.year || '—') + '</td>' +
       '<td style="font-size:11px;color:#536176">' + trunc(p.authors || '—', 32) + '</td>' +
       '<td style="font-size:11px">' + trunc(p.journal || '—', 26) + '</td>' +
@@ -5388,12 +5469,43 @@ function toggleTier(key) {
   if (btn) btn.textContent = open ? btn.dataset.showLabel : 'show fewer';
 }
 
+// `trust-surface-v1` Q5 — the bibliography is the CITATION set.
+//
+// `job.papers` is the retrieval candidate pool. The apixaban answer listed 29
+// papers under "Full bibliography" and cited 7 of them, Sjögren 1990 among the
+// 22 — the same uncited boilerplate the anesthesia curriculum carried, which
+// is what showed the defect is structural rather than a truncation artifact. A
+// bibliography is what an answer drew on; a pool is what a search returned;
+// presenting the second as the first inflated the apparent evidence base
+// fourfold.
+//
+// The split is computed SERVER-SIDE (`endo_ai.assemble_bibliography`, which
+// the deck path uses too) and arrives as `cited_pmids`. ONE function here so
+// the bibliography, the evidence-shape chip and the not-cited disclosure
+// cannot each derive their own answer to the same question.
+//
+// Falling back to the whole pool when the field is absent is deliberate: an
+// old cached job or a history record written before this change shows the
+// pre-fix view rather than an empty bibliography.
+function citedPapersFor(job) {
+  var papers = (job && job.papers) || [];
+  var ids    = (job && job.cited_pmids) || [];
+  if (!ids.length) return { cited: papers, uncited: [] };
+  var set = {};
+  ids.forEach(function(id) { set[String(id)] = 1; });
+  return {
+    cited:   papers.filter(function(p) { return set[String(p.pmid)]; }),
+    uncited: papers.filter(function(p) { return !set[String(p.pmid)]; })
+  };
+}
+
 function renderBibliography(papers) {
   if (!papers || !papers.length) {
     document.getElementById('biblioSection').style.display = 'none';
     return;
   }
-  document.getElementById('biblioCount').textContent = papers.length + ' papers';
+  document.getElementById('biblioCount').textContent =
+    papers.length + (papers.length === 1 ? ' paper cited' : ' papers cited');
 
   // Group by RAW tier key (same rule as the evidence-shape chip). Known tiers
   // render in TIER_DISPLAY order; unknown keys get a generic section at the
@@ -5439,6 +5551,32 @@ function renderBibliography(papers) {
   document.getElementById('biblioList').outerHTML =
     '<div id="biblioList">' + html + '</div>';
   document.getElementById('biblioSection').style.display = 'block';
+}
+
+function toggleNotCited() {
+  var body = document.getElementById('notCitedBody');
+  var chev = document.getElementById('notCitedChevron');
+  if (!body) return;
+  var open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  if (chev) chev.textContent = open ? '\u25b8' : '\u25be';
+}
+
+// `trust-surface-v1` Q5's permitted disclosure: the papers the search returned
+// that the answer did not cite. Deliberately NOT rendered through
+// `renderBibliography` — sharing that renderer is how the two lists would
+// start looking like one list again.
+function _renderRetrievedNotCited(papers) {
+  var sec = document.getElementById('biblioNotCited');
+  if (!sec) return;
+  if (!papers || !papers.length) { sec.style.display = 'none'; return; }
+  var html = '';
+  sortPapersByTierThenScore(papers).forEach(function(p, i) {
+    html += biblioLine(p, i + 1);
+  });
+  document.getElementById('notCitedList').innerHTML = html;
+  document.getElementById('notCitedCount').textContent = papers.length;
+  sec.style.display = 'block';
 }
 
 // ── Abort ────────────────────────────────────────────

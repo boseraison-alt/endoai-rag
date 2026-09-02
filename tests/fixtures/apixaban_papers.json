@@ -1,0 +1,292 @@
+[
+  {
+    "pmid": "ESE-QG-2023",
+    "year": "2023",
+    "authors": "European Society of Endodontolog",
+    "journal": "International Endodontic J",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 87.0,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "35579093",
+    "year": "2023",
+    "authors": "Meschi N, Palma PJ, Cabanillas-B",
+    "journal": "International endodontic j",
+    "sample_size": null,
+    "followup_months": 12,
+    "score": 84.0,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40898413",
+    "year": "2025",
+    "authors": "Ramani A, Sangwan P",
+    "journal": "International endodontic j",
+    "sample_size": 88,
+    "followup_months": 60,
+    "score": 82.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "41815050",
+    "year": "2026",
+    "authors": "Alovisi M, Arduino PG, Petti S",
+    "journal": "International endodontic j",
+    "sample_size": 183,
+    "followup_months": 12,
+    "score": 81.7,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "35762859",
+    "year": "2023",
+    "authors": "Bucchi C, Rosen E, Taschieri S",
+    "journal": "International endodontic j",
+    "sample_size": 529,
+    "followup_months": null,
+    "score": 80.9,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "37815804",
+    "year": "2024",
+    "authors": "Yildiz B, Dumani A, Isci AS et a",
+    "journal": "International endodontic j",
+    "sample_size": 100,
+    "followup_months": 24,
+    "score": 80.0,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "41040033",
+    "year": "2025",
+    "authors": "Kawthar BS, Fatma B, Hanen B et",
+    "journal": "The journal of contemporar",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 78.5,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "38491954",
+    "year": "2024",
+    "authors": "Flynn R, Foschi F, Maloney B et",
+    "journal": "International endodontic j",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 78.5,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "42288014",
+    "year": "2026",
+    "authors": "Zhan S, Yan Q, Zhang Y",
+    "journal": "International dental journ",
+    "sample_size": 508,
+    "followup_months": null,
+    "score": 78.1,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "35670625",
+    "year": "2023",
+    "authors": "Bürklein S, Arias A",
+    "journal": "International endodontic j",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 77.4,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40616689",
+    "year": "2025",
+    "authors": "Wang C; Chen S; Wang L; Li B; Ba",
+    "journal": "Clinical oral investigatio",
+    "sample_size": 50,
+    "followup_months": 24,
+    "score": 76.7,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "42652796",
+    "year": "2026",
+    "authors": "Valdivieso Del Pueblo C, Montero",
+    "journal": "Journal of clinical medici",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 76.1,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "36933044",
+    "year": "2023",
+    "authors": "López-Valverde I, Vignoletti F,",
+    "journal": "Clinical oral investigatio",
+    "sample_size": 598,
+    "followup_months": 60,
+    "score": 76.1,
+    "level_key": "level3a"
+  },
+  {
+    "pmid": "39595446",
+    "year": "2024",
+    "authors": "Almohareb RA; Barakat RM; Basuha",
+    "journal": "Healthcare (Basel)",
+    "sample_size": 1500,
+    "followup_months": null,
+    "score": 75.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "41872366",
+    "year": "2026",
+    "authors": "Mushtaq A; Alsanafi S; Elmsmari",
+    "journal": "Scientific reports",
+    "sample_size": null,
+    "followup_months": 6,
+    "score": 75.6,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40178589",
+    "year": "2025",
+    "authors": "Sanchez-Herrera G; Facchera M; P",
+    "journal": "Oral and maxillofacial sur",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "38280514",
+    "year": "2024",
+    "authors": "Sabeti M; Chung YJ; Aghamohammad",
+    "journal": "Journal of endodontics",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40122230",
+    "year": "2025",
+    "authors": "Brochado Martins JF; Georgiou AC",
+    "journal": "Journal of endodontics",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "38443242",
+    "year": "2025",
+    "authors": "Sinsareekul C, Saengthong-Aram P",
+    "journal": "The Journal of prosthetic",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "38664717",
+    "year": "2024",
+    "authors": "Chouchene F, Oueslati A, Masmoud",
+    "journal": "Systematic reviews",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40887721",
+    "year": "2025",
+    "authors": "Vitali FC; Dos Reis-Prado AH; Sa",
+    "journal": "International endodontic j",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40449882",
+    "year": "2025",
+    "authors": "Talekar AW; Abraham D; Sharma R;",
+    "journal": "Journal of endodontics",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "39207274",
+    "year": "2024",
+    "authors": "Bafail AS",
+    "journal": "Oral Health Prev Dent",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "41005763",
+    "year": "2025",
+    "authors": "Mujawar A; Pandit V; Shaikh S; S",
+    "journal": "The Journal of internation",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "41651276",
+    "year": "2026",
+    "authors": "Wylie ME, Fernando JR, Parashos",
+    "journal": "Journal of dentistry",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "40539414",
+    "year": "2025",
+    "authors": "Trindade JL; Maracci LM; Morgent",
+    "journal": "Australian endodontic jour",
+    "sample_size": null,
+    "followup_months": null,
+    "score": 74.8,
+    "level_key": "level1"
+  },
+  {
+    "pmid": "2084204",
+    "year": "1990",
+    "authors": "Sjogren U, Hagglund B, Sundqvist",
+    "journal": "Journal of endodontics",
+    "sample_size": 356,
+    "followup_months": null,
+    "score": 74.0,
+    "level_key": "classic"
+  },
+  {
+    "pmid": "38243912",
+    "year": "2024",
+    "authors": "Jurič R, Vidmar G, Blagus R et a",
+    "journal": "International endodontic j",
+    "sample_size": 1259,
+    "followup_months": 156,
+    "score": 73.9,
+    "level_key": "level3a"
+  },
+  {
+    "pmid": "27759881",
+    "year": "2016",
+    "authors": "Del Fabbro M, Corbella S, Sequeira-Byron P",
+    "journal": "Cochrane Database of Systematic Reviews",
+    "sample_size": null,
+    "followup_months": 120,
+    "score": 73.3,
+    "level_key": "cochrane"
+  }
+]

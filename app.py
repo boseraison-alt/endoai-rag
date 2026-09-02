@@ -102,6 +102,7 @@ except ImportError:
 
 from endo_ai import (build_evidence_base, ask_clinical_question, ask_learn_question,
                      build_deep_learning_module, StreamAborted,
+                     finalise_answer_text, assemble_bibliography,
                      save_answer, generate_clarifying_questions,
                      classify_question_intent,
                      analyze_radiograph, _analysis_to_prefill,
@@ -585,6 +586,12 @@ def status(job_id: str):
     # Return a copy with abstracts stripped — never expose raw copyrighted text to client
     safe = dict(job)
     safe["papers"] = _safe_papers(job.get("papers", []))
+    # `trust-surface-v1` Q5. The browser's bibliography is the CITATION set,
+    # not the retrieval pool, and the split is computed here — from the answer
+    # and the papers of this same job — so every consumer of /status gets one
+    # answer to "what did this cite?" rather than each deriving its own.
+    safe["cited_pmids"] = assemble_bibliography(
+        job.get("answer") or "", job.get("papers") or [])["cited_pmids"]
     return jsonify(safe)
 
 
@@ -616,6 +623,10 @@ def run_question(job_id: str, question: str, mode: str = "review",
         cached = get_cached_answer(cache_key, max_age_days=ttl,
                                    context_hash=ctx_hash)
         if cached:
+            # `trust-surface-v1`: a cached answer is a rendered surface too,
+            # and every answer in the cache was written before Q2 and Q3. Same
+            # normalisation as a fresh one — one function, both paths.
+            cached["answer"], _cq = finalise_answer_text(cached["answer"])
             age_days = cached.get("age_days")
             if mode == "learn" and age_days is not None:
                 age_label = "today" if age_days == 0 else f"{age_days}d ago"
