@@ -29,6 +29,7 @@ the only copies of the conversation this batch is about.
 | E · Latency | DONE | turn-2 time-to-first-text **56.6s → 14.4s** | `tests/test_case_streaming.py` (24 → 25) | `ea6a54f` |
 
 Suite: **1464 passed, 46 skipped** (1510 collected).
+Case eval: **4 of 4 passing** (`--case-subset`), see §7.
 
 ---
 
@@ -311,7 +312,50 @@ both survivals were my tests' fault. See §8.
 
 ---
 
-## 7. Decisions, with the alternatives rejected
+## 7. Close-out — the case subset, and a collision worth recording
+
+`--case-subset`, all four cases, against the committed revision (`/health`
+reported `ea6a54f`, matching `git rev-parse --short HEAD`):
+
+| case | intent | papers | support flags | |
+|---|---|---|---|---|
+| necrotic-virgin-tooth-young-adult-diagnostic | diagnostic | — | 1/18 (5.6%) | PASS |
+| bisphosphonate-extraction-vs-rct-treatment | treatment | — | 0/23 (0.0%) | PASS |
+| dens-evaginatus-premolar-diagnostic | diagnostic | 74 | 2/19 (10.5%) | PASS |
+| dens-evaginatus-prevention-followup | treatment | 27 | 0/12 (0.0%) | PASS |
+
+**The follow-up case exercised the reordered corrective message live, and it
+went the right way.** Validation failed at attempt 1 with 4 unattributed claims
+(limit 3); the retry came back with **1**, and passed. The failure that
+motivated the three-move message was a retry going 7 → 8. This is the first
+observation of that path since the reordering, and it is the opposite shape.
+
+### The collision, recorded because it changed a result
+
+The first pass of the subset ran **3 of 4**. The fourth died on
+`WinError 10054 — an existing connection was forcibly closed by the remote
+host`, and the harness had already printed, twice:
+
+> NOTE: 2 citation-support check(s) (58 pairs) in this window were written by
+> another process and are EXCLUDED. Something else is using the app while the
+> eval runs.
+
+The other process was **RB, using Curo**, generating a Deep Learning
+curriculum on "different anesthesia technique in endodontics" — first against
+the stale port-5003 server (revision `f23e8c8`, `git_dirty: true`, imported
+18:53), then against the freshly started one. That is a real user session, not
+a stray process, and nothing was killed to make the measurement cleaner. The
+case was re-run alone and passed.
+
+Two things this demonstrates, both of them `guardrails-v1` machinery doing its
+job unprompted: the writer-pid guard **excluded 58 foreign pairs** that would
+otherwise have inflated the denominator, and `/health` identified the stale
+server's revision in one request. The failure mode it does not cover is the
+shared PubMed and Anthropic rate limit, which is what produced the reset.
+
+---
+
+## 8. Decisions, with the alternatives rejected
 
 | Decision | Rejected alternative | Why |
 |---|---|---|
@@ -326,7 +370,7 @@ both survivals were my tests' fault. See §8.
 
 ---
 
-## 8. What went wrong in my own work
+## 9. What went wrong in my own work
 
 **Three source-inspection tests let mutants through, in one session.**
 `check_precedence` (case-v2.1), `check_claim_hygiene` (Item D), and
@@ -351,6 +395,16 @@ both satisfiable at once: REPHRASE, LABEL, then the marker move carrying its
 `ONLY where…` condition. Pinned by a new test that states the collision, so the
 next edit to that message has to see both halves.
 
+**A stray file appeared in `git status` twice before I read why.** The eval
+harness saves every case answer it generates; under pytest, with the fixture id
+"c", it wrote into the repo's own log directory on every suite run. That is the
+fourth instance of the bug class `tests/conftest.py` exists for, and it
+arrived the same way as the other three — a writer that builds its path
+inline. Worse, **the first test I wrote for it let the mutant through**: it
+compared the directory listing before and after, and the previous mutant's
+leaked file was already in `before`. A test whose entire subject is a leaked
+file passed while the file was being leaked.
+
 **A commit message of mine reported a suite size that was wrong.** Item B says
 "1540 tests passing, 46 skipped". The true figure under `pytest tests/` is
 **1510 collected, 1464 passing, 46 skipped**, and no test module was lost
@@ -365,7 +419,7 @@ harness.
 
 ---
 
-## 9. Found, not fixed
+## 10. Found, not fixed
 
 - **The unsourced label attaches to the claim unit it appears in**, so the two
   sub-sentences of a labelled multi-sentence step are still counted
@@ -381,13 +435,17 @@ harness.
   gate. The general path has no such gate.
 - **Turn-1 case latency is retrieval-dominated and unmeasured as a
   distribution.** Three runs spanning 92–175 s is not enough to say anything.
+- **Turn-1 retrieval and the eval share a rate limit with the live app**, and
+  nothing coordinates them. The harness detects and excludes foreign log rows;
+  it cannot detect a connection reset caused by contention, which is what
+  ended the first subset run.
 - **Case conversations are still persisted nowhere.** This batch committed two
   transcripts by hand so the analysis is reproducible; the product still keeps
   them only in the browser DOM and an in-memory job store.
 
 ---
 
-## 10. Cost
+## 11. Cost
 
 | | |
 |---|---|

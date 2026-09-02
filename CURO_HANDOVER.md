@@ -10,7 +10,7 @@ auto-compact.
 
 ---
 
-## 1. What Curo is right now (state as of tag `case-v2.1`)
+## 1. What Curo is right now (state as of tag `case-v3`)
 
 An evidence-graded endodontics assistant: **2,350-paper** curated library (Neon
 Postgres + pgvector) with per-paper provenance (evidence tier incl. in vitro,
@@ -23,11 +23,12 @@ recommendation-traceability gate**, and a citation-support check on all three
 answer paths that reads the whole abstract and **knows what shape of claim it
 is judging**, streaming answers, Review-mode conversation memory, **case
 discussion that tells a diagnostic question from a treatment one and answers
-the first with a ranked, per-candidate-retrieved differential**, and five
+the first with a ranked, per-candidate-retrieved differential**, **streamed, with the guardrails
+running underneath text the clinician is already reading**, and five
 export styles — audio, video,
 slides, podcast and a self-contained reveal.js web deck that auto-advances with
 its own narration — all generated from ONE cached slide-spec in the approved
-dark design. **1,495 tests**, all mutation-checked. **25-case retrieval eval**
+dark design. **1,510 tests**, all mutation-checked. **25-case retrieval eval**
 with a 3-run baseline (`eval/baseline_v6.json`) whose harness measures the
 citation-support flag rate per case, on both routes, and **excludes rows
 written by another process**.
@@ -49,18 +50,43 @@ Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 | longest claim unit on a curriculum | **469 chars**, from 2,403 |
 | abstract excerpt the support judge sees | the whole abstract |
 | retrieval baseline | `eval/baseline_v6.json` — 25 cases x 3 runs, unmoved |
-| tests | **1,495** passing, 44 skipped |
+| tests | **1,464** passing, 46 skipped (1,510 collected) |
 | **`/health`** | reports the **git hash the process imported**, frozen at import. Check it before trusting any server. |
 | case follow-ups: non-discriminating question rate | **0/20**, from 8/15 = 53% |
 | the same question on the contrast case (68, on alendronate) | **10/10** asked — filtered by relevance, not deleted |
 | diagnostic case answer | **6 candidates, 139 papers, $0.1801** (was 26 papers, $0.0724, no differential) |
-| case eval cases | **3, all passing** (`--case-subset`) |
+| case eval cases | **4** (`--case-subset`), incl. the set's first FOLLOW-UP case |
 | the dens evaginatus fixture | DE is candidate **1 of 6**, management at char 1,277 (was char 323); **0/16** support flags |
+| case turn-2 time to first text | **14.4 s**, from 56.6 s — readable while the checks run |
+| citations surviving a browser copy | **34 of 34**, from **0 of 34** |
+| claims the case detector catches, prevention turn | **7**, from 2 — a protocol directive is a claim |
+| the regenerated prevention turn | unattributed **7 → 2**, support flags **2/12 → 0/11**, no retry |
+| library papers naming dens evaginatus | **24**, from 15 |
 
 **Which run each rate comes from, because they are not all the same run.**
 The library Review figure is the `grounding-v2` run. **Do not quote 4.3% as
 the library baseline at all**: the same three cases measured 8.2%, 8.9% and
 6.3% across one night, with nothing changed between the first two.
+
+**What changed in `case-v3`.** Read `OVERNIGHT_REPORT_6.md`. The item
+that started it — "the answers are full of uncited claims" — split into two
+different bugs on measurement. The dominant one was a COPY bug: `.claim-cite`
+carried `user-select: none`, so all 34 citations on screen became 0 citations
+in the pasted text and every claim then looked uncited. The second was real
+and smaller: the claim detector caught a claim by its NUMBERS, and a chairside
+protocol is an INSTRUCTION — "Reduce occlusal contact on the tubercle",
+"Screen the entire mouth for DE" — uncited and actionable with no statistic in
+it. Four patterns added, plus `UNCITED_AUTHOR_MENTION` with no tolerance
+count. A numeric directive now has three honest endings — cite it, cut it, or
+label it "standard practice, not from the retrieved evidence base" — and the
+label ACTUALLY WORKS, because a retry offered only "rephrase or delete" turned
+7 unattributed claims into 8. Targeted retrieval found the prevention
+literature the flat write-back floor of 50 had been hiding (the single most
+on-point paper scored 35.4). And the case path now streams: turn-2 time to
+first text 56.6 s -> 14.4 s, with the guardrails running underneath a readable
+answer instead of a spinner, and follow-ups seeding retrieval with the papers
+the previous turn cited — as CANDIDATES, after the routing gate, never as a
+cache.
 
 **What changed in `case-v2.1`.** Read `OVERNIGHT_REPORT_5.md`. Three things,
 and the first was a defect `case-v2` had reintroduced: the differential
@@ -173,6 +199,24 @@ last, so the finding was the part that was missing.
     three dens invaginatus prevalence claims with counts that appear nowhere
     in it.
 
+20. **A chairside instruction is a claim.** A numeric directive with no
+    marker has exactly three honest endings — cite it, cut it, or label it
+    "standard practice, not from the retrieved evidence base" — and the label
+    must actually count as attribution, or the honest answer and the silent
+    one are punished identically and the retry learns nothing. A named author
+    with no marker anywhere in its claim unit is a validator FAILURE with no
+    tolerance count: the model reached for a specific paper and did not wrap
+    it. Attaching the nearest PMID clears the warning and misleads the reader,
+    and the corrective message says so.
+21. **Partial text is never checked, never shown as `answer`, and never
+    reported as passing.** On every streaming path the guardrails run once on
+    the text read off the FINAL message; `partial_answer` is a separate job
+    field, cleared on completion, and `checks_status` stays `"pending"` for
+    the whole stream. A half-written `[[PMID:312` reads as a fabrication. A
+    follow-up may SEED retrieval with the PMIDs the previous turn cited — as
+    candidates, after the routing gate — but no evidence base and no answer is
+    ever cached or reused across turns.
+
 Recurring bug classes (see `HANDOVER.md`): trusted stored labels, untagged
 PubMed query terms, batch-metadata applied per-paper, fail-open checks that
 show nothing, tests that grep source instead of asserting on the prompt/data
@@ -189,7 +233,10 @@ hash, the claim unit, the grounding/traceability reconciliation, `cost_log`
 `source` + `pubmed_audit` pid guard) -> `case-v2` (diagnostic vs treatment
 intent, differential-first retrieval, follow-up relevance, the first two case
 eval cases) -> `case-v2.1` (the tooth as a prior, per-candidate paper
-attribution, targeted dens evaginatus ingest, the ordering pinned).
+attribution, targeted dens evaginatus ingest, the ordering pinned) -> `case-v3`
+(the copy bug behind "uncited claims", protocol directives as claims, the DE
+prevention literature, the first follow-up eval case, streaming on the case
+path).
 
 Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
 
@@ -333,7 +380,63 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   `scripts/monthly_maintenance.py`, dry-run by default and deliberately
   **NOT scheduled**. Ran end to end clean: backfill 24s, rescore 10s, eval
   686s with 25/25 cases passing. RB decides when it first runs `--apply`.
-## 5. Next batch — "retrieval-honesty-v1" (paste-ready for the fresh session)
+## 5. Next batch — "dl-quality-v1" (RB, queued 2026-09-01, verbatim)
+
+Autonomous batch on `main`, tag `dl-quality-v1` at end. Standing rules from
+`WORKLIST.md` §0/§6 apply in full. Commit + push per item; re-bundle after
+commits.
+
+> QUEUED — batch dl-quality-v1 (after current work; standing rules; tag at
+> end).
+> Fixture: the laser curriculum generated <today> — keep it as the
+> before-state.
+>
+> ITEM 1 — Truncation gate in the stitcher. Module 4 ends mid-sentence ("when
+> tips are not"); Module 1's materials table ends mid-cell ("Wavelength 630").
+> Diagnose (expect stop_reason max_tokens, the case-v2.1 signature). Fix:
+> raise/segment the cap AND add a stitcher gate rejecting any module whose
+> text ends mid-sentence, mid-table-row, or mid-citation — regenerate that
+> module once, else emit the module-not-generated notice. Mutation-check with
+> a truncated fixture.
+>
+> ITEM 2 — Remove the 30-claim cap on the DL support check. Check every cited
+> claim; report count + cost delta. Then re-check this curriculum in full and
+> specifically adjudicate: PMID 27759881 cited for "no healing advantage for
+> CBCT over radiography" — if misattributed (it is described elsewhere as the
+> LLLT post-surgical Cochrane), the claim must be re-sourced or cut.
+>
+> ITEM 3 — The flagged Sabeti claim: verify author attribution and whether
+> "noninferiority criteria" appears in or is fairly implied by the abstract of
+> 40818665; restate at source strength (the DE-claim precedent).
+>
+> ITEM 4 — Cross-module consistency pass in the stitcher: after assembly, one
+> Sonnet pass flags (a) numeric parameter conflicts between modules (e.g.,
+> NaOCl 2/2.5/3/5.25%) → add one reconciling sentence citing which study used
+> which; (b) decision-tree recommendations that conflict across modules →
+> reconcile or explicitly note the tension; (c) malformed IF/THEN/BECAUSE (a
+> BECAUSE containing only citations, no reason). This pass ANNOTATES and
+> repairs formatting; it must not rewrite evidence claims. Tests for each
+> detector; mutation-check.
+>
+> ITEM 5 — Regenerate the laser curriculum end-to-end; include before/after
+> for: truncations (2→0), unchecked claims (13→0), the two adjudicated
+> citations, consistency annotations added. Update eval DL case assertions: no
+> mid-sentence module endings, zero unchecked claims. Report §8 format.
+
+**The fixture is identified**: `answers/answer_20260901_135816.txt`, "Use of
+lasers in root canal disinfection", 97 papers, generated 13:58 on
+`guardrails-v1` during the demo re-warm. Both truncations reproduce in it —
+`| **Laser — Diode (aPDT)** | Wavelength 630 |` at line 92 and "…irrigant
+extrusion when tips are not" at line 302. Do not regenerate it before Item 5;
+it is the before-state.
+
+**Item 2 supersedes §6.7.** The `_SUPPORT_MAX_PAIRS = 30` judgement call that
+was waiting on RB is now decided: remove the cap. §5b Item 4 covers the same
+ground and should be reconciled with whatever this batch measures, not run
+twice.
+
+
+## 5b. Queued after `dl-quality-v1` — "retrieval-honesty-v1" (paste-ready)
 
 Autonomous batch on `main`, tag `retrieval-honesty-v1` at end. Standing rules
 from `WORKLIST.md` §0/§6 apply in full, including the every-column backup rule.
@@ -456,9 +559,17 @@ third change on the citation-support metric in one batch.
   so a mismatch means the process is old. This is not theoretical: during
   `guardrails-v1` a server started 80 minutes earlier wrote 13 pairs into an
   eval measurement window, and was identified by exactly this field.
-- **A running server is a writer.** Stop it before a measurement you intend to
-  report, or expect the harness's "written by another process and EXCLUDED"
-  note. `evidence_mapping.jsonl` and `pubmed_audit.jsonl` both carry a writer
+- **A running server is a writer, AND RB MAY BE USING IT.** During the
+  `case-v3` close, an eval subset run and a live Deep Learning curriculum
+  collided: the harness excluded 58 foreign citation-support pairs and then
+  the fourth case died on `WinError 10054 — connection forcibly closed`, which
+  the pid guard cannot prevent because the contention is for the PubMed and
+  Anthropic rate limits, not the log file. **Check for a live job before you
+  kill or restart anything** — `curl -s localhost:PORT/status/<job>` — and
+  re-run the affected case rather than killing the user's work. The stale 5003
+  server had been idle for 97 minutes and then served a real user question;
+  "idle" is not "abandoned". Stop a server before a measurement you intend to
+  report, or expect the "written by another process and EXCLUDED" note. `evidence_mapping.jsonl` and `pubmed_audit.jsonl` both carry a writer
   pid now, and both readers exclude foreign rows and say so.
 - **Eval runs cannot overlap, and NEITHER CAN A PYTEST RUN.** `tests/conftest.py`
   redirects all three audit logs to tmp, so the suite no longer contaminates —
@@ -471,7 +582,17 @@ third change on the citation-support metric in one batch.
   Write/Edit tools for any Python containing a backslash or nested quotes** —
   and for any multi-line string replacement, which is where it bit again in
   `guardrails-v1`.
-- Set `PYTHONIOENCODING=utf-8` on every python invocation.
+- Set `PYTHONIOENCODING=utf-8` on every python invocation. `PYTHONUTF8=1`
+  additionally fixes the SOURCE decoding of a script piped in on stdin —
+  without it, a heredoc containing `…` or `—` is mangled before Python parses
+  it, and the failure looks like a string that will not match.
+- **A `[SKIP] anchor found N times` from a mutation harness is an UNKILLED
+  mutant, not a passing one.** It was never applied. Two anchors in `case-v3`
+  matched both the Review and the case completion blocks, which are identical
+  but for one line.
+- **A mutation harness must clean strays BETWEEN mutants, not at the end.** A
+  file leaked by mutant N is in mutant N+1's "before" state, and a before/after
+  comparison then passes while the leak is happening.
 - **A same-length mutation can leave a stale `.pyc`.** `rm -rf __pycache__`
   after every mutation restore.
 - **Never truth-test an ElementTree element.** `find(a) or find(b)` discards a
