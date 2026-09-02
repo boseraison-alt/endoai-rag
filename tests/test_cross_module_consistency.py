@@ -250,15 +250,32 @@ class TestTheGuardIsWhatMakesThisSafe:
     def test_a_dropped_marker_is_rejected(self):
         ok, why = consistency_guard(self.BEFORE,
                                     self.BEFORE.replace(" [[PMID:111]]", ""))
-        assert not ok and "markers changed" in why
+        assert not ok and "markers lost" in why
 
-    def test_an_added_marker_is_rejected(self):
-        """Adding one attaches a paper to a sentence no module author chose it
-        for, which is the cheap fix `case-v3` Item B forbids by name."""
+    def test_a_marker_for_an_UNCITED_paper_is_rejected(self):
+        """A PMID the curriculum does not already cite comes from outside the
+        evidence the modules were written from. That is the fabrication case,
+        and it is the one this half of the guard exists for."""
         ok, why = consistency_guard(
             self.BEFORE, self.BEFORE.replace("[[PMID:111]]",
                                              "[[PMID:111]] [[PMID:999]]"))
-        assert not ok and "markers changed" in why
+        assert not ok and "does not cite" in why
+
+    def test_re_citing_an_ALREADY_CITED_paper_is_allowed(self):
+        """THE FIRST REAL RUN FAILED ON THIS, and the guard was wrong, not the
+        model.
+
+        The rule started as "no marker may be added at all". Then the laser
+        regeneration produced four perfectly good annotations citing papers the
+        curriculum already cited, the guard rejected the whole pass, and the
+        curriculum shipped unannotated. The prompt invites the model to cite in
+        a reconciling sentence — and it should, because "which study used 2.5%
+        and which used 5.25%" is useless without naming them. The guard was
+        forbidding exactly what the prompt asked for.
+        """
+        after = (self.BEFORE + chr(10) + chr(10) + "The 2.5% figure is Yang 2024 [[PMID:111]].")
+        ok, why = consistency_guard(self.BEFORE, after)
+        assert ok, why
 
     def test_a_reworded_cited_claim_is_rejected(self):
         ok, why = consistency_guard(

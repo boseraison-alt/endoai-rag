@@ -242,6 +242,202 @@ class TestTheWriterRegeneratesOnce:
         assert endo_ai.CURRICULUM_MODULE_MAX_TOKENS > 3200
 
 
+class TestTheStitcherWasTruncatingToo:
+    """THE SECOND TRUNCATION, AND THE ONE THAT PRODUCED THE REPORTED SYMPTOM.
+
+    Found by regenerating the laser curriculum after the module cap was fixed
+    and getting back a document with THREE modules. The log said "4 of 4
+    modules complete" and every module had been written; the stitcher dropped
+    the fourth.
+
+    Measured across every `stitch_curriculum` call in `cost_log.jsonl`:
+    **23 of 26 returned exactly 11,640 output tokens**, which is what the old
+    formula produced for four modules. The stitcher must reproduce every
+    module body VERBATIM and then add an overview, transitions, takeaways and
+    references, so `n_modules * 1800` was never the right unit — modules
+    measure 3,700-4,500 tokens each, and the budget was under half of what
+    reproduction alone needs.
+
+    This also explains the Module-4 concentration in the stored curricula
+    better than the transition-paragraph theory did. "Module 4 ends
+    mid-sentence" is what a reader sees when the stitcher runs out of output
+    partway through the last module it was copying.
+
+    The module-level gate cannot catch it: every module was complete when it
+    was handed over. So the check has to be here, on the assembled document.
+    """
+
+    def test_the_budget_scales_with_the_text_being_reproduced(self):
+        """Called, not read. `stitch_token_budget` exists as a function so
+        this test can hand it real inputs."""
+        small = endo_ai.stitch_token_budget("x" * 20000)
+        large = endo_ai.stitch_token_budget("x" * 60000)
+        assert large > small
+
+    def test_the_old_fixed_budget_was_fine_small_and_wrong_at_real_size(self):
+        """Precision about what was actually broken.
+
+        11,640 was the old four-module figure and 23 of 26 stitch calls ever
+        made returned exactly it — but it was NOT wrong for every curriculum.
+        A 20,000-character one costs about 5,700 tokens to copy and fits
+        comfortably. The formula failed at the size real curricula are, which
+        is why it went unnoticed for 26 runs: nothing about it looks wrong
+        until you compare it to the text it has to reproduce.
+        """
+        assert endo_ai.stitch_token_budget("x" * 20000) < 11640
+        assert endo_ai.stitch_token_budget("x" * 40000) > 11640
+
+    def test_the_real_curriculum_would_have_had_room(self):
+        """The laser curriculum's module bodies come to roughly 40,000
+        characters. The old budget gave the stitcher 11,640 tokens to
+        reproduce them, which is under half of what copying alone costs."""
+        budget = endo_ai.stitch_token_budget("x" * 40000)
+        reproduce_cost = 40000 / 3.5
+        assert budget > reproduce_cost, (
+            f"budget {budget} is below the {reproduce_cost:.0f} tokens the "
+            f"text costs to copy — the stitcher would truncate again")
+
+    def test_it_is_capped(self):
+        assert endo_ai.stitch_token_budget("x" * 10_000_000) ==             endo_ai.STITCH_BUDGET_CEILING
+
+    def test_the_old_per_module_formula_is_gone(self):
+        src = inspect.getsource(endo_ai.stitch_curriculum)
+        assert "stitch_budget = stitch_token_budget(module_blocks)" in src
+
+    def test_a_missing_module_is_detected_by_title(self):
+        mods = [{"title": "Module 1 — Laser Physics and Mechanisms", "script": "x"},
+                {"title": "Module 4 — Clinical Outcomes and Adverse Effects",
+                 "script": "y"}]
+        doc = ("## Module 1 - Laser Physics and Mechanisms in Endodontics" + chr(10) + "body")
+        missing = endo_ai._modules_missing_from_stitch(doc, mods)
+        assert missing == ["Module 4 — Clinical Outcomes and Adverse Effects"]
+
+    def test_a_renumbered_or_repunctuated_heading_is_NOT_missing(self):
+        """The stitcher rewrites headings into its own style, and a check that
+        demanded an exact match would fire on every run."""
+        mods = [{"title": "Module 2 — Microbial Biofilm Removal", "script": "x"}]
+        for doc in ("## Module 2: Microbial Biofilm Removal",
+                    "## 2. Microbial biofilm removal and disinfection",
+                    "### Module Two — Microbial Biofilm Removal"):
+            assert endo_ai._modules_missing_from_stitch(doc, mods) == [], doc
+
+    def test_the_stitcher_reads_its_own_stop_reason(self):
+        src = inspect.getsource(endo_ai.stitch_curriculum)
+        assert 'getattr(resp, "stop_reason", None) == "max_tokens"' in src
+
+    def test_it_retries_at_the_ceiling_before_giving_up(self):
+        src = inspect.getsource(endo_ai.stitch_curriculum)
+        assert "stitch_curriculum_retry" in src
+        assert "max_tokens=32000" in src
+
+    def test_the_fallback_keeps_every_module(self):
+        """A curriculum missing its last module is a worse failure than one
+        with plain transitions, because nothing in the document says anything
+        is absent."""
+        mods = [{"title": "Module 1 — A", "script": "body one [[PMID:1]]"},
+                {"title": "Module 2 — B", "script": "body two [[PMID:2]]"}]
+        out = endo_ai._assemble_curriculum_without_stitcher("Q", mods, "refs")
+        for m in mods:
+            assert m["title"] in out
+            assert m["script"] in out
+        assert endo_ai._modules_missing_from_stitch(out, mods) == []
+
+    def test_the_fallback_says_it_is_a_fallback(self):
+        out = endo_ai._assemble_curriculum_without_stitcher("Q", [], "")
+        assert "without the editorial pass" in out
+        assert "Nothing has been omitted from the modules" in out
+
+
+class TestTheStitcherRecoversBehaviourally:
+    """RUN, not read. FOURTH time in this batch that a source-inspection test
+    let a mutant through: replacing `if missing or truncated:` with
+    `if False:` left every inspected string in place, and nothing noticed that
+    the retry and the fallback had stopped existing.
+    """
+
+    MODS = [{"title": "Module 1 — Laser Physics", "script": "one [[PMID:1]]"},
+            {"title": "Module 2 — Biofilm Removal", "script": "two [[PMID:2]]"}]
+    EV = {"_summary": {"all_scored": [{"pmid": "1"}, {"pmid": "2"}]}}
+
+    @pytest.fixture
+    def stub(self, monkeypatch):
+        """Returns a recorder; each call pops the next scripted reply."""
+        calls = []
+
+        class _Usage:
+            input_tokens = 10
+            output_tokens = 10
+
+        def make(text, stop="end_turn"):
+            class _R:
+                content = [type("B", (), {"text": text})()]
+                usage = _Usage()
+                stop_reason = stop
+            return _R()
+
+        def install(replies):
+            queue = list(replies)
+
+            def fake(function_name, mode=None, **kw):
+                calls.append((function_name, kw.get("max_tokens")))
+                return queue.pop(0), 0.01
+            monkeypatch.setattr(endo_ai, "tier2_invoke", fake)
+
+        monkeypatch.setattr(endo_ai.anthropic, "Anthropic", lambda **kw: object())
+        monkeypatch.setattr(endo_ai, "_get_api_key", lambda: "test")
+        return calls, make, install
+
+    def test_a_complete_stitch_is_used_and_nothing_is_retried(self, stub):
+        calls, make, install = stub
+        good = '## Module 1 — Laser Physics' + chr(10) + 'one' + chr(10) + '## Module 2 — Biofilm Removal' + chr(10) + 'two'
+        install([make(good)])
+        out, _cost = endo_ai.stitch_curriculum("Q", self.MODS, self.EV)
+        assert out == good
+        assert len(calls) == 1, f"it retried a complete stitch: {calls}"
+
+    def test_a_stitch_missing_a_module_is_retried_at_the_ceiling(self, stub):
+        calls, make, install = stub
+        short = '## Module 1 — Laser Physics' + chr(10) + 'one'
+        full = '## Module 1 — Laser Physics' + chr(10) + 'one' + chr(10) + '## Module 2 — Biofilm Removal' + chr(10) + 'two'
+        install([make(short), make(full)])
+        out, _cost = endo_ai.stitch_curriculum("Q", self.MODS, self.EV)
+        assert out == full
+        assert len(calls) == 2, "the missing module was not noticed"
+        assert calls[1][0] == "stitch_curriculum_retry"
+        assert calls[1][1] == endo_ai.STITCH_BUDGET_CEILING
+
+    def test_a_stitch_that_stopped_at_max_tokens_is_retried(self, stub):
+        """Even when every module happens to be present — `stop_reason` is
+        ground truth about whether the reply finished."""
+        calls, make, install = stub
+        full = '## Module 1 — Laser Physics' + chr(10) + 'one' + chr(10) + '## Module 2 — Biofilm Removal' + chr(10) + 'two'
+        install([make(full, stop="max_tokens"), make(full)])
+        endo_ai.stitch_curriculum("Q", self.MODS, self.EV)
+        assert len(calls) == 2
+
+    def test_a_second_failure_falls_back_to_deterministic_assembly(self, stub):
+        """The point of the whole mechanism: a curriculum missing its last
+        module is a worse failure than one with plain transitions."""
+        calls, make, install = stub
+        short = '## Module 1 — Laser Physics' + chr(10) + 'one'
+        install([make(short), make(short)])
+        out, _cost = endo_ai.stitch_curriculum("Q", self.MODS, self.EV)
+        assert len(calls) == 2
+        assert endo_ai._modules_missing_from_stitch(out, self.MODS) == []
+        for m in self.MODS:
+            assert m["script"] in out
+        assert "without the editorial pass" in out
+
+    def test_the_cost_of_the_retry_is_counted(self, stub):
+        calls, make, install = stub
+        short = '## Module 1 — Laser Physics' + chr(10) + 'one'
+        full = '## Module 1 — Laser Physics' + chr(10) + 'one' + chr(10) + '## Module 2 — Biofilm Removal' + chr(10) + 'two'
+        install([make(short), make(full)])
+        _out, cost = endo_ai.stitch_curriculum("Q", self.MODS, self.EV)
+        assert cost == pytest.approx(0.02), (
+            "a retry that is not billed makes every cost report wrong")
+
+
 class TestTheAssemblyGateBehaviourally:
     """RUN, not read.
 

@@ -1,0 +1,126 @@
+{
+ "question": "Use of lasers in root canal disinfection",
+ "after": {
+  "modules": 3,
+  "words": 5684,
+  "truncated_modules": [],
+  "stitcher_placeholders": 0,
+  "unchecked_claims": 0,
+  "module_not_generated": 0,
+  "parameter_conflicts": [
+   {
+    "agent": "naocl",
+    "unit": "%",
+    "values": [
+     2.5,
+     3.0
+    ]
+   }
+  ],
+  "malformed_because": [],
+  "cited_pmids": [
+   "27759881",
+   "30797116",
+   "31301436",
+   "31809911",
+   "33731503",
+   "36156804",
+   "37355163",
+   "37849444",
+   "38013016",
+   "38340037",
+   "38382735",
+   "38484867",
+   "38662505",
+   "38878107",
+   "40135760",
+   "40136729",
+   "40287048",
+   "40485280",
+   "40565094",
+   "40818665",
+   "41063319",
+   "41388259",
+   "41389357",
+   "41465429",
+   "41514415",
+   "41789272",
+   "41833582",
+   "42306383"
+  ],
+  "cost_usd": 1.8381,
+  "elapsed_s": 527.3
+ },
+ "before": {
+  "modules": 4,
+  "words": 5653,
+  "truncated_modules": [
+   {
+    "module": "## Module 4 \u2014 Clinical Outcomes, Success Rates, and Adverse Effects",
+    "reason": "cut mid-sentence (ends on \"not\")",
+    "tail": "ed irrigation carries a theoretical risk of irrigant extrusion when tips are not"
+   }
+  ],
+  "stitcher_placeholders": 0,
+  "unchecked_claims": 13,
+  "module_not_generated": 0,
+  "parameter_conflicts": [
+   {
+    "agent": "naocl",
+    "unit": "%",
+    "values": [
+     2.0,
+     2.5,
+     5.25
+    ]
+   }
+  ],
+  "malformed_because": [
+   {
+    "because": "[[PMID:40818665]] [[PMID:41389357]]",
+    "reason": "contains only citations, no reason"
+   }
+  ],
+  "cited_pmids": [
+   "24192536",
+   "27759881",
+   "30797116",
+   "30836213",
+   "31301436",
+   "35996480",
+   "36596331",
+   "37195228",
+   "37981598",
+   "38013016",
+   "38157279",
+   "38340037",
+   "38382735",
+   "38403667",
+   "38425318",
+   "38878107",
+   "39287434",
+   "39849275",
+   "40135760",
+   "40136729",
+   "40558896",
+   "40565094",
+   "40818665",
+   "41063319",
+   "41121058",
+   "41388259",
+   "41389357",
+   "41470159",
+   "41505924",
+   "41514415",
+   "41692102",
+   "41704064",
+   "41789272",
+   "41833582",
+   "41918875",
+   "42092871",
+   "42163172",
+   "42482547",
+   "42505761"
+  ]
+ }
+}

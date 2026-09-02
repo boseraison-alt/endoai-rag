@@ -1,0 +1,958 @@
+{
+ "n": 124,
+ "papers": [
+  {
+   "pmid": "3473179",
+   "year": "1987",
+   "title": "An evaluation of an electric pulp tester as a measure of analgesia in human vital teeth.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "3474345",
+   "year": "1987",
+   "title": "An ultrastructural investigation of the human apical pulp in irreversible pulpitis. I. Nerves.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "3479918",
+   "year": "1987",
+   "title": "A comparison of the periodontal ligament injection using 2% lidocaine with 1:100,000 epinephrine and saline in human mandibular premolars.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "3481797",
+   "year": "1987",
+   "title": "An ultrastructural investigation of the human apical pulp in irreversible pulpitis. II. Vasculature and connective tissue.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "3253404",
+   "year": "1988",
+   "title": "The periodontal ligament injection: a comparison of 2% lidocaine, 3% mepivacaine, and 1:100,000 epinephrine to 2% lidocaine with 1:100,000 epinephrine in human mandibular premolars.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "3255778",
+   "year": "1988",
+   "title": "The periodontal ligament injection: a comparison of the efficacy in human maxillary and mandibular teeth.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "2607268",
+   "year": "1989",
+   "title": "An evaluation of volumes and concentrations of lidocaine in human inferior alveolar nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "1814249",
+   "year": "1991",
+   "title": "An evaluation of 4% prilocaine with 1:200,000 epinephrine and 2% mepivacaine with 1:20,000 levonordefrin compared with 2% lidocaine with:100,000 epinephrine for inferior alveolar nerve block.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "1842158",
+   "year": "1991",
+   "title": "An evaluation of lidocaine hydrocarbonate compared with lidocaine hydrochloride for inferior alveolar nerve block.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "9796516",
+   "year": "1992",
+   "title": "An evaluation of the incisive nerve block and combination inferior alveolar and incisive nerve blocks in mandibular anesthesia.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "7645791",
+   "year": "1993",
+   "title": "Evaluation of a clinical recovery score after general anesthesia.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "8509754",
+   "year": "1993",
+   "title": "An evaluation of 4% prilocaine and 3% mepivacaine compared with 2% lidocaine (1:100,000 epinephrine) for inferior alveolar nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "8784893",
+   "year": "1996",
+   "title": "Anesthetic efficacy of the intraosseous injection in maxillary and mandibular teeth.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "8934993",
+   "year": "1996",
+   "title": "Anesthetic efficacy of the periodontal ligament injection after an inferior alveolar nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "9198431",
+   "year": "1996",
+   "title": "Anesthetic efficacy of the intraosseous injection after an inferior alveolar nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "9007920",
+   "year": "1997",
+   "title": "Anesthetic efficacy of the intraosseous injection of 2% lidocaine (1:100,000 epinephrine) and 3% mepivacaine in mandibular first molars.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "9431539",
+   "year": "1997",
+   "title": "Anesthetic efficacy of the supplemental intraosseous injection of 3% mepivacaine in irreversible pulpitis.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "9481968",
+   "year": "1997",
+   "title": "Peripheral opioid analgesia in teeth with symptomatic inflamed pulps.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "10483386",
+   "year": "1998",
+   "title": "Anesthetic efficacy of a repeated intraosseous injection given 30 min following an inferior alveolar nerve block/intraosseous injection.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "9693577",
+   "year": "1998",
+   "title": "Anesthetic efficacy of the supplemental intraosseous injection of 2% lidocaine with 1:100,000 epinephrine in irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": true,
+   "level_key": "level3a",
+   "score": 30.9,
+   "is_curated": false,
+   "classic_tier": false,
+   "sample_size": null,
+   "followup_months": null,
+   "citations": 0,
+   "abstract_chars": 1347,
+   "has_retraction": false,
+   "breakdown": {
+    "design": 17.5,
+    "sample": 5.0,
+    "recency": 1.0,
+    "citations": 1.0,
+    "followup": 3.3,
+    "impact_factor": 0.0
+   }
+  },
+  {
+   "pmid": "9830641",
+   "year": "1998",
+   "title": "Anesthetic efficacy of the intraosseous injection of 0.9 mL of 2% lidocaine (1:100,000 epinephrine) to augment an inferior alveolar nerve block.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "10102587",
+   "year": "1999",
+   "title": "Anesthetic efficacy and heart rate effects of the supplemental intraosseous injection of 2% mepivacaine with 1:20,000 levonordefrin.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "10348512",
+   "year": "1999",
+   "title": "Anesthetic efficacy of the mylohyoid nerve block and combination inferior alveolar nerve block/mylohyoid nerve block.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "10397653",
+   "year": "1999",
+   "title": "The use of ultrasound for guiding needle placement for inferior alveolar nerve blocks.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "10630947",
+   "year": "2000",
+   "title": "Anesthetic efficacy and heart rate effects of the intraosseous injection of 3% mepivacaine after an inferior alveolar nerve block.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "10760722",
+   "year": "2000",
+   "title": "Anesthetic efficacy and heart rate effects of the intraosseous injection of 1.5% etidocaine (1:200,000 epinephrine) after an inferior alveolar nerve block.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "11077389",
+   "year": "2000",
+   "title": "Effect of systemic penicillin on pain in untreated irreversible pulpitis.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "11469290",
+   "year": "2000",
+   "title": "Pain reduction in untreated irreversible pulpitis using an intraosseous injection of Depo-Medrol.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "11174585",
+   "year": "2001",
+   "title": "Controlled injection pressure.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "11312459",
+   "year": "2001",
+   "title": "Anesthetic efficacy of ropivacaine in maxillary anterior infiltration.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "11495405",
+   "year": "2001",
+   "title": "Anesthetic efficacy of a combination of hyaluronidase and lidocaine with epinephrine in inferior alveolar nerve blocks.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "11505257",
+   "year": "2001",
+   "title": "Anesthetic efficacy of unilateral and bilateral inferior alveolar nerve blocks to determine cross innervation in anterior teeth.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "11515948",
+   "year": "2001",
+   "title": "Anesthetic efficacy of infiltrations in mandibular anterior teeth.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "15384292",
+   "year": "2002",
+   "title": "Anesthetic efficacy of an infiltration in mandibular anterior teeth following an inferior alveolar nerve block.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "12701778",
+   "year": "2003",
+   "title": "Effect of an intraosseous injection of depo-medrol on pulpal concentrations of PGE2 and IL-8 in untreated irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "12931095",
+   "year": "2003",
+   "title": "Comparison of preoperative pain and medication use in emergency patients presenting with irreversible pulpitis or teeth with necrotic pulps.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "14558586",
+   "year": "2003",
+   "title": "A comparison of injection pain and postoperative pain of two intraosseous anesthetic techniques.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "14606783",
+   "year": "2003",
+   "title": "The significance of needle deflection in success of the inferior alveolar nerve block in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "14651278",
+   "year": "2003",
+   "title": "Anesthetic efficacy of the supplemental X-tip intraosseous injection in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "14959903",
+   "year": "2003",
+   "title": "Effectiveness of 20% benzocaine as a topical anesthetic for intraoral injections.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "14970775",
+   "year": "2004",
+   "title": "Injection pain and postinjection pain of the palatal-anterior superior alveolar injection, administered with the Wand Plus system, comparing 2% lidocaine with 1:100,000 epinephrine to 3% mepivacaine.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15243483",
+   "year": "2004",
+   "title": "Injection pain and postinjection pain of the anterior middle superior alveolar injection administered with the Wand or conventional syringe.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15273637",
+   "year": "2004",
+   "title": "Anesthetic efficacy of articaine for inferior alveolar nerve blocks in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15497297",
+   "year": "2004",
+   "title": "Anesthetic efficacy of the anterior middle superior alveolar (AMSA) injection.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "15675261",
+   "year": "2004",
+   "title": "Comparison of injection pain, heart rate increase, and postinjection pain of articaine and lidocaine in a primary intraligamentary injection administered with a computer-controlled local anesthetic delivery system.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "15716846",
+   "year": "2005",
+   "title": "Efficacy of articaine and lidocaine in a primary intraligamentary injection administered with a computer-controlled local anesthetic delivery system.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15793381",
+   "year": "2005",
+   "title": "A comparison of articaine and lidocaine for inferior alveolar nerve blocks.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15851928",
+   "year": "2005",
+   "title": "Anesthetic effectiveness of the supplemental intraligamentary injection, administered with a computer-controlled local anesthetic delivery system, in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15917682",
+   "year": "2005",
+   "title": "Comparison of intraosseous and infiltration injections for venous lidocaine blood concentrations and heart rate changes after injection of 2% lidocaine with 1:100,000 epinephrine.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "15980707",
+   "year": "2005",
+   "title": "A prospective, randomized, double-blind comparison of bupivacaine and lidocaine for inferior alveolar nerve blocks.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "17055903",
+   "year": "2006",
+   "title": "Articaine for supplemental intraosseous anesthesia in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "17177591",
+   "year": "2006",
+   "title": "The effects of a 2-stage injection technique on inferior alveolar nerve block injection pain.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "17177592",
+   "year": "2006",
+   "title": "Anesthetic efficacy of lidocaine/meperidine for inferior alveolar nerve blocks.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "17185118",
+   "year": "2007",
+   "title": "Anesthetic efficacy of lidocaine/meperidine for inferior alveolar nerve blocks in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "17706440",
+   "year": "2007",
+   "title": "Injection pain of the inferior alveolar nerve block in patients with irreversible pulpitis.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "17931925",
+   "year": "2007",
+   "title": "A prospective, randomized, double-blind comparison of bupivacaine and lidocaine for maxillary infiltrations.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "18085837",
+   "year": "2007",
+   "title": "Anesthetic efficacy of buccal and lingual infiltrations of lidocaine following an inferior alveolar nerve block in mandibular posterior teeth.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "18215665",
+   "year": "2008",
+   "title": "Anesthetic efficacy of 1.8 mL and 3.6 mL of 2% lidocaine with 1:100,000 epinephrine for maxillary infiltrations.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "18215666",
+   "year": "2008",
+   "title": "Anesthetic efficacy of a repeated intraosseous injection following a primary intraosseous injection.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "18327970",
+   "year": "2008",
+   "title": "Heart rate effects of intraosseous injections using slow and fast rates of anesthetic solution deposition.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "18358883",
+   "year": "2008",
+   "title": "A prospective, randomized, double-blind comparison of articaine and lidocaine for maxillary infiltrations.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "18793913",
+   "year": "2008",
+   "title": "Effect of sublingual triazolam on the success of inferior alveolar nerve block in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "18928837",
+   "year": "2008",
+   "title": "Comparison of the anesthetic efficacy of the conventional inferior alveolar, Gow-Gates, and Vazirani-Akinosi techniques.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "19026871",
+   "year": "2008",
+   "title": "The anesthetic efficacy of diphenhydramine and the combination diphenhydramine/lidocaine for the inferior alveolar nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "19249592",
+   "year": "2009",
+   "title": "Articaine for supplemental buccal mandibular infiltration anesthesia in patients with irreversible pulpitis when the inferior alveolar nerve block fails.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "19720211",
+   "year": "2009",
+   "title": "A prospective, randomized, double-blind comparison of 2% lidocaine with 1:100,000 and 1:50,000 epinephrine and 3% mepivacaine for maxillary infiltrations.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "19801226",
+   "year": "2009",
+   "title": "A prospective, randomized comparison of the anesthetic efficacy of the greater palatine and high tuberosity second division nerve blocks.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "19840637",
+   "year": "2009",
+   "title": "A prospective, randomized, double-blind comparison of the anesthetic efficacy of two percent lidocaine with 1:100,000 and 1:50,000 epinephrine and three percent mepivacaine in the intraoral, infraorbital nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "20020793",
+   "year": "2009",
+   "title": "The efficacy of a repeated buccal infiltration of articaine in prolonging duration of pulpal anesthesia in the mandibular first molar.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "20171351",
+   "year": "2010",
+   "title": "Effect of preoperative ibuprofen on the success of the inferior alveolar nerve block in patients with irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": true,
+   "level_key": "level1",
+   "score": 50.4,
+   "is_curated": false,
+   "classic_tier": false,
+   "sample_size": null,
+   "followup_months": null,
+   "citations": 25,
+   "abstract_chars": 1183,
+   "has_retraction": false,
+   "breakdown": {
+    "design": 28.0,
+    "sample": 5.0,
+    "recency": 4.0,
+    "citations": 5.0,
+    "followup": 3.3,
+    "impact_factor": 0.0
+   }
+  },
+  {
+   "pmid": "20171357",
+   "year": "2010",
+   "title": "A prospective, randomized single-blind study of the anesthetic efficacy of the inferior alveolar nerve block administered with a peripheral nerve stimulator.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "20307730",
+   "year": "2010",
+   "title": "Anesthetic efficacy of 1.8 milliliters and 3.6 milliliters of 2% lidocaine with 1:100,000 epinephrine for posterior superior alveolar nerve blocks.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "20478446",
+   "year": "2010",
+   "title": "Anesthetic efficacy of articaine for combination labial plus lingual infiltrations versus labial infiltration in the mandibular lateral incisor.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "20553134",
+   "year": "2010",
+   "title": "A prospective, randomized, double-blind comparison of 2% lidocaine with 1:100,000 epinephrine, 4% prilocaine with 1:200,000 epinephrine, and 4% prilocaine for maxillary infiltrations.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "20553136",
+   "year": "2010",
+   "title": "A prospective, randomized, double-blind study of the anesthetic efficacy of sodium bicarbonate buffered 2% lidocaine with 1:100,000 epinephrine in inferior alveolar nerve blocks.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "20728709",
+   "year": "2010",
+   "title": "Prospective, randomized single-blind study of the anesthetic efficacy of 1.8 and 3.6 milliliters of 2% lidocaine with 1:50,000 epinephrine for inferior alveolar nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "20951285",
+   "year": "2010",
+   "title": "A prospective, randomized, double-blind comparison of the anesthetic efficacy of two percent lidocaine with 1:100,000 epinephrine and three percent mepivacaine in the maxillary high tuberosity second division nerve block.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21174567",
+   "year": "2010",
+   "title": "A prospective, randomized, double-blind comparison of 2% mepivacaine with 1\u2009:\u200a20,000 levonordefrin versus 2% lidocaine with 1\u2009:\u2009100,000 epinephrine for maxillary infiltrations.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "21419288",
+   "year": "2011",
+   "title": "Anesthetic efficacy of 4% Articaine with 1:100,000 epinephrine versus 4% articaine with 1:200,000 epinephrine as a primary buccal infiltration in the mandibular first molar.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21419290",
+   "year": "2011",
+   "title": "Anesthetic efficacy of a combination palatal and buccal infiltration of the maxillary first molar.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21458333",
+   "year": "2011",
+   "title": "Long buccal nerve block injection pain in patients with irreversible pulpitis.",
+   "journal": "Oral Surg Oral Med Oral Pathol Oral Radiol Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21496653",
+   "year": "2011",
+   "title": "Anesthetic efficacy of 1.8 mL versus 3.6 mL of 4% articaine with 1:100,000 epinephrine as a primary buccal infiltration of the mandibular first molar.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21496654",
+   "year": "2011",
+   "title": "Effect of combination of preoperative ibuprofen/acetaminophen on the success of the inferior alveolar nerve block in patients with symptomatic irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21689548",
+   "year": "2011",
+   "title": "A prospective, randomized single-blind study of the anesthetic efficacy of frequency-dependent conduction blockade of the inferior alveolar nerve.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "21924181",
+   "year": "2011",
+   "title": "Reversal of soft-tissue anesthesia in asymptomatic endodontic patients: a preliminary, prospective, randomized, single-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "22099891",
+   "year": "2011",
+   "title": "Efficacy of Ibuprofen and ibuprofen/acetaminophen on postoperative pain in symptomatic patients with a pulpal diagnosis of necrosis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "22168805",
+   "year": "2011",
+   "title": "Anesthetic efficacy of combinations of 0.5 m mannitol and lidocaine with epinephrine in inferior alveolar nerve blocks: a prospective randomized, single-blind study.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "22515880",
+   "year": "2012",
+   "title": "Effect of nitrous oxide on the efficacy of the inferior alveolar nerve block in patients with symptomatic irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "22515886",
+   "year": "2012",
+   "title": "Anesthetic efficacy of combinations of 0.5 mol/L mannitol and lidocaine with epinephrine for inferior alveolar nerve blocks in patients with symptomatic irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "23146638",
+   "year": "2012",
+   "title": "Anesthetic efficacy of the inferior alveolar nerve block in red-haired women.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "23402500",
+   "year": "2013",
+   "title": "Anesthetic efficacy of a primary articaine infiltration and a repeat articaine infiltration in the incisive/mental nerve region of mandibular premolars: a prospective, randomized, single-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "23506277",
+   "year": "2013",
+   "title": "Anesthetic efficacy of a combination of 0.5 M mannitol plus 127.2 mg of lidocaine with 50 \u03bcg epinephrine in inferior alveolar nerve blocks: a prospective randomized, single-blind study.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "23522530",
+   "year": "2013",
+   "title": "Reversal of pulpal and soft tissue anesthesia by using phentolamine: a prospective randomized, single-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "23880260",
+   "year": "2013",
+   "title": "Is a volume of 3.6 mL better than 1.8 mL for inferior alveolar nerve blocks in patients with symptomatic irreversible pulpitis?",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "24139250",
+   "year": "2013",
+   "title": "Buffered lidocaine for incision and drainage: a prospective, randomized double-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "24423417",
+   "year": "2013",
+   "title": "Anesthetic efficacy of a combination of 0.9 M mannitol plus 68.8 mg of lidocaine with 50 \u03bcg epinephrine in inferior alveolar nerve blocks: a prospective randomized, single blind study.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "24331983",
+   "year": "2014",
+   "title": "Effect of preoperative acetaminophen/hydrocodone on the efficacy of the inferior alveolar nerve block in patients with symptomatic irreversible pulpitis: a prospective, randomized, double-blind, placebo-controlled study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "24932979",
+   "year": "2014",
+   "title": "Anesthetic efficacy of a combination of 0.5 M mannitol plus 36.8 mg of lidocaine with 18.4 \u03bcg epinephrine in maxillary infiltration: a prospective, randomized, single-blind study.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "25146009",
+   "year": "2014",
+   "title": "Does the combination of 3% mepivacaine plain plus 2% lidocaine with epinephrine improve anesthesia and reduce the pain of anesthetic injection for the inferior alveolar nerve block? A prospective, randomized, double-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "25218523",
+   "year": "2014",
+   "title": "Anesthetic comparisons of 4% concentrations of articaine, lidocaine, and prilocaine as primary buccal infiltrations of the mandibular first molar: a prospective randomized, double-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "25442725",
+   "year": "2014",
+   "title": "Does acetaminophen/hydrocodone affect cold pulpal testing in patients with symptomatic irreversible pulpitis? A prospective, randomized, double-blind, placebo-controlled study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "25433970",
+   "year": "2015",
+   "title": "Effect of operator and subject gender on injection pain: a randomized double-blind study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "25442724",
+   "year": "2015",
+   "title": "Evaluation of the Gow-Gates and Vazirani-Akinosi techniques in patients with symptomatic irreversible pulpitis: a prospective randomized study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "25770038",
+   "year": "2015",
+   "title": "Incidence of missed inferior alveolar nerve blocks in vital asymptomatic subjects and in patients with symptomatic irreversible pulpitis.",
+   "journal": "J Endod",
+   "in_library": true,
+   "level_key": "level3a",
+   "score": 52.0,
+   "is_curated": false,
+   "classic_tier": false,
+   "sample_size": 3169,
+   "followup_months": null,
+   "citations": 6,
+   "abstract_chars": 1729,
+   "has_retraction": false,
+   "breakdown": {
+    "design": 17.5,
+    "sample": 15.0,
+    "recency": 8.0,
+    "citations": 3.0,
+    "followup": 3.3,
+    "impact_factor": 0.0
+   }
+  },
+  {
+   "pmid": "25841959",
+   "year": "2015",
+   "title": "Effect of Buffered 4% Lidocaine on the Success of the Inferior Alveolar Nerve Block in Patients with Symptomatic Irreversible Pulpitis: A Prospective, Randomized, Double-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "26095381",
+   "year": "2015",
+   "title": "Buffered 4% Articaine as a Primary Buccal Infiltration of\u00a0the\u00a0Mandibular First Molar: A Prospective, Randomized, Double-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "26253800",
+   "year": "2015",
+   "title": "Efficacy of a Buffered 4% Lidocaine Formulation for\u00a0Incision\u00a0and Drainage: A Prospective, Randomized, Double-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "26806591",
+   "year": "2016",
+   "title": "What is the Effect of No Endodontic Debridement on Postoperative Pain for Symptomatic Teeth with Pulpal Necrosis?",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "26831048",
+   "year": "2016",
+   "title": "Anesthetic Success of an Inferior Alveolar Nerve Block and Supplemental Articaine Buccal Infiltration for Molars and Premolars in Patients with Symptomatic Irreversible Pulpitis.",
+   "journal": "J Endod",
+   "in_library": true,
+   "level_key": "level3b",
+   "score": 51.8,
+   "is_curated": false,
+   "classic_tier": false,
+   "sample_size": 204,
+   "followup_months": null,
+   "citations": 32,
+   "abstract_chars": 1702,
+   "has_retraction": false,
+   "breakdown": {
+    "design": 12.2,
+    "sample": 15.0,
+    "recency": 8.0,
+    "citations": 8.0,
+    "followup": 3.3,
+    "impact_factor": 0.0
+   }
+  },
+  {
+   "pmid": "27461787",
+   "year": "2016",
+   "title": "Does Liposomal Bupivacaine (Exparel) Significantly Reduce Postoperative Pain/Numbness in Symptomatic Teeth with\u00a0a\u00a0Diagnosis of Necrosis? A Prospective, Randomized, Double-blind Trial.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "27663614",
+   "year": "2016",
+   "title": "How Effective Is Supplemental Intraseptal Anesthesia in Patients with Symptomatic Irreversible Pulpitis?",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "27769675",
+   "year": "2016",
+   "title": "Pain Reduction in Untreated Symptomatic Irreversible Pulpitis Using Liposomal Bupivacaine (Exparel): A Prospective, Randomized, Double-blind Trial.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "29200372",
+   "year": "2017",
+   "title": "Anesthetic Efficacy of Articaine and Lidocaine in a Primary Intraseptal Injection: A Prospective, Randomized Double-Blind Study.",
+   "journal": "Anesth Prog",
+   "in_library": true,
+   "level_key": "level1",
+   "score": 62.6,
+   "is_curated": false,
+   "classic_tier": false,
+   "sample_size": 100,
+   "followup_months": null,
+   "citations": 9,
+   "abstract_chars": 1383,
+   "has_retraction": false,
+   "breakdown": {
+    "design": 28.0,
+    "sample": 12.0,
+    "recency": 8.0,
+    "citations": 5.0,
+    "followup": 3.3,
+    "impact_factor": 0.0
+   }
+  },
+  {
+   "pmid": "29153730",
+   "year": "2018",
+   "title": "Effect of a Combination of Intranasal Ketorolac and Nitrous Oxide on the Success of the Inferior Alveolar Nerve Block in Patients with Symptomatic Irreversible Pulpitis: A Prospective, Randomized, Double-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "29208402",
+   "year": "2018",
+   "title": "Anesthetic Efficacy of Supine and Upright Positions for the Inferior Alveolar Nerve Block: A Prospective, Randomized Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "29459150",
+   "year": "2018",
+   "title": "Anesthetic Efficacy of a Combination of 4% Prilocaine/2% Lidocaine with Epinephrine for the Inferior Alveolar Nerve Block: A Prospective, Randomized, Double-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "29506886",
+   "year": "2018",
+   "title": "Is Eye Color Related to Dental Injection Pain? A Prospective, Randomized, Single-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "30715932",
+   "year": "2018",
+   "title": "Inferior Alveolar Nerve Block Injection Pain Using a Computer-Controlled Local Anesthetic Device (CCLAD): A Prospective, Randomized Study.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "30711184",
+   "year": "2019",
+   "title": "Ibuprofen and Acetaminophen Versus Intranasal Ketorolac (Sprix) in an Untreated Endodontic Pain Model: A Randomized, Double-blind Investigation.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "30803532",
+   "year": "2019",
+   "title": "Anesthetic Efficacy of Intranasal 3% Tetracaine plus 0.05% Oxymetazoline (Kovanaze) in Maxillary Teeth.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "30883235",
+   "year": "2019",
+   "title": "Pulpal Anesthesia of Adjacent Teeth Following Infiltration of 2% Lidocaine With 1:100,000 Epinephrine in the Maxillary Lateral Incisor and First Molar.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "31891295",
+   "year": "2019",
+   "title": "An Evaluation of Ibuprofen Versus Ibuprofen/Acetaminophen for Postoperative Endodontic Pain in Patients With Symptomatic Irreversible Pulpitis and Symptomatic Apical Periodontitis.",
+   "journal": "Anesth Prog",
+   "in_library": false
+  },
+  {
+   "pmid": "32763435",
+   "year": "2020",
+   "title": "Maxillary Lateral Incisor Injection Pain Using the Dentapen Electronic Syringe.",
+   "journal": "J Endod",
+   "in_library": false
+  },
+  {
+   "pmid": "33387550",
+   "year": "2021",
+   "title": "Anesthetic Success Using Nitrous Oxide and a Combination of Lidocaine/Clonidine for the Inferior Alveolar Nerve Block and the Effects on Blood Pressure and Pulse in Patients with Symptomatic Irreversible Pulpitis: A Prospective, Randomized, Double-blind Study.",
+   "journal": "J Endod",
+   "in_library": false
+  }
+ ]
+}

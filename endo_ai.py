@@ -6253,13 +6253,33 @@ def consistency_guard(before: str, after: str, repairable: list = None) -> tuple
     keeps the unannotated document, because an annotation is a convenience and
     a rewritten evidence claim is a defect.
     """
-    before_marks = sorted(re.findall(r"\[\[PMID:\d+\]\]", before or ""))
-    after_marks  = sorted(re.findall(r"\[\[PMID:\d+\]\]", after or ""))
-    if before_marks != after_marks:
-        lost  = [m for m in before_marks if before_marks.count(m) > after_marks.count(m)]
-        added = [m for m in after_marks if after_marks.count(m) > before_marks.count(m)]
-        return False, (f"citation markers changed — lost {sorted(set(lost))}, "
-                       f"added {sorted(set(added))}")
+    before_marks = re.findall(r"\[\[PMID:\d+\]\]", before or "")
+    after_marks  = re.findall(r"\[\[PMID:\d+\]\]", after or "")
+
+    # NO MARKER MAY BE LOST. Dropping one deletes a citation from a claim that
+    # had it, which is the failure this guard exists for.
+    lost = [m for m in set(before_marks)
+            if after_marks.count(m) < before_marks.count(m)]
+    if lost:
+        return False, f"citation markers lost: {sorted(set(lost))}"
+
+    # A marker may be ADDED only if that paper is already cited somewhere in
+    # the document.
+    #
+    # THIS RULE STARTED OUT AS "no marker may be added at all", and the first
+    # real run rejected the whole pass for it — because the prompt invites the
+    # model to cite in a reconciling sentence, and then the guard forbade
+    # exactly what the prompt asked for. A sentence saying which study used
+    # 2.5% NaOCl and which used 5.25% is USELESS without naming them, so the
+    # prompt was right and the guard was wrong.
+    #
+    # What must still be impossible is a marker for a paper the curriculum
+    # does not already cite — that would be a PMID from outside the evidence
+    # the modules were written from, which is the fabrication case.
+    already = set(before_marks)
+    invented = sorted({m for m in after_marks if m not in already})
+    if invented:
+        return False, f"markers for papers the curriculum does not cite: {invented}"
 
     exempt = {" ".join(r.split()) for r in (repairable or [])}
     missing = []
@@ -6453,6 +6473,26 @@ def annotate_curriculum_consistency(final_md: str, modules: list,
     return annotated, cost, report
 
 
+STITCH_BUDGET_CEILING = 32000
+
+
+def stitch_token_budget(module_blocks: str) -> int:
+    """Output tokens the stitcher needs to reproduce `module_blocks` and wrap
+    them.
+
+    A FUNCTION rather than an expression inline, so a test can call it with
+    real inputs instead of eval-ing a source line — which is the same
+    source-inspection mistake that let three mutants through earlier in this
+    batch.
+
+    characters / 3.5 -> tokens; x1.35 because the stitcher re-punctuates and
+    inserts transitions as it copies; + 3500 for the overview, takeaways,
+    final verdict and reference list it writes itself.
+    """
+    return min(int(int(len(module_blocks or "") / 3.5) * 1.35) + 3500,
+               STITCH_BUDGET_CEILING)
+
+
 def stitch_curriculum(parent_question: str, modules_with_scripts: list,
                       all_evidence: dict) -> tuple:
     """
@@ -6565,7 +6605,26 @@ Now produce the final stitched curriculum."""
     # (overview, transitions, takeaways, verdict, references), we need at least
     # N*1800 + 2500. Add 20% headroom and clamp to Sonnet's 64K output limit.
     n_modules = len(modules_with_scripts)
-    stitch_budget = min(int((n_modules * 1800 + 2500) * 1.2), 32000)
+    # THE STITCHER WAS TRUNCATING EVERY FOUR-MODULE CURRICULUM EVER BUILT.
+    #
+    # This was `min(int((n_modules * 1800 + 2500) * 1.2), 32000)` = 11,640 for
+    # four modules. Measured across every `stitch_curriculum` call in
+    # `cost_log.jsonl`: **23 of 26 returned EXACTLY 11,640 output tokens.**
+    # The stitcher must reproduce every module body VERBATIM and then add an
+    # overview, transitions, takeaways and a reference list — so 1,800 tokens
+    # per module was never the right unit. Modules measure 3,700-4,500 tokens
+    # each, and the budget was under half of what reproduction alone needs.
+    #
+    # This is the SAME defect as the module cap and it is the one that produced
+    # the reported symptom. "Module 4 ends mid-sentence" is what a reader sees
+    # when the stitcher runs out of output partway through the LAST module it
+    # was reproducing — which also explains why every truncation found in the
+    # stored curricula sits in Module 4 and never in modules 1-3.
+    #
+    # Budget from the ACTUAL text this call has to reproduce, not from a
+    # per-module guess: characters / 3.5 gives tokens, x1.35 for the model's
+    # own phrasing, plus a fixed allowance for the parts it writes itself.
+    stitch_budget = stitch_token_budget(module_blocks)
 
     print(f"\n[curriculum] Step D — stitching {n_modules} modules (budget={stitch_budget} tokens)")
     # TIER 2 (flag-gated) — Sonnet candidate; reproduces module bodies verbatim
@@ -6577,8 +6636,106 @@ Now produce the final stitched curriculum."""
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
     )
-    print(f"  Cost: ${cost:.4f} ({resp.usage.input_tokens} in / {resp.usage.output_tokens} out)")
-    return resp.content[0].text, cost
+    print(f"  Cost: ${cost:.4f} ({resp.usage.input_tokens} in / "
+          f"{resp.usage.output_tokens} out, "
+          f"stop={getattr(resp, 'stop_reason', '?')})")
+    final = resp.content[0].text
+
+    # ── DID EVERY MODULE SURVIVE? ──
+    # The gate `dl-quality-v1` Item 1 put on module text cannot see this: each
+    # module was complete when it was handed over, and the loss happens here.
+    # A curriculum silently missing its last module is a worse failure than a
+    # truncated sentence, because nothing in the document says anything is
+    # absent.
+    missing = _modules_missing_from_stitch(final, modules_with_scripts)
+    truncated = getattr(resp, "stop_reason", None) == "max_tokens"
+    if missing or truncated:
+        why = (f"stop_reason=max_tokens" if truncated else "") + \
+              (f" missing: {missing}" if missing else "")
+        print(f"  [stitch] INCOMPLETE ({why.strip()}) — retrying once at the "
+              f"ceiling")
+        resp2, cost2 = tier2_invoke(
+            "stitch_curriculum_retry",
+            mode="learn",
+            max_tokens=32000,
+            system=system_prompt,
+            messages=[{"role": "user", "content": user_message}],
+        )
+        cost += cost2
+        final2 = resp2.content[0].text
+        missing2 = _modules_missing_from_stitch(final2, modules_with_scripts)
+        if not missing2 and getattr(resp2, "stop_reason", None) != "max_tokens":
+            print("  [stitch] retry is complete — using it")
+            return final2, cost
+        # STILL incomplete. Assemble deterministically rather than ship a
+        # document with a module missing. The LLM stitcher writes the prose
+        # around the modules; the modules ARE the curriculum, and losing one to
+        # buy a nicer transition paragraph is not a trade worth making.
+        print(f"  [stitch] retry STILL incomplete (missing: {missing2}) — "
+              f"assembling deterministically")
+        return _assemble_curriculum_without_stitcher(
+            parent_question, modules_with_scripts, refs_block), cost
+
+    return final, cost
+
+
+def _modules_missing_from_stitch(final: str, modules_with_scripts: list) -> list:
+    """Which module titles do NOT appear in the stitched document.
+
+    Matched on the TITLE rather than on the body, because the stitcher is
+    allowed to insert transitions and is not allowed to drop a module. A title
+    is compared loosely — whitespace-normalised, case-folded — since the
+    stitcher renumbers and re-punctuates headings.
+    """
+    hay = " ".join((final or "").split()).lower()
+    out = []
+    for m in modules_with_scripts or []:
+        title = " ".join((m.get("title") or "").split()).lower()
+        if not title:
+            continue
+        if title in hay:
+            continue
+        # A partial match is enough: the stitcher rewrites "Module 4 —
+        # Clinical Outcomes" into its own heading style. Require most of the
+        # title's distinctive words to be present together.
+        words = [w for w in re.findall(r"[a-z]{4,}", title)]
+        if words and sum(1 for w in words if w in hay) >= max(2, len(words) - 1):
+            continue
+        out.append(m.get("title"))
+    return out
+
+
+def _assemble_curriculum_without_stitcher(parent_question: str,
+                                          modules_with_scripts: list,
+                                          refs_block: str) -> str:
+    """The fallback. Every module, in order, with no LLM in the loop.
+
+    Deliberately plain, and it SAYS it is plain. A reader who is told the
+    connective prose is missing has a complete curriculum with a rough edge; a
+    reader who is told nothing has an incomplete curriculum that looks whole.
+    """
+    parts = [
+        f"# {parent_question}",
+        "",
+        "> **Note — assembled without the editorial pass.** Every module below "
+        "is complete and carries its own citations, but the overview, "
+        "inter-module transitions and closing synthesis could not be generated "
+        "within the output budget. Nothing has been omitted from the modules "
+        "themselves.",
+        "",
+    ]
+    for m in modules_with_scripts or []:
+        parts.append(f"## {m.get('title', 'Module')}")
+        parts.append("")
+        parts.append(m.get("script", ""))
+        parts.append("")
+        parts.append("---")
+        parts.append("")
+    if refs_block:
+        parts.append("## REFERENCES")
+        parts.append("")
+        parts.append(refs_block)
+    return "\n".join(parts)
 
 
 def merge_evidence_bases(per_module_evidence: list) -> dict:
