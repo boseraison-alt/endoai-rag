@@ -47,14 +47,24 @@ UNCHECKED_FOOTER = re.compile(
 
 
 def _modules(text: str) -> list:
-    """(heading, body) for each module in a stitched curriculum."""
+    """(heading, body) for each module in a stitched curriculum.
+
+    Splits on TOP-LEVEL `## ` headings, not on `---`. The first version cut
+    each body at the first horizontal rule and so never saw
+    `### 4a. Procedural Protocol` — which is where the anesthesia
+    curriculum's mid-sentence cut actually lives ("…19.35 mm from the"). A
+    scan that stops before the damage reports a clean document.
+    """
     body = text.split("## Citation Support by Module")[0]
-    parts = re.split(r"^(## Module[^\n]*)$", body, flags=re.M)
+    parts = re.split("^(## [^" + chr(92) + "n]*)$", body, flags=re.M)
     out = []
     for i in range(1, len(parts), 2):
-        seg = parts[i + 1].split("\n---\n")[0]
+        head = parts[i].strip()
+        if not head.startswith("## Module"):
+            continue
+        seg = parts[i + 1]
         if len(seg.split()) >= 40:
-            out.append((parts[i].strip(), seg))
+            out.append((head, seg))
     return out
 
 

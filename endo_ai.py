@@ -5373,6 +5373,27 @@ CURRICULUM_WORDS_PER_MODULE  = 650    # ~4 min at 150 wpm
 CURRICULUM_INTRO_OUTRO_WORDS = 600    # intro + transitions + closing + takeaways
 CURRICULUM_TOTAL_TARGET_MIN  = 20     # density-over-duration cap
 
+# 3200 -> 6000. MEASURED, not guessed: of 190 `write_curriculum_module` calls
+# ever logged, 164 (86%) returned EXACTLY 3,200 output tokens. The median
+# output length across the whole history of the feature was the cap itself,
+# which is the signature of a value that was never large enough for the
+# content the prompt asks for. Every module of the 2026-09-01 laser curriculum
+# hit it, and both retries did too.
+#
+# The cap is NOT the only fix and must not be treated as one. A cap can always
+# be reached, and until this batch nothing looked at `stop_reason` — so the
+# durable guarantee is `detect_module_truncation` plus the regenerate-once
+# gate, and this number only makes that gate fire rarely instead of always.
+#
+# SEPARATELY, AND NOT FIXED HERE: the modules were already running ~1,500
+# words against a stated target of 650 (measured on the laser fixture: 1497 /
+# 1489 / 1548 / 939, the last one being the truncated one). The 650-word
+# target has been fiction for the life of the feature, and raising the cap
+# does not make it true. Reported in OVERNIGHT_REPORT_7.md rather than
+# silently corrected, because changing the target changes the curriculum's
+# length contract and belongs in its own measured piece of work.
+CURRICULUM_MODULE_MAX_TOKENS = 6000
+
 _MODULE_LINE_RE = re.compile(
     r"^\s*(?:MODULE\s*:\s*)?(.+?)\s*\|\|\|\s*(.+?)\s*$", re.MULTILINE)
 
@@ -5550,6 +5571,172 @@ def _module_not_generated_block(title: str, n_papers: int, query: str = "") -> s
         f"literature, or that it is described using terminology the search did not "
         f"cover. Consider narrowing the parent question or consulting a specialist "
         f"review directly.\n"
+        + (f">\n> *Search used:* `{query[:220]}`\n" if query else "")
+    )
+
+
+# ── TRUNCATION ────────────────────────────────────────────
+#
+# MEASURED BEFORE WRITING ANY OF THIS. Of 190 `write_curriculum_module` calls
+# ever logged, **164 (86%) stopped at exactly `max_tokens`** — the median
+# output length across the whole history of the feature IS the cap. On the
+# laser curriculum of 2026-09-01 13:58 every one of the four modules and both
+# retries returned exactly 3,200 output tokens, and two of them are visibly
+# cut: Module 4 ends "…irrigant extrusion when tips are not", and Module 1's
+# materials table ends mid-cell at "Wavelength 630".
+#
+# Nothing looked. `stop_reason` appeared once in this file, inside a comment.
+# That is bug class (d) — a check that fails open and shows nothing — in the
+# place it costs the most, because a curriculum is the output a clinician
+# reads end to end.
+#
+# TWO SIGNALS, deliberately, because they are available in different places:
+#
+#   `stop_reason == "max_tokens"` is ground truth and is checked at the call
+#   site, where a regeneration is possible.
+#
+#   `detect_module_truncation` reads the TEXT, and it is what guards the
+#   stitcher — where the message object is long gone and, worse, where the
+#   evidence says the damage gets cosmetically repaired. The stitcher is an
+#   LLM pass instructed to reproduce module bodies verbatim; the truncated
+#   table row reached the final document as `| **Laser — Diode (aPDT)** |
+#   Wavelength 630 |`, with a closing pipe the module author never wrote. A
+#   structural check that ran only after stitching would have called that row
+#   well-formed.
+
+# Function words that cannot end a finished clinical sentence. This list is
+# the precision half of the mid-sentence rule: a paragraph ending "when tips
+# are not" is unambiguously cut, while one ending "…reduces bacterial load"
+# is not, and no amount of punctuation-counting separates those two.
+_TRUNCATION_TAIL_WORDS = frozenset("""
+a an the and or but nor for so yet of in on at to from by with without within
+into onto upon over under between among across through during before after
+above below near about against toward towards per via than then when while
+where which who whom whose that this these those is are was were be been being
+am has have had do does did can could may might must shall should will would
+if unless until since because although though whereas however therefore thus
+hence moreover furthermore additionally also both either neither each every
+any some most more less least such as well not no nor only just even still
+""".split())
+
+_TABLE_ROW_LINE = re.compile(r"^\s*\|.*$")
+_HRULE_RE       = re.compile(r"^[ 	]*(?:-{3,}|\*{3,}|_{3,})[ 	]*$")
+_LIST_MARKER    = re.compile(r"^\s*(?:[-•+*]|\d{1,2}[.)])\s+")
+# A finished line ends in terminal punctuation, a closing delimiter, or the
+# end of a citation marker. `:` counts — a module legitimately ends a lead-in
+# line with a colon before a list.
+_FINISHED_TAIL  = re.compile(r"""[.!?:;"'\)\]»…]\s*$|\]\]\s*$|\*\*\s*$|\|\s*$""")
+
+
+def _table_cell_count(line: str) -> int:
+    """Cells in a markdown table row, ignoring the outer pipes."""
+    s = line.strip()
+    if s.startswith("|"):
+        s = s[1:]
+    if s.endswith("|"):
+        s = s[:-1]
+    return len(s.split("|"))
+
+
+def detect_module_truncation(text: str) -> dict:
+    """Was this module cut off mid-thought?
+
+    Returns {"truncated": bool, "reason": str|None, "tail": str}.
+
+    CONSERVATIVE BY CONSTRUCTION. A false positive here replaces a real module
+    with a "module not generated" notice, which is a worse outcome than the
+    truncation it is trying to prevent — so every rule below fires only on
+    something a finished module cannot contain: an unclosed citation marker, a
+    table row with fewer cells than its own header, or a paragraph whose last
+    word is a conjunction or a preposition.
+    """
+    out = {"truncated": False, "reason": None, "tail": ""}
+    if not (text or "").strip():
+        return {"truncated": True, "reason": "empty module", "tail": ""}
+
+    lines = [l for l in text.rstrip().split("\n")]
+    # A trailing horizontal rule is a SEPARATOR, not content, and treating
+    # it as the last line hides the very thing this function looks for: the
+    # anesthesia curriculum's Module 4 ends '...19.35 mm from the' followed
+    # by a blank line and `---`, and the first version of this scan called
+    # it finished because `---` holds no words to inspect.
+    non_empty = [l for l in lines
+                 if l.strip() and not _HRULE_RE.match(l)]
+    if not non_empty:
+        return {"truncated": True, "reason": "no content", "tail": ""}
+    last = non_empty[-1]
+    out["tail"] = last.strip()[-80:]
+
+    # 1. Mid-citation. A marker opened and never closed is the one shape the
+    #    renderer cannot degrade gracefully: `[[PMID:412` is not a citation,
+    #    it is three characters of a number the reader cannot look up.
+    if text.count("[[") != text.count("]]"):
+        out.update(truncated=True, reason="cut mid-citation (unclosed [[PMID marker)")
+        return out
+
+    # 2. Mid-table-row. Compared against the header of the row's OWN table,
+    #    because a module may contain several tables with different widths.
+    if _TABLE_ROW_LINE.match(last):
+        header = None
+        for l in reversed(lines[:lines.index(last)] if last in lines else []):
+            if not _TABLE_ROW_LINE.match(l):
+                break
+            header = l
+        if not last.strip().endswith("|"):
+            out.update(truncated=True, reason="cut mid-table-row (no closing pipe)")
+            return out
+        if header is not None:
+            want, got = _table_cell_count(header), _table_cell_count(last)
+            if got < want:
+                out.update(truncated=True,
+                           reason=f"cut mid-table-row ({got} cells, header has {want})")
+                return out
+
+    # 3. Mid-sentence.
+    #
+    # There WAS an exemption here for headings and table rows, on the theory
+    # that they finish without punctuation by design. It was deleted after
+    # measurement: across 108 real module bodies it changed ZERO verdicts,
+    # because a table row ends in a pipe and `_FINISHED_TAIL` already accepts
+    # that, and no real heading ends on a conjunction or a preposition. A
+    # mutation run is what surfaced it — the branch could be replaced with
+    # `if False:` and every test still passed.
+    #
+    # Same precedent as the two interval patterns deleted in `case-v3` Item B:
+    # a line no input needs is the code equivalent of a test that cannot fail,
+    # and keeping it means keeping a rule nobody can check.
+    if _FINISHED_TAIL.search(last):
+        return out
+    body = re.sub(r"[\*_`\[\]]+$", "", last.strip())
+    words = re.findall(r"[A-Za-z][A-Za-z'-]*", body)
+    if words and words[-1].lower() in _TRUNCATION_TAIL_WORDS:
+        out.update(truncated=True,
+                   reason=f"cut mid-sentence (ends on \"{words[-1]}\")")
+    return out
+
+
+def _module_truncated_block(title: str, reason: str, query: str = "") -> str:
+    """Rendered in place of a module the writer could not finish.
+
+    Deliberately DIFFERENT wording from `_module_not_generated_block`. That one
+    says the literature is thin, which is a fact about the world; this one says
+    the generator failed, which is a fact about this system. Telling a reader
+    the evidence was missing when the truth is that we ran out of tokens is a
+    lie in the direction that happens to make us look better.
+    """
+    return (
+        f"## Module \u2014 {title}\n\n"
+        f"> **Module not generated \u2014 the text was cut off before it was "
+        f"finished.**\n>\n"
+        f"> The module was written and then found to be incomplete "
+        f"({reason}). It was regenerated once and was still incomplete, so it "
+        f"has been withheld rather than published with a severed sentence, "
+        f"table or citation.\n>\n"
+        f"> This is a GENERATION failure, not a gap in the literature \u2014 "
+        f"the evidence for this module was retrieved successfully. No "
+        f"protocol, parameters or decision rules are given here, because a "
+        f"clinical instruction that stops mid-sentence is more dangerous than "
+        f"an absent one.\n"
         + (f">\n> *Search used:* `{query[:220]}`\n" if query else "")
     )
 
@@ -5736,17 +5923,56 @@ Write the module content now."""
     # window is still far from the limit, so the ROUTING stands — but do not
     # quote 25K as a constraint when deciding anything else.
     convo = [{"role": "user", "content": user_message}]
-    resp = _invoke_claude(client, function_name=f"write_curriculum_module[{idx}/{total}]",
-        model=MODELS["reasoning_standard"],
-        max_tokens=3200,
-        system=system_prompt,
-        messages=convo,
-    )
-    cost = log_llm_call("write_curriculum_module", MODELS["reasoning_standard"],
-                        resp.usage, mode="learn")
-    print(f"  Cost: ${cost:.4f} ({resp.usage.input_tokens} in / {resp.usage.output_tokens} out)")
 
+    def _write(fn_name):
+        r = _invoke_claude(client, function_name=fn_name,
+            model=MODELS["reasoning_standard"],
+            max_tokens=CURRICULUM_MODULE_MAX_TOKENS,
+            system=system_prompt,
+            messages=convo,
+        )
+        c = log_llm_call("write_curriculum_module", MODELS["reasoning_standard"],
+                         r.usage, mode="learn")
+        print(f"  Cost: ${c:.4f} ({r.usage.input_tokens} in / "
+              f"{r.usage.output_tokens} out, stop={getattr(r, 'stop_reason', '?')})")
+        return r, c
+
+    resp, cost = _write(f"write_curriculum_module[{idx}/{total}]")
     answer = resp.content[0].text
+
+    # ── REGENERATE ONCE ON A CUT MODULE ──
+    # Two signals, because they are true in different ways. `stop_reason` is
+    # ground truth from the API and needs no heuristic; the text detector
+    # catches a module that stopped for another reason mid-thought, and is the
+    # same function that guards the stitcher downstream. Either one is enough.
+    #
+    # This is a REGENERATION, not a continuation. Asking the model to carry on
+    # from a severed sentence produces a module with two halves written under
+    # different amounts of remaining budget, and the join is exactly where a
+    # numeric protocol loses its citation.
+    stop = getattr(resp, "stop_reason", None)
+    cut  = detect_module_truncation(answer)
+    if stop == "max_tokens" or cut["truncated"]:
+        why = "stop_reason=max_tokens" if stop == "max_tokens" else cut["reason"]
+        print(f"  [module {idx}] TRUNCATED ({why}) — regenerating once")
+        print(f"      tail: ...{cut['tail']}")
+        resp2, cost2 = _write(f"write_curriculum_module_untruncate[{idx}/{total}]")
+        cost += cost2
+        answer2 = resp2.content[0].text
+        cut2 = detect_module_truncation(answer2)
+        if getattr(resp2, "stop_reason", None) != "max_tokens" and not cut2["truncated"]:
+            answer = answer2
+            print(f"  [module {idx}] regeneration is complete — using it")
+        elif len(answer2) > len(answer):
+            # Still cut, but further in. The caller's gate decides what
+            # happens next; handing it the longer of two cut modules is
+            # strictly better than handing it the shorter one.
+            answer = answer2
+            print(f"  [module {idx}] regeneration STILL truncated, but longer — "
+                  f"the assembly gate will decide")
+        else:
+            print(f"  [module {idx}] regeneration STILL truncated and no longer — "
+                  f"keeping the first")
 
     # Validate-and-retry — curriculum modules are dense and most prone to
     # gap-filling with statistical guesswork.
@@ -5763,7 +5989,7 @@ Write the module content now."""
         convo.append({"role": "user", "content": _build_corrective_message(result)})
         retry = _invoke_claude(client, function_name=f"write_curriculum_module_retry[{idx}/{total}]",
             model=MODELS["reasoning_standard"],
-            max_tokens=3200,
+            max_tokens=CURRICULUM_MODULE_MAX_TOKENS,
             system=system_prompt,
             messages=convo,
         )
@@ -6189,6 +6415,41 @@ def _curriculum_module_body(idx: int, mod: dict, question: str, total: int,
 
     # ── Step C — writing for this module ──
     script, cost = write_curriculum_module(mod, ev, question, idx=num, total=total)
+
+    # ── THE ASSEMBLY GATE — a cut module never reaches the stitcher ──
+    # `write_curriculum_module` has already regenerated once. If the text is
+    # still cut, it must not be stitched: the stitcher is an LLM pass told to
+    # reproduce module bodies verbatim, and on the 2026-09-01 laser curriculum
+    # it silently REPAIRED the damage into something that looks well-formed —
+    # a table row cut mid-cell arrived in the final document as
+    # `| **Laser — Diode (aPDT)** | Wavelength 630 |`, closing pipe and all.
+    # A reader cannot tell that from a row whose author meant to write 630.
+    #
+    # So the notice is emitted instead, the same one an evidence-less module
+    # gets, for the same reason: a half-written clinical protocol is worse
+    # than a stated absence.
+    cut = detect_module_truncation(script)
+    if cut["truncated"]:
+        print(f"  [module {num}] REJECTED — truncated: {cut['reason']}")
+        print(f"      tail: ...{cut['tail']}")
+        support = _support_not_run("module not generated — the text was "
+                                   f"truncated ({cut['reason']})")
+        return {
+            "index":   idx,
+            "evidence": ev,
+            "cost":    cost,
+            "elapsed": _time.perf_counter() - started,
+            "entry": {
+                **mod,
+                "script": _append_support_warnings(
+                    _module_truncated_block(
+                        title, cut["reason"], mod.get("search_query", "")),
+                    support),
+                "not_generated":    True,
+                "truncated":        True,
+                "citation_support": support,
+            },
+        }
 
     # Even with evidence present, refuse a module that specifies clinical
     # parameters while citing nothing.
