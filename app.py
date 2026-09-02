@@ -1297,7 +1297,8 @@ def build_evidence_base_with_progress(job_id: str, question: str,
 
 def build_differential_evidence(job_id: str, case_description: str,
                                 candidates: list, progress_lo: int = 15,
-                                progress_hi: int = 70) -> dict:
+                                progress_hi: int = 70,
+                                prior_pmids: list = None) -> dict:
     """One evidence base covering EVERY candidate cause (`case-v2` Item 3b).
 
     Runs the existing evidence engine once per candidate — the candidate's own
@@ -1356,7 +1357,12 @@ def build_differential_evidence(job_id: str, case_description: str,
                            f"({i + 1} of {len(candidates)})")
         print(f"\n[differential] {i + 1}/{len(candidates)} — {name}")
         try:
-            ev = build_evidence_base_with_progress(job_id, query, mode="case")
+            # `prior_pmids` goes to EVERY candidate, not once: a paper
+            # carried from the previous turn is judged against each
+            # candidate's own query, so it enters through whichever candidate
+            # it is actually relevant to. The union dedupes by pmid.
+            ev = build_evidence_base_with_progress(
+                job_id, query, mode="case", prior_pmids=prior_pmids)
         except Exception as e:
             print(f"  [differential] retrieval failed for {name!r}: {e}")
             per_candidate[name] = {**cand, "n_papers": 0, "pmids": [],
@@ -2318,12 +2324,34 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
                  ("candidate", "supports", "against", "discriminator")}
                 for c in differential])
 
+        # ── Carry the previous turn's papers as CANDIDATES ──
+        # `case-v3` Item E. A follow-up rebuilt its evidence base from
+        # scratch, so the papers the clinician was just reading about were
+        # re-found or not depending on how the combined query embedded, and
+        # the continuity between turns lived only in the prose. These seed
+        # retrieval and never bypass it: `build_evidence_base_with_progress`
+        # adds them after the routing gate has decided, and every gate then
+        # applies — the similarity floor recomputed against THIS turn's
+        # question, tier banding, and the retracted/superseded exclusions.
+        #
+        # NOT a cache. The evidence base is still rebuilt every turn and no
+        # answer is ever reused; only the candidate set carries over. Caching
+        # a turn-1 evidence base and serving it at turn 3 is the mistake
+        # `case_convs` made, and it would answer the follow-up from the wrong
+        # literature.
+        from endo_ai import case_prior_pmids
+        prior_pmids = case_prior_pmids(messages) if is_followup else []
+        if prior_pmids:
+            print(f"  [case] carrying {len(prior_pmids)} paper(s) cited by the "
+                  f"earlier turn(s) as candidates")
+
         if differential:
             # One retrieval per candidate, unioned. The candidates share the
             # library gate, so a candidate the library already covers costs no
             # PubMed traffic.
             evidence = build_differential_evidence(job_id, original_q,
-                                                   differential)
+                                                   differential,
+                                                   prior_pmids=prior_pmids)
         else:
             update_job(job_id,
                        message=("Searching literature for this question..."
@@ -2336,16 +2364,59 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
             # a case series is often the only literature on an unusual
             # presentation. Measured before this: case answers cited a median
             # of 2 papers from a median-100 evidence base.
-            evidence = build_evidence_base_with_progress(job_id, search_q,
-                                                         mode="case")
+            evidence = build_evidence_base_with_progress(
+                job_id, search_q, mode="case", prior_pmids=prior_pmids)
 
         if is_aborted(job_id):
             update_job(job_id, status="aborted", progress=100, message="Cancelled")
             return
 
+        # ── Stream, then check (`case-v3` Item E) ──
+        # A case turn's wall time is dominated by synthesis and the
+        # post-checks, not retrieval — retrieval is seconds and pennies. The
+        # clinician used to watch a spinner through all of it. Now the answer
+        # arrives as it is written and the chips say "checking…" for exactly
+        # the window between the model stopping and the guardrails finishing.
+        #
+        # The papers are published BEFORE synthesis so the [[PMID:N]] pills
+        # rendered mid-stream resolve to author names rather than bare
+        # numbers. `_safe_papers` still strips the abstracts on the way out.
+        update_job(job_id,
+                   message   = "Asking Claude…",
+                   progress  = 80,
+                   papers    = evidence.get("_summary", {}).get("all_scored", []),
+                   streaming = True,
+                   partial_answer = "",
+                   checks_status  = "pending")
+
+        def _on_partial(text: str):
+            # Raw, UNCHECKED model text. It goes to `partial_answer` — never
+            # to `answer` — so nothing downstream can mistake it for a
+            # validated result.
+            update_job(job_id,
+                       partial_answer = text,
+                       streaming      = True,
+                       checks_status  = "pending",
+                       message        = "Writing the answer…",
+                       progress       = min(95, 80 + len(text) // 400))
+
+        def _on_phase(_label: str):
+            update_job(job_id, streaming=False, checks_status="pending",
+                       progress=97,
+                       message="Checking citations against the abstracts…")
+
         from endo_ai import ask_case_question
-        answer, cost = ask_case_question(messages, evidence,
-                                         differential=differential)
+        try:
+            answer, cost = ask_case_question(
+                messages, evidence,
+                differential = differential,
+                stream_cb    = _on_partial,
+                abort_cb     = lambda: is_aborted(job_id),
+                phase_cb     = _on_phase)
+        except StreamAborted:
+            update_job(job_id, status="aborted", progress=100,
+                       message="Cancelled", streaming=False, partial_answer="")
+            return
         cost += diff_cost
 
         papers = evidence.get("_summary", {}).get("all_scored", [])
@@ -2358,6 +2429,12 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
             papers   = papers,
             images   = [],
             cost_usd = round(cost, 4),
+            # The guardrails have finished; the chips can stop saying
+            # "checking…". `partial_answer` is cleared so nothing downstream
+            # can read UNCHECKED text once a checked answer exists.
+            streaming      = False,
+            partial_answer = "",
+            checks_status  = "complete",
         )
     except Exception as e:
         update_job(job_id, status="error", progress=100, error=str(e), message=str(e))

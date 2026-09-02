@@ -132,10 +132,16 @@ class TestTheTreatmentPathIsUnchanged:
             "every treatment turn would pay for a differential it discards")
 
     def test_a_treatment_turn_still_uses_the_single_query_builder(self):
+        """Matched on the ARGUMENTS, not on one formatting of the call. The
+        line was wrapped when `case-v3` added `prior_pmids`, and a substring
+        assertion on the old layout would have failed on a change that altered
+        nothing about which builder runs."""
         import app
         src = inspect.getsource(app.run_case_chat)
-        assert "build_evidence_base_with_progress(job_id, search_q," in src
-        assert 'mode="case"' in src
+        m = re.search(r"build_evidence_base_with_progress\(\s*\n?\s*job_id,\s*"
+                      r"search_q,\s*mode=\"case\"", src)
+        assert m, ("the treatment path no longer calls the single-query "
+                   "builder with the combined case+follow-up query")
 
 
 # ── 3. The differential ───────────────────────────────────

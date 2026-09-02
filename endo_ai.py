@@ -425,6 +425,13 @@ def tier2_invoke(function_name: str, mode: str, **create_kwargs):
         resp, _ms, cost = _call(chosen)
         return resp, cost
 
+    # Streaming is meaningless when two models run concurrently into one
+    # callback — the partials would interleave into nonsense. The comparison
+    # mode is a flag-gated debug harness, so it drops the streaming kwargs
+    # rather than the caller having to know which mode it is in.
+    for _k in ("stream", "on_partial"):
+        create_kwargs.pop(_k, None)
+
     # Parallel-comparison path — both models, both logged
     from concurrent.futures import ThreadPoolExecutor
     opus_resp = sonnet_resp = None
@@ -1007,6 +1014,42 @@ def build_context_block(exchanges: list,
                          + ", ".join("PMID " + p
                                      for p in pmids[:CONTEXT_PMIDS_PER_EXCHANGE]))
     return "\n".join(lines)
+
+
+def case_prior_pmids(messages: list,
+                     max_turns: int = MAX_CONTEXT_EXCHANGES) -> list:
+    """Every PMID the earlier ASSISTANT turns of a case conversation cited.
+
+    The case equivalent of `context_prior_pmids`, and it exists for the same
+    reason (`case-v3` Item E): a follow-up rebuilt its evidence base from
+    scratch, so the papers the clinician had just been reading about were
+    re-found or not depending on how the combined query embedded. "Is there
+    anything a dentist can do to prevent it?" is a different query from the
+    original case, and the continuity between the two turns lived only in the
+    prose.
+
+    These SEED retrieval; they never bypass it. They are handed to
+    `build_evidence_base_with_progress` as `prior_pmids`, which adds them as
+    CANDIDATES after the routing gate has already decided — that ordering is
+    the safety property, and it is asserted in
+    `tests/test_review_context.py::TestSeedsDoNotDecideTheRoute`. Every gate
+    then applies to them unchanged: the similarity floor recomputed against
+    THIS turn's question, tier banding, and the retracted / withdrawn /
+    superseded exclusions in `rag.search_by_pmids`.
+
+    Newest turn first, de-duplicated, and only the assistant's turns — a PMID
+    the CLINICIAN typed is not something this system retrieved.
+    """
+    out, seen = [], set()
+    assistant = [m for m in (messages or [])
+                 if (m or {}).get("role") == "assistant"]
+    for m in reversed(assistant[-max(1, int(max_turns)):]):
+        for p in _extract_cited_pmids(m.get("content") or ""):
+            p = str(p).strip()
+            if p and p not in seen:
+                seen.add(p)
+                out.append(p)
+    return out
 
 
 def context_prior_pmids(exchanges: list,
@@ -4367,28 +4410,39 @@ def _build_corrective_message(result: dict) -> str:
     if result.get("unattributed_claims"):
         ua = result["unattributed_claims"]
         sample = "\n   - ".join(c["sentence"] for c in ua[:5])
-        # The rephrase option leads, and the marker option carries the
-        # grounding condition. The previous wording — "Add markers from the
-        # evidence base, OR rephrase" — read as an instruction to find a PMID,
-        # with rephrasing as the fallback, on a message the model receives
-        # AFTER being told its answer failed validation. That is the moment a
-        # decorative citation is cheapest to add and hardest to notice.
+        # ORDER IS LOAD-BEARING, and it is the product of two batches that
+        # pull in opposite directions.
+        #
+        # `guardrails-v1` established that the marker option must NOT lead:
+        # this message reaches the model AFTER it has been told its answer
+        # failed, which is the moment a decorative citation is cheapest to
+        # add and hardest to notice. `case-v3` Item D then established that
+        # the message must offer the LABEL, because a retry given only
+        # "rephrase or delete" turned 7 unattributed claims into 8 by
+        # rewriting the same uncited protocol in different words.
+        #
+        # Item D added the label and, in doing so, moved MARK back to the
+        # front. The full suite caught it: two `tests/test_grounding_rule.py`
+        # assertions, written against a measurement, went red. Both are
+        # satisfiable at once, and this is the order that does it. The two
+        # moves that CANNOT produce a decorative citation come first; the
+        # one that can comes last, carrying its condition.
         parts.append(
-            f"\n2. **UNATTRIBUTED CLAIMS** — {len(ua)} sentence(s) make clinical/numeric claims with no "
-            f"[[PMID:N]] marker. You have THREE moves, and the third is the one most often right for a "
-            f"chairside protocol step:\n"
-            f"   (a) MARK it, but only where a paper in the evidence block actually states that "
-            f"sentence — a marker asserts the cited paper says this, and adding one to clear this "
-            f"warning is a worse answer than the unmarked sentence you started with.\n"
-            f"   (b) REPHRASE it so it no longer asserts an evidence-derived fact — drop the "
-            f"percentage, the success rate, the comparative claim like 'superior to' — or delete it.\n"
-            f"   (c) LABEL it. If the step is genuinely standard practice and the clinician needs it, "
-            f"keep it and say where it comes from: end the sentence '— standard practice, not from the "
-            f"retrieved evidence base'. That counts as attribution and this warning will clear. Use it "
-            f"for a real convention; do not use it to keep a number you invented.\n"
-            f"   Do NOT simply rewrite the same uncited instructions in different words. That is what "
-            f"happened on a previous retry of this kind — 7 unattributed claims became 8 — and it costs "
-            f"a full regeneration to arrive nowhere. Examples:\n   - {sample}"
+            f'\n2. **UNATTRIBUTED CLAIMS** — {len(ua)} sentence(s) make clinical/numeric claims with no '
+            f'[[PMID:N]] marker. You have THREE moves. The first two cannot produce a decorative '
+            f'citation, and one of them is usually the right ending for a chairside protocol step:\n'
+            f'   (a) REPHRASE it so it no longer asserts an evidence-derived fact — drop the '
+            f'percentage, the success rate, the comparative claim like \'superior to\' — or delete it.\n'
+            f'   (b) LABEL it. If the step is genuinely standard practice and the clinician needs '
+            f'it, keep it and say where it comes from: end the sentence \'— standard practice, not '
+            f'from the retrieved evidence base\'. That counts as attribution and this warning will '
+            f'clear. Use it for a real convention; do not use it to keep a number you invented.\n'
+            f'   (c) Add a marker — ONLY where a paper in the evidence block actually states '
+            f'that sentence. A marker asserts the cited paper says this, and adding one to clear '
+            f'this warning is a worse answer than the unmarked sentence you started with.\n'
+            f'   Do NOT simply rewrite the same uncited instructions in different words. That is '
+            f'what happened on a previous retry of this kind — 7 unattributed claims became 8 — '
+            f'and it costs a full regeneration to arrive nowhere. Examples:\n   - {sample}'
         )
 
     rec = result.get("recommendation") or {}
@@ -6531,7 +6585,8 @@ _MARKERS_DIAGNOSTIC = (
 
 # ── CASE DISCUSSION ───────────────────────────────────────
 def ask_case_question(messages: list, evidence: dict,
-                      differential: list = None) -> tuple:
+                      differential: list = None, stream_cb=None,
+                      abort_cb=None, phase_cb=None) -> tuple:
     """
     Clinical case discussion / chat mode.
     messages: conversation history [{"role": "user"|"assistant", "content": str}]
@@ -6539,6 +6594,23 @@ def ask_case_question(messages: list, evidence: dict,
     formatted as a ranked differential and the candidates are supplied to the
     model as reasoning scaffolding. Omitted or empty means the treatment path,
     byte-identical to what shipped before `case-v2`.
+
+    `stream_cb(partial_markdown)` / `abort_cb()` / `phase_cb(label)` are the
+    same three the Review path takes, and they mean the same things here
+    (`case-v3` Item E). A case turn's wall time is dominated by synthesis and
+    the post-checks, not retrieval, so the clinician was watching a spinner for
+    the whole of both. With `stream_cb` the differential or the assessment is
+    readable while the rest is still being written, and `phase_cb` fires when
+    the model stops so the header chips can say "checking…" for exactly the
+    window in which that is true.
+
+    THE GUARDRAIL INVARIANT, unchanged and load-bearing:
+    `validate_evidence_mapping` and `verify_citation_support` run on `answer`,
+    read from the FINAL message after the stream closes. Neither is reachable
+    from inside `stream_cb`. A half-written "[[PMID:312" would read as a
+    fabrication and produce a false warning about a good answer, so partial
+    text must never reach them.
+
     Returns (answer, cost).
     """
     client = anthropic.Anthropic(api_key=_get_api_key())
@@ -6670,8 +6742,22 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
     print(f"\nCase consultation -- asking Claude...")
     print("=" * 60)
 
+    def _publish_partial(partial_text: str):
+        # A failure to show progress must never fail the answer.
+        try:
+            stream_cb(partial_text)
+        except Exception as e:      # pragma: no cover — defensive
+            print(f"  [stream] partial publish failed: {type(e).__name__}: {e}")
+
     # TIER 2 (flag-gated) — Sonnet candidate; 2K tok chat-friendly responses
     # with conversation memory, no fresh evidence synthesis required.
+    stream_kwargs = {}
+    if stream_cb is not None or abort_cb is not None:
+        stream_kwargs = {
+            "stream":     stream_cb is not None,
+            "on_partial": _publish_partial if stream_cb is not None else None,
+            "abort_cb":   abort_cb,
+        }
     resp, cost = tier2_invoke(
         "ask_case_question",
         mode       = "case",
@@ -6683,10 +6769,27 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
         max_tokens = 6000,
         system     = system_prompt,
         messages   = api_messages,
+        **stream_kwargs,
     )
     print(f"  Cost: ${cost:.4f} ({resp.usage.input_tokens} in / {resp.usage.output_tokens} out)")
 
+    # THE COMPLETE text, read off the final message — never off the accumulated
+    # stream chunks and never off anything `stream_cb` was handed. Everything
+    # past this line sees this string and only this string.
     answer = resp.content[0].text
+
+    if abort_cb is not None and abort_cb():
+        # Cancelled while the last tokens were in flight — do not spend two
+        # more LLM calls validating an answer nobody will read.
+        raise StreamAborted()
+
+    if phase_cb is not None:
+        # The model has stopped writing and the guardrails have NOT finished.
+        # The chips say "checking…" for exactly this window.
+        try:
+            phase_cb("checking")
+        except Exception as e:      # pragma: no cover — defensive
+            print(f"  [stream] phase publish failed: {type(e).__name__}: {e}")
 
     # Validate-and-retry — case answers are short, validation is cheap and
     # mis-cited PMIDs in case advice are particularly dangerous chairside.

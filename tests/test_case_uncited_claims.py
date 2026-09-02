@@ -427,9 +427,29 @@ class TestTheRetryOffersTheLabel:
 
     def test_it_offers_all_three_moves(self):
         m = self._msg()
-        assert "(a) MARK it" in m
-        assert "(b) REPHRASE it" in m
-        assert "(c) LABEL it" in m
+        assert "(a) REPHRASE it" in m
+        assert "(b) LABEL it" in m
+        assert "(c) Add a marker" in m
+
+    def test_the_marker_move_comes_LAST(self):
+        """The collision between this item and `guardrails-v1`, pinned here so
+        the next edit to this message has to see both halves at once.
+
+        Item D first wrote the moves as MARK / REPHRASE / LABEL, which added
+        the label correctly and silently undid the ordering `guardrails-v1`
+        measured: the marker option must not lead, because this message
+        reaches the model AFTER it has been told its answer failed, and that
+        is the moment a decorative citation is cheapest to add. The full suite
+        caught it via two assertions in `tests/test_grounding_rule.py`. Both
+        requirements are satisfiable at once and the shipped order does it --
+        the two moves that cannot produce a decorative citation come first.
+        """
+        m = self._msg()
+        assert m.index("(a) REPHRASE it") < m.index("(c) Add a marker")
+        assert m.index("(b) LABEL it") < m.index("(c) Add a marker")
+        # And the marker move still carries its condition, which is the other
+        # half of what guardrails-v1 pinned.
+        assert "ONLY where a paper in the evidence block actually states" in m
 
     def test_the_label_wording_matches_what_the_detector_accepts(self):
         """The message tells the model a phrase; `_UNSOURCED_LABEL_RE` has to
