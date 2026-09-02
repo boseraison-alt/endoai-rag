@@ -4375,12 +4375,20 @@ def _build_corrective_message(result: dict) -> str:
         # decorative citation is cheapest to add and hardest to notice.
         parts.append(
             f"\n2. **UNATTRIBUTED CLAIMS** — {len(ua)} sentence(s) make clinical/numeric claims with no "
-            f"[[PMID:N]] marker. For each one, prefer to REPHRASE it so it no longer asserts an "
-            f"evidence-derived fact (drop the percentage, the success rate, the comparative claim like "
-            f"'superior to', or the recommendation like 'is indicated'), or delete it. Add a marker ONLY "
-            f"where a paper in the evidence block actually states that sentence — a marker asserts the "
-            f"cited paper says this, and adding one to clear this warning is a worse answer than the "
-            f"unmarked sentence you started with. Examples:\n   - {sample}"
+            f"[[PMID:N]] marker. You have THREE moves, and the third is the one most often right for a "
+            f"chairside protocol step:\n"
+            f"   (a) MARK it, but only where a paper in the evidence block actually states that "
+            f"sentence — a marker asserts the cited paper says this, and adding one to clear this "
+            f"warning is a worse answer than the unmarked sentence you started with.\n"
+            f"   (b) REPHRASE it so it no longer asserts an evidence-derived fact — drop the "
+            f"percentage, the success rate, the comparative claim like 'superior to' — or delete it.\n"
+            f"   (c) LABEL it. If the step is genuinely standard practice and the clinician needs it, "
+            f"keep it and say where it comes from: end the sentence '— standard practice, not from the "
+            f"retrieved evidence base'. That counts as attribution and this warning will clear. Use it "
+            f"for a real convention; do not use it to keep a number you invented.\n"
+            f"   Do NOT simply rewrite the same uncited instructions in different words. That is what "
+            f"happened on a previous retry of this kind — 7 unattributed claims became 8 — and it costs "
+            f"a full regeneration to arrive nowhere. Examples:\n   - {sample}"
         )
 
     rec = result.get("recommendation") or {}

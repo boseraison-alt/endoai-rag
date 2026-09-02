@@ -273,3 +273,173 @@ class TestTheCasePathUsesReviewsThresholds:
     def test_the_case_path_calls_the_same_validator(self):
         src = inspect.getsource(endo_ai.ask_case_question)
         assert "validate_evidence_mapping(answer, evidence)" in src
+
+
+# ── the eval case that pins all of this (Item D) ──────────
+
+class TestThePreventionFollowUpCaseIsPinned:
+    """`dens-evaginatus-prevention-followup` — the first FOLLOW-UP case in the
+    set. It replays turn 1 from the stored transcript and generates only turn
+    2, because a follow-up inherits an intent, an evidence base and a
+    differential, and a case set that can only express turn 1 cannot pin turn
+    2 — which is where every defect in this batch lived.
+    """
+
+    FIXTURE = "dens-evaginatus-prevention-followup"
+
+    def _case(self):
+        import sys as _s
+        from pathlib import Path as _P
+        _s.path.insert(0, str(_P(__file__).parent.parent / "eval"))
+        import run_eval
+        _doc, cases = run_eval.load_cases()
+        for c in cases:
+            if c["id"] == self.FIXTURE:
+                return c
+        pytest.fail(f"{self.FIXTURE} is not in questions.json")
+
+    def test_it_is_a_follow_up_not_a_first_turn(self):
+        c = self._case()
+        prior = c.get("prior_turns") or []
+        assert len(prior) >= 2, "the case lost its conversation history"
+        assert prior[0]["role"] == "user"
+        assert prior[-1]["role"] == "assistant"
+
+    def test_the_replayed_turn_comes_from_the_stored_transcript(self):
+        """Inline would drift from the answer the user actually saw; the file
+        is the artefact this batch was written against."""
+        prior = self._case()["prior_turns"]
+        ref = prior[-1].get("content_file")
+        assert ref and "de_conversation_turn1" in ref
+        assert (Path(__file__).parent.parent / ref).exists()
+
+    def test_it_caps_unattributed_at_the_products_own_limit(self):
+        """3 is `_EVMAP_MAX_UNATTRIBUTED`, so the case fails exactly when the
+        answer would. If the unsourced-label exemption broke, this turn goes
+        back to 7 and trips it."""
+        assert self._case()["expect"]["max_unattributed"] ==             endo_ai._EVMAP_MAX_UNATTRIBUTED
+
+    def test_it_allows_no_uncited_author_mentions(self):
+        assert self._case()["expect"]["max_uncited_author_mentions"] == 0
+
+    def test_it_does_NOT_require_the_label_string(self):
+        """The honest outcome is cite-or-label. A run that manages to cite
+        every step is a better answer, not a failure, and an assertion that
+        demanded the label would punish it."""
+        must = [m.lower() for m in self._case()["expect"].get("must_contain", [])]
+        assert not any("not from the retrieved" in m for m in must)
+
+
+class TestTheHarnessCanExpressThis:
+    """The three additions `case-v3` made to run_eval, asserted on the harness
+    rather than on a copy — a test that re-implements the check passes while
+    the harness's own copy is broken, which this repo has already been bitten
+    by once."""
+
+    def _src(self):
+        import sys as _s
+        from pathlib import Path as _P
+        _s.path.insert(0, str(_P(__file__).parent.parent / "eval"))
+        import run_eval
+        return inspect.getsource(run_eval.run_case_with_synthesis)
+
+    def test_prior_turns_are_replayed(self):
+        src = self._src()
+        assert 'case.get("prior_turns")' in src
+        assert '"messages": msgs' in src
+
+    def test_a_referenced_transcript_is_stripped_of_its_header(self):
+        """The stored transcripts carry a provenance header above a `---`
+        rule; replaying it as the assistant's words would feed the model a
+        note about itself."""
+        marker = 'split(' + repr("\n---\n") + ', 1)[-1]'
+        src = self._src().replace("'", '"')
+        assert marker.replace("'", '"') in src
+
+    def test_the_counts_come_from_the_products_own_detectors(self):
+        import run_eval
+        src = inspect.getsource(run_eval.check_claim_hygiene)
+        assert "_ea._detect_unattributed_claims(answer)" in src
+        assert "_ea._detect_uncited_author_mentions(answer)" in src
+
+
+class TestTheHygieneCheckActuallyFails:
+    """The harness's OWN function, called directly. Written inline, both of
+    these survived a mutation to `if False:` with every test green — the tests
+    could assert the detector was CALLED but not that its answer was compared
+    to anything."""
+
+    def _check(self, answer, exp):
+        import sys as _s
+        from pathlib import Path as _P
+        _s.path.insert(0, str(_P(__file__).parent.parent / "eval"))
+        import run_eval
+        return run_eval.check_claim_hygiene(answer, exp)
+
+    DIRTY = "\n".join([
+        "## Recommendation",
+        "Reduce the tubercle in 0.5 mm increments at 6-8 week intervals.",
+        "Screen the entire mouth for other affected premolars.",
+        "Monitor with cold testing every 6 months from now on.",
+        "Refer promptly if the pulp responds sluggishly to cold.",
+        "",
+    ])
+
+    def test_too_many_unattributed_claims_fails(self):
+        f = self._check(self.DIRTY, {"max_unattributed": 1})
+        assert f and "unattributed clinical claim" in f[0]
+
+    def test_a_generous_cap_passes(self):
+        assert self._check(self.DIRTY, {"max_unattributed": 20}) == []
+
+    def test_an_absent_cap_is_not_checked(self):
+        """A case that does not ask for this must not acquire it."""
+        assert self._check(self.DIRTY, {}) == []
+
+    def test_a_named_author_fails_at_zero(self):
+        f = self._check(
+            "## Evidence\nSjogren et al. demonstrated that pulp status at "
+            "the time of treatment dominates the outcome.\n",
+            {"max_uncited_author_mentions": 0})
+        assert f and "named author" in f[0]
+
+    def test_the_measured_dict_is_populated(self):
+        import sys as _s
+        from pathlib import Path as _P
+        _s.path.insert(0, str(_P(__file__).parent.parent / "eval"))
+        import run_eval
+        m = {}
+        run_eval.check_claim_hygiene(self.DIRTY, {"max_unattributed": 99,
+                                                  "max_uncited_author_mentions": 9}, m)
+        assert m["unattributed"] >= 3
+        assert m["author_mentions"] == 0
+
+
+class TestTheRetryOffersTheLabel:
+    """The eval case caught this: a run failed with 7 unattributed claims and
+    the RETRY produced 8, because the corrective message only offered
+    "rephrase or delete". The prompt allows a third ending; the retry must
+    too, or a full Opus regeneration arrives nowhere."""
+
+    def _msg(self):
+        return _build_corrective_message({"unattributed_claims": [
+            {"sentence": "Reduce the tubercle in 0.5 mm increments."}]})
+
+    def test_it_offers_all_three_moves(self):
+        m = self._msg()
+        assert "(a) MARK it" in m
+        assert "(b) REPHRASE it" in m
+        assert "(c) LABEL it" in m
+
+    def test_the_label_wording_matches_what_the_detector_accepts(self):
+        """The message tells the model a phrase; `_UNSOURCED_LABEL_RE` has to
+        recognise that exact phrase, or the retry follows the instruction and
+        fails again."""
+        m = self._msg()
+        assert "standard practice, not from the retrieved evidence base" in m
+        assert endo_ai._UNSOURCED_LABEL_RE.search(
+            "Reduce in 0.5 mm increments — standard practice, not from the "
+            "retrieved evidence base.")
+
+    def test_it_warns_against_rewriting_the_same_uncited_text(self):
+        assert "different words" in self._msg()

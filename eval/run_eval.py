@@ -200,6 +200,43 @@ NUMERIC_PARAM_RE = re.compile(
     re.IGNORECASE)
 
 
+def check_claim_hygiene(answer, exp, measured=None):
+    """Uncited claims and uncited author mentions, against the case's caps.
+
+    Read from the PRODUCT's own detectors, never a copy: `case-v3` added four
+    claim patterns and an unsourced-label exemption, and an eval that
+    re-implemented the count would drift away from the validator it exists to
+    watch.
+
+    A TOP-LEVEL FUNCTION, for the reason `check_precedence` is one. Written
+    inline, both of these checks survived a mutation to `if False:` with every
+    test still green — the tests could only assert that the detector was
+    CALLED, not that its answer was compared to anything.
+    """
+    import endo_ai as _ea
+    measured = measured if measured is not None else {}
+    failures = []
+
+    max_ua = exp.get("max_unattributed")
+    if max_ua is not None:
+        ua = _ea._detect_unattributed_claims(answer)
+        measured["unattributed"] = len(ua)
+        if len(ua) > max_ua:
+            failures.append(
+                f"{len(ua)} unattributed clinical claim(s), max {max_ua}: "
+                + "; ".join(d["sentence"][:90] for d in ua[:3]))
+
+    max_am = exp.get("max_uncited_author_mentions")
+    if max_am is not None:
+        am = _ea._detect_uncited_author_mentions(answer)
+        measured["author_mentions"] = len(am)
+        if len(am) > max_am:
+            failures.append(
+                f"{len(am)} named author(s) with no marker, max {max_am}: "
+                + ", ".join(sorted({a["name"] for a in am})[:5]))
+    return failures
+
+
 def check_precedence(answer, pairs):
     """"X before Y" over an answer. Returns a list of failure strings.
 
@@ -297,9 +334,25 @@ def run_case_with_synthesis(case):
         # pipeline — the one with the intent split and the differential — went
         # untested. The route matters: `run_case_chat` is where both live.
         if case.get("mode") == "case":
+            # `prior_turns` makes a case case a CONVERSATION. A follow-up is a
+            # different object from a first turn — it inherits an intent, an
+            # evidence base and a differential — and a case set that can only
+            # express turn 1 cannot pin the behaviour of turn 2, which is
+            # where `case-v3` found its defects. An assistant turn may be
+            # given inline or, because they run to thousands of characters, as
+            # `content_file`.
+            msgs = []
+            for t in case.get("prior_turns") or []:
+                body = t.get("content")
+                if body is None and t.get("content_file"):
+                    raw = (ROOT / t["content_file"]).read_text(encoding="utf-8")
+                    # The stored transcripts carry a provenance header above a
+                    # `---` rule; the answer is what follows it.
+                    body = raw.split("\n---\n", 1)[-1]
+                msgs.append({"role": t["role"], "content": body or ""})
+            msgs.append({"role": "user", "content": case["question"]})
             r = client.post("/case_chat", json={
-                "messages": [{"role": "user", "content": case["question"]}],
-                "skip_clarify": True})
+                "messages": msgs, "skip_clarify": True})
             endpoint = "/case_chat"
         else:
             r = client.post("/ask", json={"question": case["question"],
@@ -410,6 +463,8 @@ def run_case_with_synthesis(case):
         failures.append(f"case intent was {st.get('case_intent')!r}, "
                         f"expected {want_intent!r}")
 
+    failures.extend(check_claim_hygiene(answer, exp, measured_extra))
+
     max_flags = exp.get("max_support_flags")
     if max_flags is not None and sup_flagged > max_flags:
         failures.append(f"{sup_flagged} citation-support flag(s), max "
@@ -450,6 +505,7 @@ def run_case_with_synthesis(case):
             "search_terms_used": 0, "answer_chars": len(answer),
             "cost_usd": st.get("cost_usd"), "has_banner": has_banner,
             "case_intent": st.get("case_intent"),
+            **measured_extra,
             "n_candidates": len(st.get("differential") or []),
             "support_checked": sup_checked, "support_flagged": sup_flagged,
             "support_checks": sup_calls}, failures
@@ -752,6 +808,9 @@ CASE_SUBSET = [
     # INTENT, and this one differs in what the case GIVES you — it names a
     # tooth, and the lead candidate is only derivable from that.
     "dens-evaginatus-premolar-diagnostic",
+    # case-v3. The first FOLLOW-UP case in the set: it replays turn 1 and
+    # generates only turn 2, which is where the uncited-protocol defect lived.
+    "dens-evaginatus-prevention-followup",
 ]
 
 LIVE_SUBSET = [

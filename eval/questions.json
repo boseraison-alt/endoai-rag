@@ -1273,6 +1273,62 @@
         "the top of the observed range, so it catches a blow-up and not the",
         "judge's noise."
       ]
+    },
+    {
+      "id": "dens-evaginatus-prevention-followup",
+      "question": "oh i do see a possible dens evaginatu sin tooth #20. Is there anything a dentist can do to present pulp necrosis from setting in?",
+      "mode": "case",
+      "force_route": "library",
+      "prior_turns": [
+        {
+          "role": "user",
+          "content": "20 year old make of asian origin presents with necrotic tooth #20 with no visible signs of cracks or restorations. Radiographs show periapical radiolucency and patient denies any history of trauma. tooth on contra lateral side is also root canal treated. What could be the etiology for necrosis"
+        },
+        {
+          "role": "assistant",
+          "content_file": "eval/logs/case_answers/de_conversation_turn1_differential.md"
+        }
+      ],
+      "expect": {
+        "case_intent": "treatment",
+        "min_papers": 20,
+        "must_contain": [
+          "dens evaginatus"
+        ],
+        "max_unattributed": 3,
+        "max_uncited_author_mentions": 0,
+        "max_support_flags": 2
+      },
+      "why": [
+        "The user's own second turn, verbatim, typos included. It is the first",
+        "eval case in this file that is a FOLLOW-UP: it replays turn 1 from the",
+        "stored transcript and only turn 2 is generated, because a follow-up",
+        "inherits an intent, an evidence base and a differential, and a case set",
+        "that can only express turn 1 cannot pin turn 2 — which is where case-v3",
+        "found its defects.",
+        "",
+        "WHAT IT GUARDS. The turn's Scenario A was a four-step preventive protocol",
+        "carrying a reduction increment, an interval and a recall period, and three",
+        "of its four steps cited nothing. The detector missed them because the",
+        "original claim patterns catch a claim by its NUMBERS and a protocol step is",
+        "an INSTRUCTION. Measured before and after case-v3:",
+        "",
+        "                            before   after",
+        "  unattributed claims            7       2",
+        "  citation-support flags      2/12    0/11",
+        "  labelled-unsourced lines       0       1",
+        "",
+        "max_unattributed is 3, the product's own _EVMAP_MAX_UNATTRIBUTED, so the",
+        "case fails exactly when the answer would. If the unsourced-label exemption",
+        "broke, this turn goes back to 7 and trips it.",
+        "",
+        "max_uncited_author_mentions is 0 with no tolerance, matching the validator:",
+        "a named author with nothing to click is unambiguous.",
+        "",
+        "This case is NOT asserted to contain the label string. The honest outcome",
+        "is cite-or-label, and a run that manages to cite every step is a better",
+        "answer, not a failure."
+      ]
     }
   ]
 }
