@@ -6629,10 +6629,23 @@ Now produce the final stitched curriculum."""
     print(f"\n[curriculum] Step D — stitching {n_modules} modules (budget={stitch_budget} tokens)")
     # TIER 2 (flag-gated) — Sonnet candidate; reproduces module bodies verbatim
     # and only writes overview/transitions/takeaways/refs (light synthesis).
+    # STREAMED, and not for progress — there is no `on_partial` here and
+    # nothing displays the partials. The SDK REFUSES a non-streaming request
+    # whose `max_tokens` could take it past ten minutes:
+    #
+    #   ValueError: Streaming is required for operations that may take longer
+    #   than 10 minutes
+    #
+    # The old 11,640 budget sat under that threshold, which is part of why the
+    # under-budgeting went unnoticed for 26 runs — the value that was too small
+    # to finish the job was also small enough never to trip this. Capping the
+    # budget back under the threshold would "fix" the crash by restoring the
+    # truncation, so the call streams instead.
     resp, cost = tier2_invoke(
         "stitch_curriculum",
         mode="learn",
         max_tokens=stitch_budget,
+        stream=True,
         system=system_prompt,
         messages=[{"role": "user", "content": user_message}],
     )
@@ -6658,6 +6671,7 @@ Now produce the final stitched curriculum."""
             "stitch_curriculum_retry",
             mode="learn",
             max_tokens=32000,
+            stream=True,
             system=system_prompt,
             messages=[{"role": "user", "content": user_message}],
         )

@@ -300,6 +300,34 @@ class TestTheStitcherWasTruncatingToo:
     def test_it_is_capped(self):
         assert endo_ai.stitch_token_budget("x" * 10_000_000) ==             endo_ai.STITCH_BUDGET_CEILING
 
+    def test_the_stitch_calls_stream(self):
+        """NOT for progress — there is no `on_partial` and nothing displays
+        the partials.
+
+        The SDK refuses a non-streaming request whose max_tokens could take it
+        past ten minutes, and the new budget crosses that line on a real
+        curriculum: the first regeneration after the budget fix died with
+        "ValueError: Streaming is required for operations that may take longer
+        than 10 minutes". The old 11,640 sat under the threshold, which is part
+        of why the under-budgeting went unnoticed for 26 runs — the value too
+        small to finish the job was also small enough never to trip this.
+
+        Capping the budget back under the threshold would "fix" the crash by
+        restoring the truncation, so this must stay.
+        """
+        src = inspect.getsource(endo_ai.stitch_curriculum)
+        assert src.count("stream=True") == 2, (
+            "both the stitch call and its retry must stream")
+
+    def test_a_real_sized_budget_would_be_illegal_without_streaming(self):
+        """The number that makes the line above load-bearing rather than
+        decorative. Four modules of ~4,100 tokens are roughly 57,000
+        characters of module text."""
+        budget = endo_ai.stitch_token_budget("x" * 57000)
+        assert budget > 21333, (
+            f"budget {budget} no longer exceeds the SDK's non-streaming "
+            f"ceiling, so the streaming requirement above is untested")
+
     def test_the_old_per_module_formula_is_gone(self):
         src = inspect.getsource(endo_ai.stitch_curriculum)
         assert "stitch_budget = stitch_token_budget(module_blocks)" in src
