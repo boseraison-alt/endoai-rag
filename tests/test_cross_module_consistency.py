@@ -301,6 +301,77 @@ class TestTheGuardIsWhatMakesThisSafe:
 
 class TestTheEditsAreAppliedProgrammatically:
 
+    def test_a_PREFIX_of_a_line_is_dropped_not_inserted_into(self):
+        """THE SECOND THING THE REAL RUN TAUGHT THIS FUNCTION.
+
+        Substring matching let the model anchor on a ~110-character prefix of a
+        398-character cited line. The insertion split that line in two, the
+        original no longer existed verbatim, and the guard reported "2 cited
+        line(s) were rewritten" and threw the whole pass away. The model had
+        rewritten nothing — the APPLIER had, by inserting into the middle of a
+        clinical claim, and the guard was right to refuse it.
+
+        Whole-line matching makes that structurally impossible.
+        """
+        line = ("Mashalkar et al. (n = 60 teeth) found that only 3 of 30 "
+                "samples showed bacterial growth [[PMID:24326811]].")
+        text = line + chr(10) + chr(10) + "Next line [[PMID:2]]."
+        out, counts = endo_ai._apply_consistency_edits(
+            text, {"annotations": [
+                {"anchor": "Mashalkar et al. (n = 60 teeth) found that only",
+                 "text": "Reconciling sentence."}]}, [])
+        assert counts["dropped_anchor"] == 1
+        assert counts["annotations"] == 0
+        assert out == text, "a partial anchor was inserted into"
+        assert consistency_guard(text, out)[0]
+
+    def test_the_same_annotation_with_the_WHOLE_line_applies(self):
+        line = ("Mashalkar et al. (n = 60 teeth) found that only 3 of 30 "
+                "samples showed bacterial growth [[PMID:24326811]].")
+        text = line + chr(10) + chr(10) + "Next line [[PMID:2]]."
+        out, counts = endo_ai._apply_consistency_edits(
+            text, {"annotations": [{"anchor": line,
+                                    "text": "Reconciling sentence."}]}, [])
+        assert counts["annotations"] == 1
+        assert "Reconciling sentence." in out
+        assert line in out, "the anchored line must survive intact"
+        ok, why = consistency_guard(text, out)
+        assert ok, why
+
+    def test_whitespace_differences_in_the_anchor_are_tolerated(self):
+        """The model re-wraps as it copies. Requiring byte equality would drop
+        almost every annotation and look like the model misbehaving.
+
+        BOTH DIRECTIONS, because only one of them tests anything. The first
+        version varied the whitespace in the DOCUMENT and left the anchor
+        clean — and the document lines are normalised before comparison
+        anyway, so removing the anchor's own normalisation changed nothing and
+        the mutant lived. The case that needs the anchor normalised is the
+        opposite one: a clean line and a re-wrapped anchor.
+        """
+        # irregular DOCUMENT, clean anchor
+        text = "A  cited   line [[PMID:1]]." + chr(10) + "Other."
+        _out, counts = endo_ai._apply_consistency_edits(
+            text, {"annotations": [{"anchor": "A cited line [[PMID:1]].",
+                                    "text": "S."}]}, [])
+        assert counts["annotations"] == 1
+
+        # clean DOCUMENT, irregular anchor — this is the one that needs
+        # `" ".join(anchor.split())`
+        text = "A cited line [[PMID:1]]." + chr(10) + "Other."
+        out, counts = endo_ai._apply_consistency_edits(
+            text, {"annotations": [{"anchor": "A  cited   line  [[PMID:1]].",
+                                    "text": "S."}]}, [])
+        assert counts["annotations"] == 1, (
+            "a re-wrapped anchor was dropped; the model re-wraps as it copies")
+        assert "S." in out
+
+    def test_the_prompt_asks_for_what_the_applier_requires(self):
+        """A prompt that invites something the applier drops produces silent
+        failure — which is exactly how the first real run lost every
+        annotation it generated."""
+        assert "COMPLETE LINE" in endo_ai.CONSISTENCY_PROMPT
+
     def test_a_bad_anchor_is_dropped_not_guessed(self):
         text = "Line one.\n\nLine two."
         out, counts = endo_ai._apply_consistency_edits(

@@ -5,46 +5,44 @@
 
 ## OVERVIEW
 
-Laser-assisted root canal disinfection has moved from experimental curiosity to a clinically accessible adjunct, yet its evidence base remains sharply tiered: photoacoustic streaming with pulsed erbium systems demonstrably reduces postoperative pain [[PMID:40818665]], while periapical healing superiority over conventional chemo-mechanical preparation has not been confirmed at any GRADE level above low certainty [[PMID:36156804]]. This curriculum distils four interconnected modules — laser physics, biofilm removal efficacy, protocol application, and clinical outcomes — into operationally actionable guidance. By the end, clinicians will be able to select the appropriate laser modality and parameters for a given case, interpret the hierarchy of supporting evidence critically, and apply or withhold laser adjuncts based on the outcome being targeted rather than equipment availability alone.
+Laser-assisted disinfection has moved from experimental curiosity to a clinically debated adjunct in contemporary endodontics, yet the gap between laboratory promise and clinical proof remains wide. This curriculum equips the clinician to select appropriate laser systems and wavelengths for specific clinical scenarios, apply evidence-based protocols with correct parameters, critically appraise claims of superiority over conventional chemomechanical preparation, and counsel patients realistically about what laser adjuncts can — and cannot — deliver. Four modules progress from biophysical principles through indication selection, step-by-step technique, and outcomes evidence, culminating in an operational decision rule for chairside use. The highest-tier evidence currently positions laser therapy as an adjunct for postoperative pain reduction [[PMID:40818665]] and, selectively, for biofilm disruption in complex anatomy [[PMID:38662505]] — not as a replacement for NaOCl-based irrigation [[PMID:41833582]].
 
 ---
 
-## Module 1 — Laser Physics and Mechanisms in Endodontics
+## Module 1 — Laser Physics and Bactericidal Mechanisms in Endodontics
 
-**The literature is currently divided on this topic.** The 2026 PROSPERO-registered umbrella review by Duarte et al. (CRD42025599352), synthesising 9 systematic reviews across Er:YAG, Er,Cr:YSGG, Nd:YAG, and diode systems, concluded that evidence on laser-activated irrigation (LAI) "remains limited and heterogeneous" and that LAI "should currently be regarded as an adjunct with unproven clinical benefit" [[PMID:41833582]]. Conversely, individual systematic reviews and meta-analyses report statistically significant antimicrobial effects for specific wavelengths and parameters. Both positions are presented below, with the higher-tier umbrella review serving as the lead conclusion.
+**The literature is currently divided on this topic.** The 2026 PROSPERO-registered umbrella review by Duarte et al. synthesising 9 systematic reviews concluded that laser-assisted irrigation "should currently be regarded as an adjunct with unproven clinical benefit," citing heterogeneity in wavelengths, designs, and outcome measures [[PMID:41833582]]. Conversely, the systematic review and meta-analysis by Ghahari et al. (n = 565 samples) demonstrated statistically significant biofilm reduction by erbium lasers in root canals (SMD −0.551; 95% CI −0.656 to −0.445; I² = 23.89%; p = 0.031) [[PMID:38662505]], and the Er:YAG-focused systematic review by Fiegler-Rudol et al. found that all 15 included studies reported improved disinfection over conventional or ultrasonic methods [[PMID:40136729]]. The higher-quality, AMSTAR 2-assessed 2026 umbrella review favours the cautious interpretation: potential laboratory benefit exists, but clinical translation remains unconfirmed [[PMID:41833582]].
 
-**Laser Wavelengths and Tissue Interactions**
+**Laser Systems Used in Endodontics**
 
-Every dental laser used in endodontics is defined by its wavelength, which dictates chromophore absorption and therefore tissue interaction. Four systems dominate the literature:
+Four principal laser types appear in the evidence base, each defined by its wavelength and tissue-interaction mechanism:
 
-- **Er:YAG (2940 nm):** Highest absorption by water and hydroxyapatite; generates photoacoustic streaming and cavitation within irrigant columns [[PMID:40136729]]
-- **Er,Cr:YSGG (2780 nm):** Also strongly absorbed by water and hydroxyapatite; produces photoacoustic streaming, cavitation-like fluid movement, and localised photothermal effects within the root canal system [[PMID:42306383]]
-- **Nd:YAG (1064 nm):** Primarily photothermal; penetrates dentinal tubules and denatures microbial proteins and disrupts cell membranes [[PMID:40565094]]
-- **Diode lasers (808–980 nm):** Absorbed by pigmented tissues and haemoglobin; predominantly photothermal with photobiomodulation capability at lower powers [[PMID:41833582]]
+- **Er:YAG (2940 nm):** Peak water absorption; generates photoacoustic streaming and cavitation; highest efficiency for biofilm disruption at 75–100 mJ energy, 100–150 μs pulse duration, and <50 Hz pulse rate [[PMID:38662505]]
+- **Er,Cr:YSGG (2780 nm):** Absorbed by both water and hydroxyapatite; produces photoacoustic streaming, cavitation-like fluid movement, and localised photothermal effects within the canal [[PMID:42306383]]
+- **Nd:YAG (1064 nm):** Near-infrared; acts by direct photothermal effect without photosensitiser; at 200 mJ/pulse, 20 pulses per second for 20 s, reduces *E. coli* from 8.67 × 10⁶ to 4.39 × 10⁴ CFU/mL and *S. aureus* from 1.44 × 10⁶ to 3.8 × 10⁴ CFU/mL, but causes a temperature rise of 61.8 ± 4.2 °C — a clinically significant thermal risk [[PMID:11806644]]
+- **Diode lasers (810–980 nm):** Absorbed by pigmented/vascular tissue; at 1.2 W (980 nm), comparable bactericidal effect on *E. faecalis* to 2 W and 3 W settings, with the lowest external root surface temperature rise (6.25 °C vs. 10.20 °C at 2 W and 16.79 °C at 3 W) [[PMID:29378981]]
 
-**Mechanisms of Antimicrobial Action**
+**Bactericidal Mechanisms**
 
-Three distinct physical mechanisms underlie laser-mediated canal disinfection:
+Two distinct mechanisms operate depending on laser class:
 
-1. **Photothermal effects** — Nd:YAG and diode wavelengths generate localised heat sufficient to denature bacterial proteins and disrupt lipopolysaccharide-containing cell membranes [[PMID:40565094]]
-2. **Photoacoustic streaming (PIPS/SWEEPS)** — Pulsed erbium lasers create rapidly expanding and imploding vapour bubbles; the resultant cavitation drives intense liquid dynamics throughout the canal, forcing irrigant into lateral canals and dentinal tubules [[PMID:38340037]]
-3. **Photochemical / reactive-oxygen-species (ROS) generation** — In antimicrobial photodynamic therapy (aPDT), a photosensitiser absorbs laser energy and generates ROS that oxidatively damage bacterial membranes [[PMID:31809911]] [[PMID:40485280]]
+*Photothermal effect* — Direct delivery of infrared energy denatures bacterial proteins and disrupts cell membranes. This is the primary mechanism for Nd:YAG and diode systems; temperature rises sufficient for sterilisation risk thermal damage to periodontium and root dentin [[PMID:11806644]].
 
-**Erbium Laser Efficacy — Quantified Evidence**
+*Photoacoustic streaming and cavitation* — Erbium-wavelength lasers vaporise irrigant water, generating expanding and imploding vapour bubbles. Meire & De Moor describe cavitation as "the driving force behind LAI," with growing and imploding vapour bubbles causing intense liquid dynamics throughout the root canal [[PMID:38340037]]. This physically disrupts biofilm and propels irrigant into dentinal tubules and lateral canals [[PMID:40136729]]. Protocols include photon-induced photoacoustic streaming (PIPS) and shock wave-enhanced emission photoacoustic streaming (SWEEPS) [[PMID:41505924]].
 
-A systematic review and meta-analysis (Ghahari et al., 2024; n = 565 samples) demonstrated that erbium lasers produced a standardised mean difference of −0.551 (95% CI: −0.656 to −0.445; I² = 23.89%; p = 0.031) for biofilm reduction in root canals [[PMID:38662505]]. Peak efficacy was recorded at 2940 nm, 75–100 mJ energy, 100–150 µs pulse duration, and < 50 Hz pulse frequency [[PMID:38662505]]. These parameters are not yet standardised across clinical protocols — a limitation the umbrella review explicitly flags [[PMID:41833582]].
+*Antimicrobial photodynamic therapy (aPDT)* — Low-power laser light activates a photosensitiser (typically methylene blue 0.005% or toluidine blue 0.1 mg/mL), generating reactive oxygen species (ROS) that oxidise bacterial cell walls without thermal tissue damage [[PMID:38618073]]. Siddiqui et al., reviewing 17 studies using diode wavelengths 625–805 nm, fiber diameter 200 μm, and power 40 mW–5 W, found that 12 of 17 studies reported effective *E. faecalis* elimination, but 4 found conventional irrigation superior — efficacy "remains questionable" [[PMID:24192536]].
 
-**Nd:YAG Penetration and Limitations**
+**Dentin Safety Considerations**
 
-The systematic review by Fiegler-Rudol et al. (2025) confirmed that Nd:YAG lasers achieve significant reductions in total microbial load via photothermal denaturation and dentinal tubule penetration, but complete sterilisation was not consistently achieved in any included experimental study [[PMID:40565094]]. This recommendation rests on experimental and preclinical studies only — no large-scale RCT has evaluated Nd:YAG as a standalone disinfection adjunct with validated clinical endpoints; treat as provisional pending higher-tier confirmation.
+Laser-activated irrigation (LAI) demonstrably alters dentin microstructure. Rathod et al. found that 980 nm diode LAI caused FTIR-confirmed structural degradation of collagen (amide bands), phosphate, and carbonate, along with thermal-stress-induced cracking; Er,Cr:YSGG (2940 nm, 25 mJ, 10 Hz, 60 μs, 200 μm tip, 21 mm insertion length) produced comparatively lesser structural damage than diode LAI [[PMID:41519256]]. This finding rests on an ex vivo study of 42 premolars (n = 14/group) — no clinical RCT has evaluated long-term structural consequences of LAI on root dentin in vivo; treat as provisional pending higher-tier confirmation.
 
-**Laser Ablation with Indocyanine Green (ICG)**
+**Conventional Irrigation Remains Standard of Care**
 
-An RCT by Leonardo et al. (2023; n = 60) showed that laser ablation therapy with ICG produced statistically significant additional microbial reduction beyond chemomechanical preparation alone (p < .05), regardless of whether 2.5% NaOCl or saline was used as the primary irrigant [[PMID:37355163]]. An in vitro study (Dourado et al., 2025) further demonstrated that ICG-mediated laser ablation reduced colony-forming units to levels comparable to 2.5% NaOCl and induced the highest oxidative stress markers among tested photodynamic agents [[PMID:41465429]].
+Across this curriculum, NaOCl is cited at four concentrations (2%, 2.5%, 3%, and 5.25%), each tied to a distinct study context: 5.25% NaOCl is the primary irrigant concentration in the Module 1 foundational protocol (Mashalkar et al. [[PMID:24326811]]; Kottur et al. [[PMID:39955574]]), 3% NaOCl is the concentration used by Pažin et al. (2024) in their retreatment UAI/conventional arm [[PMID:38013016]], 2% NaOCl is the concentration used by Kolberg-Babrzyńska et al. (2025) during Er:YAG LAI activation [[PMID:40135760]], and 2.5% NaOCl is the concentration used by Swetha et al. (2024) for pulpotomy haemostasis [[PMID:38157279]]; the evidence base does not establish which concentration is preferred for laser-adjunct protocols generally, and clinicians should match the concentration to the specific study protocol being replicated.
 
-**Clinical Cavitation Mechanics (LAI)**
+Mashalkar et al. (n = 60 teeth) found that only 3 of 30 samples showed bacterial growth after 5.25% NaOCl + hydrogen peroxide irrigation, versus 8 of 30 after 980 nm diode laser alone — conventional chemomechanical preparation outperformed laser monotherapy [[PMID:24326811]]. The 2026 umbrella review positions lasers as adjuncts to, not replacements for, NaOCl-based irrigation [[PMID:41833582]].
 
-Meire and De Moor (2024) explain that cavitation is the primary driving force of LAI: pulsed laser energy creates vapour bubbles that grow and implode near the fibre tip, generating secondary phenomena — including acoustic streaming and microjet formation — that distribute irrigant throughout canal irregularities inaccessible to files [[PMID:38340037]]. Wavelength, pulse energy, pulse duration, and fibre-tip geometry all modulate cavitation intensity, yet no consensus parameter set exists [[PMID:38340037]] [[PMID:41833582]].
+The 5.25% NaOCl concentration cited here (Mashalkar et al. [[PMID:24326811]]) and in the Module 1 Clinical Application protocol [[PMID:39955574]] reflects the primary disinfection standard used in those studies, which is distinct from the 2% NaOCl used by Kolberg-Babrzyńska et al. (2025) specifically during Er:YAG LAI activation [[PMID:40135760]], the 3% NaOCl used by Pažin et al. (2024) in their retreatment RCT [[PMID:38013016]], and the 2.5% NaOCl used by Swetha et al. (2024) for pulpotomy haemostasis [[PMID:38157279]]; each concentration should be understood as study-specific rather than universally interchangeable.
 
 ---
 
@@ -52,60 +50,75 @@ Meire and De Moor (2024) explain that cavitation is the primary driving force of
 
 ### 4a. Procedural Protocol
 
-1. **Complete chemomechanical preparation first.** Shape to a minimum apical size of 25/.04 before any laser activation; laser adjuncts do not replace mechanical preparation — standard practice, not from the retrieved evidence base.
+1. **Establish access and working length**
+   Determine working length radiographically and electronically — standard practice, not from the retrieved evidence base. Prepare canal to a size that allows laser tip insertion; the retrieved evidence base does not specify a minimum apical preparation size for laser tip access as a generalised rule.
 
-2. **Select irrigant concentration.** Use 2% NaOCl for LAI-assisted retreatment [[PMID:40135760]] or 2.5% NaOCl for primary treatment [[PMID:37355163]]. Duarte et al. did not report a consensus irrigant concentration across included reviews [[PMID:41833582]].
+2. **Primary chemomechanical irrigation with 5.25% NaOCl**
+   Irrigate with 5.25% NaOCl after each consecutive instrument throughout the preparation sequence [[PMID:39955574]]. This step is the disinfection foundation and must not be replaced by laser alone [[PMID:24326811]] [[PMID:41833582]].
 
-3. **For Er:YAG LAI: set parameters to 50 mJ, 25 Hz, 1 W, 300 µs pulse duration; use a 300 µm fibre tip.** These are the parameters used in the Kolberg-Babrzyńska et al. RCT (n = 40), yielding a fluence of 71.4 J/cm² and power density of 1,428.6 W/cm² [[PMID:40135760]].
+3. **Smear layer removal**
+   Irrigate with 17% EDTA as a final flush before laser activation [[PMID:29378981]].
 
-4. **Deliver Er:YAG LAI with 2% NaOCl, followed by 17% EDTA activation.** Both irrigants were activated sequentially in the Kolberg-Babrzyńska et al. protocol; EDTA contact time was not separately specified in that study [[PMID:40135760]].
+4. **Select laser system per indication**
+   - *Cavitation/LAI goal:* Er:YAG 2940 nm at 75–100 mJ, <50 Hz, 100–150 μs pulse duration [[PMID:38662505]]
+   - *aPDT goal:* Diode 660 nm, 100 mW, fiber tip 300 μm [[PMID:30797116]]; or 630 nm LED at 3 W/cm² for two 30-second periods [[PMID:35996480]]
+   - *Diode LAI:* 980 nm at 1.2 W (lowest effective power with least external temperature rise: 6.25 °C) [[PMID:29378981]]
 
-5. **For aPDT with ICG: apply ICG photosensitiser then activate with infrared diode laser.** Leonardo et al. did not report the ICG concentration or diode power output — those parameters must be sourced from the device manufacturer's validated protocol [[PMID:37355163]].
+5. **For aPDT: apply photosensitiser and observe contact time**
+   Introduce methylene blue 0.005% via sterile paper cone for 3 min pre-irradiation [[PMID:30797116]]; alternatively, toluidine blue 0.1 mg/mL for two 30-second irradiation periods [[PMID:35996480]].
 
-6. **For aPDT with methylene blue: use 0.005% methylene blue solution; irradiate at 660 nm, 100 mW, for 90 s (total energy 9.0 J); insert a 300 µm light diffusor 2 mm short of working length** [[PMID:30797116]]. This recommendation rests on a single case report (Amaral et al., 2019 [[PMID:30797116]]) with 60-month follow-up on one tooth — no RCT has evaluated these specific aPDT parameters; treat as provisional pending higher-tier confirmation.
+6. **Laser irradiation**
+   - *aPDT (diode 660 nm):* Deliver 100 mW for 40 s (energy density 4 J/cm²) via 300 μm fiber inserted 2 mm short of working length [[PMID:30797116]]
+   - *Nd:YAG (if selected):* 100 mJ or 200 mJ at 20 pps for 20 s; note that 200 mJ produces a temperature rise of 61.8 ± 4.2 °C and 100 mJ produces 24.3 ± 3.9 °C — both represent significant thermal load [[PMID:11806644]]
+   - *Er,Cr:YSGG LAI:* 2940 nm, 25 mJ, 10 Hz, 60 μs, 200 μm tip, 21 mm insertion [[PMID:41519256]]
 
-7. **Apply photobiomodulation (PBM) post-operatively if a periapical lesion is present.** Kolberg-Babrzyńska et al. used 635 nm, 400 mW, 5 s per point, 2 J dose per point, 4 J/cm², 8 mm applicator diameter, at 2 apical points over 4 sessions (day 0, 24 h, 48 h, 96 h) [[PMID:40135760]].
+7. **Post-laser irrigant flush**
+   Flush canal with 5.25% NaOCl after laser activation to remove debris mobilised by cavitation — standard practice, not from the retrieved evidence base.
 
-8. **Obturate with thermoplasticised gutta-percha and AH Plus epoxy resin sealer.** This was the obturation method used in the validating RCT [[PMID:40135760]].
+8. **Dry and obturate**
+   Dry canals with paper points and obturate using the clinician's chosen technique — the retrieved evidence base does not report a laser-specific obturation protocol.
+
+---
 
 ### 4b. Decision Tree
 
-**IF** the tooth is undergoing primary root canal treatment with intact canal anatomy and no periapical lesion
-**THEN** Er:YAG LAI (50 mJ, 25 Hz, 300 µm tip) with 2.5% NaOCl is an acceptable adjunct after shaping
-**BECAUSE** LAI may improve irrigant distribution in inaccessible areas, though the umbrella review confirms clinical benefit remains unproven [[PMID:41833582]]
+**IF** the operator's primary goal is biofilm disruption and improved irrigant penetration into the apical third and lateral canals
+**THEN** select Er:YAG (2940 nm) at 75–100 mJ, <50 Hz, 100–150 μs (PIPS or SWEEPS protocol)
+**BECAUSE** erbium wavelengths produce cavitation-driven photoacoustic streaming with the strongest evidence for biofilm reduction in the root canal (SMD −0.551; 95% CI −0.656 to −0.445) [[PMID:38662505]] [[PMID:40136729]]
 
-**IF** the tooth requires endodontic retreatment with a chronic periapical lesion
-**THEN** use Er:YAG LAI (50 mJ, 25 Hz, 1 W, 300 µs, 300 µm tip) with 2% NaOCl and 17% EDTA, followed by post-operative 635 nm PBM over 4 sessions
-**BECAUSE** this combined protocol produced significantly smaller periapical lesion size at 6 months (mean 1.55 ± 0.51 mm vs. 1.95 ± 0.71 mm in control, p < 0.05) [[PMID:40135760]]
+**IF** conventional chemomechanical preparation and NaOCl irrigation have been completed but residual infection is suspected (e.g., persistent sinus tract, necrotic tooth with periapical lesion)
+**THEN** add aPDT as adjunct: methylene blue 0.005% for 3 min contact + 660 nm diode at 100 mW for 40 s
+**BECAUSE** aPDT generates ROS-mediated killing without thermal risk, and combining aPDT with antimicrobial irrigants may provide a synergistic effect [[PMID:31809911]]
 
-**IF** residual bacteria persist after chemomechanical preparation and conventional irrigation in a single-rooted tooth
-**THEN** add LA therapy with ICG using an infrared diode laser as a further adjunct
-**BECAUSE** ICG-mediated LA produced significant additional CFU reduction beyond preparation and 2.5% NaOCl irrigation alone (p < .05) [[PMID:37355163]]
+**IF** diode laser (980 nm) is the only system available
+**THEN** set power to 1.2 W rather than 2 W or 3 W
+**BECAUSE** 1.2 W produces comparable *E. faecalis* reduction with a significantly lower external root surface temperature rise (6.25 °C vs. 16.79 °C at 3 W) [[PMID:29378981]]
 
-**IF** the canal anatomy is severely calcified or the fibre tip cannot be positioned safely near working length
-**THEN** do not proceed with LAI; revert to conventional needle irrigation with ultrasonic activation
-**BECAUSE** tip position directly governs cavitation efficacy and thermal safety; Meire and De Moor reported that fibre tip geometry is a primary determinant of cavitation outcome but did not report safe parameters for obstructed canals [[PMID:38340037]]
+**IF** the case involves a separated instrument blocking apical access or anatomical complexity preventing full chemo-mechanical debridement
+**THEN** aPDT adjunct (660 nm, 100 mW, 90 s total irradiation time delivering 9.0 J, fiber 300 μm inserted 2 mm short of working length) may be added to canals where instrumentation is limited
+**BECAUSE** this recommendation rests on a single case report with 60-month follow-up (Amaral et al. [[PMID:30797116]]) — no RCT or prospective cohort has evaluated aPDT specifically for separated instrument cases; treat as provisional pending higher-tier confirmation.
 
-**IF** the clinician lacks a calibrated laser unit with verified output parameters
-**THEN** do not use laser adjuncts; uncalibrated use risks thermal damage without confirmed antimicrobial benefit
-**BECAUSE** current evidence requires specific energy/frequency settings and no standardised protocol exists [[PMID:41833582]]
+**IF** high-powered laser is proposed as the sole disinfection method, replacing NaOCl-based irrigation
+**THEN** revert to NaOCl-based chemomechanical preparation as the primary protocol; laser serves as adjunct only
+**BECAUSE** conventional 5.25% NaOCl produced bacterial growth in only 3/30 samples versus 8/30 for 980 nm diode laser alone [[PMID:24326811]], and the 2026 umbrella review classifies laser-activated irrigation as having "unproven clinical benefit" as a standalone treatment [[PMID:41833582]]
+
+---
 
 ### 4c. Materials & Instrumentation
 
-| Category | Specification | Source |
-|---|---|---|
-| **Laser system — Er:YAG LAI** | 2940 nm pulsed; 50 mJ · 25 Hz · 1 W · 300 µs pulse duration | [[PMID:40135760]] |
-| **Laser tip — Er:YAG LAI** | 300 µm diameter fibre tip; fluence 71.4 J/cm²; power density 1,428.6 W/cm² | [[PMID:40135760]] |
-| **Irrigant — retreatment LAI** | 2% NaOCl followed by 17% EDTA; contact time for EDTA not reported in source study | [[PMID:40135760]] |
-| **Irrigant — primary treatment** | 2.5% NaOCl; saline used as comparator only | [[PMID:37355163]] |
-| **Photosensitiser — aPDT (methylene blue)** | 0.005% methylene blue solution | [[PMID:30797116]] |
-| **Laser system — aPDT (methylene blue)** | 660 nm diode · 100 mW · 90 s · 9.0 J total energy | [[PMID:30797116]] |
-| **aPDT fibre tip** | 300 µm light diffusor; inserted 2 mm short of working length | [[PMID:30797116]] |
-| **Photosensitiser — aPDT (ICG)** | ICG — concentration not reported in RCT evidence base | [[PMID:37355163]] |
-| **PBM unit — post-operative** | 635 nm diode · 400 mW · 5 s/point · 2 J/point · 4 J/cm² · 8 mm applicator · 4 sessions | [[PMID:40135760]] |
-| **Obturation** | Thermoplasticised gutta-percha + AH Plus epoxy resin sealer | [[PMID:40135760]] |
-| **Imaging** | CBCT for periapical lesion measurement at baseline, 6 months, and 12 months | [[PMID:40135760]] |
-| **Shaping prerequisite** | Minimum apical file size before any laser activation — evidence base does not specify; 25/.04 used in RCT | [[PMID:37355163]] |
+| Category | Specification |
+|---|---|
+| **Primary irrigant** | 5.25% NaOCl · delivered between each instrument file via side-vented needle · volume per canal not reported in the retrieved evidence base [[PMID:39955574]] |
+| **Smear layer irrigant** | 17% EDTA · final flush before laser activation [[PMID:29378981]] |
+| **aPDT photosensitiser (Option A)** | Methylene blue · 0.005% concentration · applied via sterile paper cone · 3 min canal contact time pre-irradiation [[PMID:30797116]] |
+| **aPDT photosensitiser (Option B)** | Toluidine blue · 0.1 mg/mL (FotoSan®, CMS Dental, Denmark) · two 30-second irradiation periods [[PMID:35996480]] |
+| **Laser: aPDT** | Diode · 660 nm · 100 mW · 300 μm fiber tip · 40 s irradiation · 4 J/cm² · fiber 2 mm short of working length [[PMID:30797116]] |
+| **Laser: LAI/PIPS/SWEEPS** | Er:YAG · 2940 nm · 75–100 mJ · <50 Hz · 100–150 μs pulse [[PMID:38662505]] |
+| **Laser: Er,Cr:YSGG LAI** | 2780 nm · 25 mJ · 10 Hz · 60 μs · 200 μm tip · 21 mm insertion length [[PMID:41519256]] |
+| **Laser: Diode LAI** | 980 nm · 1.2 W · 10 Hz · 200 μm tip · 21 mm insertion length [[PMID:41519256]] [[PMID:29378981]] |
+| **Laser: Nd:YAG** | 1064 nm · 100–200 mJ · 20 pps · 20 s · 200 mJ produces ΔT +61.8 ± 4.2 °C; 100 mJ produces ΔT +24.3 ± 3.9 °C [[PMID:11806644]] |
+| **Instruments** | NiTi rotary system; Kottur et al. used ProTaper to F4 with 5.25% NaOCl irrigation between each file [[PMID:39955574]] |
+| **Imaging** | Periapical radiograph for working length — standard practice; CBCT parameters not reported in the retrieved evidence base |
 
 ---
 
@@ -113,45 +126,62 @@ Meire and De Moor (2024) explain that cavitation is the primary driving force of
 
 | Step | Parameter | Evidence-Based Value |
 |---|---|---|
-| Irrigant — primary treatment | NaOCl concentration | 2.5% NaOCl [[PMID:37355163]] |
-| Irrigant — retreatment with LAI | NaOCl concentration | 2% NaOCl [[PMID:40135760]] |
-| Chelating agent with LAI | EDTA concentration | 17% EDTA; contact time not reported in source [[PMID:40135760]] |
-| Er:YAG LAI — pulse energy | Energy per pulse | 50 mJ [[PMID:40135760]] |
-| Er:YAG LAI — frequency | Pulse repetition rate | 25 Hz [[PMID:40135760]] |
-| Er:YAG LAI — power | Average power output | 1 W [[PMID:40135760]] |
-| Er:YAG LAI — pulse duration | Duration per pulse | 300 µs [[PMID:40135760]] |
-| Er:YAG LAI — fluence | Calculated fluence at tip | 71.4 J/cm² [[PMID:40135760]] |
-| Er:YAG LAI — fibre tip diameter | Tip size | 300 µm [[PMID:40135760]] |
-| Optimal Er:YAG parameters per meta-analysis | Wavelength · energy · pulse duration · frequency | 2940 nm · 75–100 mJ · 100–150 µs · < 50 Hz [[PMID:38662505]] |
-| aPDT — methylene blue concentration | Photosensitiser dose | 0.005% [[PMID:30797116]] |
-| aPDT — diode laser (methylene blue) | Wavelength · power · time · total energy | 660 nm · 100 mW · 90 s · 9.0 J [[PMID:30797116]] |
-| aPDT — ICG photosensitiser concentration | Dose | Not reported in evidence base [[PMID:37355163]] |
-| Post-op PBM — periapical lesion | Wavelength · power · dose · sessions | 635 nm · 400 mW · 2 J/point · 4 sessions at day 0, 24 h, 48 h, 96 h [[PMID:40135760]] |
-| Overall clinical verdict | Evidence status | Adjunct with unproven clinical benefit; further standardised RCTs required [[PMID:41833582]] |
+| Primary irrigant | Concentration | 5.25% NaOCl [[PMID:39955574]] |
+| Smear layer removal | EDTA concentration | 17% EDTA, final flush pre-laser [[PMID:29378981]] |
+| aPDT photosensitiser A contact time | Duration before light activation | Methylene blue 0.005% × 3 min [[PMID:30797116]] |
+| aPDT photosensitiser B contact time | Duration / irradiation schedule | Toluidine blue 0.1 mg/mL × two 30-second irradiation periods [[PMID:35996480]] |
+| aPDT irradiation (diode 660 nm) | Power · time · energy · fiber · position | 100 mW · 40 s · 4 J/cm² · 300 μm fiber · 2 mm short of WL [[PMID:30797116]] |
+| aPDT bacterial reduction (primary teeth, n=30) | CFU reduction vs. conventional | 99% (aPDT + conventional) vs. 93% (conventional alone); difference not statistically significant [[PMID:32171875]] |
+| Er:YAG LAI optimal parameters | Energy · pulse rate · pulse duration · wavelength | 75–100 mJ · <50 Hz · 100–150 μs · 2940 nm [[PMID:38662505]] |
+| Er,Cr:YSGG LAI settings | Energy · Hz · pulse duration · tip · insertion | 25 mJ · 10 Hz · 60 μs · 200 μm · 21 mm [[PMID:41519256]] |
+| Diode LAI optimal power | Watts | 1.2 W (980 nm) — equivalent efficacy, lowest thermal risk (ΔT 6.25 °C) [[PMID:29378981]] |
+| Nd:YAG temperature risk | ΔT at 200 mJ vs. 100 mJ | +61.8 ± 4.2 °C (200 mJ); +24.3 ± 3.9 °C (100 mJ) [[PMID:11806644]] |
+| Nd:YAG vs. NaOCl bacterial reduction | CFU/mL post-treatment (*S. aureus*) | Nd:YAG 200 mJ → 3.8 × 10⁴ CFU/mL; 0.5 mL NaOCl rinse → 1.84 × 10³ CFU/mL — NaOCl superior [[PMID:11806644]] |
+| Overall clinical evidence status | Evidence grade | Adjunct with unproven standalone clinical benefit; standardised clinical trials lacking [[PMID:41833582]] |
+| Dentin structural risk | Preferred LAI system | Er,Cr:YSGG causes less dentin structural damage than 980 nm diode LAI (ex vivo, n=42; no clinical RCT available) [[PMID:41519256]] |
 
 ---
 
-> ⚠ **Citation support: 1 of 60 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
+> ⚠ **Citation support: 1 of 61 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
 >
-> - [[PMID:41833582]] cited for: "Duarte et al. did not report a consensus irrigant concentration across included reviews."
+> - [[PMID:30797116]] cited for: "aPDT photosensitiser A contact time — Duration before light activation — Methylene blue 0.005% × 3 min"
 
 ---
 
-*Understanding the physics of each wavelength clarifies why erbium systems outperform diode lasers at the level of irrigant activation — the next module translates that mechanism into measured biofilm-removal and disinfection efficacy data.*
+*With the physical and mechanistic foundations established, Module 2 translates this knowledge into patient selection — determining which clinical presentations genuinely benefit from laser adjuncts and which are better served by conventional protocols alone.*
 
 ---
 
-## Module 2 — Microbial Biofilm Removal and Disinfection Efficacy
+## Module 2 — Clinical Assessment and Indication Selection for Laser Disinfection
 
-**Why biofilm makes standard irrigation insufficient.** Endodontic biofilm is a structured, multispecies community anchored to root canal walls and embedded within dentinal tubules, lateral canals, isthmuses, and apical deltas — anatomical refuges that a conventional side-vented needle cannot reliably reach. Laser-activated irrigation (LAI) addresses this by harnessing cavitation: pulsed laser energy generates rapidly expanding and imploding vapour bubbles around the fibre tip, producing intense fluid dynamics that drive irrigant throughout the underlying root canal [[PMID:38340037]]. This photoacoustic streaming mechanism is the physical basis for LAI's superior penetration into complex anatomy compared with passive needle delivery [[PMID:38340037]].
+**The literature is currently divided on this topic.** Whether laser-assisted disinfection produces meaningfully superior periapical healing compared to conventional irrigation is unresolved at the highest evidence tiers. Doğan et al., 2024 (n=56, 12-month CBCT follow-up) found that LAI-SWEEPS achieved 86.9% lesion volume reduction versus 74.5% in controls — yet this difference was not statistically significant (p>0.05) [[PMID:38878107]]. Conversely, Kolberg-Babrzyńska et al., 2025 found a statistically significant reduction in periapical lesion size at 6 months when Er:YAG LAI (50 mJ, 25 Hz, 1 W, 300 μs, 300 μm tip) was combined with photobiomodulation at 635 nm compared to chemo-mechanical treatment alone [[PMID:40135760]]. Larger, adequately powered RCTs are required before laser disinfection can displace conventional irrigation as standard of care for periapical healing outcomes.
 
-**LAI vs. other activation techniques — disinfection efficacy.** In vitro evidence consistently favours LAI for biofilm and smear layer removal. Donnermeyer et al., 2024 demonstrated in a 3D-printed model with isthmuses (2.5 × 0.4 × 0.2 mm) and lateral canals (0.2 mm diameter) that Er:YAG LAI — using a P400FL tip at canal entrance, 25 pps, 50 mJ, 300 μs, continuous irrigation with 3 mL per 20 s for 3 × 20 s per canal — achieved the greatest overall hydrogel removal from the entire root canal system compared with needle irrigation, manual agitation, EndoActivator, EDDY sonic, and passive ultrasonic irrigation [[PMID:38382735]]. Abaza et al., 2025 found that Er,Cr:YSGG LAI (25 mJ, 50 Hz, radial-firing tip; four 15-second activation cycles) achieved the lowest smear layer scores across all root thirds when combined with NaOCl + EDTA, outperforming both diode LAI and UAI; notably, Er,Cr:YSGG with saline alone outperformed NaOCl without activation, indicating that mechanical cavitation can dominate chemical action [[PMID:41389357]]. A systematic review on the GentleWave system found that Er:YAG lasers produced comparable debris removal to GentleWave, while GentleWave achieved higher LPS/LTA reductions than UAI alone, underscoring that advanced activation outperforms passive delivery [[PMID:41514415]].
+**Selecting the Right Patient: Inclusion Criteria**
 
-**The literature is currently divided on this topic.** Regarding whether LAI and other adjunct therapies translate into *improved periapical healing* at 12 months, two high-tier sources conflict. Meire et al., 2023 (ESE-commissioned systematic review, GRADE assessment, 13 RCTs + 1 cohort) concluded there is insufficient evidence to recommend any adjunctive laser therapy for healing of apical periodontitis — GRADE certainty was very low for diode laser and low for aPDT [[PMID:36156804]]. In contrast, Doğan et al., 2024 (RCT, n=56, 12-month CBCT volumetry) found that LAI-SWEEPS produced 86.9% periapical lesion volume reduction vs. 74.5% in the no-activation control, although the difference did not reach statistical significance (p > 0.05) [[PMID:38878107]]. The Meire et al. systematic review carries higher GRADE certainty and represents the current state of the evidence: it found insufficient evidence to recommend any adjunctive laser therapy for AP healing, while trends from individual RCTs remain biologically plausible [[PMID:36156804]].
+Laser adjuncts are best indicated when chemo-mechanical preparation alone is likely to be insufficient. Prioritise laser disinfection in:
 
-**Antimicrobial photodynamic therapy (aPDT).** aPDT uses a photosensitiser activated by visible light to generate reactive oxygen species lethal to biofilm organisms. Das et al., 2025 (meta-analysis, 11 RCTs, GRADE assessment) reported that aPDT as an adjunct to chemo-mechanical irrigation significantly reduced postoperative pain at 24 h (SMD: −1.21) and 72 h (SMD: −0.63), and narrative findings across six studies suggested microbial load reduction, though heterogeneity prevented meta-analysis on that outcome [[PMID:41388259]]. Coelho et al., 2019 specifically used methylene blue at 1.56 μM/mL with an optical fibre applied for 180 seconds (P = 100 mW, E = 18 J) delivered to working length, with canals instrumented under 2.5% NaOCl irrigation, and found significantly lower postoperative pain VAS scores at 24 h and 72 h compared with controls [[PMID:31301436]]. Meire et al., 2023 found low-certainty GRADE evidence for aPDT and no statistically significant difference in 12-month radiographic healing versus controls [[PMID:36156804]], so aPDT offers adjunctive pain-reduction and antimicrobial benefit but cannot yet be said to independently improve periapical healing outcomes.
+- Teeth with large periapical lesions (PAI score ≥3) confirmed on CBCT [[PMID:38878107]]
+- Multi-rooted teeth with curved or complex canal anatomy, where Doğan et al., 2024 specifically acknowledge conventional irrigation is most limited [[PMID:38878107]]
+- Endodontic retreatment cases with persistent infection — Conejero et al., 2021 (retrospective, n=214) showed adjunctive photodynamic therapy (PDT) reduced calcium hydroxide interappointment dressing need from 82.7% to 17% in retreatment (p<0.01); note this rests on a retrospective study of 214 teeth with no matched RCT confirmation — treat as provisional pending prospective validation [[PMID:33731503]]
+- Combined endo-perio lesions, particularly with probing depth ≥6 mm, where Li et al., 2026 (n=634, retrospective) demonstrated composite success risk ratio of 1.22 (95% CI: 1.10–1.36) favouring adjunctive water laser [[PMID:42482547]]
+- Patients with high preoperative pain scores, where semiconductor laser significantly reduces postoperative VAS at day 1 (p<0.001) [[PMID:41063319]]
+- Anatomically complex cases (dens invaginatus, open apex) where supplementary disinfection is biologically justified [[PMID:40206775]]
 
-**Laser type matters.** Sabeti et al., 2026 (meta-analysis, 7 RCTs, n=490 teeth) showed LAI overall significantly reduced postoperative pain versus UAI (SMD: −0.58; 95% CI: −0.94 to −0.22; p = 0.0016); subgroup analysis identified pulsed Er:YAG modalities as superior (PIPS: SMD −1.10; SWEEPS: SMD −1.57 at 24–48 h), while diode LAI showed no significant effect compared with UAI (SMD: 0.03) [[PMID:40818665]]. On the basis of this meta-analysis, diode LAI cannot be considered equivalent to Er:YAG for pain reduction relative to UAI [[PMID:40818665]].
+**Contraindications and Exclusion Criteria**
+
+Do not select laser disinfection as the primary intervention when:
+
+- The tooth is non-restorable or has vertical root fracture (systemic treatment planning supersedes adjunct selection)
+- Single-rooted teeth with small periapical lesions: Doğan et al., 2024 explicitly found no statistically significant healing benefit of LAI-SWEEPS over manual agitation in single-canal teeth at 12 months [[PMID:38878107]]
+- Laser equipment or trained operator is unavailable — chemo-mechanical irrigation remains standard of care per AAE guidelines
+- Patient has a documented photosensitiser allergy (relevant only when antimicrobial PDT is planned)
+- Er:YAG laser retreatment for filling material removal: Fischer et al., 2024 (systematic review) found Er:YAG SWEEPS did not significantly reduce residual filling material volume (p>0.05) — PUI or XP-Endo Finisher should be preferred in retreatment [[PMID:39489325]]
+
+**Diagnostic Workup Before Laser Selection**
+
+Accurate pre-treatment diagnosis determines both whether laser is indicated and which modality to select. Pulpal and periapical diagnosis must follow established AAE classification. CBCT is the imaging standard for volumetric lesion measurement when laser-activated irrigation is planned for large periapical lesions [[PMID:38878107]]. Microbial profiling using MALDI-TOF mass spectrometry can identify dominant species (E. faecalis predominated in retreatment cases; Lactobacillus spp. in abscess cases in Ahlat et al., 2023, n=150) [[PMID:37925063]], though this remains a research tool rather than a clinical prerequisite.
+
+Preoperative pain level is an independent predictor of postoperative pain: Jian et al., 2025 identified preoperative pain score, periapical lesion size, and laser protocol as the three main factors affecting postoperative VAS across 197 patients [[PMID:41063319]]. Patients with symptomatic irreversible pulpitis and large periapical lesions therefore represent the highest-benefit subgroup for laser adjunction. Antimicrobial PDT (aPDT) as adjunct to chemo-mechanical irrigation reduces postoperative pain (SMD −1.21 at 24 h; SMD −0.63 at 72 h) and microbial load, though only 3 of 11 included studies had low risk of bias [[PMID:41388259]].
 
 ---
 
@@ -159,61 +189,79 @@ Meire and De Moor (2024) explain that cavitation is the primary driving force of
 
 ### 4a. Procedural Protocol
 
-1. **Complete chemo-mechanical shaping first.** Shape to a minimum apical preparation of #25/.06 taper before any activation step; the LAI model studies used 25/.06 preparations to allow tip insertion and irrigant flow [[PMID:38382735]].
+1. **Establish diagnosis and indication** — Confirm PAI score ≥3 on CBCT or periapical radiograph; classify pulpal status per AAE criteria. Record preoperative VAS pain score. [[PMID:38878107]]
 
-2. **Primary irrigation with NaOCl throughout shaping.** Deliver via side-vented needle throughout instrumentation — standard practice, not from the retrieved evidence base. Coelho et al. used 2.5% NaOCl during canal instrumentation in their RCT [[PMID:31301436]]; the choice between 2.5% and 5.25% for necrotic cases is standard practice, not from the retrieved evidence base.
+2. **Obtain working length** — Electronic apex locator confirmed by periapical radiograph. Doğan et al., 2024 did not report a specific apex locator; use institutional standard. [[PMID:38878107]]
 
-3. **Er:YAG LAI activation of NaOCl — first cycle.** Fill canal with NaOCl. Insert P400FL fibre (400 μm diameter) at canal entrance — not to working length. Activate at 50 mJ, 25 pps, 300 μs pulse duration for 3 × 20 seconds per canal [[PMID:38382735]]. Repeat the sequence for each canal individually.
+3. **Canal shaping** — Shape to a minimum apical size adequate for laser tip insertion (manufacturer guidance for 300 μm tip requires patent canal to working length). Kolberg-Babrzyńska et al., 2025 used standard chemo-mechanical preparation prior to Er:YAG LAI. [[PMID:40135760]]
 
-4. **EDTA flush — smear layer removal.** Irrigate with 17% EDTA; activate with Er:YAG LAI at 50 mJ, 25 Hz, 1 W, 300 μs pulse duration (fluence 71.4 J/cm², power density 1,428.6 W/cm², 300 μm tip diameter) for one activation sequence per canal [[PMID:40135760]].
+4. **Primary chemo-mechanical irrigation** — Irrigate with 2% NaOCl (Kolberg-Babrzyńska et al., 2025 protocol) throughout instrumentation; final flush volume not specified in that study. For pulpotomy cases, Swetha et al., 2024 used 2.5% NaOCl for haemostasis in the conventional arm. [[PMID:40135760]] [[PMID:38157279]]
 
-5. **Final NaOCl activation cycle.** Refill canal with NaOCl and perform one additional LAI sequence (3 × 20 s at 50 mJ, 25 pps, 300 μs) to flush EDTA and mobilised debris [[PMID:38382735]].
+These concentrations reflect different study contexts: 2% NaOCl is the irrigation concentration used by Kolberg-Babrzyńska et al. (2025) specifically during Er:YAG LAI activation in retreatment cases [[PMID:40135760]], and 2.5% NaOCl is the concentration used by Swetha et al. (2024) for pulp haemostasis in the conventional pulpotomy arm [[PMID:38157279]]; neither concentration is interchangeable with the 5.25% NaOCl used as the primary irrigant in the Module 1 and Module 1 Clinical Application protocols [[PMID:39955574]] [[PMID:24326811]].
 
-6. **aPDT adjunct (for necrotic or retreatment cases).** Flood canal with methylene blue photosensitiser at 1.56 μM/mL. Insert optical fibre to working length. Irradiate for 180 seconds at 100 mW output (total energy = 18 J) [[PMID:31301436]]. Alternatively, Toluidine Blue at 0.1 mg/mL (FotoSan® carrier) activated at 630 nm, 3 W/cm² has been reported in case-level evidence [[PMID:41789272]] — no RCT-level head-to-head comparison of these two photosensitisers was identified in the retrieved evidence base.
+5. **Er:YAG LAI activation** — Insert 300 μm tip to working length; parameters: 50 mJ, 25 Hz, 1 W, 300 μs pulse; fluence 71.4 J/cm²; power density 1,428.6 W/cm². Activate 2% NaOCl, then repeat with 17% EDTA. [[PMID:40135760]]
 
-7. **Dry and obturate.** Paper-point dry to working length; obturate with thermoplastic gutta-percha and epoxy resin–based sealer. Kolberg-Babrzyńska et al. used thermocondensed GP with AH Plus sealer following their Er:YAG LAI + 17% EDTA protocol [[PMID:40135760]].
+6. **Final rinse and dry** — Paper points to working length; canal must be patent and dry before obturation or medicament placement.
+
+7. **Diode LAI alternative (810 nm)** — If Er:YAG unavailable: 810 nm semiconductor diode laser for LAI reduces postoperative VAS versus controls (p<0.001 at day 1); Jian et al., 2025 did not report energy or tip parameters beyond wavelength. [[PMID:41063319]]
+
+8. **Photobiomodulation (PBM) adjunct** — Apply 635 nm diode, 400 mW, 2 J per point, 4 J/cm², 8 mm applicator, 5 s per point, 2 apical points; repeat at 24 h, 48 h, and 96 h post-treatment. [[PMID:40135760]]
+
+9. **Obturation** — Thermo-condensed gutta-percha with AH Plus sealer (epoxy resin-based), as used by Kolberg-Babrzyńska et al., 2025. [[PMID:40135760]]
+
+10. **Postoperative follow-up** — Clinical and radiographic review at 3, 6, 9 months; CBCT volumetric reassessment at 12 months for large lesions. [[PMID:38878107]]
+
+---
 
 ### 4b. Decision Tree
 
-**Branch 1 — Standard primary RCT, vital pulp, no periapical lesion:**
-IF vital pulp, no periapical pathosis, routine canal anatomy
-THEN complete chemo-mechanical preparation with standard needle irrigation; LAI adjunct is optional
-BECAUSE Meire et al. 2023 found insufficient evidence (GRADE: very low to low certainty) that any laser adjunct improves 12-month healing over standard care [[PMID:36156804]]
+**Branch 1 — Large periapical lesion, single-rooted tooth**
+IF PAI ≥3 on a single-rooted tooth with straight canal anatomy
+THEN use standard chemo-mechanical irrigation; laser adjunct is optional
+BECAUSE Doğan et al., 2024 found no statistically significant healing benefit of LAI-SWEEPS vs. manual agitation in single-canal teeth at 12 months [[PMID:38878107]]
 
-**Branch 2 — Necrotic pulp with periapical lesion, single-rooted tooth:**
-IF necrotic pulp with periapical index ≥3, single straight canal
-THEN add Er:YAG LAI (50 mJ, 25 pps, 3 × 20 s per canal) and consider aPDT adjunct (methylene blue 1.56 μM/mL, 180 s at 100 mW)
-BECAUSE LAI-SWEEPS produced 86.9% lesion volume reduction vs. 74.5% in controls at 12 months (not statistically significant); aPDT reduces postoperative pain at 24–72 h (SMD −1.21) [[PMID:38878107]] [[PMID:41388259]]
+**Branch 2 — Large periapical lesion, multi-rooted or complex anatomy**
+IF PAI ≥3 in a multi-rooted tooth or complex anatomy (curved canals, dens invaginatus)
+THEN add Er:YAG LAI (50 mJ, 25 Hz, 300 μm tip) with 2% NaOCl and 17% EDTA plus postoperative PBM at 635 nm
+BECAUSE Kolberg-Babrzyńska et al., 2025 demonstrated statistically significant periapical lesion reduction at 6 months with this combined protocol [[PMID:40135760]]
 
-**Branch 3 — Retreatment with complex anatomy (isthmuses, lateral canals confirmed on CBCT):**
-IF retreatment case with multi-rooted tooth and complex anatomy
-THEN Er:YAG LAI is the preferred activation modality — superior to needle, sonic, and UAI in isthmus and overall system cleaning
-BECAUSE Donnermeyer et al. found LAI achieved greatest hydrogel removal from entire root canal system including apical isthmuses; GentleWave and LAI both outperform passive delivery [[PMID:38382735]] [[PMID:41514415]]
+**Branch 3 — Retreatment case with persistent infection**
+IF endodontic retreatment with confirmed periapical pathosis and previous calcium hydroxide failure
+THEN add aPDT (phenothiazinium photosensitiser, diode laser activation) to chemo-mechanical retreatment; avoid Er:YAG SWEEPS for filling removal
+BECAUSE Conejero et al., 2021 showed 17% vs. 82.7% calcium hydroxide need with vs. without PDT (p<0.01) [[PMID:33731503]]; Fischer et al., 2024 showed Er:YAG SWEEPS did not significantly reduce residual filling material (p>0.05) [[PMID:39489325]]
 
-**Branch 4 — Only diode laser available, no Er:YAG:**
-IF only diode laser (810–980 nm) is available
-THEN diode LAI may reduce postoperative pain versus needle irrigation at 6–48 h but should not be assumed to provide Er:YAG-equivalent photoacoustic streaming or antimicrobial activation
-BECAUSE Sabeti et al. meta-analysis: diode LAI SMD vs. UAI = 0.03 (non-significant); McGillivray & Dutta found diode superior to needle for 6–48 h pain reduction [[PMID:40818665]] [[PMID:38484867]]
+**Branch 4 — High preoperative pain, symptomatic irreversible pulpitis**
+IF preoperative VAS >5 and diagnosis of symptomatic irreversible pulpitis
+THEN combine LAI and LLLT (combined protocol, 810 nm semiconductor laser) to minimise postoperative pain
+BECAUSE Jian et al., 2025 (n=197) showed combined LAI+LLLT produced the lowest VAS scores and fewest analgesic tablets (0.53 ± 0.74 tablets) across all laser subgroups [[PMID:41063319]]
 
-**Branch 5 — Immature apex / regenerative endodontic procedure:**
-IF immature permanent tooth with necrotic pulp requiring REP
-THEN use reduced-concentration NaOCl (1.5%); aPDT is an acceptable adjunct; avoid high-energy Er:YAG LAI near open apex
-BECAUSE Er:YAG laser-assisted irrigation in REP context carries a reported risk of irrigant extrusion through the open apex [[PMID:40287048]]
+**Branch 5 — Endo-perio lesion with probing depth ≥6 mm**
+IF combined endo-perio lesion confirmed, probing depth ≥6 mm
+THEN add adjunctive water laser to conventional RCT and scaling/root planing
+BECAUSE Li et al., 2026 (n=634) showed composite success risk ratio 1.22 (95% CI 1.10–1.36, p=0.003), with greatest benefit at baseline PD ≥6 mm [[PMID:42482547]]
+
+**Branch 6 — Pulpotomy with haemostasis difficulty**
+IF symptomatic irreversible pulpitis requiring pulpotomy and haemostasis unachieved with 2.5% NaOCl within 5 min
+THEN switch to diode laser (GaAlAs 980 nm or KTP laser) for haemostasis and cavity disinfection
+BECAUSE Swetha et al., 2024 (n=86) found LCP (980 nm) achieved 93% success at 18 months vs. 88.4% for conventional; Ayhan et al., 2025 (n=65) found KTP laser gave 90.5% vs. 86.4% success — neither difference was statistically significant [[PMID:38157279]] [[PMID:41121058]]
+
+---
 
 ### 4c. Materials & Instrumentation
 
-| Category | Specification | Source |
-|---|---|---|
-| **Primary irrigant** | NaOCl · 2.5% used in Coelho et al. RCT during shaping; 1.5% for REP cases per scoping review | [[PMID:31301436]] [[PMID:40287048]] |
-| **Chelating agent** | EDTA · 17% solution · activate with one LAI cycle · 20 s contact per activation | [[PMID:40135760]] |
-| **aPDT photosensitiser option A** | Methylene blue · 1.56 μM/mL · pre-irradiation contact then 180 s irradiation at 100 mW · optical fibre to working length | [[PMID:31301436]] |
-| **aPDT photosensitiser option B** | Toluidine Blue (FotoSan®) · 0.1 mg/mL · 630 nm LED · 3 W/cm² — case-series level evidence only; no RCT head-to-head vs. methylene blue in retrieved evidence base | [[PMID:41789272]] |
-| **Er:YAG LAI system** | Er:YAG laser · P400FL flat-end fibre (400 μm diameter) · tip at canal entrance · 50 mJ · 25 pps · 300 μs pulse duration · fluence 71.4 J/cm² · 3 × 20 s per canal per irrigant fill | [[PMID:38382735]] [[PMID:40135760]] |
-| **Er,Cr:YSGG LAI (alternative)** | 25 mJ · 50 Hz · radial-firing tip · four 15 s activation cycles · use with NaOCl + EDTA for optimal smear layer removal | [[PMID:41389357]] |
-| **aPDT light source** | Diode laser · 630–660 nm · 100 mW · 180 s · total energy 18 J · optical fibre inserted to working length | [[PMID:31301436]] |
-| **Shaping instruments** | Ni-Ti rotary system · minimum #25/.06 taper before LAI activation | [[PMID:38382735]] |
-| **Obturation** | Thermoplastic (warm) gutta-percha · epoxy resin–based sealer (AH Plus used in Kolberg-Babrzyńska et al. following Er:YAG LAI protocol) | [[PMID:40135760]] |
-| **Imaging** | Periapical radiograph (baseline, 3, 6, 12 months); CBCT small FOV for volumetric lesion assessment at baseline and 12 months in large periapical lesion cases | [[PMID:38878107]] [[PMID:40135760]] |
+| Category | Specification |
+|---|---|
+| **Irrigants — Primary** | 2% NaOCl · volume not specified in Kolberg-Babrzyńska et al. · delivered via side-vented needle then activated by Er:YAG tip [[PMID:40135760]] |
+| **Irrigants — Chelation** | 17% EDTA · activated by Er:YAG LAI · volume not reported in cited study [[PMID:40135760]] |
+| **Irrigants — Pulpotomy haemostasis** | 2.5% NaOCl (conventional arm) · contact time not specified by Swetha et al. [[PMID:38157279]] |
+| **Laser — Er:YAG LAI** | Wavelength 2,940 nm · 50 mJ · 25 Hz · 1 W · 300 μs pulse · 300 μm tip · fluence 71.4 J/cm² · power density 1,428.6 W/cm² [[PMID:40135760]] |
+| **Laser — Diode LAI** | 810 nm semiconductor · exact energy and tip parameters not reported by Jian et al. [[PMID:41063319]] |
+| **Laser — Diode pulpotomy** | GaAlAs 980 nm (haemostasis/disinfection); KTP laser (potassium titanyl phosphate, ~532 nm) — specific power settings not reported in Ayhan et al. or Swetha et al. [[PMID:38157279]] [[PMID:41121058]] |
+| **Laser — PBM adjunct** | 635 nm diode · 400 mW · 2 J/point · 4 J/cm² · 8 mm applicator · 5 s/point · 2 apical points · sessions at 0, 24, 48, 96 h [[PMID:40135760]] |
+| **aPDT photosensitiser** | Phenothiazinium salts (methylene blue or toluidine blue) · pre-irradiation time 1–5 min (range across included trials) · delivered via optical fibre [[PMID:39442490]] |
+| **Pulp-capping medicament** | Biodentine (calcium silicate-based bioceramic, Septodont) · placed after haemostasis in pulpotomy [[PMID:38157279]] |
+| **Obturation sealer** | Epoxy resin-based sealer (AH Plus, Dentsply) · with thermo-condensed gutta-percha [[PMID:40135760]] |
+| **Imaging** | CBCT (small FOV, ≤8×8 cm) for volumetric lesion measurement pre- and 12-month post-treatment; periapical radiography at 3, 6, 9 months using Molven's criteria [[PMID:38878107]] |
 
 ---
 
@@ -221,47 +269,50 @@ BECAUSE Er:YAG laser-assisted irrigation in REP context carries a reported risk 
 
 | Step | Parameter | Evidence-Based Value |
 |---|---|---|
-| Canal shaping before LAI | Minimum apical size / taper | #25/.06 taper [[PMID:38382735]] |
-| NaOCl during shaping (necrotic cases) | Concentration used in retrieved RCT | 2.5% [[PMID:31301436]]; higher concentrations not specified in retrieved evidence base |
-| NaOCl for REP / immature apex | Concentration | 1.5% [[PMID:40287048]] |
-| Er:YAG LAI — pulse energy | Laser parameter | 50 mJ [[PMID:38382735]] [[PMID:40135760]] |
-| Er:YAG LAI — pulse rate | Laser parameter | 25 pps [[PMID:38382735]] |
-| Er:YAG LAI — pulse duration | Laser parameter | 300 μs [[PMID:38382735]] [[PMID:40135760]] |
-| Er:YAG LAI — activation time per irrigant fill | Exposure per canal | 3 × 20 s [[PMID:38382735]] |
-| EDTA concentration + activation | Chelator protocol | 17% EDTA · 1 LAI cycle × 20 s [[PMID:40135760]] |
-| aPDT photosensitiser + irradiation | Concentration · power · time | Methylene blue 1.56 μM/mL · 100 mW · 180 s · 18 J total [[PMID:31301436]] |
-| LAI vs. UAI — postoperative pain (Er:YAG, meta-analysis) | Effect size | SMD −0.58 overall; SWEEPS SMD −1.57 at 24–48 h [[PMID:40818665]] |
-| Diode LAI vs. UAI — postoperative pain | Effect size | SMD 0.03 (non-significant) [[PMID:40818665]] |
-| aPDT vs. control — postoperative pain at 24 h | Meta-analysis SMD | −1.21 [[PMID:41388259]] |
-| Laser adjunct impact on periapical healing at 12 months | Highest-tier clinical outcome | Insufficient evidence to recommend (GRADE: very low to low certainty) [[PMID:36156804]] |
-| Long-term periapical healing (≥5 yr) with LAI as adjunct in primary RCT | Follow-up data | Not reported in retrieved evidence base |
+| Lesion size threshold for laser adjunct | PAI score / CBCT volume | PAI ≥3; large lesion confirmed volumetrically [[PMID:38878107]] |
+| Preferred indication | Tooth type | Multi-rooted, complex anatomy > single-rooted straight canal [[PMID:38878107]] |
+| Primary irrigant (LAI) | Solution · concentration | NaOCl · 2% [[PMID:40135760]] |
+| Chelating irrigant (LAI) | Solution · concentration | EDTA · 17% [[PMID:40135760]] |
+| Er:YAG LAI parameters | Energy · frequency · power · pulse · tip | 50 mJ · 25 Hz · 1 W · 300 μs · 300 μm tip [[PMID:40135760]] |
+| PBM adjunct protocol | Wavelength · dose · timing | 635 nm · 2 J/point · at 0, 24, 48, 96 h [[PMID:40135760]] |
+| Periapical healing benefit (multi-root) | Mean lesion reduction at 6 mo | Significantly smaller in laser group (1.55 mm vs. 1.95 mm, p<0.05) [[PMID:40135760]] |
+| Periapical healing benefit (single-root) | CBCT volume reduction at 12 mo | LAI-SWEEPS 86.9% vs. control 74.5%; difference NOT significant (p>0.05) [[PMID:38878107]] |
+| Postoperative pain — combined laser | VAS at day 1 | Significantly lower vs. control (p<0.001); analgesic use 0.53 ± 0.74 tablets [[PMID:41063319]] |
+| Retreatment — filling material removal | Er:YAG SWEEPS efficacy | Not significant (p>0.05); prefer PUI or XP-Endo Finisher [[PMID:39489325]] |
+| Pulpotomy success — diode 980 nm | 18-month Kaplan-Meier survival | 93% (laser) vs. 88.4% (conventional); not statistically significant [[PMID:38157279]] |
+| aPDT effect on postoperative pain | SMD vs. control | −1.21 at 24 h; −0.63 at 72 h (low certainty evidence) [[PMID:41388259]] |
+| Follow-up imaging schedule | Modality · interval | Periapical radiograph at 3, 6, 9 mo; CBCT at 12 mo for large lesions [[PMID:38878107]] |
 
 ---
 
 > ⚠ **Citation support: 2 of 57 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
 >
-> - [[PMID:38340037]] cited for: "This photoacoustic streaming mechanism is the physical basis for LAI's superior penetration into complex anatomy compared with passive needl"
-> - [[PMID:40287048]] cited for: "NaOCl for REP / immature apex — Concentration — 1.5%"
+> - [[PMID:38878107]] cited for: "Record preoperative VAS pain score."
+> - [[PMID:40135760]] cited for: "For pulpotomy cases, Swetha et al., 2024 used 2.5% NaOCl for haemostasis in the conventional arm."
 
 ---
 
-*With the microbiological rationale and activation-technique hierarchy established, Module 3 moves from evidence to operatory: how to sequence irrigants, position the fibre tip, and layer laser modalities within a complete clinical protocol.*
+*Knowing which patients benefit directs us to the next question: precisely how do we execute laser adjunct protocols at the chair? Module 3 moves from selection to technique, specifying tip position, activation cycles, irrigant volumes, and the multimodal combinations that produce the strongest pain outcomes.*
 
 ---
 
-## Module 3 — Clinical Laser Techniques and Protocol Application
+## Module 3 — Laser Disinfection Techniques and Treatment Protocols
 
-**The literature is currently divided on this topic.** Two parallel questions govern laser use in root canal disinfection: (1) does laser adjunct therapy improve periapical healing, and (2) does it reduce postoperative pain? The highest-tier evidence answers these questions differently.
+**The literature is currently divided on this topic.** The central clinical question — does adjunctive laser therapy improve outcomes in root canal treatment beyond conventional chemomechanical preparation — is answered differently depending on the outcome measured.
 
-**Healing Outcomes.** The PROSPERO-registered ESE systematic review by Meire et al. (2023) [[PMID:36156804]] screened five databases and included 14 clinical studies evaluating adjunct therapies in apical periodontitis. GRADE assessment yielded *very low* certainty of evidence for diode laser canal irradiation and *low* certainty for aPDT. The authors concluded there is insufficient evidence to recommend any adjunctive laser therapy for the treatment of apical periodontitis [[PMID:36156804]]. A pre-registered RCT by Doğan et al. (2024) [[PMID:38878107]] corroborated this: in 56 single-rooted teeth with large periapical lesions, CBCT-measured lesion volume reduction at 12 months was 86.9% for SWEEPS-LAI versus 74.5% for controls — numerically greater but not statistically significant (p > 0.05) [[PMID:38878107]].
+For **periapical healing**, the highest-tier available evidence is the ESE-commissioned systematic review by Meire et al., 2023, which found insufficient evidence to recommend any adjunctive therapy, including diode laser canal irradiation, aPDT, and ultrasonically activated irrigation, for the treatment of apical periodontitis (GRADE: very low to low certainty) [[PMID:36156804]]. This conclusion is reinforced by the RCT by Doğan et al., 2024 (n=56, 12-month CBCT follow-up), which showed LAI-SWEEPS produced 86.9% lesion volume reduction versus 74.5% for conventional irrigation — a numerically meaningful difference that nonetheless failed to reach statistical significance (p>0.05) [[PMID:38878107]]. Similarly, Pažin et al., 2024 found no significant difference in periapical lesion healing between UAI alone and UAI+PDT at 12 months (median reduction 86.98% vs. 79.72%; p=0.970) in a 36-patient single-visit retreatment RCT [[PMID:38013016]].
 
-**Pain Outcomes.** Here, higher-tier evidence favours laser. A 2026 meta-analysis by Sabeti et al. [[PMID:40818665]] pooling 7 RCTs (n = 490 teeth) found laser-activated irrigation (LAI) reduced postoperative pain versus ultrasonically activated irrigation (SMD = −0.58; 95% CI: −0.94 to −0.22; p = 0.0016), with peak effect at 24–48 hours (SMD = −1.00) [[PMID:40818665]]. Pulsed Er:YAG modalities showed the strongest benefit: PIPS SMD = −1.10; SWEEPS SMD = −1.57; diode LAI showed no significant effect (SMD = 0.03) [[PMID:40818665]]. A separate 2025 PROSPERO-registered systematic review by Das et al. [[PMID:41388259]] confirmed aPDT reduces postoperative pain at 24 h (SMD = −1.21) and 72 h (SMD = −0.63) [[PMID:41388259]]. An RCT by Jian et al. (2025) [[PMID:41063319]] (n = 202) demonstrated that the combination of 810 nm LAI plus transcutaneous LLLT produced the lowest VAS scores and fewest analgesic tablets consumed (0.53 ± 0.74 tablets over 14 days), outperforming either modality alone [[PMID:41063319]].
+For **postoperative pain**, higher-tier evidence shifts in favor of laser adjuncts. The 2026 meta-analysis by Sabeti et al. (7 RCTs, n=490 teeth) demonstrated LAI significantly reduced postoperative pain compared to UAI overall (SMD = −0.58; 95% CI: −0.94 to −0.22; p=0.0016), with the greatest effect at 24–48 hours (SMD = −1.00) [[PMID:40818665]]. Among laser types, pulsed Er:YAG modalities were clearly superior: SWEEPS produced SMD = −1.57 and PIPS produced SMD = −1.10, while diode LAI showed no significant pain benefit (SMD = 0.03) [[PMID:40818665]]. These findings are corroborated by the meta-analysis by Luo et al., 2024 (22 studies, n=892), which reported significant pain reductions for LLLT (SMD = −0.86 at 24 h), diode laser (SMD = −0.27 at 48 h), and PDT (SMD = −1.12 at 24 h; pain incidence RR = 0.47) [[PMID:39287434]]. Das et al., 2025 (PROSPERO-registered SR, 11 RCTs) confirmed aPDT significantly reduced VAS pain at 24 h (SMD = −1.21) and 72 h (SMD = −0.63) [[PMID:41388259]].
 
-**Smear Layer and Irrigant Activation.** An in vitro study by Abaza et al. (2025) [[PMID:41389357]] (n = 160 single-rooted premolars) compared Er,Cr:YSGG laser (25 mJ, 50 Hz, radial-firing tip, four 15-second activation cycles) against diode laser (pulsed 50%, 1.5 W), PUI, and conventional syringe-needle irrigation. The combination of Er,Cr:YSGG activation with NaOCl + EDTA achieved the lowest smear layer scores across all canal thirds; Er,Cr:YSGG with saline alone outperformed NaOCl alone, highlighting the dominant mechanical effect [[PMID:41389357]]. A model study by Donnermeyer et al. (2024) [[PMID:38382735]] using a 3D-printed canal system with 60° curvature, radius 5 mm, and isthmus structures (2.5 × 0.4 × 0.2 mm) found Er:YAG LAI (P400FL tip at canal entrance; 25 pps, 50 mJ, 300 µs; 3 × 20 s per canal; 3 ml/20 s) achieved significantly greater hydrogel removal from the entire root canal system than all other tested techniques (p < 0.05) [[PMID:38382735]].
+**Current standard-of-care remains conventional chemomechanical preparation as the primary treatment.** Laser adjuncts targeting pain reduction — particularly pulsed Er:YAG via SWEEPS/PIPS — represent the best-evidenced supplementary role at present. Claims regarding improved healing should be treated as provisional pending adequately powered RCTs.
 
-**Photobiomodulation for Vital Pulp Therapy.** A prospective cohort by Olszewska et al. (2024) [[PMID:37849444]] (n = 86 immature permanent teeth, ages 8–13) applied 635 nm diode laser PBM (100 mW, 200 mW/cm², 4 J total energy) immediately and 24 h after VPT with Biodentine. PBM significantly reduced cold sensitivity at 6 h, 24 h, 7 days, and 30 days compared to controls (p < 0.001), with no difference at 90 days [[PMID:37849444]].
+**Technique-Specific Considerations**
 
-**PDT in Retreatment.** A single-site RCT by Pažin et al. (2024) [[PMID:38013016]] (n = 36, periapical lesions > 5 mm) found that adding PDT after UAI final irrigation (3% NaOCl sequence) did not improve periapical lesion volume reduction at 1 year compared to UAI alone (86.98% vs. 79.72% reduction, p = 0.970) [[PMID:38013016]]. However, a retrospective analysis by Conejero et al. (2021) [[PMID:33731503]] (n = 214 teeth) showed RCT + PDT cases required calcium hydroxide intracanal dressing significantly less often than RCT alone in both primary (16.4% vs. 72.4%, p < 0.01) and retreatment (17% vs. 82.7%, p < 0.01) scenarios [[PMID:33731503]].
+*Laser-activated irrigation (LAI):* Donnermeyer et al., 2024 (in vitro, n=20 model canals) demonstrated that Er:YAG LAI using a P400FL fiber tip at the canal entrance, set to 25 pps, 50 mJ, 300 μs pulse duration, with 3×20 s activation per canal and 3 mL irrigant per 20-second cycle, produced significantly greater hydrogel removal from the entire root canal system including isthmus structures compared to ultrasonic, sonic, and manual agitation (p<0.05) [[PMID:38382735]]. Kolberg-Babrzyńska et al., 2025 applied Er:YAG LAI with 2% NaOCl and 17% EDTA (50 mJ; 25 Hz; 1 W; 300 μs; 300 μm tip; fluence 71.4 J/cm²) in retreatment and showed a statistically significant reduction in periapical lesion size at 6 months compared to controls (mean 1.55 mm vs. 1.95 mm; p<0.05), with this group also receiving adjunct 635-nm PBM [[PMID:40135760]].
+
+*aPDT:* Trials included in the SR by Araújo et al., 2024 used phenothiazinium salts as photosensitizers; that review did not report specific intracanal exposure times [[PMID:37195228]]. PDT generates reactive oxygen species through light activation of a photosensitizer, causing microbial cell inactivation — standard practice description, not drawn from a single retrieved paper.
+
+*PDT in retreatment:* Conejero et al., 2021 (retrospective, n=214) found RCT+PDT reduced calcium hydroxide requirement in retreatment from 82.7% to 17.0% of cases (p<0.01) and reduced the proportion requiring >2 visits from 64.9% to 49.1% (p=0.05) [[PMID:33731503]]. This recommendation rests on a retrospective cohort of 214 teeth (Conejero et al. 2021 [[PMID:33731503]]) — no prospective RCT has evaluated PDT's effect on visit number or calcium hydroxide need in retreatment specifically; treat as provisional pending higher-tier confirmation.
 
 ---
 
@@ -269,57 +320,402 @@ BECAUSE Er:YAG laser-assisted irrigation in REP context carries a reported risk 
 
 ### 4a. Procedural Protocol
 
-**1. Pre-operative CBCT assessment**
-Obtain CBCT with small FOV (≤ 8 × 8 cm) to quantify periapical lesion volume and assess canal curvature. Document baseline volume in mm³ using ITK-SNAP or equivalent segmentation software for 12-month comparison [[PMID:38878107]].
+**1. Complete chemomechanical preparation before any laser adjunct**
+Laser adjuncts are supplements to, not replacements for, conventional instrumentation and irrigation — standard practice, not from the retrieved evidence base. Meire et al., 2023 defines adjunct therapy explicitly as procedures beyond conventional chemomechanical preparation [[PMID:36156804]].
 
-**2. Chemo-mechanical preparation to patency**
-Shape to a minimum apical preparation that accommodates the P400FL radial-firing tip (400 µm diameter) — standard practice, not from the retrieved evidence base. Do not commence laser activation before shaping is complete.
+**2. Primary irrigation with NaOCl throughout instrumentation**
+Irrigate canals with 3% NaOCl throughout shaping (concentration used by Pažin et al., 2024) [[PMID:38013016]]. Kolberg-Babrzyńska et al., 2025 used 2% NaOCl specifically for the LAI activation step [[PMID:40135760]]; use 2% when following that study's Er:YAG protocol.
 
-**3. Initial irrigant delivery**
-Abaza et al. (2025) [[PMID:41389357]] tested NaOCl as the primary irrigant throughout canal preparation; the retrieved evidence base does not specify a delivery needle depth for the pre-laser irrigation phase — standard practice (side-vented needle, short of working length) applies here.
+The 3% NaOCl concentration is specific to the UAI/conventional irrigation arm of the Pažin et al. (2024) single-visit retreatment RCT [[PMID:38013016]] and is not equivalent to the 2% NaOCl used by Kolberg-Babrzyńska et al. (2025) during Er:YAG LAI activation [[PMID:40135760]] or the 5.25% NaOCl used as the foundational irrigant in Module 1 [[PMID:39955574]]; clinicians should apply the concentration that matches the specific study protocol being followed.
 
-**4. Er:YAG LAI activation — full-sequence protocol (default)**
-Insert P400FL radial-firing tip (400 µm diameter) at the canal entrance (SWEEPS mode) or 1 mm short of working length (PIPS mode). Activate Er:YAG at 50 mJ, 25 Hz (1 W), 300 µs pulse duration; run 3 cycles × 20 seconds per canal with continuous 3 ml/20 s irrigant replenishment [[PMID:38382735]]. SWEEPS and PIPS yield the strongest pain reduction (SMD −1.57 and −1.10 respectively vs. UAI) [[PMID:40818665]].
+**3. Final chelation step with 17% EDTA**
+Apply 17% EDTA prior to final NaOCl irrigation and LAI activation, as used in Kolberg-Babrzyńska et al., 2025; that study did not report a specific EDTA contact time [[PMID:40135760]].
 
-**Alternative — Diode LAI (when Er:YAG unavailable):**
-Use 810 nm or 980 nm diode at 1.5 W pulsed (50% duty cycle); activate for four 15-second cycles per canal [[PMID:41389357]]. Diode LAI showed no significant postoperative pain reduction versus UAI in meta-analysis (SMD = 0.03); choose diode only when Er:YAG equipment is unavailable [[PMID:40818665]].
+**4. Er:YAG LAI activation (preferred modality for pain and debridement)**
+Position P400FL fiber tip at the canal entrance — not apically. Activate at 50 mJ energy, 25 Hz frequency, 1 W power, 300 μs pulse duration, 300 μm tip diameter [[PMID:38382735]] [[PMID:40135760]]. Run 3 cycles of 20 seconds per canal with continuous irrigant flow of 3 mL per 20-second cycle [[PMID:38382735]]. SWEEPS (SMD −1.57) and PIPS (SMD −1.10) modalities show the strongest postoperative pain reduction; diode LAI shows no significant benefit (SMD = 0.03) [[PMID:40818665]].
 
-**5. EDTA chelation step**
-Deliver 17% EDTA [[PMID:41389357]] and activate with the same Er:YAG parameters for one 20-second cycle [[PMID:38382735]]. NaOCl + EDTA combination yielded the lowest smear layer scores across all canal thirds in comparative in vitro testing [[PMID:41389357]].
+**5. aPDT application (particularly indicated in retreatment)**
+Apply phenothiazinium salt photosensitizer intracanally and activate with the appropriate light source [[PMID:37195228]]. Araújo et al., 2024 did not report specific intracanal exposure times for the included trials [[PMID:37195228]]. aPDT reduced postoperative VAS at 24 h (SMD −1.21) and 72 h (SMD −0.63) [[PMID:41388259]].
 
-**6. Final NaOCl flush**
-Deliver a final volume of NaOCl and activate for one additional 20-second LAI cycle to clear EDTA residue — standard practice, not from the retrieved evidence base.
+**6. LLLT — extraoral application for postoperative pain management**
+Apply a 635-nm diode laser at 400 mW, 5 seconds per point, 2 J per point, 4 J/cm², at 2 application points at the apex level, over 4 sessions: on the treatment day and at 24 h, 48 h, and 96 h post-treatment [[PMID:40135760]]. In the 810-nm semiconductor laser RCT by Jian et al., 2025, LLLT was applied to buccal and palatal/lingual mucosa; that study did not report W/cm² or J dosing parameters [[PMID:41063319]].
 
-**7. Dry the canal**
-Use paper points to working length to confirm no residual moisture before obturation — standard practice, not from the retrieved evidence base.
+**7. Combined LAI + LLLT for maximum pain control**
+Combining LAI with LLLT produced the lowest postoperative VAS scores across all time points and lowest analgesic consumption (0.53 ± 0.74 tablets over 14 days) compared to either modality alone or control [[PMID:41063319]].
 
 **8. Obturation**
-Obturate with a calcium silicate-based bioceramic sealer — standard practice, not from the retrieved evidence base. The retrieved evidence base does not report obturation material outcomes as a function of LAI use.
-
-**9. Post-operative LLLT (pain management adjunct)**
-Apply 810 nm diode transcutaneously to buccal and lingual/palatal mucosa at the apex level: 400 mW, 5 seconds per point, 2 J per point [[PMID:41063319]]. Repeat at 24 h, 48 h, and 96 h post-treatment. The combined LAI + LLLT protocol produced 0.53 ± 0.74 analgesic tablets used over 14 days versus significantly more in controls [[PMID:41063319]].
-
-**10. 12-month CBCT review**
-Re-scan with identical small FOV; quantify lesion volume change volumetrically. In single-rooted teeth, expect lesion reduction regardless of LAI use, as no statistically significant difference between SWEEPS-LAI (86.9%) and control (74.5%) was detected at 12 months [[PMID:38878107]].
+Obturate with thermoplasticized gutta-percha and AH Plus epoxy resin-based sealer, as used in Kolberg-Babrzyńska et al., 2025 [[PMID:40135760]].
 
 ---
 
 ### 4b. Decision Tree
 
-**Branch 1 — Standard LAI Application**
-IF tooth has apical periodontitis with PAI ≥ 3, intact single or multi-canal root, and Er:YAG laser is available
-THEN apply SWEEPS or PIPS protocol (50 mJ, 25 Hz, 300 µs, 3 × 20 s) as primary activation
-BECAUSE SWEEPS and PIPS yield the greatest postoperative pain reduction versus UAI (SMD −1.57 and −1.10 respectively) [[PMID:40818665]]
+**IF** the tooth has apical periodontitis and is undergoing primary root canal treatment in a single-rooted canal
+**THEN** complete conventional chemomechanical preparation; add laser adjuncts for postoperative pain management, but do not expect statistically significant improvement in periapical healing
+**BECAUSE** Doğan et al., 2024 (n=56, 12-month CBCT RCT) showed no statistically significant healing advantage for LAI-SWEEPS versus conventional irrigation in single-rooted teeth (p>0.05) [[PMID:38878107]], and Meire et al., 2023 found insufficient evidence for any adjunct to improve AP healing [[PMID:36156804]]
 
-**Branch 2 — Adjunct Withheld**
-IF the sole clinical goal is periapical healing improvement in a single-rooted tooth and laser equipment is unavailable
-THEN proceed with conventional chemo-mechanical preparation plus UAI without laser adjunct
-BECAUSE no statistically significant difference in 12-month CBCT lesion healing was detected between SWEEPS-LAI, PUI, and controls in single-rooted teeth [[PMID:38878107]], and GRADE certainty for healing benefit remains very low for diode laser and low for aPDT [[PMID:36156804]]
+**IF** the patient has significant preoperative pain or a large periapical lesion (PAI ≥3)
+**THEN** use the combined LAI (Er:YAG SWEEPS/PIPS) + LLLT protocol
+**BECAUSE** Jian et al., 2025 identified periapical lesion size and preoperative pain as the main predictors of postoperative pain, and the combined group used the fewest analgesics (0.53 ± 0.74 tablets over 14 days) [[PMID:41063319]]
 
-**Branch 3 — Retreatment with Complex Anatomy**
-IF endodontic retreatment is required with multi-rooted tooth and isthmus structures confirmed on CBCT
-THEN add Er:YAG LAI (50 mJ, 25 Hz, 25 pps, 300 µs, 3 × 20 s) to the retreatment protocol
-BECAUSE LAI outperformed all other activation techniques in isthmus hydrogel removal in a complex curved canal model, and the primary study authors note outcomes may differ
+**IF** the tooth is undergoing nonsurgical retreatment with an established periapical lesion
+**THEN** consider adjunctive aPDT to reduce calcium hydroxide dependence and number of visits
+**BECAUSE** Conejero et al., 2021 showed PDT reduced calcium hydroxide requirement in retreatment from 82.7% to 17.0% (p<0.01) [[PMID:33731503]] — retrospective cohort evidence only; treat as provisional
+
+**IF** the tooth is multirooted with complex anatomy (isthmuses, lateral canals)
+**THEN** prioritize Er:YAG LAI over sonic or ultrasonic activation
+**BECAUSE** Donnermeyer et al., 2024 showed LAI superior to all other techniques including UAI for removal from isthmus structures (p<0.05) [[PMID:38382735]], and Doğan et al., 2024 noted their null healing finding may not extend to complex multirooted systems [[PMID:38878107]]
+
+**IF** only a diode laser (810–980 nm) is available
+**THEN** use it for extraoral LLLT rather than intracanal LAI
+**BECAUSE** Sabeti et al., 2026 confirmed diode LAI produced no significant pain reduction (SMD = 0.03), while LLLT with diode devices shows consistent pain reduction benefit (SMD = −0.86 at 24 h) [[PMID:40818665]] [[PMID:39287434]]
+
+---
+
+### 4c. Materials & Instrumentation
+
+| Category | Specification | Source |
+|---|---|---|
+| **Irrigants — primary** | 2% NaOCl (LAI protocol) or 3% NaOCl (UAI/conventional protocol) | [[PMID:40135760]] [[PMID:38013016]] |
+| **Irrigants — volume/cycle** | 3 mL per 20-second activation cycle during LAI | [[PMID:38382735]] |
+| **Irrigants — chelator** | 17% EDTA; applied before final NaOCl/LAI step; contact time not reported in evidence base | [[PMID:40135760]] |
+| **LAI laser system** | Er:YAG · SWEEPS or PIPS modality · 50 mJ · 25 Hz · 1 W · 300 μs pulse · 300 μm P400FL fiber tip · tip at canal entrance | [[PMID:38382735]] [[PMID:40135760]] |
+| **LAI activation duration** | 3 × 20 s per canal (60 s total) | [[PMID:38382735]] |
+| **LLLT laser — intraoperative** | 635-nm diode · 400 mW · 5 s per point · 2 J per point · 4 J/cm² · 2 apex-level points · 4 sessions (day 0, +24 h, +48 h, +96 h) | [[PMID:40135760]] |
+| **LLLT laser — 810-nm semiconductor** | Applied to buccal and lingual/palatal mucosa; dose parameters not reported in evidence base | [[PMID:41063319]] |
+| **aPDT photosensitizer** | Phenothiazinium salt (methylene blue / toluidine blue O class); intracanal exposure time not reported in evidence base | [[PMID:37195228]] |
+| **Obturation** | Thermoplasticized gutta-percha + AH Plus (epoxy resin-based sealer) | [[PMID:40135760]] |
+| **Imaging — follow-up** | CBCT with volumetric measurement (ITK-SNAP) at 12 months; periapical radiographs at 3, 6, 9 months assessed by Molven's criteria | [[PMID:38878107]] |
+
+---
+
+### Clinical Protocol Summary
+
+| Step | Parameter | Evidence-Based Value |
+|---|---|---|
+| Primary irrigation (throughout shaping) | NaOCl concentration | 2% NaOCl (LAI protocol) [[PMID:40135760]]; 3% NaOCl (UAI/conventional) [[PMID:38013016]] |
+| Chelation prior to final activation | EDTA concentration | 17% EDTA; contact time not reported in evidence base [[PMID:40135760]] |
+| LAI fiber tip position | Tip location | Canal entrance; P400FL tip (300 μm diameter) [[PMID:38382735]] |
+| LAI energy settings (Er:YAG SWEEPS/PIPS) | Power / pulse / frequency | 50 mJ · 1 W · 25 Hz · 300 μs pulse duration [[PMID:40135760]] [[PMID:38382735]] |
+| LAI activation duration | Time per canal | 3 × 20 s = 60 s total; 3 mL per 20-s cycle [[PMID:38382735]] |
+| LAI vs. UAI pain benefit | Effect size (SMD) | Overall SMD −0.58 (95% CI −0.94 to −0.22); SWEEPS SMD −1.57; PIPS SMD −1.10; diode LAI SMD 0.03 (NS) [[PMID:40818665]] |
+| Periapical healing — single-root canal | Statistically significant advantage over conventional | Not demonstrated at 12 months (p>0.05) [[PMID:38878107]]; insufficient evidence per SR [[PMID:36156804]] |
+| aPDT photosensitizer class | Agent | Phenothiazinium salt; intracanal exposure time not reported in evidence base [[PMID:37195228]] |
+| aPDT pain reduction | SMD at 24 h / 72 h | SMD −1.21 at 24 h; SMD −0.63 at 72 h [[PMID:41388259]] |
+| LLLT dosing (635-nm diode) | Dose per point / sessions | 400 mW · 5 s · 2 J/point · 4 J/cm² · 2 apex points · 4 sessions (day 0, +24 h, +48 h, +96 h) [[PMID:40135760]] |
+| Combined LAI + LLLT analgesic use | Tablets over 14 days | 0.53 ± 0.74 tablets (lowest of all groups) [[PMID:41063319]] |
+| PDT impact on CaOH₂ need (retreatment) | Cases requiring calcium hydroxide | Reduced from 82.7% to 17.0% (p<0.01) — retrospective cohort evidence only [[PMID:33731503]] |
+| Adjunctive therapy guideline recommendation | ESE position | Insufficient evidence to recommend any adjunct for AP healing (GRADE: very low–low) [[PMID:36156804]] |
+
+---
+
+> ⚠ **Citation support: 2 of 63 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
+>
+> - [[PMID:37195228]] cited for: "Kolberg-Babrzyńska et al., 2025 applied Er:YAG LAI with 2% NaOCl and 17% EDTA (50 mJ; 25 Hz; 1 W; 300 μs; 300 μm tip; fluence 71.4 J/cm²) in"
+> - [[PMID:36156804]] cited for: "**IF** the tooth has apical periodontitis and is undergoing primary root canal treatment in a single-rooted canal **THEN** complete conventi"
+
+---
+
+*Protocols in hand, the final module asks the decisive clinical question: what do outcomes actually look like? Module 4 consolidates the evidence on healing rates, pain control, adverse events, and vital pulp therapy — allowing the clinician to set realistic expectations and communicate them accurately to patients.*
+
+---
+
+## Module 4 — Clinical Outcomes, Efficacy, and Adverse Events
+
+**The literature is currently divided on this topic.** Two parallel questions dominate outcomes research on laser-assisted root canal disinfection: (1) does laser adjunct therapy improve *healing of apical periodontitis* compared with conventional chemo-mechanical preparation, and (2) does it reduce *postoperative pain*? Higher-tier evidence answers these questions differently.
+
+**Healing of Apical Periodontitis**
+
+The highest-tier evidence addressing laser adjuncts for AP healing is the pre-registered ESE systematic review by Meire et al. (2023), which identified 14 studies (13 RCTs, 1 retrospective cohort) meeting ≥1-year follow-up and ≥10 patients per arm [[PMID:36156804]]. GRADE assessment returned *very low* certainty for diode laser and *low* certainty for aPDT, ozone, and UAI; meta-analysis on UAI (2 studies) showed no statistically significant difference in radiographic healing at 12 months. The authors concluded there is *insufficient evidence to recommend any adjunctive therapy for the treatment of AP* [[PMID:36156804]]. This finding is directly corroborated by Doğan et al. (2024), an RCT in 56 single-rooted mandibular teeth with PAI ≥3, which measured volumetric CBCT healing at 12 months: LAI-SWEEPS achieved 86.9% lesion volume reduction versus 74.5% for manual agitation, but the difference was *not statistically significant* (p > 0.05) [[PMID:38878107]]. Both sources converge: laser-activated irrigation does not statistically outperform conventional methods for periapical healing in single-canal teeth at 12 months, though a numerically greater reduction is consistently observed.
+
+**Postoperative Pain**
+
+Here the evidence favors laser adjuncts more clearly. The 2026 meta-analysis by Sabeti et al. pooled 7 RCTs (n = 490 teeth) comparing LAI directly to UAI: LAI reduced postoperative pain (SMD = −0.58; 95% CI: −0.94 to −0.22; p = .0016), with the greatest effect at 24–48 hours (SMD = −1.00) [[PMID:40818665]]. Crucially, pulsed Er:YAG modalities drove this effect (PIPS: SMD = −1.10; SWEEPS: SMD = −1.57), while diode LAI showed no significant benefit (SMD = 0.03) [[PMID:40818665]]. The multimodal RCT by Jian et al. (2025, n = 202) confirmed that combining 810-nm semiconductor LAI with transcutaneous LLLT produced the lowest VAS scores across 14 days and the fewest analgesic tablets consumed (0.53 ± 0.74 tablets), compared with LLLT alone or LAI alone [[PMID:41063319]]. Similarly, Luo et al. (2024, n = 892) demonstrated significant pain-score reductions for LLLT (SMD = −0.86 at 24 h), diode laser (SMD = −0.27 at 48 h), and aPDT (SMD = −1.12 at 24 h), with aPDT also reducing pain *incidence* (RR = 0.47; 95% CI: 0.31–0.72) [[PMID:39287434]]. Das et al. (2025) corroborated this for aPDT specifically, reporting standardized mean differences of −1.21 at 24 h and −0.63 at 72 h for VAS pain scores in their meta-analysis of 5 RCTs [[PMID:41388259]].
+
+**Emerging Debate — LLLT for Periapical Healing vs. Pain**
+
+A tension exists between the Cochrane review by Del Fabbro et al. (2016), which found no evidence that LLLT prevented postoperative pain in periapical *surgical* cases [[PMID:27759881]], and the non-surgical RCT and meta-analysis evidence summarised in Modules 3 and 4 showing significant pain reduction with LLLT (SMD = −0.86 at 24 h) and combined LAI+LLLT (0.53 ± 0.74 analgesic tablets) [[PMID:39287434]] [[PMID:41063319]]; this tension is not resolved by the current evidence base because the Cochrane review addresses periapical surgery patients while the favourable studies address non-surgical root canal treatment, and a head-to-head RCT powered for both populations would be required to determine whether the discrepancy reflects a true procedural difference or differences in study design and follow-up.
+
+The Cochrane review by Del Fabbro et al. (2016) found *no evidence* that LLLT prevented postoperative pain in periapical surgery (very low quality evidence) [[PMID:27759881]], a finding that conflicts with the RCT-level pain evidence summarized above for *non-surgical* treatment. Clinicians should note that the current standard of care does not endorse laser adjuncts as mandatory; the ESE position, as reflected by Meire et al. (2023), treats all adjunct therapies as investigational for AP healing [[PMID:36156804]].
+
+**Pulpotomy Outcomes with Laser Hemostasis**
+
+In vital pulp therapy, laser hemostasis produces comparable or marginally superior results to conventional methods. Swetha et al. (2024) found 18-month success rates of 93% (diode laser 980-nm, GaAlAs) versus 88.4% (2.5% NaOCl hemostasis), with no statistically significant difference; however, laser pulpotomy produced less postoperative pain at 48 hours (mean CCP pain 1.7 ± 1.4, p < 0.001) and thicker dentine bridges on CBCT (median IQR: 0.89, 1.06 vs. CCP, p = 0.0479) [[PMID:38157279]]. Ayhan et al. (2025) retrospectively confirmed overall MTA pulpotomy success of 87.69% at 12 months across saline, NaOCl, and KTP laser hemostasis groups, with no statistically significant difference between modalities [[PMID:41121058]].
+
+**Adverse Events**
+
+No serious laser-specific adverse events (perforation, irreversible thermal damage, extrusion injury) were reported in the RCTs and systematic reviews within this evidence base [[PMID:36156804]] [[PMID:40818665]]. Olszewska et al. (2024) reported no side effects attributable to 635-nm diode PBM (100 mW, 200 mW/cm², 4 J) in 86 immature teeth over 90 days [[PMID:37849444]]. The safety profile of LAI regarding irrigant extrusion requires monitoring, particularly in immature teeth — Ribeiro et al. (2025) flagged this as a risk with Er:YAG LAI in regenerative endodontic contexts, though no clinical adverse event data were reported [[PMID:40287048]]. This risk rests on expert review without prospective cohort quantification; treat as a provisional safety signal.
+
+---
+
+## Clinical Application
+
+### 4a. Procedural Protocol
+
+**1. Case selection and preoperative imaging**
+Confirm AP diagnosis radiographically (PAI ≥ 2). Obtain CBCT for lesions > 5 mm or complex anatomy. Laser adjuncts are most evidence-supported for *pain management*; communicate realistic expectations for AP healing outcomes to the patient [[PMID:36156804]].
+
+**2. Establish working length**
+Determine electronically and confirm radiographically. Standard endodontic working length protocols apply; laser adjuncts do not alter this step. Meire et al. did not report specific WL parameters for adjunct-use studies [[PMID:36156804]].
+
+**3. Chemo-mechanical preparation**
+Complete rotary/reciprocating canal shaping to the planned apical size. Copious irrigation with sodium hypochlorite is the primary disinfectant; LAI is adjunctive, not a replacement. Doğan et al. did not specify shaping sequence or file system beyond describing "root canal treatment" and "irrigation procedures" [[PMID:38878107]].
+
+**4. Conventional irrigant delivery**
+Deliver sodium hypochlorite by side-vented needle to within 2–3 mm of working length before laser activation. Swetha et al. used 2.5% NaOCl in the control arm [[PMID:38157279]]; Doğan et al. did not report NaOCl concentration [[PMID:38878107]].
+
+**5. Laser-activated irrigation — Er:YAG (PIPS or SWEEPS)**
+Insert a radially-firing Er:YAG tip in the coronal third (non-touching technique). PIPS and SWEEPS protocols delivered the strongest pain-reduction effect at 24–48 hours (PIPS: SMD = −1.10; SWEEPS: SMD = −1.57) [[PMID:40818665]]. Erkan et al. (2022) used Er:YAG laser in a single-rooted premolar model; specific energy/pulse settings were not extractable from the available abstract [[PMID:35267110]].
+
+**6. Laser-activated irrigation — 810-nm semiconductor diode (LAI mode)**
+Insert fiber tip and activate 810-nm semiconductor laser in continuous-wave mode for irrigant activation. Jian et al. (2025) used 810-nm semiconductor laser for the LAI group (n = 48) within standard single-visit treatment; specific power and time parameters were not reported in the available abstract [[PMID:41063319]].
+
+**7. Transcutaneous LLLT (combined protocol)**
+Apply 810-nm semiconductor laser irradiation to buccal and lingual/palatal mucosa immediately post-obturation. The combined LAI + LLLT protocol produced the lowest postoperative VAS at days 1–7 and minimum analgesic use (0.53 ± 0.74 tablets) compared to either modality alone or control [[PMID:41063319]]. Specific power density and exposure time per site were not reported by Jian et al. [[PMID:41063319]].
+
+**8. aPDT (antimicrobial photodynamic therapy, if selected)**
+Apply phenothiazinium salt photosensitizer (e.g., toluidine blue 0.1 mg/mL or methylene blue) intracanally for a pre-irradiation contact time of 1–5 minutes, then activate with 630–660-nm LED or diode laser [[PMID:39287434]] [[PMID:41388259]]. Das et al. report aPDT reduces 24-h VAS by SMD −1.21 and 72-h VAS by SMD −0.63 [[PMID:41388259]]; pre-irradiation time range from Perin et al. (2024) [[PMID:39663253]].
+
+**9. Final rinse and dry**
+Rinse with sterile saline or distilled water after NaOCl/aPDT sequence. Dry with paper points to working length.
+
+**10. Obturation**
+Obturate using standard technique. Canal-filling material choice is governed by case factors; no laser adjunct modifies obturation material selection per this evidence base.
+
+**11. Postoperative instructions**
+Advise VAS self-monitoring at 24 h, 48 h, and day 7. Analgesic requirements are significantly lower in laser-assisted groups; reserve prescription analgesics for patients with large periapical lesions or high preoperative pain scores — both identified as significant predictors of postoperative pain by multivariate analysis [[PMID:41063319]].
+
+---
+
+### 4b. Decision Tree
+
+**IF** the patient has confirmed AP (PAI ≥ 2) in a permanent tooth and the primary goal is optimal *postoperative pain control*
+**THEN** use pulsed Er:YAG LAI (PIPS or SWEEPS) as irrigant activator, with or without adjunct transcutaneous LLLT
+**BECAUSE** SWEEPS produced SMD = −1.57 and PIPS SMD = −1.10 pain reduction vs. UAI at 24–48 h in a 7-RCT meta-analysis (n = 490) [[PMID:40818665]]
+
+**IF** the primary goal is *periapical lesion healing* in a single-canal permanent tooth at 12 months
+**THEN** use standard chemo-mechanical preparation as the primary approach; do not substitute laser adjuncts for evidence-based irrigant protocols
+**BECAUSE** LAI-SWEEPS showed 86.9% lesion reduction vs. 74.5% for manual agitation but the difference was not statistically significant (p > 0.05, n = 56) [[PMID:38878107]], and GRADE certainty for laser adjuncts on AP healing is very low to low [[PMID:36156804]]
+
+**IF** the case involves vital pulp therapy (full coronal pulpotomy) in a permanent molar with symptomatic irreversible pulpitis
+**THEN** diode laser (GaAlAs, 980 nm) hemostasis is an acceptable alternative to 2.5% NaOCl hemostasis before bioceramic placement
+**BECAUSE** 18-month success rates were 93% (laser) vs. 88.4% (NaOCl) with no statistically significant difference, but laser produced significantly less pain at 48 h (p < 0.001) and thicker dentine bridges at 18 months (p = 0.0479) [[PMID:38157279]]
+
+**IF** the case is a *combined endo-perio lesion* with baseline probing depth ≥ 6 mm
+**THEN** adjunct water laser therapy combined with RCT and scaling/root planing is preferred over conventional RCT + SRP alone
+**BECAUSE** water laser adjunct achieved composite success RR = 1.22 (95% CI: 1.10–1.36) with greater benefit in deep pockets, and fewer acute exacerbations within 7 days (RR = 0.52) [[PMID:42482547]]
+
+**IF** the patient is aged 8–13 with an immature permanent tooth requiring vital pulp therapy and postoperative sensitivity is a concern
+**THEN** apply 635-nm diode PBM (100 mW, 200 mW/cm², 4 J) immediately and at 24 h post-VPT as an adjunct
+**BECAUSE** PBM significantly reduced cold sensitivity at 6 h, 24 h, 7 days, and 30 days (p < 0.001) compared to no PBM, with no adverse effects reported over 90 days [[PMID:37849444]]
+
+**IF** the patient has a diode-only laser available (no Er:YAG) and the goal is intracanal LAI for pain reduction
+**THEN** do not rely on diode LAI for this purpose; apply diode laser via transcutaneous LLLT mode or aPDT instead
+**BECAUSE** diode LAI showed no significant pain reduction (SMD = 0.03) in subgroup analysis, while transcutaneous LLLT and aPDT showed significant effects [[PMID:40818665]] [[PMID:39287434]]
+
+---
+
+### 4c. Materials & Instrumentation
+
+| Category | Specification |
+|---|---|
+| **Primary irrigant** | Sodium hypochlorite (NaOCl) · 2.5% concentration (used in Swetha et al. control arm) [[PMID:38157279]] · Volume and contact time not standardized across included RCTs · Side-vented needle delivery to within 2–3 mm of WL |
+| **aPDT photosensitizer** | Phenothiazinium salts (toluidine blue 0.1 mg/mL [FotoSan®] or methylene blue) · Pre-irradiation contact: 1–5 min intracanally · Delivered via endodontic syringe or fiber tip |
+| **aPDT light source** | Diode laser or LED · 630–660 nm wavelength · 3 W/cm² (Zargar et al. protocol used FotoSan® + 630-nm LED, 3 W/cm²) [[PMID:41789272]] |
+| **LAI — Er:YAG** | Pulsed Er:YAG laser · PIPS or SWEEPS tip geometry · Radially-firing, non-touching technique · Coronal-third placement · Best evidence for pain reduction at 24–48 h [[PMID:40818665]] |
+| **LAI — Semiconductor diode** | 810-nm diode laser · Continuous-wave mode · Used for intracanal irrigant activation (LAI arm) or transcutaneous mucosal irradiation (LLLT arm) [[PMID:41063319]] · Specific power/time not reported by Jian et al. |
+| **PBM (LLLT) for VPT** | 635-nm diode laser · 100 mW power · 200 mW/cm² power density · 4 J total energy per application · Applied immediately and at 24 h post-VPT [[PMID:37849444]] |
+| **Hemostasis — laser option** | KTP laser (potassium titanyl phosphate) or 980-nm diode GaAlAs · Applied to pulp stumps after amputation · No significant difference vs. saline or NaOCl for MTA pulpotomy success at 12 months [[PMID:41121058]] |
+| **Capping material (VPT)** | Calcium silicate-based bioceramic · Biodentine (Septodont) used in Swetha et al. and Olszewska et al. studies · Place over laser-hemostased pulp stump [[PMID:38157279]] [[PMID:37849444]] |
+| **Imaging** | CBCT (small FOV, ≤8 × 8 cm) for volumetric lesion measurement pre- and post-treatment at 12 months · Periapical radiographs (Molven's criteria) at 3, 6, 9 months for routine follow-up [[PMID:38878107]] |
+
+---
+
+### Clinical Protocol Summary
+
+| Step | Parameter | Evidence-Based Value |
+|---|---|---|
+| Case selection — AP healing | Laser adjunct indication | Insufficient evidence to prefer over conventional; treat as adjunct only [[PMID:36156804]] |
+| Case selection — pain management | Best laser modality | Pulsed Er:YAG (PIPS or SWEEPS); diode LAI not effective for pain (SMD = 0.03) [[PMID:40818665]] |
+| Primary irrigant | Concentration | 2.5% NaOCl [[PMID:38157279]]; higher concentrations not specified in LAI RCTs |
+| aPDT photosensitizer contact time | Pre-irradiation | 1–5 minutes intracanally [[PMID:39663253]] |
+| aPDT activation wavelength | Light source | 630–660 nm diode laser or LED [[PMID:41388259]] |
+| aPDT pain reduction | Effect size | SMD −1.21 at 24 h; SMD −0.63 at 72 h (meta-analysis, 5 RCTs) [[PMID:41388259]] |
+| LAI vs. UAI pain reduction | Overall effect | SMD −0.58 (95% CI: −0.94 to −0.22); greatest at 24–48 h (SMD −1.00) [[PMID:40818665]] |
+| SWEEPS pain reduction vs. UAI | Subgroup SMD | −1.57 at 24–48 h [[PMID:40818665]] |
+| LLLT + LAI combined analgesic use | Tablets consumed | 0.53 ± 0.74 tablets over 14 days (vs. highest in control) [[PMID:41063319]] |
+| Periapical healing — LAI-SWEEPS | CBCT volume reduction | 86.9% at 12 months; not significantly different from MDA (74.5%), p > 0.05 [[PMID:38878107]] |
+| Laser pulpotomy success | 18-month rate | 93% (980-nm diode GaAlAs) vs. 88.4% conventional NaOCl; no significant difference [[PMID:38157279]] |
+| MTA pulpotomy — KTP laser hemostasis | 12-month success | 90.5% (KTP laser) vs. 86.4% (NaOCl) vs. 86.4% (saline); p > 0.05 [[PMID:41121058]] |
+| PBM for VPT postoperative sensitivity | Dose | 635 nm · 100 mW · 200 mW/cm² · 4 J; applied at 0 h and 24 h post-VPT; significant sensitivity reduction at 6 h–30 days [[PMID:37849444]] |
+| Adverse events | Reported in laser RCTs | None serious; no thermal damage or extrusion injury reported across included RCTs and SRs [[PMID:36156804]] [[PMID:40818665]] |
+| Long-term AP healing (≥5 yr) | Laser-specific data | Not reported in evidence base for laser adjuncts specifically |
+
+---
+
+> ⚠ **Citation support: 9 of 63 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
+>
+> - [[PMID:36156804]] cited for: "No serious laser-specific adverse events (perforation, irreversible thermal damage, extrusion injury) were reported in the RCTs and systemat"
+> - [[PMID:40818665]] cited for: "No serious laser-specific adverse events (perforation, irreversible thermal damage, extrusion injury) were reported in the RCTs and systemat"
+> - [[PMID:36156804]] cited for: "Meire et al. did not report specific WL parameters for adjunct-use studies."
+> - [[PMID:38878107]] cited for: "Doğan et al. did not specify shaping sequence or file system beyond describing "root canal treatment" and "irrigation procedures"."
+> - [[PMID:35267110]] cited for: "Erkan et al. (2022) used Er:YAG laser in a single-rooted premolar model; specific energy/pulse settings were not extractable from the availa"
+
+---
+
+## KEY TAKEAWAYS
+
+**Laser adjuncts cannot replace NaOCl — sequence matters.** The foundational principle across all four modules is that conventional chemomechanical preparation with NaOCl remains the disinfection standard; laser systems are strictly adjunctive. When diode laser alone was tested against 5.25% NaOCl + hydrogen peroxide irrigation, bacterial growth was detected in 8/30 vs. 3/30 samples, respectively [[PMID:24326811]], and the 2026 PROSPERO-registered umbrella review classifies laser-assisted irrigation as having "unproven clinical benefit" as a standalone treatment [[PMID:41833582]]. Always irrigate with 5.25% NaOCl between each instrument file before any laser step is activated.
+
+**Er:YAG SWEEPS/PIPS is the only laser modality with robust evidence for postoperative pain reduction.** A 7-RCT meta-analysis (n = 490 teeth) confirmed LAI reduces postoperative pain vs. UAI overall (SMD = −0.58), but subgroup analysis shows SWEEPS drove the effect (SMD = −1.57) and diode LAI contributed nothing significant (SMD = 0.03) [[PMID:40818665]]. If the clinical goal is pain management, select pulsed Er:YAG and combine it with transcutaneous LLLT — the combined protocol reduced analgesic consumption to 0.53 ± 0.74 tablets over 14 days [[PMID:41063319]].
+
+**Emerging: Laser adjuncts may improve periapical healing selectively in multi-rooted, anatomically complex teeth.** No laser modality has demonstrated a statistically significant healing advantage over conventional irrigation in single-canal teeth at 12 months [[PMID:38878107]] [[PMID:36156804]]. However, Er:YAG LAI produced significantly greater hydrogel removal from isthmus structures than ultrasonic or sonic activation (p<0.05) [[PMID:38382735]], and one prospective RCT showed statistically significant periapical lesion reduction at 6 months in multi-rooted teeth treated with Er:YAG LAI + PBM vs. chemo-mechanical preparation alone [[PMID:40135760]]. Reserve laser adjuncts for complex anatomy; do not apply them uniformly to all cases expecting a healing benefit.
+
+**Diode laser at 1.2 W (980 nm) is the safest intracanal power setting when Er:YAG is unavailable.** At 2 W the external root surface temperature rise is 10.20 °C; at 3 W it is 16.79 °C; at 1.2 W it is 6.25 °C — with equivalent bactericidal effect on *E. faecalis* across all three settings [[PMID:29378981]]. Nd:YAG at 200 mJ produces a temperature rise of 61.8 ± 4.2 °C and should be avoided for intracanal use given the periradicular thermal risk [[PMID:11806644]]. When only a diode system is available, redirect it to extraoral LLLT or aPDT rather than intracanal LAI.
+
+**Divided: aPDT efficacy as an antimicrobial adjunct remains contested.** Twelve of 17 reviewed studies found effective *E. faecalis* elimination with aPDT [[PMID:24192536]], and meta-analyses confirm postoperative VAS reductions at 24 h (SMD = −1.21) and 72 h (SMD = −0.63) [[PMID:41388259]]. Against this, a 36-patient single-visit retreatment RCT found no significant difference in periapical healing at 12 months between UAI alone and UAI + PDT (p = 0.970) [[PMID:38013016]], and Siddiqui et al. noted 4 of 17 studies found conventional irrigation superior. Use aPDT as a targeted adjunct in retreatment and high-pain cases, not as a universal supplement; apply photosensitiser (methylene blue 0.005% or toluidine blue 0.1 mg/mL) for a 1–5 minute contact time before 630–660-nm activation.
+
+---
+
+## The Final Verdict
+
+### 1. Decision Rule
+
+**Clinical question:** Should I add a laser adjunct to conventional chemo-mechanical root canal treatment, and if so, which one?
+
+**If** the tooth has confirmed apical periodontitis (PAI ≥ 2) **AND** is single-rooted with straight anatomy **AND** the primary treatment goal is periapical healing → **complete standard chemo-mechanical preparation with NaOCl as the sole disinfection strategy; no laser adjunct is mandated.** Add pulsed Er:YAG LAI (SWEEPS or PIPS: 50 mJ, 25 Hz, 1 W, 300 μs, 300 μm P400FL tip at canal entrance, 3 × 20 s at 3 mL/cycle) only if postoperative pain control is an explicit secondary goal.
+
+**If** the tooth has apical periodontitis (PAI ≥ 3) **AND** is multi-rooted with complex anatomy (isthmuses, lateral canals, curved canals, dens invaginatus) OR is an endodontic retreatment case → **add Er:YAG LAI (SWEEPS or PIPS) to NaOCl-based chemomechanical preparation** as the preferred laser adjunct; supplement with adjunctive aPDT (phenothiazinium photosensitiser, 630–660 nm activation) in retreatment cases where calcium hydroxide dependence reduction is sought.
+
+**If** the primary intraoperative goal is postoperative pain reduction **AND** only a diode laser (810–980 nm) is available → **do not use diode intracanal LAI**; redirect to transcutaneous LLLT (applied to buccal/lingual mucosa post-obturation) or intracanal aPDT as the appropriate diode application.
+
+**If** the case is vital pulp therapy in a permanent molar and haemostasis with 2.5% NaOCl is not achieved within 5 minutes → **switch to diode laser (GaAlAs 980 nm) haemostasis** before bioceramic (Biodentine) placement.
+
+---
+
+### 2. Evidence Anchor
+
+**Branch A (single-rooted, standard anatomy, healing goal — conventional irrigation alone):**
+**Anchored in:** Level I systematic review of 13 RCTs + 1 retrospective cohort (Meire et al., 2023; GRADE very low–low certainty) [[PMID:36156804]], corroborated by Level I RCT (n=56, 12-month CBCT, Doğan et al., 2024) showing no statistically significant healing benefit of LAI-SWEEPS vs. manual agitation (p>0.05) [[PMID:38878107]].
+
+**Branch B (multi-rooted / complex anatomy / retreatment — Er:YAG LAI + aPDT adjunct):**
+**Anchored in:** Level II prospective RCT (Kolberg-Babrzyńska et al., 2025) demonstrating statistically significant 6-month periapical lesion reduction in multi-rooted teeth with Er:YAG LAI + PBM [[PMID:40135760]]; Level II prospective in vitro study showing superior isthmus debridement with Er:YAG LAI vs. all comparators (p<0.05) [[PMID:38382735]]; retrospective cohort (n=214, Level III, Conejero et al., 2021) for aPDT in retreatment [[PMID:33731503]] — no prospective RCT has confirmed the retreatment aPDT branch.
+
+**Branch C (diode-only system — redirect to LLLT/aPDT):**
+**Anchored in:** Level I meta-analysis of 7 RCTs (n=490, Sabeti et al., 2026) demonstrating diode LAI SMD = 0.03 (non-significant) for pain, versus SWEEPS SMD = −1.57 and LLLT SMD = −0.86 at 24 h [[PMID:40818665]] [[PMID:39287434]].
+
+**Branch D (vital pulp therapy haemostasis — diode laser):**
+**Anchored in:** Level II prospective RCT (n=86, Swetha et al., 2024) showing 93% vs. 88.4% 18-month success (p not significant) but significantly less 48 h pain and thicker dentine bridges with 980-nm GaAlAs laser [[PMID:38157279]]. No head-to-head multicentre RCT has yet evaluated diode vs. NaOCl haemostasis in VPT with ≥24-month follow-up.
+
+---
+
+### 3. Where Uncertainty Remains
+
+- **Optimal laser parameters for LAI have not been standardised across trials.** Er:YAG energy settings range from 25 mJ [[PMID:41519256]] to 75–100 mJ [[PMID:38662505]] across cited studies; NaOCl concentration during activation ranges from 2% [[PMID:40135760]] to 5.25% [[PMID:39955574]]; pulse duration, tip size, and tip position vary. No head-to-head RCT has compared parameter permutations directly within the same patient population. A factorial-design multicentre RCT with standardised tip position and concentration would resolve this.
+
+- **The healing benefit of laser adjuncts in multi-rooted teeth beyond 6 months is unconfirmed.** The only positive healing RCT (Kolberg-Babrzyńska et al., 2025) reports 6-month lesion size data in a single centre [[PMID:40135760]]; whether the advantage is sustained at 12 and 24 months is unknown. A minimum 24-month CBCT follow-up RCT specifically powered for multi-rooted teeth is required.
+
+- **The clinical significance of diode LAI dentin structural damage is unquantified.** Ex vivo FTIR data from 42 premolars suggest 980-nm diode LAI causes measurable collagen and mineral degradation [[PMID:41519256]], but no prospective clinical cohort has correlated these microstructural changes with root fracture rate or long-term tooth survival. A prospective cohort tracking teeth treated with vs. without diode LAI over ≥5 years with micro-CT correlation would resolve this.
+
+- **aPDT efficacy in retreatment rests entirely on retrospective evidence.** The claim that aPDT reduces calcium hydroxide interappointment dressing need from 82.7% to 17% is derived from a single retrospective cohort (n=214, no randomisation, no blinding) [[PMID:33731503]]; no prospective RCT evaluating this outcome exists. A multicentre parallel-arm RCT in retreatment cases with confirmed persistent periapical pathosis, powered for calcium hydroxide requirement as a primary endpoint, is needed.
+
+- **Long-term survival data (≥5 years) for laser-treated teeth are absent from the evidence base.** All RCTs and prospective studies in this curriculum have a maximum follow-up of 18 months; the 2023 ESE systematic review [[PMID:36156804]] required only ≥12-month follow-up to be included, and no laser-specific study reported 5-year outcomes. Prospective registry-based cohort studies tracking laser-treated vs. conventionally-treated teeth through electronic dental records would provide the survival data clinicians need.
+
+---
+
+### 4. When NOT to Apply This Rule
+
+- **Vertical root fracture confirmed on CBCT or direct visualisation.** No adjunct laser protocol improves prognosis when structural tooth integrity is compromised. → Action: extract or refer to oral surgery; do not invest in laser adjunct preparation.
+
+- **Active dentoalveolar abscess with systemic signs (fever ≥38 °C, trismus, facial swelling involving deep spaces, lymphadenopathy).** The decision rule assumes a contained endodontic infection amenable to single- or two-visit root canal treatment. Systemic spread requires urgent incision and drainage, antibiotic therapy, and possible hospitalisation. → Action: refer to oral and maxillofacial surgery or emergency medicine; laser disinfection is not the primary intervention.
+
+- **Non-restorable tooth, inadequate ferrule, or severely compromised periodontium (bone loss ≥ 70%, mobility grade III).** Laser adjunct selection presupposes that the tooth is worth treating endodontically. Where restorability is in doubt, extraction and implant-based or prosthetic alternatives should be discussed before any laser protocol is considered. → Action: refer to restorative or prosthodontic specialist for treatment-planning conference before initiating RCT.
+
+---
+
+## REFERENCES
+
+1. [PMID: 41833582] Duarte MA, Neves JA, Caçador M et al. — Umbrella review (9 SRs) concluding laser-assisted irrigation has unproven clinical benefit as adjunct. *International dental journal*, 2026. (Score: 78.5/100)
+
+2. [PMID: 38662505] Ghahari P, Ghahhary A, Behrad S et al. — Systematic review and meta-analysis (n=565) demonstrating significant biofilm reduction by erbium lasers (SMD −0.551) with optimal Er:YAG parameters 75–100 mJ, <50 Hz, 100–150 μs. *Photobiomodulation, photomedicine, and laser surgery*, 2024. (Score: 74.8/100)
+
+3. [PMID: 40136729] Fiegler-Rudol J, Grzech-Leśniak Z, Tkaczyk M et al. — Systematic review of 15 studies finding Er:YAG improved disinfection over conventional or ultrasonic methods in all included studies. *Dentistry journal*, 2025. (Score: 38.6/100)
+
+4. [PMID: 42306383] Arslanparcasi HF, Arslanparcasi MA — Review of Er,Cr:YSGG (2780 nm) photoacoustic, cavitation, and photothermal mechanisms in root canal disinfection. *Cureus*, 2026. (Score: 38.6/100)
+
+5. [PMID: 11806644] Folwaczny M, Mehl A, Jordan C et al. — Nd:YAG at 200 mJ/20 pps/20 s: CFU reduction and temperature rise of 61.8 ± 4.2 °C; NaOCl superior for *S. aureus* reduction. *Journal of endodontics*, 2002. (Score: 52.6/100)
+
+6. [PMID: 29378981] Kıvanc BH, Arısu HD, Sağlam BC et al. — Diode LAI (980 nm): 1.2 W produces equivalent *E. faecalis* reduction with lowest external temperature rise (6.25 °C vs. 16.79 °C at 3 W). *Nigerian journal of clinical practice*, 2017. (Score: 50.4/100)
+
+7. [PMID: 38340037] Meire M, De Moor RJG — Expert review describing photoacoustic cavitation as the driving force behind LAI in erbium laser systems. *International endodontic journal*, 2024. (Score: 39.8/100)
+
+8. [PMID: 41505924] Grzech-Leśniak K — Review of PIPS and SWEEPS photoacoustic streaming protocols. *International dental journal*, 2026. (Score: 39.8/100)
+
+9. [PMID: 38618073] Pourhajibagher M, Bahrami R, Bahador A — Review of ROS-mediated antimicrobial photodynamic therapy mechanisms using methylene blue and toluidine blue. *Journal of dental sciences*, 2024. (Score: 38.6/100)
+
+10. [PMID: 24192536] Siddiqui SH, Awan KH, Javed F — Systematic review of 17 studies on diode aPDT (625–805 nm, 40 mW–5 W): 12/17 showed effective *E. faecalis* elimination; efficacy "remains questionable." *Photodiagnosis and photodynamic therapy*, 2013. (Score: 61.5/100)
+
+11. [PMID: 41519256] Rathod NN, Mohan A, Kindaro V et al. — Ex vivo study (n=42 premolars) showing 980 nm diode LAI causes greater FTIR-confirmed dentin structural degradation than Er,Cr:YSGG LAI. *Journal of endodontics*, 2026. (Score: 57.0/100)
+
+12. [PMID: 24326811] Mashalkar S, Pawar MG, Kolhe S et al. — RCT (n=60): 5.25% NaOCl + H₂O₂ yielded bacterial growth in 3/30 samples vs. 8/30 for 980 nm diode laser alone. *Nigerian journal of clinical practice*, 2014. (Score: 57.0/100)
+
+13. [PMID: 39955574] Kottur AA, Mujeeb A, Assiry AA et al. — Prospective study using ProTaper to F4 with 5.25% NaOCl between each file as irrigation protocol. *BMC oral health*, 2025. (Score: 57.0/100)
+
+14. [PMID: 30797116] Amaral RR, Cohen S, Ferreira MVL et al. — Case report (60-month follow-up): aPDT with methylene blue 0.005%, 3 min contact, 660 nm diode 100 mW 40 s (4 J/cm²), 300 μm fiber 2 mm short of WL, for case with separated instrument. *Photodiagnosis and photodynamic therapy*, 2019. (Score: 41.1/100)
+
+15. [PMID: 35996480] Shahbazi S, Esmaeili S, Feli M et al. — Case series: toluidine blue 0.1 mg/mL (FotoSan®) with 630 nm LED at 3 W/cm², two 30-second irradiation periods. *Journal of lasers in medical sciences*, 2022. (Score: 34.8/100)
+
+16. [PMID: 31809911] Bordea IR, Hanna R, Chiniforush N et al. — Systematic review supporting potential synergistic effect of aPDT combined with antimicrobial irrigants. *Photodiagnosis and photodynamic therapy*, 2020. (Score: 73.7/100)
+
+17. [PMID: 32171875] Okamoto CB, Bussadori SK, Prates RA et al. — RCT (primary teeth, n=30): aPDT + conventional = 99% CFU reduction vs. 93% conventional alone; difference not statistically significant. *Photodiagnosis and photodynamic therapy*, 2020. (Score: 57.0/100)
+
+18. [PMID: 38878107] Doğan MU, Arıcıoğlu B, Köse TE et al. — RCT (n=56, 12-month CBCT): LAI-SWEEPS 86.9% vs. manual agitation 74.5% lesion volume reduction; p>0.05; no significant benefit in single-rooted teeth. *Clinical oral investigations*, 2024. (Score: 78.1/100)
+
+19. [PMID: 40135760] Kolberg-Babrzyńska I, Grzech-Leśniak K, Kiryk J et al. — Prospective RCT: Er:YAG LAI (50 mJ, 25 Hz, 1 W, 300 μs, 300 μm tip) + 635 nm PBM produced significant 6-month periapical lesion reduction vs. controls in multi-rooted teeth (1.55 mm vs. 1.95 mm, p<0.05). *Dental and medical problems*, 2025. (Score: 61.1/100)
+
+20. [PMID: 33731503] Conejero MJ, Almenar A, Forner L et al. — Retrospective cohort (n=214): RCT+PDT reduced calcium hydroxide requirement in retreatment from 82.7% to 17% (p<0.01) and >2 visits from 64.9% to 49.1% (p=0.05). *Journal of oral science*, 2021. (Score: 56.5/100)
+
+21. [PMID: 42482547] Li J, Chen C, Wu D et al. — Retrospective cohort (n=634): adjunctive water laser in endo-perio lesions, composite success RR = 1.22 (95% CI: 1.10–1.36); greatest benefit at baseline PD ≥6 mm; fewer acute exacerbations (RR = 0.52). *The Journal of international medical research*, 2026. (Score: 65.0/100)
+
+22. [PMID: 41063319] Jian Y — SR/meta-analysis (n=197–202): combined 810-nm semiconductor LAI + LLLT produced lowest VAS and 0.53 ± 0.74 analgesic tablets; preoperative pain, lesion size, and laser protocol were the three main predictors of postoperative VAS. *European journal of medical research*, 2025. (Score: 78.1/100)
+
+23. [PMID: 40206775] Nasrabadi N, Yazdani A, Mehrabani M — Case series supporting supplementary disinfection in anatomically complex cases (dens invaginatus, open apex). *Iranian endodontic journal*, 2025. (Score: 45.3/100)
+
+24. [PMID: 41388259] Das U, Giri J, Ayer A — PROSPERO-registered SR/meta-analysis (11 RCTs): aPDT reduces VAS at 24 h (SMD −1.21) and 72 h (SMD −0.63); only 3/11 studies had low risk of bias. *BMC oral health*, 2025. (Score: 78.5/100)
+
+25. [PMID: 39489325] Fischer BV, Goulart TS, Vitali FC et al. — Systematic review: Er:YAG SWEEPS did not significantly reduce residual filling material volume in retreatment (p>0.05); PUI or XP-Endo Finisher preferred. *Journal of dentistry*, 2024. (Score: 74.8/100)
+
+26. [PMID: 37925063] Ahlat M, Aydin C, Kaya S et al. — Case series (n=150): MALDI-TOF microbial profiling; *E. faecalis* predominated in retreatment cases, *Lactobacillus* spp. in abscess cases. *Anaerobe*, 2023. (Score: 44.8/100)
+
+27. [PMID: 38157279] Swetha D, Ballal S, Sundar S et al. — Prospective RCT (n=86): diode laser (GaAlAs 980 nm) pulpotomy 93% vs. 2.5% NaOCl 88.4% success at 18 months (not significant); laser reduced 48 h pain (p<0.001) and produced thicker dentine bridges (p=0.0479). *European endodontic journal*, 2024. (Score: 66.7/100)
+
+28. [PMID: 41121058] Ayhan M, Altunbaş D, Akdeniz İ — Retrospective cohort (n=65): KTP laser, NaOCl, and saline haemostasis for MTA pulpotomy; overall 87.69% success at 12 months; no significant difference between modalities. *BMC oral health*, 2025. (Score: 66.1/100)
+
+29. [PMID: 36156804] Meire MA, Bronzato JD, Bomfim RA et al. — ESE-commissioned systematic review (14 studies, 13 RCTs): GRADE very low–low certainty; insufficient evidence to recommend any adjunctive therapy for AP treatment. *International endodontic journal*, 2023. (Score: 80.5/100)
+
+30. [PMID: 38013016] Pažin B, Lauc T, Bago I — 36-patient single-visit retreatment RCT: no significant difference in periapical lesion healing between UAI alone and UAI+PDT at 12 months (median reduction 86.98% vs. 79.72%; p=0.970). *Photodiagnosis and photodynamic therapy*, 2024. (Score: 56.5/100)
+
+31. [PMID: 40818665] Sabeti M, Harouni A, Gabbay J — Meta-analysis of 7 RCTs (n=490): LAI vs. UAI overall SMD = −0.58; SWEEPS SMD = −1.57; PIPS SMD = −1.10; diode LAI SMD = 0.03 (NS). *Journal of endodontics*, 2026. (Score: 74.8/100)
+
+32. [PMID: 39287434] Luo Z, He Y, Wu H et al. — Meta-analysis (22 studies, n=892): LLLT SMD = −0.86 at 24 h; diode laser SMD = −0.27 at 48 h; aPDT SMD = −1.12 at 24 h; aPDT pain incidence RR = 0.47 (95% CI: 0.31–0.72). *International endodontic journal*, 2024. (Score: 78.1/100)
+
+33. [PMID: 27759881] Del Fabbro M, Corbella S, Sequeira-Byron P et al. — Cochrane review: no evidence that LLLT prevented postoperative pain in periapical surgery (very low quality evidence). *The Cochrane database of systematic reviews*, 2016. (Score: 81.1/100)
+
+34. [PMID: 37849444] Olszewska A, Matys J, Gedrange T et al. — Retrospective study (n=86 immature teeth, 90 days): 635-nm diode PBM (100 mW, 200 mW/cm², 4 J) significantly reduced cold sensitivity at 6 h–30 days with no adverse effects. *Advances in clinical and experimental medicine*, 2024. (Score: 63.1/100)
+
+35. [PMID: 40287048] Ribeiro L, Fischer BV, Vitali FC et al. — Expert review flagging Er:YAG LAI irrigant extrusion as a provisional safety signal in regenerative endodontic contexts. *Journal of dentistry*, 2025. (Score: 39.8/100)
+
+36. [PMID: 38382735] Donnermeyer D, Dust PC, Schäfer E et al. — In vitro prospective study (n=20 model canals): Er:YAG LAI (P400FL tip, canal entrance, 25 pps, 50 mJ, 300 μs, 3×20 s, 3 mL/cycle) superior to UAI, sonic, and manual agitation for isthmus debridement (p<0.05). *Journal of endodontics*, 2024. (Score: 60.4/100)
+
+37. [PMID: 37195228] Araújo LP, Gobbo LB, Silva TAD et al. — Systematic review on aPDT in paediatric endodontics using phenothiazinium salts; intracanal exposure times not reported. *International journal of paediatric dentistry*, 2024. (Score: 78.5/100)
+
+38. [PMID: 39442490] Suresh N, Joseph B, Sathyan P et al. — Review of phenothiazinium salt photosensitisers (methylene blue, toluidine blue) delivered via optical fibre for aPDT. *Bioorganic & medicinal chemistry*, 2024. (Score: 39.8/100)
+
+39. [PMID: 35267110] Erkan E, Gündoğar M, Uslu G et al. — Prospective study: Er:YAG laser in single-rooted premolar model; specific energy/pulse settings not extractable from available abstract. *Odontology*, 2022. (Score: 62.6/100)
+
+40. [PMID: 41789272] Zargar N, Nasrabadi N, Hemmati G et al. — Case series: FotoSan® toluidine blue + 630-nm LED, 3 W/cm², aPDT protocol for intracanal use. *Journal of lasers in medical sciences*, 2025. (Score: 45.3/100)
+
+41. [PMID: 39663253] Perin MLC, Silva LSMD, Duarte ML et al. — Expert review: pre-irradiation contact time range 1–5 minutes for photosensitisers used in aPDT. *Lasers in medical science*, 2024. (Score: 44.3/100)
 
 ---
 
@@ -327,24 +723,12 @@ BECAUSE LAI outperformed all other activation techniques in isthmus hydrogel rem
 
 The stitched curriculum did not carry every module's citation-support outcome through verbatim. Those outcomes are restated here so none of them is silently missing.
 
-**Clinical Laser Techniques and Protocol Application**
+**Laser Disinfection Techniques and Treatment Protocols**
 
 ---
 
-> ⚠ **Citation support: 8 of 68 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
+> ⚠ **Citation support: 2 of 63 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
 >
-> - [[PMID:38878107]] cited for: "Document baseline volume in mm³ using ITK-SNAP or equivalent segmentation software for 12-month comparison."
-> - [[PMID:41389357]] cited for: "Deliver 17% EDTA and activate with the same Er:YAG parameters for one 20-second cycle."
-> - [[PMID:38382735]] cited for: "Deliver 17% EDTA and activate with the same Er:YAG parameters for one 20-second cycle."
-> - [[PMID:36156804]] cited for: "IF the sole clinical goal is periapical healing improvement in a single-rooted tooth and laser equipment is unavailable
-THEN proceed with co"
-> - [[PMID:38878107]] cited for: "IF endodontic retreatment is required with multi-rooted tooth and isthmus structures confirmed on CBCT
-THEN add Er:YAG LAI (50 mJ, 25 Hz, 25"
-
-**Clinical Outcomes, Efficacy Comparison, and Adverse Effects**
-
----
-
-> ⚠ **Citation support: 1 of 55 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
->
-> - [[PMID:27759881]] cited for: "The Cochrane review by Del Fabbro M et al. (2016) found no evidence that low-level laser therapy prevented postoperative pain in a surgical"
+> - [[PMID:37195228]] cited for: "Kolberg-Babrzyńska et al., 2025 applied Er:YAG LAI with 2% NaOCl and 17% EDTA (50 mJ; 25 Hz; 1 W; 300 μs; 300 μm tip; fluence 71.4 J/cm²) in"
+> - [[PMID:36156804]] cited for: "**IF** the tooth has apical periodontitis and is undergoing primary root canal treatment in a single-rooted canal
+**THEN** complete conventi"

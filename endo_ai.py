@@ -6357,7 +6357,7 @@ OUTPUT — return ONLY this JSON object, no fence, no commentary:
   ]
 }
 
-An anchor that does not appear verbatim in the curriculum is dropped, so copy it exactly. Return empty lists rather than inventing work."""
+THE ANCHOR MUST BE ONE COMPLETE LINE, copied from its first character to its last. Not a prefix, not a sentence taken out of the middle of a paragraph, not a shortened version — the WHOLE line. An anchor that is not a complete line of the curriculum is dropped and your sentence is lost, because inserting after a partial line would split a clinical claim in half. Return empty lists rather than inventing work."""
 
 
 def _consistency_findings_block(conflicts: list, malformed: list) -> str:
@@ -6414,15 +6414,36 @@ def _apply_consistency_edits(text: str, payload: dict, malformed: list) -> tuple
         text = text.replace(body, new, 1)
         applied["repairs"] += 1
 
+    # THE ANCHOR MUST BE A COMPLETE LINE, and this is the second thing the
+    # laser regeneration taught this function.
+    #
+    # The first version inserted after any substring match. The model returned
+    # a ~110-character prefix of a 398-character cited line, the insertion
+    # split that line in two, the original no longer existed verbatim, and
+    # `consistency_guard` reported "2 cited line(s) were rewritten" and
+    # discarded the whole pass. The model had not rewritten anything — the
+    # APPLIER had, by inserting into the middle of a sentence, and the guard
+    # was right to refuse it.
+    #
+    # Matching whole lines makes an insertion structurally incapable of
+    # splitting a claim: either the anchor names a line and the sentence goes
+    # after it, or nothing happens.
+    lines = text.split(chr(10))
+    norm = [" ".join(l.split()) for l in lines]
     for ann in (payload.get("annotations") or []):
         anchor, sentence = ann.get("anchor") or "", ann.get("text") or ""
         if not anchor or not sentence:
             continue
-        if anchor not in text:
+        key = " ".join(anchor.split())
+        try:
+            i = norm.index(key)
+        except ValueError:
             applied["dropped_anchor"] += 1
             continue
-        text = text.replace(anchor, anchor + "\n\n" + sentence, 1)
+        lines[i + 1:i + 1] = ["", sentence]
+        norm[i + 1:i + 1] = ["", " ".join(sentence.split())]
         applied["annotations"] += 1
+    text = chr(10).join(lines)
 
     return text, applied
 
