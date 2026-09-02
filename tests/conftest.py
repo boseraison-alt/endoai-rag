@@ -53,6 +53,17 @@ def _audit_logs_stay_out_of_the_repo(tmp_path_factory):
     endo_ai._EVMAP_LOG_PATH = str(d / "evidence_mapping.jsonl")
     endo_ai._COST_LOG_PATH = str(d / "cost_log.jsonl")
     endo_ai._PUBMED_AUDIT_LOG_PATH = str(d / "pubmed_audit.jsonl")
+
+    # The fourth, found in `case-v3` by noticing a stray `c.md` in `git status`
+    # twice. The eval harness saves every case answer it generates so an
+    # assertion failure can be read against the actual text; under pytest that
+    # wrote a stub answer into the repo's own log directory on every run.
+    try:
+        sys.path.insert(0, str(Path(__file__).parent.parent / "eval"))
+        import run_eval
+        run_eval.CASE_ANSWER_DIR = d / "case_answers"
+    except Exception:      # the eval harness is not importable in every env
+        pass
     yield
 
 

@@ -46,6 +46,77 @@ class TestWriteBackIsDisabled:
             "eval run would write its own results into the library it measures"
 
 
+class TestTheHarnessWritesNothingIntoTheRepo:
+    """The fourth instance of one bug class, found by noticing a stray file in
+    `git status` twice and the second time reading why.
+
+    `tests/conftest.py` already redirects `evidence_mapping.jsonl`,
+    `cost_log.jsonl` and `pubmed_audit.jsonl` out of the working tree, because
+    a suite run must not append to the production audit trail. The eval
+    harness's case-answer dump had the same shape and no guard: it built
+    `ROOT / "eval" / "logs" / "case_answers"` inline, so every suite run wrote
+    a stub answer for the fixture case id "c" into the repo's own log
+    directory. A writer that builds its path inline is a writer nobody can
+    point somewhere else.
+    """
+
+    def test_the_dir_is_redirected_away_from_the_repo(self):
+        repo_logs = (Path(__file__).parent.parent / "eval" / "logs"
+                     / "case_answers").resolve()
+        assert Path(run_eval.CASE_ANSWER_DIR).resolve() != repo_logs, (
+            "the suite is writing case answers into the repo's log directory")
+
+    def test_a_case_run_under_pytest_writes_no_file_into_the_repo(self, monkeypatch):
+        """Behavioural, and ORDER-INDEPENDENT.
+
+        The first version compared the directory listing before and after. It
+        let a mutant through: the mutation harness cleans strays only at the
+        end of the run, so the previous mutant's leaked file was already in
+        `before`, the sets matched, and a test whose whole subject is a leaked
+        file passed while the file was being leaked. Naming the exact path and
+        clearing it first is the only version of this that cannot be fooled by
+        what an earlier run left behind.
+        """
+        repo_logs = (Path(__file__).parent.parent / "eval" / "logs"
+                     / "case_answers")
+        probe = repo_logs / "leak-probe.md"
+        if probe.exists():
+            probe.unlink()
+
+        import app as app_mod
+        import endo_ai
+
+        class _Resp:
+            status_code = 200
+
+            def get_json(self):
+                return self._j
+
+        class _Client:
+            def post(self, *a, **k):
+                r = _Resp(); r._j = {"job_id": "j1"}; return r
+
+            def get(self, *a, **k):
+                r = _Resp()
+                r._j = {"status": "complete", "answer": "An answer.",
+                        "papers": [{"pmid": "1"}], "cost_usd": 0.99}
+                return r
+
+        monkeypatch.setattr(app_mod.app, "test_client", lambda: _Client())
+        monkeypatch.setattr(endo_ai, "LIBRARY_WRITE_BACK", True, raising=False)
+        run_eval.run_case_with_synthesis(
+            {"id": "leak-probe", "question": "q", "mode": "case",
+             "force_route": "library", "expect": {}})
+
+        assert not probe.exists(), (
+            f"the harness wrote {probe} into the repo during a test run")
+        # And it did write it SOMEWHERE — a save that silently did nothing
+        # would pass the assertion above for the wrong reason.
+        assert (Path(run_eval.CASE_ANSWER_DIR) / "leak-probe.md").exists(), (
+            "the case answer was not saved at all; this test would then pass "
+            "even with the leak present")
+
+
 class TestSynthesisAssertions:
     """These only run in --synthesis-subset. If the wiring regresses to
     filter-only, `has_banner` disappears from the result and these fail."""

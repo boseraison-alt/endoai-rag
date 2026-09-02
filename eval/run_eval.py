@@ -24,6 +24,14 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
+
+# A MODULE-LEVEL CONSTANT so `tests/conftest.py` can redirect it, which is the
+# whole point. `tests/test_eval_harness.py` drives `run_case` with a stubbed
+# client and id "c", and every suite run wrote `eval/logs/case_answers/c.md`
+# into the working tree. Same bug class as the three audit logs the conftest
+# already redirects: a writer that builds its path inline is a writer nobody
+# can point somewhere else.
+CASE_ANSWER_DIR = ROOT / "eval" / "logs" / "case_answers"
 sys.path.insert(0, str(ROOT))
 
 QUESTIONS = Path(__file__).parent / "questions.json"
@@ -395,7 +403,7 @@ def run_case_with_synthesis(case):
         # NOT ".../answers": `.gitignore` carries a bare `answers/`, for the
         # product answer dump at the repo root, and a bare pattern matches
         # at any depth — so these would have been silently untracked.
-        out_dir = ROOT / "eval" / "logs" / "case_answers"
+        out_dir = CASE_ANSWER_DIR
         out_dir.mkdir(parents=True, exist_ok=True)
         header = [
             f"# {case['id']}",
