@@ -258,6 +258,93 @@ class TestTheSeamHoldsOffline:
                    line.startswith("with client.messages.stream"), line
 
 
+class TestAMidStreamTransportFailureIsRetried:
+    """THE GAP THAT ONLY OPENED WHEN THE STITCHER STARTED STREAMING.
+
+    `_invoke_claude` retries on `anthropic.APIConnectionError`. The SDK raises
+    that while it is making the REQUEST — but once the response is open and
+    being iterated, a dropped connection surfaces as the raw httpx exception
+    and walks straight past that clause.
+
+    Streaming is what makes a call long enough to be interrupted, so this was
+    invisible until `dl-quality-v1` made the longest call in the system stream.
+    The laser regeneration then died on
+
+        httpx.ReadError: [WinError 10054] An existing connection was forcibly
+        closed by the remote host
+
+    after paying for all four modules, and every one had to be regenerated.
+    """
+
+    def test_a_read_error_mid_stream_is_retried_not_raised(self, monkeypatch):
+        import httpx
+        monkeypatch.setattr(endo_ai, "_RETRY_BACKOFF_SEC", [0.0])
+        calls = []
+
+        def flaky(client, on_partial=None, abort_cb=None, **kw):
+            calls.append(1)
+            if len(calls) == 1:
+                raise httpx.ReadError("connection forcibly closed")
+            return FakeMessage(ANSWER_MD)
+
+        monkeypatch.setattr(endo_ai, "_stream_once", flaky)
+        msg = endo_ai._invoke_claude(FakeClient(), function_name="t",
+                                     stream=True, model="m", max_tokens=10,
+                                     messages=[])
+        assert msg.content[0].text == ANSWER_MD
+        assert len(calls) == 2, "the mid-stream failure was not retried"
+
+    def test_a_remote_protocol_error_is_retried_too(self, monkeypatch):
+        """Same class, different symptom — a truncated response body."""
+        import httpx
+        monkeypatch.setattr(endo_ai, "_RETRY_BACKOFF_SEC", [0.0])
+        calls = []
+
+        def flaky(client, on_partial=None, abort_cb=None, **kw):
+            calls.append(1)
+            if len(calls) == 1:
+                raise httpx.RemoteProtocolError("peer closed connection")
+            return FakeMessage(ANSWER_MD)
+
+        monkeypatch.setattr(endo_ai, "_stream_once", flaky)
+        endo_ai._invoke_claude(FakeClient(), function_name="t", stream=True,
+                               model="m", max_tokens=10, messages=[])
+        assert len(calls) == 2
+
+    def test_it_still_gives_up_eventually(self, monkeypatch):
+        """A retry loop with no exit is worse than the crash it replaces."""
+        import httpx
+        monkeypatch.setattr(endo_ai, "_RETRY_BACKOFF_SEC", [0.0, 0.0])
+        calls = []
+
+        def always(client, on_partial=None, abort_cb=None, **kw):
+            calls.append(1)
+            raise httpx.ReadError("down")
+
+        monkeypatch.setattr(endo_ai, "_stream_once", always)
+        with pytest.raises(httpx.ReadError):
+            endo_ai._invoke_claude(FakeClient(), function_name="t", stream=True,
+                                   model="m", max_tokens=10, messages=[])
+        assert len(calls) == 3, "attempts = backoff steps + 1"
+
+    def test_a_user_abort_is_still_not_retried(self, monkeypatch):
+        """StreamAborted must keep travelling straight through — it is a
+        cancellation, not a transient error, and retrying it would spend money
+        on an answer the clinician has already dismissed."""
+        monkeypatch.setattr(endo_ai, "_RETRY_BACKOFF_SEC", [0.0])
+        calls = []
+
+        def aborting(client, on_partial=None, abort_cb=None, **kw):
+            calls.append(1)
+            raise endo_ai.StreamAborted()
+
+        monkeypatch.setattr(endo_ai, "_stream_once", aborting)
+        with pytest.raises(endo_ai.StreamAborted):
+            endo_ai._invoke_claude(FakeClient(), function_name="t", stream=True,
+                                   model="m", max_tokens=10, messages=[])
+        assert len(calls) == 1
+
+
 # ── 2. Guardrails see the complete text, once ─────────────
 
 class TestGuardrailsOnlySeeCompleteText:

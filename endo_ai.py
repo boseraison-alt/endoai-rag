@@ -346,6 +346,17 @@ def _stream_once(client, *, on_partial=None, abort_cb=None, **kwargs):
     return message
 
 
+# Mid-stream transport failures, which the SDK does NOT map to
+# APIConnectionError. Guarded because httpx is anthropic's dependency rather
+# than ours declared directly; if it is ever absent the retry simply loses this
+# clause instead of failing to import.
+try:
+    import httpx as _httpx
+    _TRANSPORT_ERRORS = (_httpx.TransportError,)
+except Exception:            # pragma: no cover — httpx ships with anthropic
+    _TRANSPORT_ERRORS = ()
+
+
 def _invoke_claude(client, *, function_name: str = "claude", stream: bool = False,
                    on_partial=None, abort_cb=None, **kwargs):
     """Wrap client.messages.create with retry-on-transient-error.
@@ -388,6 +399,26 @@ def _invoke_claude(client, *, function_name: str = "claude", stream: bool = Fals
         except anthropic.APIConnectionError as e:
             last_exc = e
             reason = f"connection error ({type(e).__name__})"
+        except _TRANSPORT_ERRORS as e:
+            # A MID-STREAM transport failure. The SDK maps connection problems
+            # to APIConnectionError only while it is making the REQUEST; once
+            # the response is open and being iterated, a dropped connection
+            # surfaces as the raw httpx exception and walks straight past the
+            # clause above.
+            #
+            # This gap was invisible until the stitcher started streaming,
+            # because streaming is what makes a call long enough to be
+            # interrupted: the laser regeneration died on
+            # `httpx.ReadError: [WinError 10054] An existing connection was
+            # forcibly closed by the remote host` after paying for all four
+            # modules. Every one of them had to be regenerated.
+            #
+            # A retry restarts the whole generation, which costs. Losing it
+            # costs more. NOTE that on the paths with an `on_partial`, a retry
+            # replays from the beginning, so a viewer can see the text get
+            # shorter once — cosmetic, and only on a transport failure.
+            last_exc = e
+            reason = f"stream transport error ({type(e).__name__})"
 
         if attempt >= len(_RETRY_BACKOFF_SEC):
             print(f"  [{function_name}] giving up after {attempt+1} attempts ({reason})")
