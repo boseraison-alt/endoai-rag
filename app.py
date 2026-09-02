@@ -561,9 +561,15 @@ def _safe_papers(papers: list) -> list:
     Users see only metadata (PMID, title, authors, year, journal, score, level).
     Abstract text stays server-side as Claude context only — never exposed to clients.
     """
+    # `impact_factor` is deliberately NOT here (invariant 11, Q3, addendum A6).
+    # Q3 removed it from every rendered surface, but the field kept leaving the
+    # server, so the browser was one line of code away from showing it again.
+    # Verified on a live payload: the AAE position statements were still being
+    # shipped `impact_factor: 8.0` — a number that cannot exist, since a
+    # position statement is not a journal and has no impact factor.
     ALLOWED = {"pmid", "title", "authors", "year", "journal",
                "journal_abbrev", "volume", "issue", "pages",
-               "impact_factor", "sample_size", "followup_months",
+               "sample_size", "followup_months",
                "citations", "level_key", "score",
                # Provenance badges — metadata only, no abstract text
                "has_coi", "coi_funder", "coi_status", "is_registered", "registry",

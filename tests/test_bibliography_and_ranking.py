@@ -320,6 +320,20 @@ class TestImpactFactorIsGone:
         assert "12.0" not in line
         assert "27759881" in line and "Evidence Score: 73.3" in line
 
+    def test_it_does_not_even_leave_the_server(self):
+        """Found by checking a LIVE payload after the demo server was restarted
+        onto this build: the browser no longer rendered an impact factor, but
+        `_safe_papers` was still shipping the field — so the UI was one line
+        away from showing it again. The AAE position statements were being sent
+        `impact_factor: 8.0`, a number that cannot exist."""
+        import app as app_mod
+        out = app_mod._safe_papers([{
+            "pmid": "AAE-PS-retreatment", "journal": "AAE Position Statement",
+            "impact_factor": 8.0, "score": 90.0, "level_key": "level1"}])
+        assert "impact_factor" not in out[0]
+        assert out[0]["journal"] == "AAE Position Statement", \
+            "the journal is display metadata and must survive"
+
     def test_the_abstract_popover_does_not_render_one(self):
         html = INDEX_HTML.read_text(encoding="utf-8")
         assert "'IF ' + _provEscape" not in html
