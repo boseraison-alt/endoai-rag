@@ -4499,7 +4499,26 @@ def _build_corrective_message(result: dict) -> str:
 # ──────────────────────────────────────────────────────────
 
 CITATION_SUPPORT_CHECK = os.getenv("CITATION_SUPPORT_CHECK", "true").lower() in ("1", "true", "yes")
-_SUPPORT_MAX_PAIRS     = 30     # pairs checked per answer (see the note below)
+# None = NO CAP. Every cited claim in an answer is checked.
+#
+# This was 30, and it bound on three of four modules in both stored curricula:
+# 117 of 130 claims checked on the anesthesia run, 120 of 133 on the laser run
+# — 13 unchecked in each. The rendered block said so honestly ("4 further cited
+# claim(s) were NOT checked"), which is invariant 15 working and is the only
+# reason this was findable at all. But a guardrail that declines to look at 10%
+# of a curriculum's claims is a guardrail with a hole in it, and the claims it
+# skipped were the LAST ones in each module — the clinical-application
+# protocols, which are the sentences most likely to be acted on.
+#
+# COST IS NOW LINEAR IN CLAIMS, deliberately and with no ceiling. Payload per
+# request is still bounded by `_SUPPORT_BATCH_CHARS`, so removing the cap adds
+# Haiku calls rather than growing any single one. A ceiling reintroduced "for
+# safety" would be the same silent truncation this batch spent Item 1 removing:
+# it would bind on exactly the answers that most need checking.
+#
+# Still settable to an int, because `scripts/measure_claim_units.py` holds it
+# fixed to keep a before/after replay comparable. Production leaves it None.
+_SUPPORT_MAX_PAIRS     = None
 
 # The judge sees the WHOLE abstract. This used to be `abstract[:1200]`, a cap
 # from when 57% of the library's abstracts were themselves cut at 1,000 or
@@ -4592,12 +4611,13 @@ def verify_citation_support(answer: str, evidence: dict) -> dict:
         all_pairs = [(p[0], p[1], p[2] if len(p) > 2 else SHAPE_PROSE)
                      for p in _extract_claim_citation_pairs(answer,
                                                             with_shape=True)]
-        pairs = all_pairs[:_SUPPORT_MAX_PAIRS]
-        # How many pairs EXIST, not just how many were looked at. A curriculum
-        # module routinely produces more than 30 and the cap binds silently:
-        # the rendered block said "all 30 checked" while 15 were never seen.
-        # That is this repo's bug class (d) inside the guardrail meant to
-        # catch it, and invariant 15 requires the answer to state its outcome.
+        pairs = (all_pairs if _SUPPORT_MAX_PAIRS is None
+                 else all_pairs[:_SUPPORT_MAX_PAIRS])
+        # How many pairs EXIST, not just how many were looked at. With the
+        # cap gone these are normally equal, but NOT always: a pair whose
+        # abstract is not in the cache is skipped below, and the reader still
+        # has to be told. Invariant 15 requires the answer to state its
+        # outcome, and "checked 28 of 31" is an outcome.
         out["total_pairs"] = len(all_pairs)
         if not pairs:
             out["detail"] = "no cited claims to check"
@@ -4789,11 +4809,13 @@ def _append_support_warnings(answer: str, support: dict) -> str:
     status  = support.get("status", "not_run")
     checked = support.get("checked", 0)
 
-    # `_SUPPORT_MAX_PAIRS` caps how many pairs are checked at all, and a
-    # curriculum module routinely exceeds it. Saying "each of the 30 cited
-    # claims was checked" while 15 were never looked at is the fail-open
-    # silence invariant 15 exists to forbid — the sentence is true and the
-    # reader draws the wrong conclusion from it.
+    # This tail is what made the 30-pair cap findable, and it stays now that
+    # the cap is gone. `checked` can still fall short of `total_pairs` when a
+    # cited paper's abstract is not in the cache — the pair is skipped rather
+    # than judged against nothing. Saying "each of the 30 cited claims was
+    # checked" while 15 were never looked at is the fail-open silence
+    # invariant 15 exists to forbid: the sentence is true and the reader draws
+    # the wrong conclusion from it.
     total    = support.get("total_pairs") or checked
     unchecked = max(0, total - checked)
     tail = (f" {unchecked} further cited claim(s) were NOT checked (the check "

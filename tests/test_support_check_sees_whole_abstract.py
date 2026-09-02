@@ -177,16 +177,48 @@ class TestThePayloadIsBoundedByBatchingNotByCutting:
 
 
 class TestTheAnswerSaysWhatWasNotChecked:
-    """`_SUPPORT_MAX_PAIRS` binds on real curricula — the two laser runs
-    measured 29/30/30/30 checked, i.e. at the cap on three of four modules."""
+    """The cap is GONE (`dl-quality-v1` Item 2). It was 30 and it bound on
+    three of four modules in both stored curricula — 117 of 130 claims checked
+    on the anesthesia run, 120 of 133 on the laser run, 13 unchecked in each,
+    and the skipped ones were the LAST in each module, which is where the
+    clinical-application protocols live.
 
-    def test_total_pairs_records_what_existed(self, judge, monkeypatch):
-        n = endo_ai._SUPPORT_MAX_PAIRS + 12
+    The reporting stays, because `checked` can still fall short of
+    `total_pairs` for a legitimate reason: a cited paper whose abstract is not
+    in the cache is skipped rather than judged against nothing."""
+
+    def test_the_cap_is_off(self):
+        assert endo_ai._SUPPORT_MAX_PAIRS is None, (
+            "a pair cap is back. It binds on exactly the answers that most "
+            "need checking — see the constant's own comment.")
+
+    def test_every_claim_is_checked_now(self, judge, monkeypatch):
+        n = 42
         _abstracts(monkeypatch, {str(1000 + i): "abstract text " * 30
                                  for i in range(n)})
         out = endo_ai.verify_citation_support(_answer(n), {})
         assert out["total_pairs"] == n
-        assert out["checked"] == endo_ai._SUPPORT_MAX_PAIRS
+        assert out["checked"] == n, (
+            f"only {out['checked']} of {n} claims were checked")
+
+    def test_a_cap_still_works_when_a_replay_sets_one(self, judge, monkeypatch):
+        """`scripts/measure_claim_units.py` holds it fixed so a before/after
+        replay stays comparable. Production leaves it None."""
+        monkeypatch.setattr(endo_ai, "_SUPPORT_MAX_PAIRS", 10)
+        _abstracts(monkeypatch, {str(1000 + i): "abstract text " * 30
+                                 for i in range(25)})
+        out = endo_ai.verify_citation_support(_answer(25), {})
+        assert out["total_pairs"] == 25
+        assert out["checked"] == 10
+
+    def test_a_missing_abstract_still_shortens_the_checked_count(
+            self, judge, monkeypatch):
+        """The reason the footer survives the cap's removal."""
+        _abstracts(monkeypatch, {str(1000 + i): "abstract text " * 30
+                                 for i in range(8)})     # 8 of 12 cached
+        out = endo_ai.verify_citation_support(_answer(12), {})
+        assert out["total_pairs"] == 12
+        assert out["checked"] < 12
 
     def test_the_rendered_block_states_the_unchecked_remainder(self):
         rendered = endo_ai._append_support_warnings("ANSWER", {

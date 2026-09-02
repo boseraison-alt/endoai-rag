@@ -20,7 +20,7 @@ existed as a single untracked file on one machine — and committed under
 | Item | Status | Before → After | Test file | Commit |
 |---|---|---|---|---|
 | 1 · Truncation gate | see §2 | modules ending cut: **2 visible / 4 actual → 0** | `tests/test_module_truncation.py` (26) | |
-| 2 · Remove the 30-claim cap | see §4 | unchecked claims **13 → 0** on each fixture | | |
+| 2 · Remove the 30-claim cap | DONE | unchecked claims **13 → 0** on each fixture; checked **117→130** and **120→133** | `tests/test_support_check_sees_whole_abstract.py` | |
 | 3 · The Sabeti claim | DONE | adjudicated — **cut, not re-sourced** | `eval/logs/citation_adjudications.md` | `71af84b` |
 | 4 · Cross-module consistency | | | | |
 | 5 · Regenerate and re-measure | | | | |
@@ -84,15 +84,25 @@ Measured over every stored curriculum:
 
 | | |
 |---|---|
-| module bodies scanned | **100** |
-| flagged | **5** |
+| module bodies scanned | **108** |
+| flagged | **8** (6 distinct curricula) |
 | false positives | **0** |
-| where the 5 sit | **all Module 4** |
+| where they sit | **every one is Module 4** |
 
-All five verified by hand: three end at `[[PMID:` or `[[`, two end on "with"
-and "not". The Module-4 concentration is itself the finding — modules 1–3 are
+All verified by hand: four end at `[[PMID:` or `[[`, the rest on "with", "not"
+and "the". The Module-4 concentration is itself the finding — modules 1–3 are
 followed by the stitcher's transition paragraph, which papers over the cut in
 the *rendered* document. Only the last module's damage is visible to a reader.
+
+**That table read 100 scanned / 5 flagged until the scan was found wrong**, by
+the regression fixture failing rather than by me. It split module bodies at the
+first `---`, which stops before `### 4a. Procedural Protocol` — where the
+anesthesia curriculum's cut actually is — and `detect_module_truncation`
+treated a trailing `---` as the last content line, so a module ending
+"…19.35 mm from the
+
+---" read as finished. A scan that stops before the
+damage reports a clean document.
 
 ### The three changes
 
@@ -179,8 +189,31 @@ Measured from the fixtures' own rendered footers:
 
 The cap binds on three of four modules in both. The block is honest about it —
 "4 further cited claim(s) were NOT checked (the check covers the first 30)" —
-which is invariant 15 doing its job, and is also the reason this was findable.
+which is invariant 15 doing its job, and is the only reason this was findable.
+
+**Which claims it skipped is the part that matters.** The cap takes the FIRST
+30 pairs of each module, so what goes unchecked is the tail — and in a
+curriculum module the tail is the *Clinical Application* section, the numeric
+chairside protocol. The guardrail was declining to look at precisely the
+sentences most likely to be acted on.
+
+### The change
+
+`_SUPPORT_MAX_PAIRS = None` — no cap. Payload per request is still bounded by
+`_SUPPORT_BATCH_CHARS`, so removing the cap adds Haiku calls rather than
+growing any single one, and **cost is now linear in claims with no ceiling.**
+That is deliberate: a ceiling reintroduced "for safety" would bind on exactly
+the answers that most need checking, which is the silent truncation Item 1
+spent its whole length removing.
+
+The constant survives as a knob because `scripts/measure_claim_units.py` holds
+it fixed to keep a before/after replay comparable. Production leaves it `None`.
+
+**The unchecked-remainder reporting stays**, and it is not vestigial:
+`checked` can still fall short of `total_pairs` when a cited paper's abstract
+is not in the cache, because that pair is skipped rather than judged against
+nothing. The reader still has to be told.
 
 ---
 
-*(Items 4 and 5, and the final numbers for Items 1 and 2, follow.)*
+*(Items 4 and 5, and the regenerated numbers, follow.)*
