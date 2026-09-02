@@ -402,7 +402,21 @@ Bundle: `~/OneDrive/Desktop/endo-ai-rag_backup.bundle`.
   `scripts/monthly_maintenance.py`, dry-run by default and deliberately
   **NOT scheduled**. Ran end to end clean: backfill 24s, rescore 10s, eval
   686s with 25/25 cases passing. RB decides when it first runs `--apply`.
-## 5. Next batch — "dl-quality-v1" (RB, queued 2026-09-01, verbatim)
+## 5. THE QUEUE, in order
+
+RB has queued four batches. They are listed here in the order they must run,
+because two of them depend on artefacts the earlier ones produce.
+
+| | batch | status | depends on |
+|---|---|---|---|
+| §5 | `dl-quality-v1` | Items 1-4 DONE, Item 5 (regenerate) in flight | — |
+| §5b | `classics-v1` | [B1] and [C] DONE; [B2]-[B4] outstanding | — |
+| §5c | `dl-quality-v2` | not started | the REGENERATED anesthesia curriculum, from `dl-quality-v1` Item 5 / `classics-v1` [B4] |
+| §5d | `retrieval-honesty-v1` | not started | displaced twice; still current |
+
+---
+
+## 5a. Batch — "dl-quality-v1" (RB, queued 2026-09-01, verbatim)
 
 Autonomous batch on `main`, tag `dl-quality-v1` at end. Standing rules from
 `WORKLIST.md` §0/§6 apply in full. Commit + push per item; re-bundle after
@@ -458,7 +472,177 @@ ground and should be reconciled with whatever this batch measures, not run
 twice.
 
 
-## 5b. Queued after `dl-quality-v1` — "retrieval-honesty-v1" (paste-ready)
+## 5b. Batch — "classics-v1" (RB, queued 2026-09-02, verbatim)
+
+[A] is answered and [C] is DONE; [B1] is DONE (the corpus fixture exists).
+[B2]-[B4] are outstanding.
+
+> AUTONOMOUS BATCH — classics-v1
+> Standing rules apply (WORKLIST.md §0/§6): measure before changing; dry-run
+> all DB writes and report delta splits before applying; mutation-check every
+> new test; real fixtures, not synthetic; wip-commit before any destructive git
+> operation; push + refresh the OneDrive bundle after every completed item;
+> eval runs strictly serial; never weaken a checker or gate to improve a
+> number. Tag classics-v1 at the end. Report in §8 format.
+>
+> [A] BATCH STATUS RECONCILIATION (do this first, it gates everything)
+> Check git log/tags for dl-quality-v1 and case-v3 completion. Three
+> possibilities: 1. Not yet run -> run those queued batches to completion
+> FIRST, then continue here. 2. Ran, but the anesthesia curriculum (generated
+> after) still shows mid-sentence module endings ("...19.35 mm from the",
+> "[module body ends here as supplied]") and support-check footers still say
+> "N further cited claim(s) were NOT checked" -> the truncation gate and the
+> 30-claim-cap removal FAILED on real output. Reproduce using the stored
+> anesthesia curriculum spec/answer, find why the gate passed truncated text
+> (likely: gate checks the stitcher input, not the final rendered module; or
+> the retry path bypasses it), fix at the generation/stitch layer — never by
+> relaxing the gate — and add the anesthesia curriculum as a stored regression
+> fixture asserting: no module ends mid-sentence, no "ends here as supplied"
+> marker, support-check footer reports 0 unchecked claims. 3. Ran and the
+> paste predates the fix -> regenerate the anesthesia curriculum once, confirm
+> clean, and say so in the report.
+>
+> [B] CLASSIC READER/OSU CORPUS AUDIT — measure first, then fix only the
+> measured cause. Context: RB expected the classic Ohio State anesthesia corpus
+> (Reader as senior author; first authors Nusstein, Fowler, Drum, and others;
+> mostly J Endod, ~1990-2015: IANB success rates, anesthesia failure in
+> irreversible pulpitis, supplemental intraosseous/intraligamentary/buccal-
+> infiltration trials, articaine vs lidocaine) to appear in the anesthesia
+> curriculum. Two OSU papers ARE cited (PMID 26831048, 25770038) — the question
+> is the deeper canon.
+> B1. Build the canonical list: query PubMed for ("Reader A"[Author] OR
+>     "Nusstein J"[Author] OR "Drum M"[Author]) AND anesthesia-related terms,
+>     restricted to J Endod / Oral Surg Oral Med Oral Pathol / Anesth Prog,
+>     1985-2020. Dedupe to a list of ~30-60 PMIDs. Store as
+>     eval/fixtures/osu_anesthesia_corpus.json.
+> B2. For EVERY pmid in that list, report a table: in library? | tier assigned
+>     | score + per-component breakdown | did the classics exemption fire? |
+>     was it in the candidate pool for the anesthesia curriculum run? | if
+>     dropped, at which stage (KNN similarity below floor / coverage gate /
+>     candidate cap / tier filter)?
+> B3. Fix ONLY what the table shows, in this priority: - If the classics
+>     exemption is not firing on papers that qualify: fix the exemption logic;
+>     mutation-checked test built on real rows from B2. - If the papers were
+>     never ingested: ingest them with full provenance (tier from study design,
+>     COI tri-state, MEDLINE status), dry-run first with delta split, then
+>     apply. These are targeted adds, not a bulk import. - If retrieval
+>     vocabulary misses them (e.g., query says "inferior alveolar nerve block"
+>     but classics are indexed under other terms): extend the synonym groups;
+>     show hits-per-query before/after. Do NOT add any journal-based weighting
+>     anywhere — see [C].
+> B4. Done when: regenerating the anesthesia curriculum cites the classic
+>     corpus where clinically appropriate (report the before/after citation
+>     lists), and the full retrieval eval shows no regression outside baseline
+>     ranges. If a case moves, explain it — code change vs variance — do not
+>     silently re-baseline.
+>
+> [C] LOCK THE NO-JOURNAL-WEIGHTING DECISION (RB decided today: no venue
+> preference)
+> C1. Add an invariant test asserting the scoring path takes no journal-identity
+>     input: no journal name, ISSN, or venue-derived feature may reach
+>     score_paper's arithmetic (journal is allowed ONLY for the Cochrane
+>     journal-verification check and display metadata). Test must be built on
+>     the actual scoring code path, not a source grep. Mutation-check it:
+>     temporarily add a +1 JOE bonus and confirm the test fails, then revert.
+> C2. Append to CURO_HANDOVER.md §2 invariants: "11. No journal-identity signal
+>     in scoring or ranking. Venue is metadata and Cochrane-verification only.
+>     Decided by RB 2026-09-02 (JOE-vs-IEJ question); the remedy for missing
+>     canon papers is retrieval/ingestion fixes, never venue weight."
+>
+> Report per item: what was measured, what was changed, test counts
+> before/after, eval deltas, cost. Refresh bundle, push, tag classics-v1.
+
+**[A] is answered, and the answer is possibility 1 with a correction to
+possibility 2.** `case-v3` is complete and tagged. `dl-quality-v1` was
+mid-batch. The anesthesia curriculum was NOT generated after the fix: `/health`
+reports the server that produced it as `f23e8c8`, `git_dirty: true`, imported
+18:53 — before Item 1 existed. All three symptoms reproduce in the stored
+fixture and all three are the before-state.
+
+**One finding not in the item list**, and it matters for [J] as well:
+`[module body ends here as supplied]` appears NOWHERE in this codebase. The
+stitcher LLM invented it when handed a module cut mid-sentence — so the system
+detected the truncation, said so in plain English, and nothing downstream
+parsed it.
+
+
+## 5c. Queued third — "dl-quality-v2" (RB, queued 2026-09-02, verbatim)
+
+Runs after `classics-v1`. Its fixture is the REGENERATED anesthesia curriculum,
+so `dl-quality-v1` Item 5 and `classics-v1` [B4] must both have produced one
+first. Item [F]'s prerequisite is already answered: **there is no "Item 6
+consolidated references" commit anywhere in the history** (`git log --all`
+searched for reference/bibliography), so [F] is the "not landed -> land it"
+branch, not the "it failed" branch.
+
+> AUTONOMOUS BATCH ADDENDUM — dl-quality-v2
+> Standing rules apply (measure first; never weaken a gate; mutation-check
+> every test; real fixtures; push + re-bundle per item). Fixture for everything
+> below: the stored anesthesia curriculum run. Tag dl-quality-v2 at end.
+>
+> [F] BIBLIOGRAPHY = CITATIONS, EXACTLY
+> Measured claim: the anesthesia bibliography contains papers never cited in
+> the text (AAE position statements on antibiotics/implants/regenerative endo,
+> Sjogren 1990, Cochrane pulpotomy + antibiotic-prescribing reviews) while
+> in-text PMIDs are absent from it. First check git log for Item 6
+> (consolidated references, set-equality): not landed -> land it; landed -> it
+> failed, diagnose. Likely cause: bibliography assembled from the retrieval
+> candidate pool instead of citations extracted from the rendered modules.
+> Fix: bibliography must be exactly the union of in-text PMIDs, ordered
+> tier-then-score. Test: set-equality assertion on the anesthesia fixture, both
+> directions (no uncited entry, no missing citation). Mutation-check by
+> injecting one pool-only paper.
+>
+> [G] ENDPOINT-DEFINITION DISCIPLINE FOR SUCCESS RATES
+> Measure first: across the anesthesia fixture, list every % success claim, the
+> endpoint its cited abstract defines (lip numbness / EPT / pain-free access),
+> and whether the rendered claim states it. Then: (a) synthesis prompt rule —
+> a success % must carry its endpoint when the abstract states one, and two
+> rates with different endpoints may not be juxtaposed as comparable without
+> saying so; (b) extend verify_citation_support — flag a % claim that drops an
+> endpoint qualifier present in the abstract. Report flag-rate impact on the
+> 5-case synthesis subset (a rise here is a true positive, not a regression).
+>
+> [H] NO POPULATION MEAN AS A PER-PATIENT INSTRUCTION
+> Anesthesia Module 4 turns a mean foramen position (3.88 mm above occlusal
+> plane, cited range -3 to +10 mm) into a measurement step. Extend the
+> ranges-as-scalars gate from charts to protocol text: a numeric directive
+> derived from a central tendency whose cited dispersion spans a clinically
+> different action must be rendered with the range, or not as a directive.
+> Real-fixture test; mutation-check.
+>
+> [I] UNCITED CLINICAL DIRECTIVES ON THE DL PATH
+> "1.8 mL plain lidocaine IANB for hypertensive patients" — determine whether
+> it carries a citation. Uncited -> the recommendation-traceability gate does
+> not cover the DL path; extend it (this is the case-v3 uncited-directive
+> class, confirmed on curriculum output). Cited but unsupported -> a
+> verify_citation_support miss; add the pair to the adjudication set in [B] and
+> report the split. Do NOT hand-edit the clinical content — fix the gate and
+> regenerate.
+>
+> [J] CROSS-MODULE PROTOCOL CONSISTENCY — concrete fixtures for the queued pass
+> Assert on the regenerated anesthesia curriculum that these do not recur:
+> IANB volume stated as conclusive in one module and as no-difference in
+> another while a third prescribes the lower volume; onset wait differing
+> across modules; lip-numbness check interval differing across modules;
+> supplemental-injection order differing across modules. Where the literature
+> genuinely conflicts, the curriculum must SAY it conflicts and cite both sides
+> once — a single reconciled statement reused across modules — never state each
+> side flatly in different modules. Test on the stored fixture; mutation-check
+> by re-injecting one conflict.
+>
+> Report per item: measurement table, cause, fix, test counts, eval delta, cost.
+
+**[J] builds directly on `dl-quality-v1` Item 4**, which shipped the
+deterministic detectors (`detect_parameter_conflicts`,
+`detect_malformed_because`), the insertion-only annotation pass and
+`consistency_guard`. [J]'s four fixtures are PROTOCOL conflicts rather than
+concentration conflicts, so they need a detector of their own — the existing
+one compares numbers attached to named agents, not recommendations attached to
+clinical situations.
+
+
+## 5d. Queued last — "retrieval-honesty-v1" (paste-ready)
 
 Autonomous batch on `main`, tag `retrieval-honesty-v1` at end. Standing rules
 from `WORKLIST.md` §0/§6 apply in full, including the every-column backup rule.
@@ -604,6 +788,17 @@ third change on the citation-support metric in one batch.
   Write/Edit tools for any Python containing a backslash or nested quotes** —
   and for any multi-line string replacement, which is where it bit again in
   `guardrails-v1`.
+- **A MUTATION HARNESS MUST NEVER RUN WHILE A GENERATION IS IN FLIGHT.** It
+  rewrites `endo_ai.py` once per mutant. An already-imported module is safe,
+  but anything imported lazily inside a function is not, and the failure would
+  be silent and unreproducible. Done carelessly once during `dl-quality-v1`;
+  the generation survived, which is luck rather than a guarantee.
+- **A `` written through a shell heredoc arrives as 0x08, a BACKSPACE.** The
+  regex compiles, runs, and matches nothing — a filter that never fires. It
+  happened to `_PARAM_AGENT_HEAD` in `dl-quality-v1` and survived two repair
+  attempts. Build any regex line with `chr(92)` so no backslash literal passes
+  through the shell, and scan for it with:
+  `[n for n in dir(endo_ai) if isinstance(getattr(endo_ai,n), re.Pattern) and chr(8) in getattr(endo_ai,n).pattern]`
 - Set `PYTHONIOENCODING=utf-8` on every python invocation. `PYTHONUTF8=1`
   additionally fixes the SOURCE decoding of a script piped in on stdin —
   without it, a heredoc containing `…` or `—` is mangled before Python parses
@@ -615,6 +810,19 @@ third change on the citation-support metric in one batch.
 - **A mutation harness must clean strays BETWEEN mutants, not at the end.** A
   file leaked by mutant N is in mutant N+1's "before" state, and a before/after
   comparison then passes while the leak is happening.
+- **THE HARNESS MUST REFUSE TO START ON A RED BASELINE.** `dl-quality-v1`'s
+  first run reported 16 kills of 16 and proved nothing: it named a test file
+  that did not exist, so pytest exited non-zero on every mutant for that
+  reason. `restored: DIRTY` on the last line was the only clue. With a green
+  baseline the same 16 mutants produced 5 survivors.
+- **Keep the mutant test list to the files that hold the assertions.** Adding
+  two merely-related curriculum test files took each mutant from 2s to 75s and
+  the run from 40 seconds to an hour.
+- **When a mutant survives, it is one of three things and they need different
+  fixes:** a weak test (rewrite it behaviourally), a broken mutant (`frozenset()
+  or frozenset(...)` returns the second operand and mutates nothing), or
+  REDUNDANT CODE — measure whether the line changes any real verdict, and if it
+  does not, delete it.
 - **A same-length mutation can leave a stale `.pyc`.** `rm -rf __pycache__`
   after every mutation restore.
 - **Never truth-test an ElementTree element.** `find(a) or find(b)` discards a
