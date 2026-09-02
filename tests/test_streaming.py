@@ -681,17 +681,13 @@ def _run_node(js_body):
     node = shutil.which("node")
     if not node:
         pytest.skip("node not available — cannot exercise the shipped JS")
-    harness = _extract_js([
-        "CHIPS_CHECKING", "buildTrustChips", "_stripSupportBlockquote",
-        # deShout sentence-cases ALL-CAPS headings; renderAnswer has called it
-        # since the Instrument Serif typography change, so it must ride along
-        # or the extracted function throws ReferenceError under node.
-        "_citeEsc", "pmidMeta", "formatCite", "deShout", "renderAnswer",
-        "_recommendationTier", "renderAnswerWithBox",
-        # `trust-surface-v1` Q4: renderAnswer now builds its citation
-        # replacers from the shared key pattern, so both ride along.
-        "PMID_KEY_SRC", "isNumericPmid", "pmidRefHtml",
-    ])
+    # The name list lives in `tests/js_harness.RENDER_DEPS`, not here. It is a
+    # dependency graph maintained by hand, and a local copy of it went red
+    # twice in one batch with a ReferenceError that had nothing to do with the
+    # behaviour under test.
+    from js_harness import CHIP_DEPS, RENDER_DEPS
+    harness = _extract_js(["CHIPS_CHECKING", "buildTrustChips",
+                           "_stripSupportBlockquote"] + RENDER_DEPS)
     prog = "var mode = 'review';\nvar trunc = function(s){return s;};\n" + harness + "\n" + js_body
     with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False,
                                      encoding="utf-8") as f:

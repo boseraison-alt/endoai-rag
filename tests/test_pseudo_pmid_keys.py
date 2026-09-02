@@ -52,6 +52,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pytest
 
+from js_harness import run_node
+
 import endo_ai
 from endo_ai import (_PMID_RE, _detect_unattributed_claims,
                      _extract_claim_citation_pairs, validate_evidence_mapping)
@@ -176,52 +178,8 @@ class TestTheDeckChokepointSeesBothShapes:
 
 # ── the browser, running the shipped JavaScript ───────────
 
-def _extract_js(names):
-    """Pull named top-level declarations out of index.html so this exercises
-    the SHIPPED source rather than a Python restatement of it."""
-    src = INDEX_HTML.read_text(encoding="utf-8").split("\n")
-    out = []
-    for name in names:
-        start, is_fn = None, False
-        for i, line in enumerate(src):
-            if line.startswith("function %s(" % name):
-                start, is_fn = i, True
-                break
-            if line.startswith("var %s " % name) or line.startswith("var %s=" % name):
-                start, is_fn = i, False
-                break
-        assert start is not None, "%s not found as a top-level declaration" % name
-        j = start
-        while j < len(src):
-            if is_fn and j > start and src[j] == "}":
-                break
-            if not is_fn and src[j].rstrip().endswith(";"):
-                break
-            j += 1
-        assert j < len(src), "could not find the end of %s" % name
-        out.append("\n".join(src[start:j + 1]))
-    return "\n\n".join(out)
-
-
 def _run_node(js_body):
-    node = shutil.which("node")
-    if not node:
-        pytest.skip("node not available - cannot exercise the shipped JS")
-    harness = _extract_js(["PMID_KEY_SRC", "isNumericPmid", "pmidRefHtml",
-                           "_citeEsc", "pmidMeta", "formatCite", "deShout",
-                           "renderAnswer"])
-    prog = "var trunc = function(s){return s;};\n" + harness + "\n" + js_body
-    with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False,
-                                     encoding="utf-8") as f:
-        f.write(prog)
-        path = f.name
-    try:
-        r = subprocess.run([node, path], capture_output=True, text=True,
-                           encoding="utf-8", timeout=30)
-        assert r.returncode == 0, r.stderr
-        return json.loads(r.stdout.strip().splitlines()[-1])
-    finally:
-        os.unlink(path)
+    return run_node(js_body)
 
 
 class TestTheBrowserRendersBothShapes:

@@ -2817,7 +2817,17 @@ Specific traps, because these are the ones that actually occur:
 - An ARGUMENT FROM SILENCE ("no included study reported X") presented as the paper's finding. A review that does not mention X has not stated anything about X.
 - A claim GENERALISED past the paper's scope ("no difference for any modality" when the review pooled only one).
 
-If the evidence base genuinely does not address something the answer needs, say so in the answer."""
+If the evidence base genuinely does not address something the answer needs, say so in the answer.
+
+ANSWERING BEYOND THE EVIDENCE BASE — allowed, in one specific shape:
+You MAY give general clinical knowledge the retrieved literature does not cover, when the clinician needs it to act. It must be SEPARATED, never woven into a paragraph beside cited prose, and it must be followed by a return to what this evidence base does support.
+
+1. Put the whole out-of-domain passage in one continuous run and open it with a phrase that says so plainly — "From the wider literature (which this search did not return)", "standard practice, not from the retrieved evidence base". Never split it across a cited sentence.
+2. Do NOT attach a `[[PMID:N]]` marker to any of it. It is unverified, and saying so is the point. A marker here is the worst available move: it launders unchecked advice into checked advice.
+3. Name the guideline bodies you are leaning on (SDCEP, ESE, AAE, ACC/AHA, NICE, …) so the clinician can go to the document itself.
+4. Then COME BACK. Immediately after the passage, state the decision the retrieved literature DOES support, with its marker — including when that is "the alternative treatment is a legitimate option here". This is required, not optional; an answer that ends outside its evidence base has left the clinician there.
+
+The renderer lifts that run into a bordered "NOT FROM THE EVIDENCE BASE — UNVERIFIED" block, so write it as ordinary prose and let the structure do the labelling."""
 
 
 def score_citations_velocity(citations: int, year) -> float:
@@ -4197,7 +4207,14 @@ def _detect_unattributed_claims(answer: str) -> list:
 
     Conservative — pattern-matches numeric/comparative/recommendation language.
     Returns a list of {sentence, section} dicts.
+
+    Quarantine blocks are removed first (`trust-surface-v1` Q2). The block
+    header attributes everything inside it, unmissably and in the answer text
+    itself, so flagging those sentences again would fail an answer for using
+    the structure the prompt requires — the same trap `_UNSOURCED_LABEL_RE`
+    exists to avoid, one level up.
     """
+    answer = _strip_quarantine_blocks(answer)
     flagged = []
     for title, body in _split_sections(answer):
         if _is_exempt_section(title):
@@ -4257,6 +4274,196 @@ def _detect_uncited_author_mentions(answer: str) -> list:
                             "section": title})
                 break
     return out
+
+
+# ── OUT-OF-DOMAIN CONTENT IS QUARANTINED, NOT MIXED IN ────
+#
+# `trust-surface-v1` Q2, implementing RB's decision of 2026-09-02: Curo MAY
+# answer beyond its evidence base, but that content is visually and
+# structurally separated, and the answer then returns to the decision Curo can
+# support.
+#
+# The apixaban answer is what the decision was made against. Its second
+# paragraph opens "From the wider literature (which this search did not return
+# …)" and then delivers, in ordinary prose indistinguishable from the cited
+# paragraphs around it, a complete DOAC management protocol: bleeding-risk
+# classification, a haemostatic-measures list, a dosing interval, two patient
+# thresholds, and a bridging instruction. Nothing in the rendering said which
+# half of the answer the library stood behind.
+#
+# WHY THIS NORMALISES SERVER-SIDE rather than in the browser. Q2a requires the
+# block to survive EVERY export path — PDF, clipboard, slides, speaker notes,
+# narration. The one representation all of them already consume is the answer
+# text, so the quarantine is written INTO it, in markdown that stays readable
+# if a path never learns to upgrade it. The browser then styles the same block
+# into a bordered container; it does not create it.
+#
+# HOW THE SPAN IS FOUND. The model already labels this content out loud —
+# `_UNSOURCED_LABEL_RE` is the vocabulary the prompt offers and the escape
+# hatch `_detect_unattributed_claims` honours. That label starts the run; the
+# run extends forward over following claim units until one carries a citation
+# or the paragraph ends. It stops at a citation because a cited claim is by
+# definition back inside the evidence base — which is exactly the reframe Q2c
+# requires, so the boundary and the reframe are the same event.
+#
+# The run is extended over ANY uncited unit, not only directive ones. In the
+# fixture that is what pulls "Bridging with LMWH is not indicated" and "INR
+# testing is not applicable" — two short sentences carrying no numbers and no
+# label of their own — into the block with the paragraph they belong to.
+# Leaving them outside would satisfy the letter of the item and none of it:
+# they are the two most quotable directives in the answer.
+
+_QUARANTINE_HEADER = "⚠ **NOT FROM THE EVIDENCE BASE — UNVERIFIED**"
+_QUARANTINE_NOTE   = ("_General clinical knowledge. No paper in this library was "
+                      "retrieved for it and nothing below was checked against an "
+                      "abstract._")
+_QUARANTINE_FOOTER = "**Consult directly:**"
+
+# Recognises a block already in place, so the pass is idempotent and so a model
+# that has learned to emit the structure itself is not double-wrapped.
+_QUARANTINE_BLOCK_RE = re.compile(
+    r"(?:^>[^\n]*\n?)*?^>[ \t]*"
+    + re.escape(_QUARANTINE_HEADER)
+    + r"[\s\S]*?^>[ \t]*"
+    + re.escape(_QUARANTINE_FOOTER)
+    + r"[^\n]*\n?",
+    re.MULTILINE)
+
+# Bodies whose guidance the answer is standing on. Named in the footer so the
+# clinician is pointed at the actual document rather than told, vaguely, to
+# look elsewhere. Order-preserving and de-duplicated at use.
+_AUTHORITY_BODY_RE = re.compile(
+    r"\b(?:SDCEP|ESE|AAE|ADA|BDA|BSH|BSHT|ACC/AHA|ACC|AHA|ISTH|NICE|SIGN|WHO"
+    r"|FDA|EMA|EFP|AAOMR|AAOM|IADT|FDI|EAPD|AAPD|ASA|ESC|RCS|SDCEP)\b")
+
+_PARAGRAPH_SPLIT_RE = re.compile(r"\n[ \t]*\n")
+
+
+def _quarantine_footer(text: str) -> str:
+    """The footer line, naming the guideline bodies the span leans on."""
+    seen, bodies = set(), []
+    for m in _AUTHORITY_BODY_RE.finditer(text or ""):
+        name = m.group(0)
+        if name not in seen:
+            seen.add(name)
+            bodies.append(name)
+    if bodies:
+        return (f"> {_QUARANTINE_FOOTER} " + " · ".join(bodies[:6]) +
+                " — Curo has not retrieved or checked these sources.")
+    return (f"> {_QUARANTINE_FOOTER} the specialty guidelines for this "
+            "question — Curo has not retrieved or checked them.")
+
+
+def _quarantine_block(units: list) -> str:
+    """One quarantined span, as the markdown every surface will carry."""
+    text = " ".join(u.strip() for u in units if u.strip())
+    lines = [f"> {_QUARANTINE_HEADER}", ">", f"> {_QUARANTINE_NOTE}", ">",
+             "> " + text, ">", _quarantine_footer(text)]
+    return "\n".join(lines)
+
+
+def quarantine_unsourced_content(answer: str):
+    """Lift labelled out-of-domain prose into its own delimited block.
+
+    Returns `(answer, blocks)` where `blocks` is the list of quarantined
+    texts, in document order. Idempotent: an answer already carrying blocks is
+    returned unchanged.
+
+    Q2b — "may never be interleaved with cited prose in the same paragraph" —
+    is enforced by SPLITTING the paragraph: anything before the label and
+    anything from the first cited unit onward stay as ordinary prose, and only
+    the run between them is wrapped.
+    """
+    if not answer:
+        return answer or "", []
+
+    blocks = []
+    out_sections = []
+    for title, body in _split_sections(answer):
+        rebuilt = []
+        for para in _PARAGRAPH_SPLIT_RE.split(body or ""):
+            if not para.strip() or _QUARANTINE_BLOCK_RE.search(para):
+                rebuilt.append(para)
+                continue
+            units = _SENTENCE_SPLIT_RE.split(para)
+            start = None
+            for i, u in enumerate(units):
+                if _ANY_CITATION_RE.search(u):
+                    continue
+                if _UNSOURCED_LABEL_RE.search(u):
+                    start = i
+                    break
+            if start is None:
+                rebuilt.append(para)
+                continue
+            end = start
+            while end + 1 < len(units) and not _ANY_CITATION_RE.search(units[end + 1]):
+                end += 1
+            before = " ".join(u.strip() for u in units[:start] if u.strip())
+            after  = " ".join(u.strip() for u in units[end + 1:] if u.strip())
+            block  = _quarantine_block(units[start:end + 1])
+            blocks.append(" ".join(u.strip() for u in units[start:end + 1] if u.strip()))
+            piece = ([before] if before else []) + [block] + ([after] if after else [])
+            rebuilt.append("\n\n".join(piece))
+        new_body = "\n\n".join(p for p in rebuilt)
+        out_sections.append((title, new_body))
+
+    if not blocks:
+        return answer, []
+
+    # Reassemble with the heading markers the split consumed. `_split_sections`
+    # reports the title text only, so the level is recovered from the original.
+    levels = {m.group(2).strip(): m.group(1) for m in _HEADING_RE.finditer(answer)}
+    parts = []
+    for title, body in out_sections:
+        if title == "(intro)":
+            parts.append(body)
+        else:
+            parts.append(f"{levels.get(title, '##')} {title}\n\n{body}")
+    return "\n\n".join(parts).strip(), blocks
+
+
+def _strip_quarantine_blocks(answer: str) -> str:
+    """The answer with every quarantine block removed.
+
+    `_detect_unattributed_claims` reads this rather than the raw answer: the
+    block header attributes everything inside it, out loud and unmissably, so
+    flagging those sentences again would punish the model for using the
+    structure the prompt now requires. It is the same reasoning that makes
+    `_UNSOURCED_LABEL_RE` an exemption there — the block is that label, in
+    structural form.
+
+    `_detect_uncited_directive_claims` deliberately does NOT strip them. The
+    banner's second number is what quarantined content feeds (Q2b).
+    """
+    return _QUARANTINE_BLOCK_RE.sub("", answer or "")
+
+
+def _check_quarantine_reframe(answer: str) -> list:
+    """Q2c. A quarantined block must be followed by evidence Curo does hold.
+
+    The point of answering beyond the evidence base is to hand the clinician
+    back to a decision the library supports — in the fixture, that the Cochrane
+    review found no clear superiority for surgical over non-surgical
+    retreatment (RR 1.15, 0.97-1.35), which makes non-surgical retreatment a
+    legitimate option for a patient at bleeding risk. That reframe is the most
+    valuable sentence in the answer and it was there by accident.
+
+    Scoped to the SECTION: a cited claim anywhere after the block in the same
+    section satisfies it. Requiring the very next paragraph would fail answers
+    that reframe two sentences later, which is a style, not a defect.
+    """
+    issues = []
+    for title, body in _split_sections(answer or ""):
+        for m in _QUARANTINE_BLOCK_RE.finditer(body or ""):
+            if not _ANY_CITATION_RE.search(body[m.end():]):
+                issues.append(
+                    f"UNREFRAMED_QUARANTINE in \"{title}\": content labelled as "
+                    "outside the evidence base is not followed by any cited "
+                    "claim. State the decision the retrieved literature DOES "
+                    "support, with its [[PMID:N]] marker, after the block."
+                )
+    return issues
 
 
 # ── UNCITED CLINICAL DIRECTIVES ON THE RENDERED ANSWER ────
@@ -4504,6 +4711,10 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
     gap_ratio = (len(gaps) / total_cite_required) if total_cite_required else 0.0
 
     rec = _check_recommendation(answer)
+    # `trust-surface-v1` Q2c. Answering beyond the evidence base is allowed;
+    # leaving the clinician there is not. A quarantine block must be followed
+    # by the decision the retrieved literature DOES support.
+    reframe_issues = _check_quarantine_reframe(answer)
 
     # Decide pass/fail
     failure_reason = None
@@ -4523,6 +4734,11 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
         names = ", ".join(sorted({a["name"] for a in author_mentions})[:5])
         failure_reason = (f"UNCITED_AUTHOR_MENTION: {len(author_mentions)} "
                           f"named author(s) with no [[PMID:N]] marker ({names})")
+    elif reframe_issues:
+        # Last in the chain deliberately: it can only fire on an answer that
+        # already carries a quarantine block, which means the model did the
+        # honest thing and then stopped one sentence short.
+        failure_reason = "; ".join(reframe_issues)
 
     # Score: fabrication is dominant penalty
     score = 100
@@ -4531,6 +4747,7 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
     score -= 10 * len(gaps)
     score -= 10 * len(rec["issues"])
     score -= 10 * len(author_mentions)
+    score -= 10 * len(reframe_issues)
     score = max(0, min(100, score))
 
     return {
@@ -4545,6 +4762,7 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
         "gap_sections":         gaps,
         "total_cite_required":  total_cite_required,
         "recommendation":       rec,
+        "quarantine_issues":    reframe_issues,
         "failure_reason":       failure_reason,
     }
 
@@ -4672,6 +4890,20 @@ def _build_corrective_message(result: dict) -> str:
             f"it to anyone. Do NOT keep the name and attach the nearest PMID: "
             f"that clears this warning and misleads the reader, which is the "
             f"worse of the two failures. Examples:\n   - {sample}")
+
+    if result.get("quarantine_issues"):
+        parts.append(
+            "\n**OUT-OF-DOMAIN CONTENT LEFT HANGING** — " +
+            "; ".join(result["quarantine_issues"]) +
+            " Answering beyond the retrieved literature is allowed and often "
+            "right; leaving the clinician outside it is not. After the "
+            "unverified block, return to what this evidence base DOES support "
+            "and say what it means for the decision in front of them — even "
+            "when that is \"the alternative treatment is a legitimate option\". "
+            "One cited sentence is enough. Do not add a marker to the "
+            "unverified content itself to satisfy this: it is unverified, and "
+            "saying so is the point."
+        )
 
     if result.get("gap_sections"):
         gs = result["gap_sections"]
@@ -5442,6 +5674,15 @@ Clinical Question: {question}""",
         except Exception as e:      # pragma: no cover — defensive
             print(f"  [stream] phase publish failed: {type(e).__name__}: {e}")
 
+    # `trust-surface-v1` Q2 — quarantine before anything reads the answer.
+    # Every downstream consumer (validator, support check, cache, export,
+    # narration) sees the normalised text, so the block cannot be a browser
+    # decoration that a PDF or a slide quietly drops.
+    answer, _quarantined = quarantine_unsourced_content(answer)
+    if _quarantined:
+        print(f"  [quarantine] {len(_quarantined)} span(s) labelled outside "
+              f"the evidence base, lifted into their own block")
+
     # Validate-and-retry against evidence base
     result = validate_evidence_mapping(answer, evidence)
     _log_evidence_mapping("ask_clinical_question", "review", attempt=1, result=result)
@@ -5467,6 +5708,7 @@ Clinical Question: {question}""",
                                   retry.usage, mode="review")
         cost += retry_cost
         retry_answer = retry.content[0].text
+        retry_answer, _rq = quarantine_unsourced_content(retry_answer)
         retry_result = validate_evidence_mapping(retry_answer, evidence)
         _log_evidence_mapping("ask_clinical_question", "review", attempt=2, result=retry_result)
         print(f"  Retry mapping:    passed={retry_result['passed']} score={retry_result['score']} "
@@ -6243,6 +6485,15 @@ Write the module content now."""
             print(f"  [module {idx}] regeneration STILL truncated and no longer — "
                   f"keeping the first")
 
+    # `trust-surface-v1` Q2 — quarantine before anything reads the answer.
+    # Every downstream consumer (validator, support check, cache, export,
+    # narration) sees the normalised text, so the block cannot be a browser
+    # decoration that a PDF or a slide quietly drops.
+    answer, _quarantined = quarantine_unsourced_content(answer)
+    if _quarantined:
+        print(f"  [quarantine] {len(_quarantined)} span(s) labelled outside "
+              f"the evidence base, lifted into their own block")
+
     # Validate-and-retry — curriculum modules are dense and most prone to
     # gap-filling with statistical guesswork.
     result = validate_evidence_mapping(answer, evidence)
@@ -6266,6 +6517,7 @@ Write the module content now."""
                                   retry.usage, mode="learn")
         cost += retry_cost
         retry_answer = retry.content[0].text
+        retry_answer, _rq = quarantine_unsourced_content(retry_answer)
         retry_result = validate_evidence_mapping(retry_answer, evidence)
         _log_evidence_mapping(f"write_curriculum_module[{idx}/{total}]", "learn",
                               attempt=2, result=retry_result)
@@ -7918,6 +8170,15 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
         except Exception as e:      # pragma: no cover — defensive
             print(f"  [stream] phase publish failed: {type(e).__name__}: {e}")
 
+    # `trust-surface-v1` Q2 — quarantine before anything reads the answer.
+    # Every downstream consumer (validator, support check, cache, export,
+    # narration) sees the normalised text, so the block cannot be a browser
+    # decoration that a PDF or a slide quietly drops.
+    answer, _quarantined = quarantine_unsourced_content(answer)
+    if _quarantined:
+        print(f"  [quarantine] {len(_quarantined)} span(s) labelled outside "
+              f"the evidence base, lifted into their own block")
+
     # Validate-and-retry — case answers are short, validation is cheap and
     # mis-cited PMIDs in case advice are particularly dangerous chairside.
     result = validate_evidence_mapping(answer, evidence)
@@ -7940,6 +8201,7 @@ Lower (L→R): 17=Mn L 3rd molar, 18=Mn L 2nd molar, 19=Mn L 1st molar, 20=Mn L 
         )
         cost += retry_cost
         retry_answer = retry_resp.content[0].text
+        retry_answer, _rq = quarantine_unsourced_content(retry_answer)
         retry_result = validate_evidence_mapping(retry_answer, evidence)
         _log_evidence_mapping("ask_case_question", "case", attempt=2, result=retry_result)
         print(f"  Retry mapping:    passed={retry_result['passed']} score={retry_result['score']} "

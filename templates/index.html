@@ -1735,6 +1735,52 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 /* ── Header trust chips ──────────────────────────────────── */
 .atag-ok      { background: #e3f5ec; color: #0b5f3d; }
 .atag-warn    { background: #faf0dc; color: #854d0e; }
+/* ── `trust-surface-v1` Q2a — the unverified block ───────────────────────
+   Out-of-domain content gets its own container, and it is deliberately the
+   only DARK element in a light answer: the requirement is that a clinician
+   scanning the page cannot mistake it for the cited prose around it, and a
+   pale tinted box in a page of pale tinted boxes does not achieve that.
+
+   Colours are the deck's dark tokens verbatim (presentations/design_tokens.py
+   COLORS), so the same content reads identically in the answer and on a
+   slide: alert_bg #3a1520, alert_red #f87171, text_body #eef2fa,
+   text_lead #aebad0, border #2c3a58. */
+.unverified-block {
+  margin: 18px 0;
+  padding: 14px 16px 12px;
+  background: #3a1520;
+  border: 1px solid #f87171;
+  border-left: 5px solid #f87171;
+  border-radius: 6px;
+  color: #eef2fa;
+}
+.unverified-head {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  color: #f87171;
+  margin-bottom: 8px;
+}
+.unverified-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #aebad0;
+  margin-bottom: 10px;
+}
+.unverified-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #eef2fa;
+}
+.unverified-foot {
+  margin-top: 10px;
+  padding-top: 9px;
+  border-top: 1px solid #2c3a58;
+  font-size: 12px;
+  color: #aebad0;
+}
+.unverified-foot strong { color: #eef2fa; }
+
 /* `trust-surface-v1` Q1b — the half of the trust banner that counts claims
    NOTHING checked. It sits inside the chip so the two numbers cannot be
    separated, and it is deliberately louder than its host: the failure mode
@@ -5065,9 +5111,21 @@ function renderAnswerWithBox(text, isPartial) {
   }
 
   // "Does not apply when…" — surfaced separately when the model supplied it.
+  //
+  // `trust-surface-v1` Q8. The tail `([^.]*\.)` is what the caveat IS: the
+  // condition after the trigger phrase. When the trigger ends its sentence
+  // there is no tail — the group captures the full stop and nothing else — and
+  // the box then rendered a caveat line reading, in its entirety,
+  //
+  //     not applicable.
+  //
+  // That is exactly what the apixaban answer did: it contains the sentence
+  // "INR testing is not applicable.", and an orphaned "not applicable." line
+  // appeared under the recommendation, attached to nothing. An empty field
+  // renders nothing.
   var caveat = '';
   var cm = recRaw.match(/(?:does not apply|not applicable|except when|unless)\b([^.]*\.)/i);
-  if (cm) caveat = cm[0].trim();
+  if (cm && /[A-Za-z]{3}/.test(cm[1])) caveat = cm[0].trim();
 
   var box =
     '<div class="rec-box">' +
@@ -5101,9 +5159,58 @@ function deShout(t) {
   return t.charAt(0) + t.slice(1).toLowerCase();
 }
 
+// ── The unverified block (`trust-surface-v1` Q2a) ─────────
+//
+// The engine writes out-of-domain content into the answer as a delimited
+// markdown block — header line, note, prose, "Consult directly:" footer, every
+// line blockquoted. It is written SERVER-SIDE precisely so a PDF, a clipboard
+// paste or a slide cannot drop it. This function is the browser's upgrade of
+// that same block into a bordered container; it never creates one.
+//
+// Stashed rather than transformed in place. The pipeline below turns blank
+// lines into paragraph breaks and single newlines into <br>, which would
+// shred a multi-line container; the placeholder rides through and the finished
+// HTML is put back at the end. The placeholder closes and reopens the
+// surrounding paragraph so the container is a block-level sibling rather than
+// a <div> stranded inside a <p>.
+var _QUARANTINE_BLOCK_RE_JS =
+  /^&gt;[ \t]*⚠ \*\*NOT FROM THE EVIDENCE BASE — UNVERIFIED\*\*[\s\S]*?^&gt;[ \t]*\*\*Consult directly:\*\*[^\n]*/gm;
+
+function _unverifiedInline(s) {
+  return s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+          .replace(/(^|[\s(])_([^_]+)_(?=[\s.,;:)]|$)/g, '$1<em>$2</em>');
+}
+
+function _stashUnverifiedBlocks(text, stash) {
+  return text.replace(_QUARANTINE_BLOCK_RE_JS, function (block) {
+    var body = [], footer = '', note = '';
+    block.split('\n').forEach(function (line, i) {
+      var l = line.replace(/^&gt;[ \t]?/, '').trim();
+      if (i === 0 || !l) return;                       // header line, blank lines
+      if (/^\*\*Consult directly:\*\*/.test(l)) { footer = l; return; }
+      if (/^_General clinical knowledge/.test(l))    { note = l; return; }
+      body.push(l);
+    });
+    var html =
+      '<div class="unverified-block" role="note">' +
+        '<div class="unverified-head">⚠ NOT FROM THE EVIDENCE BASE — UNVERIFIED</div>' +
+        (note ? '<div class="unverified-note">' + _unverifiedInline(note) + '</div>' : '') +
+        '<div class="unverified-body">' + _unverifiedInline(body.join(' ')) + '</div>' +
+        (footer ? '<div class="unverified-foot">' + _unverifiedInline(footer) + '</div>' : '') +
+      '</div>';
+    stash.push(html);
+    return '@@UNVERIFIED' + (stash.length - 1) + '@@';
+  });
+}
+
 function renderAnswer(text) {
-  return text
+  var _uvStash = [];
+  return String(text == null ? '' : text)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // Before the blockquote markers are stripped: the block is identified by
+    // them, and stripping first would leave its lines indistinguishable from
+    // ordinary prose.
+    .replace(/^[\s\S]*$/, function (t) { return _stashUnverifiedBlocks(t, _uvStash); })
     // Markdown blockquote markers (the engine's appended citation-support /
     // validation blocks) would otherwise render as literal "&gt;" scruff.
     .replace(/^&gt;\s?/gm, '')
@@ -5128,7 +5235,13 @@ function renderAnswer(text) {
     .replace(/\n/g, '<br>')
     .replace(/^/, '<p>').replace(/$/, '</p>')
     .replace(/<p><(h[23]|hr)>/g, '<$1>').replace(/<\/(h[23])><\/p>/g, '</$1>')
-    .replace(/<p><hr><\/p>/g, '<hr>');
+    .replace(/<p><hr><\/p>/g, '<hr>')
+    // The unverified blocks go back in last, closing and reopening the
+    // paragraph around them so each is a block-level sibling.
+    .replace(/@@UNVERIFIED(\d+)@@/g, function (_, i) {
+      return '</p>' + _uvStash[+i] + '<p>';
+    })
+    .replace(/<p>\s*<\/p>/g, '');
 }
 
 function renderPaperTable(papers) {
