@@ -19,7 +19,7 @@ existed as a single untracked file on one machine — and committed under
 
 | Item | Status | Before → After | Test file | Commit |
 |---|---|---|---|---|
-| 1 · Truncation gate | see §2 | modules ending cut: **2 visible / 4 actual → 0** | `tests/test_module_truncation.py` (26) | |
+| 1 · Truncation gate | DONE | **two** truncations: module writer 164/190 calls at the cap, stitcher **23/26** | `tests/test_module_truncation.py` (48) | `0bef9ae`, `4419bcc` |
 | 2 · Remove the 30-claim cap | DONE | unchecked claims **13 → 0** on each fixture; checked **117→130** and **120→133** | `tests/test_support_check_sees_whole_abstract.py` | |
 | 3 · The Sabeti claim | DONE | adjudicated — **cut, not re-sourced** | `eval/logs/citation_adjudications.md` | `71af84b` |
 | 4 · Cross-module consistency | | | | |
@@ -27,7 +27,13 @@ existed as a single untracked file on one machine — and committed under
 
 ---
 
-## 2. Item 1 — the cap was the median
+## 2. Item 1 — two stacked truncations, and I only found the second by fixing the first
+
+**There were two, at different layers, and the one I diagnosed first is not the
+one that produced the reported symptom.** Both are real, both are measured
+below, and the order in which they surfaced is the honest story of this item.
+
+### 2a. The module writer, at 3,200 tokens
 
 **Diagnosed from the cost log, not from the two visible symptoms.** The item
 named two truncations: Module 4 ending "…irrigant extrusion when tips are not",
@@ -104,7 +110,47 @@ treated a trailing `---` as the last content line, so a module ending
 ---" read as finished. A scan that stops before the
 damage reports a clean document.
 
-### The three changes
+### 2b. The stitcher, at 11,640 tokens — found by fixing 2a
+
+Raising the module cap and regenerating the laser curriculum returned a
+document with **three modules**. The log said "4 of 4 modules complete" and all
+four had been written. The stitcher dropped the fourth.
+
+```
+Cost: $0.2560 (27140 in / 11640 out)     <- out == budget, exactly
+```
+
+| | |
+|---|---|
+| `stitch_curriculum` calls ever logged | **26** |
+| of those, returning exactly 11,640 output tokens | **23 = 88%** |
+
+**Every four-module curriculum this system has ever produced was truncated by
+the stitcher.** The budget was `min(int((n_modules * 1800 + 2500) * 1.2),
+32000)` — but the stitcher must reproduce every module body *verbatim* before
+adding an overview, transitions, takeaways and references, and modules measure
+3,700–4,500 tokens each. 1,800 per module was never the right unit; the budget
+was under half of what copying alone costs.
+
+**This corrects §2a's explanation of the Module-4 concentration.** I attributed
+it to the stitcher's transition paragraphs masking cuts in modules 1–3. The
+real reason is simpler and I should have reached it: the stitcher runs out of
+output partway through the *last* module it is copying, so the tail of the
+document is where the damage lands. Same observation, better cause.
+
+**The module-level gate cannot see this**, because every module was complete
+when it was handed over. So the fix is a post-stitch check — `stop_reason`,
+plus every module title present in the output — then a retry at the ceiling,
+then a **deterministic assembly**. The LLM stitcher writes the prose around the
+modules; the modules *are* the curriculum, and losing one to buy a nicer
+transition paragraph is not a trade worth making. The fallback says so in its
+own first paragraph.
+
+The budget is now `stitch_token_budget(module_blocks)` — computed from the
+length of the text the call has to reproduce, and a **function**, so a test can
+call it with real inputs instead of eval-ing a source line.
+
+### The three changes to the module writer
 
 1. **`CURRICULUM_MODULE_MAX_TOKENS = 6000`**, from 3200, shared by the first
    call and the validation retry. This is not the fix, and the constant's

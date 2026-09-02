@@ -783,6 +783,31 @@ supporting sentence is exactly a claim unit; and the chart gates
 (invariant 2 — no range as a scalar, no unitless pair treated as comparable)
 for [L3], which the item explicitly asks to apply as text rules.
 
+**A SCOPING PASS OVER THE FIXTURE WAS ALREADY RUN**, so [L1] starts from
+measured ground rather than from the estimate. It does NOT trigger the
+"stop and report" condition:
+
+| | |
+|---|---|
+| bracketed citation tags, whole document | 55 |
+| §§1-6, i.e. actual citation instances | **47** — inside the expected 45-50 |
+| §7 tags | **8, and they are BACK-REFERENCES** |
+
+Two things a naive parser gets wrong, both found by counting rather than by
+reading:
+
+1. **§7 is a protocol that re-cites §§1-6 in shorthand** — `[SR/MA+TSA ×2,
+   NMA]`, `[NMA top rank; RCT 92.5%]`, `[consensus only]`. These carry no
+   venue and no year and must be LINKED to the instance they refer back to by
+   `resolved_id`, never resolved against PubMed on their own. Resolving
+   "[RCT]" is meaningless.
+2. **§6's device table cites without brackets at all.** Five of its seven rows
+   put the citation in the evidence column as prose — "Cochrane: reduces pain
+   vs placebo", "MA: faster onset, less pain, no success gain", "Two phase III
+   RCTs: lower-lip recovery 70 vs 155 min". A bracket-only parser silently
+   drops all five, and one of them is [L4]b's own target, the liposomal
+   bupivacaine Cochrane claim. The table needs its own extraction rule.
+
 ## 5d. Queued last — "retrieval-honesty-v1" (paste-ready)
 
 Autonomous batch on `main`, tag `retrieval-honesty-v1` at end. Standing rules
