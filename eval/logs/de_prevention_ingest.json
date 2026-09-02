@@ -1,0 +1,483 @@
+{
+ "applied": true,
+ "before_rows": 15,
+ "after_rows": 24,
+ "on_topic": 23,
+ "off_topic": 21,
+ "off_topic_pmids": [
+  "23543523",
+  "26403154",
+  "27759881",
+  "34280957",
+  "35920073",
+  "36512807",
+  "37966465",
+  "38135112",
+  "38280514",
+  "38449041",
+  "38548045",
+  "38606520",
+  "38634795",
+  "38963396",
+  "39264795",
+  "39418527",
+  "40466913",
+  "40533920",
+  "40702914",
+  "41063319",
+  "42611134"
+ ],
+ "added": [
+  {
+   "pmid": "27955921",
+   "year": 2017,
+   "level_key": "level3a",
+   "score": 47.2,
+   "title": "Clinical and Radiographic Outcomes in Immature Permanent Necrotic Evaginated Teeth Treated with Rege"
+  },
+  {
+   "pmid": "30444709",
+   "year": 2018,
+   "level_key": "level3a",
+   "score": 46.1,
+   "title": "Contemporary endodontic treatment choices for adult patients with dens evaginatus and apical periodo"
+  },
+  {
+   "pmid": "35399138",
+   "year": 2022,
+   "level_key": "level3a",
+   "score": 47.6,
+   "title": "Radiographic outcomes and prognostic factors in nonvital immature permanent teeth after apexificatio"
+  },
+  {
+   "pmid": "37180325",
+   "year": 2023,
+   "level_key": "level4",
+   "score": 35.9,
+   "title": "Apexification of dens evaginatus in a mandibular premolar: A case report."
+  },
+  {
+   "pmid": "37506764",
+   "year": 2023,
+   "level_key": "level5",
+   "score": 35.4,
+   "title": "Current Management of Dens Evaginatus Teeth Based on Pulpal Diagnosis."
+  },
+  {
+   "pmid": "39119030",
+   "year": 2024,
+   "level_key": "level4",
+   "score": 47.4,
+   "title": "Dens evagination and complete invagination in the same tooth with extraoral fistula: A rare case rep"
+  },
+  {
+   "pmid": "39391143",
+   "year": 2024,
+   "level_key": "level4",
+   "score": 43.1,
+   "title": "Early Detection and Interceptive Orthodontic Treatment of Impacted Canine: A Case Report."
+  },
+  {
+   "pmid": "41415043",
+   "year": 2025,
+   "level_key": "level4",
+   "score": 45.3,
+   "title": "Regenerative endodontic therapy assisted by a concentrated growth factor scaffold for bilateral symm"
+  },
+  {
+   "pmid": "41777974",
+   "year": 2026,
+   "level_key": "level4",
+   "score": 42.4,
+   "title": "Multiple Talon Cusps and Dens Evaginatus in the Maxillary Dentition With Coexisting Single-Tooth Hyp"
+  }
+ ],
+ "queries": [
+  {
+   "label": "DE prophylactic tubercle management",
+   "term": "(\"dens evaginatus\" OR \"evaginated odontome\" OR \"evaginated odontoma\" OR \"central cusp\" OR \"tuberculated premolar\" OR \"Leong premolar\" OR \"Leong's premolar\" OR \"occlusal tubercle\" OR \"evaginated tooth\" OR \"evaginated teeth\") AND (prophylactic OR prophylaxis OR preventive OR prevention OR \"tubercle reduction\" OR \"selective grinding\" OR \"occlusal reduction\" OR \"tubercle capping\" OR \"composite reinforcement\" OR sealant OR \"fissure seal*\" OR \"resin reinforcement\") NOT (\"talon cusp\"[ti])",
+   "on_topic": [
+    {
+     "pmid": "39179988",
+     "level_key": "level3a",
+     "score": 66.5,
+     "year": "2024",
+     "title": "Etiologies of non-surgical root canal treatment and its association with risk factors in a selected Thai population."
+    },
+    {
+     "pmid": "39986569",
+     "level_key": "level3a",
+     "score": 63.1,
+     "year": "2025",
+     "title": "Clinical Outcomes of Regenerative Endodontic Procedure: Periapical Healing, Root Development, and Intracanal Calcificati"
+    },
+    {
+     "pmid": "38493190",
+     "level_key": "level3a",
+     "score": 56.5,
+     "year": "2024",
+     "title": "Pulpotomy for teeth with irreversible pulpitis in immature permanent teeth: a retrospective case series study."
+    },
+    {
+     "pmid": "35413305",
+     "level_key": "level3a",
+     "score": 56.5,
+     "year": "2022",
+     "title": "Outcomes and Predisposing Factors of Two Prophylactic Treatments in Dens Evaginatus Premolars: A Retrospective Study."
+    },
+    {
+     "pmid": "39520509",
+     "level_key": "level3a",
+     "score": 55.4,
+     "year": "2025",
+     "title": "Prevalence and prophylactic management of premolars with dens evaginatus in singaporean school children: a retrospective"
+    },
+    {
+     "pmid": "27955921",
+     "level_key": "level3a",
+     "score": 47.2,
+     "year": "2017",
+     "title": "Clinical and Radiographic Outcomes in Immature Permanent Necrotic Evaginated Teeth Treated with Regenerative Endodontic "
+    },
+    {
+     "pmid": "41415043",
+     "level_key": "level4",
+     "score": 45.3,
+     "year": "2025",
+     "title": "Regenerative endodontic therapy assisted by a concentrated growth factor scaffold for bilateral symmetrical dens evagina"
+    },
+    {
+     "pmid": "39391143",
+     "level_key": "level4",
+     "score": 43.1,
+     "year": "2024",
+     "title": "Early Detection and Interceptive Orthodontic Treatment of Impacted Canine: A Case Report."
+    },
+    {
+     "pmid": "41777974",
+     "level_key": "level4",
+     "score": 42.4,
+     "year": "2026",
+     "title": "Multiple Talon Cusps and Dens Evaginatus in the Maxillary Dentition With Coexisting Single-Tooth Hypodontia: A Case Repo"
+    },
+    {
+     "pmid": "37180325",
+     "level_key": "level4",
+     "score": 35.9,
+     "year": "2023",
+     "title": "Apexification of dens evaginatus in a mandibular premolar: A case report."
+    },
+    {
+     "pmid": "37506764",
+     "level_key": "level5",
+     "score": 35.4,
+     "year": "2023",
+     "title": "Current Management of Dens Evaginatus Teeth Based on Pulpal Diagnosis."
+    },
+    {
+     "pmid": "16410059",
+     "level_key": "level5",
+     "score": 23.1,
+     "year": "2006",
+     "title": "Dens evaginatus: literature review, pathophysiology, and comprehensive treatment regimen."
+    },
+    {
+     "pmid": "21903560",
+     "level_key": "level5",
+     "score": 20.9,
+     "year": "2011",
+     "title": "A rare case of dens evaginatus and dens invaginatus in the same tooth, with a review of treatment options."
+    }
+   ],
+   "off_topic": [
+    {
+     "pmid": "36512807",
+     "level_key": "cochrane",
+     "score": 92.2,
+     "year": "2022",
+     "title": "Single versus multiple visits for endodontic treatment of permanent teeth."
+    },
+    {
+     "pmid": "34280957",
+     "level_key": "cochrane",
+     "score": 81.5,
+     "year": "2021",
+     "title": "Interventions for treating cavitated or dentine carious lesions."
+    },
+    {
+     "pmid": "27759881",
+     "level_key": "cochrane",
+     "score": 81.1,
+     "year": "2016",
+     "title": "Endodontic procedures for retreatment of periapical lesions."
+    },
+    {
+     "pmid": "23543523",
+     "level_key": "level1",
+     "score": 75.9,
+     "year": "2013",
+     "title": "Operative caries management in adults and children."
+    },
+    {
+     "pmid": "26403154",
+     "level_key": "cochrane",
+     "score": 73.7,
+     "year": "2015",
+     "title": "Single crowns versus conventional fillings for the restoration of root-filled teeth."
+    },
+    {
+     "pmid": "40533920",
+     "level_key": "level1",
+     "score": 80.0,
+     "year": "2025",
+     "title": "Vital Pulp Therapy in Permanent Teeth: A Systematic Review and Meta-Analyses."
+    },
+    {
+     "pmid": "38449041",
+     "level_key": "level1",
+     "score": 80.0,
+     "year": "2024",
+     "title": "Use of Vital Pulp Therapies in Primary Teeth 2024."
+    },
+    {
+     "pmid": "38606520",
+     "level_key": "level1",
+     "score": 78.5,
+     "year": "2024",
+     "title": "The efficacy of premixed bioceramic sealers versus standard sealers on root canal treatment outcome, extrusion rate and "
+    },
+    {
+     "pmid": "38634795",
+     "level_key": "level1",
+     "score": 78.5,
+     "year": "2024",
+     "title": "Apical root canal microbiome associated with primary and posttreatment apical periodontitis: A systematic review."
+    },
+    {
+     "pmid": "40702914",
+     "level_key": "level1",
+     "score": 78.5,
+     "year": "2025",
+     "title": "Postoperative Pain After Root Canal Preparation With Different Instruments in Primary Teeth: A Systematic Review and Met"
+    },
+    {
+     "pmid": "41063319",
+     "level_key": "level1",
+     "score": 78.1,
+     "year": "2025",
+     "title": "Preventive and therapeutic effects of semiconductor laser on pain in root canal treatment."
+    },
+    {
+     "pmid": "42611134",
+     "level_key": "level1",
+     "score": 78.1,
+     "year": "2026",
+     "title": "Cryotherapy as an adjunct in root canal therapy: a systematic review and meta-analysis."
+    },
+    {
+     "pmid": "37966465",
+     "level_key": "level1",
+     "score": 77.8,
+     "year": "2024",
+     "title": "Treatment outcomes of regenerative endodontic therapy in immature permanent teeth with pulpal necrosis: A systematic rev"
+    },
+    {
+     "pmid": "38963396",
+     "level_key": "level1",
+     "score": 77.8,
+     "year": "2024",
+     "title": "Clinical and radiographic success rate of the root canal filling materials used in primary teeth: A systematic review."
+    },
+    {
+     "pmid": "39264795",
+     "level_key": "level1",
+     "score": 77.8,
+     "year": "2025",
+     "title": "The effectiveness of partial pulpotomy compared with full pulpotomy in managing deep caries in vital permanent teeth wit"
+    },
+    {
+     "pmid": "35920073",
+     "level_key": "level1",
+     "score": 77.0,
+     "year": "2023",
+     "title": "Effectiveness of root resection techniques compared with root canal retreatment or apical surgery for the treatment of a"
+    },
+    {
+     "pmid": "40466913",
+     "level_key": "level1",
+     "score": 75.1,
+     "year": "2025",
+     "title": "Jasminum-based Nano-reinforced Calcium Hydroxide Reduces Postoperative Pain in Symptomatic Apical Periodontitis: A Rando"
+    },
+    {
+     "pmid": "38280514",
+     "level_key": "level1",
+     "score": 74.8,
+     "year": "2024",
+     "title": "Outcome of Contemporary Nonsurgical Endodontic Retreatment: A Systematic Review of Randomized Controlled Trials and Coho"
+    },
+    {
+     "pmid": "39418527",
+     "level_key": "level1",
+     "score": 74.8,
+     "year": "2024",
+     "title": "Sodium Hypochlorite Accidents in Endodontic Practice: Clinical Evidence and State of the Art."
+    },
+    {
+     "pmid": "38548045",
+     "level_key": "level1",
+     "score": 74.8,
+     "year": "2024",
+     "title": "Clinical and Radiographic Failure of Nonsurgical Endodontic Treatment and Retreatment Using Single-cone Technique With C"
+    },
+    {
+     "pmid": "38135112",
+     "level_key": "level1",
+     "score": 74.8,
+     "year": "2024",
+     "title": "The Effect of Master Apical Preparation Size on Healing Outcomes in Endodontic Treatment: A Systematic Review and Meta-A"
+    }
+   ]
+  },
+  {
+   "label": "DE vital pulp therapy and pulpotomy",
+   "term": "(\"dens evaginatus\" OR \"evaginated odontome\" OR \"evaginated odontoma\" OR \"central cusp\" OR \"tuberculated premolar\" OR \"Leong premolar\" OR \"Leong's premolar\" OR \"occlusal tubercle\" OR \"evaginated tooth\" OR \"evaginated teeth\") AND (\"vital pulp therapy\" OR pulpotomy OR \"pulp cap*\" OR apexogenesis OR \"MTA\" OR \"calcium silicate\" OR Biodentine OR \"direct pulp capping\" OR \"partial pulpotomy\") NOT (\"talon cusp\"[ti])",
+   "on_topic": [
+    {
+     "pmid": "32381409",
+     "level_key": "level1",
+     "score": 74.4,
+     "year": "2020",
+     "title": "Does the Etiology of Pulp Necrosis Affect Regenerative Endodontic Treatment Outcomes? A Systematic Review and Meta-analy"
+    },
+    {
+     "pmid": "28864219",
+     "level_key": "level1",
+     "score": 72.2,
+     "year": "2017",
+     "title": "Regenerative Endodontics Versus Apexification in Immature Permanent Teeth with Apical Periodontitis: A Prospective Rando"
+    },
+    {
+     "pmid": "30905573",
+     "level_key": "level1",
+     "score": 72.2,
+     "year": "2019",
+     "title": "Regenerative Endodontics: A Systematic Analysis of the Failed Cases."
+    },
+    {
+     "pmid": "37158340",
+     "level_key": "level3a",
+     "score": 56.5,
+     "year": "2023",
+     "title": "Treatment outcomes of immature permanent necrotic evaginated teeth: A retrospective study comparing regenerative endodon"
+    },
+    {
+     "pmid": "38493190",
+     "level_key": "level3a",
+     "score": 56.5,
+     "year": "2024",
+     "title": "Pulpotomy for teeth with irreversible pulpitis in immature permanent teeth: a retrospective case series study."
+    },
+    {
+     "pmid": "35399138",
+     "level_key": "level3a",
+     "score": 47.6,
+     "year": "2022",
+     "title": "Radiographic outcomes and prognostic factors in nonvital immature permanent teeth after apexification with modified calc"
+    },
+    {
+     "pmid": "30444709",
+     "level_key": "level3a",
+     "score": 46.1,
+     "year": "2018",
+     "title": "Contemporary endodontic treatment choices for adult patients with dens evaginatus and apical periodontitis: a case repor"
+    },
+    {
+     "pmid": "39119030",
+     "level_key": "level4",
+     "score": 47.4,
+     "year": "2024",
+     "title": "Dens evagination and complete invagination in the same tooth with extraoral fistula: A rare case report."
+    },
+    {
+     "pmid": "41415043",
+     "level_key": "level4",
+     "score": 45.3,
+     "year": "2025",
+     "title": "Regenerative endodontic therapy assisted by a concentrated growth factor scaffold for bilateral symmetrical dens evagina"
+    },
+    {
+     "pmid": "42391465",
+     "level_key": "level4",
+     "score": 43.7,
+     "year": "2026",
+     "title": "Clinical and Radiographic Outcomes of Metronidazole Monotherapy in Regenerative Endodontics: A Case Series."
+    },
+    {
+     "pmid": "41777974",
+     "level_key": "level4",
+     "score": 42.4,
+     "year": "2026",
+     "title": "Multiple Talon Cusps and Dens Evaginatus in the Maxillary Dentition With Coexisting Single-Tooth Hypodontia: A Case Repo"
+    },
+    {
+     "pmid": "37506764",
+     "level_key": "level5",
+     "score": 35.4,
+     "year": "2023",
+     "title": "Current Management of Dens Evaginatus Teeth Based on Pulpal Diagnosis."
+    },
+    {
+     "pmid": "25470507",
+     "level_key": "level5",
+     "score": 27.6,
+     "year": "2014",
+     "title": "What can cause the pulps of immature, permanent teeth with open apices to become necrotic and what treatment options are"
+    },
+    {
+     "pmid": "16410059",
+     "level_key": "level5",
+     "score": 23.1,
+     "year": "2006",
+     "title": "Dens evaginatus: literature review, pathophysiology, and comprehensive treatment regimen."
+    }
+   ],
+   "off_topic": []
+  },
+  {
+   "label": "DE staged reduction and monitoring outcomes",
+   "term": "(\"dens evaginatus\" OR \"evaginated odontome\" OR \"evaginated odontoma\" OR \"central cusp\" OR \"tuberculated premolar\" OR \"Leong premolar\" OR \"Leong's premolar\" OR \"occlusal tubercle\" OR \"evaginated tooth\" OR \"evaginated teeth\") AND (outcome* OR survival OR prognosis OR follow-up OR \"recall interval\" OR monitoring OR \"reparative dentin*\" OR \"secondary dentin*\" OR \"pulp canal obliteration\") NOT (\"talon cusp\"[ti])",
+   "on_topic": [
+    {
+     "pmid": "32381409",
+     "level_key": "level1",
+     "score": 74.4,
+     "year": "2020",
+     "title": "Does the Etiology of Pulp Necrosis Affect Regenerative Endodontic Treatment Outcomes? A Systematic Review and Meta-analy"
+    },
+    {
+     "pmid": "28864219",
+     "level_key": "level1",
+     "score": 72.2,
+     "year": "2017",
+     "title": "Regenerative Endodontics Versus Apexification in Immature Permanent Teeth with Apical Periodontitis: A Prospective Rando"
+    },
+    {
+     "pmid": "30905573",
+     "level_key": "level1",
+     "score": 72.2,
+     "year": "2019",
+     "title": "Regenerative Endodontics: A Systematic Analysis of the Failed Cases."
+    },
+    {
+     "pmid": "40792425",
+     "level_key": "level5",
+     "score": 39.8,
+     "year": "2025",
+     "title": "Guided Endodontics in Managing Root Canal Treatment for Anomalous Teeth-A Narrative Review."
+    }
+   ],
+   "off_topic": []
+  }
+ ]
+}
