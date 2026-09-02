@@ -3826,7 +3826,35 @@ _AUTHOR_MENTION_STOPWORDS = {
     "Figure", "Module", "Step", "Grade", "Tooth", "Patient", "Evidence",
 }
 
-_PMID_RE          = re.compile(r"\[\[PMID:\s*(\d+)\s*\]\]")
+# ── What an inline citation marker looks like ─────────────
+#
+# `trust-surface-v1` Q4. This used to be `(\d+)`, and the whole marker layer
+# inherited that assumption. It is wrong: hand-ingested authority documents —
+# the ESE quality guidelines, the AAE position statements, NCBI Bookshelf
+# chapters — carry synthetic identifiers (`ESE-QG-2023`, `AAE-PS-obturation`,
+# `NBK430685`), and `build_evidence_base` puts them in the evidence base under
+# exactly those keys. So the model correctly writes `[[PMID:ESE-QG-2023]]` and
+# every consumer of this pattern was blind to it.
+#
+# Six consumers share this regex, and before this change exactly ONE of them
+# knew about the other key shape — `validate_evidence_mapping` had a local
+# `non_numeric` re-scan bolted on beside it. The other five did not, and the
+# measured consequences on the apixaban fixture were:
+#
+#   * `_extract_claim_citation_pairs` never built a pair for the ESE claim, so
+#     the banner read "9/9 CONSISTENT" over 10 cited claims. A denominator that
+#     silently drops a citation is invariant 15's fail-open shape.
+#   * `_detect_unattributed_claims` saw the ESE sentence as carrying no marker.
+#   * the browser's own `[[PMID:(\d+)]]` replacer left `[[PMID:ESE-QG-2023]]`
+#     RAW on the rendered page — invariant 3, the defect Q4 is named for.
+#
+# One pattern, both shapes, and the local patch deleted: a second scan that
+# only one caller runs is how the shapes drifted apart in the first place.
+_PMID_ID_PAT      = r"(?:\d+|[A-Za-z][A-Za-z0-9._-]{1,63})"
+_PMID_RE          = re.compile(r"\[\[PMID:\s*(" + _PMID_ID_PAT + r")\s*\]\]")
+# The bibliographic key shape used ONLY in the final numbered reference list
+# (`[PMID: 12345678]`). Same two id shapes, single brackets.
+_REF_PMID_RE      = re.compile(r"\[PMID:\s*(" + _PMID_ID_PAT + r")\s*\]")
 _HEADING_RE       = re.compile(r"^(#{2,4})\s+(.+?)\s*$", re.MULTILINE)
 
 # A period inside an abbreviation is not a sentence end. Each lookbehind is
@@ -4299,20 +4327,14 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
     fabricated     = sorted(p for p in cited_set if p not in evidence_pmids)
     valid          = sorted(p for p in cited_set if p in evidence_pmids)
 
-    # Non-numeric markers, e.g. "[[PMID:AAE-PS-obturation]]". The numeric
-    # _PMID_RE cannot see these, so they bypass the check above. They are NOT
-    # automatically fabrications: hand-ingested authority documents (the AAE
-    # position statements) legitimately carry synthetic identifiers. The test
-    # is the same as for any citation — is it in the evidence base?
-    non_numeric = {m.group(1).strip()
-                   for m in re.finditer(r"\[\[PMID:\s*([^\]]+?)\s*\]\]", answer or "")
-                   if not m.group(1).strip().isdigit()}
-    if non_numeric:
-        cited_set |= non_numeric
-        invented = {p for p in non_numeric if p not in evidence_pmids}
-        if invented:
-            fabricated = sorted(set(fabricated) | invented)
-        valid = sorted(set(valid) | (non_numeric - invented))
+    # Non-numeric markers ("[[PMID:AAE-PS-obturation]]") used to need a second
+    # scan here, because `_PMID_RE` was numeric-only and this was the one
+    # consumer that had been taught otherwise. `_PMID_RE` now matches both id
+    # shapes, so `cited` above already contains them and the re-scan would only
+    # be a second place for the two shapes to drift apart. They are still NOT
+    # automatically fabrications — hand-ingested authority documents carry
+    # synthetic identifiers — and the test is unchanged: is it in the evidence
+    # base? (`trust-surface-v1` Q4.)
 
     unattributed = _detect_unattributed_claims(answer)
     gaps         = _detect_gap_sections(answer)

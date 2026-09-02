@@ -1682,6 +1682,9 @@ def _eutils_get(url: str, params: dict):
     raise last_exc  # unreachable, satisfies linters
 
 
+_ABSTRACT_KEY_RE = _learn_re.compile(r"^(?:\d{1,10}|[A-Za-z][A-Za-z0-9._-]{1,63})$")
+
+
 @app.route("/api/abstract/<pmid>")
 def get_abstract(pmid):
     """Fetch full abstract + metadata for a single PMID.
@@ -1694,8 +1697,16 @@ def get_abstract(pmid):
 
     On L3 fetch, we backfill L2 + L1 so the next click is instant.
     """
-    if not pmid.isdigit() or len(pmid) > 10:
+    # `trust-surface-v1` Q4. The guard used to be `pmid.isdigit()`, which meant
+    # a citation pill for a hand-ingested authority document (ESE-QG-2023,
+    # AAE-PS-obturation, NBK430685) answered 400 — so making those markers
+    # render as pills without widening this would have swapped a raw marker for
+    # a dead one. A synthetic key is served from the library ONLY: it has no
+    # PubMed record, so the live-eutils tier below is skipped for it and no
+    # pubmed.ncbi.nlm.nih.gov URL is ever handed back for one.
+    if not _ABSTRACT_KEY_RE.match(pmid or ""):
         return jsonify({"error": "invalid PMID"}), 400
+    is_numeric = pmid.isdigit()
 
     # L1 — in-process
     if pmid in _ABSTRACT_CACHE:
@@ -1713,14 +1724,24 @@ def get_abstract(pmid):
             "journal":  cached.get("journal") or "",
             "year":     cached.get("year")    or "",
             "authors":  cached.get("authors") or "",
-            "url":      f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/",
+            "url":      (f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
+                         if is_numeric else ""),
             "source":   "postgres",
         }
         _ABSTRACT_CACHE[pmid] = result
         _trim_abstract_cache()
         return jsonify(result)
 
-    # L3 — live eutils (slow path)
+    # L3 — live eutils (slow path). Numeric ids only: a synthetic key has no
+    # PubMed record, and asking eutils for "ESE-QG-2023" spends a rate-limited
+    # round trip to be told so. Say plainly that the library copy is missing.
+    if not is_numeric:
+        return jsonify({
+            "error": "This authority document is held in the library and has no "
+                     "PubMed record. Its abstract is not cached.",
+            "kind":  "local_only",
+        }), 404
+
     try:
         # esummary for structured metadata (title, journal, year, authors)
         s = _eutils_get(

@@ -31,8 +31,15 @@ from presentations.design_tokens import BODY_BUDGET
 # The generator emits `[[PMID:12345]]`, but real decks also contain the
 # single-bracket `[PMID:12345]` variant and comma-joined lists. Match all of
 # them: the rule is that no bracketed PMID marker of any shape reaches a slide.
+# `trust-surface-v1` Q4: the id is NOT always numeric. Hand-ingested authority
+# documents carry synthetic keys (`ESE-QG-2023`, `AAE-PS-obturation`,
+# `NBK430685`) and the engine cites them with exactly this marker shape. While
+# these patterns said `[0-9]`, `[[PMID:ESE-QG-2023]]` walked straight through
+# the chokepoint and onto a rendered surface. Mirrors `endo_ai._PMID_ID_PAT`.
+_PMID_KEY = r"(?:[0-9]{1,9}|[A-Za-z][A-Za-z0-9._-]{1,63})"
 PMID_MARKER_RE = re.compile(
-    r"""\[{1,2}\s*PMIDS?\s*[:\-]?\s*([0-9]{1,9}(?:\s*[,;/]\s*[0-9]{1,9})*)\s*\]{1,2}""",
+    r"\[{1,2}\s*PMIDS?\s*[:\-]?\s*(" + _PMID_KEY +
+    r"(?:\s*[,;/]\s*" + _PMID_KEY + r")*)\s*\]{1,2}",
     re.IGNORECASE,
 )
 

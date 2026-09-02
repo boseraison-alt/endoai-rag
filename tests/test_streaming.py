@@ -688,6 +688,9 @@ def _run_node(js_body):
         # or the extracted function throws ReferenceError under node.
         "_citeEsc", "pmidMeta", "formatCite", "deShout", "renderAnswer",
         "_recommendationTier", "renderAnswerWithBox",
+        # `trust-surface-v1` Q4: renderAnswer now builds its citation
+        # replacers from the shared key pattern, so both ride along.
+        "PMID_KEY_SRC", "isNumericPmid", "pmidRefHtml",
     ])
     prog = "var mode = 'review';\nvar trunc = function(s){return s;};\n" + harness + "\n" + js_body
     with tempfile.NamedTemporaryFile("w", suffix=".js", delete=False,

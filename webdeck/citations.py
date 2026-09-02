@@ -18,9 +18,15 @@ from __future__ import annotations
 import html
 import re
 
-PMID_MARKER = re.compile(r"\[\[PMID:\s*(\d+)\s*\]\]")
+# `trust-surface-v1` Q4: the id is NOT always numeric. Hand-ingested authority
+# documents carry synthetic keys (`ESE-QG-2023`, `AAE-PS-obturation`,
+# `NBK430685`) and the engine cites them with exactly this marker shape. While
+# these patterns said `[0-9]`, `[[PMID:ESE-QG-2023]]` walked straight through
+# the chokepoint and onto a rendered surface. Mirrors `endo_ai._PMID_ID_PAT`.
+_PMID_KEY   = r"(?:\d+|[A-Za-z][A-Za-z0-9._-]{1,63})"
+PMID_MARKER = re.compile(r"\[\[PMID:\s*(" + _PMID_KEY + r")\s*\]\]")
 # The engine also emits the single-bracket form in reference blocks.
-PMID_BRACKET = re.compile(r"\[PMID:\s*(\d+)\s*\]")
+PMID_BRACKET = re.compile(r"\[PMID:\s*(" + _PMID_KEY + r")\s*\]")
 PMID_BARE    = re.compile(r"\bPMID[:\s]+(\d+)\b", re.I)
 
 

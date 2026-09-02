@@ -2000,6 +2000,14 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   font-size: 11px;
 }
 .pmid-link:hover { text-decoration: underline; }
+/* A synthetic library key (ESE-QG-2023, AAE-PS-*, NBK*) has no PubMed record,
+   so it renders as text rather than a link that would 404. Muted, not blue —
+   the colour is what tells a clinician whether there is somewhere to click. */
+.pmid-link-local {
+  color: #536176;
+  cursor: default;
+  border-bottom: 1px dotted #aab4c4;
+}
 
 .score-wrap {
   display: flex;
@@ -4893,6 +4901,28 @@ document.addEventListener('copy', function (e) {
 // pmid → paper metadata, refreshed from every answer's papers array so
 // [[PMID:N]] markers render as "Author et al., J Endod. 2024;50(3):123-30"
 // instead of a bare PMID. Falls back to "PMID N" when metadata is missing.
+// -- What a citation key looks like, in ONE place ---------
+// `trust-surface-v1` Q4. The replacers below used to spell the key inline as
+// `(\d+)`, and `[[PMID:ESE-QG-2023]]` therefore rendered RAW on the page --
+// invariant 3, on the Review path, in the Level I section. Hand-ingested
+// authority documents (ESE quality guidelines, AAE position statements, NCBI
+// Bookshelf chapters) legitimately carry synthetic identifiers, and the engine
+// stores them under exactly those keys. This mirrors `endo_ai._PMID_ID_PAT`.
+var PMID_KEY_SRC = '(?:\\d+|[A-Za-z][A-Za-z0-9._-]{1,63})';
+function isNumericPmid(id) {
+  return /^\d+$/.test(String(id == null ? '' : id));
+}
+// Only a real PubMed id gets a pubmed.ncbi.nlm.nih.gov href. A synthetic key
+// has no record there, and a link that 404s is a worse citation than none.
+function pmidRefHtml(id, label) {
+  var txt = _citeEsc(label == null ? id : label);
+  return isNumericPmid(id)
+    ? '<a class="pmid-link" href="https://pubmed.ncbi.nlm.nih.gov/' +
+      encodeURIComponent(id) + '/" target="_blank">' + txt + '</a>'
+    : '<span class="pmid-link pmid-link-local" title="Authority document held in the library - no PubMed record">' +
+      txt + '</span>';
+}
+
 var pmidMeta = {};
 function setCitationMeta(papers) {
   pmidMeta = {};
@@ -5041,12 +5071,15 @@ function renderAnswer(text) {
     // Inline provenance markers [[PMID:N]] → clickable author-style citation
     // that opens the abstract side panel. Must run BEFORE the single-bracket
     // replacer below, otherwise the inner [PMID:N] portion would match twice.
-    .replace(/\[\[PMID:(\d+)\]\]/g, function(_, pmid) {
-      return '<sup class="claim-cite" data-pmid="' + pmid + '" onclick="openProvenancePanel(\'' + pmid +
-             '\')" title="Show source abstract (PMID ' + pmid + ')">' + _citeEsc(formatCite(pmid)) + '</sup>';
+    .replace(new RegExp('\\[\\[PMID:\\s*(' + PMID_KEY_SRC + ')\\s*\\]\\]', 'g'), function(_, pmid) {
+      return '<sup class="claim-cite" data-pmid="' + _citeEsc(pmid) + '" onclick="openProvenancePanel(\'' +
+             _citeEsc(pmid) + '\')" title="Show source abstract (PMID ' + _citeEsc(pmid) + ')">' +
+             _citeEsc(formatCite(pmid)) + '</sup>';
     })
-    .replace(/\[PMID: (\d+)\]/g,
-      '<a class="pmid-link" href="https://pubmed.ncbi.nlm.nih.gov/$1/" target="_blank">[PMID: $1]</a>')
+    // The final numbered reference list's bibliographic key, same two shapes.
+    .replace(new RegExp('\\[PMID:\\s*(' + PMID_KEY_SRC + ')\\]', 'g'), function(_, pmid) {
+      return pmidRefHtml(pmid, '[PMID: ' + pmid + ']');
+    })
     .replace(/\n{2,}/g, '</p><p>')
     .replace(/\n/g, '<br>')
     .replace(/^/, '<p>').replace(/$/, '</p>')
@@ -5062,7 +5095,7 @@ function renderPaperTable(papers) {
     var scoreBarColor = scoreColor;
     var row = document.createElement('tr');
     row.innerHTML =
-      '<td><a class="pmid-link" href="https://pubmed.ncbi.nlm.nih.gov/' + p.pmid + '/" target="_blank">' + p.pmid + '</a></td>' +
+      '<td>' + pmidRefHtml(p.pmid) + '</td>' +
       '<td>' + (p.year || '—') + '</td>' +
       '<td style="font-size:11px;color:#536176">' + trunc(p.authors || '—', 32) + '</td>' +
       '<td style="font-size:11px">' + trunc(p.journal || '—', 26) + '</td>' +
@@ -5174,7 +5207,7 @@ function biblioLine(p, n) {
   return '<li class="biblio-item">' +
     '<span class="biblio-num">' + n + '.</span>' +
     '<span>' +
-      '<a class="pmid-link" href="https://pubmed.ncbi.nlm.nih.gov/' + p.pmid + '/" target="_blank">[PMID: ' + p.pmid + ']</a> ' +
+      pmidRefHtml(p.pmid, '[PMID: ' + p.pmid + ']') + ' ' +
       _citeEsc(auth) + ' — ' + (p.year || '') + ss + fu +
       provenanceBadges(p) +
     '</span>' +
