@@ -3631,6 +3631,24 @@ _EVMAP_EXEMPT_SECTIONS = {
 # Patterns that mark a sentence as a "clinical claim" requiring attribution.
 # Conservative — only flag sentences that clearly assert a fact derivable from
 # literature, not transitions or background prose.
+#
+# THE FOUR ADDED IN `case-v3` are at the end, and each is a real sentence from
+# the DE case conversation that the detector let through. The originals catch
+# a claim by its NUMBERS — a percentage, an n, a p-value, a dose. A chairside
+# protocol has a different shape: it is an instruction, and an instruction can
+# be entirely uncited and entirely actionable without containing a statistic.
+#
+#   "Reduce occlusal contact on the tubercle — selective equilibration to
+#    eliminate traumatic occlusal loading on the cusp."
+#   "This is the single most impactful step."
+#   "Calcium hydroxide or MTA liner placement after each reduction step is
+#    advocated in the literature for deeper reductions."
+#   "Screen the entire mouth for DE."
+#
+# Four instructions a clinician could act on this afternoon, no marker on any
+# of them, and the third one appeals to a literature it does not cite. The
+# measurement is in `eval/logs/case_uncited.json`: 6 claims of these shapes
+# across the two turns, all missed.
 _CLAIM_PATTERNS = [
     re.compile(r"\b\d{1,3}(?:\.\d+)?\s*%"),                         # "85.3%", "85 %"
     re.compile(r"\bn\s*=\s*\d+", re.IGNORECASE),                    # "n=42"
@@ -3646,7 +3664,93 @@ _CLAIM_PATTERNS = [
                r"is preferred over)\b", re.IGNORECASE),
     re.compile(r"\b\d{1,2}(?:\.\d+)?\s*%\s+(?:NaOCl|EDTA|chlorhexidine|sodium hypochlorite)\b",
                re.IGNORECASE),                                       # specific concentrations
+
+    # ── added in `case-v3`, from the DE conversation ──
+    # An interval written as a RANGE — "6-8 week intervals", "2-3 month
+    # recall". This is the only one of the three shapes the item listed that
+    # the original patterns actually miss, and the mutation run is what
+    # established that: a mutant disabling the other two survived every test,
+    # because "0.5 mm per visit" already matches `\d+ mm` and "every 6 months"
+    # already matches `\d+ months` in the unit pattern above. A range escapes
+    # because "6-8 week" is SINGULAR and that list holds only plurals.
+    #
+    # The two redundant alternatives were written, tested, found unkillable,
+    # and deleted. A pattern no input needs is the regex equivalent of a test
+    # that cannot fail.
+    re.compile(r"\b\d+\s*[-–—]\s*\d+\s*(?:day|week|month|year)s?\s+"
+               r"(?:intervals?|recall|review|apart)\b", re.IGNORECASE),
+
+    # An appeal to the literature, with no citation. This is the sharpest of
+    # the four: the sentence explicitly claims a body of evidence exists and
+    # declines to name it.
+    re.compile(r"\b(?:advocated|described|reported|documented|established|"
+               r"recommended|supported|shown|demonstrated|validated)\s+in\s+the\s+"
+               r"literature\b"
+               r"|\bthe\s+literature\s+(?:advocates|supports|shows|describes|"
+               r"recommends|reports)\b"
+               r"|\b(?:studies|trials|reviews|authors)\s+(?:have\s+)?"
+               r"(?:shown|demonstrated|reported|found|suggest(?:ed)?)\b",
+               re.IGNORECASE),
+
+    # An imperative clinical instruction. Anchored to the start of the unit so
+    # it fires on a protocol STEP and not on the same verb used mid-sentence
+    # ("...which would reduce the load..."). The optional list marker and bold
+    # run are there because a protocol step is almost always written
+    # "3. **Reduce ...**".
+    re.compile(r"^\s*(?:[-*•]\s*|\d{1,2}[.)]\s*)?(?:\*\*)?\s*"
+               r"(?:Reduce|Recontour|Equilibrate|Apply|Place|Seal|Bond|Monitor|"
+               r"Refer|Screen|Perform|Prescribe|Adjust|Remove|Restore|Instruct|"
+               r"Review|Repeat|Avoid|Splint|Extract|Obturate|Irrigate|Medicate)\b",
+               re.IGNORECASE),
+
+    # A superlative about clinical importance. "The single most impactful step"
+    # ranks an intervention against every alternative, which is exactly the
+    # kind of claim a paper either supports or does not.
+    re.compile(r"\b(?:the\s+single\s+most\s+\w+|most\s+impactful|"
+               r"is\s+critical\b|is\s+essential\b|is\s+mandatory\b|"
+               r"key\s+determinant|dominant\s+(?:factor|determinant)|"
+               r"the\s+deciding\s+factor)\b", re.IGNORECASE),
 ]
+
+# An EXPLICIT admission that a claim is not from the evidence base. A claim
+# carrying one of these is attributed — not to a paper, but to the clinician's
+# own judgement, out loud, which is the honest ending for a step the retrieved
+# literature does not cover.
+#
+# Without this the escape hatch is a trap: the prompt offers "label it", the
+# model labels it, and `_detect_unattributed_claims` flags it anyway because
+# there is no marker — so the honest move and the silent one fail identically
+# and the model learns nothing from the retry. The label has to count.
+_UNSOURCED_LABEL_RE = re.compile(
+    r"not\s+from\s+the\s+(?:retrieved\s+)?evidence\s+base"
+    r"|standard\s+practice[,;]?\s+not\s+(?:from|supported)"
+    r"|no\s+paper\s+(?:in\s+)?(?:this|the)\s+evidence\s+base"
+    r"|this\s+evidence\s+base\s+does\s+not\s+(?:address|contain|cover)"
+    r"|which\s+this\s+search\s+did\s+not\s+return"
+    r"|from\s+the\s+wider\s+literature"
+    r"|convention(?:al)?\s+practice,\s+uncited"
+    r"|not\s+(?:derived\s+)?from\s+the\s+(?:papers|literature)\s+(?:above|below|retrieved)",
+    re.IGNORECASE)
+
+
+# A named author with no marker anywhere in the same claim — "Sjogren et al.
+# demonstrated that…" with nothing to click. `case-v3` Item B(c): this is a
+# FORMAT violation, not a judgement call. The prompt says every inline
+# reference must be wrapped as [[PMID:N]], and an author surname is an inline
+# reference: it tells the clinician a specific paper exists and then gives
+# them no way to reach it.
+#
+# The surname must be capitalised and followed by `et al` or `and <Surname>`,
+# which is how the model actually writes them. A bare capitalised word is not
+# enough — "Scenario A" and "Reduce occlusal" would both match.
+_AUTHOR_MENTION_RE = re.compile(
+    r"\b([A-Z][A-Za-zÀ-ÿ'’-]{2,})\s+(?:et\s+al\.?|and\s+[A-Z][A-Za-zÀ-ÿ'’-]{2,}\b)"
+)
+# Phrases that look like an author mention and are not one.
+_AUTHOR_MENTION_STOPWORDS = {
+    "Cochrane", "PubMed", "Level", "Scenario", "Type", "Class", "Table",
+    "Figure", "Module", "Step", "Grade", "Tooth", "Patient", "Evidence",
+}
 
 _PMID_RE          = re.compile(r"\[\[PMID:\s*(\d+)\s*\]\]")
 _HEADING_RE       = re.compile(r"^(#{2,4})\s+(.+?)\s*$", re.MULTILINE)
@@ -4004,12 +4108,53 @@ def _detect_unattributed_claims(answer: str) -> list:
             # Skip sentences that already have a marker
             if _PMID_RE.search(s):
                 continue
+            # ...or that say out loud where they came from instead. A claim
+            # labelled "standard practice, not from the retrieved evidence
+            # base" is attributed to the clinician's own judgement, which is
+            # the honest ending for a step the literature does not cover. The
+            # prompt offers this move; flagging it anyway would make the
+            # honest answer and the silent one fail identically.
+            if _UNSOURCED_LABEL_RE.search(s):
+                continue
             # Does this sentence look like a clinical claim?
             for pat in _CLAIM_PATTERNS:
                 if pat.search(s):
                     flagged.append({"sentence": s[:240], "section": title})
                     break
     return flagged
+
+
+def _detect_uncited_author_mentions(answer: str) -> list:
+    """Named authors introduced with no `[[PMID:N]]` marker on the same claim.
+
+    "Sjogren et al. demonstrated that pulp status at the time of treatment is
+    the dominant determinant of outcome" tells the clinician a specific paper
+    exists and gives them nothing to click. That is a FORMAT violation, not a
+    judgement call: the prompt's own rule is that every inline reference is
+    wrapped as `[[PMID:N]]`, and an author surname is an inline reference.
+
+    Deliberately scoped to the CLAIM UNIT, not the sentence: a name in the
+    same unit as a marker is attributed, even if the marker sits on the
+    neighbouring clause. Being stricter than that would flag the normal and
+    correct "Sjögren et al. found X [[PMID:N]]".
+
+    Returns [{name, sentence, section}].
+    """
+    out = []
+    for title, body in _split_sections(answer):
+        if _is_exempt_section(title):
+            continue
+        for sent in _split_claim_units(body):
+            s = sent.strip()
+            if len(s) < 20 or _PMID_RE.search(s):
+                continue
+            for m in _AUTHOR_MENTION_RE.finditer(s):
+                if m.group(1) in _AUTHOR_MENTION_STOPWORDS:
+                    continue
+                out.append({"name": m.group(0), "sentence": s[:240],
+                            "section": title})
+                break
+    return out
 
 
 def _detect_gap_sections(answer: str) -> list:
@@ -4097,6 +4242,10 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
 
     unattributed = _detect_unattributed_claims(answer)
     gaps         = _detect_gap_sections(answer)
+    # `case-v3` Item B(c). A named author with nothing to click is a format
+    # violation on the same footing as a bare PMID: it asserts that a specific
+    # paper says this, and hands the clinician no way to check.
+    author_mentions = _detect_uncited_author_mentions(answer)
 
     # Total cite-required sections (everything non-exempt with body)
     total_cite_required = 0
@@ -4119,6 +4268,14 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
         failure_reason = f"GAP_SECTIONS: {len(gaps)}/{total_cite_required} sections have zero PMID attribution (limit {int(_EVMAP_MAX_GAP_RATIO*100)}%)"
     elif rec["present"] and rec["issues"]:
         failure_reason = "UNTRACEABLE_RECOMMENDATION: " + "; ".join(rec["issues"])
+    elif author_mentions:
+        # No tolerance count, unlike unattributed claims. An unattributed
+        # claim can be a background sentence the pattern read too eagerly; a
+        # named author is unambiguous — the model reached for a specific paper
+        # and did not wrap it. One is enough.
+        names = ", ".join(sorted({a["name"] for a in author_mentions})[:5])
+        failure_reason = (f"UNCITED_AUTHOR_MENTION: {len(author_mentions)} "
+                          f"named author(s) with no [[PMID:N]] marker ({names})")
 
     # Score: fabrication is dominant penalty
     score = 100
@@ -4126,6 +4283,7 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
     score -= 5  * max(0, len(unattributed) - 1)
     score -= 10 * len(gaps)
     score -= 10 * len(rec["issues"])
+    score -= 10 * len(author_mentions)
     score = max(0, min(100, score))
 
     return {
@@ -4136,6 +4294,7 @@ def validate_evidence_mapping(answer: str, evidence: dict) -> dict:
         "fabricated_pmids":     fabricated,
         "valid_pmids":          valid,
         "unattributed_claims":  unattributed,
+        "author_mentions":      author_mentions,
         "gap_sections":         gaps,
         "total_cite_required":  total_cite_required,
         "recommendation":       rec,
@@ -4233,6 +4392,20 @@ def _build_corrective_message(result: dict) -> str:
             "one [[PMID:N]] marker on the load-bearing claim. Do not add citations you "
             "cannot support from the evidence block."
         )
+
+    if result.get("author_mentions"):
+        am = result["author_mentions"]
+        sample = "\n   - ".join(a["sentence"] for a in am[:4])
+        parts.append(
+            f"\n**NAMED AUTHORS WITH NO MARKER** — {len(am)} sentence(s) name "
+            f"a specific author or study and carry no `[[PMID:N]]`. Naming an "
+            f"author asserts that a particular paper says this, so it needs "
+            f"the same marker any other claim about a paper needs. Either wrap "
+            f"the paper you mean, or — if you cannot find it in the evidence "
+            f"block — remove the name and state the point without attributing "
+            f"it to anyone. Do NOT keep the name and attach the nearest PMID: "
+            f"that clears this warning and misleads the reader, which is the "
+            f"worse of the two failures. Examples:\n   - {sample}")
 
     if result.get("gap_sections"):
         gs = result["gap_sections"]
@@ -6388,6 +6561,14 @@ Every standalone clinical claim — a recommendation, statistic, treatment succe
 - If a claim summarises a systematic review's pooled estimate, cite the SR's PMID, not the underlying primary trials.
 __MARKER_PLACEMENT__
 - The double-bracket format `[[PMID:N]]` is what powers the click-through source-abstract side panel in the UI. Do NOT use the single-bracket form `[PMID: N]` anywhere in your response — the UI will not recognise it as a verifiability marker.
+- NEVER name an author without a marker. "Sjögren et al. demonstrated…" tells the clinician a specific paper exists and gives them nothing to click, which is the same failure as a bare PMID. Either wrap the paper — "Sjögren et al. demonstrated X [[PMID:N]]" — or drop the name and state the point without attributing it to anyone.
+
+A NUMERIC CLINICAL DIRECTIVE HAS EXACTLY THREE HONEST ENDINGS.
+A step a clinician can act on — a depth, an interval, a number of visits, a material, a recall period — is a claim. When the evidence block does not support one, you have three moves and no fourth:
+1. CITE it, if a paper in the block states it.
+2. CUT it, if it is not needed to answer the question.
+3. LABEL it, if it is genuinely standard practice and the clinician needs it: write it and mark it plainly — "standard practice, not from the retrieved evidence base" — carrying NO marker.
+What you must never do is state it with the same confidence as a cited step and no marker. "Reduce in 0.5 mm increments at 6–8 week intervals" reads exactly like the cited sentence above it, and the clinician has no way to tell them apart. Silent confidence is the failure; a labelled convention is not.
 
 __GROUNDING_RULE__
 

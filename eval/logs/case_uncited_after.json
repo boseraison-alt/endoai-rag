@@ -1,0 +1,44 @@
+{
+ "turns": [
+  {
+   "label": "turn 1 — differential",
+   "path": "eval/logs/case_answers/de_conversation_turn1_differential.md",
+   "markers_in_text": 17,
+   "checker_pairs": 17,
+   "units_with_marker": 17,
+   "units_without_marker": 35,
+   "detector_catches": 3,
+   "detector_misses_but_new_pattern_catches": 0,
+   "neither": 32,
+   "validator_n_unattributed": 3,
+   "missed": [],
+   "detected_by_validator": [
+    "Dens evaginatus with pulp horn extension\n*Fits because:* Tooth #20 is the mandibular left second premolar — the single most frequently reported tooth for dens evaginatus.",
+    "The patient is 20 years old and of Asian origin, precisely the demographic and age group in which this anomaly classically presents with pulp necrosis: the evaginated tubercle fractures or abrades during occlusal function in the early teens",
+    "CBCT is indicated when conventional imaging is insufficient to characterise the cause of periapical pathology [[PMID:AAE-PS-cbct]]."
+   ]
+  },
+  {
+   "label": "turn 2 — prevention",
+   "path": "eval/logs/case_answers/de_conversation_turn2_prevention.md",
+   "markers_in_text": 12,
+   "checker_pairs": 12,
+   "units_with_marker": 9,
+   "units_without_marker": 23,
+   "detector_catches": 7,
+   "detector_misses_but_new_pattern_catches": 0,
+   "neither": 16,
+   "validator_n_unattributed": 7,
+   "missed": [],
+   "detected_by_validator": [
+    "1. **Reduce occlusal contact on the tubercle** — selective equilibration to eliminate traumatic occlusal loading on the cusp.",
+    "This is the single most impactful step; gradual attrition of an unloaded tubercle allows reparative/secondary dentine to progressively wall off the pulp horn before exposure occurs.",
+    "3. **Gradual elective reduction of the tubercle over multiple visits** — performed in small increments (0.5 mm per visit) with 6–8 week intervals, allowing secondary dentine deposition to track ahead of the reduction.",
+    "Calcium hydroxide or MTA liner placement after each reduction step is advocated in the literature for deeper reductions.",
+    "4. **Monitor with cold test and periapical radiographs every 6 months** — pulp canal obliteration on sequential films is a reassuring sign of active reparative dentine formation and continued vitality.",
+    "Screen the entire mouth for DE — mandibular second premolars are the classic site but mandibular first premolars and, occasionally, maxillary premolars can also be affected.",
+    "Patient education is critical — the patient must understand not to bite hard foods (nuts, ice, hard crusts) that could abruptly fracture the remaining tubercle on any unmanaged DE tooth."
+   ]
+  }
+ ]
+}
