@@ -4504,10 +4504,52 @@ def _strip_quarantine_blocks(answer: str) -> str:
     `_UNSOURCED_LABEL_RE` an exemption there — the block is that label, in
     structural form.
 
-    `_detect_uncited_directive_claims` deliberately does NOT strip them. The
-    banner's second number is what quarantined content feeds (Q2b).
+    `_detect_uncited_directive_claims` deliberately does NOT strip them — the
+    banner's second number is what quarantined content feeds (Q2b). It reads
+    `_quarantine_content_only` instead, for the reason recorded there.
     """
     return _QUARANTINE_BLOCK_RE.sub("", answer or "")
+
+
+def _quarantine_content_only(answer: str) -> str:
+    """Quarantine blocks reduced to the prose inside them.
+
+    FOUND BY MEASURING THE POST-FIX ANESTHESIA CURRICULUM (`dl-quality-v2` M2),
+    and it is a defect Stage 1 introduced. `_detect_uncited_directive_claims`
+    was reading the raw answer, so it counted the block's own FURNITURE — the
+    header, the note, the "Consult directly:" footer — as uncited clinical
+    claims:
+
+        total flagged in the regenerated curriculum   24
+        ...that were quarantine furniture             12   (50%)
+
+    Curo wrote those lines to LABEL unverified content. Counting them as
+    unverified content is circular, and it doubled the number on the one
+    surface whose whole purpose is to be believed.
+
+    It did not show up in Stage 1 because no stored answer had a block yet: 0
+    of 197 flags across the 22 stored curricula are furniture. Every document
+    generated from now on would have had it.
+
+    Two things are fixed at once. The `>` prefixes go, and the block is
+    surrounded by blank lines — so a claim unit can no longer fuse the footer
+    onto the numbered step that follows it, which is what produced flags
+    reading `...checked against an abstract._ > > 4. **Deliver primary...`.
+    """
+    def _bare(m):
+        kept = []
+        for line in m.group(0).splitlines():
+            text = re.sub(r"^>[ \t]?", "", line).strip()
+            if not text:
+                continue
+            if (text == _QUARANTINE_HEADER
+                    or text.startswith(_QUARANTINE_FOOTER)
+                    or text.startswith(_QUARANTINE_NOTE[:40])):
+                continue
+            kept.append(text)
+        return "\n\n" + " ".join(kept) + "\n\n"
+
+    return _QUARANTINE_BLOCK_RE.sub(_bare, answer or "")
 
 
 def _check_quarantine_reframe(answer: str) -> list:
@@ -4671,7 +4713,11 @@ def _detect_uncited_directive_claims(answer: str) -> list:
     checker, so a "claim" means one thing across the whole file.
     """
     out = []
-    for title, body in _split_sections(answer or ""):
+    # Quarantined CONTENT is counted (Q2b); the block's own furniture is not.
+    # See `_quarantine_content_only` — half the flags on the first curriculum
+    # generated after Stage 1 were the header and footer Curo writes to label
+    # the block.
+    for title, body in _split_sections(_quarantine_content_only(answer or "")):
         if _is_exempt_section(title):
             continue
         for sent in _split_claim_units(body):

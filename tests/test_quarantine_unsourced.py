@@ -210,6 +210,60 @@ class TestTheBlockAttributesWhatIsInsideIt:
         assert "Bridging with LMWH is not indicated for apixaban." in joined
         assert "INR testing is not applicable." in joined
 
+    def test_the_blocks_own_furniture_is_not_counted_as_a_claim(self):
+        """Found by measuring the first curriculum generated after Stage 1
+        (`dl-quality-v2` M2): 12 of its 24 flagged claims were the header, the
+        note and the "Consult directly:" footer — lines Curo writes to LABEL
+        unverified content. Counting them as unverified content is circular,
+        and it doubled the number on the surface whose purpose is to be
+        believed."""
+        out, _ = quarantine_unsourced_content(fixture_answer())
+        for c in _detect_uncited_directive_claims(out):
+            for furniture in ("NOT FROM THE EVIDENCE BASE",
+                              "No paper in this library was retrieved",
+                              "General clinical knowledge",
+                              "Consult directly:"):
+                assert furniture not in c["sentence"], \
+                    "the block's own furniture was counted: %r" % c["sentence"][:90]
+
+    def test_a_claim_unit_cannot_fuse_the_block_onto_the_next_step(self):
+        """The other half of the same fix. Blockquote lines do not end a claim
+        unit, so the block used to fuse onto whatever followed it — real flags
+        read `...checked against an abstract._ > > 4. **Deliver primary...`,
+        which is two different clinical claims in one.
+
+        Asserted as the actual property — no single claim carries text from
+        BOTH sides of the boundary. An earlier version looked for a leftover
+        `>` character, and a mutant that removed the blank lines (but still
+        stripped the `>` prefixes) survived it.
+
+        The block here is written INLINE, with no blank line before the step
+        that follows — the shape the model itself will produce now that the
+        prompt asks for the structure. Built from the module's own constants so
+        it cannot drift away from what the engine emits."""
+        answer = ("## CLINICAL RECOMMENDATION\n"
+                  "> " + endo_ai._QUARANTINE_HEADER + "\n>\n"
+                  "> Interruption should be avoided in most patients.\n>\n"
+                  "> " + endo_ai._QUARANTINE_FOOTER + " SDCEP\n"
+                  "Deliver the primary block with 1.8 mL of 2% lidocaine.\n")
+        flagged = _detect_uncited_directive_claims(answer)
+        assert flagged, "nothing was flagged, so this proves nothing"
+        for c in flagged:
+            inside  = "Interruption should be avoided" in c["sentence"]
+            outside = "Deliver the primary block" in c["sentence"]
+            assert not (inside and outside), \
+                "one claim unit spans the block boundary: %r" % c["sentence"][:120]
+        assert len(flagged) == 2, [c["sentence"][:60] for c in flagged]
+
+    def test_the_content_inside_the_block_is_still_reachable(self):
+        """Standing rule 4's pair: stripping the furniture must not strip the
+        prose with it, or Q2b's count silently becomes zero."""
+        out, _ = quarantine_unsourced_content(fixture_answer())
+        bare = endo_ai._quarantine_content_only(out)
+        assert "Bridging with LMWH is not indicated for apixaban." in bare
+        assert "NOT FROM THE EVIDENCE BASE" not in bare
+        assert "Consult directly:" not in bare
+
 
 class TestTheReframeIsRequired:
     """Q2c. The fixture does this well, by accident. This makes it an element."""

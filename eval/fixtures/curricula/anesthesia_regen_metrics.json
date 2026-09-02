@@ -1,0 +1,121 @@
+{
+ "question": "anesthesia for endodontics, different techniques , when to use what and newest material on the market",
+ "after": {
+  "modules": 4,
+  "words": 12745,
+  "truncated_modules": [],
+  "stitcher_placeholders": 0,
+  "unchecked_claims": 0,
+  "module_not_generated": 0,
+  "parameter_conflicts": [],
+  "malformed_because": [],
+  "cited_pmids": [
+   "22414822",
+   "26831048",
+   "27558847",
+   "29990391",
+   "31601433",
+   "35718426",
+   "36512807",
+   "36683563",
+   "37268843",
+   "38219030",
+   "38475776",
+   "38490300",
+   "38528685",
+   "38548045",
+   "38583758",
+   "38701294",
+   "38712714",
+   "38768707",
+   "39151889",
+   "39342989",
+   "39406486",
+   "39442480",
+   "39523312",
+   "39923048",
+   "39982504",
+   "40321815",
+   "40533920",
+   "40705444",
+   "41026565",
+   "41703537"
+  ],
+  "cost_usd": 2.1239,
+  "elapsed_s": 773.4
+ },
+ "before": {
+  "modules": 4,
+  "words": 5583,
+  "truncated_modules": [
+   {
+    "module": "## Module 4 \u2014 Clinical Outcomes, Complications, and Evidence-Based Selection Criteria",
+    "reason": "cut mid-sentence (ends on \"the\")",
+    "tail": ", targeting approximately 3.88 mm above the occlusal plane and 19.35 mm from the"
+   }
+  ],
+  "stitcher_placeholders": 2,
+  "unchecked_claims": 13,
+  "module_not_generated": 0,
+  "parameter_conflicts": [
+   {
+    "agent": "lidocaine",
+    "unit": "%",
+    "values": [
+     1.8,
+     2.0
+    ]
+   },
+   {
+    "agent": "mepivacaine",
+    "unit": "%",
+    "values": [
+     2.0,
+     3.0
+    ]
+   }
+  ],
+  "malformed_because": [],
+  "cited_pmids": [
+   "22414822",
+   "25770038",
+   "26831048",
+   "27558847",
+   "28370327",
+   "29480930",
+   "29709297",
+   "29990391",
+   "30638269",
+   "30903123",
+   "31306506",
+   "31365529",
+   "31813471",
+   "33040335",
+   "35398916",
+   "35890176",
+   "35947082",
+   "36281366",
+   "36292314",
+   "36421046",
+   "36988825",
+   "37268843",
+   "38219030",
+   "38459266",
+   "38528685",
+   "39213456",
+   "39503145",
+   "39609974",
+   "39854973",
+   "40321815",
+   "40500816",
+   "40705444",
+   "40734367",
+   "40755177",
+   "40820098",
+   "41075922",
+   "41360139",
+   "41808844",
+   "41981812"
+  ]
+ }
+}
