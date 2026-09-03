@@ -1330,6 +1330,64 @@ only the tier ladder, is shaped for therapy questions. Carry it into A25a.
 
 ---
 
+### A33 — Materials/bench questions: A25's third and strongest instance  *(new fixture)*
+
+Question asked: *"glass ionomer as permanent access restoration for access opening
+through a ceramic crown after endodontic treatment."* Curo retrieved 45 papers and
+cited **2**, both paediatric — an EAPD review of restorative materials in primary
+teeth and a primary-molar pulpotomy RCT. Its own text: *"all Level I evidence
+returned concerns restorative materials in primary dentition."*
+
+A competitor answered it well from eleven sources, of which **not one is a
+randomised trial**: an in vitro microleakage meta-analysis, three further in vitro
+studies (crown retention after access, fracture strength after access simulation,
+luting-cement microleakage), a **practitioner survey** (Trautmann 2001,
+*Quintessence Int*), two narrative reviews on GIC in endodontics, and a 2026
+Cochrane review on direct coronal restoration of permanent posterior teeth.
+
+**This is the point.** No one will randomise a patient's ceramic crown, so the best
+available evidence for this question *is* bench and survey evidence. Curo bands
+in vitro second-from-bottom and (per A31) has no tier for surveys or descriptive
+work at all. The literature that answers the question is either at the bottom of
+the ladder or outside it, so the quotas filled with the only therapy-shaped papers
+matching "glass ionomer restoration" — which live in paediatric dentistry.
+
+Save both answers as `eval/fixtures/gic_access_ceramic_{curo,oe}.md`.
+
+- **A33a** Extend A31's taxonomy: add **surveys and practice-consensus studies** to
+  the observational/descriptive tier's retrieval filter. Trautmann 2001 is
+  currently unreachable by any tier query, exactly as Jeon 2021 was.
+- **A33b** Report why the in vitro tier did not surface the microleakage
+  meta-analysis (de Araújo 2021, *Biomed Res Int*) — quota, floor, depth, or never
+  retrieved. Note it is an SR **of** in vitro studies, so its own banding may be
+  ambiguous; say which tier it lands in and whether that is right.
+- **A33c** The missed 2026 Cochrane review on direct coronal restoration of
+  permanent posterior teeth is a **separate, ordinary defect** — highest recognised
+  tier, squarely on topic. Determine whether it is absent from the library or
+  unreached by the live query, and fix accordingly.
+- **A33d** Query vocabulary (A24 on the Literature path): the generated terms
+  chased the *material* and lost the *scenario*. Report whether any query contained
+  access cavity / coronal seal / intraorifice barrier / ceramic repair / silane. A
+  question with a material AND a substrate AND a clinical scenario needs all three
+  in the query set.
+- **A33e** Precision: 45 retrieved, 2 citable. Report the retrieved-but-uncited
+  distribution by tier for this fixture — a pool that is 96% unusable is a
+  measurement worth having beside the recall numbers.
+- **A33f — carry into A25a.** This is now the third documented instance of the
+  therapy-hierarchy mismatch (anaesthesia diagnostic accuracy; apicoectomy anatomy;
+  this). Unlike the first two it is not a topic but a **question class** —
+  materials and technique — and a large share of restorative questions fall in it.
+  A25a's classification must count how many eval and border questions are
+  materials/bench questions, not only therapy/diagnosis/prognosis/anatomy.
+
+**Note what worked:** the quarantine block contained substantially the correct
+clinical answer (composite over a GIC base, HF etch + silane, GIC as intraorifice
+barrier not occlusal surface) and was labelled unverified rather than dressed up.
+Same shape as the apixaban answer — sound reasoning, failed retrieval, honest about
+which was which. Do not "fix" this by making the model quieter.
+
+---
+
 ## §8c CORPUS DEPTH — six levers  *(strategic; sequence at the end of §8c)*
 
 Origin: three consecutive comparisons where Curo's reasoning beat the competitor
@@ -1490,6 +1548,18 @@ followed by orphaned text, and Markdown emphasis leaks as literal `**`
   block count before and after. If the count is still above ~5 per module, the
   problem is the generator emitting that much unsourced text, not the renderer —
   say so and hand it to A20/Stage 2 item I rather than shrinking the warning.
+- **A22f — "From the wider literature" overclaims, and contradicts its own
+  header.** The quarantine block opens with "General clinical knowledge. No paper
+  in this library was retrieved for it", then later says "From the wider literature
+  (which this search did not return)". The second phrasing asserts the content IS
+  in the published literature and merely went unretrieved — a claim about the
+  literature that Curo cannot support. Some of it will be well-supported; some is
+  convention that never was.
+  Replace with wording that says only what is known, e.g. *"Not from any paper Curo
+  checked — general clinical practice, from the model's own knowledge rather than
+  from a source."* One framing per block, not two. Same class as A17: copy
+  claiming more than the engine did. Test that no rendered surface asserts the
+  existence of supporting literature for unsourced content.
 
 ### A23 — Apicoectomy retrieval gap  *(new fixture, A5 class)*
 
