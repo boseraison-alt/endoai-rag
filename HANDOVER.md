@@ -184,11 +184,19 @@ clinical expectation. It disagreed on 8 of 20 — in both directions — and
 finding that is what surfaced the similarity-floor bug below. 21 cases now,
 12 library / 9 live.
 
-**Answer-level assertions are recorded but inert.** `must_contain`,
+**Answer-level assertions are inert in the DEFAULT mode only.** `must_contain`,
 `must_not_contain`, `banner`, `modules_non_empty` and
-`max_unsourced_numeric_modules` live in the case files as intent; the harness
-is retrieval-only and does not evaluate them. A green run is not evidence that
-they hold. The README in `questions.json` repeats this — do not let it drift.
+`max_unsourced_numeric_modules` are not evaluated by a plain `run_eval.py` run,
+which is retrieval-only — a green default run is not evidence that they hold,
+and the run says so in its own closing line. They ARE evaluated under
+`--synthesis-subset`, `--live-subset` and `--case-subset`, which cost real
+money and are the only runs that can fail on them.
+
+(This paragraph said the assertions were inert full stop, and was false from
+the day the synthesis modes landed. Found while attributing an A30d failure —
+same class as A32c's authority guarantee: a description of the system that
+outlived the system. The README in `questions.json` said it too and is
+corrected with it.)
 
 ### The similarity floor asks a different question than you think
 
