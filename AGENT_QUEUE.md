@@ -156,6 +156,47 @@ two of its items are minutes of work. Stage 4 must not run before Stage 3 becaus
 its fixtures are stale. Stage 6 ends in a decision for RB and must not be
 pre-empted by implementation.
 
+### §2b CURRENT SPLIT (2026-09-03) — RETRIEVAL vs PRESENTATION
+
+The original A/B split above is superseded for the current work. **The binding
+constraint is not file collisions — it is PubMed.** A38d's first eval carried 22
+contamination warnings from two stray Flask servers, and the failing case passed
+in isolation. Two agents doing retrieval work poison each other's measurements,
+and the damage is invisible: it looks like a finding, not a collision.
+
+| | **Agent R — retrieval & measurement** | **Agent P — presentation** |
+|---|---|---|
+| Items | A42, A39, A41b, A34c, A33i, A10, A26, A25a, the re-baseline | A22 + A44a, A44m, A44 groups 1–4, A17 copy sweep, A43 (after A42 lands) |
+| Owns | `rag.py`, `endo_ai.py` retrieval paths, `eval/**`, `scripts/**`, all DB writes | `templates/**`, `static/**`, `webdeck/**`, `presentations/**` |
+| PubMed | **sole access** | **none, ever** |
+| DB writes | yes, dry-run first | none |
+| Eval runs | yes, serial (rule 9) | none |
+| `AGENT_QUEUE.md` | **sole editor** | reports to RB; R folds it in |
+
+**Rules for the split:**
+
+1. **Separate git worktrees.** Not two agents in one checkout. Agent P writing a
+   template restarts the dev server underneath Agent R's measurement run — that
+   is exactly the failure that killed a 27-minute curriculum and produced the
+   404-poll bug. Each worktree runs its own server on its own port.
+2. **`app.py` is the seam and needs care.** Agent R owns its retrieval and route
+   logic; Agent P owns render helpers and anything that emits markup. If a change
+   cannot be cleanly assigned, it belongs to R and P reports it rather than
+   editing.
+3. **Test files are owned like source files.** Declare which test modules each
+   agent may create or edit before starting; a shared test file is a merge
+   conflict waiting to happen.
+4. **Agent P never runs `eval/run_eval.py`** and never starts a process that
+   makes network calls to PubMed. If P believes it needs a measurement, it asks R.
+5. **Merge order: R first, then P onto R's head.** R's changes affect what P
+   renders; the reverse is rarely true.
+
+**Honest limit on the speed-up:** the re-baseline must come last and depends on
+R's whole chain, so parallelism does not shorten the critical path — it gets the
+presentation track done alongside it rather than after it. That is worth real
+time (A22, A44 and A17 are a day's work between them), but nobody should expect
+A42 to land sooner because P exists.
+
 ---
 
 ## §3 STAGE 1 — `trust-surface-v1`  (highest priority)
@@ -1770,6 +1811,41 @@ defects already in this queue.
   never breaks the page.
 - **A44l — reading measure and typographic care**: `max-width: 68ch` on prose,
   `text-wrap: balance` on headings, `prefers-reduced-motion` respected.
+
+**Group 4 — added on RB's prompt, 2026-09-03. A44m is the architectural one.**
+
+- **A44m — the generator emits a semantic ROLE; the renderer owns appearance.**
+  This is A9's principle ("the model writes prose, never metadata") extended one
+  step. The synthesis output must say *what a block is* — pitfall, decision rule,
+  definition, unverified aside, evidence gap — and must **never** emit CSS classes,
+  colours, box characters or layout markup. The renderer maps role to treatment.
+  Without this rule the callout vocabulary drifts within a month: the model starts
+  inventing new box types, two of them mean the same thing, and A22's eighteen
+  boxes come back wearing different names. Test: no rendered answer contains
+  presentation markup that originated in model output; every callout in a stored
+  document maps to a known role, and an unknown role renders as plain prose rather
+  than as a guessed style.
+- **A44n — these are all rendering changes, so A16's rule applies.** 22 stored
+  curricula and every cached answer were written before this vocabulary exists.
+  A16b already made the archive routes re-render at read time, so this should
+  mostly work — but "should" is not "does". For each A44 change, verify a STORED
+  document renders correctly through the new renderer, and confirm
+  `finalise_answer_text` stays idempotent (rule 18) now that more transforms run
+  on every read.
+- **A44o — the surfaces a clinician actually reads on.** Nothing in the queue
+  covers these, and the UI was built at 1440px only.
+  - **Print / PDF**: a curriculum is what gets taught from. `@media print` — TOC
+    hidden, callouts keep their meaning without relying on background colour,
+    links show their PMIDs, no orphaned headings, page breaks between modules.
+  - **Tablet and phone**: an endodontist reads a curriculum on an iPad between
+    patients. Check every mode and the curriculum at ~768px and ~390px; the
+    reference's own pattern is a good guide (TOC hidden below 1080px, two-column
+    lists collapsing below 640px).
+  - **Anchors**: stable per-module ids so RB can send a colleague a link to
+    module 3 rather than to the whole document.
+  - **Keyboard and focus**: the mode chips, the History drawer and the collapsible
+    sections must be reachable and dismissible by keyboard, with a visible focus
+    ring. `prefers-reduced-motion` respected.
 
 **Do not adopt:** the reference's three-family font stack or its purple accent.
 Curo has its own (A15g), and RB has said he likes it.

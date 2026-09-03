@@ -949,6 +949,51 @@ def multi_query_search(question: str, generated_terms: list, limit: int = 100) -
     return out[:limit * 2]
 
 
+def apply_evidence_floor(relevant: list, floor: float = None,
+                         min_papers: int = None) -> list:
+    """Which of the routing-admitted papers the MODEL actually reads.
+
+    A42. `relevant` decided the ROUTE — is the library's coverage good enough to
+    answer from. This decides what goes in the prompt, and it is a different
+    question with a different answer: 18% of that set sits between 0.55 and 0.60
+    and is cited 1.1% of the time (181 cited paper-instances, ten A38d runs).
+
+    Two rules, and the second exists because the first was generalised from an
+    unrepresentative sample. Measured on the five A38d questions the floor looks
+    uniformly cheap; measured on all 29 it guts the thin ones —
+    `case-opening-sparse` 103 papers to 6, `pregnancy` 100 to 12. A pool of 6
+    manufactures the false evidence gap A5 was about, so below `min_papers` the
+    floor does not cut at all and the most similar N are kept instead. It can
+    only ever ADD papers back, and it selects by similarity because which papers
+    survive is a relevance question (standing rule 19).
+
+    A separate function rather than four lines inline so a test can exercise the
+    expression production evaluates rather than a restatement of it (rule 14) —
+    two mutations survived while this was inline.
+    """
+    floor = RELEVANCE_GATE["evidence_floor"] if floor is None else floor
+    min_papers = (RELEVANCE_GATE["min_evidence_papers"]
+                  if min_papers is None else min_papers)
+    by_sim = sorted(relevant or [],
+                    key=lambda r: -float(r.get("similarity") or 0))
+    kept = [r for r in by_sim if float(r.get("similarity") or 0) >= floor]
+
+    if len(kept) < min_papers:
+        topped = by_sim[:min_papers]
+        # Standing rule 5, and this is the branch a reader most needs to see:
+        # the pool it reports is NOT what the floor would have given.
+        print(f"  [evidence_floor] only {len(kept)} of {len(by_sim)} clear "
+              f"{floor}; keeping the {len(topped)} most similar instead "
+              f"(min_evidence_papers={min_papers})")
+        return topped
+    if len(kept) < len(by_sim):
+        print(f"  [evidence_floor] {len(by_sim)} cleared the routing floor; "
+              f"{len(kept)} clear the evidence floor {floor}; dropped "
+              f"{len(by_sim) - len(kept)} (best dropped "
+              f"{float(by_sim[len(kept)].get('similarity') or 0):.3f})")
+    return kept
+
+
 def cap_by_relevance(bucket: list, cap: int, tier: str = "") -> list:
     """Choose which papers in a tier survive the cap, by relevance.
 
@@ -1088,16 +1133,56 @@ RELEVANCE_GATE = {
     # 18% of the pool is carried into every synthesis prompt and cited 1.1% of
     # the time. That is cost, not evidence.
     #
-    # WHY THIS IS NOT THE COST FIX IT LOOKS LIKE, stated here so the next person
-    # does not reach for 0.65 expecting a bill to halve. Context falls 60,745 ->
-    # 51,015 tokens, which at Opus input pricing is $0.15 of a MEASURED $2.26
-    # per Review answer — 7%. The evidence block is ~70% of input tokens but
-    # input is only ~$1.31 of the total; output is ~$0.29 and the guardrail
-    # calls ~$0.66. Even 0.65, at 16% of citations, saves $0.44. And raising
-    # the ROUTING floor to 0.60 would push 2 of 29 eval questions onto the LIVE
-    # route, which costs more, not less — which is exactly why these are two
-    # constants now.
+    # IT IS THE COST FIX, and the estimate that said otherwise was wrong.
+    # Pricing context tokens alone at Opus input rates put the saving at $0.15
+    # and called this free-but-worthless. Measured on A42b's paired design it
+    # is $1.08 — cost $2.67 -> $1.59, a 40% fall, while the cited count held at
+    # 18.0 -> 19.0. Seven times the estimate, because the estimate missed
+    # everything downstream of the pool: fewer papers means fewer
+    # claim-citation pairs for the support checker and fewer retries. Standing
+    # rule 1 — the instruction was to measure, and estimating instead produced
+    # the wrong answer.
+    #
+    # How much is really the floor: the two biggest savings are on runs that
+    # cost $3.98 and $3.74 at 0.55 and look retry-inflated. Excluding them the
+    # saving is $0.30. So $0.30-$1.08 is the floor and the rest is variance;
+    # n=5, one run per condition, four of five cheaper.
+    #
+    # And raising the ROUTING floor instead would push 2 of 29 eval questions
+    # onto the LIVE route, which costs more, not less — which is exactly why
+    # these are two constants.
     "evidence_floor":   0.60,
+    # A FLOOR NEEDS A FLOOR. The table above was measured on the five A38d
+    # questions, and those turn out to be the ones where the library is DEEP —
+    # they lose 0-40% of their pool. Across all 29 eval questions the same
+    # floor is wildly uneven, and it guts exactly the questions that can least
+    # afford it:
+    #
+    #   case-opening-sparse                 103 papers ->   6
+    #   dens-evaginatus-premolar-diagnostic  56 papers ->   6
+    #   pregnancy                           100 papers ->  12
+    #   dens-invaginatus                    135 papers ->  27
+    #   sonic-vs-ultrasonic                 115 papers ->  28
+    #
+    # A pool of 6 cannot support an answer; it manufactures the false evidence
+    # gap A5 was about. Generalising "the floor is free" from five deep-pool
+    # questions to all 29 was the error, and this is the correction rather
+    # than a hedge.
+    #
+    # So the floor only ever removes SURPLUS: below this many papers it does
+    # not cut at all, and the most similar N are kept regardless. On a thin
+    # pool there was no cost to save in the first place.
+    #
+    #   min keep   total pool   vs 0.55   smallest   questions under 20
+    #   none             2076       63%          6                    3
+    #   40               2204       67%         40                    0
+    #
+    # The guard costs 4 points of context saving (37% -> 33%) and cannot cost
+    # a citation, because it only ever ADDS papers back. 40 rather than 24:
+    # A33j's arithmetic floor is ~24 (the smallest pool that could yield ~20
+    # references at the best citation rate ever observed, 82%), and 40 leaves
+    # headroom above a bound that assumed a rate never seen twice.
+    "min_evidence_papers": 40,
     "min_relevant":     12,     # hits that must clear the floor to serve locally
     "min_hits":         20,     # raw KNN hits before relevance is even considered
     "max_topic_age_yr":  3,     # newest on-topic paper older than this -> go live
@@ -1327,18 +1412,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # A42 — and it filters at the EVIDENCE floor, which is above the
             # routing floor. `relevant` decided the route; this decides what the
             # model reads. Standing rule 5: say what was dropped.
-            _ev_floor = RELEVANCE_GATE["evidence_floor"]
-            _for_model = [r for r in relevant
-                          if float(r.get("similarity") or 0) >= _ev_floor]
-            if len(_for_model) < len(relevant):
-                _dropped = sorted((float(r.get("similarity") or 0)
-                                   for r in relevant), reverse=True)
-                print(f"  [evidence_floor] {len(relevant)} cleared the routing "
-                      f"floor {RAG_SIMILARITY_FLOOR}; {len(_for_model)} clear the "
-                      f"evidence floor {_ev_floor}; dropped "
-                      f"{len(relevant) - len(_for_model)} "
-                      f"(best dropped {_dropped[len(_for_model)]:.3f})")
-            all_rag = rag_results_to_scored(_for_model)
+            all_rag = rag_results_to_scored(apply_evidence_floor(relevant))
 
             # Band by STUDY DESIGN (level_key), rank by score WITHIN each band.
             #

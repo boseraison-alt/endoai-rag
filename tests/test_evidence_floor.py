@@ -65,29 +65,19 @@ class TestTheTwoFloorsAreDistinct:
 
 
 class TestTheProductionPathAppliesIt:
-    """Standing rule 14 — the constant is only worth having if the retrieval
-    path reads it, and a mutation removing it must fail a test."""
+    """Standing rule 14 — the test drives the expression production evaluates,
+    not a restatement of it. Two mutations survived while this was four lines
+    inline in the library branch and the tests inspected source text."""
 
-    def _library_branch(self):
+    def test_the_library_branch_calls_it(self):
         src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
-        i = src.index("            all_rag = rag_results_to_scored(")
-        j = src.rindex('_ev_floor = RELEVANCE_GATE', 0, i)
-        return src[j:i + 120]
-
-    def test_the_model_sees_the_evidence_floor_not_the_routing_floor(self):
-        body = self._library_branch()
-        assert 'RELEVANCE_GATE["evidence_floor"]' in body
-        assert "rag_results_to_scored(_for_model)" in body
+        assert "rag_results_to_scored(apply_evidence_floor(relevant))" in src
 
     def test_the_unfiltered_list_no_longer_reaches_the_model(self):
-        body = self._library_branch()
-        assert "rag_results_to_scored(relevant)" not in body, (
+        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        assert "rag_results_to_scored(relevant)" not in src, (
             "the routing list is reaching synthesis again — A42 measured that "
             "18% of it is cited 1.1% of the time")
-
-    def test_it_logs_what_it_dropped(self):
-        """Standing rule 5. A silent cut is how the retreatment RCT vanished."""
-        assert "[evidence_floor]" in self._library_branch()
 
     def test_the_gate_still_counts_at_the_routing_floor(self):
         """The whole point of two constants: the gate's arithmetic is
@@ -136,3 +126,88 @@ class TestTheFloorIsAppliedToTheRightNumber:
         assert "0.4633" in src, (
             "the wrong-quantity correction must stay next to the number it "
             "corrects, or it will be made again")
+
+
+class TestAFloorNeedsAFloor:
+    """The A42a table was measured on the five A38d questions, and those are
+    the ones where the library is DEEP. Across all 29 eval questions the same
+    floor guts the thin ones:
+
+        case-opening-sparse                 103 -> 6
+        dens-evaginatus-premolar-diagnostic  56 -> 6
+        pregnancy                           100 -> 12
+
+    A pool of 6 manufactures the false evidence gap A5 was about. Generalising
+    "the floor is free" from five deep-pool questions to all 29 was the error;
+    the guard is the correction, and it costs 4 points of context saving
+    (37% -> 33%) while being unable to cost a citation, because it only ever
+    adds papers back.
+    """
+
+    def test_the_guard_exists_and_is_above_a33j_s_arithmetic_floor(self):
+        """A33j: ~20 references is impossible below a pool of ~24, at the best
+        citation rate ever observed. 40 leaves headroom above a bound that
+        assumed a rate never seen twice."""
+        assert GATE["min_evidence_papers"] >= 24
+        assert GATE["min_evidence_papers"] == 40
+
+    def _papers(self, sims):
+        return [{"pmid": f"P{i}", "similarity": s} for i, s in enumerate(sims)]
+
+    def test_a_deep_pool_is_cut_at_the_floor(self):
+        papers = self._papers([0.70] * 50 + [0.56] * 30)
+        out = app_mod.apply_evidence_floor(papers)
+        assert len(out) == 50
+        assert all(float(p["similarity"]) >= 0.60 for p in out)
+
+    def test_a_thin_pool_is_not_cut_at_all(self, capsys):
+        """20 papers, every one below the evidence floor. The floor would leave
+        zero; the guard keeps all 20 — and says so."""
+        papers = self._papers([0.56 + i * 0.001 for i in range(20)])
+        out = app_mod.apply_evidence_floor(papers)
+        assert len(out) == 20, "the guard must not cut a pool this thin"
+        assert "[evidence_floor] only 0 of 20" in capsys.readouterr().out
+
+    def test_the_guard_tops_up_to_exactly_the_minimum(self, capsys):
+        papers = self._papers([0.70] * 10 + [0.56] * 60)
+        out = app_mod.apply_evidence_floor(papers)
+        assert len(out) == GATE["min_evidence_papers"]
+        assert "keeping the 40 most similar instead" in capsys.readouterr().out
+
+    def test_the_guard_only_ever_adds_papers_back(self):
+        """It selects from the routing-admitted set, so it can never introduce
+        a paper the old code excluded."""
+        papers = self._papers([0.70] * 10 + [0.56] * 60)
+        out = app_mod.apply_evidence_floor(papers)
+        ids = {p["pmid"] for p in papers}
+        assert {p["pmid"] for p in out} <= ids
+
+    def test_the_top_up_is_by_similarity_not_by_order(self):
+        """Standing rule 19: which papers survive is a relevance question. The
+        input is deliberately shuffled so a top-up that trusted list order
+        would keep the wrong ones."""
+        papers = self._papers([0.56, 0.59, 0.57, 0.58])
+        out = app_mod.apply_evidence_floor(papers, min_papers=2)
+        assert [p["pmid"] for p in out] == ["P1", "P3"]
+
+    def test_a_pool_smaller_than_the_minimum_is_returned_whole(self):
+        papers = self._papers([0.56, 0.57, 0.58])
+        assert len(app_mod.apply_evidence_floor(papers)) == 3
+
+    def test_an_empty_pool_does_not_explode(self):
+        assert app_mod.apply_evidence_floor([]) == []
+
+    def test_the_cut_is_logged(self, capsys):
+        """Standing rule 5. A silent cut is how the retreatment RCT vanished."""
+        app_mod.apply_evidence_floor(self._papers([0.70] * 50 + [0.56] * 30))
+        out = capsys.readouterr().out
+        assert "[evidence_floor]" in out and "best dropped 0.560" in out
+
+    def test_nothing_is_logged_when_nothing_is_cut(self, capsys):
+        app_mod.apply_evidence_floor(self._papers([0.70] * 50))
+        assert "[evidence_floor]" not in capsys.readouterr().out
+
+    def test_the_measurement_that_forced_the_guard_is_recorded(self):
+        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        assert "case-opening-sparse" in src
+        assert "103 papers ->   6" in src
