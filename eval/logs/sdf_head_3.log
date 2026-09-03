@@ -1,0 +1,72 @@
+mode: RETRIEVAL-ONLY  (no answers generated; must_contain / banner / modules_non_empty are NOT evaluated)
+
+======================================================================
+sdf-pulp-outcomes   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 307ecff (imported 2026-09-02T23:04:35)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: (adult* OR permanent)
+  Smart search terms: '("silver diamine fluoride" OR SDF OR "silver fluoride" OR "ammoniacal silver nitrate") AND ("pulp" OR "pulpal" OR "vital" OR vitality) AND ("carious lesion*" OR "caries" OR "dental caries" OR "deep caries" OR "cavity")'
+  Multi-term search: ['("silver diamine fluoride" OR SDF OR "silver fluoride" OR "ammoniacal silver nitrate") AND ("pulp" OR "pulpal" OR "vital" OR vitality) AND ("carious lesion*" OR "caries" OR "dental caries" OR "deep caries" OR "cavity")', '("silver diamine fluoride" OR SDF OR "Riva Star" OR "Carisolv") AND ("pulp vitality" OR "pulp survival" OR "pulp inflammation" OR pulpitis) AND (arrest* OR reminerali* OR "caries management")', '("fluoride varnish" OR "silver fluoride" OR "stannous fluoride" OR "sodium fluoride") AND ("deep carious lesion*" OR "residual caries" OR "arrested caries") AND ("pulp exposure" OR "pulp health" OR "pulpal response")', '("silver nitrate" OR "ammoniacal silver" OR "diamine silver") AND ("dentin reminerali*" OR "caries arrest" OR "non-operative caries") AND ("tooth vitality" OR "vital pulp" OR "pulp death" OR necrosis)', '("topical antimicrobial*" OR "biofilm control" OR "caries-arrest agent*") AND ("deep caries" OR "advanced caries" OR "extensive decay") AND ("pulp prognosis" OR "pulp preservation" OR "endodontic risk")', '(SDF OR "silver-based agent*" OR "fluoride-contain* compound*") AND ("adult caries" OR "root caries" OR "secondary caries") AND ("inflammation marker*" OR "histopatholog*" OR "tissue response*")', '("chemical arrest*" OR "arrested lesion*" OR "sclerotic dentin") AND ("carious dentin" OR "infected dentin" OR "caries progression") AND ("apical periodontitis" OR "pulp necrosis" OR "sensibility test*")']
+  Searching Cochrane for: '("silver diamine fluoride" OR SDF OR "silver fluoride" OR "ammoniacal silver nitrate") AND ("pulp" OR "pulpal" OR "vital" OR vitality) AND ("carious lesion*" OR "caries" OR "dental caries" OR "deep caries" OR "cavity")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 591ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed) [broadened]: 13 PMIDs in 778ms
+    Fetching metadata for 13 papers...
+    [abstract_cache] persisted 13 abstracts from this batch
+    [superseded] dropped 6 outdated version(s) whose current version is in the same batch
+  OKCochrane Reviews (PubMed): 13 papers -- top score 83.3/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 8 PMIDs in 720ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 884ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 909ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1076ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1113ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1214ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 4 PMIDs in 752ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 22 PMIDs in 776ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 617ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 4 papers...
+    Fetching metadata for 22 papers...
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 4 abstracts from this batch
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 4 papers -- top score 72.3/100
+    [abstract_cache] persisted 8 abstracts from this batch
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 8 papers -- top score 82.0/100
+    [abstract_cache] persisted 22 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 22 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 1 pre-registered, 1 with corrections/retractions
+    [cap] level1: 21 above the quality floor, keeping the 18 most relevant; dropped 3 (best dropped PubMed rank 20)
+    [quality] kept 18 of 21 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 22 papers -- top score 81.1/100
+  [early_stop] 36 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 36   {'cochrane': 7, 'level1': 29}
+  esearch  48 hits over 16 queries = 3.0/query (11 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 6 -> 36 (+30) — use --diff for the tracked range
+  PASS
+
+1/1 cases passed  [RETRIEVAL-ONLY]
+NOTE: answer-level assertions (must_contain, must_not_contain, banner, modules_non_empty, max_unsourced_numeric_modules) were NOT evaluated. Run --synthesis-subset for those.

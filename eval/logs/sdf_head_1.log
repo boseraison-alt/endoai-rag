@@ -1,0 +1,72 @@
+mode: RETRIEVAL-ONLY  (no answers generated; must_contain / banner / modules_non_empty are NOT evaluated)
+
+======================================================================
+sdf-pulp-outcomes   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 307ecff (imported 2026-09-02T22:51:53)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("silver diamine fluoride" OR SDF)
+  Smart search terms: '("pulp" OR "pulpal" OR "vital*") AND ("deep caries" OR "deep carious lesion*" OR "caries proximity") AND ("adult*" OR "permanent teeth" OR "mature teeth")'
+  Multi-term search: ['("pulp" OR "pulpal" OR "vital*") AND ("deep caries" OR "deep carious lesion*" OR "caries proximity") AND ("adult*" OR "permanent teeth" OR "mature teeth")', '("silver diamine fluoride" OR "SDF" OR "silver fluoride" OR "diamine silver fluoride") AND ("caries arrest" OR "caries reminerali*" OR "arrested caries") AND ("adult*" OR "permanent teeth" OR "mature dentition")', '("silver diamine fluoride" OR "SDF" OR "Riva Star" OR "Cariestop") AND ("dentin" OR "dentinal") AND ("lesion proximity" OR "proximity to pulp" OR "near pulp")', '("fluoride application*" OR "topical fluoride" OR "silver compound*") AND ("deep cavity" OR "deep excavation" OR "caries removal") AND ("pulp vitality" OR "pulp response" OR "pulp inflammation")', '("cavity disinfection" OR "antimicrobial treatment" OR "chemomechanical caries") AND ("secondary dentin" OR "reparative dentin" OR "dentin bridge formation") AND ("adult patient*" OR "adult population")', '("silver nitrate" OR "silver-fluoride compound*" OR "metal fluoride*") AND ("residual caries" OR "caries control" OR "active lesion management") AND ("vital tooth" OR "tooth vitality" OR "pulp survival")', '("minimally invasive dentistry" OR "atraumatic restorative" OR "ART approach") AND ("carious dentin" OR "infected dentin" OR "carious tissue") AND ("pulpal outcome*" OR "treatment success" OR "clinical efficacy")']
+  Searching Cochrane for: '("pulp" OR "pulpal" OR "vital*") AND ("deep caries" OR "deep carious lesion*" OR "caries proximity") AND ("adult*" OR "permanent teeth" OR "mature teeth")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 671ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 787ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 880ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 989ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1004ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1005ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1126ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 18 PMIDs in 692ms
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 5 PMIDs in 839ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 633ms (HTTP 200)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 18 papers...
+    Fetching metadata for 5 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 570ms
+    Fetching metadata for 2 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 12 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 5 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 5 papers -- top score 82.0/100
+    [abstract_cache] persisted 2 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 63.0/100
+    [abstract_cache] persisted 18 abstracts from this batch
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 18 papers -- top score 78.9/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [COI] 1 of 50 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 14 pre-registered, 1 with corrections/retractions
+    [cap] level1: 50 above the quality floor, keeping the 18 most relevant; dropped 32 (best dropped PubMed rank 19)
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 81.7/100
+  [early_stop] 42 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 42   {'level1': 42}
+  esearch  76 hits over 16 queries = 4.8/query (11 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 6 -> 42 (+36) — use --diff for the tracked range
+  PASS
+
+1/1 cases passed  [RETRIEVAL-ONLY]
+NOTE: answer-level assertions (must_contain, must_not_contain, banner, modules_non_empty, max_unsourced_numeric_modules) were NOT evaluated. Run --synthesis-subset for those.
