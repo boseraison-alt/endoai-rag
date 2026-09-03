@@ -208,13 +208,26 @@ class TestTheLivePathCapsByRelevanceToo:
     def test_a_sparse_tier_tops_up_by_relevance_not_by_score(self):
         """Below the floor we are saying quality is insufficient and taking
         what we can. Taking the best-SCORING of those fills a thin tier with
-        whatever happened to score well rather than with what was asked."""
+        whatever happened to score well rather than with what was asked.
+
+        The fixture has to make the two orderings DISAGREE and give the top-up
+        fewer slots than candidates — an earlier version had two papers and
+        three slots, so both survived either way and the test proved nothing.
+        MIN_PAPERS_KEPT is 3 and the level1 floor is 50."""
         import endo_ai
-        papers = [{"pmid": "far", "pubmed_rank": 99, "score": 49},
-                  {"pmid": "near", "pubmed_rank": 1, "score": 20}]
+        papers = [{"pmid": "above", "pubmed_rank": 50, "score": 80}]
+        # below the floor: the most relevant are the worst scoring
+        papers += [{"pmid": "near-%d" % i, "pubmed_rank": i, "score": 10 + i}
+                   for i in range(1, 4)]
+        papers += [{"pmid": "far-%d" % i, "pubmed_rank": 90 + i, "score": 45 - i}
+                   for i in range(1, 4)]
         kept = {p["pmid"] for p in
                 endo_ai._apply_quality_threshold(papers, "review", "level1")}
-        assert "near" in kept
+        assert "above" in kept, "a paper over the quality floor was dropped"
+        assert "near-1" in kept, (
+            "the top-up took the best-scoring sub-floor papers, not the most "
+            "relevant ones: kept %s" % sorted(kept))
+        assert not {"far-1", "far-2", "far-3"} & kept, sorted(kept)
 
     def test_it_says_what_it_dropped(self, capsys):
         import endo_ai
