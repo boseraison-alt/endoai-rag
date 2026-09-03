@@ -97,6 +97,19 @@ Opening instruction for the agent session:
     `finalise_answer_text` was not idempotent — the status block quotes flagged
     claims, those quotes carry the quarantiner's vocabulary, and a second pass
     nested the trust banner inside the unverified block it reports on.)
+19. **A score never decides membership; only ranking within a tier.** Relevance
+    decides what enters a candidate set — similarity, coverage, question match.
+    Score decides the order of what is already in. Using one where the other
+    belongs is a category error, not a tuning choice. (Origin: A5b — the per-tier
+    cap kept 25 of 60 level1 papers *by score*, cutting the single most on-point
+    RCT at rank 54/60 in favour of position statements that were less similar to
+    the question. That manufactured a false evidence gap three steps downstream.)
+20. **A shared file is never replaced wholesale; changes are grafted additively.**
+    `AGENT_QUEUE.md`, `CURO_HANDOVER.md` and `WORKLIST.md` have more than one
+    writer. Before editing, read the version in the repo — not a local or
+    downloaded copy — and assert afterwards that the sections you did not touch
+    survived. (Origin: a dropped whole-file copy would have reverted §0 and
+    deleted the 47-instance count Stage 5 L1 is keyed to, twice in one day.)
 
 ---
 
@@ -1130,6 +1143,37 @@ Test both branches on real topics: a broad one must produce a narrowing question
 a specific one ("apicoectomy of mandibular teeth") must go straight to building.
 Mutation-check both directions — this is the pair where a one-way test passes while
 the gate is stuck open or stuck shut.
+
+---
+
+### A30 — Sweep for score used where relevance belongs  *(new, from A5b; do early)*
+
+A5b found the per-tier cap deciding *membership* by score, cutting the most
+on-point RCT in the library at rank 54 of 60 in favour of position statements that
+were less similar to the question. One category error, three days of symptoms:
+the retreatment false gap, and probably part of A23's apicoectomy anatomy gap.
+
+Standing rule 19 now states the principle. This item finds the other instances.
+
+- **A30a** Enumerate every point between query and synthesis where a set is
+  truncated, ordered, capped, deduplicated or selected: the union-KNN merge, the
+  authority guarantee, the coverage gate's counts, per-tier caps, the synthesis
+  context budget, the bibliography assembler, the follow-up seed pool. For each,
+  report what the decision is *for* (membership or ranking) and what input it
+  actually uses.
+- **A30b** Fix any that decide membership by score, the same way A5b did:
+  membership by relevance, order by score, log what is dropped (rule 5).
+- **A30c** For each fix, report which papers enter and leave on the three failed
+  fixtures, with similarities — not just counts. A swap that trades 20 papers at
+  similarity 0.78–0.67 for 20 at 0.60 scoring 78–90 is the whole finding.
+- **A30d** Full eval serially afterwards; explain every case that moves.
+
+**Related and now urgent:** A7's guideline banding. The hand-assigned 90.0/87.0
+scores on 15 guideline rows are not only a display problem — they were actively
+evicting trials from the candidate pool. A12 still stands (band first, do not
+recompute scores in the same change), but the scoring inconsistency A7 reported
+(hand-ingested guidelines at 90.0 vs PubMed-indexed equivalents at 50.4 and 30.9)
+should now be brought to RB with a proposal rather than parked.
 
 ---
 
