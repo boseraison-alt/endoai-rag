@@ -490,7 +490,9 @@ def search(
     """
     Semantic search against local library.
     Optionally filter by evidence level (level_key).
-    Returns papers sorted by similarity × score.
+    Returns papers ordered by SIMILARITY. The limit decides membership of
+    the candidate pool, and membership is a relevance question
+    (standing rule 19); quality ranks later, within a tier.
     """
     if not DATABASE_URL:
         return []
@@ -522,7 +524,23 @@ def search(
                   -- in step.)
                   AND COALESCE(superseded_by, '') = ''
                   AND 1 - (embedding <=> %s::vector) >= %s
-                ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
+                -- A30/rule 19. This LIMIT decides MEMBERSHIP of the
+                -- candidate pool, so it is ordered by relevance alone. It
+                -- used to blend `score * 0.6 + similarity * 40` — score is
+                -- 0-100 and similarity 0-1, so the score carried 60 of the
+                -- 100 available weight and decided who got in.
+                --
+                -- Measured on "retreatment in one visit versus two visits":
+                -- Schwendicke 2017 sits at similarity 0.635, rank 40 in the
+                -- library by pure relevance and comfortably above the 0.55
+                -- floor — and the blend pushed it out of the top 100
+                -- ENTIRELY, which is why it reached no query and looked like
+                -- a vocabulary miss. Karaoglan moved 95 -> 32 and Toia
+                -- 63 -> 15 on the same change.
+                --
+                -- Ranking by quality still happens; it happens later, within
+                -- a tier, where invariant 1 puts it.
+                ORDER BY (1 - (embedding <=> %s::vector)) DESC
                 LIMIT %s;
             """, (query_vec, level_key, query_vec, similarity_threshold, query_vec, limit))
         else:
@@ -552,7 +570,23 @@ def search(
                   -- conclusion the authors have since revised.
                   AND COALESCE(superseded_by, '') = ''
                   AND 1 - (embedding <=> %s::vector) >= %s
-                ORDER BY (score * 0.6 + (1 - (embedding <=> %s::vector)) * 40) DESC
+                -- A30/rule 19. This LIMIT decides MEMBERSHIP of the
+                -- candidate pool, so it is ordered by relevance alone. It
+                -- used to blend `score * 0.6 + similarity * 40` — score is
+                -- 0-100 and similarity 0-1, so the score carried 60 of the
+                -- 100 available weight and decided who got in.
+                --
+                -- Measured on "retreatment in one visit versus two visits":
+                -- Schwendicke 2017 sits at similarity 0.635, rank 40 in the
+                -- library by pure relevance and comfortably above the 0.55
+                -- floor — and the blend pushed it out of the top 100
+                -- ENTIRELY, which is why it reached no query and looked like
+                -- a vocabulary miss. Karaoglan moved 95 -> 32 and Toia
+                -- 63 -> 15 on the same change.
+                --
+                -- Ranking by quality still happens; it happens later, within
+                -- a tier, where invariant 1 puts it.
+                ORDER BY (1 - (embedding <=> %s::vector)) DESC
                 LIMIT %s;
             """, (query_vec, query_vec, similarity_threshold, query_vec, limit))
 
