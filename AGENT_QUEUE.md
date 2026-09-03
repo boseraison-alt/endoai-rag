@@ -1474,6 +1474,68 @@ Report the distribution and the derived number together. **A33j and A35 must be
 decided with each other's numbers in hand** — a reference target without a pool
 big enough to meet it produces padding, which A35d forbids.
 
+### A33h-ii / A33j / A35a — MEASURED 2026-09-03, reported before implementing
+
+**A33h-ii: labelling wins, and RB's predicted failure of trailing-order is real.**
+The generator was asked to label each AND-group `subject` / `scenario` /
+`qualifier`. It labelled a qualifier correctly on **4 of 4**, matching what a
+clinician would say every time. Trailing-first agrees on only **3 of 4** — and
+the disagreement is exactly the dangerous case:
+
+```
+GIC / ceramic crown   subject | scenario | QUALIFIER     trailing agrees
+apicoectomy anatomy   subject | QUALIFIER                trailing agrees
+retreatment visits    subject | scenario | QUALIFIER     trailing agrees
+laser disinfection    subject | QUALIFIER | scenario     TRAILING WOULD DROP
+                                                          THE SCENARIO
+```
+
+On the laser query the qualifier sits in the MIDDLE and the scenario is last, so
+trailing-first would drop `(disinfect* OR antibacterial OR antimicrobial OR
+biofilm)` — the outcome concept, and precisely the failure RB predicted. **Adopt
+labelling; keep trailing order only as the legacy fallback.** My n=1 rule would
+have been wrong on 1 query in 4, in the most damaging direction.
+
+**A35a: RB's premise is not supported. Curo descends readily; level1 is the
+problem.** Retrieved vs cited across 15 stored answers, 593 papers, 147 cited:
+
+```
+tier        retrieved   cited   cited%
+cochrane           24      10     42%
+level1            414      86     21%     <- 70% of the pool, LOWEST-but-one rate
+level2             31      11     35%
+level3a            46      21     46%
+level3b            13       7     54%
+level4             23       1      4%
+level5             20       9     45%
+TOTAL             593     147     25%
+```
+
+Levels IIIa (46%), IIIb (54%) and V (45%) are cited at **twice** level1's rate.
+The synthesis does not refuse to descend — it descends more readily than it uses
+level1. What is actually wrong is that **the pool is 70% level1 and four fifths
+of it goes uncited**. A35 should be reframed from "descend the ladder" to
+"level1 precision": the tier quotas fill with therapy-shaped papers that do not
+support a claim. That is the sixth premise overturned by measurement.
+
+**A33j: the ratio is too unstable to derive a threshold from a median.**
+
+```
+citation rate (cited/pool)   min 2.2%   median 23.3%   max 82.4%
+```
+
+At the median, ~20 references needs a pool of ~86 reaching synthesis; at the
+worst observed rate, 900. But bigger pools have LOWER rates — pool 17 -> 82%
+cited, pool 52 -> 12%, pool 45 -> 2% — so pool size does not buy citations and a
+threshold derived from the median would be false precision. **What the data does
+license:** even at the best rate ever observed (82%), ~20 references is
+arithmetically impossible below a pool of ~24. That is a defensible floor.
+
+**Caveat that must not be lost:** `BROADEN_THRESHOLD` is applied to ONE TIER's
+esearch hit count, not to the final pool. Converting a final-pool floor into a
+per-tier trigger needs the per-tier-to-final-pool transfer measured, which this
+has not done. Do not set the constant from the ~24 figure without that step.
+
 ### A35 — Use the evidence you retrieved  *(RB, 2026-09-03)*
 
 RB's observation: when there is no Level I evidence, Curo appears not to fall back
