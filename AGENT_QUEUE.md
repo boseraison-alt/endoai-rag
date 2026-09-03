@@ -1593,6 +1593,305 @@ simply be removed.
 level1-precision gloss read a rate as a defect when it was an artefact of quota
 size). Rule 21 is doing its job.
 
+### A35j/k/l — BUILT AS A MEASUREMENT, NOT SHIPPED (2026-09-03, evening)
+
+**A35k ran first, as instructed, and its answer cancels A35j.** 29 eval
+questions, library route, candidate sets collected once so every scheme is
+scored against the same papers. Full report:
+`eval/reports/a35k_quota_measurement.md`; raw data `eval/logs/a35k_candidates.json`.
+
+**1. The pool is already 114 papers.** min 56, p25 100, median 118, p75 128,
+max 171. 55,750 context tokens, $0.836/answer. RB's constraint was "a library
+answer went ~38 -> ~120 once, do not double it again without the number
+visible" — the number is visible and it is already there. The ~38 predates the
+A5b/A30 membership fixes.
+
+**2. The inversion A35j names is real and large.** 1,525 papers cut that are MORE
+similar than papers admitted, on 28 of 29 questions; best cut 0.727 against a
+worst admitted 0.591. Only level1 is meaningfully quota-bound (28 of 29); nine of
+eleven tiers are never bound at all.
+
+**3. But removing the quota is a SWAP and it goes the wrong way.** At cost parity
+(reserve 6/tier, cap 120): 689 enter, 620 leave, and **675 of the 689 entrants
+are level1**. That is structural — level1 holds 44% of all candidates, so every
+slot the quota stops rationing goes to it. The per-tier quota is the only thing
+keeping level1 below a quarter of the pool.
+
+```
+level1 share of the pool     23%  ->  42%
+mean similarity of the pool  0.6257 -> 0.6316   (+0.006)
+$ per answer                 0.8363 -> 0.8864   (+6%)
+```
+
+Weighting each scheme's composition by A35a's measured per-tier cited rates,
+A35j scores 0.285 against the current 0.312 — a DIRECTION, not a count (A33j:
+the rate falls as pools grow). **A35j is predicted to lower the citation count it
+exists to raise. NOT SHIPPED.**
+
+**4. The other direction, measured and also not shipped.** Keeping the quota and
+adding a global similarity floor at 0.60 gives 74 papers, $0.560, mean similarity
+0.652, tier balance unchanged. It reverses A35's direction, so it is RB's call,
+not the agent's.
+
+**5. A35j is not DEFINED on the live path.** `pubmed_rank` is a rank within one
+tier's own query; there is no cross-tier relevance to fill by. A35k measured the
+library route and says so rather than generalising.
+
+**Per A35l's own criterion the supply explanation is now exhausted** — four
+eliminations: synthesis already descends (A35a), level1 is not imprecise (A35f),
+pool size does not buy citations (A33j), the quota is not too small (A35k). Curo
+cites ~9-11 of ~114. **This is a synthesis-judgement question.** A35l's
+re-measurement has nothing to re-measure until a synthesis-side change is made.
+
+**Correction to rule 23 and A35f.** Both say "level1's quota is 25 against other
+tiers' 4-19". On the LIBRARY route every tier gets the same flat 25
+(`RELEVANCE_GATE["max_per_tier"]`); level1 binds because it holds 2,153 of 4,867
+candidates. The 4-19 figures are `MODE_TIER_QUOTAS`, which is the LIVE path. The
+denominator conclusion stands; the reason is candidate mass, not a larger
+allowance.
+
+### A38 — THE PRISMA DEDUP NOTICE ASSERTS SOMETHING IT CANNOT KNOW  *(new, 2026-09-03; the strongest lead A35 has produced)*
+
+Surfaced by A33c's ingestion. `flag_superseded_by_review` takes the newest SR/MA
+**year** anywhere in cochrane+level1, subtracts a 2-year buffer, and flags EVERY
+level2/3a/3b/3/4 paper at or below that year — then writes into the synthesis
+prompt that those N papers are "likely already synthesised inside PMID X" and to
+"defer to the SR's pooled estimate". **There is no topic test anywhere in it.**
+
+```
+1,294 of 3,301 retrieved papers — 39% of everything retrieved across the 29
+eval questions — arrive at synthesis labelled "defer to the SR".
+per question: median 39%, min 24%, max 53%. It fires on all 29.
+```
+
+Worst case, `bisphosphonate-extraction-vs-rct-treatment`: **70 of 133 papers
+(53%)** told to defer to PMID 42512863, *"Regenerative Potential of Biodentine in
+Complex Endodontic Cases"* — including papers on osteoporosis and periapical
+status, MRONJ radiographic predictors, and RCT of compromised teeth. That review
+did not synthesise the MRONJ literature. The claim is false, stated as fact in
+the prompt, and attached to an instruction to stand the paper down.
+
+- **A38a** Is this why ~9-11 of ~114 are cited? **Hypothesis, not finding** — the
+  correlation is not clean (level3a 46% and level3b 54% cited are both heavily
+  flagged; level4 at 4% also is). Measure it: one answer with the notice
+  suppressed against one with it, same fixture, same pool.
+- **A38b** Three options, none implemented, because this is product behaviour and
+  not a bug with an obvious correct form:
+  1. choose the superseding SR by RELEVANCE, not by year — the current choice is
+     rule 19 one level up, an authority decision made by a proxy that does not
+     know what was asked;
+  2. stop asserting inclusion — say a newer review on the topic exists and to
+     prefer its pooled estimate WHERE IT POOLS THE SAME OUTCOME, without naming
+     N papers as already synthesised;
+  3. delete it, with the measurement written where the function was (A32).
+  **Agent's recommendation: 1 and 2 together.** Small, removes a false claim,
+  neither needs an SR's inclusion list.
+- Report: `eval/reports/a33e_uncited_and_prisma.md`.
+
+### A33e — ANSWERED (2026-09-03). And similarity is not relevance.
+
+87 papers reached synthesis on the GIC fixture; 4 cited; **97% unused**. Every
+citation came from level1 — nine tiers supplied 62 papers and none was used.
+
+32 of the 84 uncited papers are MORE similar than the least-similar cited one.
+But read them: class II restorations, paediatric stainless-steel crowns,
+retrograde root seals, interim pulpitis management. **On-vocabulary, off-question.**
+
+**This caveat lands on A35k's own numbers.** Its 1,525 "inversions" are defined
+by cosine similarity, and this fixture shows what a similarity inversion often
+is — the same words, a different question. The inversion is real as a rule-19
+category error; it is weaker than it looks as evidence that better papers were
+turned away.
+
+### A34 — ANSWERED (2026-09-03): JOE is fine; IEJ is the one that is lifted
+
+Report: `eval/reports/a34_journal_balance.md`. Library 3,036 rows, retrieval
+3,301 paper-slots over the 29 questions, PubMed 494 results on the same questions.
+
+```
+                          PubMed   library   retrieved      verdict
+Journal of Endodontics     15.4%     13.7%       16.2%     balanced
+Int Endodontic Journal      7.3%      7.8%       14.4%     retrieval 2x
+Australian Endod J          4.7%      1.6%        1.6%     UNDER-STOCKED
+Clin Oral Investig          2.4%      3.2%        3.3%     balanced
+Journal of Dentistry        2.2%      2.1%        1.7%     balanced
+
+JOE : IEJ      PubMed 2.1:1     library 1.76:1     on the page 1.13:1
+```
+
+**A34b, plainly: JOE is not under-represented anywhere.** It is retrieved at
+16.2% against PubMed's own 15.4% for the same questions. The perceived skew is
+real and it is IEJ being lifted, not JOE being held down.
+
+**And it is not the tier quotas.** IEJ is over-retrieved INSIDE almost every tier
+— level1 2.0x, level3a 2.0x, level5 2.9x — while at level4 JOE is retrieved at
+20.1% and IEJ at 1.4%. Membership inside a tier is cosine similarity, so the
+finding is that IEJ papers embed closer to the questions clinicians ask than JOE
+papers in the same tier do. No journal signal exists anywhere in the engine;
+invariant 11 is intact; this is what the two journals publish.
+
+- **A34d: do NOT reopen the mechanism question.** A JOE preference would push JOE
+  above the field's own mix while repealing invariant 11, deleting test C1 and
+  rewriting the "never by journal" card. The measurement does not support it.
+- **A34c applies to a different journal.** *Australian Endodontic Journal* is the
+  one genuine stocking gap — 4.7% of PubMed's return, 1.6% of the library.
+  Additive ingestion, no scoring change, no invariant touched. Nobody was looking
+  for it.
+- **Stopped here for RB, as A34d requires.** Neither mechanism option implemented.
+
+### A39 — THE CURRICULUM PATH GETS ONE QUERY WHERE LITERATURE GETS SEVEN  *(new, 2026-09-03)*
+
+Found while measuring A33i. Setzer 2010 part 1 (`20951283`) — the meta-analysis
+A23 says Curo missed, retrieving part 2 only — is reached by **no tier filter**.
+It is correctly typed Meta-Analysis and passes the domain filter; what excludes
+it is the module query's `mandibular` group, which A33h-i's labelling correctly
+calls the qualifier.
+
+Relaxation would recover it — and the same relaxation takes Jeon 2021 and
+Mainkar 2020 out of the top 200 (pool 2,170 -> 7,562). So relaxation is the wrong
+instrument. The right one is query DIVERSITY, and the asymmetry is:
+
+```
+Literature path (app.py)      generate_multi_search_terms -> 7 query angles
+Curriculum path (endo_ai)     generate_search_terms       -> 1
+```
+
+`multi_query_search`'s own comment says "never let one generated string decide
+what the library returns" (A4). The curriculum path does exactly that, per module.
+
+- **A39a** Measure before building: how many of A23's five named papers does a
+  7-angle union reach on the apicoectomy module, against 4 of 5 for the single
+  query? And what does 7x the esearch calls per module x 4 modules x 8 tiers cost
+  in time and rate-limit budget? Not built — the cost is material.
+
+### A33h-i / A33g — SHIPPED AND MEASURED (2026-09-03, evening)
+
+**A33h-i shipped.** The generator labels each top-level AND-group; relaxation
+drops only a declared `qualifier`, never a subject or scenario; a labelled query
+with NO qualifier is not broadened at all. Position is now the fallback for
+unlabelled queries only, and it changed from OR-arity to TRAILING order (arity
+names the qualifier 1 time in 4, trailing 3 in 4). Labels produced:
+
+```
+GIC / ceramic crown    subject | scenario | QUALIFIER
+apicoectomy anatomy    subject | QUALIFIER
+retreatment visits     subject | scenario | QUALIFIER
+laser disinfection     subject | QUALIFIER | scenario   <- position disagrees
+```
+
+**A33g's vocabulary half: BUILT, SWITCHABLE, DEFAULT OFF. Eighth premise
+overturned, third of them the agent's own.**
+
+```
+baseline                                       pool  14   0/4
+relaxation only (declared qualifier dropped)   pool  62   0/4
+scenario expansion only, GENERATED             pool  19   0/4
+both, GENERATED                                pool  88   0/4
+both, with the HAND-WRITTEN enrichment         pool  90   2/4   @9, @10
+```
+
+The 2/4 reproduces exactly and **is not a vocabulary result**. The enrichment
+that produced it added `"orifice barrier" OR "intraorifice barrier"` — not a
+synonym for an access restoration but a different named technique answering the
+same question, and the phrase in both recovered papers' titles. A clinician
+recognising the literature wrote that string. Asked to expand the scenario group
+the generator returns synonyms of the words it was given (3/3 identical);
+re-asked for adjacent techniques rather than synonyms it returns different
+synonyms (3/3, pools to 584, 0/4); `generate_multi_search_terms`, which already
+asks for adjacent techniques across seven angles, reaches 0/4 on 2 of 2. **Five
+generations, two framings, no recovery.**
+
+**The two still missing** (`27542693`, `32818565`) are unreachable by any
+legitimate relaxation: neither paper mentions glass ionomer at all, so the
+SUBJECT group excludes them — and the subject is the one group that must never be
+dropped. They answer a different question (what access does to the crown) from
+the one asked (is GIC an acceptable permanent access restoration).
+
+**BROADEN_THRESHOLD stays 5, and there is now a second reason.** Relaxation is
+not free when it fires on a query that was not failing: on the apicoectomy query
+dropping the declared `mandibular` qualifier takes the pool 2,170 -> 7,562 and
+BOTH known on-topic papers out of the top 200. Raising the threshold makes
+relaxation fire on healthy pools, which is where it does damage.
+
+### A33i — DROPPED (2026-09-03), on the apicoectomy evidence alone
+
+```
+reachable ONLY through a survey filter        0 of 5 targets
+of A23's 5 named papers, already reachable    4 (observational x3, level3a/3b x1)
+what the filter would add                     37 papers, led by 3D-printed
+  replicas for endodontic education, a questionnaire on microscope use,
+  quality-of-life after RCT vs extraction, periodontal therapy success
+```
+
+None of A23's five papers is a survey. The measurement is recorded above
+`LEVEL_OBS_TERMS` and `tests/test_observational_tier.py` pins the absence.
+
+### A33c — INGESTED (2026-09-03), and it is the DOMAIN FILTER'S FIRST CONVICTION
+
+Filed as "an ordinary ingestion gap, not a taxonomy or ranking one". It is
+neither:
+
+```
+42444634[uid]                                            1 record
+42444634[uid] AND ("Cochrane Database Syst Rev"[jour])    1
+42444634[uid] AND ENDO_DOMAIN_FILTER                      0
+... 0 against every one of the eleven domain clauses individually
+```
+
+"Restorative materials for direct coronal restoration of permanent posterior
+teeth" never says root canal, pulp, periapical or endodontic. The domain filter
+is appended unconditionally and is not a droppable topic group, so **no live
+query can reach it at any pool size under any relaxation.**
+
+A31e records the filter exonerated twice (Q7, A23a). This one is really it, and
+it is A33f as a mechanism: the fixture asks a RESTORATIVE question of an
+endodontic assistant and the domain boundary answers before the evidence does.
+**Widening it is NOT done** — Stage 4 S3, every live query on every path, needs
+its own measurement.
+
+Ingested via `scripts/ingest_a33c_coronal_restoration.py` on the hand-ingest path
+(`fetch_papers` cannot reach it). Library 3,035 -> 3,036, banded `cochrane` at
+80.0 on the journal, 6,929-char abstract uncapped.
+
+**And it does NOT close the A33 fixture.** Its similarity to that question is
+**0.505**, below the 0.55 floor. Against its own subject 0.814; against "which
+restorative material for a posterior tooth after endodontic treatment" 0.686. It
+is now available to restorative-material questions; the competitor citing it on
+the ceramic-crown question was reaching wider than the question. Not tuned around
+— a floor admitting 0.505 admits everything.
+
+`35097115` (de Araujo) HELD BACK under A12: absent, passes the domain filter,
+would band level1 at 55.9 on its Meta-Analysis type — but it is an SR **of in
+vitro studies**, so level1 puts it beside randomised trials in patients.
+`--apply-contested` writes it once A25 has decided.
+
+### A30b — a THIRD cap deciding membership by score  *(found while measuring A35k)*
+
+`app.py`'s differential merge loop capped its merged per-tier union with
+`bucket.sort(key=score); bucket[:max_per_tier]`. A30a's enumeration missed it.
+Fixed to `cap_by_relevance`, score kept for ordering within the tier. It costs
+most here of anywhere: the differential exists to carry evidence for the
+candidate causes that are NOT the leading one, and the score does not know which
+candidate a paper was retrieved for. Live-route papers carry no similarity and
+fall back to exactly the previous score order; a test pins that.
+
+### A40 — THE KNN CANDIDATE CEILING IS AN UNEXAMINED CONSTANT  *(new, 2026-09-03)*
+
+`multi_query_search` returns `out[:limit * 2]` — a hard 200 candidates.
+
+```
+KNN returned 200 on                             29 of 29 questions
+ALL 200 cleared the similarity floor on         14 of 29
+```
+
+On half the eval set the similarity floor selects nothing and an unexamined
+constant decides the candidate pool, upstream of every tier decision. It
+truncates in similarity order, so it is membership-by-relevance in kind and NOT a
+rule-19 violation — but "how much evidence exists for this question" is currently
+answered by that constant. **Not changed**: A35k says supply is not the
+constraint, so raising it would add cost against a hypothesis the same data does
+not support. Recorded so it is not rediscovered a fourth time.
+
 ---
 
 ### A35 — REFRAMED (2026-09-03): the defect is level1 precision, not refusal to descend  *(SUPERSEDED by A35j above — retained for the record)*
