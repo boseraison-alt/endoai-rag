@@ -135,6 +135,21 @@ Opening instruction for the agent session:
     A35f, A35j, A35k and A38's Defect 2 all chased a number that no longer
     existed. This is bug class #4 — a cache is a time capsule — appearing in
     *measurement* rather than in rendering.)
+26. **One constant, one purpose.** A value that gates two decisions couples them
+    invisibly: changing it for one silently changes the other, and nobody looks.
+    Split it, even when both would hold the same number today. (Origin: A42 — the
+    similarity floor also gated library-versus-live routing. Now `similarity_floor`
+    for routing and `evidence_floor` for the pool.)
+27. **A finding from a convenient subset is a hypothesis; confirm it on the full
+    set before shipping.** (Origin: A42a's "the floor is free" came from A38d's ten
+    runs — which were the deep-pool questions. Across all 29, three pools collapsed
+    to 6–12 papers, which is how a false evidence gap gets manufactured. **This
+    instruction was mine**, not the agent's: I said the answer was probably already
+    in the ten runs on hand.)
+28. **Prefer a guard that can only fail in the safe direction.** `min_evidence_papers`
+    only ever adds papers back, so it cannot cost a citation — its worst case is
+    spending money. A guard whose failure mode is monotone needs far less proving
+    than one that can cut both ways.
 
 ---
 
@@ -1853,6 +1868,48 @@ Curo has its own (A15g), and RB has said he likes it.
 **Sequencing.** This is presentation work and it queues **after** A42, A39 and the
 re-baseline. A44a is the exception — it is A22's answer, RB has already complained
 about the boxes, and it should travel with A22.
+
+### A45 — Synthesis retries are an unmeasured cost driver  *(new, from A42b's honest bounding)*
+
+A42b reported the saving as **$0.30–$1.08**, and named why: "the two biggest
+savings are on runs that look retry-inflated." That caveat is the finding. Retries
+have never been measured on current code, and a retry pays for a whole synthesis
+call twice.
+
+Historical context: the grounding rule and the recommendation-traceability gate
+once collided and bought full Opus retries — prompt reconciliation took attempt-1
+pass from 3/10 to 10/10 and cut cost 40%. That was several prompt changes ago, and
+several new gates ago (Q1's detector, A38's reworded notice, A20/A37's gating).
+
+- **A45a** Measure the retry rate on current code across the 29 eval questions and
+  the stored answers: what fraction of syntheses retry at all, how many retry more
+  than once, and what is the cost of retried runs against clean ones.
+- **A45b** Attribute the retries by which validator or gate rejected the attempt.
+  Report the distribution — one gate causing most retries is a prompt problem;
+  retries spread evenly across gates is a model-variance problem, and they have
+  different fixes.
+- **A45c** Fix only what the distribution shows, and **never by relaxing a gate**
+  (rule 6). A gate that rejects correct work has wrong logic; fix the logic.
+- **A45d** Report cost beside hits-per-query and paper counts (rule 12). If the
+  retry rate is low, say so — that closes the $0.30–$1.08 uncertainty from the
+  other end and confirms the floor's saving as real.
+
+### A46 — Predict the baseline deltas before running it  *(method, for the v6 re-baseline)*
+
+The agent already noted: *"every retrieval case will now report fewer papers, and
+the six guard-bound questions exactly 40 — that's this change, not drift."* That is
+a prediction, and it is worth much more written down **before** the run than
+explained after.
+
+- **A46a** Before `--update-baseline`, commit a short written prediction: which
+  cases move, in which direction, by roughly how much, and why. Name the six
+  guard-bound questions explicitly.
+- **A46b** Run, then compare against the prediction. **Anything that moves and was
+  not predicted is the signal** — that is the whole point, and it is the only way
+  a re-baseline can be a test rather than a rubber stamp.
+- **A46c** Commit prediction and outcome together with `baseline_v6`, keeping `v5`.
+  Rule 13 is satisfied by the explanation, and this makes the explanation
+  falsifiable rather than post-hoc.
 
 ### A43 — Visuals in answers: flowcharts, comparisons, colour  *(RB, 2026-09-03)*
 
