@@ -101,6 +101,60 @@ directive, PMID 40705444.
 
 ---
 
+## §3b LATEST — the membership sweep and the eval (2026-09-03)
+
+**One root cause explained three days of symptoms.** A score was deciding
+*membership* in candidate sets, where only relevance should. Found in four places
+and fixed in all of them: the per-tier library cap (A5b), `rag.search`'s
+`ORDER BY (score*0.6 + similarity*40) LIMIT 100` (A30b), the live
+`_apply_quality_threshold` cap, and `ensure_authoritative`. Standing rule 19 now
+states the principle.
+
+The retreatment case is the clearest illustration: 60 Level I papers cleared the
+similarity floor, the cap kept 25 **by score**, and the single most on-point RCT
+sat at rank 54 of 60 and was cut — in favour of position statements that were
+*less similar to the question*, six of eight of them below the similarity floor
+entirely. The answer then announced that no such trial existed. On the retreatment
+fixture, 71 of 100 candidates change: mean similarity 0.551 → 0.635, mean score
+78.3 → 61.0, and every paper leaving is a hand-assigned 90.0 guideline row.
+
+**A fifth class, and a new one: the taxonomy could not express the thing.** All
+seven tier filters name therapy or synthesis designs. Nothing matched a
+cross-sectional, morphometric, imaging or diagnostic-accuracy study, so **46% of
+the most relevant papers for an anatomy question were reachable by no tier filter
+at any depth** — including the bony-lid technique paper. A31 added an
+observational/descriptive tier banded last, floor 27, calibrated from measurement:
+those papers score max 46.5, because a therapy-shaped scorer gives a descriptive
+study no credit for a comparison it never made. **That is A25's argument as a
+number rather than an assertion.**
+
+**`ensure_authoritative` had never fired**, and three internal handover files
+described the guarantee it never provided. Deleted, with the measurement written
+where the function was. Eight green tests had sat on it because all eight called it
+with `relevant=[]`, a state production never produces.
+
+**Eval: retrieval 28/29 twice, synthesis 4/5.** 33 metrics moved, in two groups
+with opposite causes — 17 retrieve more (median 3.2×, all library-routed, the fix
+working) and 4 retrieve fewer, each moving in lockstep with its own search-term
+count, which is A14's variance rather than a membership change.
+`sdf-pulp-outcomes` fails in a full run and passes 3/3 in isolation:
+**unattributed, deliberately not called clean.** The first eval run carried 22
+contamination warnings from stray Flask servers; re-run clean at zero, both logs
+committed.
+
+**Also corrected: a claim about the harness had outlived the harness.**
+`HANDOVER.md` and `questions.json` said answer-level assertions were inert and the
+harness retrieval-only. The synthesis modes exist and do evaluate them — which is
+how the one synthesis failure surfaced. Same class as A32c: an explanatory surface
+describing a capability that had changed underneath it.
+
+**Three inert checks found this week** — the verification banner over unchecked
+claims, the 404 poll that never terminated, and the authority guarantee. None threw
+an error; all three looked reassuring. The only way to find them is to ask whether
+a check has ever actually fired.
+
+---
+
 ## §4 DECISIONS MADE — do not relitigate
 
 - **No journal-identity weighting**, ever. RB asked for a JOE-over-IEJ preference
@@ -115,6 +169,22 @@ directive, PMID 40705444.
 - **The IF column stays** (inert, guarded); dropping it is a post-demo question.
 - `monthly_maintenance.py` no `--apply` until after the demo. Vision path off
   until a BAA. `cost_log.jsonl` append-only. Never weaken a gate for a number.
+- **A score never decides membership** (rule 19). Relevance decides what enters a
+  candidate set; score orders what is already in. 2026-09-03.
+- **Curriculum may ask, but only to narrow a topic too broad to teach from.**
+  Literature asks nothing. Both branches tested. 2026-09-03.
+- **The authority guarantee is deleted, not redesigned.** It must never reach
+  below the similarity floor — that is rule 19 wearing a virtuous hat. The
+  union-of-max across generated queries *is* the variance protection. 2026-09-03.
+- **The observational/descriptive tier is banded last and stays there** until A25
+  decides per-question-type ranking. Reachability now, ranking later, never in one
+  commit. 2026-09-03.
+- **The ~$2 bisect of the laser live/library split is approved** — the fixture
+  guards a defect that shipped once, and "narrowed to two candidates" is not good
+  enough before a demo. 2026-09-03.
+- **`baseline_v6` is a deliberate re-baseline**, with the 17-case explanation
+  committed beside it and `v5` kept. Not silent, so rule 13 is satisfied.
+  2026-09-03.
 
 ---
 
