@@ -1103,6 +1103,241 @@ A20 stops Curo interviewing the clinician; A21 lets the clinician continue. Rend
   identically. Test that a follow-up cannot render a surface a first answer would
   not.
 
+### A20 (revision) — Curriculum may ask, but only to narrow a broad topic  *(RB, 2026-09-03)*
+
+A20's premise that Curriculum asks no questions was wrong; the agent found it does.
+RB's decision: **Curriculum keeps the ability to ask, gated the same way Case is.**
+It may ask when the topic is genuinely too broad to teach without direction
+("regenerative endodontics" — immature apex or mature? outcomes or technique?).
+It must NOT ask on a topic already specific enough to build from. Literature still
+asks nothing at all.
+
+Test both branches on real topics: a broad one must produce a narrowing question;
+a specific one ("apicoectomy of mandibular teeth") must go straight to building.
+Mutation-check both directions — this is the pair where a one-way test passes while
+the gate is stuck open or stuck shut.
+
+---
+
+## §8c CORPUS DEPTH — six levers  *(strategic; sequence at the end of §8c)*
+
+Origin: three consecutive comparisons where Curo's reasoning beat the competitor
+and its coverage lost — anesthesia, retreatment, mandibular apicoectomy. The
+common failure is not synthesis, it is what reaches synthesis.
+
+### A24 — Retrieve per module, not per curriculum
+
+Measured on the apicoectomy curriculum: four modules (indications, diagnosis,
+technique, outcomes) appear to share one query set, so the anatomy module was
+written from a pile assembled for the topic as a whole.
+
+- **A24a** Confirm the mechanism first (this is A23b): does each module generate
+  its own search terms, or do all modules share the curriculum's?
+- **A24b** If shared: generate terms per module from that module's own subject and
+  retrieve separately. The anatomy module should be searching cortical thickness,
+  mandibular canal proximity and mental foramen position; the outcomes module
+  should be searching success rates and survival.
+- **A24c** Cost is retrieval time, not model spend (A1c: `fetch_papers` makes no
+  LLM call). Report added wall time per curriculum and hits-per-query per module.
+- **A24d** Done when the regenerated apicoectomy curriculum's anatomy module cites
+  anatomical papers it does not currently reach (see A23's named list).
+
+### A25 — The tier ladder is a therapy hierarchy applied to every question
+
+The single biggest correctness improvement available, and a design change rather
+than a bug fix. Curo bands every paper as though the question were "does this
+work?" — trials high, cross-sectional studies low. For a therapy question that is
+right. For "how thick is the buccal plate at the second molar?" it is wrong: a
+large, well-conducted CBCT morphometry study is the *best available* evidence for
+that question, and Curo scores it around 50 and buries it. The same error made the
+anesthesia answer apologise for a diagnostic-accuracy study ("flagged: not an RCT")
+when that design is exactly correct for a diagnostic question.
+
+Cochrane and GRADE both use question-type-specific hierarchies. Curo uses one.
+
+- **A25a — measure before designing.** Classify the 25 eval questions plus the
+  border set by question type: therapy / diagnosis / prognosis / prevalence-anatomy
+  / harm. Report the distribution. If therapy dominates overwhelmingly, say so —
+  the fix may not be worth its risk.
+- **A25b** Propose a per-type ladder in the report and STOP for RB. Do not
+  implement in the same item. Sketch: therapy keeps the current ladder;
+  prevalence/anatomy puts large well-conducted cross-sectional and morphometric
+  studies at the top; diagnosis puts cross-sectional accuracy studies with a
+  reference standard at the top; prognosis puts inception cohorts at the top.
+- **A25c** Whatever is built, invariant 1 survives in spirit: tier is assigned by
+  study design *relative to the question type*, never by score, and score still
+  ranks only within a tier. A paper's tier may now differ between two questions —
+  that is correct and must be visible in the rendered tier label, not hidden.
+- **A25d** This changes stored bands. Dry-run with delta split; back up every
+  column; re-baseline the eval deliberately and explain every case that moves.
+
+### A26 — Chase citations backwards from every retrieved systematic review
+
+When Curo retrieves an SR it reads the review and stops. The studies inside it are
+where the primary numbers and the classic papers live.
+
+- **A26a** For each retrieved SR, fetch its included/cited primary studies via
+  PubMed's linked-citation data. Report how many are already in the library and
+  how many are new, on the three failed fixtures (anesthesia, retreatment,
+  apicoectomy).
+- **A26b** Verify the claim before building: would this have surfaced the
+  Reader/OSU anesthesia canon, Karaoğlan and Toia 2022, and Setzer Part 1?
+  If not, say so and stop — the item is justified by that specific test.
+- **A26c** Ingest with full provenance, dry-run with delta split. Chase one level
+  only; do not recurse.
+- **A26d** Metric is hits-per-query and the named-paper test in A26b, not raw
+  library growth.
+
+### A27 — Read full text where it is legally free
+
+Curo reads abstracts only, which is honest and is also a ceiling. Cortical
+thickness gradients, anterior-loop lengths and subgroup numbers live in methods
+and results, not abstracts.
+
+- **A27a** Measure the ceiling first: for the three failed fixtures, how many
+  cited papers have PMC open-access full text available?
+- **A27b** Where available, retrieve and use full text; keep the abstract-only
+  disclaimer accurate per paper — the rendered surface must say which papers were
+  read in full and which were not (A9's principle: the page must not claim more
+  than was done).
+- **A27c** This also catches A10's population mismatches: a full text makes
+  "wisdom teeth" and "maxillary MB root" unmissable. Re-run the three misattributed
+  citations from A10's addendum against full text and report whether they would
+  have been caught.
+- **A27d** Report added cost and latency per answer. Respect PMC's terms and rate
+  limits; open-access subset only.
+
+### A28 — Seed the library deliberately
+
+Growth is currently accidental — the library only grows where someone has already
+asked. Take the questions an endodontist actually asks and stock them in advance.
+
+- **A28a** Build a topic list of 30–40 questions: start from
+  `eval/COMPARISON_QUESTIONS.md`, the eval set, the border set, and the stored
+  history. RB reviews the list before ingestion.
+- **A28b** For each, run the retrieval path and ingest what passes provenance
+  checks. Dry-run with delta split; report papers added per topic.
+- **A28c** Re-run the full eval afterwards and explain any case that moves.
+  Growth that degrades precision is not growth.
+
+### A29 — Guidelines and classification frameworks
+
+Most are not in PubMed and need their own ingestion path. This is what makes an
+answer read as expert rather than assembled, and it is what an out-of-domain
+question should be referred to.
+
+- **A29a** Consume Stage 4's S4 inventory rather than rebuilding it: ESE, AAE,
+  SDCEP, ADA, AAOMR, AAOMS. Add the standard classification frameworks a
+  specialist expects (e.g. Kim–Kratchman A/B/C for apical surgery case selection).
+- **A29b** These are guidelines, not trials: band them per A7's guideline tier, and
+  never let a position statement outrank a Cochrane review in any rendered
+  ordering.
+- **A29c** Where a question is out of Curo's domain, the quarantine block's
+  "Consult directly:" line should name the specific document, not the body.
+
+### Sequencing for §8c
+
+A24 and A26 are cheap and are expected to recover most of the observed gap — do
+them first, after A5b and A23. A25 is the largest improvement and the largest
+risk: measure (A25a), propose, and wait for RB. A27, A28 and A29 are projects, not
+fixes, and belong after the demo.
+
+---
+
+### A22 — The quarantine block is the wrong granularity and the wrong frequency
+
+RB, on the apicoectomy curriculum: the boxes are unreadable and there are far too
+many of them. He is right, and it is not only cosmetic. Measured from that output:
+**~18 quarantine blocks across four modules**, several wrapping a SINGLE step of a
+numbered list, and the identical footer *"Consult directly: the specialty
+guidelines for this question — Curo has not retrieved or checked them"* repeated
+~15 times verbatim. A warning that appears eighteen times is wallpaper — the same
+ambient-versus-alarming failure identified for the banner in A3, now visual.
+
+It also breaks the document. Step 3 renders as a bare "3." followed by a block
+followed by orphaned text, and Markdown emphasis leaks as literal `**`
+("Administer local anaesthesia** Inferior alveolar nerve block…").
+
+- **A22a — never wrap part of a list item.** A numbered or bulleted step is
+  atomic. If a step is unsourced, MARK the step; do not wrap it in a block that
+  separates it from its number. Test on the apicoectomy fixture: no list item is
+  split by a quarantine block, and no literal `**` survives rendering.
+- **A22b — two levels, chosen by size.** A substantial unsourced passage (a
+  paragraph or more) keeps the full block. A single unsourced sentence or step
+  gets an INLINE treatment instead: a thin (2px) amber left rule and a small
+  end-of-sentence marker, no header, no footer, no repeated boilerplate.
+- **A22c — say it once per module.** One legend at the top of each module
+  ("Passages marked ° are general clinical practice, not from the retrieved
+  evidence base — Curo has not checked them against any abstract"), and one
+  consolidated note at the end listing them. Delete the repeated per-block footer
+  entirely.
+- **A22d — contrast.** Body text inside any quarantine treatment must be near-black
+  on the pale ground (target ≥7:1; the amber is for the rule and the label, never
+  for body copy). Verify the rendered contrast ratio in the running app, not in
+  the stylesheet. This is a light UI — check that no dark-theme token leaked in.
+- **A22e** Re-render the apicoectomy curriculum after the change and report the
+  block count before and after. If the count is still above ~5 per module, the
+  problem is the generator emitting that much unsourced text, not the renderer —
+  say so and hand it to A20/Stage 2 item I rather than shrinking the warning.
+
+### A23 — Apicoectomy retrieval gap  *(new fixture, A5 class)*
+
+Save the curriculum as `eval/fixtures/curriculum_mandibular_apicoectomy.md`. A
+competitor answer on the same topic (saved beside it as `..._oe.md`) cites, and
+Curo retrieved none of, the following — all core to this exact question:
+
+- **Jeon KJ et al., Clin Oral Investig 2021** — CBCT anatomical analysis of
+  mandibular posterior teeth *for endodontic microsurgery*: buccal cortical
+  thickness ~1.7 mm at first premolar rising to 6.9–12.3 mm at the second molar
+  distal root; apex-to-canal distance shortest at the second molar, <2 mm in
+  8–11%. This is the single most on-topic paper for the question asked.
+- **Mainkar A, Zhu Q, Safavi K, J Endod 2020** — altered sensation after
+  mandibular premolar and molar periapical surgery: ~14% overall, 38% premolar
+  vs 8% molar, OR 7.19. Curo cited only von Arx 2021 (12.9% / 22.6%).
+- **Setzer FC et al., J Endod 2010 (Part 1)** — traditional vs microsurgery,
+  94% vs 59%. Curo retrieved Part 2 only.
+- **Bi C et al., J Endod 2022** and **Lee SM et al., J Endod 2020** — the bony
+  lid / bone window technique, which exists specifically for thick mandibular
+  cortex. Absent entirely.
+- Kim–Kratchman A/B/C case classification; targeted EMS with 3D-printed guides;
+  MRONJ/antiresorptive considerations; nerve-injury MANAGEMENT (extruded material
+  removal, steroids, referral timing).
+
+Meanwhile **55 papers were retrieved and not cited**, including pulpotomy,
+wisdom-tooth and radiography-selection reviews. So this is a precision AND recall
+failure on the same query.
+
+- **A23a** Determine the mechanism, per A5a's method: gate short-circuit,
+  vocabulary miss, cap, or absent from library. Report before fixing.
+- **A23b** The curriculum's topic vocabulary ("mandibular", "inferior alveolar
+  nerve", "mental foramen", "cortical thickness", "bony lid") should have driven
+  retrieval. Check whether module-level topics generate their own search terms or
+  whether all four modules share one query set.
+- **A23c** Done when a regenerated curriculum cites the anatomical gradient
+  papers. Report hits-per-query before and after.
+
+### A10 (addendum) — Right finding, wrong population
+
+Three citations in the apicoectomy curriculum support their claim *as a sentence*
+while describing a different operation or a different tooth. Every gate passed.
+
+1. **PMID 25069437** — Coulthard et al., *Surgical techniques for the removal of
+   mandibular wisdom teeth* (Cochrane) — cited for **flap design and wound closure
+   in apicoectomy** (triangular vs envelope, primary vs secondary closure). Third
+   molar extraction evidence transplanted to periapical surgery.
+2. **PMID 20478451** — Degerness & Bowles, on the **maxillary** molar mesiobuccal
+   root — cited for isthmus anatomy in a **mandibular** apicoectomy protocol
+   ("isthmus tissue increases substantially at 3.6 mm from the apex in MB roots").
+   Also duplicated in the reference list (entries 2 and 40).
+3. **PMID 29990391** — the injectable local anaesthetics Cochrane review — cited
+   for what it *does not say*. Citing a paper for an absence is not support.
+
+Extend A10's classifier: alongside background / methods / results / conclusions,
+check **population and procedure match**. A claim about procedure X may not be
+supported by a paper studying procedure Y, however well the sentence matches.
+Flag as `POPULATION_MISMATCH`, reported separately. Measure the flip rate before
+enabling, per A10d. Also add a reference-list de-duplication test.
+
 ### A17 — Sweep every explanatory surface for method claims  *(new, small, high value)*
 
 A15 found the "WHAT YOU GET" card telling the clinician that papers are ranked by
