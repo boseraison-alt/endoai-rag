@@ -494,22 +494,21 @@ def ask():
     # A20. Literature answers; it does not interview. This gate was the ONLY
     # way the review route could put a question back to the clinician — the
     # synthesis prompt has forbidden questions in the answer body since
-    # `trust-surface-v1`, and 0 of 10 stored review answers contain one. So
-    # this line is the whole of A20b.
+    # `trust-surface-v1`, and 0 of 10 stored review answers contain one.
     #
-    # Curriculum keeps it, deliberately and for now. A20's premise was that
-    # "Curriculum already asks none"; measured, that is wrong — the gate fires
-    # on `learn` too, and three stored curricula carry an answered
-    # clarification block in their titles. Turning it off there is a separate
-    # decision for RB, not a side effect of this one.
-    if mode != "review" and not skip_clarify and not context:
+    # A20 (revision), RB 2026-09-03. Curriculum keeps the ability to ask, but
+    # narrowed to its one legitimate use: a topic too broad to teach from.
+    # `generate_clarifying_questions` asked 2-3 clinical questions on
+    # principle, which on "apicoectomy of mandibular teeth" is the same
+    # interrogation Literature just stopped doing.
+    if mode == "learn" and not skip_clarify and not context:
         try:
-            questions = generate_clarifying_questions(question,
-                                                      context_block=context_block)
+            from endo_ai import generate_curriculum_narrowing
+            questions = generate_curriculum_narrowing(question)
             if questions:
                 return jsonify({"needs_clarification": True, "questions": questions})
         except Exception:
-            pass   # On any error, proceed normally
+            pass   # Fail open, and open means build.
 
     # Build enriched question if user answered clarifying questions
     full_question = question
@@ -950,6 +949,51 @@ def multi_query_search(question: str, generated_terms: list, limit: int = 100) -
     return out[:limit * 2]
 
 
+def cap_by_relevance(bucket: list, cap: int, tier: str = "") -> list:
+    """Choose which papers in a tier survive the cap, by relevance.
+
+    A5b. WHICH papers survive is a relevance question; the ORDER they are then
+    shown in is a quality question. This used to answer both with the score,
+    and the score does not know what was asked.
+
+    Measured on "retreatment in one visit versus two visits": 60 level1 papers
+    cleared the 0.55 similarity floor, the cap kept 25 of them BY SCORE, and
+    Karaoglan 2022 — the single most on-point RCT in the library, similarity
+    0.648 — ranked 54th of 60 by score and was cut. Twenty of the twenty-five
+    it kept were LESS similar to the question than the one it dropped, led by
+    AAE and ESE position statements at score 90.0 and 87.0 and similarities of
+    0.62 and 0.60 (which is also A7: guideline rows sitting in level1 at a
+    score no trial in the library reaches). The answer then declared that no
+    prospective study directly compares the two protocols — A5's false evidence
+    gap, produced here.
+
+    Invariant 1 is untouched: tier is still assigned by study design, and the
+    caller still orders within the tier by score. This decides membership, not
+    rank.
+
+    Ties break on score, so two equally relevant papers are separated by the
+    better one — and the order is deterministic, which a bare sort on a float
+    that repeats is not.
+    """
+    if cap is None or cap <= 0 or len(bucket) <= cap:
+        return list(bucket)
+
+    def relevance(p):
+        return (float(p.get("similarity") or 0), float(p.get("score") or 0))
+
+    ranked  = sorted(bucket, key=relevance, reverse=True)
+    kept    = ranked[:cap]
+    dropped = ranked[cap:]
+    # Standing rule 5: anything that discards candidate content says what it
+    # discarded and how close the closest one was. A silent cap is how the
+    # retreatment RCT disappeared without a trace in the first place.
+    print(f"  [cap] {tier or 'tier'}: {len(bucket)} above the floor, keeping "
+          f"the {cap} most relevant; dropped {len(dropped)}, best dropped "
+          f"similarity {float(dropped[0].get('similarity') or 0):.3f} "
+          f"(PMID {dropped[0].get('pmid')})")
+    return kept
+
+
 # Papers that must reach the clinician whatever the query happened to surface.
 AUTHORITY_TOP_LEVEL1 = 3
 
@@ -1289,12 +1333,32 @@ def build_evidence_base_with_progress(job_id: str, question: str,
                     tier = "level5"
                 by_tier.setdefault(tier, []).append(p)
 
+            # A5b — WHICH papers survive the cap is a relevance question; the
+            # ORDER they are shown in is a quality question. This used to
+            # answer both with the score, and the score does not know what was
+            # asked.
+            #
+            # Measured on "retreatment in one visit versus two visits":
+            # 60 level1 papers cleared the 0.55 floor, the cap kept 25 by
+            # score, and Karaoglan 2022 — the single most on-point RCT in the
+            # library, similarity 0.648 — ranked 54th of 60 BY SCORE and was
+            # cut. Twenty of the twenty-five it kept were LESS similar to the
+            # question than the one it dropped, led by AAE and ESE position
+            # statements at score 90.0 and 87.0 with similarities of 0.57 and
+            # 0.56 (which is also A7: guideline rows sitting in level1 at a
+            # score no trial reaches). The answer then declared that no
+            # prospective study directly compares the two protocols — A5's
+            # false evidence gap, caused here.
+            #
+            # So: SELECT the survivors by similarity to this question, then
+            # order them by score for display, which is invariant 1 unchanged
+            # — tier by study design, score ranking only within a tier.
             for tier in TIER_ORDER:
                 bucket = by_tier.get(tier)
                 if not bucket:
                     continue
+                bucket = cap_by_relevance(bucket, MAX_RAG_PAPERS_PER_TIER, tier)
                 bucket.sort(key=lambda x: x["score"], reverse=True)
-                bucket = bucket[:MAX_RAG_PAPERS_PER_TIER]
                 evidence[tier] = {
                     "text":   _scored_to_text(bucket, TIER_LABEL.get(tier, tier.upper())),
                     "ids":    [p["pmid"] for p in bucket],

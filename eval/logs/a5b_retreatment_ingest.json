@@ -1,0 +1,57 @@
+{
+  "wanted": {
+    "34555421": "Toia CC et al., J Endod 2022 \u2014 1-visit vs 2-visit retreatment of teeth with persistent/secondary infection, RCT, 18-month follow-up"
+  },
+  "expected_present": {
+    "35488883": "Karaoglan 2022, Int Endod J",
+    "28148534": "Schwendicke & Gostemeyer 2017, BMJ Open"
+  },
+  "before": {
+    "35488883": [
+      "35488883",
+      2022,
+      "level1",
+      67.8,
+      "International endodontic journal",
+      "Outcome of single- versus two-visit root canal retreatment in teeth wi"
+    ],
+    "28148534": [
+      "28148534",
+      2017,
+      "level1",
+      61.5,
+      "BMJ open",
+      "Single-visit or multiple-visit root canal treatment: systematic review"
+    ]
+  },
+  "after": {
+    "35488883": [
+      "35488883",
+      2022,
+      "level1",
+      67.8,
+      "International endodontic journal",
+      "Outcome of single- versus two-visit root canal retreatment in teeth wi"
+    ],
+    "28148534": [
+      "28148534",
+      2017,
+      "level1",
+      61.5,
+      "BMJ open",
+      "Single-visit or multiple-visit root canal treatment: systematic review"
+    ],
+    "34555421": [
+      "34555421",
+      2022,
+      "level1",
+      66.7,
+      "Journal of endodontics",
+      "Effectiveness of 1-Visit and 2-Visit Endodontic Retreatment of Teeth w"
+    ]
+  },
+  "added": [
+    "34555421"
+  ],
+  "applied": true
+}

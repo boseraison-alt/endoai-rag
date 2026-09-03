@@ -1412,6 +1412,80 @@ def _parse_question_array(raw: str):
     return None
 
 
+# A20 (revision), RB 2026-09-03. Curriculum MAY ask — but only to narrow a
+# topic too broad to teach from, never to interrogate a specific one.
+#
+# Hoisted for the same reason as CASE_FOLLOWUP_PROMPT: a test that reads the
+# function source passes over a docstring restating the rule and survives a
+# mutant that deleted it from the prompt.
+CURRICULUM_NARROWING_PROMPT = """A colleague has asked for a teaching curriculum on:
+
+\"\"\"{topic}\"\"\"
+
+Curo will build FOUR modules from this. Your only job is to decide whether the
+topic is specific enough to build four modules from, or so broad that the four
+would each have to pick a different subject.
+
+BUILD IT — return [] — when the topic already names what is being taught: a
+procedure, a material, a technique, a population, or a comparison.
+
+  "apicoectomy of mandibular teeth"                    -> build
+  "use of lasers in root canal disinfection"            -> build
+  "MTA versus Biodentine for pulpotomy in mature teeth" -> build
+  "anesthesia for endodontics"                          -> build
+
+ASK — return one or two questions — only where a teacher would genuinely have
+to choose before starting, and different choices would produce entirely
+different curricula.
+
+  "regenerative endodontics" -> immature apex or mature tooth? outcomes or technique?
+  "trauma"                   -> which injury, and which dentition?
+  "endodontics"              -> the whole specialty
+
+The test is NOT "could this be more specific" — almost anything could, and
+asking on that basis is the interrogation this gate exists to prevent. The test
+is: WOULD FOUR MODULES BUILT FROM THIS BE ABOUT FOUR DIFFERENT THINGS?
+
+If you ask, offer the actual choice rather than an open prompt: "Immature apex
+or mature tooth?" — never "Can you be more specific?". At most two questions.
+
+Return ONLY a JSON array of strings, empty if the topic is ready to build. No
+markdown, no explanation."""
+
+
+def generate_curriculum_narrowing(topic: str) -> list:
+    """One or two narrowing questions for a topic too broad to teach from, or
+    [] for a topic that is ready to build.
+
+    Deliberately NOT `generate_clarifying_questions`, which asks 2-3 clinical
+    questions on principle — the behaviour A20 removed from Literature. A
+    curriculum is not a patient: the only thing worth asking before building
+    one is which curriculum was meant.
+
+    Fails OPEN, and open here means BUILD. A gate that errors must not leave
+    the clinician staring at a question they cannot get past, and a slightly
+    too-broad curriculum is a far better failure than a refused one.
+    """
+    client = anthropic.Anthropic(api_key=_get_api_key())
+    try:
+        resp = _invoke_claude(
+            client, function_name="generate_curriculum_narrowing",
+            model=MODELS["structured_fast"],
+            max_tokens=300,
+            messages=[{"role": "user", "content":
+                      CURRICULUM_NARROWING_PROMPT.format(topic=topic)}]
+        )
+        log_llm_call("generate_curriculum_narrowing", MODELS["structured_fast"],
+                     resp.usage, mode="learn")
+        raw = re.sub(r"```json|```", "", resp.content[0].text).strip()
+        result = _parse_question_array(raw)
+        if result is not None:
+            return result[:2]
+    except Exception as e:
+        print(f"  [learn] narrowing check failed, building anyway: {e}")
+    return []
+
+
 def generate_clarifying_questions(question: str, context_block: str = "") -> list:
     """
     Generate 2-3 targeted clinical clarifying questions before running a full search.

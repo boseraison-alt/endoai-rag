@@ -49,7 +49,7 @@ def client(monkeypatch):
     import app as app_mod
     import endo_ai
 
-    calls = {"review": 0, "case": 0}
+    calls = {"review": 0, "case": 0, "narrow": 0}
 
     def fake_clarify(question, context_block=""):
         calls["review"] += 1
@@ -59,8 +59,15 @@ def client(monkeypatch):
         calls["case"] += 1
         return ["How long has it hurt?"]
 
+    def fake_narrow(topic):
+        # Broad by default; the specific-topic tests override this.
+        calls["narrow"] += 1
+        return ["Immature apex or mature tooth?"]
+
     monkeypatch.setattr(app_mod, "generate_clarifying_questions", fake_clarify)
     monkeypatch.setattr(endo_ai, "generate_case_followups", fake_case,
+                        raising=False)
+    monkeypatch.setattr(endo_ai, "generate_curriculum_narrowing", fake_narrow,
                         raising=False)
     # The answer itself is not under test here; nothing must reach the network.
     monkeypatch.setattr(app_mod, "run_question", lambda *a, **k: None)
@@ -100,14 +107,16 @@ class TestLiteratureNeverAsks:
                                       "mode": "review"})
         assert "needs_clarification" not in r.get_json()
 
-    def test_curriculum_still_asks(self, client):
-        """Deliberate asymmetry, pinned. A20's premise was that Curriculum
-        asks none; measured, it does. Turning that off is RB's call, and this
-        test is what will fail loudly when someone makes it."""
-        r = client.post("/ask", json={"question": "Anesthesia for endodontics",
-                                      "mode": "learn"})
-        assert r.get_json().get("needs_clarification") is True
-        assert client._clarify_calls["review"] == 1
+    def test_the_literature_clarifier_is_gone_from_every_route(self, client):
+        """A20's premise was that Curriculum asks none; measured, it did — via
+        the same 2-3-clinical-questions generator Literature used. Neither
+        route consults it now (A20 revision, RB 2026-09-03); Curriculum has a
+        gate of its own, tested below."""
+        client.post("/ask", json={"question": "MTA in vital pulp therapy",
+                                  "mode": "review"})
+        client.post("/ask", json={"question": "Anesthesia for endodontics",
+                                  "mode": "learn"})
+        assert client._clarify_calls["review"] == 0
 
     def test_the_case_path_is_untouched(self, client):
         """A20b — do not touch the case relevance gate. There the question IS
@@ -118,6 +127,179 @@ class TestLiteratureNeverAsks:
                           "content": "20-year-old, necrotic 45, buccal sinus tract"}]})
         assert r.get_json().get("needs_clarification") is True
         assert client._clarify_calls["case"] == 1
+
+
+class TestCurriculumNarrowsButDoesNotInterrogate:
+    """A20 (revision), RB 2026-09-03. Curriculum keeps the ability to ask, cut
+    down to its one legitimate use: a topic too broad to teach from.
+
+    Both directions, because this is the pair where a one-way test passes
+    while the gate is stuck open or stuck shut."""
+
+    def _client(self, monkeypatch, narrowing):
+        import app as app_mod
+        import endo_ai
+        seen = {"n": 0, "topic": None}
+
+        def fake(topic):
+            seen["n"] += 1
+            seen["topic"] = topic
+            if isinstance(narrowing, Exception):
+                raise narrowing
+            return narrowing
+
+        monkeypatch.setattr(endo_ai, "generate_curriculum_narrowing", fake,
+                            raising=False)
+        monkeypatch.setattr(app_mod, "run_question", lambda *a, **k: None)
+        app_mod.app.config["TESTING"] = True
+        return app_mod.app.test_client(), seen
+
+    def test_a_broad_topic_is_narrowed_before_anything_is_built(self, monkeypatch):
+        c, seen = self._client(monkeypatch,
+                               ["Immature apex or mature tooth?",
+                                "Outcomes, or technique?"])
+        r = c.post("/ask", json={"question": "regenerative endodontics",
+                                 "mode": "learn"})
+        body = r.get_json()
+        assert body.get("needs_clarification") is True
+        assert body["questions"] == ["Immature apex or mature tooth?",
+                                     "Outcomes, or technique?"]
+        assert "job_id" not in body, "it started building a curriculum anyway"
+        assert seen["topic"] == "regenerative endodontics"
+
+    def test_a_specific_topic_goes_straight_to_building(self, monkeypatch):
+        """RB's own example. A curriculum that stops to ask "which tooth?"
+        about a topic that already says which tooth is the interrogation
+        Literature just had removed."""
+        c, seen = self._client(monkeypatch, [])
+        r = c.post("/ask", json={"question": "apicoectomy of mandibular teeth",
+                                 "mode": "learn"})
+        body = r.get_json()
+        assert "needs_clarification" not in body, body
+        assert body.get("job_id"), "the curriculum was not built"
+        assert seen["n"] == 1, "the gate was skipped rather than passed"
+
+    def test_literature_does_not_consult_the_narrowing_gate_either(self, monkeypatch):
+        """The narrowing question is about which curriculum was meant. A
+        literature question has no curriculum to narrow."""
+        c, seen = self._client(monkeypatch, ["Immature apex or mature tooth?"])
+        r = c.post("/ask", json={"question": "regenerative endodontics",
+                                 "mode": "review"})
+        assert "needs_clarification" not in r.get_json()
+        assert seen["n"] == 0
+
+    def test_answering_the_narrowing_question_builds_rather_than_re_asking(
+            self, monkeypatch):
+        """The second half of the round trip. The gate is skipped once context
+        has been supplied, or the clinician can never get past it."""
+        c, seen = self._client(monkeypatch, ["Immature apex or mature tooth?"])
+        r = c.post("/ask", json={"question": "regenerative endodontics",
+                                 "mode": "learn",
+                                 "context": "Q1: Immature apex or mature tooth?\n"
+                                            "Answer: immature apex"})
+        assert "needs_clarification" not in r.get_json()
+        assert seen["n"] == 0
+
+    def test_a_broken_gate_builds_rather_than_blocks(self, monkeypatch):
+        """Fail open, and open here means BUILD. A gate that errors must not
+        leave the clinician staring at a question they cannot get past, and a
+        slightly too-broad curriculum is a far better failure than a refused
+        one."""
+        c, _ = self._client(monkeypatch, RuntimeError("model unavailable"))
+        r = c.post("/ask", json={"question": "regenerative endodontics",
+                                 "mode": "learn"})
+        assert "needs_clarification" not in r.get_json()
+        assert r.get_json().get("job_id")
+
+
+class TestWhatTheNarrowingGateIsTold:
+    """Asserted on the hoisted prompt — the text the model is actually shown."""
+
+    def test_the_operative_test_is_four_modules_not_specificity(self):
+        import endo_ai
+        p = endo_ai.CURRICULUM_NARROWING_PROMPT
+        assert "WOULD FOUR MODULES BUILT FROM THIS BE ABOUT FOUR DIFFERENT THINGS?" in p
+        assert 'The test is NOT "could this be more specific"' in p
+
+    @pytest.mark.parametrize("topic", [
+        "apicoectomy of mandibular teeth",
+        "use of lasers in root canal disinfection",
+        "MTA versus Biodentine for pulpotomy in mature teeth",
+        "anesthesia for endodontics",
+    ])
+    def test_each_build_example_is_actually_marked_build(self, topic):
+        """One-directional examples are how a gate gets stuck shut. Asserted
+        per line rather than on a count: a count of "at least three" survives
+        a mutant that unmarks one of four, which is exactly what happened."""
+        import endo_ai
+        line = next((l for l in endo_ai.CURRICULUM_NARROWING_PROMPT.splitlines()
+                     if topic in l), None)
+        assert line is not None, "the prompt lost the example %r" % topic
+        assert "-> build" in line, (
+            "%r is shown to the model without its verdict" % topic)
+
+    def test_the_ask_side_examples_survive_too(self):
+        import endo_ai
+        p = endo_ai.CURRICULUM_NARROWING_PROMPT
+        for broad in ("regenerative endodontics", '"trauma"', '"endodontics"'):
+            assert broad in p, broad
+
+    def test_it_asks_for_a_choice_not_an_open_prompt(self):
+        import endo_ai
+        p = endo_ai.CURRICULUM_NARROWING_PROMPT
+        assert 'never "Can you be more specific?"' in p
+
+    def test_the_generator_itself_fails_open_to_building(self, monkeypatch):
+        """The route's own try/except is not enough: it catches whatever the
+        generator throws, so a test that stubs the generator proves only that
+        the ROUTE fails open. This runs the real function with the model
+        unavailable — the layer where the failure actually happens."""
+        import endo_ai
+        monkeypatch.setattr(endo_ai, "_get_api_key", lambda: "test-key")
+        monkeypatch.setattr(endo_ai.anthropic, "Anthropic", lambda **kw: object())
+        monkeypatch.setattr(endo_ai, "_invoke_claude",
+                            lambda *a, **k: (_ for _ in ()).throw(
+                                RuntimeError("model unavailable")))
+        assert endo_ai.generate_curriculum_narrowing("regenerative endodontics") == []
+
+    def test_an_unparseable_answer_builds_rather_than_asking_nonsense(self, monkeypatch):
+        """Same tolerance ladder as the case follow-ups. A parse failure must
+        not become a question the clinician cannot answer."""
+        import endo_ai
+
+        class _R:
+            content = [type("T", (), {"text": "I could not decide."})()]
+            usage = type("U", (), {"input_tokens": 1, "output_tokens": 1,
+                                   "cache_creation_input_tokens": 0,
+                                   "cache_read_input_tokens": 0})()
+
+        monkeypatch.setattr(endo_ai, "_get_api_key", lambda: "test-key")
+        monkeypatch.setattr(endo_ai.anthropic, "Anthropic", lambda **kw: object())
+        monkeypatch.setattr(endo_ai, "log_llm_call", lambda *a, **k: 0.0)
+        monkeypatch.setattr(endo_ai, "_invoke_claude", lambda *a, **k: _R())
+        assert endo_ai.generate_curriculum_narrowing("trauma") == []
+
+    def test_it_never_asks_more_than_two(self, monkeypatch):
+        import endo_ai
+        import json as _json
+
+        class _R:
+            content = [type("T", (), {"text": _json.dumps(
+                ["a?", "b?", "c?", "d?"])})()]
+            usage = type("U", (), {"input_tokens": 1, "output_tokens": 1,
+                                   "cache_creation_input_tokens": 0,
+                                   "cache_read_input_tokens": 0})()
+
+        monkeypatch.setattr(endo_ai, "_get_api_key", lambda: "test-key")
+        monkeypatch.setattr(endo_ai.anthropic, "Anthropic", lambda **kw: object())
+        monkeypatch.setattr(endo_ai, "log_llm_call", lambda *a, **k: 0.0)
+        monkeypatch.setattr(endo_ai, "_invoke_claude", lambda *a, **k: _R())
+        assert endo_ai.generate_curriculum_narrowing("endodontics") == ["a?", "b?"]
+
+    def test_the_topic_is_actually_interpolated(self):
+        import endo_ai
+        filled = endo_ai.CURRICULUM_NARROWING_PROMPT.format(topic="pulpotomy")
+        assert "pulpotomy" in filled and "{topic}" not in filled
 
 
 class TestTheAnswerBodyAsksNothing:
