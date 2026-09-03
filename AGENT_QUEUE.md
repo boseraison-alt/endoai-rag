@@ -1560,7 +1560,58 @@ to cite them.
 So A35c ("synthesis must descend") is largely already true and should not be
 built. **The work moves upstream, to retrieval.**
 
-- **A35f** Diagnose why level1 candidates are so much less on-topic than lower
+- **A35f — MEASURED 2026-09-03. HYPOTHESIS NOT SUPPORTED, and my own A35a
+  reading was an over-reading.** Similarity of what each tier ADMITS, pooled
+  over four real questions:
+
+  ```
+  tier         mean worst-admitted   quota-bound
+  cochrane            0.687             0 of 2
+  level1              0.622             3 of 4     <- HIGHEST of the non-cochrane tiers
+  level3b             0.620             0 of 3
+  guideline           0.622             0 of 4
+  classic             0.601             0 of 4
+  level4              0.590             0 of 3
+  level3a             0.589             2 of 4
+  invitro             0.585             0 of 2
+  level3              0.581             0 of 4
+  level5              0.581             0 of 4
+  level2              0.579             0 of 4
+  ```
+
+  **level1 does not reach further down the relevance ordering — it reaches
+  LESS far than every other tier bar cochrane.** It is quota-bound on 3 of 4
+  questions, but it cuts at 0.645 / 0.715 / 0.577, i.e. it is turning away
+  relevant papers, not admitting irrelevant ones. A per-tier relevance floor
+  binding before the quota would therefore change almost nothing: the papers a
+  floor would remove are not there.
+
+  **The 21% is a denominator effect.** Citation rate is cited/available, and
+  level1's availability is 3-6x every other tier's because its quota is 25
+  against their 4-19. Counted the other way round:
+
+  ```
+  tier        share of ALL citations Curo makes
+  level1                59%
+  level3a               14%
+  cochrane               7%
+  level2                 7%
+  level5                 6%
+  level3b                5%
+  ```
+
+  **level1 supplies 59% of every citation.** It is the workhorse, not the
+  problem. My A35a gloss — "the pool is 70% level1 and four fifths goes
+  uncited, so it is a level1 precision problem" — read a rate as a defect when
+  it is an artefact of quota size. That is the seventh premise overturned and
+  the second of mine.
+
+  **Consequence: do not build A35f's floor or A35g's quota change.** Neither
+  addresses anything the measurement supports, and shrinking level1's quota
+  would cut the tier that supplies most of the evidence. The route to more
+  references is not here.
+
+- **A35f (original)** Diagnose why level1 candidates are so much less on-topic than lower
   tiers. Report the similarity distribution by tier — hypothesis: level1's quota
   (25) is large enough to reach far down the relevance ordering, while smaller
   tiers only ever admit their few genuinely relevant papers. If so, the fix is a
