@@ -120,6 +120,14 @@ Opening instruction for the agent session:
 22. **Change one variable at a time when attributing a recovery.** (Origin: the
     131-pool comparison in A33d altered both the dropped group and the scenario
     vocabulary, and credited the wrong one.)
+23. **A rate is not a defect until its denominator is checked.** (Origin: level1's
+    21% cited rate looked like a precision problem; its quota is 25 against other
+    tiers' 4–19, and it in fact supplies 59% of all citations.)
+24. **Superseded items are archived, not stacked.** When a premise is overturned,
+    keep a short record — the premise, the measurement that killed it, the date —
+    and move the superseded *instructions* to `AGENT_QUEUE_ARCHIVE.md`. The record
+    of overturned premises is the most valuable thing in this file (rule 21); the
+    dead instructions beneath them are the least. Completed items move there too.
 
 ---
 
@@ -1536,7 +1544,58 @@ esearch hit count, not to the final pool. Converting a final-pool floor into a
 per-tier trigger needs the per-tier-to-final-pool transfer measured, which this
 has not done. Do not set the constant from the ~24 figure without that step.
 
-### A35 — REFRAMED (2026-09-03): the defect is level1 precision, not refusal to descend
+### A35 — REFRAMED AGAIN (2026-09-03, second): the quota is too SMALL
+
+A35f's measurement disproved A35's reframing — and the finding inverts it. Read
+the numbers together:
+
+- level1 admits down to mean worst similarity **0.622**, *higher* than level3a
+  (0.589) and level2 (0.579). It reaches LESS far down the ordering, not further.
+- level1 is **quota-bound on 3 of 4** questions, cutting at **0.645 / 0.715 /
+  0.577**.
+- level1 supplies **59% of every citation Curo makes**.
+- The 21% cited rate is a denominator artefact: level1's quota is 25 against
+  other tiers' 4–19.
+
+**So Curo turns away level1 papers at 0.645 while admitting level2 papers at
+0.579.** It is discarding more-relevant evidence to preserve a budget for
+less-relevant evidence, and doing it in the tier that produces most of the answer.
+The quota is too small, and that is the honest route to RB's ~20 references —
+more genuinely relevant papers available to cite, with no padding.
+
+**This is rule 19 one level further up.** A fixed per-tier quota is a membership
+decision made by *tier* rather than by relevance: "fill 25 slots" admits and
+excludes on the basis that slots exist. But the quotas exist for a real reason —
+without them a Cochrane review is drowned by 200 level1 papers — so they cannot
+simply be removed.
+
+- **A35j — quotas become minimums, not maximums.** Reserve a floor of slots per
+  tier so weaker tiers are never crowded out (this preserves the diversity the
+  quotas were built for), then fill the remaining capacity **by similarity across
+  all tiers**, down to a global floor. Tier keeps doing what it should — banding,
+  labelling, presentation ordering — and stops rationing.
+- **A35k — measure before choosing the numbers.** Report, for the 29 eval
+  questions: how many papers per tier sit above the floor but below the current
+  quota cut; what the total pool becomes under reserved-minimum-plus-similarity;
+  and what that does to synthesis context size and cost. RB has already flagged
+  that a library answer went from ~38 to ~120 papers once; this must not
+  double it again without the number being visible first.
+- **A35l** Re-measure citations produced per tier afterwards. Success is the
+  *count* of cited papers rising toward ~20 while A35d's rule holds — no paper
+  cited that supports no claim. If the count does not rise, the supply
+  explanation is exhausted and the question is genuinely a synthesis judgement
+  one; say so rather than reaching for another mechanism.
+- **A35f and A35g are cancelled** — a floor binding before the quota would remove
+  almost nothing, and shrinking level1's quota would cut the tier supplying most
+  of the evidence.
+
+**Record: seventh premise overturned, second of them the agent's own** (the
+level1-precision gloss read a rate as a defect when it was an artefact of quota
+size). Rule 21 is doing its job.
+
+---
+
+### A35 — REFRAMED (2026-09-03): the defect is level1 precision, not refusal to descend  *(SUPERSEDED by A35j above — retained for the record)*
 
 **A35's premise is overturned — the sixth.** Measured across 15 stored answers,
 593 retrieved and 147 cited:
