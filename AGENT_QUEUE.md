@@ -1650,7 +1650,76 @@ candidates. The 4-19 figures are `MODE_TIER_QUOTAS`, which is the LIVE path. The
 denominator conclusion stands; the reason is candidate mass, not a larger
 allowance.
 
-### A38 — THE PRISMA DEDUP NOTICE ASSERTS SOMETHING IT CANNOT KNOW  *(new, 2026-09-03; the strongest lead A35 has produced)*
+### A38 — RB DECISION (2026-09-03): do this next, before the re-baseline
+
+**There are two defects here and only one of them is a hypothesis. Separate them.**
+
+**Defect 1 — the notice makes a claim the system cannot know. This is a finding,
+not a lead, and it justifies the fix on its own.** "Likely already synthesised
+inside PMID X — defer to its pooled estimate" asserts that a specific review
+included a specific study, with no topic test and no citation linkage. Telling the
+synthesis that MRONJ radiographic predictors were synthesised inside a Biodentine
+regeneration review is simply false. Fix it whether or not it moves the citation
+count. It is the same class as "citations & impact factor", the authority
+guarantee, and "from the wider literature" — an assertion the engine cannot
+support — except this one **acts**: it instructs the model to set evidence aside.
+
+**Defect 2 — that it explains the ~9–11 of ~114 citation count. That IS a
+hypothesis**, and the agent is right that the correlation is not clean. Test it
+separately; do not let the fix's justification rest on it.
+
+**Approach — RB's decision, agreeing with the agent's options 1+2 and adding a
+third that makes it checkable:**
+
+- **A38a** Prefer **verified inclusion over inference**. Where PubMed citation
+  linkage can tell us which primary studies an SR actually cites, use it — then
+  "already synthesised inside PMID X" becomes a fact rather than a guess. This is
+  the same machinery A26 queues for backward citation chasing; build it once and
+  use it for both.
+- **A38b** Where linkage is unavailable, require **topic proximity** between the
+  candidate paper and the SR above a measured threshold, and **reword the notice
+  so it stops asserting inclusion**: not "already synthesised inside PMID X" but
+  "a recent systematic review on this topic exists; where it addresses the same
+  question, prefer its pooled estimate to individual older trials." True, useful,
+  and it does not fabricate a bibliographic fact.
+- **A38c** Pick the SR **by relevance to the question**, not by newest year in the
+  tier. The current rule can nominate a review that has nothing to do with the
+  question asked.
+- **A38d** Measure the flag rate before and after, and the citation count before
+  and after, reported separately — so Defect 1's fix is not credited with Defect
+  2's outcome, or blamed for its absence.
+- **A38e** If the citation count does rise materially, that closes RB's
+  ~20-reference request through the honest route: Curo was ignoring 39% of what it
+  retrieved on a false premise. If it does not rise, say so — four supply
+  explanations are already eliminated and a fifth negative result is worth as much
+  as a positive one.
+
+### A41 — A domain lexicon for query construction  *(new, from A33g's negative result)*
+
+A33g's vocabulary half failed, and **why** it failed is the useful part. The
+enrichment that recovered 2 of 4 contained `"orifice barrier"` — not a synonym for
+an access restoration but a **different named technique**, recognised by a
+clinician who knows the literature. Five generations across two framings never
+produce it. This is a real limit: a general-purpose term generator cannot invent a
+term of art it has no reason to reach for.
+
+- **A41a** Build a curated endodontic lexicon — named techniques, materials,
+  devices and procedures with their variant spellings ("orifice barrier",
+  "intraorifice barrier", "bony lid", "bone window", "targeted endodontic
+  microsurgery", "apexification", "revascularisation"…). Seed it from the terms
+  that appear in the eval set, the comparison set, and the three failed fixtures;
+  RB reviews it before it is used.
+- **A41b** Offer it to the term generator as *available vocabulary* for the
+  subject and scenario groups, never as a mandatory expansion. Measure recovery on
+  the four fixtures with it and without.
+- **A41c** This is the cheap cousin of A28/A29 (seeded topics, guidelines corpus),
+  which bring their own vocabulary with them. If A41 works, note whether A28 would
+  supersede it.
+- **A41d** Keep A33g's hand-written enrichment switchable and OFF, as built. It is
+  a measurement instrument, not a feature — it encodes one clinician's knowledge
+  of one question.
+
+### A38 — THE PRISMA DEDUP NOTICE ASSERTS SOMETHING IT CANNOT KNOW  *(agent's original finding, 2026-09-03)*
 
 Surfaced by A33c's ingestion. `flag_superseded_by_review` takes the newest SR/MA
 **year** anywhere in cochrane+level1, subtracts a 2-year buffer, and flags EVERY

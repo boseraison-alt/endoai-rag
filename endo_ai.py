@@ -904,61 +904,183 @@ def detect_outliers(scored_papers: list) -> list:
 
 
 # ── PRISMA-STYLE DEDUP ────────────────────────────────────
-# Systematic reviews and meta-analyses typically synthesise all primary studies
-# published up to ~12-18 months before their own publication date.
-# When the evidence base contains a recent SR/MA AND older primary RCTs/cohorts
-# on the same topic, those primary studies are likely already counted inside
-# the SR — citing both double-counts the same evidence.
+# Citing both a trial and the review that pooled it double-counts the same
+# evidence. That is real. What this used to do about it was not.
 #
-# Heuristic: any primary study (Level II / IIIa / IIIb / IV) published more than
-# PRISMA_BUFFER_YEARS before the newest SR/MA in the evidence base is flagged
-# as `superseded_by_review`. We do NOT delete the paper (its methodological detail
-# may still be useful) — we just tell Claude to defer to the SR's pooled estimate.
+# A38, measured 2026-09-03. It took the newest SR/MA YEAR anywhere in
+# cochrane+level1, subtracted a buffer, flagged EVERY older primary study, and
+# told the synthesis in the prompt that those papers were "likely already
+# synthesised inside PMID X — defer to its pooled estimate". There was no topic
+# test and no citation linkage in it anywhere. Across the 29 eval questions:
+#
+#   1,294 of 3,301 retrieved papers — 39% of everything retrieved — carried
+#   that claim. Median 39% per question, min 24%, max 53%. It fired on all 29.
+#
+#   Where PubMed exposes the nominated review's reference list, 10 of 482
+#   flagged papers were actually cited by it. TWO PERCENT.
+#
+#   The rule nominated a different review from the most relevant one on 26 of
+#   29 questions — "Root anatomy and canal configuration" for dens invaginatus,
+#   "Impact of iRoot SP on Periodontal Clinical Parameters" for sonic-vs-
+#   ultrasonic, and on the bisphosphonate question 70 of 133 papers were told
+#   to defer to "Regenerative Potential of Biodentine in Complex Endodontic
+#   Cases" — including MRONJ radiographic predictors and osteoporosis periapical
+#   status, which that review cannot have synthesised.
+#
+# Two defects, and only one of them is a hypothesis (RB's framing). DEFECT 1 is
+# that the notice asserts a bibliographic fact the engine cannot know; that is a
+# finding and it justifies this change on its own. DEFECT 2 — that it explains
+# why ~9-11 of ~114 retrieved papers get cited — is a hypothesis, measured
+# separately in A38d, and this fix is not credited with its outcome.
+#
+# What replaces it:
+#
+#   A38c  the review is chosen by RELEVANCE TO THE QUESTION, not by newest year.
+#         Mean similarity of the nominated review 0.674 -> 0.738.
+#   A38a  a paper is flagged `superseded_by_review` ONLY when PubMed's own
+#         reference linkage says the review cites it. Then the claim is a fact.
+#   A38b  everything else gets no claim at all — not a negative one. The
+#         reference list is PARTIAL (only PubMed-indexed, publisher-deposited
+#         references), so absence from it is not evidence of absence. Linkage
+#         can confirm; it can never refute.
+#
+# A38b as RB specified it also asked for a topic-proximity threshold where
+# linkage is unavailable. THAT THRESHOLD IS NOT MEASURABLE FROM THIS DATA and
+# is not invented here: SR-to-paper cosine has median 0.757 for the 10 verified
+# papers and 0.619 for the 1,284 unverified, and at 0.70 a threshold keeps 70%
+# of the verified and still 19% of the unverified. n=10 is far too small to fit
+# a cut to. With the notice no longer naming papers it does not need one —
+# there is nothing left for a proximity gate to protect.
 PRISMA_BUFFER_YEARS  = 2     # SRs typically include studies up to N years before pub
 SR_TIER_KEYS         = ("cochrane", "level1")
 PRIMARY_TIER_KEYS    = ("level2", "level3a", "level3b", "level3", "level4")
 
-def flag_superseded_by_review(evidence: dict) -> dict:
-    """Mark primary studies whose evidence is already pooled inside a more
-    recent systematic review or meta-analysis. Mutates the passed evidence
-    dict in place and returns it."""
-    # Find the newest SR/MA year across cochrane + level1
-    newest_sr_year = 0
-    newest_sr_pmid = ""
+# PubMed's reference linkage, cached per PMID. Built here rather than in a
+# script because A26 (backward citation chasing) needs exactly this call — RB's
+# instruction was to build it once and use it for both.
+#
+# Coverage is the thing to know before relying on it: of 46 reviews nominated
+# across the eval set, 11 (24%) have a reference list at all, median 36 entries.
+# A real systematic review cites far more than 36, so even a present list is a
+# subset. Hence: presence is proof, absence is silence.
+_SR_REFS_MAX = 128
+_sr_refs_cache: dict = {}
+_sr_refs_lock = _cost_thread.Lock()
+
+
+def pubmed_reference_pmids(pmid: str, timeout: int = 10) -> frozenset:
+    """The PMIDs PubMed records this paper as citing. Empty on any failure.
+
+    Fails OPEN — an empty set means "we know nothing", which downstream turns
+    into no claim rather than a negative claim. A network hiccup must never
+    become an assertion about the literature.
+    """
+    pmid = str(pmid or "").strip()
+    if not pmid:
+        return frozenset()
+    with _sr_refs_lock:
+        if pmid in _sr_refs_cache:
+            return _sr_refs_cache[pmid]
+    try:
+        r = ncbi_get(f"{NCBI_EUTILS_BASE}/elink.fcgi", params=_ncbi_params({
+            "dbfrom": "pubmed", "db": "pubmed", "id": pmid,
+            "linkname": "pubmed_pubmed_refs", "retmode": "json"}), timeout=timeout)
+        sets = (r.json().get("linksets") or [{}])[0].get("linksetdbs") or []
+        refs = frozenset(str(x) for d in sets for x in (d.get("links") or []))
+    except Exception as ex:
+        print(f"    [prisma] reference lookup failed for {pmid} ({ex}) — "
+              f"no inclusion will be claimed")
+        refs = frozenset()
+    with _sr_refs_lock:
+        if len(_sr_refs_cache) >= _SR_REFS_MAX:
+            _sr_refs_cache.clear()
+        _sr_refs_cache[pmid] = refs
+    return refs
+
+
+def _reset_sr_refs_cache() -> None:
+    """Tests use this; nothing on the request path needs it."""
+    with _sr_refs_lock:
+        _sr_refs_cache.clear()
+
+
+def flag_superseded_by_review(evidence: dict, verify: bool = True) -> dict:
+    """Name the most relevant recent review, and mark ONLY the papers it is
+    known to cite. Mutates the passed evidence dict in place and returns it.
+
+    `verify=False` skips the network lookup; nothing is then marked
+    `superseded_by_review`, which is the correct degradation — without linkage
+    there is no verified inclusion to report.
+    """
+    # A38c. Pick the review by relevance to the question where the route
+    # supplies one. The live path has no similarity, so it keeps the year rule
+    # — and says which rule it used, because the two disagree on 26 of 29
+    # questions and a reader of the log needs to know which they are seeing.
+    candidates = []
     for tier_key in SR_TIER_KEYS:
         for p in (evidence.get(tier_key, {}) or {}).get("scored", []) or []:
             try:
                 y = int(p.get("year", 0))
             except (ValueError, TypeError):
                 continue
-            if y > newest_sr_year:
-                newest_sr_year = y
-                newest_sr_pmid = p.get("pmid", "")
+            if y > 0:
+                candidates.append((p, y, float(p.get("similarity") or 0)))
 
-    if newest_sr_year == 0:
+    if not candidates:
         return evidence  # no SR to compare against
 
-    cutoff = newest_sr_year - PRISMA_BUFFER_YEARS
+    if any(sim > 0 for _p, _y, sim in candidates):
+        chosen, sr_year, _sim = max(candidates, key=lambda c: (c[2], c[1]))
+        rule = "relevance"
+    else:
+        chosen, sr_year, _sim = max(candidates, key=lambda c: c[1])
+        rule = "year (no similarity on this route)"
+    sr_pmid = chosen.get("pmid", "")
+    cutoff = sr_year - PRISMA_BUFFER_YEARS
 
-    flagged = 0
+    # Belt as well as braces: `pubmed_reference_pmids` swallows its own errors,
+    # but a lookup that ever did raise must not take the whole answer with it.
+    # No linkage means no claim, which is the safe direction.
+    try:
+        refs = pubmed_reference_pmids(sr_pmid) if verify else frozenset()
+    except Exception as ex:
+        print(f"    [prisma] reference lookup raised ({ex}) — no inclusion claimed")
+        refs = frozenset()
+
+    verified, in_window = 0, 0
     for tier_key in PRIMARY_TIER_KEYS:
         for p in (evidence.get(tier_key, {}) or {}).get("scored", []) or []:
+            p["superseded_by_review"] = False
+            p.pop("superseding_sr_pmid", None)
+            p.pop("superseding_sr_year", None)
             try:
                 y = int(p.get("year", 0))
             except (ValueError, TypeError):
-                p["superseded_by_review"] = False
                 continue
-            if y > 0 and y <= cutoff:
+            if not (0 < y <= cutoff):
+                continue
+            in_window += 1
+            if str(p.get("pmid")) in refs:
                 p["superseded_by_review"] = True
-                p["superseding_sr_pmid"]  = newest_sr_pmid
-                p["superseding_sr_year"]  = newest_sr_year
-                flagged += 1
-            else:
-                p["superseded_by_review"] = False
+                p["superseding_sr_pmid"]  = sr_pmid
+                p["superseding_sr_year"]  = sr_year
+                verified += 1
 
-    if flagged:
-        print(f"  [PRISMA dedup] flagged {flagged} primary studies as already synthesised "
-              f"in newer SR (PMID {newest_sr_pmid}, {newest_sr_year}; cutoff ≤ {cutoff})")
+    # Standing rule 5, and the number that matters is the gap between the two:
+    # `in_window` is what the old rule would have claimed, `verified` is what
+    # can actually be shown.
+    print(f"  [PRISMA dedup] review PMID {sr_pmid} ({sr_year}) chosen by {rule}; "
+          f"{len(refs)} reference(s) known; {verified} of {in_window} older "
+          f"primary studies verified as cited by it"
+          + ("" if refs else " — no reference list published, no inclusion claimed"))
+
+    # The prompt builder needs the review even when nothing was verified: the
+    # unverified notice still says a recent review on the topic exists, which
+    # is true and useful, without naming a paper.
+    evidence["_prisma"] = {
+        "sr_pmid": sr_pmid, "sr_year": sr_year, "chosen_by": rule,
+        "refs_known": len(refs), "verified": verified, "in_window": in_window,
+    }
     return evidence
 
 
@@ -4392,7 +4514,20 @@ def _build_evidence_context(evidence: dict) -> str:
     if currency_warning:
         context += currency_warning + "\n"
 
-    # PRISMA-style dedup notice — primary studies already pooled in a newer SR
+    # PRISMA-style dedup notice. A38 — this block used to name every older
+    # primary study as "likely already synthesised inside PMID X". Where that
+    # was checkable it was true 2% of the time, so it now says two different
+    # things and never conflates them:
+    #
+    #   VERIFIED   PubMed's own reference linkage says the review cites this
+    #              paper. "Cites" is what the linkage supports, and it is what
+    #              the notice says — a review's reference list includes papers
+    #              it discusses as well as papers it pools, so the instruction
+    #              is conditional on the outcome actually matching.
+    #   OTHERWISE  a recent review on this topic exists and the model should
+    #              prefer its pooled estimate where it addresses the same
+    #              question. No paper is named, because nothing is known about
+    #              any particular one.
     superseded = [p for p in all_scored if p.get("superseded_by_review")]
     if superseded:
         sr_pmid = superseded[0].get("superseding_sr_pmid", "")
@@ -4400,13 +4535,22 @@ def _build_evidence_context(evidence: dict) -> str:
         pmid_list = ", ".join(p.get("pmid", "?") for p in superseded[:10])
         more = "" if len(superseded) <= 10 else f" (and {len(superseded)-10} more)"
         context += (
-            f"\n📚 PRISMA DEDUP NOTICE: {len(superseded)} primary studies in this evidence base "
-            f"are likely already synthesised inside the newer systematic review/meta-analysis "
-            f"PMID {sr_pmid} ({sr_year}). To avoid double-counting evidence, defer to the SR's "
-            f"pooled estimate when discussing those findings, and only cite the primary study "
-            f"independently if you need a methodological detail (e.g., specific instrumentation, "
-            f"sample characteristics) that the SR does not capture.\n"
-            f"  Affected PMIDs: {pmid_list}{more}\n"
+            f"\n📚 PRISMA DEDUP: the systematic review PMID {sr_pmid} ({sr_year}) "
+            f"CITES {len(superseded)} paper(s) in this evidence base. Where it pools "
+            f"the same outcome, prefer its pooled estimate and cite the review; cite "
+            f"the primary study independently only for a methodological detail the "
+            f"review does not capture.\n"
+            f"  Cited by that review: {pmid_list}{more}\n"
+        )
+    elif (evidence.get("_prisma") or {}).get("sr_pmid"):
+        _rp = evidence["_prisma"]["sr_pmid"]
+        _ry = evidence["_prisma"]["sr_year"]
+        context += (
+            f"\n📚 PRISMA DEDUP: a recent systematic review on this topic is in this "
+            f"evidence base (PMID {_rp}, {_ry}). Where it addresses the same question, "
+            f"prefer its pooled estimate to individual older trials. Which papers it "
+            f"included is NOT known — do not treat any particular study below as "
+            f"already covered by it.\n"
         )
 
     # ── Top paper PER TIER (replaces cross-tier "top 3 by score") ──
