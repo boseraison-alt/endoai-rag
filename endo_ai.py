@@ -5319,6 +5319,116 @@ def _detect_uncited_author_mentions(answer: str) -> list:
     return out
 
 
+# ── A44m — THE GENERATOR EMITS A ROLE; THE RENDERER OWNS APPEARANCE ──────
+#
+# A9 says the model writes prose and never metadata. This is that principle one
+# step out: the answer says WHAT A BLOCK IS, and never how it should look.
+#
+# MEASURED FIRST, and the measurement says this is a GUARD, not a repair. Across
+# 160 stored curricula, answers and fixtures there is not one HTML tag, CSS
+# class, inline style, custom property, colour instruction or box-drawing
+# character in model output. The only hits were `#14A` and `#9` — rubber dam
+# clamp sizes. So nothing has drifted yet, and RB's reason for the rule is the
+# right one: without it the vocabulary drifts within a month, the model starts
+# inventing box types, two of them mean the same thing, and A22's eighteen boxes
+# come back wearing different names.
+#
+# What HAS accumulated is ad-hoc SHAPES, which is the same drift one level down:
+#
+#   blockquote (any)     1309 occurrences   119 documents
+#   emoji callout         225                83
+#   bold-label line       117                47
+#   quarantine block       58                 7
+#   evidence gap note      56                 7
+#   validation banner       3                 3
+#
+# So the vocabulary is closed here, and every block gets a ROLE from it.
+#
+# THE FORM. A role fence, `:::role` … `:::`. It survives every export path for
+# the same reason the quarantine block does — it is in the answer text, which is
+# the one representation PDF, clipboard, slides, speaker notes and narration all
+# consume — and it degrades to readable plain text if a path never learns to
+# upgrade it. It cannot collide with content: no clinical prose contains `:::`.
+#
+# UNKNOWN ROLES RENDER AS PROSE. A44m's own test. A model that invents
+# `:::warning` gets its fence stripped and its body kept, never a guessed style
+# — because guessing is how a fifth box type becomes a sixth.
+CALLOUT_ROLES = {
+    # role          tag shown by the renderer      what it is for
+    "rule":        "DECISION RULE",     # a protocol step or IF/THEN/BECAUSE
+    "trap":        "PITFALL",           # where this goes wrong in practice
+    "note":        "NOTE",              # a definition or aside
+    "unverified":  "NOT CHECKED",       # A22's quarantine block, as a MEMBER
+    "gap":         "EVIDENCE GAP",      # the literature does not settle it
+}
+
+_ROLE_FENCE_RE = re.compile(
+    r"^:::[ \t]*([A-Za-z][A-Za-z0-9_-]{0,31})[ \t]*\n([\s\S]*?)^:::[ \t]*$",
+    re.MULTILINE)
+
+# What the model must never write. Used by a test and by `find_presentation_markup`
+# so the rule is enforced rather than merely stated.
+_PRESENTATION_MARKUP = (
+    ("html tag", re.compile(
+        r"<(?:div|span|section|table|td|tr|strong|em|ul|ol|li|p|br|hr)\b[^>]*>", re.I)),
+    ("class attribute", re.compile(r"""class\s*=\s*["']""")),
+    ("inline style", re.compile(r"""style\s*=\s*["']""")),
+    ("css custom property", re.compile(r"var\(--[a-z-]+\)")),
+    ("css declaration", re.compile(r"(?:^|;)\s*(?:color|background|font-size)\s*:", re.I)),
+    ("box drawing", re.compile(r"[┌┐└┘├┤┬┴┼─│╔╗╚╝═║╠╣╦╩╬▀▄█▌▐░▒▓]")),
+    # "highlight the importance of X" is ordinary prose; "highlight this in
+    # red" is the model reaching for the renderer's job. The colour or shape
+    # word is what separates them, so it is required.
+    ("styling instruction", re.compile(
+        r"\b(?:highlight|render|display|show)\s+(?:this|it|them)?\s*"
+        # `(?![\w-])` rather than `\b`, because "show red-free imaging" is
+        # clinical prose and `\b` matches inside a hyphenated word. Rule 17:
+        # test the matcher against the variants the corpus contains.
+        r"(?:in\s+|as\s+)?(?:red|amber|green|yellow|bold|a box|a callout)"
+        r"(?![\w-])", re.I)),
+)
+
+
+def find_presentation_markup(text: str) -> list:
+    """Presentation the generator should never have written.
+
+    Returns [(kind, excerpt)]. Empty is the expected state — see the
+    measurement above — so a non-empty result is a regression in the prompt,
+    not a rendering question.
+    """
+    out = []
+    for kind, rx in _PRESENTATION_MARKUP:
+        for m in rx.finditer(text or ""):
+            out.append((kind, m.group(0)[:60]))
+    return out
+
+
+def parse_callouts(text: str) -> list:
+    """Every role fence in `text`, as [(role, body, known)] in document order."""
+    out = []
+    for m in _ROLE_FENCE_RE.finditer(text or ""):
+        role = m.group(1).strip().lower()
+        out.append((role, m.group(2).strip(), role in CALLOUT_ROLES))
+    return out
+
+
+def normalise_callouts(text: str) -> str:
+    """Strip every fence whose role is not in the vocabulary, keeping its body.
+
+    A44m's rule, and the reason it is a rule: an unknown role renders as plain
+    prose, NEVER as a guessed style. Idempotent (rule 18) — a text with only
+    known roles is returned unchanged, and running this twice is running it
+    once.
+    """
+    def _strip(m):
+        role = m.group(1).strip().lower()
+        if role in CALLOUT_ROLES:
+            return m.group(0)
+        print(f"  [callout] unknown role {role!r} — rendered as prose")
+        return m.group(2).strip()
+    return _ROLE_FENCE_RE.sub(_strip, text or "")
+
+
 # ── OUT-OF-DOMAIN CONTENT IS QUARANTINED, NOT MIXED IN ────
 #
 # `trust-surface-v1` Q2, implementing RB's decision of 2026-09-02: Curo MAY
