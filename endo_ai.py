@@ -1831,6 +1831,39 @@ LEVEL_4_TERMS = [
     "case reports[pt]"
 ]
 
+# A31 — observational and descriptive designs.
+#
+# The seven filters below this one are all publication types or MeSH terms for
+# THERAPY and SYNTHESIS designs: trial, review, meta-analysis, cohort,
+# case-control, case report. Nothing among them matches a cross-sectional,
+# morphometric, imaging or diagnostic-accuracy study, so those papers were not
+# down-ranked — they were unreachable. Measured on the apicoectomy module
+# query: 46 of the 100 most relevant papers were reachable by NO tier at all,
+# including the paper A23 calls the single most on-topic one for the question.
+#
+# Three candidate filters were measured before choosing (A31a):
+#
+#   A broad   (+ anatomy[sh], diagnostic imaging[sh], radiography[sh])
+#             20 new papers, recovered 4 of 7 named, admitted noise like
+#             "[Microinvasive endodontic access]" and a 1972 case note
+#   B middle  13 new papers, recovered 5 of 7 named including Jeon 2021 and
+#             the bone-window paper; every addition on topic       <- CHOSEN
+#   C narrow  11 new papers, recovered 2 of 7 — misses Jeon, which is the
+#             paper the whole item exists for
+#
+# B is not the most permissive; it is the one whose additions were all
+# relevant. The 1991 bony-lid paper is recovered by none of them — it predates
+# the MeSH terms that describe its design — a corpus-age limit rather than a
+# filter choice, reported rather than tuned around.
+LEVEL_OBS_TERMS = [
+    "cross-sectional studies[mh]",
+    "observational study[pt]",
+    '"cone-beam computed tomography"[mh]',
+    '"imaging, three-dimensional"[mh]',
+    '"anatomy and histology"[sh]',
+    '"sensitivity and specificity"[mh]',
+]
+
 LEVEL_5_TERMS = [
     "review[pt]",
     "editorial[pt]",
@@ -1889,8 +1922,14 @@ LEVEL_SCORES = {
 # Ordered strongest-first by LEVEL_SCORES design weight. The legacy "level3"
 # bucket (45) previously sat AFTER "level3b" (35), presenting case-control
 # studies as the stronger of the two — guarded now by test_tier_banding.py.
+# A31b — `observational` sits at the WEAKEST end on purpose. This item makes
+# these designs REACHABLE; it does not claim they are strong. A25 decides later
+# whether an anatomy question should rank them higher, and that is a separate
+# change to a separate thing (A12: reachability now, ranking later, never in
+# one commit). Nothing above it moves and nothing already retrieved is
+# displaced.
 TIER_ORDER = ["cochrane", "level1", "classic", "level2", "level3a", "level3",
-              "level3b", "level4", "invitro", "level5"]
+              "level3b", "level4", "invitro", "level5", "observational"]
 TIER_LABEL = {
     "cochrane": "Cochrane Reviews",
     "level1":   "Level I — RCTs and Systematic Reviews",
@@ -1901,6 +1940,8 @@ TIER_LABEL = {
     "level4":   "Level IV — Case Series",
     "invitro":  "In Vitro / Ex Vivo — Bench Studies (not clinical evidence)",
     "level5":   "Level V — Expert Opinion / Reviews",
+    "observational": "Observational / Anatomical — Descriptive Studies "
+                     "(not comparative evidence)",
     "classic":  "Classic / Foundational (San Antonio Guide)",
     "retracted": "Retracted — excluded from evidence",
 }
@@ -3715,7 +3756,27 @@ QUALITY_FLOOR    = 50   # global ceiling on any per-tier floor (see below)
 # its own distribution. Every value is CAPPED at QUALITY_FLOOR by _tier_floor:
 # this change may only ever loosen a tier, never tighten one, so no paper that
 # reaches a clinician today can be removed by it.
+# A31 — how deep each tier's esearch goes. Everything defaults to 50; the
+# observational tier goes to 100 because it is drawing from a much larger and
+# less sharply ranked pool. Measured on the apicoectomy anatomy module: the
+# tier query matches 770 papers, and the ones the module actually needs sit at
+# ranks 32, 57, 71 and 76 — Bi 2022 was the only one inside 50. This is a
+# depth change, not a relevance change: esearch is still sorted by relevance
+# and the tier's own cap still keeps only the most relevant 6-10 of them.
+TIER_FETCH_DEPTH = {"observational": 100}
+
 TIER_QUALITY_FLOORS = {
+    # A31 — the same floor as level4 (case series), the weakest clinical tier
+    # that already exists, rather than a number invented for this one.
+    #
+    # It cannot be level5's 38: the score is computed by a therapy-shaped
+    # scorer that gives a descriptive study no credit for a comparison it never
+    # made or a follow-up it never had. Measured on the apicoectomy anatomy
+    # module, this tier's 50 papers score min 15.4, median 33.5, max 46.5 — a
+    # floor of 38 admitted 16 and cut the paper the item exists for. The floor
+    # is a junk filter here; the tier's cap is what does the choosing, and it
+    # chooses by relevance.
+    "observational": 27,
     "cochrane": 50, "level1": 50, "classic": 50, "level2": 50, "level3b": 50,
     "level3a": 45, "level3":  41,
     "level4":   27, "invitro": 31, "level5": 38,
@@ -3732,22 +3793,30 @@ MAX_PAPERS_KEPT  = 25   # default hard cap so one tier can't drown out others
 #   review  — chairside literature review: bias toward Tiers I-III primary evidence
 #   learn   — deep-learning lecture: over-index on Tier V reviews/editorials/guidelines
 #             (they supply the narrative scaffolding a 20-min teaching module needs)
+# A31c — `observational` carries its own quota in every mode. The quotas are
+# per-tier and independent: `fetch_papers` runs once per tier with that tier's
+# own cap, so a slot here can never be taken from level1 or anything above it.
+# Learn gets the larger share because a curriculum's anatomy module is the
+# thing this item exists to feed.
 MODE_TIER_QUOTAS = {
     "review": {
         "cochrane": 10, "level1": 18, "level2": 14,
         "level3a": 10, "level3b": 6, "level3": 8,
         "level4": 4,   "level5": 4,
+        "observational": 6,
     },
     "learn": {
         "cochrane": 8,  "level1": 10, "level2": 8,
         "level3a": 6,  "level3b": 4,  "level3": 6,
         "level4": 6,   "level5": 25,   # narrative-rich tier promoted
+        "observational": 10,
     },
     # case discussion uses the same balance as review
     "case": {
         "cochrane": 10, "level1": 18, "level2": 14,
         "level3a": 10, "level3b": 6, "level3": 8,
         "level4": 4,   "level5": 4,
+        "observational": 6,
     },
 }
 
@@ -3864,12 +3933,16 @@ def build_evidence_base(topic, mode: str = "review"):
         ("level3b", LEVEL_3B_TERMS, TIER_LABEL["level3b"]),
         ("level4",  LEVEL_4_TERMS,  TIER_LABEL["level4"]),
         ("level5",  LEVEL_5_TERMS,  TIER_LABEL["level5"]),
+        # A31 — last in the list and last in TIER_ORDER. Its own query,
+        # its own quota, its own floor; it takes nothing from the tiers
+        # above it.
+        ("observational", LEVEL_OBS_TERMS, TIER_LABEL["observational"]),
     ]
 
     for level_key, terms, label in levels:
         text, ids, scored = fetch_papers(
             smart_topic, " OR ".join(terms), label, level_key, mode=mode,
-            question=topic
+            question=topic, max_results=TIER_FETCH_DEPTH.get(level_key, 50)
         )
         evidence[level_key] = {"text": text, "ids": ids, "scored": scored}
         all_scored.extend(scored)

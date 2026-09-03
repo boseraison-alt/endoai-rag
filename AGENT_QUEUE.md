@@ -1213,6 +1213,19 @@ behind a scoring redesign leaves every anatomy question answered badly meanwhile
   the bony-lid papers. Note the existing protections still apply — invariant 6
   (zero-evidence modules render no numeric protocol) and tier banding mean a
   weakest-tier paper cannot drive a protocol on its own.
+- **A31 STATUS (`pending commit`).** A31a-c are built and verified: the tier
+  exists, is fetched, bands last, has its own floor (27, level4's, because a
+  therapy-shaped scorer gives descriptive designs min 15.4 / median 33.5 /
+  max 46.5), its own depth (100, because the tier query matches 771 papers)
+  and its own quota (6/10/6). No existing quota or floor moved.
+  **A31d is NOT met and is blocked on A24, not on this item.** With the module
+  query as the syllabus currently generates it, PubMed ranks the wanted papers
+  at 29 (Bi 2022), 66 (Jeon 2021) and 87 (MB resection level) out of a
+  771-paper pool, and the tier's cap keeps the 10 most relevant. The class is
+  now reachable; what is missing is a module query specific enough to rank
+  them — which is exactly A24b. Inflating this tier's quota to force them in
+  would flood the anatomy module with 80 descriptive papers and is not done.
+
 - **A31e** Also correct the record: `ENDO_DOMAIN_FILTER` has now been exonerated
   twice (Q7, A23a). Stage 4 should treat the venue-exclusion finding on its own
   merits rather than as an explanation for these gaps.
