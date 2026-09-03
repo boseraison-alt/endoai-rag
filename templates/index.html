@@ -3305,6 +3305,38 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
 }
 .hist-drawer-empty { padding: 18px 12px; font-size: 13px; color: #8a94a8; }
 
+/* A21 — the follow-up composer and New topic, on every answer. */
+.followup-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 22px 20px; border-top: 1px solid #dfe3ec;
+}
+.followup-box {
+  flex-grow: 1; display: flex; align-items: center; gap: 8px;
+  background: #ffffff; border: 1px solid #cddcf5; border-radius: 12px;
+  padding: 0 8px 0 18px; height: 52px;
+}
+.followup-box input {
+  flex-grow: 1; border: none; outline: none; background: transparent;
+  font: 400 15px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #16264d;
+}
+.followup-box input::placeholder { color: #9aa1ac; }
+.followup-send {
+  width: 34px; height: 34px; flex-shrink: 0; border: none; border-radius: 9px;
+  background: #1e4fa3; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.followup-send svg { width: 16px; height: 16px; }
+.followup-send:disabled { opacity: .45; cursor: not-allowed; }
+.new-topic-btn2 {
+  display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0;
+  font: 600 14px/1 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #5b6885; background: #ffffff; border: 1px solid #dfe3ec;
+  padding: 14px 18px; border-radius: 12px; cursor: pointer;
+}
+.new-topic-btn2:hover { border-color: #c8cfdd; color: #253451; }
+.new-topic-btn2 svg { width: 15px; height: 15px; }
+
 /* The chips carry a dot only when active, as on the artboards; the icons
    they used to carry belonged to a strip that is now inside the composer. */
 .mode-chip { padding: 7px 15px; }
@@ -3483,10 +3515,6 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
         <div class="answer-card-question" id="answerQuestion"></div>
         <div class="answer-tags" id="answerTags"></div>
       </div>
-      <button class="new-topic-btn" id="newTopicBtn" onclick="startNewTopic()"
-              title="Forget this conversation — the next question is answered on its own">
-        New topic
-      </button>
     </div>
 
     <!-- Export bar — Deep Learning only, sits ABOVE the report -->
@@ -3730,6 +3758,23 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
         </thead>
         <tbody id="paperTableBody"></tbody>
       </table>
+    </div>
+
+    <!-- A21 — every answer ends with these two, in all three modes. This is
+         NOT a contradiction of A20: A20 stops Curo interviewing the
+         clinician; this lets the clinician carry on if they want to. No
+         suggested-question chips — those are Curo prompting by another name. -->
+    <div class="followup-row" id="followupRow">
+      <div class="followup-box">
+        <input type="text" id="followupInput" placeholder="Ask a follow-up&hellip;"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();submitFollowUp();}">
+        <button class="followup-send" id="followupSend" onclick="submitFollowUp()"
+                aria-label="Ask this follow-up"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="13 6 19 12 13 18"/></svg></button>
+      </div>
+      <button class="new-topic-btn2" id="newTopicBtn2" onclick="newTopic()"
+              title="Forget this conversation — the next question is answered on its own">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New topic
+      </button>
     </div>
   </div>
 
@@ -4465,6 +4510,8 @@ function loadHistoryItem(id, itemMode, el) {
       // 3.8 — a purged cache row must not reload as if valid, and must not
       // fail silently either: mark the entry instead of rendering nothing.
       if (data.error) { _markHistoryGone(el); return; }
+      // A21c — same in both directions as the curriculum path above.
+      _seedThreadFrom({ cache_id: id });
       // Switch to appropriate tab
       setMode(itemMode === 'case' ? 'review' : itemMode);
       // Fill question
@@ -4770,6 +4817,55 @@ function startNewTopic() {
   }).catch(function() {});
 }
 
+// A21 — the mode a follow-up is ANSWERED in, which is not always the mode
+// the answer on screen was written in. Curriculum follow-ups go down the
+// literature path; see the note in showResult.
+var _followUpMode = 'review';
+
+function submitFollowUp() {
+  var el = document.getElementById('followupInput');
+  if (!el) return;
+  var q = (el.value || '').trim();
+  if (!q) return;
+  el.value = '';
+  var btn = document.getElementById('followupSend');
+  if (btn) btn.disabled = true;
+  // Same entry point as the main bar, so a follow-up is an answer: the
+  // verification banner, the quarantine block, the citation checks and the
+  // bibliography rules all apply to it identically (A21e).
+  _postAsk(q, '', true, _followUpMode);
+}
+
+// A21 — New topic, from the answer view. `startNewTopic` owns the context
+// half and is left alone; this adds the view half, so the clinician lands
+// back on an empty composer rather than on the answer they just abandoned.
+function newTopic() {
+  startNewTopic();
+  var ac = document.getElementById('answerCard');
+  if (ac) ac.style.display = 'none';
+  var ec = document.getElementById('errorCard');
+  if (ec) ec.style.display = 'none';
+  setLandingVisible(true);
+  var q = document.getElementById('qInput');
+  if (q) { q.value = ''; q.focus(); }
+}
+
+// A21c — opening a stored answer rotates onto a FRESH thread and seeds it
+// from that answer. Both halves matter: without the rotation a follow-up
+// inherits the topic the page was last on; without the seed it is answered
+// cold and the curriculum's own evidence is not used (A21b).
+function _seedThreadFrom(ref) {
+  reviewThreadId = 'th-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+  var body = { thread_id: reviewThreadId };
+  if (ref.learn_file) body.learn_file = ref.learn_file;
+  if (ref.cache_id !== undefined && ref.cache_id !== null) body.cache_id = ref.cache_id;
+  return fetch('/thread/seed', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }).catch(function () {});
+}
+
 function _renderContinuesFrom(prevQuestion) {
   var row = document.getElementById('continuesFrom');
   if (!row) return;
@@ -4779,14 +4875,17 @@ function _renderContinuesFrom(prevQuestion) {
   row.style.display = q ? 'flex' : 'none';
 }
 
-function _postAsk(q, context, skipClarify) {
+function _postAsk(q, context, skipClarify, askMode) {
   if (pollTimer) clearInterval(pollTimer);
   document.getElementById('askBtn').disabled = true;
 
+  // `askMode` is how the question is ANSWERED. It defaults to the mode the
+  // page is in; a curriculum follow-up passes 'review' so it is answered as a
+  // scoped literature question rather than rebuilding the curriculum (A21b).
   fetch('/ask', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question: q, mode: mode, context: context,
+    body: JSON.stringify({ question: q, mode: (askMode || mode), context: context,
                            skip_clarify: skipClarify, thread_id: reviewThreadId })
   })
   .then(function(r) { return r.json(); })
@@ -4961,6 +5060,7 @@ function _startPollJob(q, job_id) {
   document.getElementById('progressFill').style.width     = '0%';
   document.querySelectorAll('.step-pill').forEach(function(el) { el.className = 'step-pill'; });
   _startEtaClock();
+  _pollMisses = 0;
   _streamActive = false;
   currentJob = job_id;
   pollTimer  = setInterval(function() { pollStatus(q); }, 1500);
@@ -4971,11 +5071,45 @@ function _runSearch(q, context) {
   _postAsk(q, context || '', true);
 }
 
+// A job the server has forgotten is a TERMINAL state, not a slow one.
+//
+// Found live: a curriculum sat at "elapsed 27:34 · usually several minutes"
+// with the spinner turning and one step pill lit, while every poll behind it
+// came back 404 — the dev server had restarted and taken the in-memory jobs
+// table with it. Nothing on the page could say so, because `/status` answers
+// 404 with `{"error": ...}` and no `status` field, so none of the terminal
+// branches fired and `.catch(){}` swallowed the rest. The clock then made it
+// look MORE alive the longer it had been dead, which is the exact opposite of
+// what it was added for. Standing rule: a check that shows nothing must not
+// therefore show green (§7.2).
+var _pollMisses = 0;
+
+function _jobIsGone(question) {
+  if (pollTimer) clearInterval(pollTimer);
+  _stopEtaClock();
+  _streamActive = false;
+  currentJob = null;
+  document.getElementById('progressCard').style.display = 'none';
+  document.getElementById('askBtn').disabled = false;
+  setLandingVisible(true);
+  showError('This answer is no longer running — the server restarted while it '
+          + 'was being written, so nothing was saved. Ask it again: ' + question);
+}
+
 function pollStatus(question) {
   if (!currentJob) return;
   fetch('/status/' + currentJob)
-  .then(function(r) { return r.json(); })
+  .then(function(r) {
+    // 404 is the server saying it has never heard of this job.
+    if (r.status === 404) { _jobIsGone(question); return null; }
+    return r.json();
+  })
   .then(function(job) {
+    if (job === null) return;
+    _pollMisses = 0;
+    // Belt and braces: an error body with no status would otherwise fall
+    // through every branch below and poll forever.
+    if (!job.status && job.error) { _jobIsGone(question); return; }
     document.getElementById('progressMsg').textContent  = job.message || '';
     document.getElementById('progressFill').style.width = (job.progress || 0) + '%';
     updateStepPills(job.message || '');
@@ -5008,7 +5142,12 @@ function pollStatus(question) {
       showStreamingPartial(question, job);
     }
   })
-  .catch(function() {});
+  .catch(function () {
+    // A dropped poll is not a dead job — the network blips. Only give up
+    // after enough consecutive failures that something is really wrong.
+    _pollMisses += 1;
+    if (_pollMisses >= 20) _jobIsGone(question);
+  });
 }
 
 function updateStepPills(msg) {
@@ -5258,8 +5397,24 @@ function showResult(question, job) {
   // was written cold — after "New topic", or for the first question of a
   // thread — and the line stays hidden.
   _renderContinuesFrom(mode === 'learn' ? '' : (job.continues_from || ''));
-  var ntBtn = document.getElementById('newTopicBtn');
-  if (ntBtn) ntBtn.style.display = (mode === 'learn') ? 'none' : 'block';
+  // A21a — both controls on all three modes. Curriculum used to get
+  // neither: it had no follow-up path at all, and its New topic button was
+  // explicitly hidden.
+  var fr = document.getElementById('followupRow');
+  if (fr) fr.style.display = 'flex';
+  var fi = document.getElementById('followupInput');
+  if (fi) {
+    fi.value = '';
+    fi.placeholder = (mode === 'learn')
+      ? 'Ask a follow-up about this curriculum\u2026'
+      : 'Ask a follow-up\u2026';
+  }
+  var fs = document.getElementById('followupSend');
+  if (fs) { fs.disabled = false; fs.style.background = (MODES[mode] || MODES.review).accent; }
+  // A21b — the follow-up to a curriculum is answered as a LITERATURE question
+  // over that curriculum's evidence. Rebuilding it would cost a median $1.33
+  // and several minutes to answer one sentence, which is a broken affordance.
+  _followUpMode = 'review';
 
   // Tags
   var papers   = job.papers || [];
@@ -8793,6 +8948,11 @@ function _showLearnReportGone(el) {
 }
 
 function openLearnHistoryItem(filename, el) {
+  // A21b/A21c — a follow-up asked on this curriculum is answered over ITS
+  // evidence, and over nothing the page happened to be showing before.
+  _seedThreadFrom({ learn_file: filename });
+  _renderContinuesFrom('');
+
   // Scroll to top of content area
   var scroll = document.querySelector('.content-scroll');
   if (scroll) scroll.scrollTop = 0;

@@ -322,7 +322,16 @@ def _thread_exchanges(thread_id: str) -> list:
         return list(review_threads.get(thread_id) or [])
 
 
-def _thread_record(thread_id: str, question: str, answer: str, papers: list) -> None:
+# A21b — a curriculum carries far more evidence than a review answer, and a
+# follow-up to one is supposed to be answered over THAT evidence. 12 PMIDs is
+# the right carry for a review exchange and far too thin for a curriculum, so
+# the cap is per-kind rather than one number pretending to suit both.
+THREAD_PMIDS_REVIEW = 12
+THREAD_PMIDS_LEARN  = 60
+
+
+def _thread_record(thread_id: str, question: str, answer: str, papers: list,
+                   mode: str = "review") -> None:
     """Append one completed exchange. Recommendation only — see
     endo_ai.extract_clinical_recommendation for why the full answer stays out."""
     if not thread_id:
@@ -332,10 +341,15 @@ def _thread_record(thread_id: str, question: str, answer: str, papers: list) -> 
     for p in _extract_cited_pmids(answer or ""):
         if p not in cited:
             cited.append(p)
+    cap = THREAD_PMIDS_LEARN if mode == "learn" else THREAD_PMIDS_REVIEW
+    if len(cited) > cap:
+        # Standing rule 5: anything that caps says what it dropped.
+        print(f"  [thread] carrying {cap} of {len(cited)} cited paper(s) "
+              f"from this {mode} answer into the thread")
     entry = {
         "question":       (question or "").strip(),
         "recommendation": extract_clinical_recommendation(answer or ""),
-        "pmids":          cited[:12],
+        "pmids":          cited[:cap],
     }
     if not entry["question"]:
         return
@@ -526,6 +540,73 @@ def thread_clear():
     return jsonify({"ok": True})
 
 
+@app.route("/thread/seed", methods=["POST"])
+def thread_seed():
+    """Opening a stored answer starts a thread FROM it.
+
+    A21b/A21c. An answer opened out of history is the same thing as one just
+    written, as far as a follow-up is concerned — but nothing was recorded for
+    it, so without this the follow-up is answered cold AND inherits whatever
+    thread the page happened to be on. Both halves are wrong in opposite
+    directions, which is why this seeds and clears in one step.
+
+    The client sends a REFERENCE, never content. The server reads the stored
+    answer itself, so a page cannot dictate what its own context claims the
+    earlier exchange said.
+    """
+    data      = request.json or {}
+    thread_id = (data.get("thread_id") or "").strip()[:64]
+    if not thread_id:
+        return jsonify({"error": "thread_id required"}), 400
+    # Seeding REPLACES. A thread seeded onto an existing one would carry two
+    # unrelated topics and answer the follow-up out of both.
+    _thread_clear(thread_id)
+
+    learn_file = (data.get("learn_file") or "").strip()
+    cache_id   = data.get("cache_id")
+
+    if learn_file:
+        if ("/" in learn_file or "\\" in learn_file or ".." in learn_file
+                or not learn_file.endswith(".json")):
+            return jsonify({"error": "invalid filename"}), 400
+        path = os.path.join(_LEARN_HISTORY_DIR, learn_file)
+        if not os.path.isfile(path):
+            return jsonify({"error": "not found"}), 404
+        with open(path, encoding="utf-8") as fh:
+            rec = _audit_json.load(fh)
+        _thread_record(thread_id, display_title(rec.get("question", "")),
+                       rec.get("answer") or "", rec.get("papers") or [],
+                       mode="learn")
+    elif cache_id is not None:
+        from rag import get_conn
+        conn = get_conn()
+        cur  = conn.cursor()
+        try:
+            cur.execute("SELECT question_text, answer, papers FROM query_cache "
+                        "WHERE id = %s", (int(cache_id),))
+            row = cur.fetchone()
+        finally:
+            cur.close()
+            conn.close()
+        if not row:
+            return jsonify({"error": "not found"}), 404
+        qt, answer, papers = row
+        row_mode = "review"
+        for tag in ("learn", "review", "case"):
+            if (qt or "").startswith(f"[{tag}] "):
+                row_mode = tag
+                qt = qt[len(tag) + 3:]
+                break
+        _thread_record(thread_id, display_title(qt), answer or "",
+                       papers or [], mode=row_mode)
+    else:
+        return jsonify({"error": "learn_file or cache_id required"}), 400
+
+    carried = _thread_exchanges(thread_id)
+    return jsonify({"ok": True,
+                    "carried_papers": len(carried[-1]["pmids"]) if carried else 0})
+
+
 @app.route("/abort/<job_id>", methods=["POST"])
 def abort(job_id: str):
     with jobs_lock:
@@ -671,9 +752,9 @@ def run_question(job_id: str, question: str, mode: str = "review",
             # A cache hit is still an exchange: the clinician asked, and an
             # answer was given. If it did not join the thread, the NEXT
             # follow-up would reach back past it to a stale one.
-            if mode == "review":
+            if mode in ("review", "learn"):
                 _thread_record(thread_id, question, cached["answer"],
-                               cached.get("papers") or [])
+                               cached.get("papers") or [], mode=mode)
             return
 
         # ── Intent routing (Haiku triage) ─────────────────
@@ -776,8 +857,12 @@ def run_question(job_id: str, question: str, mode: str = "review",
         save_answer(question, answer, evidence)
         save_query_cache(cache_key, answer, papers, context_hash=ctx_hash)
         write_citation_audit(question, answer, mode)
-        if mode == "review":
-            _thread_record(thread_id, question, answer, papers)
+        # A21b — a curriculum joins the thread too, so a follow-up to it is
+        # answered over the evidence it was built from rather than rebuilding
+        # it. The recorder stores the extracted recommendation and the cited
+        # PMIDs, never the 12,000 words.
+        if mode in ("review", "learn"):
+            _thread_record(thread_id, question, answer, papers, mode=mode)
 
         # Deep Learning curricula get an additional persistent file archive
         # under learn_history/. The 7-day re-use window is enforced via the

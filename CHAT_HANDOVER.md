@@ -1,6 +1,7 @@
 # CURO — ADVISORY CHAT HANDOVER
 
 Boot file for a **new advisory chat with Claude** (not the coding agent).
+Last updated after A19-A21 (UI v2, no interviews, follow-ups) landed.
 
 Open the new chat with:
 
@@ -13,7 +14,7 @@ Three files, three jobs — don't confuse them:
 | File | For | Contains |
 |---|---|---|
 | `CHAT_HANDOVER.md` (this) | the advisory chat | how we work, state, open threads, decisions |
-| `AGENT_QUEUE.md` | the local coding agent | five stages of executable work, standing rules |
+| `AGENT_QUEUE.md` | the local coding agent | five stages + amendments A1–A18, 18 standing rules |
 | `CURO_HANDOVER.md` | the coding agent | product state, invariants, backlog |
 
 ---
@@ -26,190 +27,216 @@ write production code. Its job is:
 
 1. Read the agent's pasted reports and say what they actually mean.
 2. Diagnose problems and name the underlying bug *class*, not just the instance.
-3. Write **paste-ready autonomous batch instructions** for the agent — the format
-   is in `AGENT_QUEUE.md` §3–§7 and in RB's saved `agent-worklist` skill.
+3. Write **paste-ready autonomous batch instructions** — and **write them into
+   `AGENT_QUEUE.md`**, not only into chat. (Learned the hard way: two addenda
+   lived in chat scrollback only and the agent could not see them.)
 4. Assess competitor outputs and clinical answers RB pastes in.
 5. Push back when a request conflicts with the product's own principles.
 
-Standing permissions RB has granted: multiple parallel agents, no permission
-prompts (`bypassPermissions`), autonomous overnight batches, ~$0.70 per
-library-answer cost approved.
+Standing permissions: multiple parallel agents, no permission prompts, autonomous
+overnight batches, ~$0.70/library-answer approved.
 
-What RB wants from the advisory chat: plain language, a clear recommendation
-rather than a menu, honest disagreement when warranted, and every batch written so
-the agent can run it unattended overnight. RB frequently asks "explain in simple
-words" — that request is real, answer it in prose without jargon.
+RB wants plain language, a clear recommendation rather than a menu, honest
+disagreement, and batches the agent can run unattended. He often asks "explain in
+simple words" — that request is real; answer in prose without jargon.
 
 ---
 
 ## §2 WHAT CURO IS
 
-An evidence-graded endodontics assistant. Curated PubMed library (~2,000+ papers,
-Neon Postgres + pgvector) with per-paper provenance — evidence tier, COI tri-state,
+Evidence-graded endodontics assistant. Curated PubMed library (~2,900 rows, Neon
+Postgres + pgvector) with per-paper provenance — tier, COI tri-state,
 retraction/supersession, MEDLINE status, pre-registration. Live PubMed fallback
 with synonym-expanded queries and an authority guarantee. Tier-banded synthesis
-with a fabricated-PMID validator and a claim-vs-abstract citation-support checker.
-Streaming answers (~15 s to first text, 0.4 s cached). Three surfaces: Review
-(literature question), Case discussion, Deep Learning curriculum. Five export
-styles plus a self-contained reveal.js deck with clickable PMID→abstract pills, all
-from one content-hash-shared slide spec in an approved dark design.
+with a fabricated-PMID validator and a claim-vs-abstract support checker.
+
+**Three modes, one search bar** (as of A15): Literature · Case · Curriculum —
+internally `review` / `case` / `learn`. Case Assessment and Profile sit in the
+top-right nav. Mode behaviour is one `MODES` table applied by one function, with
+every surface asking `modeShows(mode, panel)`.
 
 Models: **Opus** for synthesis, case reasoning, differentials, curriculum writing.
-**Haiku** for search-term generation, the semantic-cache same-question gate, the
-citation-support checker, routing. **MiniLM** (local, 384-dim) for embeddings and
-cache similarity. **OpenAI tts-1-hd** for narration only.
+**Haiku** for search-term generation, the cache same-question gate, the
+citation-support checker, routing. **MiniLM** (local, 384-dim) for embeddings.
+**OpenAI tts-1-hd** for narration only.
 
 Tier ladder, by study design and never by score: cochrane → level1 → level2 →
-level3a → level3b → level4 → invitro → level5; `retracted` is terminal; unlabelled
+level3a → level3b → level4 → invitro → level5; `retracted` terminal; unlabelled
 bands to level5.
+
+Measured costs: Literature $0.54 · Case $0.12 · Curriculum median $1.33 (max
+$6.51). Suite ~1,932 tests, all mutation-checked.
 
 ---
 
 ## §3 WHERE THINGS STAND
 
-Last completed agent work: **dl-quality-v1 Item 5** — the laser curriculum
-regenerated clean. The headline number: **5,653 → 12,555 words** on the same
-question. Item 1 turned out to be four stacked defects, each exposed by fixing the
-one before it: module writer capped at 3,200 (164 of 190 calls ever); stitcher
-budget capped at 11,640 (23 of 26 calls ever); the SDK refusing long non-streaming
-requests once the budget was corrected; a mid-stream connection drop escaping the
-retry as a raw `httpx` error rather than `APIConnectionError`. Cost: $4.76 in
-crashed attempts plus $2.51 for the clean run. 27 mutants killed, 50 tests in
-`test_module_truncation.py`.
+**Demo status: GO.** A16d verified all four demo questions are cached and render
+every Stage 1 fix. Warm the process before presenting — first ask is 9.2 s, then
+1.0 s (embedding-model load).
 
-**The consequence that matters:** every critique of the *anesthesia* curriculum —
-the Gemini review, the second-opinion comparison, the [F]–[J] defect list — judged
-a document missing over half its text. `AGENT_QUEUE.md` Stage 2 [M] regenerates it
-before auditing it, precisely so the agent doesn't fix bugs that no longer exist.
+**Complete:** Stage 1 (`trust-surface-v1`, Q1–Q8) · Stage 2 M1/M2 (anesthesia
+regenerated, 5,583 → 12,745 words) · A1 (coverage gate) · A3 (banner adjudication
++ sharpening) · A4 (build provenance) · A5a · A6 · A9a (audit) · A13 · A15 ·
+A16 (cached answers) · **A19 (UI v2 to RB's sketch)** · **A20 (Literature never
+interviews)** · **A21a–c, e (follow-up + New topic everywhere)**.
 
-Everything outstanding is in `AGENT_QUEUE.md`, five stages, in priority order.
-As of writing, **nothing in that file has been given to the agent yet**.
+**Open, roughly in priority order:** A5b + A5c · A7 apply · A9b/A9c · **A10** ·
+A11 · A14 · A17 · A18 · **A21d** · Stage 2 G/H/J · Stage 3 (classics B3/B4, C) ·
+Stage 4 (scope memo) · Stage 5 (citation audit).
+
+**The UI is now the one in the Curo Search Modes canvas.** Thin top bar, centred
+lockup with the real mark, one composer with the mode chips docked inside it,
+three "what you get" cards per mode, History as a collapsed drawer, and a
+follow-up composer plus New topic at the foot of every answer. The tagline is
+**Evidence-Based Dental Educator**. A progress clock says how much longer.
+
+**A10 is the one that matters most.** Everything else is polish, breadth or
+measurement. A10 is a defect class with no existing defence: a citation that
+resolves, whose sentence really is in the abstract, supporting a directive the
+paper never concluded — because the sentence was the trial's *method*. Nothing
+asks "is this what the paper found?" Found on the hypertensive plain-lidocaine
+directive, PMID 40705444.
 
 ---
 
 ## §4 DECISIONS MADE — do not relitigate
 
-- **No journal-identity weighting**, ever. RB asked for a slight JOE-over-IEJ
-  preference on 2026-09-02 and, after being told it is impact-factor weighting by
-  another name and contradicts the product's founding principle, chose the
-  no-preference option. The remedy for missing canon papers is retrieval and
-  ingestion fixes. Locked as invariant 11.
-- **Out-of-domain content is quarantined and reframed** (2026-09-02), not refused
-  and not silently mixed into cited prose. Curo may answer beyond its evidence
-  base, but that content sits in a visually distinct `NOT FROM THE EVIDENCE BASE —
-  UNVERIFIED` block, and the answer then returns to the endodontic decision it can
-  support.
-- **No scope or domain-filter widening** without the Stage 4 numbers and RB's
+- **No journal-identity weighting**, ever. RB asked for a JOE-over-IEJ preference
+  on 2026-09-02 and, told it was impact-factor weighting by another name, chose
+  the no-preference option. Invariant 11.
+- **Out-of-domain content is quarantined and reframed**, not refused and not mixed
+  into cited prose.
+- **No scope or domain-filter widening** without Stage 4's numbers and RB's
   sign-off.
-- `monthly_maintenance.py` must not run `--apply` until after the demo.
-- The X-ray / vision path stays **off** until a BAA exists.
-- `cost_log.jsonl` is append-only.
-- Never weaken a checker or gate to improve a number.
+- **UI: Literature · Case · Curriculum**, Assessment and Profile out of the mode
+  row. Settled and built.
+- **The IF column stays** (inert, guarded); dropping it is a post-demo question.
+- `monthly_maintenance.py` no `--apply` until after the demo. Vision path off
+  until a BAA. `cost_log.jsonl` append-only. Never weaken a gate for a number.
 
 ---
 
-## §5 OPEN THREADS — what to expect back from the agent
+## §5 OPEN THREADS
 
-**Stage 1 `trust-surface-v1`.** The one to watch. Curo rendered
-`CHECKED AGAINST ABSTRACTS: 9/9 CONSISTENT` over an answer whose most actionable
-paragraph — apixaban timing, tranexamic acid concentration, CrCl and age
-thresholds — carried no citations at all. The checker only examines *cited* claims,
-so uncited text is invisible to it and the banner asserted verification over
-material nobody checked. Also fixes: impact factors being **displayed** in the
-reference list (contradicts invariant 11 on screen); a raw `[[PMID:ESE-QG-2023]]`
-leak; bibliography listing 29 papers for an answer citing 7; a score table sorting
-across tiers so a position statement displays above a Cochrane review.
+**A5b** — the retreatment question misses two directly on-point RCTs (Karaoğlan,
+*Int Endod J* 2022; Toia, *J Endod* 2022) and Schwendicke *BMJ Open* 2017. A1 does
+NOT fix it: both concepts are covered at 9 and 19 papers so the gate never fires.
+A5a found a cap-plus-absent-from-library mechanism. Three distinct retrieval
+failure modes now known: gate short-circuit, vocabulary miss, cap/ingestion.
 
-**Stage 4 `scope-measure-v1`.** Measurement only, ends in a memo and a decision for
-RB. The question: should Curo read beyond endodontic journals. Current view — no to
-"all dental journals", yes to topic-gated doors into adjacent specialties
-(anesthesia, oral surgery, prostho, perio, radiology, oral medicine, paeds, oral
-path), and **specialty guidelines (ESE/AAE/SDCEP/ADA) are probably higher value per
-item than any journal expansion**. The numbers that decide it: the DOMAIN FAILURE
-count in S2, and the per-domain relevance ratio in S3.
+**A10** — see §3. Measure the flip rate by surface before making it a hard flag;
+a large flip rate may be correct (never checked before) or a classifier failure,
+and only adjudication distinguishes them.
 
-**Stage 5 `citation-audit-v1`.** Auditing ~50 citations from a competitor answer
-that gave journal + year but no PMIDs. Hard rule baked in: unresolvable ≠
-fabricated. The number that matters for the demo is **RESOLVED-but-PARTIAL** —
-real paper, claim quietly broader than the abstract — because that's the failure a
-reader can't see and a checker can.
+**A14** — 6% of *extra* search terms degrade (0% of primary terms). Possibly the
+same defect as A5's unexplained Schwendicke miss. Metric is hits-per-query.
 
-**`ENDO_DOMAIN_FILTER`** excludes 48 of 124 Reader/OSU canon anesthesia papers and
-is very likely also why the apixaban question retrieved nothing relevant. One root
-cause, two symptoms. Do not let anyone widen it globally to fix a local problem.
+**A17/A18** — A19d replaced the specific card that claimed "citations & impact
+factor", and the dead `reviewWhat` array that still carried "ranked 0-100 by
+design, sample size, recency, citations and follow-up" went with it. **A17's
+sweep of every OTHER explanatory surface is still open** — help text, tooltips,
+the About panel, the export decks and speaker notes, the README. A18's
+promise-line times are still my estimates: measured so far, only that an
+uncached literature FOLLOW-UP takes 74 s.
+
+**A20 left one decision for you.** Curriculum still asks clarifying questions
+before it builds. A20's premise was that it does not; measured, it does, and
+three stored curricula carry the answered block. Literature no longer asks.
+Say the word and Curriculum stops too — a test currently pins the asymmetry so
+the change cannot happen by accident.
+
+**A21d — a follow-up costs about as much time as a first answer.** Measured:
+74.0 s / $0.371 uncached, 1.0 s cached. The cause is that carried PMIDs SEED
+retrieval without shortening it. Fixing that needs a recall check on the
+follow-up eval cases first (serial eval, standing rule 9). Also open, and
+smaller: both uncached seeded follow-ups run so far needed a synthesis retry
+against a 12% historical baseline — n=2, cause unknown, and a retry roughly
+doubles the cost of an answer.
+
+**Stage 4** — the scope question: should Curo read beyond endodontic journals.
+Current view: no to "all dental journals"; yes to topic-gated doors into adjacent
+specialties; **specialty guidelines (ESE/AAE/SDCEP/ADA) are probably higher value
+per item than any journal expansion.** Ends in a memo and RB's decision.
+
+**Comparison set** — `eval/COMPARISON_QUESTIONS.md`: 12 questions plus one
+Curo-only case, each with a written prediction, and a six-mark scoring sheet.
+Not yet run.
 
 ---
 
 ## §6 COMPETITIVE FINDINGS
 
-**vs OpenEvidence** (asked: Eliquis in a patient needing apicectomy). OpenEvidence
-won, clearly — the question is a perioperative anticoagulation question that
-happens to involve a tooth, and it had the right library (CHEST 2022 guidance) with
-a real DOI. Curo had no relevant literature, said so correctly, then answered
-anyway from general knowledge with no citations under a green verification tick.
-**But** Curo asked the question OpenEvidence never asked: does this patient need
-the surgery at all? It cited the Cochrane review (RR 1.15, 0.97–1.35) showing
-non-surgical retreatment does about as well, making avoidance a legitimate option
-in a bleeding-risk patient. That reframe is the differentiator in one sentence.
-Strategic conclusion: **do not chase breadth.** Ingesting cardiology dissolves the
-curation that makes Curo worth using.
+**vs OpenEvidence, apixaban/apicectomy.** OpenEvidence won — the question is
+perioperative anticoagulation wearing a dental hat, and it had CHEST 2022 with a
+DOI. Curo had nothing relevant, said so, then answered anyway from general
+knowledge with no citations under a green tick (fixed by Q1/Q2). **But** Curo
+asked what OpenEvidence never did: does this patient need the surgery at all —
+citing Cochrane RR 1.15 for non-surgical retreatment. That reframe is the
+differentiator.
 
-**vs an SR/MA-restricted general model** (anesthesia). It beat Curo on presentation
-— an evidence-level tag inline on every claim, explicit in-line flagging of its own
-weak spots ("no SR/MA or RCT isolates this; consensus only. Flagged"), and honest
-handling of conflicting meta-analyses. Curo has all that information and renders it
-as bibliography badges instead. Two design lessons taken into the queue: tag
-evidence level **at the point of claim**, and **declare** evidence gaps rather than
-suppressing them (Curo's zero-evidence gate is silent, which is safe but teaches
-the clinician nothing). What it could not do: a single verifiable PMID, or anything
-resembling the COI flag Curo raised on its own Dentsply-funded source.
+**vs OpenEvidence, one-visit vs two-visit retreatment.** Curo won on substance:
+it surfaced and adjudicated a three-way disagreement OpenEvidence smoothed over,
+and caught that the Cochrane review pools primary treatment with retreatment and
+so does not answer the question asked. It lost on retrieval (the two 2022 RCTs)
+and declared a **false evidence gap** as a result — announcing a retrieval hole as
+a literature hole, the exact hazard flagged when the gap-declaration feature was
+specified.
+
+**vs an SR/MA-restricted general model, anesthesia.** It beat Curo on presentation:
+evidence-level tags inline on every claim, and in-line flagging of its own weak
+spots. Curo has that information and buries it in badges. What it could not do: a
+single verifiable PMID, or the COI flag Curo raised on its own Dentsply-funded
+source.
+
+**Strategic conclusion: do not chase breadth.** Ingesting cardiology dissolves the
+curation that makes Curo worth using.
 
 ---
 
-## §7 RECURRING BUG CLASSES — what to look for in every report
+## §7 RECURRING BUG CLASSES — check every report against these
 
 1. **Work discarded without a signal.** Module cap, stitcher budget, domain filter
-   dropping 48 papers — three instances in one night. Anything that caps, filters
-   or truncates must log and count what it dropped.
-2. **Fail-open gates.** A check that shows nothing and therefore shows green. The
-   verification banner over uncited claims is the worst instance so far.
-3. **Assertions that can become vacuous.** A green test that has quietly lost the
-   ability to fail buys false confidence. Now a standing rule: pair it with a test
-   that fails when it goes vacuous.
-4. **Batch metadata applied per-paper** (the original COI broadcast bug).
-5. **Trusted stored labels** — verify against source, not against the database's
-   own earlier guess.
-6. **Untagged PubMed query terms** (`Cochrane Review[pt]` matching 180,686 records).
-7. **Tests that grep source** instead of asserting on the prompt or data actually
-   used at runtime.
-8. **max_tokens truncation**, in every new form it takes.
-9. **Retrieval pool leaking into presentation** — bibliographies, reference lists
-   and "top papers" tables built from candidates rather than citations.
+   dropping 48 papers. Anything that caps, filters or truncates must log and count.
+2. **Fail-open gates.** A check that shows nothing and therefore shows green — the
+   verification banner over uncited claims is the worst instance.
+3. **Assertions that can become vacuous.** Rule 14: test the expression the
+   production path evaluates, not a restatement. Dead branches mask mutants.
+4. **A cache is a time capsule of old behaviour.** Any change to a rendered surface
+   must say what happens to what is already stored (A16).
+5. **A retrieval hole announced as a literature hole** (A5's false gap).
+6. **Methods-as-findings** — a real citation supporting a directive the paper never
+   concluded (A10).
+7. **Model-written metadata.** Journal names in Review reference lines are invented;
+   the model must write prose, never metadata (A9).
+8. **Explanatory copy claiming a method the engine does not use** (A17).
+9. **Gates tested only against the canonical form** — `(IF: n/a)` slipped through
+   every Q3 test because all of them used a number (rule 17).
+10. Batch metadata applied per-paper · trusted stored labels · untagged PubMed
+    query terms · tests that grep source · max_tokens truncation in new forms.
 
 ---
 
 ## §8 RB-ONLY ITEMS
 
 1. **Re-zip the OneDrive backup without `.env`, and rotate all three secrets** —
-   Anthropic key, OpenAI key, Neon database password. The current zip on the
-   OneDrive Desktop contains live credentials; the git bundle beside it is safe
-   (`.env` was never committed). **Still pending. Oldest open item.**
-2. Save the two fixtures named in `AGENT_QUEUE.md` §0 before starting the agent.
+   Anthropic key, OpenAI key, Neon password. The zip contains live credentials; the
+   git bundle beside it is safe. **Still pending. Oldest open item.**
+2. Rehearse the demo on the presenting machine: four cached questions, one live,
+   web deck citation click, video clip. Warm the process first (§3).
 3. Listen to 60 s of laser audio spanning "apexification" — confirm or clear the
    pronunciation flag.
-4. Rehearse the demo on the presenting machine: 4 cached questions, 1 live, web
-   deck citation click, video clip. Use the `endo-ai-noreload` config.
+4. Run the comparison set in `eval/COMPARISON_QUESTIONS.md` when there is time.
 5. Decide the Stage 4 scope question when the memo lands.
 6. Verify against full text before any of it reaches teaching material: buccal
-   infiltration success being ~45–85% rather than 80–90%; articaine IO being
-   evidence-supported (RCT, QuickSleeper, 81%); plain lidocaine being the wrong
-   choice for the hypertensive branch.
+   infiltration ~45–85% rather than 80–90%; articaine IO evidence-supported;
+   plain lidocaine wrong for the hypertensive branch.
 
 ---
 
 ## §9 SESSION HYGIENE
 
-Start new advisory chats from this file rather than continuing long ones. Update
-§3 and §5 whenever a stage completes. Keep `AGENT_QUEUE.md` as the single source of
-truth for agent work — if a new batch is written, it goes in there rather than
-living only in chat scrollback.
+Start new advisory chats from this file. Update §3 and §5 whenever a stage
+completes. **Every new batch goes into `AGENT_QUEUE.md` and gets committed** — a
+batch that lives only in chat scrollback does not exist as far as the agent is
+concerned.

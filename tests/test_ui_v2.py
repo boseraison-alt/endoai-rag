@@ -41,7 +41,9 @@ var _now = 0;
 Date.now = function () { return _now; };
 var _card = { style: { display: 'block' } };
 var _eta  = { textContent: '', _cls: {},
-              classList: { toggle: function (c, on) { _eta._cls[c] = !!on; } } };
+              classList: { toggle: function (c, on) { _eta._cls[c] = !!on; },
+                           add:    function (c) { _eta._cls[c] = true; },
+                           remove: function (c) { _eta._cls[c] = false; } } };
 var document = { getElementById: function (id) {
   if (id === 'progressCard') return _card;
   if (id === 'progressEta')  return _eta;
@@ -54,6 +56,49 @@ var clearInterval = function () {};
 
 def clock(js, mode="review"):
     return run_node(js, names=CLOCK, mode=mode, preamble=DOM_STUB)[0]
+
+
+# The poll loop, and a fetch we can make answer 404 or throw.
+POLL_FNS = ["MODES", "_etaTimer", "_etaStart", "_etaBudget", "_fmtClock",
+            "_etaTick", "_startEtaClock", "_stopEtaClock",
+            "_pollMisses", "_jobIsGone", "pollStatus"]
+
+POLL_STUB = """
+// Widen the clock's stub: the poll touches elements it does not, and a
+// getElementById returning null would throw rather than fail the assertion.
+var _extra = {};
+function _el(id) {
+  if (id === 'progressCard') return _card;
+  if (id === 'progressEta')  return _eta;
+  if (!_extra[id]) _extra[id] = {id: id, style: {}, textContent: '',
+                                 disabled: false,
+                                 classList: {toggle: function () {},
+                                             add: function () {},
+                                             remove: function () {}}};
+  return _extra[id];
+}
+document = { getElementById: _el, querySelector: function () { return null; },
+             querySelectorAll: function () { return []; } };
+var _cleared = false, _lastError = '', _httpStatus = 200, _throwOnFetch = false;
+var _body = {error: 'Job not found'};
+var currentJob = null, pollTimer = null, _streamActive = false;
+clearInterval = function () { _cleared = true; };
+setInterval = function () { return 1; };
+function showError(m) { _lastError = m; }
+function setLandingVisible() {}
+function updateStepPills() {}
+function showResult() {}
+function showStreamingPartial() {}
+function fetch() {
+  if (_throwOnFetch) {
+    return { then: function () { return this; },
+             catch: function (f) { f(new Error('network')); return this; } };
+  }
+  var res = { status: _httpStatus,
+              json: function () { return Promise.resolve(_body); } };
+  return Promise.resolve(res);
+}
+"""
 
 
 # ── A19b — one tagline, everywhere ────────────────────────
@@ -328,6 +373,78 @@ class TestTheProgressClock:
         assert "setInterval(_etaTick, 1000)" in body
         assert "_startEtaClock();" in SRC[SRC.index("function _startPollJob("):
                                           SRC.index("function _runSearch(")]
+
+    def _dead(self, status, body, start_clock=False):
+        """Drive one poll against a server that has forgotten the job."""
+        return run_node(
+            POLL_STUB +
+            "_httpStatus = %d; _body = %s;" % (status, body) +
+            ("_startEtaClock(); _now = 9000; _etaTick();" if start_clock else "") +
+            "var _etaBefore = _eta.textContent;"
+            "currentJob = 'gone'; pollTimer = 1;"
+            "pollStatus('apicoectomy of mandibular teeth');"
+            "setTimeout(function () {"
+            "  console.log(JSON.stringify([{cleared: _cleared, job: currentJob,"
+            "    card: _el('progressCard').style.display, eta: _eta.textContent,"
+            "    eta_before: _etaBefore,"
+            "    err: _lastError, asked: _el('askBtn').disabled}]));"
+            "}, 10);",
+            names=POLL_FNS, preamble=DOM_STUB)[0]
+
+    def test_a_forgotten_job_is_terminal_not_slow(self):
+        """Found live, and the worst kind of finding: a curriculum sat at
+        "elapsed 27:34 · usually several minutes" with the spinner turning,
+        while every poll behind it came back 404 because the dev server had
+        restarted and taken the jobs table with it.
+
+        `/status` answers 404 with `{"error": ...}` and no `status`, so none
+        of pollStatus's terminal branches fired and `.catch(){}` ate the rest.
+        The clock then made the page look MORE alive the longer it had been
+        dead — the exact inverse of why it was added, and §7.2's fail-open
+        gate wearing a different hat."""
+        got = self._dead(status=404, body="{}")
+        assert got["cleared"] is True, "the poll kept running against a dead job"
+        assert got["job"] is None
+        assert got["card"] == "none"
+        assert got["asked"] is False, "the clinician could not ask again"
+        assert "no longer running" in got["err"]
+        assert "apicoectomy of mandibular teeth" in got["err"], (
+            "the message does not say what to re-ask")
+
+    def test_the_clock_stops_with_it(self):
+        """Asserted with the clock actually RUNNING. Reading an empty readout
+        off a clock that was never started is the vacuous assertion standing
+        rule 4 is about — and it passed a mutant that deleted the stop."""
+        got = self._dead(status=404, body="{}", start_clock=True)
+        assert got["eta_before"], "the clock was not running, so this proves nothing"
+        assert got["eta"] == "", "the clock kept counting on a job nobody was running"
+
+    def test_an_error_body_with_no_status_is_terminal_too(self):
+        """Belt and braces, tested separately from the 404. Together they
+        cover for each other, which is good code and a bad test: each mutant
+        survived while only one case was exercised."""
+        got = self._dead(status=200, body='{"error": "Job not found"}')
+        assert got["cleared"] is True
+        assert got["job"] is None
+        assert "no longer running" in got["err"]
+
+    def test_one_dropped_poll_is_not_a_dead_job(self):
+        """The counterpart, and the reason this is not simply "give up on any
+        failure": networks blip, and tearing down a live 20-minute curriculum
+        because one poll timed out would be worse than the bug it fixes."""
+        got = run_node(
+            POLL_STUB +
+            "_throwOnFetch = true;"
+            "currentJob = 'alive'; pollTimer = 1;"
+            "for (var i = 0; i < 5; i++) pollStatus('q');"
+            "setTimeout(function () {"
+            "  console.log(JSON.stringify([{cleared: _cleared, job: currentJob,"
+            "                               misses: _pollMisses}]));"
+            "}, 10);",
+            names=POLL_FNS, preamble=DOM_STUB)[0]
+        assert got["cleared"] is False, "five blips tore down a live job"
+        assert got["job"] == "alive"
+        assert got["misses"] == 5
 
     def test_it_stops_itself_when_the_card_goes_away(self):
         """Six paths hide the progress card. The ticker checks the card rather
