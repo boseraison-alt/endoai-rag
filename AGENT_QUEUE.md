@@ -1177,6 +1177,60 @@ should now be brought to RB with a proposal rather than parked.
 
 ---
 
+### A31 — The tier taxonomy has no slot for observational/descriptive designs  *(BUILD IT — RB decision)*
+
+A23a's mechanism, proven: the seven tier filters are all publication types or MeSH
+terms for **therapy and synthesis** designs — RCT, systematic review, meta-analysis,
+controlled clinical trial, prospective studies, retrospective studies, cohort
+studies, case-control, case reports, review. **Nothing matches a cross-sectional,
+descriptive, morphometric, imaging or diagnostic-accuracy study.** Jeon 2021 is
+found by the module query, survives `ENDO_DOMAIN_FILTER`, and disappears at the
+tier filter. **46% of the most relevant papers for that question are reachable by
+no tier filter at all**, including the bony-lid technique paper A23 says is
+"absent entirely".
+
+This is a fifth failure class and a new bug class for HANDOVER.md: **the taxonomy
+cannot express the thing, so it can never be retrieved.** It produces no error —
+only a thinner answer — which is why three separate investigations blamed the
+domain filter, the cap and the coverage gate before finding it.
+
+**RB decision (2026-09-03): build it now, do not wait for A25.** Those designs are
+currently *unreachable*, which is a hole in the net rather than a ranking problem;
+banding them weakest is additive and reversible, and blocking a retrieval fix
+behind a scoring redesign leaves every anatomy question answered badly meanwhile.
+
+- **A31a** Add a retrieval filter for observational/descriptive designs
+  (cross-sectional, morphometric/anatomical, imaging/diagnostic-accuracy). Keep it
+  reasonably specific — report what a broad version would admit before choosing.
+- **A31b** **Band at the weakest tier initially.** Nothing is promoted, nothing
+  currently retrieved is displaced. A25 decides later whether an anatomy question
+  should rank these higher; this item only makes them reachable. A12's discipline
+  holds: reachability now, ranking later, never in one commit.
+- **A31c** Confirm the new tier gets its own budget and cannot consume slots from
+  level1 or above. Report papers admitted per tier before and after on the
+  apicoectomy fixture.
+- **A31d** Done when the regenerated apicoectomy curriculum can cite Jeon 2021 and
+  the bony-lid papers. Note the existing protections still apply — invariant 6
+  (zero-evidence modules render no numeric protocol) and tier banding mean a
+  weakest-tier paper cannot drive a protocol on its own.
+- **A31e** Also correct the record: `ENDO_DOMAIN_FILTER` has now been exonerated
+  twice (Q7, A23a). Stage 4 should treat the venue-exclusion finding on its own
+  merits rather than as an explanation for these gaps.
+
+### A30d — sequencing the eval  *(RB decision)*
+
+**Run one eval after the whole A30a sweep lands, not one per change.** Still open:
+`ensure_authoritative` and `fetch_papers`' quality threshold, both of which decide
+membership by score. Running now would mean running again. Approved: ~$13 and the
+machine time, before the demo — retrieval that has changed twice today should not
+be demonstrated unmeasured.
+
+Batching makes attribution harder, so: if more cases move than can be explained
+cleanly, bisect by reverting individual membership changes **on the affected cases
+only** rather than re-running the full set.
+
+---
+
 ## §8c CORPUS DEPTH — six levers  *(strategic; sequence at the end of §8c)*
 
 Origin: three consecutive comparisons where Curo's reasoning beat the competitor
