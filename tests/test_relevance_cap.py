@@ -11,15 +11,20 @@ before changing anything, that is right for one of three:
     34555421  Toia 2022, J Endod            ABSENT   (ingested, see scripts/)
 
 So two thirds of the "missing" evidence was already in the library and still
-did not reach the answer, by two mechanisms and neither of them ingestion.
-This file is about the first: 60 level1 papers cleared the similarity floor,
-the cap kept 25 BY SCORE, Karaoglan ranked 54th of 60 by score, and 20 of the
-25 that were kept were LESS similar to the question than the one that was cut.
-The answer then said no prospective study directly compares the two protocols.
+did not reach the answer, and neither reason was ingestion. 60 level1 papers
+cleared the similarity floor, the cap kept 25 BY SCORE, Karaoglan ranked 54th
+of 60 by score, and 20 of the 25 that were kept were LESS similar to the
+question than the one that was cut. The answer then said no prospective study
+directly compares the two protocols.
 
-Schwendicke is the second mechanism — a recall miss, not a cap — and belongs
-with query breadth (A14/A24). It is asserted here only as the thing this fix
-does NOT claim to solve, so nobody later reads A5b as closed.
+CORRECTION, from A30a. Schwendicke was first written up here — and reported to
+RB — as a recall miss belonging to query breadth. It is not. It sits at
+similarity 0.635, rank 40 in the library by pure relevance and well above the
+0.55 floor; what removed it was the SAME category error one layer up, in
+`rag.search`'s `ORDER BY (score * 0.6 + similarity * 40) LIMIT 100`, where the
+score carried 60 of the 100 available weight on a membership decision. All
+three papers now enter the candidate pool. The lesson is the one A5b already
+taught twice: measure the mechanism, do not infer it from the symptom.
 """
 
 import sys
@@ -151,10 +156,129 @@ class TestWhatA5bDoesAndDoesNotClose:
             cur.close()
             conn.close()
 
-    def test_the_schwendicke_miss_is_recorded_as_still_open(self):
-        """It is below the floor on every generated query, so no cap change
-        reaches it. Naming that here stops A5b being read as closed when the
-        third paper is still missing for a different reason."""
-        queue = (Path(__file__).parent.parent / "AGENT_QUEUE.md").read_text(
-            encoding="utf-8")
-        assert "Schwendicke" in queue
+    def test_all_three_named_papers_now_enter_the_candidate_pool(self):
+        """A5b's done-when, plus the third paper A30b recovered. Asserted on
+        the real KNN, which is the thing that was wrong: this test fails
+        against the old score-weighted ORDER BY."""
+        from rag import search as rag_search
+        q = "retreatment in one visit versus two visits in endodontics"
+        got = {str(r["pmid"]) for r in (rag_search(q, level_key=None, limit=100) or [])}
+        for pmid, label in [("35488883", "Karaoglan 2022"),
+                            ("34555421", "Toia 2022"),
+                            ("28148534", "Schwendicke 2017")]:
+            assert pmid in got, "%s is not in the top 100 by relevance" % label
+
+
+# ── A30a — the rest of the sweep ──────────────────────────
+
+class TestTheLivePathCapsByRelevanceToo:
+    """`_apply_quality_threshold` is the live-path twin of the per-tier cap.
+    The FLOOR is a quality bar and stays one — a paper below it is not good
+    enough for any question. The CAP chooses among papers that have already
+    cleared the bar, and that is a membership decision (rule 19)."""
+
+    def _papers(self, n, floor_ok=True):
+        # relevance order 1..n, score deliberately the inverse of relevance
+        base = 60 if floor_ok else 10
+        return [{"pmid": str(i), "pubmed_rank": i, "score": base + i}
+                for i in range(1, n + 1)]
+
+    def test_the_most_relevant_survive_not_the_highest_scoring(self):
+        import endo_ai
+        kept = endo_ai._apply_quality_threshold(self._papers(40), "review", "level1")
+        ranks = sorted(p["pubmed_rank"] for p in kept)
+        assert ranks[0] == 1, "the most relevant paper PubMed returned was cut"
+        assert max(ranks) < 40, "it kept the tail, which is the score order"
+
+    def test_survivors_come_back_ordered_by_score(self):
+        """Membership by relevance, ranking by score — invariant 1 unchanged."""
+        import endo_ai
+        kept = endo_ai._apply_quality_threshold(self._papers(40), "review", "level1")
+        scores = [p["score"] for p in kept]
+        assert scores == sorted(scores, reverse=True)
+
+    def test_a_paper_with_no_rank_sorts_last(self):
+        """Absent evidence of relevance is not evidence of relevance. Live
+        write-back rows have reached this function without one."""
+        import endo_ai
+        papers = self._papers(30) + [{"pmid": "no-rank", "score": 999}]
+        kept = endo_ai._apply_quality_threshold(papers, "review", "level1")
+        assert "no-rank" not in {p["pmid"] for p in kept}
+
+    def test_a_sparse_tier_tops_up_by_relevance_not_by_score(self):
+        """Below the floor we are saying quality is insufficient and taking
+        what we can. Taking the best-SCORING of those fills a thin tier with
+        whatever happened to score well rather than with what was asked."""
+        import endo_ai
+        papers = [{"pmid": "far", "pubmed_rank": 99, "score": 49},
+                  {"pmid": "near", "pubmed_rank": 1, "score": 20}]
+        kept = {p["pmid"] for p in
+                endo_ai._apply_quality_threshold(papers, "review", "level1")}
+        assert "near" in kept
+
+    def test_it_says_what_it_dropped(self, capsys):
+        import endo_ai
+        endo_ai._apply_quality_threshold(self._papers(40), "review", "level1")
+        out = capsys.readouterr().out
+        assert "[cap]" in out and "dropped" in out
+
+    def test_it_stays_quiet_when_it_drops_nothing(self, capsys):
+        import endo_ai
+        endo_ai._apply_quality_threshold(self._papers(3), "review", "level1")
+        assert "[cap]" not in capsys.readouterr().out
+
+    def test_the_fetch_loop_records_pubmed_s_own_order(self):
+        """The rank is the only relevance signal the live path has: these
+        papers have no embedding yet, and esearch was asked for sort=relevance.
+        Recorded BEFORE the score sort that used to destroy it."""
+        src = (Path(__file__).parent.parent / "endo_ai.py").read_text(encoding="utf-8")
+        body = src[src.index("def fetch_papers("):]
+        body = body[:body.index("\ndef ")]
+        assert "for _pm_rank, pmid in enumerate(ids, 1):" in body
+        assert '"pubmed_rank":     _pm_rank,' in body
+        assert body.index("enumerate(ids, 1)") < body.index(
+            'scored_papers.sort(key=lambda x: x["score"]')
+
+
+class TestTheAuthorityGuarantee:
+
+    def _run(self, question="apicoectomy of mandibular teeth"):
+        from rag import search as rag_search
+        floor = app_mod.RELEVANCE_GATE["similarity_floor"]
+        cands = rag_search(question, level_key=None, limit=200) or []
+        relevant = [r for r in cands if float(r.get("similarity") or 0) >= floor]
+        out = app_mod.ensure_authoritative(cands, relevant, floor)
+        return cands, relevant, out
+
+    def test_it_picks_by_relevance_not_by_score(self):
+        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        body = src[src.index("def ensure_authoritative("):]
+        body = body[:body.index("\n# ── B2/B5")]
+        assert 'key=lambda p: -float(p.get("similarity") or 0))[:AUTHORITY_TOP_LEVEL1]' in body
+        assert '-float(p.get("score") or 0))[:AUTHORITY_TOP_LEVEL1]' not in body
+
+    def test_the_guarantee_currently_adds_nothing(self):
+        """A30a's finding, pinned. `usable()` requires similarity at or above
+        the floor and `relevant` already holds every such candidate, so the
+        re-inclusion set is empty by construction — on apicoectomy, where 183
+        of 200 candidates sit BELOW the floor, it still adds nothing.
+
+        This asserts the DEFECT on purpose. Making it fire means letting it
+        reach below the floor, which is a real change to what enters the pool
+        and is RB's call; when that happens this test should fail and be
+        rewritten, deliberately."""
+        cands, relevant, out = self._run()
+        assert len(cands) > len(relevant), (
+            "the fixture no longer has below-floor candidates to re-include")
+        assert len(out) == len(relevant), (
+            "the authority guarantee has started firing — good, but it is now "
+            "changing what enters the candidate pool and needs its own eval")
+
+    def test_it_still_refuses_retracted_and_withdrawn(self):
+        """Whatever else changes, the guarantee must never resurrect one."""
+        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        body = src[src.index("def ensure_authoritative("):]
+        body = body[:body.index("\n# ── B2/B5")]
+        assert 'p.get("has_retraction")' in body
+        assert '"WITHDRAWN:"' in body
+        assert 'superseded_by' in body

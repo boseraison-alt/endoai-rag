@@ -3474,7 +3474,14 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 
         n_coi_papers = n_registered = n_corrected = 0
         scored_papers = []
-        for pmid in ids:
+        # A30/rule 19. `ids` arrives in PubMed's own relevance order — esearch
+        # is called with sort=relevance — and that order is the only relevance
+        # signal the live path has, since these papers have no embedding
+        # similarity yet. It used to be destroyed by the score sort below and
+        # the cap then kept the top N by SCORE. Remembering the rank here is
+        # what lets the cap decide membership by relevance and leave ranking
+        # to the score, where invariant 1 puts it.
+        for _pm_rank, pmid in enumerate(ids, 1):
             meta    = metadata.get(pmid, {"year": "Unknown", "citations": 0, "journal": "", "authors": ""})
 
             # Use this paper's own abstract for metadata extraction — NOT the full
@@ -3551,6 +3558,7 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 
             scored_papers.append({
                 "pmid":            pmid,
+                "pubmed_rank":     _pm_rank,
                 # The tier this paper was retrieved under. Previously omitted,
                 # so write-back inserted live results with an empty level_key —
                 # they were then banded to the weakest tier on every later
@@ -3756,7 +3764,16 @@ def _apply_quality_threshold(scored_papers: list, mode: str = "review",
         TIER_QUALITY_FLOORS; never above the global QUALITY_FLOOR)
       - if fewer than MIN_PAPERS_KEPT survive, top up with the next-best
       - never keep more than the per-tier cap for the active mode
-    Caller is responsible for sorting by score before calling.
+
+    A30/rule 19. The FLOOR is a quality bar and stays a quality decision: a
+    paper below it is not good enough for any question. The CAP is a
+    membership decision among papers that have already cleared the bar, and it
+    used to keep the top N by score — the live-path twin of the per-tier cap
+    A5b found dropping the most on-point RCT in the library at rank 54 of 60.
+
+    Membership is therefore decided in PubMed's relevance order (`pubmed_rank`,
+    recorded in `fetch_papers` before the score sort), and the survivors are
+    returned ordered by score, which is where invariant 1 puts ranking.
     """
     if not scored_papers:
         return scored_papers
@@ -3765,11 +3782,33 @@ def _apply_quality_threshold(scored_papers: list, mode: str = "review",
     floor = _tier_floor(tier_key) if tier_key else QUALITY_FLOOR
     above = [p for p in scored_papers if p.get("score", 0) >= floor]
 
-    if len(above) >= MIN_PAPERS_KEPT:
-        return above[:cap]
+    def _by_relevance(papers):
+        # A paper with no rank (older cached shapes, or a caller that built the
+        # list itself) sorts last rather than first: absent evidence of
+        # relevance is not evidence of relevance.
+        return sorted(papers, key=lambda p: p.get("pubmed_rank") or 10 ** 6)
 
-    # Sparse tier — top up to MIN_PAPERS_KEPT with the best remaining
-    return scored_papers[:max(MIN_PAPERS_KEPT, len(above))][:cap]
+    def _cut(papers):
+        if len(papers) <= cap:
+            return sorted(papers, key=lambda p: p.get("score", 0), reverse=True)
+        ranked  = _by_relevance(papers)
+        kept    = ranked[:cap]
+        dropped = ranked[cap:]
+        # Standing rule 5.
+        print(f"    [cap] {tier_key or 'tier'}: {len(papers)} above the quality "
+              f"floor, keeping the {cap} most relevant; dropped {len(dropped)} "
+              f"(best dropped PubMed rank {dropped[0].get('pubmed_rank')})")
+        return sorted(kept, key=lambda p: p.get("score", 0), reverse=True)
+
+    if len(above) >= MIN_PAPERS_KEPT:
+        return _cut(above)
+
+    # Sparse tier — top up to MIN_PAPERS_KEPT with the next most RELEVANT of
+    # the papers below the floor. Topping up by score would fill a thin tier
+    # with whatever happened to score well rather than with what was asked.
+    short = [p for p in _by_relevance(scored_papers) if p not in above]
+    topped = above + short[:max(0, MIN_PAPERS_KEPT - len(above))]
+    return _cut(topped)
 
 
 # ── WITHIN-TIER SYNTHESIS ORDER ──────────────────────────

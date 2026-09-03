@@ -1010,6 +1010,21 @@ def ensure_authoritative(candidates: list, relevant: list, floor: float) -> list
     Retracted, withdrawn and superseded rows are excluded upstream by
     rag.search(); this re-checks rather than assuming, because a guarantee that
     can resurrect a retracted paper is worse than no guarantee.
+
+    A30a — MEASURED, AND IT HAS NEVER FIRED. `usable()` requires similarity at
+    or above the floor, and the `relevant` list this is handed already contains
+    every candidate at or above the floor, so `p.get("pmid") not in have` is
+    empty by construction. Checked on three real questions, including
+    apicoectomy where 183 of 200 candidates sit BELOW the floor: it added
+    nothing on all three, and its "re-included N that the similarity floor had
+    cut" line has never printed.
+
+    That is the §7.2 shape — a guarantee that shows nothing and therefore looks
+    satisfied. Making it fire means letting it reach BELOW the floor, which is
+    what its own rationale describes and a real change to what enters the
+    candidate pool. That is left for RB rather than taken here, because the
+    KNN now orders by pure relevance (A30b) and it is no longer obvious the
+    guarantee is needed at all.
     """
     from endo_ai import _COCHRANE_JOURNAL_HINTS
 
@@ -1032,11 +1047,16 @@ def ensure_authoritative(candidates: list, relevant: list, floor: float) -> list
                 and usable(p) and p.get("pmid") not in have]
     added.extend(cochrane)
 
+    # A30/rule 19 — which three get re-included is a membership decision, so
+    # it is made on similarity. (See the note above `usable`: as written this
+    # branch cannot fire at all, which is the finding that matters here. The
+    # ordering is corrected anyway so that fixing the guarantee later cannot
+    # reintroduce the category error.)
     lvl1 = sorted([p for p in candidates
                    if p.get("level_key") == "level1" and usable(p)
                    and p.get("pmid") not in have
                    and p.get("pmid") not in {a.get("pmid") for a in added}],
-                  key=lambda p: -float(p.get("score") or 0))[:AUTHORITY_TOP_LEVEL1]
+                  key=lambda p: -float(p.get("similarity") or 0))[:AUTHORITY_TOP_LEVEL1]
     added.extend(lvl1)
 
     if added:
