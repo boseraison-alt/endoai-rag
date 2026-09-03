@@ -5,6 +5,7 @@ import os
 import sys
 import re
 import json
+import unicodedata
 from datetime import datetime
 
 # Force UTF-8 output on Windows so emoji/Unicode in print() never raises UnicodeEncodeError
@@ -4750,7 +4751,126 @@ _AUTHOR_MENTION_RE = re.compile(
 _AUTHOR_MENTION_STOPWORDS = {
     "Cochrane", "PubMed", "Level", "Scenario", "Type", "Class", "Table",
     "Figure", "Module", "Step", "Grade", "Tooth", "Patient", "Evidence",
+    # A45c. Added from measurement, not from imagination: "Review and
+    # Meta-Analysis" is the ONLY non-author the discriminator below still keeps
+    # across the whole corpus (2 of 64). One word, because one word is what the
+    # measurement showed.
+    "Review",
 }
+
+# ── A45c — the `and` branch was matching the specialty's vocabulary ──────
+#
+# `UNCITED_AUTHOR_MENTION` caused 67% of synthesis retries on current code, and
+# a retry pays for a whole synthesis twice. The two examples in the day's
+# transcripts were "MTA and Biodentine" and "AAE and ESE". Neither is an author.
+#
+# The `and` branch matches ANY "Capitalised and Capitalised" pair, and
+# endodontics is full of them. Measured across every stored answer, curriculum
+# and fixture — 819 matches on that branch, of which about 30 are real author
+# pairs. PRECISION 3.7%. The seven-word stopword list cannot be made to hold a
+# specialty's vocabulary, and capitalisation cannot separate "Byström and
+# Sundqvist" from "RCTs and Systematic Reviews" (156 occurrences, from a tier
+# label) or "Photodiagnosis and Photodynamic Therapy" (a journal).
+#
+# This is rule 6, not a relaxation: the gate's LOGIC is wrong, and the bar is
+# untouched. It still takes exactly one uncited author to fail an answer.
+#
+# Two independent signals that a pair READS as a citation, either sufficient,
+# with ALL-CAPS vetoing both (rule 17 — enumerate, do not wildcard):
+#
+#   1. both surnames are ones the LIBRARY knows. `endo_papers_rag.authors`
+#      holds thousands of real endodontic names; diacritics are folded, because
+#      the library stores Gostemeyer and the answer writes Göstemeyer and that
+#      alone lost five real pairs.
+#   2. the sentence asserts something about them — a possessive, or a reporting
+#      verb within three words. "Fuss and Trope showed" is a citation whether or
+#      not the library holds a Fuss paper.
+#
+# Measured on the same corpus: 50 of 819 kept, and the only real pair either
+# signal misses is one whose surnames the library does not hold and whose
+# sentence makes no assertion. The other 769 are acronyms and title case.
+_AUTHOR_REPORTING_VERBS = (
+    # `published` is deliberately absent: a JOURNAL publishes, an author
+    # reports, and "Photodiagnosis and Photodynamic Therapy published it" is
+    # not a citation.
+    r"showed|found|reported|demonstrated|concluded|observed|noted|described|"
+    r"documented|proposed|introduced|compared|randomi[sz]ed|"
+    r"followed|analysed|analyzed|reviewed|pooled|identified|measured|"
+    r"recommend(?:ed)?|argued|suggested|established|confirmed"
+)
+_AUTHOR_ASSERTS_RE = re.compile(
+    r"^(?:'s|’s)?\W*(?:\w+\s+){0,3}(?:" + _AUTHOR_REPORTING_VERBS + r")\b", re.I)
+
+_author_surnames: set = None       # lazily built from the library, once
+_author_surname_lock = _cost_thread.Lock()
+
+
+def _fold_name(w: str) -> str:
+    """Rodig and Rödig are one surname."""
+    return "".join(c for c in unicodedata.normalize("NFKD", (w or "").lower())
+                   if not unicodedata.combining(c))
+
+
+def _library_surnames() -> set:
+    """Surnames the library's own author fields contain, folded and cached.
+
+    Fails OPEN to an empty set: with no index the possessive/reporting-verb
+    signal still runs, so a database hiccup makes the gate no worse than the
+    second signal alone — never silently blind.
+    """
+    global _author_surnames
+    with _author_surname_lock:
+        if _author_surnames is not None:
+            return _author_surnames
+    names = set()
+    try:
+        from rag import get_conn
+        conn = get_conn()
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT authors FROM endo_papers_rag "
+                        "WHERE authors IS NOT NULL AND authors <> ''")
+            for (a,) in cur.fetchall():
+                for person in re.split(r",\s*", a or ""):
+                    person = person.replace(" et al.", "").replace(" et al", "").strip()
+                    if not person:
+                        continue
+                    # "Yilmaz S" / "Rossi-Fedele G" — initials trail the surname.
+                    m = re.match(r"^([A-Za-zÀ-ÿ'’\-]+(?:\s+[A-Za-zÀ-ÿ'’\-]+)?)"
+                                 r"\s+[A-Z]{1,3}$", person)
+                    for part in (m.group(1) if m else person).split():
+                        if len(part) >= 3 and not part.isupper():
+                            names.add(_fold_name(part))
+        finally:
+            cur.close()
+            conn.close()
+    except Exception as ex:
+        print(f"  [author_gate] surname index unavailable ({ex}) — falling back "
+              f"to the assertion signal alone")
+        names = set()
+    with _author_surname_lock:
+        _author_surnames = names
+    return names
+
+
+def _reset_author_surnames() -> None:
+    """Tests use this; nothing on the request path needs it."""
+    global _author_surnames
+    with _author_surname_lock:
+        _author_surnames = None
+
+
+def _reads_as_author_citation(whole: str, tail: str) -> bool:
+    """Does this "X and Y" read as a citation, or as the specialty's prose?"""
+    if "et al" in whole.lower():
+        return True                       # the branch that was never wrong
+    parts = [w.strip().rstrip("'’s") for w in re.split(r"\s+and\s+", whole)]
+    if any(p.isupper() and len(p) >= 2 for p in parts):
+        return False                      # MTA, AAE, PIPS, NaOCl — not surnames
+    index = _library_surnames()
+    if index and all(_fold_name(p) in index for p in parts if p):
+        return True
+    return bool(_AUTHOR_ASSERTS_RE.match(tail or ""))
 
 # ── What an inline citation marker looks like ─────────────
 #
@@ -5185,6 +5305,13 @@ def _detect_uncited_author_mentions(answer: str) -> list:
                 continue
             for m in _AUTHOR_MENTION_RE.finditer(s):
                 if m.group(1) in _AUTHOR_MENTION_STOPWORDS:
+                    continue
+                # A45c. The `and` branch matched the specialty's vocabulary —
+                # "MTA and Biodentine", "RCTs and Systematic Reviews" — and
+                # caused 67% of synthesis retries. See the note above
+                # `_AUTHOR_REPORTING_VERBS`; the bar is unchanged, the logic
+                # is not.
+                if not _reads_as_author_citation(m.group(0), s[m.end():m.end() + 60]):
                     continue
                 out.append({"name": m.group(0), "sentence": s[:240],
                             "section": title})
