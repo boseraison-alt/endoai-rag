@@ -1536,7 +1536,46 @@ esearch hit count, not to the final pool. Converting a final-pool floor into a
 per-tier trigger needs the per-tier-to-final-pool transfer measured, which this
 has not done. Do not set the constant from the ~24 figure without that step.
 
-### A35 — Use the evidence you retrieved  *(RB, 2026-09-03)*
+### A35 — REFRAMED (2026-09-03): the defect is level1 precision, not refusal to descend
+
+**A35's premise is overturned — the sixth.** Measured across 15 stored answers,
+593 retrieved and 147 cited:
+
+| tier | retrieved | cited | cited % |
+|---|---|---|---|
+| cochrane | 24 | 10 | 42% |
+| **level1** | **414** | **86** | **21%** |
+| level2 | 31 | 11 | 35% |
+| level3a | 46 | 21 | **46%** |
+| level3b | 13 | 7 | **54%** |
+| level4 | 23 | 1 | 4% |
+| level5 | 20 | 9 | **45%** |
+
+Curo does not refuse to descend. It cites Levels IIIa, IIIb and V at roughly
+**twice** level1's rate. The defect is that **70% of everything retrieved is
+level1, and four fifths of it goes uncited** — the quota fills with papers of the
+right study design and the wrong subject, and the model quite correctly declines
+to cite them.
+
+So A35c ("synthesis must descend") is largely already true and should not be
+built. **The work moves upstream, to retrieval.**
+
+- **A35f** Diagnose why level1 candidates are so much less on-topic than lower
+  tiers. Report the similarity distribution by tier — hypothesis: level1's quota
+  (25) is large enough to reach far down the relevance ordering, while smaller
+  tiers only ever admit their few genuinely relevant papers. If so, the fix is a
+  per-tier **relevance floor** that binds before the quota, not a smaller quota.
+- **A35g** Consider that a quota is itself a membership decision (rule 19): "fill
+  25 slots" admits papers because slots exist, not because they are relevant. A
+  quota with a floor beneath it is the same correction applied one level up.
+- **A35h** Re-measure retrieved-vs-cited by tier after the fix. Target: level1's
+  cited rate approaches the lower tiers', with the *count* of cited papers rising
+  — that is the honest route to RB's ~20 references, not a synthesis instruction.
+- **A35d still stands** — the reference floor is a warning, not a quota, and
+  padding to reach a number remains forbidden.
+- **A35i** This is retrieval, so it lands **before** the re-baseline, not after.
+
+### A35 — Use the evidence you retrieved  *(RB, 2026-09-03 — original framing, superseded above)*
 
 RB's observation: when there is no Level I evidence, Curo appears not to fall back
 to Levels III–V — it declares a gap instead. The GIC/ceramic answer is the proof:
