@@ -125,6 +125,50 @@ class TestTheProductionPathUsesIt:
         assert "bucket[:MAX_RAG_PAPERS_PER_TIER]" not in body
 
 
+class TestTheDifferentialMergeAlsoCapsByRelevance:
+    """A30b, at a site A30a's enumeration missed — found while measuring A35k.
+
+    The differential path retrieves once per candidate cause and merges the
+    results into one per-tier union. That union was capped by SORTING ON SCORE
+    and slicing, which is the same category error A5b found, in the one place
+    where it costs most: the differential exists to carry evidence for the
+    causes that are NOT the leading one, and the score does not know which
+    candidate a paper was retrieved for.
+    """
+
+    def _merge_loop(self):
+        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        i = src.index('"source": "differential"')
+        j = src.rindex("for tier in TIER_ORDER:", 0, i)
+        return src[j:i]
+
+    def test_the_merge_caps_by_relevance(self):
+        assert "cap_by_relevance(bucket, max_per_tier, tier)" in self._merge_loop()
+
+    def test_the_merge_no_longer_slices_by_score(self):
+        assert "bucket[:max_per_tier]" not in self._merge_loop()
+
+    def test_the_merge_still_orders_by_score(self):
+        """Invariant 1: the cap decides membership, the score ranks within."""
+        body = self._merge_loop()
+        assert 'bucket.sort(key=lambda x: x.get("score") or 0, reverse=True)' in body
+
+    def test_a_live_route_paper_with_no_similarity_keeps_score_order(self):
+        """Differential candidates can come back from the LIVE route, where no
+        paper carries a similarity. The cap must then behave exactly as the
+        score slice did, or this fix silently changes the live differential."""
+        bucket = [{"pmid": str(i), "score": s, "level_key": "level1"}
+                  for i, s in enumerate([10, 90, 50, 70, 30])]
+        kept = app_mod.cap_by_relevance(bucket, 3, "level1")
+        assert [p["score"] for p in kept] == [90, 70, 50]
+
+    def test_similarity_beats_score_when_it_is_present(self):
+        bucket = [paper("hi-sim-low-score", 0.80, 20),
+                  paper("lo-sim-high-score", 0.56, 95)]
+        kept = app_mod.cap_by_relevance(bucket, 1, "level1")
+        assert kept[0]["pmid"] == "hi-sim-low-score"
+
+
 class TestWhatA5bDoesAndDoesNotClose:
 
     def test_toia_2022_is_in_the_library(self):

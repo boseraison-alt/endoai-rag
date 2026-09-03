@@ -1620,8 +1620,21 @@ def build_differential_evidence(job_id: str, case_description: str,
         bucket = merged.get(tier) or []
         if not bucket:
             continue
+        # A30b, at a site A30a's enumeration missed. This capped the merged
+        # union BY SCORE — sort by score, keep the first 25 — which is exactly
+        # the membership-by-quality error standing rule 19 exists for, and the
+        # twin of the per-tier cap A5b found cutting the most on-point RCT at
+        # rank 54 of 60. It is worse here than on the ordinary paths, because
+        # the union it cuts is the only place a paper retrieved for a WEAK
+        # candidate can reach the answer: the differential's whole purpose is
+        # to carry evidence for the causes that are not the leading one, and
+        # score does not know which candidate a paper was retrieved for.
+        #
+        # Papers arriving from the library route carry a similarity;
+        # cap_by_relevance ties-breaks on score, so ones from the live route
+        # (no similarity) fall back to exactly the score order used before.
+        bucket = cap_by_relevance(bucket, max_per_tier, tier)
         bucket.sort(key=lambda x: x.get("score") or 0, reverse=True)
-        bucket = bucket[:max_per_tier]
         evidence[tier] = {
             "text":   _scored_to_text(bucket, TIER_LABEL.get(tier, tier.upper())),
             "ids":    [p["pmid"] for p in bucket],
