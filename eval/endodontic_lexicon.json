@@ -1,0 +1,108 @@
+{
+  "_README": [
+    "A41a — a curated lexicon of endodontic TERMS OF ART, for RB's review.",
+    "",
+    "NOT IN USE. Nothing reads this file yet. A41a's instruction was that RB",
+    "reviews it before it is used; A41b wires it in as AVAILABLE vocabulary,",
+    "never as a mandatory expansion, and measures recovery with and without.",
+    "",
+    "WHY THIS EXISTS. A33g's vocabulary half failed, and why it failed is the",
+    "transferable part. The enrichment that recovered 2 of 4 target papers",
+    "contained 'orifice barrier' — not a synonym for an access restoration but",
+    "a DIFFERENT NAMED TECHNIQUE, and the phrase in both papers' titles. Asked",
+    "to expand a scenario group the generator returns synonyms of the words it",
+    "was given; five generations across two framings never produced it. A",
+    "general-purpose generator cannot invent a term of art it has no reason to",
+    "reach for.",
+    "",
+    "WHY IT IS HAND-CURATED AND NOT MINED. Both were tried. Mining the",
+    "library's own titles for phrases the generator never writes returns 276",
+    "candidates and MISSES THE TWO TERMS THIS FILE EXISTS FOR: 'orifice",
+    "barrier' appears in 1 library title and 'bony lid' in 0. The library was",
+    "assembled by the retrieval that has the blind spot, so it cannot testify",
+    "about it — you cannot mine a blind spot out of a corpus collected through",
+    "it. Mining the outside corpus instead (competitor answers, the comparison",
+    "set, the titles of papers the failed fixtures name) does surface the right",
+    "terms — intraorifice barrier, direct coronal restoration, computerized",
+    "intraosseous — but buried in document furniture ('captured verbatim',",
+    "'--- banner'), because those files are commentary, not clinical prose.",
+    "",
+    "So every entry below is justified by a named fixture and a PMID that was",
+    "actually missed. That is a short list on purpose. RB extends it; nothing",
+    "is added here on a hunch.",
+    "",
+    "SHAPE. `head` is the canonical name. `variants` are the spellings PubMed",
+    "records actually use, and are what would be OR-ed into a group. `why`",
+    "names the fixture. `evidence` names papers the vocabulary reaches that",
+    "retrieval missed without it."
+  ],
+  "version": 1,
+  "reviewed_by_rb": false,
+  "terms": [
+    {
+      "head": "orifice barrier",
+      "variants": ["orifice barrier", "intraorifice barrier",
+                   "intra-orifice barrier", "coronal barrier", "orifice plug"],
+      "concept": "a material seal placed over the root filling at the canal orifice, beneath the coronal restoration",
+      "why": "A33 — the GIC-through-a-ceramic-crown fixture. Adding these two variants took recovery from 0/4 to 2/4; without them the query returns generic GIC-in-endodontics.",
+      "evidence": ["36661351", "35097115"],
+      "generator_ever_wrote_it": false
+    },
+    {
+      "head": "bony lid",
+      "variants": ["bony lid", "bone lid", "bone window", "cortical window",
+                   "osteotomy repositioning"],
+      "concept": "raising and replacing a cortical bone plate to reach an apex through thick mandibular cortex",
+      "why": "A23 — the apicoectomy fixture calls these papers 'absent entirely'. The technique exists specifically for the anatomy the question is about.",
+      "evidence": ["36243177", "32312482"],
+      "generator_ever_wrote_it": false
+    },
+    {
+      "head": "targeted endodontic microsurgery",
+      "variants": ["targeted endodontic microsurgery", "guided endodontic microsurgery",
+                   "dynamic navigation", "static guided endodontic",
+                   "3D-printed surgical guide"],
+      "concept": "apical surgery located by a printed guide or navigation rather than by freehand estimation",
+      "why": "A23 names 'targeted EMS with 3D-printed guides' among the content the curriculum should have covered and did not.",
+      "evidence": [],
+      "generator_ever_wrote_it": false
+    },
+    {
+      "head": "direct coronal restoration",
+      "variants": ["direct coronal restoration"],
+      "concept": "restoring the crown of an endodontically treated tooth directly, without an indirect restoration",
+      "why": "A33c — the 2026 Cochrane review's own title. NARROWED ON CHECKING: the first draft listed 'direct restoration', 'coronal restoration' and 'post-endodontic restoration' as variants and claimed the generator had never written them. It has written all three. Only the full four-word phrase is novel, and vocabulary is not this paper's barrier anyway — ENDO_DOMAIN_FILTER excludes it from every live query, so it is reachable only from the library. Kept at low value, not deleted, because the phrase is still the field's name for the thing.",
+      "evidence": ["42444634"],
+      "generator_ever_wrote_it": false
+    },
+    {
+      "head": "computerized intraosseous anaesthesia",
+      "variants": ["computerized intraosseous anaesthesia",
+                   "computerized intraosseous anesthesia",
+                   "computerized intraosseous", "QuickSleeper",
+                   "intraosseous injection",
+                   "computer-controlled local anesthetic delivery", "CCLAD"],
+      "concept": "a powered intraosseous delivery system, distinct from conventional infiltration or block",
+      "why": "A25's first instance — the anaesthesia second-opinion fixture names the device; no generated query has ever contained it.",
+      "evidence": [],
+      "generator_ever_wrote_it": false
+    },
+    {
+      "head": "Kim-Kratchman classification",
+      "variants": ["Kim-Kratchman classification", "Kim-Kratchman",
+                   "Kim Kratchman", "endodontic microsurgery classification"],
+      "concept": "the A/B/C case-difficulty classification for apical microsurgery",
+      "why": "A23 lists it among the content the apicoectomy curriculum omitted.",
+      "evidence": [],
+      "generator_ever_wrote_it": false
+    }
+  ],
+  "rejected": [
+    {
+      "head": "medication-related osteonecrosis of the jaw",
+      "variants": ["MRONJ", "medication-related osteonecrosis", "antiresorptive",
+                   "bisphosphonate-related osteonecrosis", "BRONJ"],
+      "why_rejected": "A23 names MRONJ/antiresorptive among the content the apicoectomy curriculum omitted, so it looked like a lexicon entry. Checked against pubmed_audit.jsonl, the generator has already written EVERY ONE of these five variants. It is not a vocabulary blind spot, and whatever went wrong on that curriculum went wrong somewhere else. Kept here rather than deleted so the same entry is not proposed again."
+    }
+  ]
+}
