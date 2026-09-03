@@ -1,0 +1,309 @@
+mode: SYNTHESIS
+
+======================================================================
+laser-root-canal-disinfection-live   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 552de32+dirty (imported 2026-09-03T10:46:06)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  NOTE: mode=learn ignores force_route='live'. The curriculum builder does its own retrieval and never calls the pinned builder, so this case is NOT route-pinned under --synthesis-subset.
+[intent] kind=standard retrieval=both clarify=False reason=Evidence-based topic on laser efficacy for root canal disinfection; benefits from current literature.
+
+[curriculum] Step A — generating 4-module syllabus for: 'Use of lasers in root canal disinfection'
+  syllabus: ['Laser physics and bactericidal mechanisms in endodontics', 'Clinical assessment of endodontic biofilm and infection complexity', 'Laser-activated irrigation protocols and technical parameters', 'Clinical outcomes, microbiological success and adverse effects of laser disinfection']
+  Cost: $0.0034
+
+[curriculum] Steps B+C — 4 module(s) across 4 worker(s)
+
+[curriculum] Step B.1/4 — retrieving: 'Laser physics and bactericidal mechanisms in endodontics'
+
+Building evidence base for: '(Er:YAG OR Nd:YAG OR diode OR "Nd:YAG laser" OR "erbium laser" OR "excimer laser" OR KTP OR "potassium titanyl phosphate") AND (wavelength OR photon OR "thermal effect*" OR cavitation OR shockwave* OR "photothermal" OR "photomechanical") AND (bacteria* OR microorganism* OR "bacterial killing" OR "cell wall" OR disruption OR ablation)' (mode=learn)
+--------------------------------------------------
+
+[curriculum] Step B.2/4 — retrieving: 'Clinical assessment of endodontic biofilm and infection complexity'
+
+Building evidence base for: '(biofilm* OR polymicrobial OR "bacterial community" OR "microbial ecology" OR "E. faecalis" OR Enterococcus OR "gram-negative" OR anaerobe* OR "secondary infection" OR "persistent infection") AND ("root canal" OR endodontic* OR apical* OR periapical) AND (characterization OR virulence OR resistance OR detection OR culture OR molecular OR "16S rRNA")' (mode=learn)
+--------------------------------------------------
+
+[curriculum] Step B.3/4 — retrieving: 'Laser-activated irrigation protocols and technical parameters'
+
+Building evidence base for: '("photodynamic therapy" OR PDT OR aPDT OR "laser-activated irrigation" OR LAI OR PIPS OR SWEEPS OR "light-activated" OR "laser irradiation" OR "endodontic laser") AND (protocol* OR technique OR parameter* OR power OR energy OR wavelength OR "exposure time" OR irrigation OR NaOCl OR chlorhexidine) AND (disinfect* OR efficacy OR effectiveness OR antimicrobial OR "bacterial reduction")' (mode=learn)
+--------------------------------------------------
+
+[curriculum] Step B.4/4 — retrieving: 'Clinical outcomes, microbiological success and adverse effects of laser disinfection'
+
+Building evidence base for: '(("photodynamic therapy" OR PDT OR aPDT OR "laser-activated irrigation" OR LAI OR PIPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*)) AND ("success rate*" OR healing OR periapical OR "treatment outcome*" OR prognosis OR survival OR recurrence OR complication* OR "adverse effect*" OR damage OR carbonization OR "collateral damage")' (mode=learn)
+--------------------------------------------------
+  Smart search terms: '(Er:YAG OR Nd:YAG OR diode OR "erbium laser" OR "excimer laser" OR KTP OR "potassium titanyl phosphate") AND (wavelength OR photon OR "thermal effect*" OR cavitation OR shockwave* OR photothermal OR photomechanical) AND (bacteria* OR microorganism* OR "bacterial killing" OR "cell wall" OR disruption OR ablation)'
+  Searching Cochrane for: '(Er:YAG OR Nd:YAG OR diode OR "erbium laser" OR "excimer laser" OR KTP OR "potassium titanyl phosphate") AND (wavelength OR photon OR "thermal effect*" OR cavitation OR shockwave* OR photothermal OR photomechanical) AND (bacteria* OR microorganism* OR "bacterial killing" OR "cell wall" OR disruption OR ablation)'...
+  Smart search terms: '("photodynamic therapy" OR PDT OR aPDT OR "laser-activated irrigation" OR LAI OR PIPS OR SWEEPS OR "light-activated" OR "laser irradiation" OR "endodontic laser") AND (protocol* OR technique* OR parameter* OR power OR energy OR wavelength OR "exposure time" OR irrigat* OR NaOCl OR chlorhexidine) AND (disinfect* OR efficacy OR effectiveness OR antimicrobial* OR "bacterial reduction")'
+  Searching Cochrane for: '("photodynamic therapy" OR PDT OR aPDT OR "laser-activated irrigation" OR LAI OR PIPS OR SWEEPS OR "light-activated" OR "laser irradiation" OR "endodontic laser") AND (protocol* OR technique* OR parameter* OR power OR energy OR wavelength OR "exposure time" OR irrigat* OR NaOCl OR chlorhexidine) AND (disinfect* OR efficacy OR effectiveness OR antimicrobial* OR "bacterial reduction")'...
+  Smart search terms: '(photodynamic therapy OR PDT OR aPDT OR "laser-activated irrigation" OR LAI OR PIPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND ("success rate*" OR healing OR periapical OR "treatment outcome*" OR prognosis OR survival OR recurrence OR complication* OR "adverse effect*" OR damage OR carbonization OR "collateral damage")'
+  Searching Cochrane for: '(photodynamic therapy OR PDT OR aPDT OR "laser-activated irrigation" OR LAI OR PIPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND ("success rate*" OR healing OR periapical OR "treatment outcome*" OR prognosis OR survival OR recurrence OR complication* OR "adverse effect*" OR damage OR carbonization OR "collateral damage")'...
+  Smart search terms: '(biofilm* OR polymicrobial OR "bacterial community" OR "microbial ecology" OR "E. faecalis" OR Enterococcus OR "gram-negative" OR anaerobe* OR "secondary infection" OR "persistent infection") AND ("root canal" OR endodontic* OR apical* OR periapical) AND (characterization OR virulence OR resistance OR detection OR culture OR molecular OR "16S rRNA")'
+  Searching Cochrane for: '(biofilm* OR polymicrobial OR "bacterial community" OR "microbial ecology" OR "E. faecalis" OR Enterococcus OR "gram-negative" OR anaerobe* OR "secondary infection" OR "persistent infection") AND ("root canal" OR endodontic* OR apical* OR periapical) AND (characterization OR virulence OR resistance OR detection OR culture OR molecular OR "16S rRNA")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 1068ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 2 PMIDs in 1206ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 2 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 1204ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 1231ms (HTTP 200)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  -- Cochrane Reviews (PubMed): 0 results found
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 9 PMIDs in 1162ms (HTTP 200)
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1163ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1221ms (HTTP 200)
+    Fetching metadata for 9 papers...
+    Fetching metadata for 50 papers...
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKCochrane Reviews (PubMed): 2 papers -- top score 83.3/100
+    [pubmed_xml] 0 paper(s) with corrections, 4 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1177ms (HTTP 200)
+    [abstract_cache] persisted 9 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 9 papers -- top score 75.6/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 16 PMIDs in 1107ms (HTTP 200)
+    Fetching metadata for 16 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 7 pre-registered, 0 with corrections/retractions
+    [cap] level1: 48 above the quality floor, keeping the 10 most relevant; dropped 38 (best dropped PubMed rank 11)
+    [quality] kept 10 of 50 papers above threshold (mode=learn, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 80.5/100
+    [abstract_cache] persisted 16 abstracts from this batch
+    [quality] kept 3 of 16 papers above threshold (mode=learn, tier=level2)
+  OKLevel II — Prospective Studies: 16 papers -- top score 67.8/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 5 pre-registered, 1 with corrections/retractions
+    [cap] level1: 40 above the quality floor, keeping the 10 most relevant; dropped 30 (best dropped PubMed rank 11)
+    [quality] kept 10 of 50 papers above threshold (mode=learn, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 78.5/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1286ms (HTTP 200)
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 973ms (HTTP 200)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 2 PMIDs in 1075ms
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1394ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    Fetching metadata for 2 papers...
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 8 pre-registered, 0 with corrections/retractions
+    [cap] level1: 47 above the quality floor, keeping the 10 most relevant; dropped 37 (best dropped PubMed rank 11)
+    [quality] kept 10 of 50 papers above threshold (mode=learn, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 80.5/100
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 50 PMIDs in 1404ms (HTTP 200)
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 2 papers -- top score 40.9/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1030ms (HTTP 200)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 1 PMIDs in 1165ms
+    Fetching metadata for 1 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIb — Case-Control: 1 papers -- top score 35.1/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [cap] level2: 31 above the quality floor, keeping the 8 most relevant; dropped 23 (best dropped PubMed rank 12)
+    [quality] kept 8 of 50 papers above threshold (mode=learn, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 70.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 4 PMIDs in 1055ms (HTTP 200)
+  ~~ Level IV — Case Series: 4 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 33 PMIDs in 1148ms (HTTP 200)
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 8 PMIDs in 947ms
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Kerr' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [cap] level2: 18 above the quality floor, keeping the 8 most relevant; dropped 10 (best dropped PubMed rank 15)
+    [quality] kept 8 of 50 papers above threshold (mode=learn, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 70.4/100
+    Fetching metadata for 8 papers...
+    Fetching metadata for 33 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 35 PMIDs in 1118ms (HTTP 200)
+    [abstract_cache] persisted 50 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 3 pre-registered, 0 with corrections/retractions
+    [cap] level2: 26 above the quality floor, keeping the 8 most relevant; dropped 18 (best dropped PubMed rank 11)
+    [quality] kept 8 of 50 papers above threshold (mode=learn, tier=level2)
+  OKLevel II — Prospective Studies: 50 papers -- top score 70.4/100
+    Fetching metadata for 35 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 33 PMIDs in 1247ms (HTTP 200)
+    Fetching metadata for 33 papers...
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 6 of 8 papers above threshold (mode=learn, tier=level4)
+  OKLevel IV — Case Series: 8 papers -- top score 42.4/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 15 PMIDs in 1073ms (HTTP 200)
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    Fetching metadata for 15 papers...
+    [abstract_cache] persisted 33 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [cap] level3a: 25 above the quality floor, keeping the 6 most relevant; dropped 19 (best dropped PubMed rank 9)
+    [quality] kept 6 of 33 papers above threshold (mode=learn, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 33 papers -- top score 62.8/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 13 PMIDs in 998ms (HTTP 200)
+    [abstract_cache] persisted 35 abstracts from this batch
+    [cap] level3a: 13 above the quality floor, keeping the 6 most relevant; dropped 7 (best dropped PubMed rank 13)
+    [quality] kept 6 of 35 papers above threshold (mode=learn, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 35 papers -- top score 66.5/100
+    Fetching metadata for 13 papers...
+    [abstract_cache] persisted 15 abstracts from this batch
+    [quality] kept 6 of 15 papers above threshold (mode=learn, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 15 papers -- top score 40.7/100
+
+  Evidence base summary:
+  Total papers scored: 27
+  Average score:       48.1/100
+  Top paper:           PMID 41918875 -- 75.6/100
+  Top journal:         Frontiers in cellular and infection microbiology (IF=None)
+  [PRISMA dedup] flagged 10 primary studies as already synthesised in newer SR (PMID 41918875, 2026; cutoff ≤ 2024)
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 11 PMIDs in 1254ms (HTTP 200)
+    [abstract_cache] persisted 33 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [cap] level3a: 17 above the quality floor, keeping the 6 most relevant; dropped 11 (best dropped PubMed rank 11)
+    [quality] kept 6 of 33 papers above threshold (mode=learn, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 33 papers -- top score 66.1/100
+
+[curriculum] Step C.1/4 — writing module: 'Laser physics and bactericidal mechanisms in endodontics'
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 11 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 12 PMIDs in 1090ms (HTTP 200)
+    Fetching metadata for 12 papers...
+    [abstract_cache] persisted 13 abstracts from this batch
+    [cap] level3b: 5 above the quality floor, keeping the 4 most relevant; dropped 1 (best dropped PubMed rank 13)
+    [quality] kept 4 of 13 papers above threshold (mode=learn, tier=level3b)
+  OKLevel IIIb — Case-Control: 13 papers -- top score 60.6/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 41 PMIDs in 1345ms (HTTP 200)
+    [abstract_cache] persisted 11 abstracts from this batch
+    [quality] kept 3 of 11 papers above threshold (mode=learn, tier=level3b)
+  OKLevel IIIb — Case-Control: 11 papers -- top score 60.6/100
+    Fetching metadata for 41 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 43 PMIDs in 1043ms (HTTP 200)
+    [abstract_cache] persisted 12 abstracts from this batch
+    [quality] kept 4 of 12 papers above threshold (mode=learn, tier=level3b)
+  OKLevel IIIb — Case-Control: 12 papers -- top score 60.3/100
+    Fetching metadata for 43 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 44 PMIDs in 1378ms (HTTP 200)
+    Fetching metadata for 44 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 41 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [cap] level4: 36 above the quality floor, keeping the 6 most relevant; dropped 30 (best dropped PubMed rank 8)
+    [quality] kept 6 of 41 papers above threshold (mode=learn, tier=level4)
+  OKLevel IV — Case Series: 41 papers -- top score 43.7/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 1008ms (HTTP 200)
+    [abstract_cache] persisted 43 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level4: 24 above the quality floor, keeping the 6 most relevant; dropped 18 (best dropped PubMed rank 7)
+    [quality] kept 6 of 43 papers above threshold (mode=learn, tier=level4)
+  OKLevel IV — Case Series: 43 papers -- top score 46.7/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 1244ms (HTTP 200)
+    [abstract_cache] persisted 44 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [cap] level4: 38 above the quality floor, keeping the 6 most relevant; dropped 32 (best dropped PubMed rank 7)
+    [quality] kept 6 of 44 papers above threshold (mode=learn, tier=level4)
+  OKLevel IV — Case Series: 44 papers -- top score 43.7/100
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 50 PMIDs in 1206ms (HTTP 200)
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 24 of 50 papers above threshold (mode=learn, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 50.9/100
+
+  Evidence base summary:
+  Total papers scored: 58
+  Average score:       50.9/100
+  Top paper:           PMID 36156804 -- 80.5/100
+  Top journal:         International endodontic journal (IF=4.5)
+  [PRISMA dedup] flagged 13 primary studies as already synthesised in newer SR (PMID 40818665, 2026; cutoff ≤ 2024)
+
+[curriculum] Step C.4/4 — writing module: 'Clinical outcomes, microbiological success and adverse effects of laser disinfection'
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 17 of 50 papers above threshold (mode=learn, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 43.1/100
+
+  Evidence base summary:
+  Total papers scored: 50
+  Average score:       50.8/100
+  Top paper:           PMID 38634795 -- 78.5/100
+  Top journal:         International endodontic journal (IF=4.5)
+  [PRISMA dedup] flagged 7 primary studies as already synthesised in newer SR (PMID 38634795, 2024; cutoff ≤ 2022)
+
+[curriculum] Step C.2/4 — writing module: 'Clinical assessment of endodontic biofilm and infection complexity'
+    [abstract_cache] persisted 50 abstracts from this batch
+    [quality] kept 19 of 50 papers above threshold (mode=learn, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 50 papers -- top score 50.9/100
+
+  Evidence base summary:
+  Total papers scored: 55
+  Average score:       54.4/100
+  Top paper:           PMID 29852056 -- 83.3/100
+  Top journal:         The Cochrane database of systematic reviews (IF=12.0)
+  [PRISMA dedup] flagged 16 primary studies as already synthesised in newer SR (PMID 40818665, 2026; cutoff ≤ 2024)
+
+[curriculum] Step C.3/4 — writing module: 'Laser-activated irrigation protocols and technical parameters'
+  Cost: $0.1236 (16959 in / 4851 out, stop=end_turn)
+  Evidence mapping: passed=True score=100 cited=16 fabricated=0 unattributed=0 gaps=0
+  [citation_support] all 70 claim-citation pairs OK
+  Cost: $0.1608 (32408 in / 4241 out, stop=end_turn)
+  Evidence mapping: passed=False score=55 cited=14 fabricated=0 unattributed=8 gaps=1
+  RETRY — validation failed: UNATTRIBUTED_CLAIMS: 8 clinical claim(s) lack [[PMID:N]] markers (limit 3)
+  Cost: $0.1765 (37875 in / 4192 out, stop=end_turn)
+  Evidence mapping: passed=False score=35 cited=10 fabricated=0 unattributed=6 gaps=0
+  RETRY — validation failed: UNATTRIBUTED_CLAIMS: 6 clinical claim(s) lack [[PMID:N]] markers (limit 3)
+  Cost: $0.1463 (26224 in / 4508 out, stop=end_turn)
+  Evidence mapping: passed=True score=95 cited=17 fabricated=0 unattributed=2 gaps=0
+  [citation_support] 1 of 51 claim-citation pairs flagged as not supported
+  [write_curriculum_module_retry[3/4]] connection error (APIConnectionError) — retry 1/4 in 2.9s
+  [write_curriculum_module_retry[4/4]] connection error (APIConnectionError) — retry 1/4 in 2.2s
+  Retry mapping:    passed=False score=75 cited=10 fabricated=0 unattributed=4 gaps=0
+  Retry mapping:    passed=True score=100 cited=16 fabricated=0 unattributed=0 gaps=0
+  [citation_support] 2 of 58 claim-citation pairs flagged as not supported
+  [citation_support] 3 of 69 claim-citation pairs flagged as not supported
+  [module 1] wall 150.5s  $0.1667
+  [module 2] wall 181.3s  $0.1760
+  [module 3] wall 1640.2s  $0.4064
+  [module 4] wall 1645.9s  $0.3901
+[curriculum] module phase: 1645.9s wall on 4 worker(s); serial equivalent 3617.9s (2.20x)
+
+[curriculum] Step D — stitching 4 modules (budget=27145 tokens)
+  Cost: $0.4996 (30793 in / 27145 out, stop=max_tokens)
+  [stitch] INCOMPLETE (stop_reason=max_tokens) — retrying once at the ceiling
+  [stitch] retry is complete — using it
+  [citation_support] 3 module status block(s) did not survive stitching — restated in an appendix
+  [consistency] 1 parameter conflict(s), 0 malformed BECAUSE clause(s)
+  [consistency] applied 2 annotation(s), 0 repair(s); dropped 4 bad anchor(s), 0 bad because-match(es)
+  Answer saved to: answers/answer_20260903_113143.txt
+  [audit] wrote 211 claim citations -> audit_20260903_113143_baadd98988.json
+  [learn_history] saved -> 20260903_113143_use_of_lasers_in_root_canal_disinfection.json
+  route  None
+  papers 137   {}
+  support  6/248 flagged = 2.4%  (4 check(s), $2.2674)
+  vs stale point baseline in questions.json: 103 -> 137 (+34) — use --diff for the tracked range
+  FAIL  2 section(s) state numeric clinical parameters with no citation (max 0)
+
+======================================================================
+CITATION SUPPORT
+======================================================================
+  case                                       flagged   checked     rate      cost
+  laser-root-canal-disinfection-live               6       248     2.4%   $2.2674
+  TOTAL                                            6       248     2.4% $2.2674
+
+0/1 cases passed  [SYNTHESIS]

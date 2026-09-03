@@ -1893,7 +1893,16 @@ LEVEL_SCORES = {
     # in a patient, so it ranks below a human case series and above expert
     # opinion.
     "invitro":  15,
+    # A7 — expert consensus synthesised by a specialty body. Above one
+    # expert's opinion, below a bench result about a mechanism, and not a
+    # study at all. Sits between invitro (15) and level5 (10) to match its
+    # position in TIER_ORDER.
+    "guideline": 12,
     "level5":   10,
+    # A31 — descriptive and morphometric designs. Weakest rung: this tier
+    # exists to make them REACHABLE, and A25 decides later whether an anatomy
+    # question should rank them higher.
+    "observational": 8,
     # San Antonio Guide / College of Diplomates classics. Heterogeneous study
     # designs (1960s-2000s landmark RCTs, anatomical surveys, microbiology
     # series). Baseline 75 puts them just below Level I evidence on the
@@ -1929,7 +1938,7 @@ LEVEL_SCORES = {
 # one commit). Nothing above it moves and nothing already retrieved is
 # displaced.
 TIER_ORDER = ["cochrane", "level1", "classic", "level2", "level3a", "level3",
-              "level3b", "level4", "invitro", "level5", "observational"]
+              "level3b", "level4", "invitro", "guideline", "level5", "observational"]
 TIER_LABEL = {
     "cochrane": "Cochrane Reviews",
     "level1":   "Level I — RCTs and Systematic Reviews",
@@ -1939,6 +1948,7 @@ TIER_LABEL = {
     "level3":   "Level III — Retrospective / Case-Control (legacy)",
     "level4":   "Level IV — Case Series",
     "invitro":  "In Vitro / Ex Vivo — Bench Studies (not clinical evidence)",
+    "guideline": "Specialty Guidelines & Position Statements (consensus, not a study)",
     "level5":   "Level V — Expert Opinion / Reviews",
     "observational": "Observational / Anatomical — Descriptive Studies "
                      "(not comparative evidence)",
@@ -3766,6 +3776,10 @@ QUALITY_FLOOR    = 50   # global ceiling on any per-tier floor (see below)
 TIER_FETCH_DEPTH = {"observational": 100}
 
 TIER_QUALITY_FLOORS = {
+    # A7 — permissive on purpose. These rows score 30.9-90.0 on a scorer
+    # built for therapy designs; the score is not what makes a specialty
+    # guideline worth surfacing, and A12 forbids changing it here.
+    "guideline": 27,
     # A31 — the same floor as level4 (case series), the weakest clinical tier
     # that already exists, rather than a number invented for this one.
     #
@@ -3803,12 +3817,14 @@ MODE_TIER_QUOTAS = {
         "cochrane": 10, "level1": 18, "level2": 14,
         "level3a": 10, "level3b": 6, "level3": 8,
         "level4": 4,   "level5": 4,
+        "guideline": 4,
         "observational": 6,
     },
     "learn": {
         "cochrane": 8,  "level1": 10, "level2": 8,
         "level3a": 6,  "level3b": 4,  "level3": 6,
         "level4": 6,   "level5": 25,   # narrative-rich tier promoted
+        "guideline": 6,
         "observational": 10,
     },
     # case discussion uses the same balance as review
@@ -3816,6 +3832,7 @@ MODE_TIER_QUOTAS = {
         "cochrane": 10, "level1": 18, "level2": 14,
         "level3a": 10, "level3b": 6, "level3": 8,
         "level4": 4,   "level5": 4,
+        "guideline": 4,
         "observational": 6,
     },
 }

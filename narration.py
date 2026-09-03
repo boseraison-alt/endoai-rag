@@ -178,6 +178,17 @@ _PMID_MARKER = re.compile(r"\[\[PMID:\s*\d+\s*\]\]")
 # this can only ever eat a fragment. Whole markers are already gone by the
 # time it runs.
 _PARTIAL_PMID_MARKER = re.compile(r"\[\[\s*PMID\s*:?\s*\d*\s*\]?")
+# The REFERENCES list uses the SINGLE-bracket bibliographic form on purpose —
+# the synthesis prompt mandates `[PMID: N]` there and the renderer relies on it
+# to tell a reference key from an inline marker. Both patterns above require
+# DOUBLE brackets, so every reference line was read aloud as "P M I D three six
+# one five six eight oh four".
+#
+# Found by test_narration when a curriculum generated during the A30d eval
+# became the newest file in learn_history/ and carried a REFERENCES block the
+# older fixture did not have. The digits are required, so this can only match a
+# real key.
+_REF_PMID_KEY = re.compile(r"\[PMID:\s*\d+\s*\]")
 _HRULE       = re.compile(r"^\s*([-*_])\s*(?:\1\s*){2,}$", re.MULTILINE)
 _ATX         = re.compile(r"^\s{0,3}#{1,6}\s+", re.MULTILINE)
 _BULLET      = re.compile(r"^\s{0,3}[-*+]\s+", re.MULTILINE)
@@ -199,6 +210,7 @@ def strip_markdown_for_speech(text: str) -> str:
     # because narration is the last thing between a marker and a clinician's
     # ears.
     text = _PARTIAL_PMID_MARKER.sub("", text)
+    text = _REF_PMID_KEY.sub("", text)
     text = _MDLINK.sub(r"\1", text)
     text = _HRULE.sub("", text)
     text = _ATX.sub("", text)
