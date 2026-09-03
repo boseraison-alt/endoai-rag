@@ -1244,6 +1244,62 @@ only** rather than re-running the full set.
 
 ---
 
+### A32 — `ensure_authoritative` never fires  *(RB decision: do NOT let it reach below the floor)*
+
+Measured: `usable()` requires similarity at or above the floor, and the `relevant`
+list it is handed already contains every such candidate, so its re-inclusion set is
+empty by construction. It has never printed its own log line. Three questions
+tested, nothing added on any of them.
+
+**Decision: it must not be "fixed" by reaching below the similarity floor.** On
+apicoectomy 183 of 200 candidates sit below the floor; admitting high-tier papers
+from there is precisely the error just removed from the cap and the ORDER BY —
+letting authority override relevance, wearing a virtuous hat. A Cochrane review
+about a different question is still about a different question.
+
+The original intent was real and narrower than the implementation: a top-tier
+paper should not be lost to *query variance*. So:
+
+- **A32a** Redefine it as cross-query variance protection **above the floor**: a
+  paper that clears the floor on ANY generated query, but is lost in the union
+  merge or a cap, is restored. Never reaches below the floor on any query.
+- **A32b** If that mechanism cannot be built cleanly, **delete it** and say so in
+  the report. A guarantee that cannot fire is worse than no guarantee, because it
+  gets described.
+- **A32c — A17 dependency, check this first.** Does any rendered or explanatory
+  surface claim an authority guarantee (that Cochrane-tier or top Level I papers
+  can never be dropped)? If so, that copy has been false for as long as the
+  function has been inert — the same defect class as "citations & impact factor".
+  Fix the copy in the same commit as the code, and add it to A17's inventory.
+- **A32d** Whatever is built or deleted, keep the test that pins the current
+  defect deliberately, so a later change cannot silently reintroduce
+  score-over-relevance here.
+
+### A24 before the eval  *(RB decision, confirmed)*
+
+The agent is right and this is exactly what A30d exists to prevent. **Do A24
+first**, then ONE eval covering all four membership changes plus A31 and A24.
+Running now would mean running twice.
+
+A31d is correctly left unmet rather than forced. Note for the record: inflating
+the new tier's quota to push Jeon through would have put ~80 descriptive papers
+into an anatomy module — declining to do that is the right call, and A31d closes
+via A24b (a module query specific enough to rank the wanted papers), not via
+quota.
+
+### Evidence for A25, recorded now
+
+A31's calibration produced a number worth keeping: papers in the new
+observational/descriptive tier score min 15.4 / median 33.5 / **max 46.5**,
+because a therapy-shaped scorer gives a descriptive study no credit for a
+comparison it never made. Level5's floor of 38 would have cut 34 of 50 of them,
+including the paper the tier exists for.
+
+That is A25's argument as a measurement rather than an assertion: the scorer, not
+only the tier ladder, is shaped for therapy questions. Carry it into A25a.
+
+---
+
 ## §8c CORPUS DEPTH — six levers  *(strategic; sequence at the end of §8c)*
 
 Origin: three consecutive comparisons where Curo's reasoning beat the competitor
