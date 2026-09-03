@@ -680,7 +680,21 @@ Corazza BJM, Orozco EIF, Valera MC, *J Endod* 2022 (CBCT, 18-month follow-up).
 Also missed: Schwendicke F, Göstemeyer G, *BMJ Open* 2017 (flare-up RR 2.13). All
 are in core endodontic journals — **not** a domain-filter failure.
 
-- **A5b — OPEN.** A1 does not satisfy this. FIXTURE-retreatment does not flip the
+- **A5b — DONE (`9c611a5`), with its premise corrected.** Two of the three named
+  papers were ALREADY in the library and still never reached the answer.
+  Karaoglan 2022 was retrieved at similarity 0.648, cleared the floor, and was
+  cut by the per-tier cap, which kept 25 of 60 level1 papers **by score** — it
+  ranked 54th of 60, and 20 of the 25 kept were less similar to the question
+  than the one dropped, led by AAE/ESE position statements at score 90.0/87.0
+  (A7 arriving as a retrieval bug). `cap_by_relevance` now decides membership
+  by similarity, orders by score, and logs what it drops. Toia 2022
+  (PMID 34555421) really was absent and is ingested. Verified: the regenerated
+  answer cites BOTH 2022 RCTs in its clinical recommendation and declares no
+  evidence gap. **Schwendicke 2017 stays open** — below the floor on every
+  generated query, a recall miss belonging to A14/A24, not to the cap.
+  Original text below.
+
+- **A5b — the original item.** A1 does not satisfy this. FIXTURE-retreatment does not flip the
   coverage gate: both concepts are covered at 9 and 19 papers. A5a identified a
   different mechanism (candidate cap + absent from library). Fix that mechanism and
   ingest the three papers with full provenance, dry-run with delta split first.
