@@ -6731,6 +6731,33 @@ abbreviations AND expansions for any technique; never write a bare multi-word
 string. Do NOT add [pt] design filters or endodontic domain terms — those are
 appended automatically, and duplicating them narrows the search.
 
+EACH MODULE'S QUERY MUST BE ABOUT THAT MODULE. The commonest failure is four
+queries that are the TOPIC's terms with an aspect adjective bolted on. They
+then return four copies of the same pile, and the anatomy module gets written
+from evidence assembled for the topic as a whole.
+
+  topic: "apicoectomy of mandibular teeth"
+
+  BAD   module 1: (apicoectomy OR "apical resection" OR surgical endodontic*)
+                  AND (mandibular OR molars OR premolars) AND (indication* OR anatom*)
+        module 4: (apicoectomy OR "apical resection" OR surgical endodontic*)
+                  AND (mandibular OR molars OR premolars) AND (prognos* OR outcome*)
+        — the same two groups four times, differing only in an adjective.
+
+  GOOD  module 1: ("cortical bone" OR "buccal bone thickness" OR "cortical plate"
+                   OR "mandibular canal" OR "inferior alveolar nerve"
+                   OR "mental foramen" OR "root apex position" OR "bone thickness")
+                  AND (mandib* OR molar* OR premolar*)
+        module 4: ("success rate*" OR survival OR healing OR "periapical repair"
+                   OR recurrence OR "altered sensation" OR paresthesia OR complication*)
+                  AND (apicoectomy OR "endodontic microsurgery" OR "apical surgery"
+                       OR "root-end surgery")
+
+Name the structures, measurements, materials, devices, landmarks and outcomes
+the module actually teaches. A module about anatomy should be SEARCHING
+anatomy, not searching the procedure and hoping anatomy comes back. At most one
+concept group may be shared across modules; the rest must differ.
+
 Return EXACTLY {n_modules} lines, one per module, in this format:
 MODULE: <title> ||| <boolean query>
 No JSON, no fences, no numbering, no other text. Quotes inside the query are fine."""
