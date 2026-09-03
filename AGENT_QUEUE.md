@@ -1330,6 +1330,73 @@ only the tier ladder, is shaped for therapy questions. Carry it into A25a.
 
 ---
 
+### A33 — CORRECTION (2026-09-03): the premise was wrong, in the opposite direction
+
+The agent measured before fixing and **A33d is disproved**. The query is not
+under-specified; it is **over**-specified. The ceramic-crown AND-group collapses
+the pool from 131 to 26 and removes the two most on-topic papers:
+
+| query | pool | de Araújo 2021 | Aust Dent J orifice barriers |
+|---|---|---|---|
+| as generated (3 AND-groups incl. ceramic) | **26** | – | – |
+| drop the ceramic group | 131 | rank 12 | rank 11 |
+| scenario only, no material | 1261 | – | rank 41 |
+
+Every tier returned 0–1 hits, so **the taxonomy was never the binding constraint
+here** — A33a would not have surfaced Trautmann, because the query returns almost
+nothing before any tier filter applies. `36661351` (Aust Dent J 2023, orifice
+barriers) is already in the library at level1/65.9 and this query cannot reach it.
+
+**This is a new failure mode and it belongs in HANDOVER: a query so specific that
+it excludes the evidence that answers it.** Every previous retrieval finding was
+about what happens to candidates *after* they are found. This one is upstream of
+all of it, and it is the opposite of A24's diagnosis — which makes it the fourth
+premise of mine that measurement has overturned, and worth saying plainly in the
+report rather than quietly correcting.
+
+- **A33g** Fix at query construction: AND-groups must be **relaxable**. When a
+  query returns below a threshold pool, drop the most restrictive group and retry
+  before falling back to broader vocabulary. Report the pool size at each step;
+  log every dropped group (rule 5).
+- **A33h** Decide the relaxation ORDER by measurement, not intuition: which group
+  is dropped first, and on what signal (fewest matching records? most specific
+  substrate?). Report the rule before implementing it.
+- **A33i** A33a (surveys in the observational tier) stands on its own merits but is
+  **no longer justified by this fixture**. Say so, and justify it — or drop it —
+  on the apicoectomy evidence alone.
+- **A33c stands**: the 2026 Cochrane review `42444634` is absent from the library.
+  Ingest with full provenance, dry-run first.
+- **A33e** still needs the Curo answer; RB is pasting the fixtures.
+
+### A34 — Journal balance in the library  *(RB, 2026-09-03: measure before deciding)*
+
+RB has asked again for a slight preference toward *Journal of Endodontics*. The
+2026-09-02 decision was no-preference (invariant 11, pinned by test C1, and the
+approved UI card says papers are graded "never by journal, citation count or
+impact factor"). Rather than reopen that, **measure whether the perceived IEJ skew
+is a ranking problem or a library problem.**
+
+- **A34a** Report the journal distribution of the library: counts by journal
+  overall and by tier, with JOE, IEJ, *Aust Endod J*, *Clin Oral Investig* and
+  *J Dent* called out. Then the same distribution across the retrieved sets of the
+  29 eval questions and the three failed fixtures.
+- **A34b** State plainly whether JOE is under-represented **relative to what
+  PubMed would return for the same queries**. That comparison is the whole point:
+  a library skew is a stocking problem with an additive fix (A28), whereas a
+  retrieval skew with a balanced library would be the only thing a ranking change
+  could address.
+- **A34c** If under-represented in the library: propose a targeted JOE ingestion
+  (A26's backward citation chasing will also help, since JOE primary trials sit
+  inside the reviews Curo already retrieves). **No scoring change, no invariant
+  change** — this gets more JOE on the page without any journal signal entering
+  the engine.
+- **A34d** If the library is balanced and retrieval is not, report that too, with
+  numbers, and stop for RB. Only then is a mechanism question worth reopening —
+  and the options are a retrieval-stage guarantee (scores untouched, invariant 11
+  survives) or a within-tier tie-breaker (invariant 11 repealed, C1 deleted, and
+  the "never by journal" card rewritten before any demo). Do not implement either
+  without an explicit decision.
+
 ### A33 — Materials/bench questions: A25's third and strongest instance  *(new fixture)*
 
 Question asked: *"glass ionomer as permanent access restoration for access opening
@@ -1353,6 +1420,57 @@ the ladder or outside it, so the quotas filled with the only therapy-shaped pape
 matching "glass ionomer restoration" — which live in paediatric dentistry.
 
 Save both answers as `eval/fixtures/gic_access_ceramic_{curo,oe}.md`.
+
+- **A33 STATUS, measured 2026-09-03 after A5b/A30b/A31/A7 landed: THE SYMPTOM NO
+  LONGER REPRODUCES, and A33d's premise is the reverse of what was measured.**
+
+  Regenerated on current code, same question, 37 papers, $1.31, 93 s. It now
+  cites four papers, none paediatric, and declares no gap:
+
+  ```
+  27542693  level1   60.4  The effect of endodontic access on ALL-CERAMIC CROWNS: a systematic review
+  35221127  level1   81.1  Clinical efficacy of resin-based direct posterior restorations and glass ionomer
+  36661351  level1   65.9  ORIFICE BARRIERS to prevent coronal microleakage after root canal treatment
+  40369057  level3a  55.4  Clinical and radiographic outcome of a bioceramic sealer
+  ```
+
+  The old answer's two paediatric citations are not in the pool at all any
+  more. `36661351` — squarely on topic, and in the library the whole time — was
+  being evicted by the score-weighted ORDER BY and cap that A30b and A5b fixed;
+  the A7 banding removed the position statements that were holding its slot.
+  The A20c assumption line and the quarantine/reframe both survive intact.
+
+- **A33d — the premise is BACKWARDS. The query was OVER-specified, not
+  under-specified.** It did carry the scenario. Measured on the term the
+  generator produced:
+
+  ```
+  as generated, 3 AND-groups incl. ceramic     pool   26   neither named paper
+  drop the ceramic group                       pool  131   de Araujo @12, orifice barriers @11
+  scenario only, no material                   pool 1261   orifice barriers @41
+  ```
+
+  The ceramic-crown group collapses the pool from 131 to 26 and removes the two
+  most on-topic papers. Every tier query returned 0-1 hits — **the taxonomy was
+  never the binding constraint here, the topic query was.** Note the term
+  generator also logged `capped to 3 AND-groups, dropped: ("ceramic crown" OR
+  "porcelain crown" OR crown)` on the regenerated run, i.e. it dropped the
+  over-specifying group itself and that is when the good papers arrived.
+
+- **A33b answered.** de Araujo 2021 (PMID 35097115) is simply **absent from the
+  library**, and no tier query reaches it because of the over-specification
+  above, not because of its banding. It is an SR *of* in vitro studies; PubMed
+  types it as a systematic review, so it would band `level1` on ingestion, which
+  overstates it — worth raising with A25 rather than fixing by hand here.
+
+- **A33c answered.** The 2026 Cochrane overview is **PMID 42444634**, absent
+  from the library. Ordinary ingestion gap, not a taxonomy or ranking one.
+
+- **A33a — still worth doing, but for a different reason than stated.** Adding
+  surveys would NOT have surfaced Trautmann (PMIDs 11203998 / 11203999, and the
+  year is 2000 not 2001): no query reaches it at any pool size tested, and a
+  2000 Quintessence Int paper is thinly indexed. The taxonomy gap is real and
+  A31-shaped, but it is not what caused this fixture's failure.
 
 - **A33a** Extend A31's taxonomy: add **surveys and practice-consensus studies** to
   the observational/descriptive tier's retrieval filter. Trautmann 2001 is
