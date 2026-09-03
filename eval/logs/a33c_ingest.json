@@ -1,0 +1,94 @@
+{
+  "uncontested": {
+    "42444634": "Cochrane 2026 \u2014 restorative materials for direct coronal restoration of permanent posterior teeth (A33c)"
+  },
+  "contested": {
+    "35097115": "de Araujo 2022, Biomed Res Int \u2014 intraorifice barrier; an SR OF IN VITRO studies, so level1 overstates it (A33b -> A25)"
+  },
+  "expected_present": {
+    "36661351": "Aust Dent J 2023 \u2014 orifice barriers, level1",
+    "27542693": "The effect of endodontic access on all-ceramic crowns"
+  },
+  "before": {
+    "36661351": [
+      "36661351",
+      2023,
+      "level1",
+      65.9,
+      "Aust Dent J",
+      "Orifice barriers to prevent coronal microleakage after root canal trea"
+    ],
+    "27542693": [
+      "27542693",
+      2016,
+      "level1",
+      60.4,
+      "Journal of dentistry",
+      "The effect of endodontic access on all-ceramic crowns: A systematic re"
+    ]
+  },
+  "after": {
+    "36661351": [
+      "36661351",
+      2023,
+      "level1",
+      65.9,
+      "Aust Dent J",
+      "Orifice barriers to prevent coronal microleakage after root canal trea"
+    ],
+    "27542693": [
+      "27542693",
+      2016,
+      "level1",
+      60.4,
+      "Journal of dentistry",
+      "The effect of endodontic access on all-ceramic crowns: A systematic re"
+    ],
+    "42444634": [
+      "42444634",
+      2026,
+      "cochrane",
+      80.0,
+      "The Cochrane database of systematic reviews",
+      "Restorative materials for direct coronal restoration of permanent post"
+    ]
+  },
+  "fetched": {
+    "42444634": {
+      "title": "Restorative materials for direct coronal restoration of permanent posterior teeth: an overview of systematic reviews",
+      "journal": "The Cochrane database of systematic reviews",
+      "year": "2026",
+      "level_key": "cochrane",
+      "score": 80.0,
+      "why_tier": "journal:cochrane",
+      "pubtypes": [
+        "journal article",
+        "systematic review",
+        "meta-analysis"
+      ],
+      "abstract_chars": 6929
+    },
+    "35097115": {
+      "title": "Effect of an Intraorifice Barrier on Endodontically Treated Teeth: A Systematic Review and Meta-Analysis of In Vitro Studies",
+      "journal": "BioMed research international",
+      "year": "2022",
+      "level_key": "level1",
+      "score": 55.9,
+      "why_tier": "meta-analysis",
+      "pubtypes": [
+        "journal article",
+        "meta-analysis",
+        "systematic review"
+      ],
+      "abstract_chars": 1827
+    }
+  },
+  "added": [
+    "42444634"
+  ],
+  "held_back": [
+    "35097115"
+  ],
+  "applied": true,
+  "applied_contested": false
+}

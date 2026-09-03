@@ -112,3 +112,38 @@ class TestTheRecordIsCorrected:
         queue = (Path(__file__).parent.parent / "AGENT_QUEUE.md").read_text(
             encoding="utf-8")
         assert "exonerated" in queue.lower()
+
+
+class TestSurveysWereMeasuredAndDropped:
+    """A33i. A33a proposed adding surveys to this tier; measurement dropped it.
+
+    Pinned because the absence is a DECISION, not an oversight, and the next
+    person to notice that surveys are unreachable should read the measurement
+    before adding them back.
+    """
+
+    SURVEY_MESH = ("surveys and questionnaires", "health care surveys",
+                   "practice patterns", "attitude of health personnel")
+
+    def test_no_survey_term_is_in_the_filter(self):
+        joined = " ".join(e.LEVEL_OBS_TERMS).lower()
+        for term in self.SURVEY_MESH:
+            assert term not in joined, (
+                f"{term!r} was added to the observational tier — read the A33i "
+                f"note above LEVEL_OBS_TERMS first: it recovers 0 of the 5 "
+                f"apicoectomy targets and admits 37 papers the question has "
+                f"no use for")
+
+    def test_the_measurement_that_dropped_it_is_recorded_beside_it(self):
+        src = (Path(__file__).parent.parent / "endo_ai.py").read_text(
+            encoding="utf-8")
+        assert "A33i — SURVEYS ARE DELIBERATELY NOT HERE" in src
+        assert "0 of 5 targets" in src
+
+    def test_the_tier_still_reaches_the_designs_it_was_built_for(self):
+        """The four targets surveys would not have recovered are recovered by
+        the terms that ARE here — this tier is not empty of purpose."""
+        joined = " ".join(e.LEVEL_OBS_TERMS).lower()
+        assert "cross-sectional" in joined
+        assert "cone-beam computed tomography" in joined
+        assert "anatomy and histology" in joined

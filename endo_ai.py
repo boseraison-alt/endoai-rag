@@ -2172,6 +2172,30 @@ LEVEL_4_TERMS = [
 # relevant. The 1991 bony-lid paper is recovered by none of them — it predates
 # the MeSH terms that describe its design — a corpus-age limit rather than a
 # filter choice, reported rather than tuned around.
+#
+# A33i — SURVEYS ARE DELIBERATELY NOT HERE, and this is the measurement that
+# decided it rather than an omission.
+#
+# A33a proposed adding surveys and practice-consensus studies to this tier,
+# justified by Trautmann 2000. That justification was withdrawn on measurement
+# — no query reaches Trautmann at any pool size tested — so RB's instruction
+# was to stand the item up on the apicoectomy evidence alone or drop it.
+# Measured with `"surveys and questionnaires"[mh] OR "health care surveys"[mh]
+# OR "practice patterns, physicians"[mh] OR "attitude of health personnel"[mh]`
+# against the apicoectomy module query:
+#
+#   papers reachable ONLY through the survey filter          0 of 5 targets
+#   of the 5 targets A23 names, already reachable            4 (3 here, 1 in
+#                                                            level3a/3b)
+#   what the filter DOES admit, 40 papers, top of the list:  3D-printed
+#     replicas for endodontic education; a questionnaire on microscope use;
+#     quality-of-life after RCT vs extraction; success of periodontal therapy
+#
+# None of the five papers A23 names is a survey — they are CBCT morphometry, a
+# retrospective outcome cohort, a meta-analysis and two technique series. The
+# filter would add 37 papers this question has no use for and recover nothing.
+# DROPPED. `tests/test_observational_tier.py` pins the absence so a future
+# change has to read this first.
 LEVEL_OBS_TERMS = [
     "cross-sectional studies[mh]",
     "observational study[pt]",
