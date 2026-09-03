@@ -110,6 +110,16 @@ Opening instruction for the agent session:
     downloaded copy — and assert afterwards that the sections you did not touch
     survived. (Origin: a dropped whole-file copy would have reverted §0 and
     deleted the 47-instance count Stage 5 L1 is keyed to, twice in one day.)
+21. **A queue item states a hypothesis and its test, not a conclusion.** Five
+    premises have now been overturned by measurement — A5b (papers already in the
+    library), A23/A24 (modules already retrieved separately), A32 (the guarantee
+    could never fire), A33d (over- not under-specified), and A33d's own follow-up
+    (two variables changed at once). Every one was diagnosed from a symptom rather
+    than an instrumented mechanism. Write items as "measure X; if X then fix Y",
+    and treat any item phrased as a conclusion as unverified until measured.
+22. **Change one variable at a time when attributing a recovery.** (Origin: the
+    131-pool comparison in A33d altered both the dropped group and the scenario
+    vocabulary, and credited the wrong one.)
 
 ---
 
@@ -1417,6 +1427,52 @@ report rather than quietly correcting.
 - **A33c stands**: the 2026 Cochrane review `42444634` is absent from the library.
   Ingest with full provenance, dry-run first.
 - **A33e** still needs the Curo answer; RB is pasting the fixtures.
+
+### A33h — DECISIONS (RB, 2026-09-03)
+
+**1. Validate before adopting. n=1 is not enough for a rule that runs on every
+query** — and it is esearch-only, so it costs nothing but minutes. Validate
+"trailing groups first" against the apicoectomy, retreatment and laser queries.
+
+**2. But prefer a third option: stop inferring the qualifier from position.**
+"Trailing groups first" works only because the generator happens to write
+subject → scenario → substrate. That is a property of a *prompt*, not a guarantee;
+if the generator ever reorders, the rule silently inverts and drops the scenario —
+the exact outcome the measurement rejected. So:
+
+- **A33h-i** Have the term generator **label each AND-group** with its role:
+  `subject`, `scenario`, `qualifier`. Relaxation then drops the declared
+  `qualifier` first, `scenario` never, `subject` never. Position becomes a
+  fallback for un-labelled legacy queries, not the mechanism.
+- **A33h-ii** Validate the labelling on the same four queries: does the generator
+  label them the way a clinician would? Report the labels it produces before
+  wiring relaxation to them.
+- **A33h-iii** If labelling proves unreliable, fall back to validated
+  trailing-group order and say so — but measure first.
+
+**3. A33g's scope was too narrow, and the measurement says so.** Relaxation alone
+recovers 0 of 4; enriched vocabulary alone recovers 0 of 4; **both together
+recover 2 of 4.** A33g must therefore cover query *construction* as well as
+relaxation — the scenario group needs its own synonym expansion (the way tier
+queries already get OR-expanded), not just the option to drop a group. Report
+recovery for each half and for both, on all four queries.
+
+### A33j — `BROADEN_THRESHOLD` is the wrong shape, not just the wrong number
+
+Certain finding: the GIC query returned 14–29 hits and never triggered broadening,
+because the threshold is 5. But 5 is a *did-the-query-fail-entirely* check, not a
+*is-this-enough-to-answer-from* check.
+
+**Set it from what an answer needs, not from failure detection.** A35 targets ~20
+cited references; after tier filters, similarity floors and per-tier caps, a pool
+of 14 cannot produce that. Derive the threshold from the pipeline: measure, across
+the 29 eval questions, the ratio of initial pool size to finally-cited papers, and
+set the trigger so that a query whose pool cannot plausibly yield ~20 citable
+papers broadens before it is answered from.
+
+Report the distribution and the derived number together. **A33j and A35 must be
+decided with each other's numbers in hand** — a reference target without a pool
+big enough to meet it produces padding, which A35d forbids.
 
 ### A35 — Use the evidence you retrieved  *(RB, 2026-09-03)*
 
