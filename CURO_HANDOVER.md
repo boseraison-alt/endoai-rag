@@ -45,7 +45,7 @@ Backups: git bundle + DB export + full zip on OneDrive Desktop, GitHub live.
 | citation-support flag rate, Deep Learning | **6.7%** (16/238), from 13.3% — p = 0.0217; the regression is closed |
 | Deep Learning genuinely-unsupported rate, hand-judged | **2.1%** (5/238) — 69% of what the checker flags is artifact |
 | Review attempt-1 pass rate, the case that reproduced the retry | **10/10**, from 3/10 — p = 0.0031 |
-| cost per served Review answer, that case | **$0.5596**, from $0.9306 |
+| cost per served Review answer, that case | ~~$0.5596~~ **STALE — see below** |
 | cost per cold demo Review answer | **~$0.85** (five measured $0.68-$0.95), from ~$1.28 |
 | cold curriculum | **7.5 min, $1.17** (was 8.0 min, $1.52) |
 | claim units the checker understands | prose, decision-tree branch, table row, bold label, list item |
@@ -1191,3 +1191,39 @@ third change on the citation-support metric in one batch.
   scratch directory, and stage commits BY FILENAME — `git add -A` in one lane
   sweeps another lane's half-finished work.
 
+
+### Cost, re-measured 2026-09-03 (A42d) — the recorded figure was stale by 4x
+
+| | $ per answer |
+|---|---|
+| recorded above, `grounding-v1` era | 0.5596 |
+| **measured on current code, mean of 10 answers** | **2.26** |
+| worst single answer | 3.70 |
+| RB's standing approval | ~0.70 |
+
+Synthesis reads ~86,000 input tokens because the retrieved pool is ~114 papers
+(A35k). The old figure was measured against a pool of ~38, before the A5b /
+A30b / A31 / A7 membership fixes tripled it. Nothing was tuned to make cost
+rise; the pool grew because four membership bugs were fixed, and the cost
+followed.
+
+**Where the money goes**, per answer:
+
+| | |
+|---|---|
+| evidence block, ~60,700 tokens | ~70% of input |
+| input total, ~87,000 tokens @ $15/M | ~$1.31 |
+| output, ~3,800 tokens @ $75/M | ~$0.29 |
+| guardrails — evidence mapping, citation-support check, retries | ~$0.66 |
+
+**This is why the similarity floor is not the cost fix it looks like.** A42
+measured that raising the evidence floor to 0.60 removes 18% of the pool and
+1.1% of citations — free, and shipped — but it saves ~$0.15, because the
+evidence block is most of the *tokens* and only about half the *bill*. Even a
+0.65 floor, at 16% of citations, saves $0.44.
+
+**Standing rule 25 applies to this whole row.** The $0.5596 was true of the code
+that produced it and has been quoted ever since as though it were true of HEAD.
+It is the same class of error as A35a's "cites 9-11 papers", which came from 15
+cached answers predating the same four fixes, and which sent A35, A35a, A35f,
+A35j, A35k and A38's Defect 2 after a number that no longer existed.

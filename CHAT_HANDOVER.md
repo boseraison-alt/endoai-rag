@@ -65,7 +65,7 @@ Tier ladder, by study design and never by score: cochrane → level1 → level2 
 level3a → level3b → level4 → invitro → level5; `retracted` terminal; unlabelled
 bands to level5.
 
-Measured costs: Literature $0.54 · Case $0.12 · Curriculum median $1.33 (max
+Measured costs (**Literature figure corrected 2026-09-03 — see A42d**): Literature **$2.26** (was recorded $0.54; ten answers on current code, worst $3.70) · Case $0.12 · Curriculum median $1.33 (max
 $6.51). Suite ~1,932 tests, all mutation-checked.
 
 ---

@@ -1059,6 +1059,45 @@ EARLY_STOP_MIN_PAPERS = 15
 # claim than 12 above 0.45, and the pair has to be tuned as a pair.
 RELEVANCE_GATE = {
     "similarity_floor": 0.55,   # cosine; below this a hit is same-specialty noise
+    # A42. The ROUTING floor above and the EVIDENCE floor below answer two
+    # different questions, and separating them is what makes raising one a
+    # single-variable change.
+    #
+    #   routing   "does the library cover this question well enough to answer
+    #             from?" — read together with min_relevant, as the note above
+    #             insists, and NOT moved here.
+    #   evidence  "is this particular paper worth putting in front of the
+    #             model?" — a per-paper relevance decision, standing rule 19.
+    #
+    # Measured on 181 cited paper-instances across the ten A38d runs, scored on
+    # the similarity the floor actually sees (the MAX across the question and
+    # every generated term, which is what multi_query_search keeps — a first
+    # pass used question-only similarity, reported a lowest cited value of
+    # 0.4633, i.e. below a floor that demonstrably works, and would have handed
+    # RB a worse trade than the real one):
+    #
+    #   lowest cited similarity 0.587   p05 0.628   p10 0.637   median 0.713
+    #
+    #   floor   pool cut   cited cut          per question, cited below 0.60
+    #   0.55          0%    0  (0.0%)         mta-vs-biodentine    0 of 29
+    #   0.58          9%    0  (0.0%)         regenerative         0 of 45
+    #   0.60         18%    2  (1.1%)  <--    single-vs-multiple   0 of 38
+    #   0.62         33%    8  (4.4%)         cbct-vs-periapical   1 of 38
+    #   0.65         51%   29 (16.0%)         direct-pulp-capping  1 of 31
+    #
+    # 18% of the pool is carried into every synthesis prompt and cited 1.1% of
+    # the time. That is cost, not evidence.
+    #
+    # WHY THIS IS NOT THE COST FIX IT LOOKS LIKE, stated here so the next person
+    # does not reach for 0.65 expecting a bill to halve. Context falls 60,745 ->
+    # 51,015 tokens, which at Opus input pricing is $0.15 of a MEASURED $2.26
+    # per Review answer — 7%. The evidence block is ~70% of input tokens but
+    # input is only ~$1.31 of the total; output is ~$0.29 and the guardrail
+    # calls ~$0.66. Even 0.65, at 16% of citations, saves $0.44. And raising
+    # the ROUTING floor to 0.60 would push 2 of 29 eval questions onto the LIVE
+    # route, which costs more, not less — which is exactly why these are two
+    # constants now.
+    "evidence_floor":   0.60,
     "min_relevant":     12,     # hits that must clear the floor to serve locally
     "min_hits":         20,     # raw KNN hits before relevance is even considered
     "max_topic_age_yr":  3,     # newest on-topic paper older than this -> go live
@@ -1284,7 +1323,22 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # citing papers on apex locators and sealer heat properties, which
             # the claim-support check then correctly flagged. The similarity
             # floor has to filter the evidence, not merely decide the gate.
-            all_rag = rag_results_to_scored(relevant)
+            #
+            # A42 — and it filters at the EVIDENCE floor, which is above the
+            # routing floor. `relevant` decided the route; this decides what the
+            # model reads. Standing rule 5: say what was dropped.
+            _ev_floor = RELEVANCE_GATE["evidence_floor"]
+            _for_model = [r for r in relevant
+                          if float(r.get("similarity") or 0) >= _ev_floor]
+            if len(_for_model) < len(relevant):
+                _dropped = sorted((float(r.get("similarity") or 0)
+                                   for r in relevant), reverse=True)
+                print(f"  [evidence_floor] {len(relevant)} cleared the routing "
+                      f"floor {RAG_SIMILARITY_FLOOR}; {len(_for_model)} clear the "
+                      f"evidence floor {_ev_floor}; dropped "
+                      f"{len(relevant) - len(_for_model)} "
+                      f"(best dropped {_dropped[len(_for_model)]:.3f})")
+            all_rag = rag_results_to_scored(_for_model)
 
             # Band by STUDY DESIGN (level_key), rank by score WITHIN each band.
             #

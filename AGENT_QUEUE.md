@@ -128,6 +128,13 @@ Opening instruction for the agent session:
     and move the superseded *instructions* to `AGENT_QUEUE_ARCHIVE.md`. The record
     of overturned premises is the most valuable thing in this file (rule 21); the
     dead instructions beneath them are the least. Completed items move there too.
+25. **Measure on current code. A stored answer is evidence about the code that
+    produced it, not about HEAD.** (Origin: A35a's "Curo cites 9–11 of ~114" came
+    from 15 cached answers generated before A5b, A30b, A31 and A7. Measured on
+    current code it is 14–23, mean 18.4 — the target was already met. A35, A35a,
+    A35f, A35j, A35k and A38's Defect 2 all chased a number that no longer
+    existed. This is bug class #4 — a cache is a time capsule — appearing in
+    *measurement* rather than in rendering.)
 
 ---
 
@@ -1694,6 +1701,171 @@ third that makes it checkable:**
   explanations are already eliminated and a fifth negative result is worth as much
   as a positive one.
 
+### A44 — A component vocabulary for curricula and answers  *(RB, 2026-09-03; from an uploaded reference document)*
+
+RB shared a well-made long-form study guide (Kellogg finance). Its transferable
+property is not its styling but that it has **a named vocabulary of about a dozen
+block types, and every piece of content is placed into one of them.** Curo emits
+mostly prose with a few special blocks bolted on, which is why a 12,000-word
+curriculum reads as a wall. Several items below are not cosmetic — they answer
+defects already in this queue.
+
+**Group 1 — these fix known defects. Highest value.**
+
+- **A44a — a formal callout vocabulary. This is A22's real answer.** The reference
+  document defines exactly four callouts, each with a mono uppercase tag and its
+  own token pair: `rule` (accent), `trap` (red), `note` (amber), `story` (grey,
+  left-ruled). Curo currently has the quarantine block, "does not apply when",
+  citation-support warnings and evidence-gap notes, all styled ad hoc — which is
+  how eighteen amber boxes ended up in one curriculum. Define the set, give each
+  one tag and one treatment, and make the quarantine block one member of it rather
+  than a bespoke thing. Cap: **no more than two callouts of the same type per
+  module**; beyond that the generator is over-emitting, not the renderer
+  under-styling (A22e's rule).
+- **A44b — sticky table of contents with numbered sections.** A curriculum is
+  ~12,000 words with no navigation at all. The reference has a 212px sticky column
+  at ≥1080px, hidden below that, listing numbered modules plus the appendices.
+  Direct fix for a real usability failure.
+- **A44c — design tokens, and dark mode for free.** The reference defines its whole
+  palette as CSS custom properties and swaps them under both
+  `prefers-color-scheme: dark` and `[data-theme]`. Curo's app is light-only while
+  its deck exports are dark, maintained separately. One token set collapses that
+  split. Reuse Curo's existing values (A15g) — this is about the *mechanism*, not
+  adopting the reference's purple.
+- **A44d — provenance as a masthead chip row.** The reference carries author,
+  source, runtime, "11 sections · 3 worked examples" as mono chips under the
+  title. Curo's equivalent is already computed and currently scattered: papers,
+  modules, tier counts, cost, build hash (A11). Put it in one row at the top.
+
+**Group 2 — new capability for curricula, and it maps onto something Curo has.**
+
+- **A44e — self-test section.** The reference ends with ten collapsible Q&A items.
+  Curo already has a **Case Assessment** mode; a curriculum that ends with
+  self-test questions drawn from its own cited content is that feature meeting
+  this one. Every question and answer must trace to a cited claim in the
+  curriculum — no new content (A43's rule).
+- **A44f — glossary.** A definition list of terms of art. Note the overlap with
+  **A41's domain lexicon**: if that lexicon exists, the glossary can be generated
+  from the terms actually used in the curriculum. Build A41 first and this is
+  nearly free.
+- **A44g — "common mistakes" / pitfalls section.** The reference collects its
+  `trap` callouts into one appendix. Clinically this is "where this goes wrong",
+  which Curo already writes ad hoc inside modules. Collecting them is a rendering
+  change, not a generation one.
+- **A44h — reference card.** A condensed one-page summary. Curo has "Key
+  takeaways" and "The Final Verdict" doing this less tidily; consider merging.
+
+**Group 3 — patterns to reuse where they fit.**
+
+- **A44i — semantic table cells.** `pos` / `neg` / `dim` / `total` classes plus
+  `font-variant-numeric: tabular-nums`. Maps directly onto Curo's
+  favourable-versus-unfavourable prognosis tables. Colour must come from the tier
+  palette reconciliation in A43c, not from the reference's green/red.
+- **A44j — the "ledger" block** (accent left rule, mono label, the content, a
+  note). The reference uses it for formulas; Curo's equivalent is a **protocol
+  step** or a **decision rule** — a good home for the IF/THEN/BECAUSE blocks A43a
+  will also render as flowcharts.
+- **A44k — figure containment**: `figure` + bordered `figbox` + `figcaption` +
+  horizontal scroll. Adopt as the wrapper for every A43 visual so wide content
+  never breaks the page.
+- **A44l — reading measure and typographic care**: `max-width: 68ch` on prose,
+  `text-wrap: balance` on headings, `prefers-reduced-motion` respected.
+
+**Do not adopt:** the reference's three-family font stack or its purple accent.
+Curo has its own (A15g), and RB has said he likes it.
+
+**Sequencing.** This is presentation work and it queues **after** A42, A39 and the
+re-baseline. A44a is the exception — it is A22's answer, RB has already complained
+about the boxes, and it should travel with A22.
+
+### A43 — Visuals in answers: flowcharts, comparisons, colour  *(RB, 2026-09-03)*
+
+RB wants flowcharts for clinical decision trees, charts when several things are
+being compared, and colour to make sections scannable.
+
+**The governing principle, and it is what makes this safe: a visual RENDERS
+structure the answer already has. It never introduces content the text does not
+contain, and it never infers a relationship the citations do not support.** Every
+node, bar and cell traces to a cited claim. Invariant 2's chart gates apply in
+full, and invariant 6's corollary holds — **an answer with no visual is a valid
+outcome**, exactly as a chartless deck is.
+
+**A43a — decision-tree flowcharts.** Curo already emits decision trees as
+`IF … THEN … BECAUSE [PMID]` blocks. That is structured data being printed as
+prose. Render it as a flowchart (mermaid — the answer surface is HTML and it
+renders client-side; no library needed for Artifact-published pages, inline the
+renderer for pages served from the app). Each branch keeps its `BECAUSE` citation
+visible on or beside the node. **Generate from the parsed IF/THEN/BECAUSE
+structure, never by asking the model to draw a diagram** — a freehand flowchart is
+a new inference wearing a picture's clothes.
+
+**A43b — comparison charts, and the endpoint trap.** This is where the gates
+matter most. Comparing MTA 91.3% against Retroplast 66.7% is legitimate; both are
+12-month healed rates from one trial. Comparing a 5-year figure against a 1-year
+figure in the same chart is misleading even though both are percentages.
+- Every plotted value verbatim from a cited abstract, same quantity, same unit
+  (invariant 2, already enforced for decks).
+- **Every value carries its endpoint definition and follow-up period**, and the
+  chart refuses to render when they do not match across series — this is A35's
+  endpoint-definition rule (Stage 2 item G) applied to plotted values.
+- Fix the known blocker first: the P2 defect "**>2-arm comparisons unreachable —
+  `slide_patterns` drops categories/values**" is exactly the multi-item case RB is
+  asking for. It is already in the backlog and blocks this item.
+- Where values cannot be made comparable, render a **table** with the endpoint and
+  follow-up as columns rather than a chart that implies comparability.
+
+**A43c — colour is semantic, never decorative.** The palette is already spoken
+for: tier colours, the amber quarantine block, the verification banner's pass/warn
+states. Adding decorative colour collides with meaning that clinicians will be
+learning to read. Make sections scannable with hierarchy — headers, rules, spacing,
+weight — and spend colour only where it carries information. Reuse the
+CVD-validated palette from the deck work rather than picking new values.
+
+**A43d — provenance test.** No node, bar, cell or highlighted region may exist
+without a traceable cited source. Mutation-check by injecting an unsourced node
+and confirming the render is refused.
+
+**A43e — measure how often this actually applies.** Across the 29 eval questions
+and the stored answers: how many produce a decision tree at all, and how many
+contain ≥2 series that pass the endpoint test? If the answer is "few", this is a
+rarer affordance than it feels and should be built for those cases rather than
+made a default expectation.
+
+**A43f — one spec, both surfaces** (invariant 9). The deck exports already build
+charts from `slide_spec_cache` under these gates. An answer's visual and its
+exported slide must come from the same spec and match by content hash — do not
+grow a second charting path.
+
+### A42 — Cost: 3× approved, and the cheap measurement comes first  *(RB, 2026-09-03)*
+
+Measured: **$2.26 per Review answer, worst $3.70**, against `CURO_HANDOVER.md`'s
+recorded $0.5596 and RB's standing approval of ~$0.70. Synthesis reads ~86,000
+input tokens because the pool is ~114 papers.
+
+**Do not run a new paired experiment first — the answer is probably already in the
+data you have.**
+
+- **A42a — the decisive question, answerable from A38d's ten runs:** what is the
+  **similarity distribution of papers that were actually cited**? Specifically,
+  what is the lowest similarity of any cited paper, and how many cited papers sit
+  below 0.60? If almost nothing below 0.60 is ever cited, those ~40 papers are
+  pure cost and the floor is free — not a trade at all. Report the distribution
+  before proposing a number.
+- **A42b** If the floor looks free, ship floor 0.60 and re-measure on the same
+  paired design as A38d — same questions, same process, one variable. Success is
+  cited count holding at ~18 (A35d still applies: no padding, and no citing a
+  paper that supports no claim) with cost falling toward $1.
+- **A42c** If cited papers DO reach below 0.60 in numbers, the floor is a genuine
+  trade and it stops for RB with both numbers on the table: citations lost against
+  dollars saved. Do not choose for him.
+- **A42d — the recorded cost is wrong on an explanatory surface.** `$0.5596` in
+  `CURO_HANDOVER.md` is stale by ~4×. Correct it, and add cost figures to A17's
+  inventory — a number in a handover is a claim like any other, and this one has
+  been misinforming every decision made from it, including my own "don't double
+  ~120 papers" constraint, which was written against a pool that was already 114.
+- Note: this reverses A35's direction. That is fine — A35's direction was set by
+  the stale 9–11 figure (rule 25).
+
 ### A41 — A domain lexicon for query construction  *(new, from A33g's negative result)*
 
 A33g's vocabulary half failed, and **why** it failed is the useful part. The
@@ -2529,6 +2701,13 @@ reference list), and explanatory copy is the surface most likely to be read alou
 - **A17c** Fix by making the copy true, never by weakening the engine to match it.
 - **A17d** Test: no rendered surface asserts a ranking signal outside the tier
   ladder and the documented score components. Mutation-check.
+- **A17e — cost figures are method claims too (A42d, RB).** `$0.5596` per Review
+  answer sat in `CURO_HANDOVER.md` while the measured figure was **$2.26**, and it
+  was quoted into decisions — including RB's own "do not double ~120 papers"
+  constraint, written against a pool that was already 114. Add every COST and
+  LATENCY figure on an explanatory surface to A17a's inventory, with the date and
+  the code state it was measured on. Standing rule 25: a number measured on old
+  code is evidence about that code, not about HEAD.
 
 ### A18 — Verify the promise line against real latency  *(small)*
 
