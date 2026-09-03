@@ -1354,6 +1354,56 @@ all of it, and it is the opposite of A24's diagnosis — which makes it the four
 premise of mine that measurement has overturned, and worth saying plainly in the
 report rather than quietly correcting.
 
+- **A33h MEASURED, RULE REPORTED, NOT IMPLEMENTED (2026-09-03).** Reporting
+  before implementing, as instructed — and the measurement overturned my own
+  A33d conclusion as well as the original premise.
+
+  **CORRECTION TO MY OWN REPORT.** I said the ceramic AND-group "collapses the
+  pool 131 -> 26 and removes the two most on-topic papers", implying that
+  dropping it recovers them. It does not. That measurement silently compared
+  two different things: the 131-pool query was one I had hand-written with
+  `"orifice barrier"` and `"intraorifice barrier"` added to the scenario group.
+  The recovery came from the added VOCABULARY, not from dropping the group.
+  Measured properly, with the domain filter and one variable at a time:
+
+  ```
+  3 groups, original vocab                    pool  14   recovered 0/4
+  3 groups, ENRICHED scenario vocab           pool  29   recovered 0/4
+  2 groups (drop ceramic), original vocab     pool  62   recovered 0/4
+  2 groups (drop ceramic), ENRICHED vocab     pool 143   recovered 2/4
+                                                     de Araujo @11, orifice barriers @12
+  ```
+
+  **Relaxation alone does not fix this fixture. Neither does vocabulary alone.
+  Both are required.** A33g as written is necessary and insufficient.
+
+  **Candidate relaxation signals, all measured on 4 real queries:**
+
+  ```
+  OR-arity (what _broaden_query uses today)   picks the best drop 1 of 4
+  standalone PubMed frequency                 wrong: the ceramic group alone
+                                              matches 6,811 records yet is the
+                                              binding constraint in combination
+  biggest pool gain if dropped                picks the SCENARIO group on the
+                                              GIC query (318 vs 62) — which is
+                                              the group that makes the question
+                                              what it is. Dropping it returns
+                                              generic GIC-in-endodontics, i.e.
+                                              exactly the paediatric pool the
+                                              old answer drowned in. REJECT.
+  ```
+
+  None of the cheap signals is correct. **Proposed rule: drop trailing groups
+  first** — the generator writes subject, then scenario, then substrate, so the
+  LAST group is the qualifier. On the GIC query that picks the ceramic group,
+  which is right. **Evidence is n=1 and I am not implementing on that**; it
+  needs validating against the apicoectomy, retreatment and laser queries
+  before it becomes a rule.
+
+  **Separate, certain finding: `BROADEN_THRESHOLD = 5` is far too low.** The GIC
+  query returned 14-29 hits and never triggered broadening at all. Whatever
+  order is chosen, the trigger has to fire before the order matters.
+
 - **A33g** Fix at query construction: AND-groups must be **relaxable**. When a
   query returns below a threshold pool, drop the most restrictive group and retry
   before falling back to broader vocabulary. Report the pool size at each step;
@@ -1367,6 +1417,96 @@ report rather than quietly correcting.
 - **A33c stands**: the 2026 Cochrane review `42444634` is absent from the library.
   Ingest with full provenance, dry-run first.
 - **A33e** still needs the Curo answer; RB is pasting the fixtures.
+
+### A35 — Use the evidence you retrieved  *(RB, 2026-09-03)*
+
+RB's observation: when there is no Level I evidence, Curo appears not to fall back
+to Levels III–V — it declares a gap instead. The GIC/ceramic answer is the proof:
+**45 papers retrieved, 2 cited**, both Level I and both paediatric, with "no
+retrieved studies at these levels directly addressed…" written under Levels II–V.
+
+RB wants a literature answer to carry **at least ~20 references**, and lower-tier
+evidence to be used rather than discarded.
+
+**Build the goal, not the number.** A hard minimum is a target that can be hit by
+padding — citing papers that support nothing, to reach a count. That would make
+answers worse while looking better, and it is the same shape as tuning a detector
+to shrink a warning. So:
+
+- **A35a — measure first.** Across the stored answers and the three failed
+  fixtures, report retrieved-vs-cited by tier. How many retrieved papers were
+  never cited, and what tier were they? That number, not the reference count, is
+  the defect.
+- **A35b — find the mechanism.** Determine why lower tiers are not used when the
+  top tier is thin. Candidates: the synthesis prompt instructs leading with the
+  highest available tier and treats lower tiers as supporting only; per-tier
+  quotas leave few lower-tier papers in context; the tier-banding language pushes
+  the model to declare a gap rather than descend. Report which, with the prompt
+  text, before changing anything.
+- **A35c — synthesis must descend.** When the top tier is absent or off-topic, the
+  answer is built from the best tier that IS on topic, labelled as such. "No Level
+  I evidence exists for this" is a statement about the literature and must follow
+  A5c's rule; "the strongest evidence here is Level III" is a statement about what
+  was found, and is what most answers should say.
+- **A35d — the reference floor is a WARNING, not a quota.** Target ~20. If fewer
+  papers genuinely support something, cite fewer and **say why on the page** —
+  e.g. "12 of 45 retrieved papers were on topic; the rest addressed different
+  populations or procedures." Never cite a paper that supports no claim in order
+  to reach a number. Test both branches: a rich question reaches ~20+; a genuinely
+  sparse one cites fewer and states the reason.
+- **A35e** Report cost and latency impact — more cited papers means more synthesis
+  context, and the library route already carries ~120 papers where it carried ~38.
+
+### A36 — Question type determines the answer's shape  *(RB, 2026-09-03)*
+
+RB: a **material** question should concentrate on the material's properties, its
+use-case scenarios, and its advantages and disadvantages. A **clinical** question
+should hone in on the clinical decision.
+
+This is A25 arriving from the product side. RB has independently reached the same
+conclusion the retrieval work reached: the *kind* of question changes what a good
+answer looks like — and, per A25, what counts as the best evidence for it.
+
+- **A36a** Classify the question at the start of the Literature path: material /
+  technique, clinical decision, diagnosis, prognosis, or anatomy. Log the
+  classification and show it in the answer's provenance so a wrong call is visible.
+- **A36b** Give each class its own answer skeleton in the synthesis prompt. For a
+  material question: properties, indications and use-case, advantages,
+  disadvantages, and what it should NOT be used for. For a clinical question: the
+  decision, what changes it, and what the evidence does not settle.
+- **A36c** Feed the classification to A25a's measurement — this is the same axis,
+  approached from the answer side rather than the ranking side, and the two must
+  not end up with different taxonomies.
+- **A36d** Test on the GIC fixture (material) and the retreatment fixture
+  (clinical): each renders its own skeleton, and neither renders the other's.
+
+### A37 — Literature may ask, but only to resolve genuine ambiguity  *(revises A20)*
+
+RB, 2026-09-03: *"In literature, we don't have to ask a question every single time.
+If the question is very clear, but if the question is not clear, then there need to
+be follow-up questions… we need to know exactly what the question is about."*
+
+This partially reverses A20, which removed all questions from the Literature path.
+The gate is now the same one Case and Curriculum use — **ask only when the answer
+would otherwise be built on a guess** — and its specific job here is to resolve
+what A36 classifies: is this a material question or a clinical one?
+
+- **A37a** Restore a clarifying gate on `review`, with the operative test written
+  into the prompt: *"would a material-focused answer and a clinical-focused answer
+  to this question be substantially different documents?"* If no, do not ask.
+- **A37b** One round only, and always skippable — the existing
+  "Skip — search now / Search with my answers" control stays.
+- **A37c** **A20's test must be updated, not deleted.** It currently pins "review
+  never asks". Replace with both branches: a clear question ("glass ionomer as
+  access restoration through a ceramic crown" — material, unambiguous) goes
+  straight to the answer; an ambiguous one asks exactly one narrowing question.
+  Mutation-check both directions; this is the pair where a one-way test passes
+  while the gate is stuck open or shut.
+- **A37d — COPY.** The promise line under the Literature composer says *"no
+  follow-up questions, just the answer"*, and the What You Get card carries the
+  same claim. Both become false the moment this ships. Fix the copy in the SAME
+  commit as the code, and add both to A17's inventory. Third time this week that
+  copy has outlived the behaviour it described.
 
 ### A34 — Journal balance in the library  *(RB, 2026-09-03: measure before deciding)*
 
