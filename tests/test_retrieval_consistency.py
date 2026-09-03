@@ -109,9 +109,18 @@ class TestAutoBroaden:
         assert BROADEN_THRESHOLD <= 5
 
     def test_broadens_inside_the_topic_group(self):
+        """A33h-i changed the UNLABELLED fallback from OR-arity to position.
+
+        Q_ASSEMBLED's three topic groups all offer 3 alternatives, so `min` on
+        arity picked whichever came first — the chlorhexidine SUBJECT group.
+        Measured against a clinician on four real queries, OR-arity named the
+        qualifier 1 time in 4 and trailing order 3 times in 4, so the trailing
+        group goes and the subject stays.
+        """
         out = _broaden_query(Q_ASSEMBLED)
         assert out, "assembled query should be broadenable"
-        assert "chlorhexidine" not in out, "narrowest topic group should go"
+        assert "healing outcome*" not in out, "trailing topic group should go"
+        assert "chlorhexidine" in out, "the subject group must survive"
 
     def test_never_drops_the_design_filter(self):
         """Dropping a depth-0 group would remove the design or domain filter
@@ -128,6 +137,149 @@ class TestAutoBroaden:
 
     def test_empty_input(self):
         assert _broaden_query("") == ""
+
+
+class TestLabelledRelaxation:
+    """A33h-i. Relaxation drops the group the generator DECLARED a qualifier.
+
+    Every query below is one of the four real ones the labelling was validated
+    on, with the roles the generator actually produced for it.
+    """
+
+    # The laser query. The qualifier sits in the MIDDLE and the scenario is
+    # LAST, so this is the case where position and labelling disagree — and
+    # where position would drop the outcome concept the question is about.
+    LASER_TOPIC = ('(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR Er:YAG '
+                   'OR Nd:YAG) AND ("root canal" OR endodontic* OR intracanal) '
+                   'AND (disinfect* OR antibacterial OR antimicrobial OR biofilm)')
+    LASER_ROLES = ["subject", "qualifier", "scenario"]
+
+    def _assembled(self, topic):
+        return (f"({topic}) AND (randomized controlled trial[pt]) AND "
+                f'(endodontics[MeSH] OR endodontic*[tiab]) '
+                f'NOT "Retracted Publication"[pt]')
+
+    def test_the_declared_qualifier_is_the_group_dropped(self):
+        out = _broaden_query(self._assembled(self.LASER_TOPIC), self.LASER_ROLES)
+        assert "intracanal" not in out, "the declared qualifier should go"
+
+    def test_the_scenario_survives_where_position_would_drop_it(self):
+        """The whole reason labelling beat trailing order, 4/4 against 3/4."""
+        assembled = self._assembled(self.LASER_TOPIC)
+        labelled  = _broaden_query(assembled, self.LASER_ROLES)
+        position  = _broaden_query(assembled)
+        assert "disinfect*" in labelled, "the scenario must never be dropped"
+        assert "disinfect*" not in position, (
+            "this test is only meaningful while position and labelling "
+            "disagree on this query — if position now keeps the scenario, "
+            "re-read A33h before deleting the labelling")
+
+    def test_the_subject_is_never_dropped(self):
+        out = _broaden_query(self._assembled(self.LASER_TOPIC), self.LASER_ROLES)
+        assert "laser*" in out
+
+    def test_a_labelled_query_with_no_qualifier_is_not_broadened(self):
+        """Falling back to position here would drop a subject or a scenario —
+        the exact outcome the labelling exists to prevent."""
+        out = _broaden_query(self._assembled(self.LASER_TOPIC),
+                             ["subject", "scenario", "scenario"])
+        assert out == ""
+
+    def test_roles_that_do_not_match_the_groups_are_ignored(self):
+        """A stale or truncated labelling must degrade to position, not
+        misalign — role[i] naming group[i] is the whole contract."""
+        out = _broaden_query(self._assembled(self.LASER_TOPIC),
+                             ["subject", "qualifier"])
+        assert out and "disinfect*" not in out, "should fall back to position"
+
+    def test_the_design_and_domain_filters_survive_labelled_relaxation(self):
+        out = _broaden_query(self._assembled(self.LASER_TOPIC), self.LASER_ROLES)
+        assert "[pt]" in out and "[MeSH]" in out
+        assert "Retracted Publication" in out
+
+    def test_the_output_is_still_a_valid_query(self):
+        from endo_ai import _looks_like_query
+        assert _looks_like_query(
+            _broaden_query(self._assembled(self.LASER_TOPIC), self.LASER_ROLES))
+
+
+class TestGroupRoleRegistry:
+    """The roles reach `fetch_papers` keyed on the query text, the way rag.py
+    keys the write-back tally — see the note above `_group_roles`."""
+
+    def setup_method(self):
+        from endo_ai import _reset_group_roles
+        _reset_group_roles()
+
+    def test_roles_round_trip_on_the_query_text(self):
+        from endo_ai import register_group_roles, lookup_group_roles
+        register_group_roles("(a OR b) AND (c OR d)", ["subject", "qualifier"])
+        assert lookup_group_roles("(a OR b) AND (c OR d)") == ("subject", "qualifier")
+
+    def test_whitespace_does_not_lose_the_labelling(self):
+        from endo_ai import register_group_roles, lookup_group_roles
+        register_group_roles("(a OR b)  AND  (c OR d)", ["subject", "qualifier"])
+        assert lookup_group_roles("(a OR b) AND (c OR d)") == ("subject", "qualifier")
+
+    def test_an_unlabelled_query_returns_none_not_an_empty_tuple(self):
+        """`None` and `()` reach `_broaden_query` differently: None takes the
+        position fallback, and a length-0 tuple would be a count mismatch."""
+        from endo_ai import lookup_group_roles
+        assert lookup_group_roles("(x OR y) AND (z)") is None
+
+    def test_the_registry_is_bounded(self):
+        from endo_ai import register_group_roles, _GROUP_ROLES_MAX, _group_roles
+        for i in range(_GROUP_ROLES_MAX + 5):
+            register_group_roles(f"(q{i} OR b) AND (c)", ["subject", "qualifier"])
+        assert len(_group_roles) <= _GROUP_ROLES_MAX
+
+
+class TestScenarioExpansion:
+    """A33g's vocabulary half. Built, switchable, and default OFF — the
+    measurement behind that is in the block above `_ROLE_LINE_RE`.
+
+    What is pinned here is the guard, not the default: an expansion that loses
+    an alternative it started with is a narrowing wearing a widening's clothes,
+    and it is the failure that would be hardest to see afterwards.
+    """
+    ORIG = '("access restoration" OR "access opening" OR "coronal seal")'
+
+    def test_a_real_widening_is_accepted(self):
+        from endo_ai import _accept_expansion
+        assert _accept_expansion(self.ORIG, self.ORIG[:-1] +
+                                 ' OR "orifice barrier")')
+
+    def test_an_expansion_that_drops_an_alternative_is_rejected(self):
+        from endo_ai import _accept_expansion
+        assert not _accept_expansion(
+            self.ORIG, '("access restoration" OR "access opening" OR "orifice barrier")')
+
+    def test_an_unbalanced_expansion_is_rejected(self):
+        from endo_ai import _accept_expansion
+        assert not _accept_expansion(self.ORIG, self.ORIG[:-1] + ' OR "x"')
+
+    def test_an_odd_number_of_quotes_is_rejected(self):
+        from endo_ai import _accept_expansion
+        assert not _accept_expansion(self.ORIG, self.ORIG[:-1] + ' OR "unclosed)')
+
+    def test_a_restatement_of_the_same_group_is_not_a_widening(self):
+        from endo_ai import _accept_expansion
+        assert not _accept_expansion(self.ORIG, self.ORIG)
+
+    def test_alternatives_are_split_on_or_only(self):
+        from endo_ai import _or_alternatives
+        assert _or_alternatives(self.ORIG) == [
+            '"access restoration"', '"access opening"', '"coronal seal"']
+
+    def test_the_default_is_off_and_says_why(self):
+        """Rule 21: this is a hypothesis that measurement did not support.
+        If it is turned on, the numbers beside it have to be re-measured."""
+        import endo_ai
+        from pathlib import Path as _P
+        assert endo_ai.EXPAND_SCENARIO is False
+        src = (_P(endo_ai.__file__)).read_text(encoding="utf-8")
+        assert "orifice barrier" in src, (
+            "the measurement that set this default must stay beside it")
 
 
 class TestMultiQuerySearch:

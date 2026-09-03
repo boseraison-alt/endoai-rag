@@ -1123,6 +1123,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         detect_outliers, apply_currency_tags,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review, _pubmed_audit_log,
+        label_and_expand,
     )
     from rag import (search as rag_search, rag_results_to_scored, library_stats,
                      search_by_pmids as rag_search_by_pmids)
@@ -1374,6 +1375,14 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     # bypass on exactly the path that has the least other protection.
     search_terms = generate_multi_search_terms(question, smart_topic,
                                                context_block=context_block)
+    # A33h-i + A33g. Label each AND-group and expand the scenario group, on the
+    # LIVE path only. Both are changes to a PubMed BOOLEAN, and the library
+    # route does not evaluate one — it embeds the string. A longer, more
+    # operator-dense query embeds FURTHER from a paper's prose (see the note at
+    # the top of tests/test_retrieval_consistency.py: the better the boolean,
+    # the worse the vector search), so expanding the query the library route
+    # uses would be an unmeasured change with a known reason to expect harm.
+    search_terms = label_and_expand(question, search_terms)
     print(f"  Multi-term search: {search_terms}")
 
     update_job(job_id, message="Searching Cochrane Reviews...", progress=15)

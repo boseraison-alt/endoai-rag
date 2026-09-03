@@ -1595,11 +1595,105 @@ def _or_breadth(group: str) -> int:
     return group.upper().count(" OR ") + 1
 
 
-BROADEN_THRESHOLD = 5   # below this many hits, retry once with one group dropped
+# Below this many hits, retry once with one group dropped.
+#
+# Still 5, deliberately (A33j). Two things are now known about it and neither
+# licenses a new number. First, it is applied to ONE TIER's esearch count, not
+# to the final pool, and the per-tier-to-final-pool transfer has not been
+# measured. Second — and this is the one that would bite — relaxation is not
+# free when it fires on a query that was not actually failing: on the
+# apicoectomy query, dropping the declared `mandibular` qualifier takes the
+# pool from 2,170 to 7,562 and BOTH known on-topic papers out of the top 200
+# (Jeon 2021 at rank 46 and Mainkar 2020 at rank 73 before, neither after).
+# Raising the threshold makes relaxation fire on healthy pools, and a healthy
+# pool is where it does damage. The floor of ~24 from A33j is arithmetic about
+# what ~20 citations needs, not a setting.
+BROADEN_THRESHOLD = 5
 
 
-def _broaden_query(term: str) -> str:
-    """Drop the narrowest top-level AND-group. Returns "" if not broadenable.
+# ── AND-GROUP ROLES (A33h-i) ─────────────────────────────
+#
+# Relaxation used to choose the group to drop by OR-arity — fewest synonyms
+# wins. Measured on four real queries that signal picked the group whose removal
+# most broadened the pool on 1 of 4, and on the GIC-through-a-ceramic-crown
+# fixture the group it wanted to drop was the SUBJECT.
+#
+# Three cheap signals were measured (A33h) and all three were rejected:
+#
+#   OR-arity                 correct on 1 of 4.
+#   standalone PubMed count  wrong by construction — the ceramic-crown group
+#                            alone matches 6,811 records yet is the binding
+#                            constraint in combination.
+#   biggest pool gain        picks the SCENARIO group on the GIC query, which is
+#                            the group that makes the question what it is.
+#                            Dropping it returns generic GIC-in-endodontics,
+#                            i.e. the paediatric pool the old answer drowned in.
+#
+# What works is asking the generator what each group is FOR. Against a
+# clinician's reading of the same four queries the generator named the qualifier
+# 4 of 4. Trailing-group order agreed on only 3 of 4, and the disagreement is the
+# damaging one: on the laser query the qualifier sits in the MIDDLE and the
+# scenario is last, so trailing order would drop
+# `(disinfect* OR antibacterial OR antimicrobial OR biofilm)` — the outcome
+# concept the question is about.
+#
+# So the rule is: drop a group the generator DECLARED a qualifier, never a
+# subject and never a scenario. Position is the fallback for queries nobody
+# labelled — build_library, the ingest scripts, anything assembled outside the
+# live answer path — and not the mechanism.
+GROUP_ROLES = ("subject", "scenario", "qualifier")
+
+# Query text -> roles, one per top-level AND-group of the TOPIC. Keyed on the
+# query rather than threaded through fetch_papers for the reason rag.py gives
+# for the write-back tally: fetch_papers has seven call sites across four files,
+# three of which this workstream does not own, and a caller that passes no roles
+# has to degrade to the position fallback rather than to a TypeError.
+_GROUP_ROLES_MAX = 256
+_group_roles: dict = {}
+_group_roles_lock = _cost_thread.Lock()   # `threading`, aliased at line 236
+
+
+def _roles_key(query: str) -> str:
+    return " ".join((query or "").split())
+
+
+def register_group_roles(query: str, roles) -> None:
+    """Record the role of each top-level AND-group of `query`."""
+    key = _roles_key(query)
+    if not key or not roles:
+        return
+    with _group_roles_lock:
+        if len(_group_roles) >= _GROUP_ROLES_MAX:
+            _group_roles.clear()          # a server answers thousands of questions
+        _group_roles[key] = tuple(roles)
+
+
+def lookup_group_roles(query: str):
+    """Roles for `query`'s topic groups, or None if it was never labelled."""
+    with _group_roles_lock:
+        return _group_roles.get(_roles_key(query))
+
+
+def _reset_group_roles() -> None:
+    """Drop every registered labelling. Tests use this; nothing on the request
+    path needs it (the dict is bounded and self-clearing)."""
+    with _group_roles_lock:
+        _group_roles.clear()
+
+
+def _broaden_query(term: str, roles=None) -> str:
+    """Drop ONE top-level topic group. Returns "" if not broadenable.
+
+    `roles` labels the topic's AND-groups `subject` / `scenario` / `qualifier`
+    (A33h-i). When present, only a declared `qualifier` may be dropped — and a
+    labelled query with no qualifier is NOT broadened, because the alternative
+    is to drop a group the generator said carries the question. Falling back to
+    position there would drop the scenario, which is the exact failure the
+    labelling exists to prevent.
+
+    Without roles the fallback is the TRAILING group. Measured against a
+    clinician on four real queries, trailing order names the qualifier 3 times
+    in 4 where OR-arity manages 1 in 4.
 
     The design/domain filters appended by fetch_papers are themselves
     AND-groups, so only the leading TOPIC groups are eligible — broadening by
@@ -1617,8 +1711,28 @@ def _broaden_query(term: str) -> str:
     sub = _split_and_groups(inner)
     if len(sub) < 2:
         return ""
-    narrowest = min(sub, key=_or_breadth)
-    kept = " AND ".join(g for g in sub if g is not narrowest)
+
+    if roles and len(roles) == len(sub):
+        # Among several declared qualifiers, drop the trailing one: every
+        # candidate is already role-cleared, so position only has to be
+        # deterministic here, not correct. Which qualifier broadens most is an
+        # esearch-per-group question and has not been measured.
+        quals = [i for i, r in enumerate(roles) if r == "qualifier"]
+        if not quals:
+            print("    [broaden] labelled query has no qualifier — "
+                  f"not broadening ({' | '.join(r for r in roles)})")
+            return ""
+        drop = quals[-1]
+        print(f"    [broaden] dropping the declared qualifier: {sub[drop][:70]}")
+    else:
+        if roles:
+            print(f"    [broaden] {len(roles)} role(s) for {len(sub)} group(s) "
+                  f"— labelling ignored, falling back to position")
+        drop = len(sub) - 1
+        print(f"    [broaden] unlabelled query, dropping the trailing group: "
+              f"{sub[drop][:70]}")
+
+    kept = " AND ".join(g for i, g in enumerate(sub) if i != drop)
     return " AND ".join([f"({kept})"] + rest)
 
 
@@ -1703,6 +1817,209 @@ def _parse_term_list(raw: str) -> list:
         seen.add(t)
         good.append(t)
     return good
+
+
+# ── LABEL THE GROUPS, EXPAND THE SCENARIO (A33h-i + A33g) ────────────────
+#
+# ONE call does both halves of A33g, because both need the same thing: knowing
+# which group is which. The halves stay independently switchable, and that
+# turned out to matter — measured, they do not do the same thing.
+#
+# A33g was approved on this measurement of the GIC-through-a-ceramic-crown
+# fixture: relaxation alone recovered 0 of 4 target papers, enriched vocabulary
+# alone 0 of 4, and both together 2 of 4. Built and re-measured, the two halves
+# give:
+#
+#   baseline                                    pool  14   0/4
+#   relaxation only (declared qualifier dropped) pool 62   0/4
+#   scenario expansion only, GENERATED           pool 19   0/4
+#   both, GENERATED                              pool 88   0/4
+#   both, with the HAND-WRITTEN enrichment       pool 90   2/4   @9, @10
+#
+# The 2 of 4 is real and reproduces exactly. It is not attributable to
+# expanding the scenario group. The enrichment that produced it added
+# `"orifice barrier" OR "intraorifice barrier"`, and an orifice barrier is not
+# a synonym for an access restoration — it is a DIFFERENT NAMED TECHNIQUE that
+# answers the same clinical question, and it is the phrase in both target
+# papers' titles. A clinician recognising the literature wrote that string.
+#
+# Asked to expand the scenario group, the generator returns synonyms of the
+# words it was given — "post-treatment restoration", "temporary restoration",
+# "definitive restoration" — identically on 3 of 3 calls. Re-asked for "named
+# techniques and adjacent procedures that address this same clinical situation,
+# not synonyms", it returns "post-endodontic restoration", "endodontic access
+# closure", "pulp chamber restoration": 3 of 3 calls, pools up to 584, 0/4.
+# `generate_multi_search_terms`, which ALREADY asks for adjacent techniques
+# across seven angles, reaches 0/4 on 2 of 2 runs. Five generations, two
+# framings, no recovery.
+#
+# So EXPAND_SCENARIO is built, switchable, and DEFAULT OFF. It reliably grows
+# the pool (14->19, 62->88, 1447->1468) and there is no measurement saying a
+# bigger pool helps: A33j found citation rate FALLS as pools grow, and the
+# apicoectomy measurement below shows enlarging a pool pushes on-topic papers
+# out of the top-N window production actually fetches. Growing the pool with no
+# measured recall benefit is cost and dilution. One constant flips it back.
+#
+# The output contract is line-based and pipe-delimited for the reason
+# `_parse_term_list` is line-based: these strings are dense with double quotes,
+# and a JSON contract carrying them was invalid by construction about half the
+# time. The group text is LAST on the line so it may contain anything but a
+# newline.
+#
+# Only a `scenario` group is ever rewritten. `subject` and `qualifier` groups
+# are taken from the original query verbatim, never from the model's echo of
+# them, so a labelling call cannot quietly alter the concepts it was asked to
+# name. And an expansion that loses one of the alternatives it started with is
+# rejected outright: this is meant to add vocabulary, and a narrowing disguised
+# as a widening is the failure that would be hardest to see.
+_ROLE_LINE_RE = re.compile(
+    r"^\s*ROLE\s*:\s*(\d+)\s*\|\s*(\d+)\s*\|\s*([A-Za-z]+)\s*\|\s*(.+?)\s*$",
+    re.MULTILINE)
+
+LABEL_GROUPS    = True    # A33h-i: relaxation drops the declared qualifier
+EXPAND_SCENARIO = False   # A33g vocabulary half — 0/4 on five generations; see above
+
+_ROLE_PROMPT = """You wrote the PubMed boolean queries below for this clinical question.
+
+Question: {question}
+
+For EVERY top-level AND-group of EVERY query, return one line:
+
+  ROLE: <query number>|<group number>|<role>|<group>
+
+<role> is exactly one of:
+  subject   - WHAT is being asked about: the material, technique, procedure or
+              intervention that is the topic itself.
+  scenario  - the clinical SITUATION or OUTCOME that makes this a specific
+              question rather than a general one.
+  qualifier - a narrowing restriction: a substrate, a site, a population, or a
+              group that merely restates the specialty. Dropping it broadens the
+              question without changing what is being asked.
+
+A group that only restates the specialty ("root canal" OR endodontic*) is a
+qualifier: the endodontics domain filter is appended separately, so such a group
+constrains the search without adding meaning.
+
+<group> is the group text. Return `subject` and `qualifier` groups VERBATIM.
+Return a `scenario` group EXPANDED: keep every alternative it already has, and
+add the synonyms, abbreviations, device and brand names the field actually uses
+for that situation or outcome. Use * stem truncation and quote multi-word
+phrases. Do not add [pt] filters or endodontics domain terms.
+
+Queries:
+{queries}
+
+Output only ROLE: lines, one per group, in order. No prose, no code fences."""
+
+
+def _or_alternatives(group: str) -> list:
+    """The OR-separated alternatives of one AND-group, unwrapped and stripped."""
+    g = group.strip()
+    if g.startswith("(") and g.endswith(")"):
+        g = g[1:-1]
+    return [a.strip() for a in re.split(r"\s+OR\s+", g, flags=re.IGNORECASE) if a.strip()]
+
+
+def _accept_expansion(original: str, expanded: str) -> bool:
+    """Is `expanded` a widening of `original` and still a usable group?
+
+    Rejects anything that dropped an alternative it started with. A model asked
+    to add vocabulary sometimes rewrites instead, and a rewrite that silently
+    loses "coronal seal" is a narrowing wearing a widening's clothes.
+    """
+    if not expanded or expanded.count("(") != expanded.count(")"):
+        return False
+    if expanded.count('"') % 2:
+        return False
+    if " OR " not in expanded.upper():
+        return False
+    low = expanded.lower()
+    for alt in _or_alternatives(original):
+        if alt.strip('"').lower() not in low:
+            return False
+    return len(expanded) > len(original)
+
+
+def label_and_expand(question: str, terms: list,
+                     label: bool = None, expand: bool = None) -> list:
+    """Label each query's AND-groups and expand its scenario group.
+
+    Returns the term list, with scenario groups expanded where the expansion was
+    accepted. Roles are registered against the RETURNED query text, which is
+    what fetch_papers is later handed.
+
+    Never raises and never returns fewer terms than it was given: a labelling
+    failure degrades to the position fallback in `_broaden_query`, which is
+    where every unlabelled caller already lives.
+    """
+    label  = LABEL_GROUPS    if label  is None else label
+    expand = EXPAND_SCENARIO if expand is None else expand
+    terms = [t for t in (terms or []) if t]
+    if not terms or not (label or expand):
+        return terms
+
+    split = [_split_and_groups(t) for t in terms]
+    listing = "\n".join(f"{i + 1}. {t}" for i, t in enumerate(terms))
+    try:
+        client = anthropic.Anthropic(api_key=_get_api_key())
+        resp = _invoke_claude(client, function_name="label_and_expand",
+            model=MODELS["structured_fast"],
+            max_tokens=2048,
+            messages=[{"role": "user", "content": _ROLE_PROMPT.format(
+                question=question, queries=listing)}])
+        log_llm_call("label_and_expand", MODELS["structured_fast"],
+                     resp.usage, mode="shared")
+        raw = resp.content[0].text
+    except Exception as e:
+        print(f"  [group_roles] labelling failed, position fallback stands: {e}")
+        return terms
+
+    # query index -> group index -> (role, text)
+    parsed: dict = {}
+    for m in _ROLE_LINE_RE.finditer(raw):
+        qi, gi, role, text = int(m.group(1)), int(m.group(2)), m.group(3).lower(), m.group(4)
+        if role in GROUP_ROLES:
+            parsed.setdefault(qi, {})[gi] = (role, text.strip())
+
+    out = []
+    for i, term in enumerate(terms):
+        groups = split[i]
+        got = parsed.get(i + 1, {})
+        roles = [got.get(g + 1, (None, None))[0] for g in range(len(groups))]
+        if any(r is None for r in roles) or not groups:
+            print(f"  [group_roles] query {i + 1}: {sum(r is not None for r in roles)}"
+                  f"/{len(groups)} group(s) labelled — unlabelled, position fallback")
+            out.append(term)
+            continue
+
+        rebuilt = list(groups)
+        if expand:
+            for g, role in enumerate(roles):
+                if role != "scenario":
+                    continue
+                cand = got[g + 1][1]
+                if not cand.startswith("("):
+                    cand = f"({cand})"
+                if _accept_expansion(groups[g], cand):
+                    print(f"  [group_roles] query {i + 1} scenario expanded "
+                          f"{len(_or_alternatives(groups[g]))} -> "
+                          f"{len(_or_alternatives(cand))} alternatives")
+                    rebuilt[g] = cand
+                else:
+                    # Standing rule 5 — say what was discarded.
+                    print(f"  [group_roles] query {i + 1} scenario expansion "
+                          f"rejected (not a widening): {cand[:70]}")
+
+        new_term = " AND ".join(rebuilt)
+        if rebuilt != groups and not _looks_like_query(new_term):
+            print(f"  [group_roles] query {i + 1} expansion produced an unusable "
+                  f"query — keeping the original")
+            new_term = term
+        print(f"  [group_roles] query {i + 1}: {' | '.join(roles)}")
+        if label:
+            register_group_roles(new_term, roles)
+        out.append(new_term)
+    return out
 
 
 MIN_SEARCH_TERMS = 4      # below this after retry, warn loudly — never silent
@@ -3450,7 +3767,11 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         # NARROWEST group (fewest OR-synonyms) and try once more. One retry
         # only — a second would mostly return the domain filter's own results.
         if len(ids) < BROADEN_THRESHOLD:
-            broadened = _broaden_query(search_term)
+            # A33h-i. The roles were registered against `topic` by
+            # label_and_expand on the live answer path. Anything assembled
+            # elsewhere — build_library, the ingest scripts — is unlabelled and
+            # takes the position fallback, which is what it always had.
+            broadened = _broaden_query(search_term, lookup_group_roles(topic))
             if broadened:
                 print(f"  ~~ {label}: {len(ids)} hits, broadening once")
                 try:
@@ -3929,10 +4250,16 @@ def build_evidence_base(topic, mode: str = "review"):
     evidence   = {}
     all_scored = []
 
-    smart_topic = generate_search_terms(topic)
+    raw_topic = generate_search_terms(topic)
+    # A33h-i + A33g. This path is live PubMed too (it is the per-module
+    # curriculum retrieval), so it gets the same labelling and the same
+    # scenario expansion. `fetch_cochrane` keeps the UNEXPANDED topic: it
+    # queries the Cochrane Library's own search API with plain text, not a
+    # PubMed boolean, and that is a different mechanism.
+    smart_topic = (label_and_expand(topic, [raw_topic]) or [raw_topic])[0]
 
     # Cochrane
-    cochrane_direct = fetch_cochrane(smart_topic)
+    cochrane_direct = fetch_cochrane(raw_topic)
     if cochrane_direct:
         evidence["cochrane"] = {"text": cochrane_direct, "ids": [], "scored": []}
     else:
