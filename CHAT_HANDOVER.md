@@ -47,7 +47,8 @@ simple words" — that request is real; answer in prose without jargon.
 Evidence-graded endodontics assistant. Curated PubMed library (~2,900 rows, Neon
 Postgres + pgvector) with per-paper provenance — tier, COI tri-state,
 retraction/supersession, MEDLINE status, pre-registration. Live PubMed fallback
-with synonym-expanded queries and an authority guarantee. Tier-banded synthesis
+with synonym-expanded queries, each paper keeping its best similarity across
+every query. Tier-banded synthesis
 with a fabricated-PMID validator and a claim-vs-abstract support checker.
 
 **Three modes, one search bar** (as of A15): Literature · Case · Curriculum —

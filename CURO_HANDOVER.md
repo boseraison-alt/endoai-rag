@@ -16,8 +16,10 @@ An evidence-graded endodontics assistant: **2,350-paper** curated library (Neon
 Postgres + pgvector) with per-paper provenance (evidence tier incl. in vitro,
 COI tri-state, retraction/withdrawal/supersession, MEDLINE status,
 pre-registration), live PubMed fallback with synonym-expanded queries and an
-authority guarantee (Cochrane-tier + top Level I papers can never be dropped by
-query variance), tier-banded synthesis with a fabrication validator, a
+cross-query variance protection (the KNN union keeps each paper's BEST
+similarity across every generated query, so one badly-embedding query cannot
+lose a paper another query found; A32 deleted a further "authority guarantee"
+that had never fired), tier-banded synthesis with a fabrication validator, a
 grounding rule on all three synthesis prompts **reconciled with the
 recommendation-traceability gate**, and a citation-support check on all three
 answer paths that reads the whole abstract and **knows what shape of claim it

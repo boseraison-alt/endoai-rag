@@ -253,45 +253,24 @@ class TestTheLivePathCapsByRelevanceToo:
             'scored_papers.sort(key=lambda x: x["score"]')
 
 
-class TestTheAuthorityGuarantee:
+class TestTheAuthorityGuaranteeIsGone:
+    """A30a found it inert; A32 deleted it. The protection it was supposed to
+    provide is asserted in test_retrieval_consistency.py, on the union-of-max
+    that actually provides it."""
 
-    def _run(self, question="apicoectomy of mandibular teeth"):
-        from rag import search as rag_search
-        floor = app_mod.RELEVANCE_GATE["similarity_floor"]
-        cands = rag_search(question, level_key=None, limit=200) or []
-        relevant = [r for r in cands if float(r.get("similarity") or 0) >= floor]
-        out = app_mod.ensure_authoritative(cands, relevant, floor)
-        return cands, relevant, out
+    def test_it_is_not_in_the_module_any_more(self):
+        assert not hasattr(app_mod, "ensure_authoritative")
 
-    def test_it_picks_by_relevance_not_by_score(self):
+    def test_the_retrieval_path_no_longer_calls_it(self):
         src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
-        body = src[src.index("def ensure_authoritative("):]
-        body = body[:body.index("\n# ── B2/B5")]
-        assert 'key=lambda p: -float(p.get("similarity") or 0))[:AUTHORITY_TOP_LEVEL1]' in body
-        assert '-float(p.get("score") or 0))[:AUTHORITY_TOP_LEVEL1]' not in body
+        body = src[src.index("def build_evidence_base_with_progress("):]
+        body = body[:body.index("    # ── Full PubMed fallback")]
+        assert "ensure_authoritative" not in body
 
-    def test_the_guarantee_currently_adds_nothing(self):
-        """A30a's finding, pinned. `usable()` requires similarity at or above
-        the floor and `relevant` already holds every such candidate, so the
-        re-inclusion set is empty by construction — on apicoectomy, where 183
-        of 200 candidates sit BELOW the floor, it still adds nothing.
-
-        This asserts the DEFECT on purpose. Making it fire means letting it
-        reach below the floor, which is a real change to what enters the pool
-        and is RB's call; when that happens this test should fail and be
-        rewritten, deliberately."""
-        cands, relevant, out = self._run()
-        assert len(cands) > len(relevant), (
-            "the fixture no longer has below-floor candidates to re-include")
-        assert len(out) == len(relevant), (
-            "the authority guarantee has started firing — good, but it is now "
-            "changing what enters the candidate pool and needs its own eval")
-
-    def test_it_still_refuses_retracted_and_withdrawn(self):
-        """Whatever else changes, the guarantee must never resurrect one."""
+    def test_why_it_went_is_written_down_where_it_used_to_be(self):
+        """A guarantee that cannot fire is worse than none because it gets
+        described — it was, in three handover files. The note is what stops
+        someone reinstating it without reading the measurement."""
         src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
-        body = src[src.index("def ensure_authoritative("):]
-        body = body[:body.index("\n# ── B2/B5")]
-        assert 'p.get("has_retraction")' in body
-        assert '"WITHDRAWN:"' in body
-        assert 'superseded_by' in body
+        assert "A32 — `ensure_authoritative` was deleted here" in src
+        assert "must NOT be fixed by reaching below the similarity" in src

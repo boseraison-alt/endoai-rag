@@ -201,57 +201,99 @@ class TestMultiQuerySearch:
         assert [p["pmid"] for p in multi_query_search("q", [])] == ["b", "a"]
 
 
-class TestAuthorityGuarantee:
-    """A5. The backstop: the strongest evidence must survive query variance."""
+class TestCrossQueryVarianceProtection:
+    """A5's real backstop, and A32's replacement for the one that never fired.
+
+    The failure this exists for: a well-formed boolean embeds FURTHER from a
+    paper's prose than a sloppy one, so the better the generated query the
+    worse the vector search. CD005296 was rank 11 for the query that missed it.
+
+    `ensure_authoritative` was supposed to be the guarantee. It never once
+    fired — `usable()` required similarity at or above the floor and the
+    `relevant` list already held every such candidate — and its tests passed
+    only because they called it with `relevant=[]`, a state production never
+    produces. One of them, `test_cochrane_below_the_floor_is_reinstated`, used
+    floor=0.50 against similarity 0.546 and so asserted the opposite of its own
+    name. A32 deleted it rather than letting it reach below the floor, which
+    would be authority overriding relevance.
+
+    What actually protects the paper is the union-of-max below. These tests
+    move to it."""
 
     COCHRANE = {"pmid": "36512807", "level_key": "cochrane",
-                "journal": "Cochrane Database Syst Rev", "similarity": 0.546,
-                "score": 70.4}
+                "journal": "Cochrane Database Syst Rev", "score": 70.4}
 
-    def test_cochrane_below_the_floor_is_reinstated(self):
-        """The exact failure: rank 11, cut by an absolute threshold."""
-        from app import ensure_authoritative
-        out = ensure_authoritative([self.COCHRANE], [], floor=0.50)
+    def _fake_search(self, monkeypatch, by_query):
+        import app as app_mod
+        import rag
+
+        def fake(q, level_key=None, limit=100, **kw):
+            return [dict(r) for r in by_query.get(q, [])]
+
+        monkeypatch.setattr(rag, "search", fake)
+        return app_mod.multi_query_search
+
+    def test_one_badly_embedding_query_cannot_lose_the_paper(self):
+        """The whole mechanism in one assertion: the raw question finds the
+        review at 0.680, the tightest boolean scores it 0.546, and the merge
+        keeps 0.680. Under the old behaviour the boolean's number was what
+        survived if it came last."""
+        import app as app_mod
+        import rag
+        import pytest as _pytest
+        by_query = {
+            "single visit versus multiple visit root canal treatment":
+                [dict(self.COCHRANE, similarity=0.680)],
+            "(single-visit OR one-visit) AND (root canal therapy)":
+                [dict(self.COCHRANE, similarity=0.546)],
+        }
+        orig = rag.search
+        try:
+            rag.search = lambda q, level_key=None, limit=100, **kw: [
+                dict(r) for r in by_query.get(q, [])]
+            out = app_mod.multi_query_search(
+                "single visit versus multiple visit root canal treatment",
+                ["(single-visit OR one-visit) AND (root canal therapy)"])
+        finally:
+            rag.search = orig
+        assert len(out) == 1
+        assert out[0]["similarity"] == 0.680, (
+            "the merge kept a worse query's similarity for the same paper")
+
+    def test_a_paper_only_one_query_finds_still_arrives(self):
+        import app as app_mod
+        import rag
+        orig = rag.search
+        try:
+            rag.search = lambda q, level_key=None, limit=100, **kw: (
+                [dict(self.COCHRANE, similarity=0.62)] if q == "term-3" else [])
+            out = app_mod.multi_query_search("q", ["term-1", "term-2", "term-3"])
+        finally:
+            rag.search = orig
         assert [p["pmid"] for p in out] == ["36512807"]
 
-    def test_a_paper_under_the_floor_is_not_reinstated(self):
-        """The guarantee re-includes strong candidates, it does not inject
-        unrelated papers."""
-        from app import ensure_authoritative
-        assert ensure_authoritative([self.COCHRANE], [], floor=0.60) == []
+    def test_a_failing_query_does_not_lose_the_others_recall(self):
+        import app as app_mod
+        import rag
+        orig = rag.search
 
-    def test_a_retracted_cochrane_row_is_never_reinstated(self):
-        """A guarantee that can resurrect a retracted paper is worse than none."""
-        from app import ensure_authoritative
-        bad = dict(self.COCHRANE, has_retraction=True)
-        assert ensure_authoritative([bad], [], floor=0.50) == []
+        def flaky(q, level_key=None, limit=100, **kw):
+            if q == "bad":
+                raise RuntimeError("boom")
+            return [dict(self.COCHRANE, similarity=0.7)]
+        try:
+            rag.search = flaky
+            out = app_mod.multi_query_search("q", ["bad"])
+        finally:
+            rag.search = orig
+        assert [p["pmid"] for p in out] == ["36512807"]
 
-    def test_a_superseded_cochrane_row_is_never_reinstated(self):
-        from app import ensure_authoritative
-        bad = dict(self.COCHRANE, superseded_by="99999999")
-        assert ensure_authoritative([bad], [], floor=0.50) == []
-
-    def test_a_withdrawn_review_is_never_reinstated(self):
-        from app import ensure_authoritative
-        bad = dict(self.COCHRANE, title="WITHDRAWN: Single versus multiple visits")
-        assert ensure_authoritative([bad], [], floor=0.50) == []
-
-    def test_a_journal_impostor_is_not_treated_as_cochrane(self):
-        """The tier label alone is not trusted — journal is verified, the same
-        rule that fixed the fake-Cochrane-tier bug."""
-        from app import ensure_authoritative
-        fake = dict(self.COCHRANE, journal="International Endodontic Journal")
-        assert ensure_authoritative([fake], [], floor=0.50) == []
-
-    def test_top_level1_papers_are_guaranteed(self):
-        from app import ensure_authoritative, AUTHORITY_TOP_LEVEL1
-        cands = [{"pmid": str(i), "level_key": "level1", "similarity": 0.6,
-                  "score": 90 - i} for i in range(10)]
-        out = ensure_authoritative(cands, [], floor=0.55)
-        assert len(out) == AUTHORITY_TOP_LEVEL1
-        assert [p["pmid"] for p in out] == ["0", "1", "2"], "highest score first"
-
-    def test_papers_already_present_are_not_duplicated(self):
-        from app import ensure_authoritative
-        out = ensure_authoritative([self.COCHRANE], [self.COCHRANE], floor=0.50)
-        assert len(out) == 1
+    def test_the_deleted_guarantee_has_not_come_back(self):
+        """A32d. If a later change reintroduces it, this fails and whoever
+        does it has to read why it went."""
+        import app as app_mod
+        assert not hasattr(app_mod, "ensure_authoritative"), (
+            "ensure_authoritative is back — see the A32 note in app.py before "
+            "reinstating it; it must never reach below the similarity floor")
+        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        assert "A32 — `ensure_authoritative` was deleted here" in src

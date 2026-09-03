@@ -1271,6 +1271,36 @@ paper should not be lost to *query variance*. So:
   can never be dropped)? If so, that copy has been false for as long as the
   function has been inert — the same defect class as "citations & impact factor".
   Fix the copy in the same commit as the code, and add it to A17's inventory.
+- **A32 RESULT: DELETED (A32b), not redefined.** A32a's narrower mechanism has
+  nothing left to protect. `multi_query_search` keeps the MAX similarity per
+  PMID across every generated query, so one badly-embedding query cannot lose a
+  paper another query found — measured on the retreatment question with a
+  consistent query set, ZERO of the papers clearing the floor on at least one of
+  8 queries failed to reach the merged candidate set, which cuts at 0.558
+  against a floor of 0.55. And the caps below it now order by relevance (A5b,
+  A30b), so anything they cut is cut because more relevant papers exist in its
+  tier; restoring it would be authority overriding relevance.
+  The protection that is real lives in two layers that work: the union-of-max,
+  and the eval's `must_include_pmid` on 36512807.
+
+- **A32c ANSWER: no clinician-facing surface claimed it.** The claim lived in
+  three INTERNAL files — `CURO_HANDOVER.md` ("Cochrane-tier + top Level I
+  papers can never be dropped by query variance"), `CHAT_HANDOVER.md`, and
+  `HANDOVER.md`'s "three layers now stand between a query and a lost
+  authority". All three corrected in the same commit as the deletion. Nothing
+  in the templates, decks, speaker notes or README made the claim, so no
+  clinician was told it. **For A17's inventory: a handover file is an
+  explanatory surface too** — it is what the next agent and the next
+  conversation believe, and all three described a guarantee that had never
+  fired.
+
+- **Two more vacuous tests found and replaced.** `TestAuthorityGuarantee` in
+  `test_retrieval_consistency.py` passed only because every case called the
+  function with `relevant=[]`, a state the production path never produces; and
+  `test_cochrane_below_the_floor_is_reinstated` used floor=0.50 against a
+  similarity of 0.546, so it asserted the opposite of its own name. Replaced
+  with tests of the union-of-max, which is the layer that actually protects.
+
 - **A32d** Whatever is built or deleted, keep the test that pins the current
   defect deliberately, so a later change cannot silently reintroduce
   score-over-relevance here.

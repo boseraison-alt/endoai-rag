@@ -444,13 +444,17 @@ library, cut by the 0.55 floor) while the raw clinician question scored 0.680.
 A well-formed boolean is mostly operators and quotes, so the better the PubMed
 query, the worse the vector search.
 
-Three layers now stand between a query and a lost authority:
+Two layers stand between a query and a lost authority:
 - `multi_query_search` (app.py) unions KNN over the raw question plus every
-  generated term, keeping the best similarity per PMID;
-- `ensure_authoritative` (app.py) guarantees journal-verified, current
-  Cochrane reviews above the floor and the top-3 Level I papers, re-checking
-  retracted/superseded/withdrawn itself;
+  generated term, keeping the best similarity per PMID — this is the layer
+  that does the work;
 - the eval pins `must_include_pmid`/`must_cite_pmid` on 36512807.
+
+There was a third, `ensure_authoritative`, and A32 deleted it: it had never
+fired once, and RB's decision was that it must not be made to fire by reaching
+below the similarity floor, because authority overriding relevance is the error
+A5b and A30b had just removed from the cap and the KNN ordering. Measured, the
+union-of-max leaves nothing above the floor for it to rescue.
 
 Measured: the question went from 10 relevant papers (and an answer that never
 mentioned Cochrane) to 36-38 across three runs, with CD005296 present and

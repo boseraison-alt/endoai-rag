@@ -994,75 +994,41 @@ def cap_by_relevance(bucket: list, cap: int, tier: str = "") -> list:
     return kept
 
 
-# Papers that must reach the clinician whatever the query happened to surface.
-AUTHORITY_TOP_LEVEL1 = 3
-
-
-def ensure_authoritative(candidates: list, relevant: list, floor: float) -> list:
-    """Guarantee the strongest evidence survives query variance.
-
-    Any journal-verified Cochrane review above the floor is included, and so are
-    the top AUTHORITY_TOP_LEVEL1 Level I papers by score. Everything here is
-    already a KNN candidate above the similarity floor — this does not inject
-    unrelated papers, it stops the *most* relevant ones being dropped because
-    one generated string embedded badly.
-
-    Retracted, withdrawn and superseded rows are excluded upstream by
-    rag.search(); this re-checks rather than assuming, because a guarantee that
-    can resurrect a retracted paper is worse than no guarantee.
-
-    A30a — MEASURED, AND IT HAS NEVER FIRED. `usable()` requires similarity at
-    or above the floor, and the `relevant` list this is handed already contains
-    every candidate at or above the floor, so `p.get("pmid") not in have` is
-    empty by construction. Checked on three real questions, including
-    apicoectomy where 183 of 200 candidates sit BELOW the floor: it added
-    nothing on all three, and its "re-included N that the similarity floor had
-    cut" line has never printed.
-
-    That is the §7.2 shape — a guarantee that shows nothing and therefore looks
-    satisfied. Making it fire means letting it reach BELOW the floor, which is
-    what its own rationale describes and a real change to what enters the
-    candidate pool. That is left for RB rather than taken here, because the
-    KNN now orders by pure relevance (A30b) and it is no longer obvious the
-    guarantee is needed at all.
-    """
-    from endo_ai import _COCHRANE_JOURNAL_HINTS
-
-    def usable(p):
-        if float(p.get("similarity") or 0) < floor:
-            return False
-        if p.get("has_retraction") or (p.get("superseded_by") or ""):
-            return False
-        if (p.get("title") or "").upper().startswith("WITHDRAWN:"):
-            return False
-        return True
-
-    have = {p.get("pmid") for p in relevant}
-    added = []
-
-    cochrane = [p for p in candidates
-                if p.get("level_key") == "cochrane"
-                and any(h in (p.get("journal") or "").lower()
-                        for h in _COCHRANE_JOURNAL_HINTS)
-                and usable(p) and p.get("pmid") not in have]
-    added.extend(cochrane)
-
-    # A30/rule 19 — which three get re-included is a membership decision, so
-    # it is made on similarity. (See the note above `usable`: as written this
-    # branch cannot fire at all, which is the finding that matters here. The
-    # ordering is corrected anyway so that fixing the guarantee later cannot
-    # reintroduce the category error.)
-    lvl1 = sorted([p for p in candidates
-                   if p.get("level_key") == "level1" and usable(p)
-                   and p.get("pmid") not in have
-                   and p.get("pmid") not in {a.get("pmid") for a in added}],
-                  key=lambda p: -float(p.get("similarity") or 0))[:AUTHORITY_TOP_LEVEL1]
-    added.extend(lvl1)
-
-    if added:
-        print(f"  [authority] re-included {len(cochrane)} Cochrane review(s) and "
-              f"{len(lvl1)} top Level I paper(s) that the similarity floor had cut")
-    return relevant + added
+# A32 — `ensure_authoritative` was deleted here, deliberately.
+#
+# It was a backstop against a top-tier paper being lost to query variance, and
+# it had never once fired: `usable()` required similarity at or above the
+# floor, and the `relevant` list it was handed already contained every such
+# candidate, so its re-inclusion set was empty by construction. Its own log
+# line has never printed. Its unit tests passed only because they called it
+# with `relevant=[]`, a state the production path never produces — and one of
+# them, `test_cochrane_below_the_floor_is_reinstated`, used floor=0.50 against
+# a similarity of 0.546, so it asserted the opposite of its own name.
+#
+# RB's decision was that it must NOT be fixed by reaching below the similarity
+# floor: on apicoectomy 183 of 200 candidates sit below it, and admitting
+# high-tier papers from there is the error just removed from the cap and the
+# ORDER BY, wearing a virtuous hat. A Cochrane review about a different
+# question is still about a different question.
+#
+# The narrower redefinition (restore a paper that clears the floor on ANY
+# query but is lost in the union merge or a cap) has nothing left to protect:
+#
+#   * `multi_query_search` keeps the MAX similarity per PMID across every
+#     query, so one bad embedding cannot lose a paper another query found.
+#     Measured on the retreatment question with a consistent query set: of the
+#     papers clearing the floor on at least one of 8 queries, ZERO failed to
+#     reach the merged candidate set, which cuts at similarity 0.558 against a
+#     floor of 0.55.
+#   * the caps below it now order by relevance (A5b, A30b), so a paper cut
+#     there is cut because more relevant papers exist in its tier. Restoring it
+#     would be authority overriding relevance — the thing this is not allowed
+#     to be.
+#
+# The protection is real and lives in two layers that do work: the union-of-max
+# above, and the eval's `must_include_pmid` on 36512807. A guarantee that
+# cannot fire is worse than none, because it gets described — and it was, in
+# three handover files.
 
 
 # ── B2/B5 retrieval concurrency ──────────────────────────
@@ -1317,8 +1283,6 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # citing papers on apex locators and sealer heat properties, which
             # the claim-support check then correctly flagged. The similarity
             # floor has to filter the evidence, not merely decide the gate.
-            relevant = ensure_authoritative(rag_results, relevant,
-                                            RAG_SIMILARITY_FLOOR)
             all_rag = rag_results_to_scored(relevant)
 
             # Band by STUDY DESIGN (level_key), rank by score WITHIN each band.
