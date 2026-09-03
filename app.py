@@ -476,8 +476,19 @@ def ask():
     prior_pmids   = context_prior_pmids(exchanges)
     continues_from = exchanges[-1]["question"] if (exchanges and context_block) else ""
 
-    # ── Clarify gate: check if questions needed (unless context already provided) ──
-    if not skip_clarify and not context:
+    # ── Clarify gate ─────────────────────────────────────
+    # A20. Literature answers; it does not interview. This gate was the ONLY
+    # way the review route could put a question back to the clinician — the
+    # synthesis prompt has forbidden questions in the answer body since
+    # `trust-surface-v1`, and 0 of 10 stored review answers contain one. So
+    # this line is the whole of A20b.
+    #
+    # Curriculum keeps it, deliberately and for now. A20's premise was that
+    # "Curriculum already asks none"; measured, that is wrong — the gate fires
+    # on `learn` too, and three stored curricula carry an answered
+    # clarification block in their titles. Turning it off there is a separate
+    # decision for RB, not a side effect of this one.
+    if mode != "review" and not skip_clarify and not context:
         try:
             questions = generate_clarifying_questions(question,
                                                       context_block=context_block)

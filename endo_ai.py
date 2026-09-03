@@ -2846,6 +2846,20 @@ _SCORE_WEIGHTS_DESC = (
 )
 
 
+# ── A20 — Literature answers; it does not interview ───────
+#
+# Hoisted to module level for the same reason as CASE_FOLLOWUP_PROMPT: a test
+# that asserts on the function source passes over a docstring restating the
+# rule, and so survives a mutant that deleted the rule from the prompt itself.
+# This is the text the model is actually shown.
+#
+# The other half of A20 is in `app.py`: the clarify gate no longer interrupts
+# a review question before the answer. This half is the answer body.
+_NO_QUESTIONS_RULE = """- NEVER end your response with a question. NEVER ask the clinician for more information.
+- If the question is genuinely ambiguous, answer the most reasonable reading and say which reading you took, in ONE sentence beginning "Assumed:" - for example "Assumed: a mature permanent tooth with a necrotic pulp." An assumption declared is not a question asked; it tells the clinician what to correct if you read them wrong, without making them answer an interrogation first.
+- If key clinical details are missing, state what information would change the recommendation - but do not pose questions."""
+
+
 # ── The grounding rule ────────────────────────────────────
 #
 # Every synthesis prompt in this file mandates a [[PMID:N]] marker on every
@@ -6130,13 +6144,14 @@ Rules:
 - Note when sample sizes are underpowered
 - Note when evidence base is weak overall
 - Keep recommendation concise
-- NEVER end your response with a question. NEVER ask the clinician for more information. If key clinical details are missing, state what information would change the recommendation — but do not pose questions."""
+__NO_QUESTIONS_RULE__"""
 
     # Splice in the active scoring-weight description (impact factor on/off)
     # and the grounding rule, which is one constant shared with the curriculum
     # and case prompts so the three cannot drift on what a marker means.
     system_prompt = system_prompt.replace("__SCORE_WEIGHTS__", _SCORE_WEIGHTS_DESC)
     system_prompt = system_prompt.replace("__GROUNDING_RULE__", _GROUNDING_RULE)
+    system_prompt = system_prompt.replace("__NO_QUESTIONS_RULE__", _NO_QUESTIONS_RULE)
 
     # Build context — feed papers in strict tier order (Cochrane → L5),
     # not cross-tier sorted by score
