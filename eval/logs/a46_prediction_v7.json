@@ -1,0 +1,234 @@
+[
+ {
+  "id": "intentional-replantation",
+  "old": 171,
+  "new": 58,
+  "guard": false,
+  "v6_min": 24,
+  "v6_max": 68
+ },
+ {
+  "id": "dens-invaginatus",
+  "old": 135,
+  "new": 40,
+  "guard": true,
+  "v6_min": 82,
+  "v6_max": 83
+ },
+ {
+  "id": "sonic-vs-ultrasonic",
+  "old": 115,
+  "new": 40,
+  "guard": true,
+  "v6_min": 19,
+  "v6_max": 36
+ },
+ {
+  "id": "review-followup-immature-teeth",
+  "old": 140,
+  "new": 66,
+  "guard": false,
+  "v6_min": 20,
+  "v6_max": 29
+ },
+ {
+  "id": "bisphosphonate-extraction-vs-rct-treatment",
+  "old": 133,
+  "new": 65,
+  "guard": false,
+  "v6_min": null,
+  "v6_max": null
+ },
+ {
+  "id": "case-opening-sparse",
+  "old": 103,
+  "new": 40,
+  "guard": true,
+  "v6_min": 171,
+  "v6_max": 220
+ },
+ {
+  "id": "pregnancy",
+  "old": 100,
+  "new": 40,
+  "guard": true,
+  "v6_min": 15,
+  "v6_max": 24
+ },
+ {
+  "id": "bisphosphonates",
+  "old": 118,
+  "new": 63,
+  "guard": false,
+  "v6_min": 42,
+  "v6_max": 62
+ },
+ {
+  "id": "cbct-vs-periapical",
+  "old": 119,
+  "new": 71,
+  "guard": false,
+  "v6_min": 33,
+  "v6_max": 37
+ },
+ {
+  "id": "bioceramic-vs-resin-sealer",
+  "old": 100,
+  "new": 59,
+  "guard": false,
+  "v6_min": 37,
+  "v6_max": 40
+ },
+ {
+  "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+  "old": 141,
+  "new": 100,
+  "guard": false,
+  "v6_min": null,
+  "v6_max": null
+ },
+ {
+  "id": "pips-vs-ultrasonic",
+  "old": 102,
+  "new": 64,
+  "guard": false,
+  "v6_min": 29,
+  "v6_max": 35
+ },
+ {
+  "id": "diabetes-outcomes",
+  "old": 97,
+  "new": 63,
+  "guard": false,
+  "v6_min": 33,
+  "v6_max": 42
+ },
+ {
+  "id": "laser-root-canal-disinfection-live",
+  "old": 122,
+  "new": 89,
+  "guard": false,
+  "v6_min": 156,
+  "v6_max": 182
+ },
+ {
+  "id": "review-newtopic-reset",
+  "old": 81,
+  "new": 48,
+  "guard": false,
+  "v6_min": 31,
+  "v6_max": 37
+ },
+ {
+  "id": "apdt-primary-molars",
+  "old": 114,
+  "new": 82,
+  "guard": false,
+  "v6_min": 82,
+  "v6_max": 109
+ },
+ {
+  "id": "sdf-pulp-outcomes",
+  "old": 71,
+  "new": 40,
+  "guard": true,
+  "v6_min": 26,
+  "v6_max": 29
+ },
+ {
+  "id": "dens-evaginatus-prevention-followup",
+  "old": 116,
+  "new": 85,
+  "guard": false,
+  "v6_min": null,
+  "v6_max": null
+ },
+ {
+  "id": "laser-root-canal-disinfection-library",
+  "old": 118,
+  "new": 93,
+  "guard": false,
+  "v6_min": 33,
+  "v6_max": 34
+ },
+ {
+  "id": "single-vs-multiple-visit",
+  "old": 120,
+  "new": 96,
+  "guard": false,
+  "v6_min": 36,
+  "v6_max": 41
+ },
+ {
+  "id": "cracked-tooth-prognosis",
+  "old": 128,
+  "new": 104,
+  "guard": false,
+  "v6_min": 30,
+  "v6_max": 94
+ },
+ {
+  "id": "dens-evaginatus-premolar-diagnostic",
+  "old": 56,
+  "new": 40,
+  "guard": true,
+  "v6_min": null,
+  "v6_max": null
+ },
+ {
+  "id": "preemptive-nsaid",
+  "old": 86,
+  "new": 73,
+  "guard": false,
+  "v6_min": 40,
+  "v6_max": 43
+ },
+ {
+  "id": "regenerative-immature",
+  "old": 127,
+  "new": 117,
+  "guard": false,
+  "v6_min": 37,
+  "v6_max": 39
+ },
+ {
+  "id": "mta-vs-biodentine-pulpotomy",
+  "old": 123,
+  "new": 116,
+  "guard": false,
+  "v6_min": 34,
+  "v6_max": 35
+ },
+ {
+  "id": "retreatment-vs-microsurgery",
+  "old": 136,
+  "new": 129,
+  "guard": false,
+  "v6_min": 37,
+  "v6_max": 54
+ },
+ {
+  "id": "naocl-concentration",
+  "old": 75,
+  "new": 69,
+  "guard": false,
+  "v6_min": 37,
+  "v6_max": 38
+ },
+ {
+  "id": "direct-pulp-capping",
+  "old": 110,
+  "new": 110,
+  "guard": false,
+  "v6_min": 35,
+  "v6_max": 35
+ },
+ {
+  "id": "case-opening-full",
+  "old": 144,
+  "new": 144,
+  "guard": false,
+  "v6_min": 93,
+  "v6_max": 159
+ }
+]

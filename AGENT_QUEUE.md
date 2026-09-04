@@ -199,7 +199,7 @@ and the damage is invisible: it looks like a finding, not a collision.
 
 | | **Agent R — retrieval & measurement** | **Agent P — presentation** |
 |---|---|---|
-| Items | A42, A39, A41b, A34c, A33i, A10, A26, A25a, the re-baseline | A22 + A44a, A44m, A44 groups 1–4, A17 copy sweep, A43 (after A42 lands) |
+| Items | ~~A42~~ ~~A39~~ ~~A41b~~ ~~A34c~~ ~~A33i~~ · A45 done · **the re-baseline (A46)** · then A10, A26, A25a | ~~A44m~~ ~~A22b/c/f~~ · A22a + the `**` leak + A22d + A22e (browser) · A44a–d · A44n · A17 copy sweep · A43 |
 | Owns | `rag.py`, `endo_ai.py` retrieval paths, `eval/**`, `scripts/**`, all DB writes | `templates/**`, `static/**`, `webdeck/**`, `presentations/**` |
 | PubMed | **sole access** | **none, ever** |
 | DB writes | yes, dry-run first | none |
