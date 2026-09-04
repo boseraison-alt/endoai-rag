@@ -1,0 +1,760 @@
+{
+  "target": 99,
+  "library_rows_before": 3072,
+  "aej_held_before": 50,
+  "selected": [
+    "42002807",
+    "41968431",
+    "41837388",
+    "41810922",
+    "41492762",
+    "41319107",
+    "41273117",
+    "41243416",
+    "41103107",
+    "40851324",
+    "40667643",
+    "40105268",
+    "39494967",
+    "38963183",
+    "37702252",
+    "37688283",
+    "36514265",
+    "36149016",
+    "35988128",
+    "36029227",
+    "35665985",
+    "34498341",
+    "34146366",
+    "33938611",
+    "33713515",
+    "33523574",
+    "31638301",
+    "31621999",
+    "31432612",
+    "30520194",
+    "30295006",
+    "29450937",
+    "29168301",
+    "29168274",
+    "28736921",
+    "28150896",
+    "27062318",
+    "41652862",
+    "40801476",
+    "40714995",
+    "40641033",
+    "39950695",
+    "37026535",
+    "36254883",
+    "35759555",
+    "35488771",
+    "34278665",
+    "33793027",
+    "32914509",
+    "32568470",
+    "31270901",
+    "25195661",
+    "41958088",
+    "41327840",
+    "40765275",
+    "40590571",
+    "40444645",
+    "40420331",
+    "40411276",
+    "39991990",
+    "39508744",
+    "39431715",
+    "39221772",
+    "39162044",
+    "38924249",
+    "37309727",
+    "37154212",
+    "36281895",
+    "35904463",
+    "35904458",
+    "35908285",
+    "36197584",
+    "35690589",
+    "34699673",
+    "34609035",
+    "34363716",
+    "33991021",
+    "33094527",
+    "33030279",
+    "32896059",
+    "32638484",
+    "32557914",
+    "30907062",
+    "30632228",
+    "30338604",
+    "30129090",
+    "29336522",
+    "29226512",
+    "28804934",
+    "28643935",
+    "28620977",
+    "28685976",
+    "27558847"
+  ],
+  "fetched": [
+    {
+      "pmid": "42002807",
+      "title": "Early Non-Invasive Detection of Arterial Stiffness Related to Endothelial Dysfunction in Apical Periodontitis Patients: A Systematic Review and Meta-Analysis",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41968431",
+      "title": "Artificial Intelligence for Working Length Determination in Endodontics: A Systematic Review and Meta-Analysis",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 78.1
+    },
+    {
+      "pmid": "41837388",
+      "title": "Enterococcus faecalis and Endodontic Treatment Failure: A Qualitative Systematic Review of Its Role and Elimination Strategies",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41810922",
+      "title": "Effect of Endodontic Sealers on the Bond Strength of Glass Fibre Posts: A Systematic Review",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41492762",
+      "title": "Analgesic Efficacy of Low-Level Laser Therapy for Postoperative Endodontic Pain: A Systematic Review and Meta-Analysis",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41319107",
+      "title": "Preoperative Periapical Status and Outcomes of Vital Pulp Therapy: A Systematic Review and Meta-Analysis",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41273117",
+      "title": "Diagnostic Accuracy of Cone-Beam Computed Tomography and Periapical Radiography in Detecting External Cervical Resorption: A Systematic Review and Meta-Analysis",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41243416",
+      "title": "Transcriptomic Biomarkers Associated With Pulpitis: A Systematic Review and Functional Meta-Synthesis of Bioinformatic Studies in Human Pulp Tissue",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "41103107",
+      "title": "Pulse Oximeter as a Diagnostic Tool for Assessing Pulpal Pathology: A Systematic Literature Review and Meta-Analysis",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "40851324",
+      "title": "Effect of Type of Coronal Restoration on Periapical Healing and Tooth Survival of Root Filled Teeth: Systematic Review and Meta-Analysis",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "40667643",
+      "title": "Comparison of Clinical Outcomes of Two Hydraulic Calcium Silicate Cements for Pulpotomy in Cariously Exposed Permanent Teeth-A Systematic Review",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 78.1
+    },
+    {
+      "pmid": "40105268",
+      "title": "Genetic Polymorphisms and Their Association With Endodontic Postoperative Pain: A Systematic Review",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "39494967",
+      "title": "Comparative analysis of rotary versus manual instrumentation in paediatric pulpectomy procedures: A systematic review and meta-analysis",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "38963183",
+      "title": "Histological response of inflamed pulp to hydraulic calcium silicate cements in direct pulp capping: Systematic review of pulpitis models",
+      "year": "2024",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "37702252",
+      "title": "Clinical management of external cervical resorption: A systematic review",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "37688283",
+      "title": "Critical analysis of a new system to classify root and canal morphology - A systematic review",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "36514265",
+      "title": "Centric versus eccentric engine-driven endodontic instrument design for microbial load reduction-A systematic review and meta-analysis of randomised clinical trials",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "36149016",
+      "title": "The treatment of mature permanent teeth with irreversible pulpitis by cervical pulpotomy: A systematic review",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "35988128",
+      "title": "Evaluation of irrigant extrusion following the use of different root canal irrigation techniques: A systematic review and meta-analysis",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "36029227",
+      "title": "Impact of contracted endodontic cavities on instrumentation efficacy-A systematic review",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "35665985",
+      "title": "Influence of minimally invasive access cavities on load capacity of root-canal-treated teeth: A systematic review and meta-analysis",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "34498341",
+      "title": "Influence of the use of chelating agents as final irrigant on the push-out bond strength of epoxy resin-based root canal sealers: A systematic review",
+      "year": "2022",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "34146366",
+      "title": "Extrusion of debris with and without intentional foraminal enlargement - A systematic review and meta-analysis",
+      "year": "2021",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "33938611",
+      "title": "Influence of chelating solutions on tubular dentin sealer penetration: A systematic review with network meta-analysis",
+      "year": "2021",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "33713515",
+      "title": "Contribution of XP-Endo files to the root canal filling removal: A systematic review and meta-analysis of in\u00a0vitro studies",
+      "year": "2021",
+      "level_key": "level1",
+      "score": 62.6
+    },
+    {
+      "pmid": "33523574",
+      "title": "Solubility of bioceramic- and epoxy resin-based root canal sealers: A systematic review and meta-analysis",
+      "year": "2021",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "31638301",
+      "title": "Effect of occlusal reduction on postendodontic pain: A systematic review and meta-analysis of randomised clinical trials",
+      "year": "2020",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "31621999",
+      "title": "Endodontic complications associated with orthodontic temporary anchorage devices: A systematic review of human studies",
+      "year": "2020",
+      "level_key": "level1",
+      "score": 65.9
+    },
+    {
+      "pmid": "31432612",
+      "title": "Histological assessment of human regenerative endodontic procedures (REP) of immature permanent teeth with necrotic pulp/apical periodontitis: A systematic review",
+      "year": "2020",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "30520194",
+      "title": "Effect of instrumentation systems on endotoxin reduction from root canal systems: A systematic review of clinical studies and meta-analysis",
+      "year": "2019",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "30295006",
+      "title": "Effect of ibuprofen on the efficacy of inferior alveolar nerve block in patients with irreversible pulpitis: A meta-analysis",
+      "year": "2019",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "29450937",
+      "title": "Adaptation of mineral trioxide aggregate to dentine walls compared with other root-end filling materials: A systematic review",
+      "year": "2019",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "29168301",
+      "title": "Animal models used in furcation perforation studies: A systematic review and comprehensive synthesis of model characteristics",
+      "year": "2018",
+      "level_key": "level1",
+      "score": 51.5
+    },
+    {
+      "pmid": "29168274",
+      "title": "Antimicrobial properties of calcium hydroxide dressing when used for long-term application: A systematic review",
+      "year": "2018",
+      "level_key": "level1",
+      "score": 50.4
+    },
+    {
+      "pmid": "28736921",
+      "title": "Supplementary techniques for pain control during root canal treatment of lower posterior teeth with irreversible pulpitis: A systematic review and meta-analysis",
+      "year": "2018",
+      "level_key": "level1",
+      "score": 61.5
+    },
+    {
+      "pmid": "28150896",
+      "title": "Does apical negative pressure prevent the apical extrusion of debris and irrigant compared with conventional irrigation? A systematic review and meta-analysis",
+      "year": "2017",
+      "level_key": "level1",
+      "score": 50.4
+    },
+    {
+      "pmid": "27062318",
+      "title": "Efficacy and safety of articaine versus lidocaine for irreversible pulpitis treatment: A systematic review and meta-analysis of randomised controlled trials",
+      "year": "2016",
+      "level_key": "level1",
+      "score": 50.4
+    },
+    {
+      "pmid": "41652862",
+      "title": "Effect of Simvastatin on Success of Pulpotomy in Carious Permanent Molars With Symptomatic Irreversible Pulpitis: A Randomised Controlled Trial",
+      "year": "2026",
+      "level_key": "level1",
+      "score": 74.4
+    },
+    {
+      "pmid": "40801476",
+      "title": "Postoperative Pain Following Single-Visit Versus Two-Visit Endodontic Retreatment - A Comparison of Inter-Appointment and Post-Obturation Periods: Randomised Clinical Trial",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "40714995",
+      "title": "Evaluation of Post-Endodontic Pain Reduction Using Intracanal Cryotherapy in Symptomatic Apical Periodontitis",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 71.5
+    },
+    {
+      "pmid": "40641033",
+      "title": "Effect of Cavity Design on Bacterial Reduction in Root Canals and Postoperative Pain Level: A Randomised Controlled Trial",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 74.8
+    },
+    {
+      "pmid": "39950695",
+      "title": "Efficacy of Premedication With Ketorolac on Anaesthetic Success of Mental-Incisive Nerve Blocks With Symptomatic Irreversible Pulpitis: A Randomised Clinical Trial",
+      "year": "2025",
+      "level_key": "level1",
+      "score": 67.0
+    },
+    {
+      "pmid": "37026535",
+      "title": "Postoperative pain perception and associated risk factors in children after continuous rotation versus reciprocating kinematics: A randomised prospective clinical trial",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "36254883",
+      "title": "Effect of QMix as final irrigation protocol on periapical healing after single-visit root canal treatment: A\u00a0randomised controlled clinical trial",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 65.6
+    },
+    {
+      "pmid": "35759555",
+      "title": "Effect of preoperative tramadol, ibuprofen, ibuprofen/acetaminophen on the anaesthetic efficacy of inferior alveolar nerve block in patients with symptomatic irreversible pulpitis",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 58.1
+    },
+    {
+      "pmid": "35488771",
+      "title": "Influence of different agitation techniques on bacterial reduction in curved root canals",
+      "year": "2023",
+      "level_key": "level1",
+      "score": 59.3
+    },
+    {
+      "pmid": "34278665",
+      "title": "The influence of different NiTi instrumentation techniques on postoperative pain after single-visit root canal treatment",
+      "year": "2021",
+      "level_key": "level1",
+      "score": 55.9
+    },
+    {
+      "pmid": "33793027",
+      "title": "Influence of dental crown topography on fracture resistance of premolars with MOD preparation and subjected to different restorative protocols",
+      "year": "2021",
+      "level_key": "level1",
+      "score": 52.6
+    },
+    {
+      "pmid": "32914509",
+      "title": "Evaluation of 3 different treatment modalities for conservative management of attrited, sensitive molar teeth - A preliminary 12-week report",
+      "year": "2020",
+      "level_key": "level1",
+      "score": 59.3
+    },
+    {
+      "pmid": "32568470",
+      "title": "Coronal Bacterial Penetration after 7 days in class II endodontic access cavities restored with two temporary restorations: A Randomised Clinical Trial",
+      "year": "2020",
+      "level_key": "level1",
+      "score": 54.8
+    },
+    {
+      "pmid": "31270901",
+      "title": "Influence of anti-inflammatory irrigant on substance P expression for single-visit root canal treatment of teeth with irreversible pulpitis",
+      "year": "2020",
+      "level_key": "level1",
+      "score": 52.6
+    },
+    {
+      "pmid": "25195661",
+      "title": "Comparative evaluation of postoperative pain after using endodontic needle and EndoActivator during root canal irrigation: A randomised controlled trial",
+      "year": "2015",
+      "level_key": "level1",
+      "score": 51.5
+    },
+    {
+      "pmid": "41958088",
+      "title": "The Relationship Between Severity of Apical Periodontitis and Next-Generation Systemic Inflammatory Biomarkers",
+      "year": "2026",
+      "level_key": "observational",
+      "score": 39.0
+    },
+    {
+      "pmid": "41327840",
+      "title": "Accuracy of Micro Hole Negotiator and Other Techniques for Detecting MB2 Canals in Maxillary Molar Retreatment: A Prospective Cohort Study",
+      "year": "2026",
+      "level_key": "observational",
+      "score": 39.0
+    },
+    {
+      "pmid": "40765275",
+      "title": "Fracture Risk of Endodontic Files: Clinical Analysis of Reciproc and X1 Blue After Multiple Uses",
+      "year": "2025",
+      "level_key": "observational",
+      "score": 50.1
+    },
+    {
+      "pmid": "40590571",
+      "title": "Ideal Horizontal X-Ray Beam Angulation for Maxillary Molars. A Retrospective Clinical Study Using Cone-Beam Computed Tomography",
+      "year": "2025",
+      "level_key": "observational",
+      "score": 46.8
+    },
+    {
+      "pmid": "40444645",
+      "title": "Aggressive Neoplasms That Mimic Chronic Endodontic Lesions: A Multi-Institutional Case Series",
+      "year": "2025",
+      "level_key": "level2",
+      "score": 57.0
+    },
+    {
+      "pmid": "40420331",
+      "title": "Impact of Instrumentation Technique on Endodontic Treatment Quality in Curved Molars: A Retrospective Analysis",
+      "year": "2025",
+      "level_key": "observational",
+      "score": 39.0
+    },
+    {
+      "pmid": "40411276",
+      "title": "Content and Reliability Analysis of YouTube Videos Regarding Minimally Invasive Endodontics: A Cross-Sectional Analysis",
+      "year": "2025",
+      "level_key": "observational",
+      "score": 39.0
+    },
+    {
+      "pmid": "39991990",
+      "title": "Management of maxillary permanent central incisors with combined injuries sustaining a second dental trauma: A case report with 8-year follow-up",
+      "year": "2025",
+      "level_key": "level4",
+      "score": 51.1
+    },
+    {
+      "pmid": "39508744",
+      "title": "The pattern of antibiotics prescription for endodontic infections in Malaysia: Cross sectional survey study",
+      "year": "2025",
+      "level_key": "observational",
+      "score": 50.1
+    },
+    {
+      "pmid": "39431715",
+      "title": "Relationship of incidence of radix entomolaris and C-shaped canal in mandibular molars using CBCT: A multi-centre study",
+      "year": "2025",
+      "level_key": "level2",
+      "score": 70.4
+    },
+    {
+      "pmid": "39221772",
+      "title": "Successful retreatment of a maxillary central incisor with a wide-open apex using MTA to fill the entire canal: 24-year follow-up",
+      "year": "2024",
+      "level_key": "level4",
+      "score": 51.1
+    },
+    {
+      "pmid": "39162044",
+      "title": "Minimally invasive guided endodontic microsurgery with Zekrya bur: A 48-month follow-up case report",
+      "year": "2024",
+      "level_key": "level4",
+      "score": 48.9
+    },
+    {
+      "pmid": "38924249",
+      "title": "Oral health-related quality of life and perceptions of patients following primary root canal treatment or non-surgical retreatment",
+      "year": "2024",
+      "level_key": "observational",
+      "score": 40.1
+    },
+    {
+      "pmid": "37309727",
+      "title": "Long-term follow-up of single-visit pulp revascularisation for the dens evaginatus and dens invaginatus: Cases report",
+      "year": "2023",
+      "level_key": "level4",
+      "score": 34.8
+    },
+    {
+      "pmid": "37154212",
+      "title": "Conservative management of dens in dente",
+      "year": "2023",
+      "level_key": "level4",
+      "score": 34.8
+    },
+    {
+      "pmid": "36281895",
+      "title": "Working length variation during multiple-visit endodontic treatment: An observational study",
+      "year": "2023",
+      "level_key": "level3a",
+      "score": 54.3
+    },
+    {
+      "pmid": "35904463",
+      "title": "Response to the commentary on the article 'pulpal and periapical disease in crowned vital teeth: A prospective matched cohort study'",
+      "year": "2023",
+      "level_key": "observational",
+      "score": 30.1
+    },
+    {
+      "pmid": "35908285",
+      "title": "Association between second mesiobuccal canal and apical periodontitis in retrospective cone-beam computed tomographic images",
+      "year": "2023",
+      "level_key": "observational",
+      "score": 30.1
+    },
+    {
+      "pmid": "36197584",
+      "title": "Assessment of bone quality of apical periodontitis treated with MTA plug and regenerative endodontic techniques",
+      "year": "2022",
+      "level_key": "observational",
+      "score": 34.2
+    },
+    {
+      "pmid": "35690589",
+      "title": "Evaluation of endodontically treated teeth and related apical periodontitis using periapical and endodontic status scale: Retrospective cone-beam computed tomography study",
+      "year": "2022",
+      "level_key": "observational",
+      "score": 26.8
+    },
+    {
+      "pmid": "34699673",
+      "title": "Evaluation of the outcome of apexogenesis in traumatised anterior and carious posterior teeth using mineral trioxide aggregate: a 5-year retrospective study",
+      "year": "2022",
+      "level_key": "observational",
+      "score": 34.2
+    },
+    {
+      "pmid": "34609035",
+      "title": "Pulpal and periapical disease in crowned vital teeth: A prospective matched cohort study",
+      "year": "2022",
+      "level_key": "observational",
+      "score": 26.8
+    },
+    {
+      "pmid": "34363716",
+      "title": "The prevalence of oval-shaped root canals: A morphometric study using cone-beam computed tomography and image analysis software",
+      "year": "2022",
+      "level_key": "observational",
+      "score": 26.8
+    },
+    {
+      "pmid": "33991021",
+      "title": "Clinical and radiographic outcome of the root canal treatment of infected teeth with associated sinus tract: A retrospective study",
+      "year": "2021",
+      "level_key": "observational",
+      "score": 24.6
+    },
+    {
+      "pmid": "33094527",
+      "title": "Outcomes of traumatised immature teeth treated with apexification or regenerative endodontic procedure: a retrospective study",
+      "year": "2021",
+      "level_key": "observational",
+      "score": 26.8
+    },
+    {
+      "pmid": "33030279",
+      "title": "Endodontic management of mandibular second molar fused to odontome with 12-month follow-up using cone beam computed tomography: A case report",
+      "year": "2021",
+      "level_key": "level4",
+      "score": 31.5
+    },
+    {
+      "pmid": "32896059",
+      "title": "Management of a perforating internal root resorption using mineral trioxide aggregate: a case report with 5-year follow-up",
+      "year": "2020",
+      "level_key": "level4",
+      "score": 38.9
+    },
+    {
+      "pmid": "32638484",
+      "title": "Perforation of the maxillary sinus floor during apical surgery of maxillary molars: A retrospective analysis using cone beam computed tomography",
+      "year": "2020",
+      "level_key": "observational",
+      "score": 34.6
+    },
+    {
+      "pmid": "32557914",
+      "title": "Locating the MB2 canal in relation to MB1 in Maxillary First Molars using CBCT imaging",
+      "year": "2020",
+      "level_key": "observational",
+      "score": 26.8
+    },
+    {
+      "pmid": "30907062",
+      "title": "Incidence of microcracks after preparation of straight and curved root canals with three different NiTi instrumentation techniques assessed by micro-CT",
+      "year": "2019",
+      "level_key": "observational",
+      "score": 37.9
+    },
+    {
+      "pmid": "30632228",
+      "title": "Effect of calcium hydroxide as intracanal medicament on the expression of caspase-9 located within the radicular cyst epithelium",
+      "year": "2019",
+      "level_key": "observational",
+      "score": 24.6
+    },
+    {
+      "pmid": "30338604",
+      "title": "An assessment of endodontic treatment completion rate in a University-based student clinic and the factors associated with incomplete treatment",
+      "year": "2019",
+      "level_key": "observational",
+      "score": 26.8
+    },
+    {
+      "pmid": "30129090",
+      "title": "External invasive resorption: Possible coexisting factors and demographic and clinical characteristics",
+      "year": "2019",
+      "level_key": "observational",
+      "score": 24.6
+    },
+    {
+      "pmid": "29336522",
+      "title": "Continued root maturation despite persistent apical periodontitis of immature permanent teeth after failed regenerative endodontic therapy",
+      "year": "2018",
+      "level_key": "level4",
+      "score": 27.0
+    },
+    {
+      "pmid": "29226512",
+      "title": "Diagnosis of vertical root fractures in endodontically treated teeth utilising Digital Subtraction Radiography: A case series report",
+      "year": "2018",
+      "level_key": "observational",
+      "score": 22.4
+    },
+    {
+      "pmid": "28804934",
+      "title": "Complicated untreated apical periodontitis causing paraesthesia: A case report",
+      "year": "2018",
+      "level_key": "level4",
+      "score": 34.4
+    },
+    {
+      "pmid": "28643935",
+      "title": "Efficacy of self-adjusting file, XP-endo finisher and passive ultrasonic irrigation on the removal of calcium hydroxide paste from an artificial standardized groove",
+      "year": "2018",
+      "level_key": "level3a",
+      "score": 36.5
+    },
+    {
+      "pmid": "28620977",
+      "title": "2016 ASE undergraduate essay competition candidate information",
+      "year": "2018",
+      "level_key": "observational",
+      "score": 22.4
+    },
+    {
+      "pmid": "28685976",
+      "title": "Mandibular division trigeminal nerve injuries following primary endodontic treatment. A case series",
+      "year": "2017",
+      "level_key": "observational",
+      "score": 23.5
+    },
+    {
+      "pmid": "27558847",
+      "title": "Anaesthetic efficacy of intraligamentary injection techniques on mandibular molars diagnosed with asymptomatic irreversible pulpitis: A retrospective study",
+      "year": "2017",
+      "level_key": "observational",
+      "score": 26.8
+    }
+  ],
+  "skipped": [
+    [
+      "35904458",
+      "no abstract"
+    ]
+  ],
+  "by_tier": {
+    "level1": 52,
+    "observational": 27,
+    "level2": 2,
+    "level4": 9,
+    "level3a": 2
+  },
+  "applied": true
+}
