@@ -86,7 +86,14 @@ class TestAStoredAnswerRendersAsTheCurrentRendererWould:
     def test_q2_out_of_domain_prose_is_quarantined(self):
         out, blocks = endo_ai.finalise_answer_text(PRE_STAGE1_ANSWER)
         assert blocks, "the stored answer's out-of-domain paragraph was not lifted"
-        assert "NOT FROM THE EVIDENCE BASE" in out
+        # A22b/A22f. The label is read off the module rather than hard-coded,
+        # because the wording changed (A22f) and the SHAPE now depends on the
+        # passage's size (A22b): a short one is marked in the prose, a
+        # paragraph keeps the block. What must hold either way is that the
+        # stored answer's out-of-domain prose is labelled in the TEXT.
+        assert (endo_ai._QUARANTINE_HEADER in out
+                or endo_ai._QUARANTINE_INLINE_MARK in out)
+        assert "passages marked" in out, "the legend explaining the mark is missing"
 
     def test_q1_the_banner_gains_its_second_number(self):
         assert not re.search(r"not from the evidence base", PRE_STAGE1_ANSWER)
@@ -183,7 +190,8 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         assert "cited_pmids" in body
         assert set(body["cited_pmids"]) == {"27759881", "ESE-QG-2023", "35762859"}
         assert "(IF:" not in body["answer"]
-        assert "NOT FROM THE EVIDENCE BASE" in body["answer"]
+        assert (endo_ai._QUARANTINE_HEADER in body["answer"]
+                or endo_ai._QUARANTINE_INLINE_MARK in body["answer"])
 
     def test_the_cache_hit_branch_re_renders_too(self):
         src = (ROOT / "app.py").read_text(encoding="utf-8")

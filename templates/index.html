@@ -5859,7 +5859,20 @@ function deShout(t) {
 // HTML is put back at the end. The placeholder closes and reopens the
 // surrounding paragraph so the container is a block-level sibling rather than
 // a <div> stranded inside a <p>.
+// A22c/A22f. Two shapes, deliberately.
+//
+//   CURRENT  "**NOT CHECKED — not from any paper Curo retrieved**", and the
+//            run ends where the blockquote ends. The per-block "Consult
+//            directly:" footer is gone — it was repeated 56 times across the
+//            stored corpus and 17 times in a single answer, which is
+//            wallpaper rather than a warning (A3's finding, in visual form).
+//   LEGACY   the old header AND the old footer. Seven stored answers carry
+//            56 of them, and A16b re-renders the archive on every read, so
+//            dropping this pattern would silently un-quarantine every one
+//            of them (A44n).
 var _QUARANTINE_BLOCK_RE_JS =
+  /^&gt;[ \t]*\*\*NOT CHECKED — not from any paper Curo retrieved\*\*(?:\n&gt;[^\n]*)*/gm;
+var _QUARANTINE_LEGACY_RE_JS =
   /^&gt;[ \t]*⚠ \*\*NOT FROM THE EVIDENCE BASE — UNVERIFIED\*\*[\s\S]*?^&gt;[ \t]*\*\*Consult directly:\*\*[^\n]*/gm;
 
 function _unverifiedInline(s) {
@@ -5868,18 +5881,24 @@ function _unverifiedInline(s) {
 }
 
 function _stashUnverifiedBlocks(text, stash) {
-  return text.replace(_QUARANTINE_BLOCK_RE_JS, function (block) {
+  text = _stashOne(text, stash, _QUARANTINE_BLOCK_RE_JS);
+  return _stashOne(text, stash, _QUARANTINE_LEGACY_RE_JS);
+}
+
+function _stashOne(text, stash, re) {
+  return text.replace(re, function (block) {
     var body = [], footer = '', note = '';
     block.split('\n').forEach(function (line, i) {
       var l = line.replace(/^&gt;[ \t]?/, '').trim();
       if (i === 0 || !l) return;                       // header line, blank lines
       if (/^\*\*Consult directly:\*\*/.test(l)) { footer = l; return; }
-      if (/^_General clinical knowledge/.test(l))    { note = l; return; }
+      if (/^_General clinical (knowledge|practice)/.test(l)) { note = l; return; }
+      if (/^\*\*NOT CHECKED — /.test(l)) { return; }   // the current header line
       body.push(l);
     });
     var html =
       '<div class="unverified-block" role="note">' +
-        '<div class="unverified-head">⚠ NOT FROM THE EVIDENCE BASE — UNVERIFIED</div>' +
+        '<div class="unverified-head">NOT CHECKED — not from any paper Curo retrieved</div>' +
         (note ? '<div class="unverified-note">' + _unverifiedInline(note) + '</div>' : '') +
         '<div class="unverified-body">' + _unverifiedInline(body.join(' ')) + '</div>' +
         (footer ? '<div class="unverified-foot">' + _unverifiedInline(footer) + '</div>' : '') +

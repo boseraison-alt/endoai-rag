@@ -101,15 +101,30 @@ class TestTheApixabanSpanIsQuarantined:
         _, (block,) = quarantine_unsourced_content(fixture_answer())
         assert "well-standardised and generally low-risk" not in block
 
-    def test_the_footer_names_the_bodies_to_consult(self):
+    def test_the_bodies_to_consult_are_named_once_at_the_end(self):
+        """A22c. This used to assert a PER-BLOCK footer. Measured across the
+        stored corpus that footer appeared 56 times, 17 of them in a single
+        answer, which is wallpaper rather than a warning (A3's finding in
+        visual form). The bodies are now named once, in the consolidated note."""
         out, _ = quarantine_unsourced_content(fixture_answer())
-        assert "**Consult directly:** SDCEP · BSH · ACC/AHA" in out
+        assert "**Consult directly:**" not in out
+        tail = out.split("What Curo did not check")[1]
+        assert "SDCEP · BSH · ACC/AHA" in tail
 
     def test_the_block_is_marked_unverified_in_the_text_itself(self):
         """Not a browser decoration. A PDF, a paste and a slide all read this
         string, and each must carry the label."""
         out, _ = quarantine_unsourced_content(fixture_answer())
-        assert "⚠ **NOT FROM THE EVIDENCE BASE — UNVERIFIED**" in out
+        assert endo_ai._QUARANTINE_HEADER in out
+        # A22f governs CURO'S OWN WORDING, not the model's prose. This fixture
+        # is a stored answer whose body says "From the wider literature (which
+        # this search did not return)" — that is the sentence the item is
+        # about, it is quarantined content, and scrubbing it would be rewriting
+        # the evidence rather than labelling it. What must not overclaim is the
+        # furniture Curo adds around it.
+        furniture = endo_ai._QUARANTINE_HEADER + " " + endo_ai._QUARANTINE_NOTE
+        assert "wider literature" not in furniture.lower()
+        assert "model's own knowledge" in furniture
 
     def test_no_directive_from_the_span_survives_outside_the_block(self):
         """Q2d. The strongest available statement of 'not interleaved'."""
@@ -244,7 +259,6 @@ class TestTheBlockAttributesWhatIsInsideIt:
         answer = ("## CLINICAL RECOMMENDATION\n"
                   "> " + endo_ai._QUARANTINE_HEADER + "\n>\n"
                   "> Interruption should be avoided in most patients.\n>\n"
-                  "> " + endo_ai._QUARANTINE_FOOTER + " SDCEP\n"
                   "Deliver the primary block with 1.8 mL of 2% lidocaine.\n")
         flagged = _detect_uncited_directive_claims(answer)
         assert flagged, "nothing was flagged, so this proves nothing"
@@ -331,13 +345,15 @@ class TestTheBrowserBuildsTheContainer:
         out, _ = quarantine_unsourced_content(fixture_answer())
         html = _render(out)
         assert html.count('class="unverified-block"') == 1
-        assert '<div class="unverified-head">⚠ NOT FROM THE EVIDENCE BASE — UNVERIFIED</div>' in html
+        assert ('<div class="unverified-head">NOT CHECKED — not from any '
+                'paper Curo retrieved</div>') in html
 
-    def test_the_footer_survives_into_the_container(self):
+    def test_the_container_carries_no_per_block_footer(self):
+        """A22c deleted it. The container is a box around the content, not a
+        place to repeat the same warning once per box."""
         out, _ = quarantine_unsourced_content(fixture_answer())
         html = _render(out)
-        m = re.search(r'<div class="unverified-foot">(.*?)</div>', html, re.S)
-        assert m and "SDCEP" in m.group(1)
+        assert '<div class="unverified-foot">' not in html
 
     def test_every_directive_lands_inside_the_container(self):
         """Not merely 'a container exists somewhere on the page'."""

@@ -37,8 +37,12 @@ RENDER_DEPS = [
     "_citeEsc", "pmidMeta", "formatCite",
     # headings
     "deShout",
-    # the unverified block (`trust-surface-v1` Q2)
-    "_QUARANTINE_BLOCK_RE_JS", "_unverifiedInline", "_stashUnverifiedBlocks",
+    # the unverified block (`trust-surface-v1` Q2). A22c added a SECOND
+    # pattern — stored answers carry the pre-A22f header and footer, and A16b
+    # re-renders the archive on every read — so both regexes and the shared
+    # `_stashOne` are dependencies now.
+    "_QUARANTINE_BLOCK_RE_JS", "_QUARANTINE_LEGACY_RE_JS",
+    "_unverifiedInline", "_stashOne", "_stashUnverifiedBlocks",
     # the renderers themselves
     "renderAnswer", "_recommendationTier", "renderAnswerWithBox",
     # A3c — the flagged claims are marked in the rendered answer

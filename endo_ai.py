@@ -3490,7 +3490,7 @@ If the evidence base genuinely does not address something the answer needs, say 
 ANSWERING BEYOND THE EVIDENCE BASE — allowed, in one specific shape:
 You MAY give general clinical knowledge the retrieved literature does not cover, when the clinician needs it to act. It must be SEPARATED, never woven into a paragraph beside cited prose, and it must be followed by a return to what this evidence base does support.
 
-1. Put the whole out-of-domain passage in one continuous run and open it with a phrase that says so plainly — "From the wider literature (which this search did not return)", "standard practice, not from the retrieved evidence base". Never split it across a cited sentence.
+1. Put the whole out-of-domain passage in one continuous run and open it with a phrase that says so plainly — "not from the retrieved evidence base", "standard practice, not from any paper retrieved here". Do NOT write "from the wider literature": that asserts the content IS published and merely went unretrieved, which is a claim about the literature you cannot make. Never split the run across a cited sentence.
 2. Do NOT attach a `[[PMID:N]]` marker to any of it. It is unverified, and saying so is the point. A marker here is the worst available move: it launders unchecked advice into checked advice.
 3. Name the guideline bodies you are leaning on (SDCEP, ESE, AAE, ACC/AHA, NICE, …) so the clinician can go to the document itself.
 4. Then COME BACK. Immediately after the passage, state the decision the retrieved literature DOES support, with its marker — including when that is "the alternative treatment is a legitimate option here". This is required, not optional; an answer that ends outside its evidence base has left the clinician there.
@@ -5466,21 +5466,83 @@ def normalise_callouts(text: str) -> str:
 # Leaving them outside would satisfy the letter of the item and none of it:
 # they are the two most quotable directives in the answer.
 
-_QUARANTINE_HEADER = "⚠ **NOT FROM THE EVIDENCE BASE — UNVERIFIED**"
-_QUARANTINE_NOTE   = ("_General clinical knowledge. No paper in this library was "
-                      "retrieved for it and nothing below was checked against an "
-                      "abstract._")
-_QUARANTINE_FOOTER = "**Consult directly:**"
+# ── A22f — THE OLD WORDING CLAIMED MORE THAN THE ENGINE KNOWS ────────────
+#
+# The block used to open "NOT FROM THE EVIDENCE BASE — UNVERIFIED" and then, in
+# the prose the model wrote, "From the wider literature (which this search did
+# not return)". The second phrasing asserts the content IS in the published
+# literature and merely went unretrieved. Curo cannot know that. Some of this
+# content is well supported; some is convention that never was studied.
+#
+# Same class as A17 and as "citations & impact factor": copy claiming more than
+# the engine did. The replacement says only what is known — that no paper Curo
+# checked carries it, and that it came from the model rather than from a source.
+_QUARANTINE_HEADER = "**NOT CHECKED — not from any paper Curo retrieved**"
+_QUARANTINE_NOTE   = ("_General clinical practice, from the model's own knowledge "
+                      "rather than from a source. Curo has not checked it against "
+                      "any abstract, and does not claim a paper supports it._")
+
+# A22c — THE PER-BLOCK FOOTER IS GONE.
+#
+# It read "**Consult directly:** …  — Curo has not retrieved or checked these
+# sources" and it was repeated once per block: measured, 56 blocks and 56
+# identical footers across the stored corpus, 17 of each in a single answer. A
+# warning that appears seventeen times is wallpaper — the ambient-versus-alarming
+# failure A3 identified for the banner, in visual form.
+#
+# One legend per document now replaces all of them, and one consolidated note at
+# the end lists what was marked. The block therefore ends where its blockquote
+# run ends rather than at a footer line.
+_QUARANTINE_LEGEND = (
+    "> **NOT CHECKED** — passages marked ° below, and the blocks headed "
+    "*NOT CHECKED*, are general clinical practice from the model's own "
+    "knowledge. Curo did not retrieve a paper for them and has checked nothing "
+    "in them against an abstract.")
+_QUARANTINE_INLINE_MARK = "°"
+
+# A22b — TWO LEVELS, AND THE MEASUREMENT CHOSE THE THRESHOLD.
+#
+# Measured across the 56 stored blocks: 46% are ONE sentence, 41% are two, 11%
+# are three, and one is 41 sentences. So the size split is real, and where it is
+# drawn decides whether it helps:
+#
+#   inline if <=1 sentence   30 full blocks remain   worst document still 10
+#   inline if <=2 sentences   7 full blocks remain   worst document still  2
+#   inline if <=3 sentences   1 full block  remains  worst document still  1
+#
+# A22b's wording is "a single unsourced sentence or step", i.e. <=1. That is not
+# enough: at <=1 the worst document keeps 10 boxes and still fails A22e's ~5 bar.
+# Two sentences is not a paragraph, and A22b's own test for the full block is "a
+# paragraph or more", so <=2 is inside the item's intent and is what meets it.
+# Three would begin inlining paragraph-sized passages.
+QUARANTINE_INLINE_MAX_SENTENCES = 2
 
 # Recognises a block already in place, so the pass is idempotent and so a model
-# that has learned to emit the structure itself is not double-wrapped.
+# that has learned to emit the structure itself is not double-wrapped. The run
+# ends at the last consecutive blockquote line.
 _QUARANTINE_BLOCK_RE = re.compile(
     r"(?:^>[^\n]*\n?)*?^>[ \t]*"
     + re.escape(_QUARANTINE_HEADER)
+    + r"(?:\n>[^\n]*)*\n?",
+    re.MULTILINE)
+
+# A44n / A16b. Stored answers carry the OLD header and the old footer, and the
+# archive routes re-render on every read. This recognises them so nothing
+# written before today loses its block.
+_LEGACY_QUARANTINE_HEADER = "⚠ **NOT FROM THE EVIDENCE BASE — UNVERIFIED**"
+_LEGACY_QUARANTINE_FOOTER = "**Consult directly:**"
+_LEGACY_QUARANTINE_BLOCK_RE = re.compile(
+    r"(?:^>[^\n]*\n?)*?^>[ \t]*"
+    + re.escape(_LEGACY_QUARANTINE_HEADER)
     + r"[\s\S]*?^>[ \t]*"
-    + re.escape(_QUARANTINE_FOOTER)
+    + re.escape(_LEGACY_QUARANTINE_FOOTER)
     + r"[^\n]*\n?",
     re.MULTILINE)
+
+
+def _any_quarantine_block_re():
+    """Both shapes, for the readers that must see either."""
+    return (_QUARANTINE_BLOCK_RE, _LEGACY_QUARANTINE_BLOCK_RE)
 
 # Bodies whose guidance the answer is standing on. Named in the footer so the
 # clinician is pointed at the actual document rather than told, vaguely, to
@@ -5490,6 +5552,34 @@ _AUTHORITY_BODY_RE = re.compile(
     r"|FDA|EMA|EFP|AAOMR|AAOM|IADT|FDI|EAPD|AAPD|ASA|ESC|RCS|SDCEP)\b")
 
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n[ \t]*\n")
+
+
+def _quarantine_consolidated_note(blocks: list) -> str:
+    """A22c's end-of-document note: what was marked, and which bodies to read.
+
+    The per-block footer named the guideline bodies once per block; this names
+    them once per document, across every marked passage. Empty when there is
+    nothing to say, because a note that always appears is the wallpaper this
+    item is removing.
+    """
+    if not blocks:
+        return ""
+    seen, bodies = set(), []
+    for m in _AUTHORITY_BODY_RE.finditer(" ".join(blocks)):
+        if m.group(0) not in seen:
+            seen.add(m.group(0))
+            bodies.append(m.group(0))
+    n = len(blocks)
+    what = f"{n} passage{'s' if n != 1 else ''}"
+    if bodies:
+        return (f"> **What Curo did not check.** {what} above came from the "
+                f"model's own knowledge rather than from a retrieved paper. "
+                f"For those, consult directly: " + " · ".join(bodies[:6]) +
+                " — Curo has not retrieved or checked these sources.")
+    return (f"> **What Curo did not check.** {what} above came from the model's "
+            f"own knowledge rather than from a retrieved paper. Consult the "
+            f"specialty guidelines for this question — Curo has not retrieved "
+            f"or checked them.")
 
 
 def _quarantine_footer(text: str) -> str:
@@ -5508,11 +5598,31 @@ def _quarantine_footer(text: str) -> str:
 
 
 def _quarantine_block(units: list) -> str:
-    """One quarantined span, as the markdown every surface will carry."""
+    """One quarantined span, as the markdown every surface will carry.
+
+    A22c: no footer. The bodies it used to name are collected once, in the
+    consolidated note at the end of the document.
+    """
     text = " ".join(u.strip() for u in units if u.strip())
-    lines = [f"> {_QUARANTINE_HEADER}", ">", f"> {_QUARANTINE_NOTE}", ">",
-             "> " + text, ">", _quarantine_footer(text)]
-    return "\n".join(lines)
+    return "\n".join([f"> {_QUARANTINE_HEADER}", ">",
+                      f"> {_QUARANTINE_NOTE}", ">", "> " + text])
+
+
+def _quarantine_inline(units: list) -> str:
+    """A22b's light treatment: the sentence keeps its place in the prose and
+    carries the legend's mark. No header, no note, no box, no boilerplate.
+
+    The mark is a reference to the legend, the same way `[[PMID:N]]` is a
+    reference to the bibliography — the renderer decides what it looks like
+    (A44m), and a path that never learns to style it still shows a readable
+    sentence with a degree sign on it.
+    """
+    text = " ".join(u.strip() for u in units if u.strip())
+    return f"{text.rstrip()} {_QUARANTINE_INLINE_MARK}"
+
+
+def _sentence_count(text: str) -> int:
+    return len([s for s in _SENTENCE_SPLIT_RE.split(text or "") if s.strip()])
 
 
 def quarantine_unsourced_content(answer: str):
@@ -5548,7 +5658,11 @@ def quarantine_unsourced_content(answer: str):
             # Found by `test_re_rendering_is_idempotent`, which A16 needs
             # because the archive routes now re-render on every read.
             already_a_block = (stripped.startswith(">")
-                               or bool(_QUARANTINE_BLOCK_RE.search(para)))
+                               or bool(_QUARANTINE_BLOCK_RE.search(para))
+                               or bool(_LEGACY_QUARANTINE_BLOCK_RE.search(para))
+                               # A22b, rule 18 — a paragraph already carrying
+                               # the inline mark has been through this pass.
+                               or _QUARANTINE_INLINE_MARK in para)
             if not stripped or already_a_block:
                 rebuilt.append(para)
                 continue
@@ -5568,9 +5682,23 @@ def quarantine_unsourced_content(answer: str):
                 end += 1
             before = " ".join(u.strip() for u in units[:start] if u.strip())
             after  = " ".join(u.strip() for u in units[end + 1:] if u.strip())
-            block  = _quarantine_block(units[start:end + 1])
-            blocks.append(" ".join(u.strip() for u in units[start:end + 1] if u.strip()))
-            piece = ([before] if before else []) + [block] + ([after] if after else [])
+            span = units[start:end + 1]
+            span_text = " ".join(u.strip() for u in span if u.strip())
+            blocks.append(span_text)
+            # A22b — the level is chosen by SIZE. A short aside stays in the
+            # prose with the legend's mark; a paragraph or more keeps the block.
+            if _sentence_count(span_text) <= QUARANTINE_INLINE_MAX_SENTENCES:
+                marked = _quarantine_inline(span)
+                # It stays in its own paragraph rather than being fused back
+                # into the surrounding prose, so a numbered step keeps its
+                # number and nothing is split (A22a's concern, from the text
+                # side).
+                piece = ([before] if before else []) + [marked] + \
+                    ([after] if after else [])
+            else:
+                block = _quarantine_block(span)
+                piece = ([before] if before else []) + [block] + \
+                    ([after] if after else [])
             rebuilt.append("\n\n".join(piece))
         new_body = "\n\n".join(p for p in rebuilt)
         out_sections.append((title, new_body))
@@ -5587,7 +5715,19 @@ def quarantine_unsourced_content(answer: str):
             parts.append(body)
         else:
             parts.append(f"{levels.get(title, '##')} {title}\n\n{body}")
-    return "\n\n".join(parts).strip(), blocks
+    out = "\n\n".join(parts).strip()
+
+    # A22c — say it ONCE. One legend at the top, one consolidated note at the
+    # end naming the bodies the passages lean on. This replaces the per-block
+    # footer that was repeated 56 times across the stored corpus, 17 of them in
+    # a single answer. Idempotent: an answer that already carries the legend is
+    # not given a second one (rule 18 — the archive routes re-render on read).
+    if _QUARANTINE_LEGEND.strip("> ")[:24] not in out:
+        out = _QUARANTINE_LEGEND + "\n\n" + out
+    tail = _quarantine_consolidated_note(blocks)
+    if tail and tail.strip("> ")[:28] not in out:
+        out = out + "\n\n" + tail
+    return out, blocks
 
 
 # ── THE BIBLIOGRAPHY IS THE CITATION SET ──────────────────
@@ -5748,7 +5888,10 @@ def _strip_quarantine_blocks(answer: str) -> str:
     banner's second number is what quarantined content feeds (Q2b). It reads
     `_quarantine_content_only` instead, for the reason recorded there.
     """
-    return _QUARANTINE_BLOCK_RE.sub("", answer or "")
+    out = _QUARANTINE_BLOCK_RE.sub("", answer or "")
+    # A44n — stored answers carry the legacy shape and the archive routes
+    # re-render on read, so both are stripped.
+    return _LEGACY_QUARANTINE_BLOCK_RE.sub("", out)
 
 
 def _quarantine_content_only(answer: str) -> str:
@@ -5782,14 +5925,33 @@ def _quarantine_content_only(answer: str) -> str:
             text = re.sub(r"^>[ \t]?", "", line).strip()
             if not text:
                 continue
-            if (text == _QUARANTINE_HEADER
-                    or text.startswith(_QUARANTINE_FOOTER)
-                    or text.startswith(_QUARANTINE_NOTE[:40])):
+            if (text in (_QUARANTINE_HEADER, _LEGACY_QUARANTINE_HEADER)
+                    or text.startswith(_LEGACY_QUARANTINE_FOOTER)
+                    or text.startswith(_QUARANTINE_NOTE[:40])
+                    or text.startswith("**What Curo did not check.**")
+                    or text.startswith("**NOT CHECKED** —")):
                 continue
             kept.append(text)
         return "\n\n" + " ".join(kept) + "\n\n"
 
-    return _QUARANTINE_BLOCK_RE.sub(_bare, answer or "")
+    out = _QUARANTINE_BLOCK_RE.sub(_bare, answer or "")
+    out = _LEGACY_QUARANTINE_BLOCK_RE.sub(_bare, out)
+
+    # A22b — the inline mark is furniture too, and leaving it in cost a count.
+    #
+    # `_split_claim_units` reads "INR testing is not applicable. °" as an
+    # unfinished sentence and runs on into the paragraph that follows. When
+    # that paragraph is cited, the fused unit carries a citation and the whole
+    # passage is skipped: the apixaban fixture's two directives became one, and
+    # the "N claims not from the evidence base" number would have undercounted
+    # on every answer with an inline passage.
+    #
+    # Same reason the block gets blank lines around it — a claim unit must not
+    # be able to fuse across the boundary — applied to the treatment that did
+    # not exist when that was written.
+    out = re.sub(r"[ \t]*" + re.escape(_QUARANTINE_INLINE_MARK) + r"(?=\s|$)",
+                 "\n\n", out)
+    return out
 
 
 def _check_quarantine_reframe(answer: str) -> list:
@@ -5808,13 +5970,37 @@ def _check_quarantine_reframe(answer: str) -> list:
     """
     issues = []
     for title, body in _split_sections(answer or ""):
-        for m in _QUARANTINE_BLOCK_RE.finditer(body or ""):
-            if not _ANY_CITATION_RE.search(body[m.end():]):
+        # A22b — THE REQUIREMENT FOLLOWS THE CONTENT, NOT THE TREATMENT.
+        #
+        # Splitting quarantine into two levels quietly exempted the smaller
+        # one: a two-sentence span now stays inline, this function only knew
+        # about blocks, and the apixaban fixture — which is exactly two
+        # sentences — stopped being a finding. That would have shipped as "the
+        # answer improved" when nothing about it had.
+        #
+        # Q2c is about not leaving the clinician outside the evidence base. A
+        # span that does that needs the answer to come back whether it was
+        # given a box or a degree sign, so the inline mark is an end position
+        # here just as a block's is.
+        ends = [m.end() for m in _QUARANTINE_BLOCK_RE.finditer(body or "")]
+        ends += [m.end() for m in _LEGACY_QUARANTINE_BLOCK_RE.finditer(body or "")]
+        # ...but only where the mark is in PROSE. The legend says "passages
+        # marked ° below" and therefore contains the mark itself; counting it
+        # made every answer carrying a legend report an unreframed span in its
+        # intro. The inline treatment is only ever applied to ordinary
+        # paragraphs, so a mark inside a blockquote is furniture, not content.
+        for m in re.finditer(re.escape(_QUARANTINE_INLINE_MARK), body or ""):
+            line_start = (body or "").rfind("\n", 0, m.start()) + 1
+            if (body or "")[line_start:m.start()].lstrip().startswith(">"):
+                continue
+            ends.append(m.end())
+        for end in ends:
+            if not _ANY_CITATION_RE.search(body[end:]):
                 issues.append(
                     f"UNREFRAMED_QUARANTINE in \"{title}\": content labelled as "
                     "outside the evidence base is not followed by any cited "
                     "claim. State the decision the retrieved literature DOES "
-                    "support, with its [[PMID:N]] marker, after the block."
+                    "support, with its [[PMID:N]] marker, after it."
                 )
     return issues
 
@@ -7046,7 +7232,7 @@ This section is what the clinician acts on, so it MUST be traceable:
 - IF THE EVIDENCE BASE DOES NOT ADDRESS THE QUESTION, that is a finding, and it is still traceable. Write it in three moves, in this order:
   (1) State the gap plainly and name what is missing. This needs no marker: it is a statement about the evidence base, not a claim about a paper.
   (2) Then state what this evidence base DOES establish that bears on the case — the general principle, the adjacent population, the procedural factor the retrieved papers do cover — and put your markers THERE. That is the load-bearing claim, it is groundable, and it is why this section stays traceable even when the direct evidence is absent. Each marker must sit on something ONE of the cited papers states by itself: do not compose a general principle out of several papers and then attach all their markers to it, because no one of them says the composite and every one of those markers is then unverifiable.
-  (3) Any guidance you would give from outside the evidence base comes last and is explicitly labelled as such ("from the wider literature, which this search did not return"), carrying no marker.
+  (3) Any guidance you would give from outside the evidence base comes last and is explicitly labelled as such ("not from the retrieved evidence base"), carrying no marker. Do not say "from the wider literature" — it claims the content is published, which you cannot know.
   What this must never become: a recommendation full of survival percentages and success rates with no marker anywhere, on the reasoning that nothing here could be cited. If you cannot cite a number, do not give the number.
 
 ---
