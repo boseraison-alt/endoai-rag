@@ -2799,6 +2799,63 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   border-radius: 14px;
   padding: 28px 32px;
 }
+
+/* A44b — a curriculum is ~12,000 words with no navigation at all. MEASURED on
+   the stored apicoectomy document: 26,210px of laid-out height and 40 headings,
+   reachable only by scrolling.
+
+   A 212px sticky column at >=1080px, hidden below that, per the item. It is a
+   GRID column rather than a float so the prose keeps its own measure, and the
+   scroll container is the overlay, which is what `position: sticky` resolves
+   against here. */
+@media (min-width: 1080px) {
+  .profile-learn-viewer-card.has-toc {
+    max-width: 1140px;
+    display: grid;
+    grid-template-columns: 212px minmax(0, 1fr);
+    column-gap: 28px;
+    align-items: start;
+  }
+  .profile-learn-viewer-card.has-toc .profile-learn-viewer-header,
+  .profile-learn-viewer-card.has-toc .profile-learn-viewer-body {
+    grid-column: 2;
+  }
+  .profile-learn-viewer-card.has-toc .curriculum-toc {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    display: block;
+    position: sticky;
+    top: 8px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
+.curriculum-toc { display: none; }
+.curriculum-toc-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: #536176;
+  margin-bottom: 10px;
+}
+.curriculum-toc a {
+  display: block;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #1e2840;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+}
+.curriculum-toc a:hover { background: #dfe5ee; }
+.curriculum-toc a.toc-sub { padding-left: 20px; color: #536176; font-size: 11.5px; }
+.curriculum-toc a.toc-here {
+  border-left-color: #1d4ed8;
+  background: #dfe5ee;
+  font-weight: 700;
+}
 .profile-learn-viewer-header {
   display: flex;
   align-items: center;
@@ -8962,10 +9019,86 @@ function profileOpenLearnViewer(filename) {
       // history shows the sentences its banner is counting.
       bodyEl.innerHTML = markUncitedClaims(renderAnswer(rec.answer || ''),
                                            _uncitedClaimQuotes(rec.answer || ''));
+      buildCurriculumToc(bodyEl, document.getElementById('ppLearnToc'));
     })
     .catch(function() {
       bodyEl.innerHTML = '<div class="profile-list-empty">Failed to load.</div>';
     });
+}
+
+// A44b — TABLE OF CONTENTS FOR A DOCUMENT THAT HAD NO NAVIGATION.
+//
+// MEASURED on the stored apicoectomy curriculum: 26,210px of laid-out height
+// and 40 headings, reachable only by scrolling. A ~12,000-word teaching
+// document is the one thing in this product a clinician does not read
+// top-to-bottom.
+//
+// Built from the RENDERED headings rather than from the markdown, so it can
+// never disagree with what is on the page — the same reason the bibliography is
+// assembled from the answer text and not from the retrieval pool. `<h2>` is a
+// module, `<h3>` a sub-heading; ids are assigned here because `renderAnswer`
+// emits none.
+//
+// The threshold is 4: below that the document is a Review answer with a couple
+// of sections and a sidebar is noise, not navigation.
+var CURRICULUM_TOC_MIN_HEADINGS = 4;
+
+function buildCurriculumToc(bodyEl, tocEl) {
+  if (!bodyEl || !tocEl) return;
+  var card = tocEl.closest('.profile-learn-viewer-card');
+  var heads = [].slice.call(bodyEl.querySelectorAll('h2, h3'));
+  tocEl.innerHTML = '';
+  if (card) card.classList.remove('has-toc');
+  if (heads.length < CURRICULUM_TOC_MIN_HEADINGS) return;
+
+  var html = ['<div class="curriculum-toc-title">Contents</div>'];
+  heads.forEach(function (h, i) {
+    var id = 'toc-h-' + i;
+    h.id = id;
+    var label = (h.textContent || '').trim();
+    if (!label) return;
+    html.push('<a href="#' + id + '" data-toc="' + id + '"' +
+              (h.tagName === 'H3' ? ' class="toc-sub"' : '') + '>' +
+              _citeEsc(label) + '</a>');
+  });
+  tocEl.innerHTML = html.join('');
+  if (card) card.classList.add('has-toc');
+
+  // The overlay scrolls, not the card, so the click has to scroll THAT — an
+  // `href="#id"` alone jumps the document behind the modal.
+  var scroller = tocEl.closest('.profile-learn-viewer');
+  tocEl.addEventListener('click', function (ev) {
+    var a = ev.target.closest('a[data-toc]');
+    if (!a || !scroller) return;
+    ev.preventDefault();
+    var target = document.getElementById(a.getAttribute('data-toc'));
+    if (!target) return;
+    scroller.scrollTo({
+      top: scroller.scrollTop + target.getBoundingClientRect().top - 24,
+      behavior: 'smooth',
+    });
+  });
+
+  // Which section am I in. IntersectionObserver rather than a scroll handler
+  // so a 26,000px document does not run this on every frame.
+  if (typeof IntersectionObserver === 'function') {
+    var links = {};
+    [].slice.call(tocEl.querySelectorAll('a[data-toc]')).forEach(function (a) {
+      links[a.getAttribute('data-toc')] = a;
+    });
+    var seen = new Set();
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) seen.add(e.target.id); else seen.delete(e.target.id);
+      });
+      var first = heads.map(function (h) { return h.id; })
+                       .filter(function (id) { return seen.has(id); })[0];
+      Object.keys(links).forEach(function (id) {
+        links[id].classList.toggle('toc-here', id === first);
+      });
+    }, { root: scroller, rootMargin: '0px 0px -70% 0px' });
+    heads.forEach(function (h) { if (h.id) obs.observe(h); });
+  }
 }
 
 function closeLearnViewer() {
@@ -9210,6 +9343,7 @@ loadProfile();
       </div>
       <button class="profile-learn-viewer-close" onclick="closeLearnViewer()" aria-label="Close">×</button>
     </div>
+    <nav class="curriculum-toc" id="ppLearnToc" aria-label="Curriculum contents"></nav>
     <div class="profile-learn-viewer-body" id="ppLearnViewerBody"></div>
   </div>
 </div>
