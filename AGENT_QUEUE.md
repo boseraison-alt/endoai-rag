@@ -168,6 +168,15 @@ Opening instruction for the agent session:
 31. **Focused tests do not substitute for the suite before a deep change.** 27
     passing focused tests sat on a red tree of 28 failures across 6 files. Run the
     suite at the point where the blast radius stops being obvious, not at the end.
+32. **Instrument the REFUSAL rate of every guard, not just its correctness when
+    it fires.** A gate that can decline an action logs how often it declines, and
+    that count is reported beside the measurement it affects. (Origin: A33h-i's
+    "a labelled query with no declared qualifier is not broadened" refused **145
+    of 254** attempts on the v7 run — a 57% refusal rate nobody counted. It was
+    invisible because "no qualifier declared" reads like caution, and it cost
+    `pregnancy` 41 of 43 queries and took the case from passing to 2 papers
+    against a floor of 15. Every test asserted what the guard did when it FIRED;
+    none asked how often it declined.)
 
 ---
 
@@ -1911,6 +1920,45 @@ several new gates ago (Q1's detector, A38's reworded notice, A20/A37's gating).
 - **A45d** Report cost beside hits-per-query and paper counts (rule 12). If the
   retry rate is low, say so — that closes the $0.30–$1.08 uncertainty from the
   other end and confirms the floor's saving as real.
+
+
+### Broadening has two regimes, and the difference is subtle enough to be lost
+
+Written out because it will otherwise be re-simplified into one rule and the
+second regime deleted as redundant.
+
+**Above zero hits — a semantic problem.** The tier returned something, so there
+IS evidence to protect, and dropping the wrong group trades good evidence for
+more evidence. The generator's declared `qualifier` goes; a subject or a scenario
+never does; a labelled query with no qualifier is not broadened at all. This is
+A33h-i, validated 4/4 against a clinician where trailing order managed 3/4 — and
+the one disagreement was the laser query, where trailing order would have dropped
+`(disinfect* OR antibacterial OR biofilm)`, the outcome concept.
+
+**At zero hits — a recall problem.** There is no evidence to protect, so the
+semantic argument has no force. The group with the FEWEST alternatives goes,
+because that is the group whose removal opens the query most. This is the
+pre-A33h-i OR-arity rule, restored precisely where it was working and nowhere
+else.
+
+**A33h's finding does not contradict this.** "OR-arity is semantically right on
+only 1 of 4 queries" measures WHICH GROUP IS THE QUALIFIER. At zero hits nobody
+is asking which group is the qualifier; they are asking which removal returns
+records. Measured on `pregnancy`:
+
+```
+refuse to broaden (A33h-i as written)      2 papers   FAIL against a floor of 15
+drop the TRAILING group at zero           14 papers   FAIL — it dropped a
+                                                      six-alternative anaesthetic
+                                                      list and left the narrow
+                                                      groups in place
+drop the NARROWEST group at zero          43 papers   PASS
+```
+
+Both regimes are pinned by test in `tests/test_retrieval_consistency.py`
+(`TestLabelledRelaxation` and `TestTheZeroHitsFallback`). A declared qualifier
+still wins over position in BOTH regimes — the zero-hits path is a fallback for
+queries that declared none, not a replacement for labelling.
 
 ### A46 — Predict the baseline deltas before running it  *(method, for the v6 re-baseline)*
 

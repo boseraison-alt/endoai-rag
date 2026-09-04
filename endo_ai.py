@@ -1766,6 +1766,30 @@ BROADEN_THRESHOLD = 5
 # live answer path — and not the mechanism.
 GROUP_ROLES = ("subject", "scenario", "qualifier")
 
+# ── STANDING RULE 32 — COUNT WHAT THE GUARD REFUSES ──────────────────────
+#
+# Every test of the relaxation guard asserted what it did when it FIRED. None
+# asked how often it declined. On the v7 run it refused 145 of 254 attempts —
+# a 57% refusal rate nobody counted — and that took `pregnancy` from a passing
+# case to 2 papers against a floor of 15. It was invisible because "no
+# qualifier declared" reads like caution.
+#
+# So the refusal rate is now a number the run reports beside the paper count,
+# not something a reader has to reconstruct by grepping a log.
+_broaden_tally = {"attempts": 0, "dropped_qualifier": 0, "position": 0,
+                  "zero_hits_narrowest": 0, "refused": 0, "not_broadenable": 0}
+
+
+def broaden_stats(reset: bool = False) -> dict:
+    """How often relaxation fired, and how often it declined."""
+    out = dict(_broaden_tally)
+    n = out["attempts"] or 1
+    out["refusal_rate"] = round(100.0 * out["refused"] / n, 1)
+    if reset:
+        for k in _broaden_tally:
+            _broaden_tally[k] = 0
+    return out
+
 # Query text -> roles, one per top-level AND-group of the TOPIC. Keyed on the
 # query rather than threaded through fetch_papers for the reason rag.py gives
 # for the write-back tally: fetch_papers has seven call sites across four files,
@@ -1822,8 +1846,10 @@ def _broaden_query(term: str, roles=None, empty: bool = False) -> str:
     AND-groups, so only the leading TOPIC groups are eligible — broadening by
     removing the endodontics filter would return the whole of PubMed.
     """
+    _broaden_tally["attempts"] += 1
     groups = _split_and_groups(term)
     if not groups:
+        _broaden_tally["not_broadenable"] += 1
         return ""
     # fetch_papers builds "(TOPIC) AND (design) AND domain NOT ...", so the
     # whole topic is ONE depth-0 group. Unwrap it and broaden inside; dropping
@@ -1833,6 +1859,7 @@ def _broaden_query(term: str, roles=None, empty: bool = False) -> str:
     inner = head[1:-1].strip() if head.startswith("(") and head.endswith(")") else head
     sub = _split_and_groups(inner)
     if len(sub) < 2:
+        _broaden_tally["not_broadenable"] += 1
         return ""
 
     if roles and len(roles) == len(sub):
@@ -1870,6 +1897,7 @@ def _broaden_query(term: str, roles=None, empty: bool = False) -> str:
             # against a floor of 15 — better, and still failing, because it
             # dropped a six-alternative anaesthetic list and left the narrow
             # groups in place.
+            _broaden_tally["zero_hits_narrowest"] += 1
             drop = min(range(len(sub)), key=lambda i: _or_breadth(sub[i]))
             print(f"    [broaden] no qualifier declared and the tier returned "
                   f"NOTHING — dropping the narrowest group rather than staying "
@@ -1877,16 +1905,19 @@ def _broaden_query(term: str, roles=None, empty: bool = False) -> str:
             kept = " AND ".join(g for i, g in enumerate(sub) if i != drop)
             return " AND ".join([f"({kept})"] + rest)
         if not quals:
+            _broaden_tally["refused"] += 1
             print("    [broaden] labelled query has no qualifier — "
                   f"not broadening ({' | '.join(r for r in roles)})")
             return ""
         drop = quals[-1]
+        _broaden_tally["dropped_qualifier"] += 1
         print(f"    [broaden] dropping the declared qualifier: {sub[drop][:70]}")
     else:
         if roles:
             print(f"    [broaden] {len(roles)} role(s) for {len(sub)} group(s) "
                   f"— labelling ignored, falling back to position")
         drop = len(sub) - 1
+        _broaden_tally["position"] += 1
         print(f"    [broaden] unlabelled query, dropping the trailing group: "
               f"{sub[drop][:70]}")
 

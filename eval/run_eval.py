@@ -981,6 +981,23 @@ def main():
 
         print(f"  route  {measured['route']}")
         print(f"  papers {measured['papers']}   {measured['per_tier']}")
+        # Standing rule 32 — a guard reports how often it DECLINED,
+        # beside the measurement it affects. A33h-i's relaxation guard
+        # refused 145 of 254 attempts on the first v7 run, a 57% refusal
+        # rate nobody counted, and it took `pregnancy` from passing to 2
+        # papers. Every test asserted what the guard did when it fired.
+        try:
+            import endo_ai as _e
+            _b = _e.broaden_stats(reset=True)
+            if _b["attempts"]:
+                print(f"  broaden  {_b['attempts']} attempt(s): "
+                      f"{_b['dropped_qualifier']} dropped a declared qualifier, "
+                      f"{_b['zero_hits_narrowest']} narrowest-at-zero, "
+                      f"{_b['position']} unlabelled, "
+                      f"{_b['not_broadenable']} not broadenable, "
+                      f"REFUSED {_b['refused']} ({_b['refusal_rate']}%)")
+        except Exception:
+            pass
         if measured["esearch_queries"]:
             print(f"  esearch  {measured['esearch_hits']} hits over "
                   f"{measured['esearch_queries']} queries = "
