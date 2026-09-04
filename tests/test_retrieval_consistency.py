@@ -449,3 +449,81 @@ class TestCrossQueryVarianceProtection:
             "reinstating it; it must never reach below the similarity floor")
         src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
         assert "A32 — `ensure_authoritative` was deleted here" in src
+
+
+class TestTheZeroHitsFallback:
+    """A46b — the v7 re-baseline caught this, which is what A46 is for.
+
+    A33h-i's rule was that a labelled query with NO declared qualifier is not
+    broadened, on the reasoning that falling back to position would drop a
+    subject or a scenario. Measured on the first v7 run:
+
+        145 of 254 broaden attempts were refused for want of a qualifier
+        `pregnancy`: all 7 generated queries labelled scenario|subject|subject,
+        relaxation never fired on any of 43 tier-by-term combinations,
+        41 of 43 returned nothing, and the case retrieved 2 papers
+        against a floor of 15 — having passed before A33h-i
+
+    The reasoning holds when a tier returns FEW hits. At ZERO there is no
+    evidence to protect, so the rule protects nothing and costs everything.
+    Rule 28: this was the guard that fails CLOSED, and it was invisible because
+    "no qualifier declared" reads like caution.
+    """
+
+    TOPIC = ('(pregnan* OR gestation*) AND (timing OR "emergency treatment") '
+             'AND ("local anesthetic*" OR lidocaine)')
+    NO_QUALIFIER = ["scenario", "subject", "subject"]
+
+    def _assembled(self):
+        return (f"({self.TOPIC}) AND (randomized controlled trial[pt]) AND "
+                f'(endodontics[MeSH] OR endodontic*[tiab]) '
+                f'NOT "Retracted Publication"[pt]')
+
+    def test_few_hits_still_refuses_to_broaden(self):
+        """The A33h-i rule is unchanged where it was right."""
+        assert _broaden_query(self._assembled(), self.NO_QUALIFIER,
+                              empty=False) == ""
+
+    def test_zero_hits_broadens_rather_than_staying_empty(self):
+        out = _broaden_query(self._assembled(), self.NO_QUALIFIER, empty=True)
+        assert out, "a tier that returned nothing must not stay at nothing"
+
+    def test_zero_hits_drops_the_NARROWEST_group_not_the_trailing_one(self):
+        """A33h measured OR-arity as semantically right on only 1 of 4, which
+        is why labelling replaced it — but that measured WHICH GROUP IS THE
+        QUALIFIER. At zero hits the objective is recall, and fewest
+        alternatives is exactly the group whose removal opens the query most.
+
+        Measured: dropping the trailing group took `pregnancy` from 2 papers to
+        14 against a floor of 15 — better and still failing, because it dropped
+        a six-alternative anaesthetic list and left the narrow groups in."""
+        topic = ('(alpha OR beta OR gamma OR delta) AND (onlyone) AND '
+                 '(x OR y OR z)')
+        assembled = (f"({topic}) AND (review[pt]) AND (endodontics[MeSH]) "
+                     f'NOT "Retracted Publication"[pt]')
+        out = _broaden_query(assembled, ["subject", "subject", "scenario"],
+                             empty=True)
+        assert "onlyone" not in out, "the one-alternative group should go"
+        assert "alpha" in out and "x OR y OR z" in out
+
+    def test_a_declared_qualifier_still_wins_over_position(self):
+        """The zero-hits path is a FALLBACK, not a replacement. Where the
+        generator did declare a qualifier, that is still what goes — even at
+        zero hits."""
+        out = _broaden_query(self._assembled(),
+                             ["subject", "qualifier", "scenario"], empty=True)
+        assert "emergency treatment" not in out
+        assert "lidocaine" in out, "the scenario must survive"
+
+    def test_the_call_site_passes_the_zero_condition(self):
+        """Standing rule 14 — the parameter is worthless if fetch_papers never
+        sets it."""
+        from pathlib import Path as _P
+        src = (_P(__file__).parent.parent / "endo_ai.py").read_text(encoding="utf-8")
+        assert "empty=(len(ids) == 0)" in src
+
+    def test_the_measurement_that_reversed_the_rule_is_recorded(self):
+        from pathlib import Path as _P
+        src = (_P(__file__).parent.parent / "endo_ai.py").read_text(encoding="utf-8")
+        assert "145 of 254" in src
+        assert "41 of 43" in src

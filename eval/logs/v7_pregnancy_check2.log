@@ -1,0 +1,89 @@
+mode: RETRIEVAL-ONLY  (no answers generated; must_contain / banner / modules_non_empty are NOT evaluated)
+
+======================================================================
+pregnancy   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git d99a6d6+dirty (imported 2026-09-03T22:05:55)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [rag_gate] force_route=live — library skipped
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  [search_terms] capped to 3 AND-groups, dropped: (pregnan* OR "expectant mother" OR "gestational period")
+  Smart search terms: '("root canal" OR endodontic* OR "pulp treatment") AND (timing OR "treatment timing" OR "trimester" OR "second trimester") AND ("local anesthetic*" OR "infiltration anesthesia" OR lidocaine OR prilocaine OR articaine OR epinephrine OR "vasoconstrictor")'
+  [group_roles] query 1: subject | scenario | subject
+  [group_roles] query 2: scenario | subject | subject
+  [group_roles] query 3: scenario | scenario | subject
+  [group_roles] query 4: scenario | subject | subject
+  [group_roles] query 5: scenario | subject | scenario
+  [group_roles] query 6: scenario | scenario | subject
+  [group_roles] query 7: scenario | subject | scenario
+  Multi-term search: ['("root canal" OR endodontic* OR "pulp treatment") AND (timing OR "treatment timing" OR "trimester" OR "second trimester") AND ("local anesthetic*" OR "infiltration anesthesia" OR lidocaine OR prilocaine OR articaine OR epinephrine OR "vasoconstrictor")', '(pregnancy OR "pregnant patient*" OR "perinatal period" OR gestational) AND (endodontic* OR "vital pulp" OR "pulpitis treatment") AND ("anesthetic agent*" OR "local anesthetic*" OR "pain control" OR numbing)', '("obstetric patient*" OR "prenatal care" OR "gravid*" OR "maternal health") AND ("emergency dental" OR "urgent endodontic*" OR "acute pulpal" OR "tooth pain") AND (lidocaine OR prilocaine OR "articaine" OR "mepivacaine" OR "bupivacaine")', '(pregnancy OR trimester* OR "pregnant women") AND ("canal debridement" OR "pulp extirpation" OR "root treatment" OR "tooth canal*") AND ("vasopressor" OR "epinephrine" OR "adrenaline" OR "catecholamine*" OR "hemostatic agent*")', '("maternal dental" OR "pregnant patient*" OR pregnancy) AND ("intra-operative anesthesia" OR "infiltration injection*" OR "block anesthesia" OR "local anesthetic efficacy") AND ("fetal safety" OR "embryo* effect*" OR "teratogenic*" OR "medication safety")', '(pregnancy OR "obstetric" OR gestational) AND ("pulpal necrosis" OR "symptomatic irreversible pulpitis" OR "acute apical" OR "endodontic emergency") AND ("anesthetic choice*" OR "drug selection" OR "pain management" OR "infection control")', '("pregnant patient*" OR "perinatal dentistry" OR "expectant mother*") AND ("complete pulpectomy" OR "partial pulpotomy" OR "canal therapy" OR "chemomechanical debridement") AND ("safety profile" OR "adverse effect*" OR "contraindication*" OR "clinical outcome*")']
+  Searching Cochrane for: '("root canal" OR endodontic* OR "pulp treatment") AND (timing OR "treatment timing" OR "trimester" OR "second trimester") AND ("local anesthetic*" OR "infiltration anesthesia" OR lidocaine OR prilocaine OR articaine OR epinephrine OR "vasoconstrictor")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 1301ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("root canal" OR endodontic* OR "pulp treatment")
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 1749ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (subject | scenario | subject)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1856ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (endodontic* OR "vital pulp" OR "pulpitis treatment")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1967ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("obstetric patient*" OR "prenatal care" OR "gravid*" OR "ma
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 2018ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnancy OR trimester* OR "pregnant women")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 2208ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnancy OR "obstetric" OR gestational)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 2215ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("maternal dental" OR "pregnant patient*" OR pregnancy)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 1733ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 8 PMIDs in 1783ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 21 PMIDs in 1726ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1700ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("pregnant patient*" OR "perinatal dentistry" OR "expectant 
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+    Fetching metadata for 8 papers...
+    Fetching metadata for 21 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 2004ms
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 54.8/100
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    Fetching metadata for 50 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 48.1/100
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 6 of 8 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 8 papers -- top score 74.8/100
+    [pubmed_xml] 0 paper(s) with corrections, 6 with registry entries
+    [abstract_cache] persisted 21 abstracts from this batch
+    [provenance] 5 pre-registered, 0 with corrections/retractions
+    [cap] level1: 20 above the quality floor, keeping the 18 most relevant; dropped 2 (best dropped PubMed rank 20)
+    [quality] kept 18 of 21 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 21 papers -- top score 74.8/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 8 pre-registered, 0 with corrections/retractions
+    [cap] level1: 45 above the quality floor, keeping the 18 most relevant; dropped 27 (best dropped PubMed rank 20)
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 84.4/100
+  [early_stop] 43 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  [PRISMA dedup] review PMID 40818665 (2026) chosen by year (no similarity on this route); 0 reference(s) known; 0 of 0 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 43   {'level1': 43}
+  esearch  81 hits over 16 queries = 5.1/query (11 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 3 -> 43 (+40) — use --diff for the tracked range
+  PASS
+
+1/1 cases passed  [RETRIEVAL-ONLY]
+NOTE: answer-level assertions (must_contain, must_not_contain, banner, modules_non_empty, max_unsourced_numeric_modules) were NOT evaluated. Run --synthesis-subset for those.

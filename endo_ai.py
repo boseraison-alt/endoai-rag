@@ -1804,7 +1804,7 @@ def _reset_group_roles() -> None:
         _group_roles.clear()
 
 
-def _broaden_query(term: str, roles=None) -> str:
+def _broaden_query(term: str, roles=None, empty: bool = False) -> str:
     """Drop ONE top-level topic group. Returns "" if not broadenable.
 
     `roles` labels the topic's AND-groups `subject` / `scenario` / `qualifier`
@@ -1841,6 +1841,41 @@ def _broaden_query(term: str, roles=None) -> str:
         # deterministic here, not correct. Which qualifier broadens most is an
         # esearch-per-group question and has not been measured.
         quals = [i for i, r in enumerate(roles) if r == "qualifier"]
+        if not quals and empty:
+            # A46b — MEASURED, and it reversed this rule at zero.
+            #
+            # Refusing to broaden a labelled query with no qualifier is right
+            # when the tier returned FEW hits: dropping a subject or scenario
+            # there trades good evidence for more evidence. At ZERO there is no
+            # evidence to protect and the rule protects nothing.
+            #
+            # The v7 run measured the cost: 145 of 254 broaden attempts were
+            # refused for want of a declared qualifier, and on `pregnancy`
+            # every one of the seven generated queries was labelled
+            # `scenario | subject | subject`. Relaxation never fired on any of
+            # 43 tier-by-term combinations, 41 of 43 returned nothing, and the
+            # case retrieved 2 papers against a floor of 15 — a case that
+            # passed before A33h-i.
+            #
+            # Rule 28: this was the guard that fails CLOSED, and the failure
+            # was invisible because "no qualifier" reads like caution.
+            #
+            # AND THE NARROWEST GROUP GOES, NOT THE TRAILING ONE. A33h measured
+            # OR-arity as picking the semantically right group on only 1 of 4
+            # queries, which is why labelling replaced it — but that measured
+            # "which group is the qualifier". At zero hits the objective is not
+            # semantic, it is RECALL, and "fewest alternatives" is precisely
+            # the group whose removal opens the query most. Dropping the
+            # trailing group instead recovered `pregnancy` from 2 papers to 14
+            # against a floor of 15 — better, and still failing, because it
+            # dropped a six-alternative anaesthetic list and left the narrow
+            # groups in place.
+            drop = min(range(len(sub)), key=lambda i: _or_breadth(sub[i]))
+            print(f"    [broaden] no qualifier declared and the tier returned "
+                  f"NOTHING — dropping the narrowest group rather than staying "
+                  f"empty: {sub[drop][:60]}")
+            kept = " AND ".join(g for i, g in enumerate(sub) if i != drop)
+            return " AND ".join([f"({kept})"] + rest)
         if not quals:
             print("    [broaden] labelled query has no qualifier — "
                   f"not broadening ({' | '.join(r for r in roles)})")
@@ -4021,7 +4056,9 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             # label_and_expand on the live answer path. Anything assembled
             # elsewhere — build_library, the ingest scripts — is unlabelled and
             # takes the position fallback, which is what it always had.
-            broadened = _broaden_query(search_term, lookup_group_roles(topic))
+            broadened = _broaden_query(search_term,
+                                       lookup_group_roles(topic),
+                                       empty=(len(ids) == 0))
             if broadened:
                 print(f"  ~~ {label}: {len(ids)} hits, broadening once")
                 try:

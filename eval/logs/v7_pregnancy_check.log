@@ -1,0 +1,235 @@
+mode: RETRIEVAL-ONLY  (no answers generated; must_contain / banner / modules_non_empty are NOT evaluated)
+
+======================================================================
+pregnancy   [pinned: live]
+======================================================================
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git d99a6d6+dirty (imported 2026-09-03T22:03:55)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [rag_gate] force_route=live — library skipped
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR "pulp therapy")
+  Smart search terms: '(pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment plan*") AND (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocaine OR "articaine" OR epinephrine OR vasoconstrictor*)'
+  [group_roles] query 1: scenario | subject | subject
+  [group_roles] query 2: scenario | qualifier | subject
+  [group_roles] query 3: scenario | scenario | subject
+  [group_roles] query 4: scenario | subject | subject
+  [group_roles] query 5: scenario | qualifier | subject
+  [group_roles] query 6: scenario | subject | subject
+  [group_roles] query 7: scenario | scenario | subject
+  Multi-term search: ['(pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment plan*") AND (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocaine OR "articaine" OR epinephrine OR vasoconstrictor*)', '(pregnancy OR "pregnant women" OR "expectant mother*" OR maternal) AND ("pulpal treatment" OR "root canal" OR "endodontic therapy") AND ("anesthetic agent*" OR "local anesthesia" OR "infiltration anesthesia" OR "nerve block*")', '(gestation* OR "third trimester" OR "second trimester" OR "first trimester") AND ("emergency endodontic*" OR "urgent dental treatment" OR "acute tooth*") AND (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "without epinephrine")', '(pregnant OR pregnancy OR "maternal patient*") AND ("treatment delay*" OR "defer* treatment" OR "postpone* treatment" OR "interim treatment") AND ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plain anesthetic*" OR "topical anesthesia")', '("obstetric* patient*" OR "gravid patient*" OR "perinatal period") AND ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*") AND ("pain control" OR "anesthetic efficacy" OR "anesthetic safety" OR "maternal safety")', '(pregnancy OR "pregnant state" OR "in utero") AND ("elective versus emergency" OR "treatment sequencing" OR "timing consideration*" OR "clinical decision*") AND ("local anesthetic choice*" OR "anesthetic selection" OR "anesthetic protocol*" OR "drug selection")', '("expectant mother*" OR "gravida*" OR pregnancy) AND ("infected pulp" OR "symptomatic tooth" OR "periapical abscess") AND ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic penetration" OR "teratogenic risk")']
+  Searching Cochrane for: '(pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment plan*") AND (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocaine OR "articaine" OR epinephrine OR vasoconstrictor*)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 4154ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocai
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1660ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocai
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1719ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("pulpal treatment" OR "root canal" OR "endodontic therapy")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1821ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "w
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 2033ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plai
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 2115ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 2180ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("local anesthetic choice*" OR "anesthetic selection" OR "an
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1456ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic pe
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1667ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocai
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1766ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("pulpal treatment" OR "root canal" OR "endodontic therapy")
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1929ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "w
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1994ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plai
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 2081ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*")
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 2200ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("local anesthetic choice*" OR "anesthetic selection" OR "an
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  -- Level II — Prospective Studies: 0 results found
+  -- Level II — Prospective Studies: 0 results found
+  -- Level II — Prospective Studies: 0 results found
+  -- Level II — Prospective Studies: 0 results found
+  -- Level II — Prospective Studies: 0 results found
+  -- Level II — Prospective Studies: 0 results found
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 991ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic pe
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1102ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocai
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1060ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("pulpal treatment" OR "root canal" OR "endodontic therapy")
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1229ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "w
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1281ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plai
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1084ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*")
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 989ms
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 1 PMIDs in 1244ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 1 PMIDs in 1108ms
+  -- Level IIIa — Retrospective Cohort: 0 results found
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 991ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("local anesthetic choice*" OR "anesthetic selection" OR "an
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 1032ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic pe
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1273ms (HTTP 200)
+    Fetching metadata for 1 papers...
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocai
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1682ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("pulpal treatment" OR "root canal" OR "endodontic therapy")
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1640ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "w
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1724ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plai
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 48.1/100
+  -- Level IIIb — Case-Control: 0 results found
+  -- Level IIIb — Case-Control: 0 results found
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 1 papers -- top score 39.4/100
+    [abstract_cache] persisted 1 abstracts from this batch
+    [COI] 'Ultradent' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+  OKLevel IIIa — Retrospective Cohort: 1 papers -- top score 38.3/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1690ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*")
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1691ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("local anesthetic choice*" OR "anesthetic selection" OR "an
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 1609ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic pe
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1793ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (anesthetic* OR "local anesthetic*" OR lidocaine OR prilocai
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1716ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("pulpal treatment" OR "root canal" OR "endodontic therapy")
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1707ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "w
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+  -- Level IIIb — Case-Control: 0 results found
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 5 PMIDs in 1837ms
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 2 PMIDs in 1762ms
+  -- Level IV — Case Series: 0 results found
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1792ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plai
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1726ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("local anesthetic choice*" OR "anesthetic selection" OR "an
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 2153ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*")
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    Fetching metadata for 5 papers...
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 1649ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic pe
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  -- Level IV — Case Series: 0 results found
+  -- Level IV — Case Series: 0 results found
+  -- Level IV — Case Series: 0 results found
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 6 PMIDs in 1563ms
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 2 PMIDs in 1597ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (scenario | subject | subject)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 1439ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("pulpal treatment" OR "root canal" OR "endodontic therapy")
+  ~~ Level V — Expert Opinion / Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 1123ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: (lidocaine OR prilocaine OR mepivacaine OR bupivacaine OR "w
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 6 papers...
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 3 PMIDs in 1214ms
+  -- Level V — Expert Opinion / Reviews: 0 results found
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IV — Case Series: 2 papers -- top score 27.8/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 1058ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("vasoconstrictor* avoidance" OR "epinephrine-free" OR "plai
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 3 papers...
+    [abstract_cache] persisted 5 abstracts from this batch
+    [cap] level4: 5 above the quality floor, keeping the 4 most relevant; dropped 1 (best dropped PubMed rank 5)
+    [quality] kept 4 of 5 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 5 papers -- top score 45.3/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 1016ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("intracanal treatment" OR "pulp therapy" OR "endodontic procedure*")
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+  -- Level V — Expert Opinion / Reviews: 0 results found
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 1009ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("local anesthetic choice*" OR "anesthetic selection" OR "an
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+  -- Level V — Expert Opinion / Reviews: 0 results found
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 1186ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the trailing group rather than staying empty: ("articaine" OR "procaine" OR "benzocaine" OR "anesthetic pe
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 2 papers -- top score 34.3/100
+    [abstract_cache] persisted 6 abstracts from this batch
+    [quality] kept 3 of 6 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 6 papers -- top score 43.7/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 1 PMIDs in 1028ms
+  -- Level V — Expert Opinion / Reviews: 0 results found
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 3 papers -- top score 34.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 1 papers -- top score 35.4/100
+  WARNING: 14 search terms in the audit window — a concurrent retrieval is interleaved; skipping esearch-based assertions for this run. Re-run when the app is idle.
+  route  live
+  papers 14   {'level2': 1, 'level3a': 2, 'level4': 7, 'level5': 4}
+  esearch  23 hits over 85 queries = 0.3/query (75 returned nothing, 14 search terms)
+  vs stale point baseline in questions.json: 3 -> 14 (+11) — use --diff for the tracked range
+  FAIL  papers=14 < min_papers=15
+  FAIL  systematic reviews=0 < min_sr=1
+
+0/1 cases passed  [RETRIEVAL-ONLY]
+NOTE: answer-level assertions (must_contain, must_not_contain, banner, modules_non_empty, max_unsourced_numeric_modules) were NOT evaluated. Run --synthesis-subset for those.
