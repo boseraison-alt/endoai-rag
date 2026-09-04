@@ -79,14 +79,32 @@ class TestTheLexiconIsWellFormed:
         it should be RB flipping it."""
         assert isinstance(lexicon.get("reviewed_by_rb"), bool)
 
-    def test_nothing_reads_it_yet(self):
-        """A41b wires it in and measures. Until then it is data, and a test
-        that says so is cheaper than discovering it went live unmeasured."""
-        for path in ("endo_ai.py", "app.py", "rag.py"):
+    def test_the_review_flag_is_what_gates_it(self):
+        """This test used to assert that NOTHING read the lexicon, because
+        A41b had not measured it yet. A41b has now measured it — apicoectomy
+        1-2/5 to 4/5 over three runs, controls unchanged — so the file is read,
+        and the gate moved to where A41a actually put it: RB's review.
+
+        `load_lexicon` returns [] unless `reviewed_by_rb` is true, so approving
+        the lexicon is a one-line edit by the person who owns it, and an
+        unreviewed entry cannot reach a query by being merged.
+        """
+        src = (ROOT / "endo_ai.py").read_text(encoding="utf-8")
+        assert "endodontic_lexicon" in src, "A41b wired it in; this is expected"
+        i = src.index("def load_lexicon(")
+        body = src[i:src.index("\ndef ", i + 10)]
+        assert 'data.get("reviewed_by_rb")' in body, (
+            "the review gate is gone — an unreviewed lexicon would reach the "
+            "generator")
+
+    def test_it_is_still_only_read_by_the_term_generator(self):
+        """Scope: A41b offers it to query construction. Nothing else should
+        acquire a dependency on it without its own measurement."""
+        for path in ("app.py", "rag.py"):
             src = (ROOT / path).read_text(encoding="utf-8")
             assert "endodontic_lexicon" not in src, (
-                f"{path} reads the lexicon — A41b requires recovery measured "
-                f"with it and without before it is offered to the generator")
+                f"{path} now reads the lexicon — that is outside A41b's scope "
+                f"and needs its own with/without measurement")
 
 
 class TestTheBlindSpotClaimIsTrue:

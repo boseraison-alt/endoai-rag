@@ -2145,6 +2145,108 @@ def label_and_expand(question: str, terms: list,
     return out
 
 
+# ── A41b — THE DOMAIN LEXICON, OFFERED AND NEVER IMPOSED ─────────────────
+#
+# A33g's vocabulary half failed and A39 explained why: the generator cannot
+# invent a term of art it has no reason to reach for. It writes synonyms of the
+# words it was given. "Orifice barrier" is not a synonym for an access
+# restoration and "endodontic microsurgery" is not a synonym for apicoectomy —
+# they are what the LITERATURE calls those things, and both are the difference
+# between reaching the answering papers and not.
+#
+# THE WHOLE LEXICON IS OFFERED, and selection was measured and rejected first.
+# Choosing entries by cosine between the question and each entry's concept
+# fails in exactly the way the 0.45 similarity floor failed:
+#
+#   GIC / ceramic crown   orifice barrier is the right entry at 0.460, and
+#                         `direct coronal restoration` outscores it at 0.592
+#   retreatment visits    needs no term of art; `targeted endodontic
+#                         microsurgery` is its top pick at 0.506
+#   apicoectomy           `endodontic microsurgery` 0.612 — the one it gets right
+#
+# No threshold separates those. A short concept string embedded against a
+# clinical question measures "is this endodontics?", not "is this the
+# question?" — app.py records the same finding for the retrieval floor.
+#
+# With seven entries the whole list costs ~80 tokens, so the judgement goes to
+# the model, which knows what an apicoectomy is. If the lexicon ever grows to a
+# hundred entries selection becomes a real problem; it is not one yet, and
+# solving it now would mean shipping the selector this measurement rejected.
+#
+# OFFERED, NOT IMPOSED (A41b's words). The prompt says these terms EXIST and to
+# use any that apply. It must never say to include them: a mandatory expansion
+# would put "bony lid" into a pulpotomy query, which is A33g's failure with the
+# sign flipped.
+LEXICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                             "eval", "endodontic_lexicon.json")
+OFFER_LEXICON = True
+
+_lexicon_cache = None
+
+
+def load_lexicon() -> list:
+    """The curated terms, or [] if the file is missing, malformed OR unreviewed.
+
+    A41a: "RB reviews it before it is used." That is enforced here rather than
+    left as a comment — `reviewed_by_rb` in the file is the switch, so approving
+    the lexicon is a one-line edit to the data by the person who owns it, and
+    an unreviewed entry cannot reach a query by being merged.
+
+    Fails OPEN in every direction: no file, bad JSON or no approval all mean
+    the generator behaves exactly as it did before this existed, which is a
+    measured baseline rather than a broken state.
+    """
+    global _lexicon_cache
+    if _lexicon_cache is not None:
+        return _lexicon_cache
+    try:
+        with open(LEXICON_PATH, encoding="utf-8") as fh:
+            data = json.load(fh)
+        if not data.get("reviewed_by_rb"):
+            print("  [lexicon] present but not marked reviewed_by_rb — "
+                  "not offered to the generator (A41a)")
+            terms = []
+        else:
+            terms = [t for t in (data.get("terms") or [])
+                     if t.get("head") and t.get("variants")]
+    except Exception as ex:
+        print(f"  [lexicon] unavailable ({ex}) — generating without it")
+        terms = []
+    _lexicon_cache = terms
+    return terms
+
+
+def _reset_lexicon_cache() -> None:
+    """Tests use this; nothing on the request path needs it."""
+    global _lexicon_cache
+    _lexicon_cache = None
+
+
+def lexicon_offer_block() -> str:
+    """The prompt fragment. Empty when the lexicon is empty or switched off."""
+    if not OFFER_LEXICON:
+        return ""
+    terms = load_lexicon()
+    if not terms:
+        return ""
+    lines = []
+    for t in terms:
+        variants = " OR ".join(f'"{v}"' if " " in v else v
+                               for v in t["variants"][:5])
+        lines.append(f"  {t['head']} — {t['concept'][:110]}\n    {variants}")
+    return (
+        "\nVocabulary this field uses that a general search may not reach for. "
+        "These are AVAILABLE, not required — most questions need none of them. "
+        "Use one ONLY if the question is actually about that thing.\n"
+        "WHERE IT GOES, and this matters more than whether you use it: add the "
+        "terms as extra OR-alternatives INSIDE the group they belong to — the "
+        "subject group or the scenario group. NEVER add a new AND-group for "
+        "them. Every AND is a hard requirement that all concepts co-occur in "
+        "one record, so a term of art added as its own group EXCLUDES the "
+        "papers it was meant to reach.\n"
+        + "\n".join(lines) + "\n")
+
+
 MIN_SEARCH_TERMS = 4      # below this after retry, warn loudly — never silent
 TARGET_EXTRA_TERMS = 6    # + primary = 7, inside the 6-10 band the eval expects
 
@@ -2178,6 +2280,7 @@ def generate_multi_search_terms(question: str, primary_term: str,
         f'abbreviations, device and brand names, joined by AND. Use * stem '
         f'truncation and quote multi-word phrases. Do NOT add [pt] filters or '
         f'endodontics domain terms — both are appended automatically.\n\n'
+        f'{lexicon_offer_block()}\n'
         f'{_MULTI_TERM_FORMAT}'
     )
     base_prompt = _with_context(
@@ -2714,7 +2817,7 @@ Rules:
 - include BOTH abbreviation and expansion for any technique or material
 - do NOT add [pt] publication-type filters or endodontics domain terms; both are
   appended automatically and duplicating them only narrows the result set
-
+{lexicon_offer_block()}
 Question: {question}
 
 PubMed boolean query:""",

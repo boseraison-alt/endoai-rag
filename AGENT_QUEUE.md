@@ -150,6 +150,24 @@ Opening instruction for the agent session:
     only ever adds papers back, so it cannot cost a citation — its worst case is
     spending money. A guard whose failure mode is monotone needs far less proving
     than one that can cut both ways.
+29. **A marker written into answer text becomes input to every downstream text
+    analyser.** The role fence and the inline `°` live in the answer text on
+    purpose — that is what makes them survive PDF, clipboard, slides and narration.
+    The same property means every parser sees them. Strip presentation marks before
+    any analysis that reads sentences, claims or citations, and keep a test that
+    each analyser is mark-blind. (Origin: A22b — `_split_claim_units` read
+    "applicable. °" as an unfinished sentence, fused the passage into the next
+    cited unit, and the unsourced-claim counter would have undercounted on every
+    answer containing an inline passage.)
+30. **A styling change can create a fail-open gate.** Splitting the quarantine
+    treatment by size silently exempted the inline level from three consumers, and
+    `_check_quarantine_reframe` stopped finding the apixaban fixture — which would
+    have shipped as "the answer improved" when nothing had. Any change to how
+    content is *shaped* must enumerate what reads that shape. (Rule 2's family:
+    a check that shows nothing shows green.)
+31. **Focused tests do not substitute for the suite before a deep change.** 27
+    passing focused tests sat on a red tree of 28 failures across 6 files. Run the
+    suite at the point where the blast radius stops being obvious, not at the end.
 
 ---
 
@@ -2710,6 +2728,41 @@ risk: measure (A25a), propose, and wait for RB. A27, A28 and A29 are projects, n
 fixes, and belong after the demo.
 
 ---
+
+### A22 — CORRECTIONS AND DECISIONS (2026-09-03)
+
+**Two of A22's three named defects were attributed to the wrong layer, and that
+was my error.** A22 was written from a *rendered* curriculum. Measured against the
+stored corpus:
+- "literal `**` survives rendering" — does not reproduce in answer text. The
+  original observation was of the browser's output.
+- "a quarantine block splits a numbered list item" — **0 occurrences** in 160
+  stored documents. Also renderer-side.
+Both are real (RB saw them) but they live in the browser renderer, so fixing the
+text layer would have been fixing the wrong layer — the error class this project
+keeps turning up. A22a and the `**` leak move to the browser block.
+
+**Confirmed at scale:** 17 quarantine blocks with 17 identical footers in one
+stored answer, 56 footers across the corpus. A22c is real and is now fixed.
+
+**Threshold: RB accepts ≤2 sentences, not ≤1.** A22b said "a single unsourced
+sentence". The measurement says that is not enough — at ≤1 the worst document
+keeps 10 blocks and still fails A22e's ~5 bar; at ≤2 it keeps 2. Two sentences is
+not a paragraph, so ≤2 sits inside A22b's own stated test ("a paragraph or more
+keeps the full block"). Shipped at 2 with the distribution recorded beside the
+constant — which is how a threshold should be justified.
+
+**Ordering decision (RB):** finish the retrieval chain and the re-baseline first,
+then do ALL browser work as one block — A22a, the `**` leak, A22d (contrast),
+A22e's re-render, A44b–d, and A44n's stored-document verification. Reasons: the
+re-baseline has been deferred four times and gates everything; browser work is a
+coherent session that should not be split across two contexts; and A44n's
+verification is worth doing once, after the text-layer changes have all landed,
+rather than twice.
+
+**Note for RB:** A22b/c/f are server-side, so the improvement is already visible —
+56 footers become one legend, and full blocks drop from 30 to 7 across the corpus.
+The two defects that remain unfixed are the ones in the browser.
 
 ### A22 — The quarantine block is the wrong granularity and the wrong frequency
 
