@@ -6269,6 +6269,90 @@ def display_title(question: str, limit: int = 160) -> str:
     return q if len(q) <= limit else q[:limit - 1].rstrip() + "\u2026"
 
 
+# ── G2 — A CITATION THAT RESOLVES TO NOTHING IS DROPPED, LOUDLY ──
+#
+# WHAT G2 ASKED FOR, AND WHY THIS IS NARROWER. The instruction was "never emit a
+# non-PMID identifier into a PMID slot". Taken literally that removes a
+# DELIBERATE, TESTED feature: `trust-surface-v1` Q4 established synthetic
+# library keys (`ESE-QG-2023`, `NBK430685`) precisely so hand-ingested authority
+# documents can be cited, `tests/test_pseudo_pmid_keys.py` pins six consumers of
+# it, and the alternative was explicitly considered and rejected there —
+# "rendering the marker as a pill without widening that guard would only have
+# traded a raw marker for a dead one".
+#
+# MEASURED (scripts/audit_guideline_path.py, and the G2 shape scan): of 432
+# citation slots holding a non-numeric identifier, **430 RESOLVE** to a real
+# library row and render correctly as pills or reference entries. They are the
+# feature working. Dropping them would delete legitimate citations to
+# AAE-VPT-2021 and AAE-DIAGNOSIS-2009, both of which A2 verified as real
+# documents — that removes RIGHT output, and G2's own framing is that a gate may
+# only remove WRONG output.
+#
+# So the gate is on RESOLUTION, not on shape: a NON-NUMERIC identifier that
+# names nothing in the library is dropped. Numeric ids are left alone — those
+# resolve through eutils, and a fabricated numeric PMID is the fabrication
+# validator's job, not this one.
+#
+# LOUD, not silent (rule 32 and invariant 15). Dropping a citation silently is
+# the exact fail-open that made a banner read "9/9 CONSISTENT" over an answer
+# with ten cited claims. Every drop is counted and logged, and the claim it came
+# from becomes UNATTRIBUTED, which the existing detectors already report.
+_KNOWN_SYNTHETIC_KEYS = None
+
+
+def _known_synthetic_keys():
+    """Non-numeric ids that actually exist in the library. Loaded once."""
+    global _KNOWN_SYNTHETIC_KEYS
+    if _KNOWN_SYNTHETIC_KEYS is None:
+        try:
+            from rag import get_conn
+            conn = get_conn()
+            cur = conn.cursor()
+            try:
+                cur.execute("SELECT pmid FROM endo_papers_rag "
+                            "WHERE pmid !~ '^[0-9]+$'")
+                _KNOWN_SYNTHETIC_KEYS = {r[0] for r in cur.fetchall()}
+            finally:
+                cur.close()
+                conn.close()
+        except Exception as e:
+            # Fail OPEN on a database problem: dropping every synthetic
+            # citation because the library is briefly unreachable would be a
+            # far worse answer than leaving them in.
+            print(f"  [G2] library key set unavailable, gate disabled: {e}")
+            _KNOWN_SYNTHETIC_KEYS = None
+            return None
+    return _KNOWN_SYNTHETIC_KEYS
+
+
+def drop_unresolvable_citations(answer: str, known=None):
+    """Remove citation markers whose id names nothing. Returns (text, dropped)."""
+    if not answer:
+        return answer or "", []
+    known = _known_synthetic_keys() if known is None else known
+    if known is None:
+        return answer, []
+
+    dropped = []
+
+    def _check(m):
+        ident = m.group(1).strip()
+        if ident.isdigit() or ident in known:
+            return m.group(0)
+        dropped.append(ident)
+        return ""
+
+    out = _PMID_RE.sub(_check, answer)
+    out = _REF_PMID_RE.sub(_check, out)
+    if dropped:
+        import collections
+        tally = collections.Counter(dropped)
+        print("  [G2] dropped %d citation(s) that resolve to nothing: %s"
+              % (len(dropped),
+                 ", ".join("%s x%d" % (k, v) for k, v in tally.most_common())))
+    return out, dropped
+
+
 def finalise_answer_text(answer: str):
     """Everything a finished answer goes through before anything renders it.
 
@@ -6283,6 +6367,11 @@ def finalise_answer_text(answer: str):
     Returns `(answer, quarantined_blocks)`.
     """
     answer = strip_impact_factor(answer)
+    # G2 — before every downstream reader, so a citation that resolves to
+    # nothing cannot reach the bibliography, the support checker, a slide or a
+    # rendered pill. The claim it was attached to becomes unattributed, which
+    # the existing detectors report; that is the loud failure G2 asks for.
+    answer, _g2 = drop_unresolvable_citations(answer)
     # A22f — the overclaiming lead-in goes before anything else reads the text,
     # so no downstream pass can carry it into a quote, a block or a slide.
     answer = _strip_a22f_overclaim(answer)
