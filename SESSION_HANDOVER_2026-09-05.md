@@ -1,198 +1,196 @@
-# SESSION HANDOVER — overnight 2026-09-04
+# SESSION HANDOVER — 2026-09-04 → 2026-09-05
 
 Boot a new coding-agent chat with:
 
-> Read `AGENT_QUEUE.md`, `SESSION_HANDOVER_2026-09-05.md` and `CURO_HANDOVER.md`.
-> Continue from the ORDER section below.
+> Read `AGENT_QUEUE.md`, `SESSION_HANDOVER_2026-09-05.md` and
+> `HANDOVER_GUIDELINES_2026-09-04.md`. Continue from the ORDER section below.
 
-Branch `overnight/browser-block-and-baseline`, **7 commits**, `ae20d3e..HEAD`.
-Suite **2288 passed, 50 skipped, 1 failed** — the one failure is external, see §0.
+**Branch `overnight/browser-block-and-baseline`, 14 commits, `ae20d3e..4a4ae1d`.**
+Suite **2329 passed, 50 skipped, 0 failed**. Spend for the day **$10.50** over
+181 calls. Rollback tag for the demo build: **`demo-build-20260904` → `09bbc10`**.
 
 ---
 
-## 0. READ THIS FIRST — THE ANTHROPIC API IS OUT OF CREDIT
+## 0. STATE YOU NEED BEFORE TOUCHING ANYTHING
 
-```
-400 invalid_request_error — "Your credit balance is too low to access the
-Anthropic API." Confirmed on claude-haiku-4-5, i.e. it is not a model or a
-routing problem.
-```
-
-It ran out at **~01:00 on 2026-09-04**, mid-batch. This is the failure mode
-`CURO_HANDOVER.md` §7 warns about; last time the first symptom was
-`APIConnectionError` retries and a router "failing safe", so it went unnoticed.
-This time it is an explicit billing message on a `/case_chat` job.
-
-**Everything that generates is blocked**, and that is most of what remains:
-
-| parked | why |
-|---|---|
-| the v6 three-run re-baseline (item 7) | needs ~3.5h of live retrieval + synthesis |
-| A37's full distribution (item 5) | needs n≥5 live clarify calls per case fixture |
-| A22e's re-render | needs one live curriculum, ~$1.17 |
-| **regenerating the four demo answers** | **the highest-value item on this list** |
-| the Case answer surface on current code | verified on layout only |
-
-`tests/test_metadata_extraction.py::test_metadata_distribution_in_real_batch`
-is the one red test. It makes a live call. **It fails identically with every
-change from tonight stashed** — verified, not assumed. The tree is otherwise
-green.
-
-**Restore credit first. Nothing else in the queue moves without it.**
+- **Working tree is CLEAN at `4a4ae1d`.** Nothing uncommitted.
+- **Two servers are up.** Port **5000** is *ours* (`endo-ai-demo`, no-reload,
+  pid 49800). Port **5003** is still another session's stale `77867e1` — never
+  kill it, never use it.
+- **`endo-ai-demo` (5000) is `debug=False`.** It does NOT pick up code changes.
+  **Restart it after any edit to `templates/index.html` too** — Jinja caches the
+  template with debug off, and I measured a stale page twice before working
+  that out.
+- **`ADMIN_TOKEN` is now set in `.env`** (`demo-prep-20260904-local`, gitignored)
+  so `/cache/clear` works. It was added for demo prep; remove it if you would
+  rather admin routes stay disabled.
+- **Two demo answers are warm in `query_cache`** and were byte-identical across
+  runs: the Literature demo question (row 4127, 18 citations) and the VPT
+  curriculum (row 4126). A **text-layer change invalidates them** — they would
+  then render through code that did not produce them.
+- **API credit is live.** It ran out at ~01:00 and was restored; the suite's
+  live-Anthropic test passes again.
 
 ---
 
 ## 1. THE ONE THING TO CARRY FORWARD
 
-**Three premises fell tonight, and all three were instrument errors rather than
-wrong hypotheses. One of them was in the instrument I wrote to find the other
-two.**
+**Rules 33 and 34 were added yesterday for instrument error. It happened four
+more times today, twice in instruments I wrote to detect it.**
 
-`scan_split_items.py` looked for a bare `N.` list number. The corpus writes it
-bold — `**3.**`. It reported **0 split list items**, and on that zero A22a and
-the literal `**` leak were re-filed as renderer defects and moved to the browser
-lane. Corrected: **30 of 116 stored blocks orphan a list number, 24 cut a bold
-run in half.** Both are text-layer, in `quarantine_unsourced_content`.
+| where | the error |
+|---|---|
+| `scan_split_items.py` | looked for a bare `N.`; the corpus writes `**3.**`. Reported 0 split list items; the truth was 30 |
+| the detector audit written to sweep for that class | applied line-anchored patterns to whole documents — 15 false "unjustified zeros", 12 of them this |
+| the same audit | scored abstract-side patterns against the answer corpus and called their zeros justified |
+| the A2 guideline matcher, **three times in a row** | ≥3-shared-word overlap matched organisation boilerplate to itself; the correction stripped so much that `ESE-QG-2006` failed to match its own verbatim id; then a subject key generous enough to pair `AAE-PS-safety` with `AAE-CASEDIFFICULTY-2022` |
 
-Then the audit script written to sweep for that whole class reported 15
-"unjustified zeros" on its first run. Twelve were line-anchored patterns
-compiled without `re.MULTILINE`, applied to whole documents — they can only ever
-return zero. **The instrument built to detect the signature manufactured it.**
+The pattern that finally worked: **several independent signals, reporting which
+one decided**, instead of one fuzzy score that hides what fired.
 
-That is rules 33 and 34, both added to `AGENT_QUEUE.md` §1.
-
-Running total: **fifteen premises overturned by measurement, seven of them
-mine.**
+Also worth internalising: **two of my test suites passed against a broken fix.**
+The G1 mutant "exclusion never called" and the case-history mutant "invariant-21
+guard removed" both survived, because every test called the helper directly and
+none checked the wiring or the mechanism. Rule 14, three times in one session.
 
 ---
 
 ## 2. WHAT LANDED
 
+### The overnight batch (items 1–6; 7 correctly skipped)
+
 **The Case path was completely broken and nothing said so.** The thread rendered
-at **zero height** — `.chat-container` 0px with a 115px user bubble and a 241px
-assistant bubble inside it. `POST /case_chat` returned 200. Nothing errored. The
-landing column's 531 of 623px starved a `flex:1; min-height:0` section down to
-11px; it does not overlap the thread, it starves it. A regression from A15
-(`de88e4a`), which made the main search bar a second entry point that skipped the
-teardown. **0px → 337px**, verified against the running app on a real answer.
+at **zero height** — `POST /case_chat` → 200, a 115px user bubble and a 241px
+assistant bubble inside a 0px container, no error anywhere. The landing column's
+531 of 623px starved a `flex:1; min-height:0` section down to 11px. A regression
+from A15 (`de88e4a`), which made the main bar a second entry point that skipped
+the teardown. **0px → 337px**, verified on a real answer.
 
-The eval cannot see it: `case-opening-full` goes through the API, gets its
-clarify payload, and passes.
+The eval cannot see it: `case-opening-full` goes through the API and passes.
 
-**82 detectors audited** across 199 stored answers and 3,061 stored abstracts.
-13 read zero under the naive instrument and are non-zero corrected —
-`_LIST_ITEM_RE` alone went 0 → 4,710. One genuine zero survives and is *kept*:
-`_THRESHOLD_RE` guards an idiom this library does not contain (rule 34).
+**82 detectors audited**; 13 read zero under the naive instrument and are
+non-zero corrected (`_LIST_ITEM_RE` alone 0 → 4,710). One genuine zero survives
+and is *kept*: `_THRESHOLD_RE` guards an idiom this library does not contain.
 
-**The apicoectomy curriculum, start of session → now**, all read off the
-laid-out page:
+**Stored-answer repairs**, all measured on the served text: 30 orphaned list
+numbers → 0, 24 cut bold runs → 0, "From the wider literature" 12 → 0,
+uncited-mark contrast **1.02:1 → 13.34:1**, literal `*` 94 → 0.
 
-```
-  literal `*`                    94 -> 0        literal `**`         3 -> 0
-  "From the wider literature"    12 -> 0 (corpus-wide)
-  orphaned list numbers          30 -> 0        cut bold runs       24 -> 0
-  uncited marks ending mid-word 7/9 -> 0        A22c legend          0 -> 1
-  uncited-mark contrast    1.02:1 -> 13.34:1    citation pills   286 -> 316
-```
+**A44b** (sticky 212px TOC ≥1080px) and **A44d** (masthead chip row), both in
+the Deep Learning history viewer only — deliberately not on the answer card.
 
-**The 1.02:1 was invisible text, not low contrast.** `.uncited-claim` set
-`color: inherit`; inside the dark quarantine block that inherits near-white onto
-its own pale amber ground. Six of ten marks were unreadable. Outside a block the
-same marks measured 6.54–10.52:1, which is why nothing caught it.
+### Demo prep
 
-**A regression I caused and caught in the same session.** Making the legacy
-header's `⚠ ` prefix optional took raw `[[PMID:N]]` markers on screen from 0 to
-**30**. A quarantine block is stashed out of `renderAnswer` before the citation
-replacer runs, so its contents were formatted by `_unverifiedInline`, which knew
-nothing about citations. **Invariant 3 had a hole in it the whole time** and was
-unreachable only because that block was never recognised.
+Rehearsed all three modes end to end, warmed the cache, tagged `09bbc10`.
+Literature **2.1s / $0 / byte-identical**, Curriculum **3.6s warm**, Case **82s**
+(cannot be warmed — see §5).
 
-**A44b and A44d.** A sticky 212px TOC at ≥1080px on a 26,107px document with 32
-headings, and a masthead chip row. Both are also instruments, and they agree
-with each other about something nobody asked them: see §5.
+### Case discussions now reach History
+
+`run_case_chat` never wrote a history row, though `/history`, `/history/<id>`
+and `loadHistoryItem` were all already case-aware and the drawer had an
+always-empty Case tab. Fixed with **two** changes, because the obvious one is
+unsafe: `query_cache` is both the history store and the answer cache, so writing
+case rows would have made patient A's discussion servable to patient B at ≥0.92
+cosine. `get_cached_answer` now excludes `[case] ` rows in the WHERE clause.
+
+### A49 phase 0 — audits and two gates
+
+See §3. **`data/guidelines_seed.json`** (60 verified guidelines, 22 orgs) and
+**`HANDOVER_GUIDELINES_2026-09-04.md`** are committed.
 
 ---
 
-## 3. STATE AND TRAPS
+## 3. A49 PHASE 0 RESULTS — READ BEFORE DECIDING PHASE 1
 
-- **Use `endo-ai-measure` (port 5004) for any browser measurement.** It is
-  `debug=False`, so a `.py` edit cannot restart it mid-run — which killed one
-  case measurement tonight before I noticed. **It also means you must restart it
-  after every template edit**: Jinja caches the template with `debug=False`, and
-  I measured a stale page twice before working that out.
-- Port **5003** is still the other session's `77867e1`. Untouched all night.
-- **A case turn takes 4–8 minutes**, not the 30s the mode promise says. Three
-  measurement scripts timed out at 300s with the answer already generating.
-- **The clarify gate is variable**: the same `case-opening-full` description
-  asked 2, then 1, then 0 questions on identical code. Any wait that assumes a
-  clarify panel appears will hang forever when it asks zero.
-- The clarify bubble is **replaced** by the answer, not followed by a second
-  one. Waiting for two assistant bubbles waits forever.
-- **`js_harness.RENDER_DEPS` drifted twice tonight** — once for `setMode`'s new
-  helpers, once for `_citeMarkersToPills`. Its own docstring documents this
-  exact failure. Any new top-level helper that `renderAnswer` or `setMode`
-  reaches needs adding, or unrelated files go red with a `ReferenceError`.
-- The A22f strip, the split-item repair and the header variant all run at READ
-  time. **Stored rows are never mutated**, so all of it is reversible.
+Full report: `eval/reports/a49_guideline_path_audit.md`.
+
+**A4, the one that decides the design.** Scoring does **not** read
+`impact_factor` (`USE_IMPACT_FACTOR` off, test-asserted; no `ORDER BY`, no sort
+key, no cap). **Synthesis does.** `endo_ai.py:4743` appends `IF={value}` to the
+Top-paper-per-tier block, sent to Claude on **all four** answer paths. 1,572 of
+3,208 rows carry a value. **A49 is therefore both a data fix and a retrieval
+fix** — deleting the hardcoded 8.0s leaves the read in place.
+
+**A2.** Matching by organisation + subject + year, never by slug:
+**4 of 16 verified**, 6 wrong year, 6 no such document. **103 stored answers
+cite a record matching no real document.** There is no 2023 ESE Quality
+Guideline (the 2023 document is `ESE-S3-2023`, PMID 37772327). `ESE-PS-VPT-2019`
+disagrees with its own slug — stored as *"Outcome of Primary Root Canal
+Treatment"*.
+
+**A3, the severity number.** A guideline row at 90.0 **outranks 100% of the
+3,192 evidence rows** — not a majority, all of them; no real paper scores above
+85.9. Note the tier is `level_key='guideline'`, **not** `level1` as the
+handover's reading suggested: the taxonomy is clean, the contamination is
+entirely in `score`.
+
+**A1.** None of the three withdrawn Cochrane reviews is in the library or cited.
+
+**A5.** 432 slots across all 16 slugs, not two — but see the correction in §5.
+
+### The two gates (each independently revertable)
+
+- **G1 `2a1966a`** — a withdrawn source is never cited. Prospective; 0 → 0 today.
+- **G2 `034a122`** — a citation resolving to nothing is dropped, loudly.
+  **Deliberately narrower than specified** — see §5.
 
 ---
 
 ## 4. ORDER FOR THE NEXT SESSION
 
-1. **Restore API credit.** Nothing below moves without it.
-2. **Regenerate the four demo answers.** They date from 2026-09-01 18:46–18:49
-   and cite 10/13/12/13 — mean **12.0**. Current code measures 14–23, mean 18.4,
-   and a live case answer tonight cited 21. The demo currently shows two-thirds
-   of the references the engine produces, none of A38's removed false claim and
-   none of A42's halved cost. This is the highest-value pre-demo action.
-3. **Item 7, the three-run v6 baseline**, on frozen code. A46's prediction is at
-   `eval/reports/a46_prediction_v7.md`; re-confirm 5003 is not ours and report
-   the contamination count for every run.
-4. **Finish A37 (item 5)** at n≥5 per case fixture. The prediction is committed
-   and held at n=5: the gate is variable, not broken — 1 of 3 runs at 2+. A
-   count threshold needs RB.
-5. **A22e**: one live curriculum, then report the block count. Read-time
-   re-render already took the stored apicoectomy from 17 blocks to 14; the
-   remaining 14 keep legacy footers because converting *every* legacy block was
-   deliberately out of scope.
-6. **Re-run `scripts/audit_detectors.py`** once a curriculum exists on current
-   code. `_ROLE_FENCE_RE`, `parse_callouts` and `find_presentation_markup` score
-   0 legitimately today because A44's fence postdates every stored document. If
-   they are still 0 on new output, the callout vocabulary is dead.
+1. **A49 phase 1 needs RB's decision first.** Phase 0 is done and the design
+   question is answered (both a data and a retrieval fix). Do not start building
+   until RB says what happens to the 16 records.
+2. **The A48 adversarial pass** — queued mid-session, never started. Measure
+   first per A46; commit the prediction before building. Two cheap independent
+   checks (numeric-threshold consistency, source concentration) are worth doing
+   regardless.
+3. **The regression-fixture test is owed.** The diagnostic changed what it
+   should assert — "records why not" now has *three* distinct reasons, not one.
+4. **The v6 three-run baseline**, still deferred, still on frozen code.
+5. A22e, A44c (attended sessions only), the A37 distribution at n≥5.
 
 ---
 
-## 5. FOUND, NOT FIXED
+## 5. FOUND, NOT FIXED — with severities
 
-- **The curriculum generator's headings are wrong, and two independent
-  instruments agree.** A44b's TOC and A44d's chip row both report **three**
-  `## Module N` headings where the document claims four: the sequence is
-  1, [unnamed], 3, 4. All four modules also number their subsections
-  `4a / 4b / 4c` — the prompt's template numbering copied verbatim rather than
-  renumbered. Five heading labels repeat verbatim. Generator work; needs a live
-  curriculum to verify a fix. **Severity: moderate** — it is a teaching document
-  and the numbering is part of the teaching.
-- **`(ESE-QG-2023)` renders as a bare internal key** on demo question 1. The
-  model wrote a plain parenthetical instead of `[[PMID:ESE-QG-2023]]`, so it is
-  not a pill, clicks nowhere, and is not in the References block: the answer
-  cites 11 sources and lists 10. No gate is wrong — `_detect_uncited_author_mentions`
-  correctly returns `[]`, and `_AUTHORITY_BODY_RE` belongs to the quarantine
-  footer, not that gate. **Severity: cosmetic, but it is on the demo surface.**
-- **The runbook's Cochrane talking point is not on screen.** The script says
-  question 1 cites CD005296; the page shows PMID 36512807, which *is* CD005296.
-  The presenter would be asserting a number nobody can see. **Severity: low.**
-- **A11's build hash is not in the archive.** `learn_history` records carry no
-  build provenance, so A44d's masthead has no build chip. Emitting "unknown"
-  would invent a field. Fix is at save time. **Severity: low.**
-- **14 quarantine blocks still carry 14 identical footers** on the stored
-  apicoectomy curriculum. A22c replaced the footer with one legend and the
-  legend now renders, but only repaired blocks got the current treatment.
-  Converting every legacy block is A22e/A44n's question — 88 blocks corpus-wide.
-  **Severity: moderate, and RB has seen it.**
+- **The live path is blind to the newest literature on every topic.**
+  Sulaiman 42388091's only PubMed pubtype is `Journal Article`; every one of 36
+  generated queries ANDs a tier filter and **no tier filter admits a bare
+  Journal Article**. A paper carrying five of the topic's own terms is
+  structurally unreachable until MEDLINE indexes it. **Severity: high, and
+  general.** Full diagnostic: `eval/reports/a49_missed_papers_diagnostic.md`.
+- **Guidelines have no rung on the tier ladder.** `practice guideline[pt]` and
+  `guideline[pt]` appear in no tier filter, so a guideline is reachable only by
+  accident through level5's review bucket (EFCD-ESE-ORCA ranked 521 of 608).
+  `ingest_aae_guidelines.py` exists *because* of this gap. **Severity: this is
+  A49 phase 1.**
+- **`evidence_floor` 0.60 cut a network meta-analysis by 0.02.** Komora
+  39117767 is in the library at level1/74.8; its cosine to the question was
+  0.5807. A42 measured the floor as "free" on citation counts — which is a
+  different question from whether a specific on-point paper was lost. **Not an
+  argument to move it.** **Severity: for RB's judgement.**
+- **My A5 framing was too broad, and the correction matters.** Of the 432
+  "leaking" slots, **430 RESOLVE** to real library rows and render correctly —
+  that is the synthetic-key feature working, not a defect. Only the bare
+  `(ESE-QG-2023)` parenthetical form is a genuine leak. **This is why G2 is
+  narrower than specified** (see §6).
+- **Hoang 2026 could not be found on PubMed** by author + topic + pubtype. Not
+  concluded absent — **needs the DOI or PMID before anything is built on it.**
+- **The curriculum generator's subsection numbering.** All four modules number
+  their subsections `4a / 4b / 4c`; `Clinical Application` appears 4× as an h2.
+  The missing-`Module 2` heading did **not** reproduce on the VPT topic.
+  **Severity: moderate — it is a teaching document and the numbering is part of
+  the teaching.**
+- **A cold curriculum takes ~37 minutes and ~$2.00**, not the 7.5 min the old
+  handover records. It must be cache-warmed before any demo.
+- **Case answers cannot be cache-warmed** — `save_query_cache` is never called
+  from `case_chat`, deliberately (invariant 21). On stage Case is always live.
+- **A11's build hash is not in the archive**, so A44d's masthead has no build
+  chip. Fix is at save time.
 - **The eval asserts a fixed range on a stochastic quantity.**
-  `clarify.count_between: [0,1]` fails about a third of the time by design. That
-  is a harness question as much as a generator one. **Severity: it will keep
-  producing false failures until someone decides.**
+  `clarify.count_between: [0,1]` fails about a third of the time by design.
 
 ---
 
@@ -200,32 +198,28 @@ with each other about something nobody asked them: see §5.
 
 | decision | alternative rejected |
 |---|---|
-| A44b's TOC in the **history viewer only**, not the live answer card | doing both; the answer card is the demo surface and restructuring `.center-col` unattended days before a demo is not a good trade — and with no credit I could not generate a live curriculum to verify it |
-| **A44c deferred entirely** (design tokens / dark mode) | doing it; it is a ~85-colour remap and the project's own memory records that a naive remap makes dim text invisible on light backgrounds. Not an unattended change |
-| The split-item repair is **targeted** — only blocks preceded by an orphaned number | unwrapping every legacy block, which would rewrite 88 blocks nobody asked about and is A22e/A44n's question |
-| `_THRESHOLD_RE` **kept** despite firing 0 of 95 | deleting it as measured-dead code, which removes the protection the first "at least 10 patients" abstract needs (rule 6) |
-| The **dark quarantine block left alone**; only the invisible mark fixed | switching it to A22d's pale ground, which overturns a deliberate deck-parity decision that is RB's to make |
-| Committed with **one red test** | blocking every remaining item on an external billing failure |
+| **G2 gates on RESOLUTION, not on shape** | the literal instruction, "never emit a non-PMID identifier into a PMID slot" — it deletes a deliberate tested feature (`trust-surface-v1` Q4, `tests/test_pseudo_pmid_keys.py`), removes 430 correct citations including ones to documents A2 verified as real, and reintroduces the fail-open that made a banner read "9/9 CONSISTENT" over ten cited claims |
+| G1 excludes rather than badges | badging, which is right for "treat with caution" but wrong when the publisher has removed the conclusions |
+| G2 **fails open** when the library is unreachable | failing closed, which would drop every synthetic citation on a transient DB blip |
+| A44b/A44d in the history viewer only | also on the answer card — the demo surface, restructured unattended, unverifiable without a live curriculum |
+| A44c deferred entirely | doing it; a ~85-colour remap the project's own memory warns makes dim text invisible |
+| `_THRESHOLD_RE` kept despite 0 of 95 | deleting it as measured-dead code (rule 6) |
+| The split-item repair kept targeted | unwrapping every legacy block — 88 blocks nobody asked about |
+| Committed with one red test during the outage | blocking every remaining item on an external billing failure |
 
 ---
 
-## 7. RB DECISION OUTSTANDING
+## 7. OPEN, NEEDING RB
 
-**Dark quarantine block, or A22d's pale one?**
-
-`.unverified-block` is `#3a1520` ground with `#eef2fa` text, and the CSS comment
-states the reason: *"the deck's dark tokens verbatim, so the same content reads
-identically in the answer and on a slide."* A22d specifies the opposite:
-*"near-black on the pale ground (target ≥7:1) … this is a light UI, check that
-no dark-theme token leaked in."*
-
-The token did not leak. It was carried in on purpose. Both positions are
-defensible and the code cannot hold both. **The 1.02:1 invisible mark inside it
-is fixed under either answer**, so nothing is blocked on this — but the block is
-the most visually dominant element on a curriculum and RB has already called the
-boxes unreadable once.
-
-Also outstanding from before: **the lexicon still ships disabled.**
-`eval/endodontic_lexicon.json` has `reviewed_by_rb: false` and `load_lexicon()`
-returns `[]` until RB flips it. A41b measured apicoectomy 1–2/5 → 4/5 on 3 of 3
-runs with controls unchanged. Untouched tonight.
+- **A49 phase 1**: what happens to the 16 hardcoded records? 4 verified, 6 wrong
+  year, 6 naming no document, 103 answers citing them. Do not delete library
+  rows without this decision.
+- **The `IF=` read at `endo_ai.py:4743`** — invariant 22's letter is kept
+  (nothing ranks by it) but a journal-identity signal reaches the synthesiser.
+- **The dark quarantine block.** `#3a1520` with `#eef2fa` text, deliberately the
+  deck's tokens for slide parity; A22d specifies near-black on a pale ground in
+  a light UI. Both defensible, the code cannot hold both. Nothing is blocked —
+  the 1.02:1 invisible mark is fixed either way.
+- **The lexicon still ships disabled.** `reviewed_by_rb: false`; A41b measured
+  apicoectomy 1–2/5 → 4/5 on 3 of 3 runs.
+- **Hoang's PMID or DOI.**
