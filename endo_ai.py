@@ -5715,6 +5715,105 @@ def _any_quarantine_block_re():
     """Both shapes, for the readers that must see either."""
     return (_QUARANTINE_BLOCK_RE, _LEGACY_QUARANTINE_BLOCK_RE)
 
+
+# ── A22a — A STEP SEPARATED FROM ITS NUMBER, REPAIRED AT READ TIME ──
+#
+# MEASURED, with the corrected detector (see `scripts/scan_split_items.py` and
+# `eval/reports/detector_token_shape_audit.md`): across 199 stored documents and
+# 116 quarantine blocks, **30 blocks are preceded by an orphaned list number**
+# and **24 cut a bold run in half**, leaving the literal `**` RB saw rendered.
+# The earlier scan looked for a bare `N.` and reported zero; the corpus writes
+# it bold, `**3.**`.
+#
+# The GENERATOR is already fixed — A22b's size split (285acf8, 2026-09-03
+# 20:00) keeps a one-sentence step whole and marks it inline. Every one of the
+# 30 predates that commit by at least eight hours. So this is not a bug to fix
+# forward; it is a repair owed to what the archive routes SERVE, since A16b
+# re-renders every stored answer on read and "never leave a stored answer
+# rendering a surface the current code would not produce" is A16's whole point.
+#
+# ONLY TWO SHAPES EXIST in the corpus, so the repair is written to those two
+# rather than to a guess:
+#
+#   n=24  `**3.**` + body starting `Administer local anaesthesia**`
+#         — the opening `**` went into the number, the closing one stayed with
+#           the step. Original: `**3. Administer local anaesthesia**`.
+#   n=6   `**3.**` + body starting `**Primary NaOCl irrigation**`
+#         — a complete bold run; only the number was separated.
+#
+# Both are rejoined as a real markdown list item — `3. **…**` — which is what
+# makes the step atomic again (A22a). The block is UNWRAPPED rather than having
+# the number pushed inside it: a step inside a quote box is still separated
+# from its list, and at one or two sentences the current pass gives it the
+# inline mark instead, which is the treatment A22b chose.
+_ORPHAN_NUM_LINE_RE = re.compile(r"^(?:\*\*)?(\d{1,2})[.)](?:\*\*)?[ \t]*$")
+
+
+def _balance_cut_bold(line: str) -> str:
+    """Restore the opener on a bold run the block boundary cut in half."""
+    if line.count("**") % 2 == 1 and line.rstrip().endswith("**"):
+        return "**" + line
+    return line
+
+
+def _repair_split_list_items(answer: str) -> str:
+    """Rejoin every step the quarantiner separated from its list number.
+
+    Returns the answer with those blocks unwrapped back to prose, so the
+    normal pass can re-quarantine them at the current treatment level. Blocks
+    that are NOT preceded by an orphaned number are left exactly as they are —
+    converting every legacy block is A22e/A44n's question, not this one.
+    """
+    if not answer or "**NOT FROM THE EVIDENCE BASE" not in answer \
+            and "**NOT CHECKED" not in answer:
+        return answer or ""
+
+    out, pos = [], 0
+    # One scan over every blockquote run, filtered to the ones carrying a
+    # quarantine header in EITHER shape — a legacy block and a current block
+    # are both candidates, and matching them with their own two regexes would
+    # need the results interleaved by position anyway.
+    block_re = re.compile(r"(?:^>[^\n]*\n?)+", re.MULTILINE)
+    for m in block_re.finditer(answer):
+        block = m.group(0)
+        if not (_LEGACY_QUARANTINE_HEADER in block
+                or _QUARANTINE_HEADER in block):
+            continue
+
+        head = answer[pos:m.start()]
+        lines = head.rstrip("\n").split("\n")
+        nonblank = [i for i, ln in enumerate(lines) if ln.strip()]
+        if not nonblank:
+            continue
+        num_m = _ORPHAN_NUM_LINE_RE.match(lines[nonblank[-1]].strip())
+        if not num_m:
+            continue
+
+        body = []
+        for ln in block.split("\n"):
+            s = ln.lstrip(">").strip()
+            if not s:
+                continue
+            if s.startswith(("⚠ **NOT FROM", "**NOT CHECKED", "_General clinical",
+                             "_Passages marked", "**Consult directly:**")):
+                continue
+            body.append(s)
+        if not body:
+            continue
+
+        body[0] = _balance_cut_bold(body[0])
+        rejoined = "%s. %s" % (num_m.group(1), "\n".join(body))
+
+        del lines[nonblank[-1]]
+        out.append("\n".join(lines).rstrip("\n"))
+        out.append("\n\n" + rejoined + "\n\n")
+        pos = m.end()
+
+    if not out:
+        return answer
+    out.append(answer[pos:])
+    return re.sub(r"\n{3,}", "\n\n", "".join(out))
+
 # Bodies whose guidance the answer is standing on. Named in the footer so the
 # clinician is pointed at the actual document rather than told, vaguely, to
 # look elsewhere. Order-preserving and de-duplicated at use.
@@ -6040,6 +6139,11 @@ def finalise_answer_text(answer: str):
     Returns `(answer, quarantined_blocks)`.
     """
     answer = strip_impact_factor(answer)
+    # A22a — before the quarantine pass, not after: it unwraps the 30 stored
+    # blocks that were cut away from their list number so the pass below can
+    # re-treat them at the current level. Running it afterwards would re-split
+    # what it had just rejoined.
+    answer = _repair_split_list_items(answer)
     answer, blocks = quarantine_unsourced_content(answer)
     # Last, so it counts the quarantined content the step above just created.
     return ensure_uncited_half(answer), blocks
