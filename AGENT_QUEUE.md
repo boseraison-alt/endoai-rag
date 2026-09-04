@@ -178,6 +178,24 @@ Opening instruction for the agent session:
     against a floor of 15. Every test asserted what the guard did when it FIRED;
     none asked how often it declined.)
 
+33. **Apply a detector the way production applies it, over the corpus production
+    gives it.** A whole-document `findall` on a per-line pattern returns zero. An
+    answer-corpus sweep of an abstract-side pattern returns zero. Both read as a
+    clean bill of health. (Origin: `scan_split_items.py` looked for a bare `N.`
+    where the corpus writes `**3.**` and reported **0** split list items — on
+    which A22a and the `**` leak were filed as renderer defects and sent to the
+    wrong lane for a day; corrected, 30 of 116. Then the audit script written to
+    sweep for that class reproduced it: 15 "unjustified zeros" of which twelve
+    were line-anchored patterns compiled without `re.MULTILINE`. The instrument
+    manufactured the signature it was built to detect.)
+34. **A guard's zero is not evidence until you have measured the input it
+    guards.** Fires-never and matches-nothing look identical from the outside and
+    need opposite responses. (Origin: `_THRESHOLD_RE` suppresses 0 of 95
+    `_REVIEW_TOTAL_RE` windows across 646 review-design papers — and the
+    vocabulary it looks for appears nowhere in those 95 windows either, so it is
+    a correct guard against an idiom this library does not contain, not a wrong
+    token shape. Kept under rule 6. Only measuring the input separates the two.)
+
 ---
 
 ## §2 EXECUTION ORDER AND PARALLELISM
@@ -1976,6 +1994,57 @@ explained after.
 - **A46c** Commit prediction and outcome together with `baseline_v6`, keeping `v5`.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
+
+### A48 — OVERNIGHT 2026-09-04: three more overturned premises, all instrument errors
+
+**The batch stopped early: the Anthropic API ran out of credit at ~01:00** (400
+`invalid_request_error`, confirmed on Haiku). Everything that generates is
+parked — the v6 re-baseline, A22e's live re-render, A37's full distribution, and
+regenerating the demo cache. Everything below was done without it.
+
+| premise | what was actually true |
+|---|---|
+| A22a and the `**` leak are RENDERER defects; 0 split list items in stored text | **TEXT-LAYER.** The scan looked for a bare `N.`; the corpus writes `**3.**`. 30 of 116 blocks orphan a list number, 24 cut a bold run (**mine — the previous session's conclusion, from a detector that could not match**) |
+| the quarantine header has one shape | **TWO.** 114 blocks carry `⚠ `, **2 do not**, and those two were invisible to every legacy-block reader — they rendered as ordinary prose with no warning at all (rule 17) |
+| the Case path works; the eval passes it | **The whole thread rendered at ZERO height** since A15 (`de88e4a`). `POST /case_chat` → 200, nothing on screen, nothing errored. The eval asserts on the response and cannot see it |
+
+**A fourth, found in my own instrument.** The detector audit built to find this
+class reported 15 "unjustified zeros" on its first run; twelve were line-anchored
+patterns compiled without `re.MULTILINE`, applied to whole documents. It
+manufactured exactly the signature it was built to detect. 82 detectors are now
+audited against the corpus production actually gives them —
+`eval/reports/detector_token_shape_audit.md`.
+
+**Rule 33 (new).** *Apply a detector the way production applies it, over the
+corpus production gives it.* A whole-document `findall` on a per-line pattern, or
+an answer-corpus sweep of an abstract-side pattern, returns zero and reads as a
+clean bill of health. Both errors were in the same 200-line script, and one of
+them had already sent a real defect to the wrong lane for a day.
+
+**Rule 34 (new).** *A guard's zero is not evidence until you have measured the
+input it guards.* `_THRESHOLD_RE` fires 0 of 95 windows across 646 review-design
+papers — and the vocabulary it looks for appears NOWHERE in those windows, so it
+is a correct guard against an idiom this library does not contain, not a wrong
+token shape. Kept (rule 6). The difference is only visible by measuring the input.
+
+**Still open, and the one that expires:** `_ROLE_FENCE_RE`, `parse_callouts` and
+`find_presentation_markup` all score 0, correctly — A44's role fence shipped
+2026-09-03 and every stored document predates it. **Re-run the audit once a
+curriculum is generated on current code.** If it is still 0, the callout
+vocabulary is dead.
+
+**Found, not fixed — generator, needs credit.** A44b's TOC and A44d's chip row
+independently agree that the apicoectomy curriculum has **three** `## Module N`
+headings and claims four: the sequence is 1, [unnamed], 3, 4. All four modules
+also number their subsections `4a / 4b / 4c` — the prompt's template numbering
+copied verbatim rather than renumbered. Five heading labels repeat.
+
+**RB decision outstanding:** the quarantine block is `#3a1520` with `#eef2fa`
+text — the deck's dark tokens, deliberately, "so the same content reads
+identically in the answer and on a slide". A22d specifies the opposite:
+near-black on a pale ground, ≥7:1, no dark-theme token in a light UI. The token
+did not leak; it was carried in on purpose. Both are defensible; it is RB's call.
+The 1.02:1 invisible mark inside it is fixed either way.
 
 ### A43 — Visuals in answers: flowcharts, comparisons, colour  *(RB, 2026-09-03)*
 
