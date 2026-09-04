@@ -1017,6 +1017,64 @@ def invalidate_cache_near_query(query_text: str,
             pass
 
 
+CASE_HISTORY_PREFIX = "[case] "
+
+
+def _case_context_key(conv_id: str) -> str:
+    """The `context_hash` partition one case conversation lives in."""
+    return "case:%s" % (conv_id or "")
+
+
+def save_case_history(conv_id: str, question: str, answer: str, papers: list):
+    """Record a case discussion so the History sidebar can show it.
+
+    HISTORY, NOT CACHE. `get_cached_answer` excludes every `[case] ` row, so
+    nothing written here is ever served to a later question — see the comment
+    on that WHERE clause. Invariant 21 is about REUSE, not about whether the
+    clinician can look back at what they were told, and the read path was built
+    for this all along: `/history`, `/history/<id>` and `loadHistoryItem` all
+    parse the `[case] ` prefix already. Only the write was missing.
+
+    ONE ROW PER CONVERSATION, updated in place. `save_query_cache` is a plain
+    INSERT, so calling it per turn would fill the sidebar with rows whose
+    `question_text` is identical — every turn carries the same `messages[0]`
+    case description. The row is keyed on the conversation's own
+    `context_hash` partition, which the lookup already treats as an equality
+    term, so the update is a one-row match and the entry stays current as the
+    discussion grows.
+    """
+    if not DATABASE_URL:
+        return
+    key = CASE_HISTORY_PREFIX + (question or "")
+    ctx = _case_context_key(conv_id)
+    try:
+        q_vec = embed(key)
+    except Exception:
+        return
+
+    conn = get_conn()
+    cur  = conn.cursor()
+    try:
+        cur.execute(
+            "UPDATE query_cache SET answer = %s, papers = %s, "
+            "question_text = %s, question_embedding = %s, created_at = NOW() "
+            "WHERE context_hash = %s",
+            (answer, json.dumps(papers), key, q_vec, ctx))
+        if cur.rowcount == 0:
+            cur.execute("""
+                INSERT INTO query_cache (question_text, question_embedding,
+                                         answer, papers, context_hash)
+                VALUES (%s, %s, %s, %s, %s);
+            """, (key, q_vec, answer, json.dumps(papers), ctx))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"  Case history save error: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+
 def get_cached_answer(question: str, threshold: float = 0.92,
                        max_age_days: int = None,
                        context_hash: str = "") -> dict | None:
@@ -1065,7 +1123,21 @@ def get_cached_answer(question: str, threshold: float = 0.92,
               -- Hard partition, not a soft signal. Rows written before the
               -- column existed are NULL and COALESCE to '', the same partition
               -- a standalone question asks from.
-              AND COALESCE(context_hash, '') = %s{age_filter}
+              AND COALESCE(context_hash, '') = %s
+              -- INVARIANT 21 — a case answer is NEVER served to anyone.
+              --
+              -- Case turns are written to this table so the History sidebar
+              -- can show them (`save_case_history`), and this table is also
+              -- the answer cache. Without this line, storing patient A's case
+              -- discussion would make it eligible to be returned for patient
+              -- B's similar description at >=0.92 cosine — the single worst
+              -- failure this system can have, arriving as a side effect of a
+              -- history feature.
+              --
+              -- Enforced in the QUERY rather than left to the accident that
+              -- `case_chat` used to write nothing: history and cache share one
+              -- table, so the partition has to be explicit.
+              AND question_text NOT LIKE '[case] %%'{age_filter}
             ORDER BY similarity DESC
             LIMIT 1;
         """, tuple(params))

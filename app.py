@@ -2854,6 +2854,23 @@ def run_case_chat(job_id: str, messages: list, conv_id: str):
             partial_answer = "",
             checks_status  = "complete",
         )
+
+        # The case discussion joins the History sidebar. The read path was
+        # built for this — `/history`, `/history/<cache_id>` and the browser's
+        # `loadHistoryItem` all parse the `[case] ` prefix — and nothing ever
+        # wrote it, so Case was the one mode whose answers vanished when the
+        # tab was closed.
+        #
+        # HISTORY, NOT CACHE: `get_cached_answer` excludes every `[case] ` row,
+        # so this can never be served back to another patient's question
+        # (invariant 21). The write is deliberately AFTER `update_job` — a
+        # history failure must not cost the clinician the answer already on
+        # screen, so it cannot take the job down with it.
+        try:
+            from rag import save_case_history
+            save_case_history(conv_id, original_q, answer, papers)
+        except Exception as e:
+            print(f"  [case] history save failed (answer unaffected): {e}")
     except Exception as e:
         update_job(job_id, status="error", progress=100, error=str(e), message=str(e))
 
