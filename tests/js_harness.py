@@ -42,6 +42,11 @@ RENDER_DEPS = [
     # re-renders the archive on every read — so both regexes and the shared
     # `_stashOne` are dependencies now.
     "_QUARANTINE_BLOCK_RE_JS", "_QUARANTINE_LEGACY_RE_JS",
+    # Invariant 3 — the citation replacer is shared by `renderAnswer` and
+    # `_unverifiedInline` now, because a quarantine block was the one rendered
+    # surface where `[[PMID:N]]` survived raw (30 of them on one stored
+    # curriculum). It must be extracted before both of them.
+    "_citeMarkersToPills",
     "_unverifiedInline", "_stashOne", "_stashUnverifiedBlocks",
     # the renderers themselves
     "renderAnswer", "_recommendationTier", "renderAnswerWithBox",

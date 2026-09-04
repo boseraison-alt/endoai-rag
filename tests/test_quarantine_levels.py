@@ -200,6 +200,14 @@ class TestA22fTheWordingClaimsOnlyWhatIsKnown:
         name, which is stronger than silence. So every occurrence outside a
         comment must be preceded by a prohibition. A first version of this test
         matched the prohibition itself and failed on the fix.
+
+        A THIRD category exists now: the read-time STRIPPER. 12 occurrences of
+        the phrase survive in the stored corpus, written before A22f fixed the
+        generator, and `_A22F_OVERCLAIM_RE` removes them on every read. A
+        pattern that deletes the phrase is the opposite of a prompt offering
+        it, so it is allowed BY NAME — not by a general loosening that a prompt
+        could slip through. `test_the_overclaim_is_stripped_from_stored_text`
+        below is what holds it to actually doing the job.
         """
         src = (ROOT / "endo_ai.py").read_text(encoding="utf-8")
         bad = []
@@ -207,10 +215,55 @@ class TestA22fTheWordingClaimsOnlyWhatIsKnown:
             line_start = src.rfind("\n", 0, m.start()) + 1
             if src[line_start:m.start()].lstrip().startswith("#"):
                 continue                      # a comment recording the defect
-            window = src[max(0, m.start() - 120):m.start()].lower()
-            if not re.search(r"do not (?:say|write)|never (?:say|write)", window):
+            window = src[max(0, m.start() - 120):m.start()]
+            if "_A22F_OVERCLAIM_RE = re.compile(" in window:
+                continue                      # the stripper's own pattern
+            if not re.search(r"do not (?:say|write)|never (?:say|write)",
+                             window.lower()):
                 bad.append(src[max(0, m.start() - 90):m.end() + 20])
         assert not bad, bad
+
+    def test_the_overclaim_is_stripped_from_stored_text(self):
+        """The pair for the allowance above: the stripper must actually strip.
+
+        Three real shapes exist in the corpus — a colon, a comma with the
+        phrase embedded mid-sentence, and a 90-character parenthetical. A first
+        version of the pattern required a <=60-char parenthetical AND a colon
+        and removed only 6 of the 12.
+        """
+        cases = [
+            ("From the wider literature (which this search did not return): "
+             "AAE and ESE position statements endorse epinephrine.",
+             "AAE and ESE position statements endorse epinephrine."),
+            ("From the wider literature (which this search did not return), "
+             "the decision to attempt removal is driven by the fragment.",
+             "The decision to attempt removal is driven by the fragment."),
+            ("From the wider literature (which this search did not return, and "
+             "which should be consulted directly): calcium hydroxide is used.",
+             "Calcium hydroxide is used."),
+        ]
+        for raw, want in cases:
+            got = e._strip_a22f_overclaim(raw)
+            assert got == want, "%r -> %r, wanted %r" % (raw, got, want)
+            assert "wider literature" not in got.lower()
+
+    def test_the_stripper_runs_on_the_path_that_serves_answers(self):
+        """Rule 14 — the test above calls the helper directly, so it passes
+        even when nothing calls it. This one goes through the function every
+        served and cached answer actually passes through."""
+        raw = ("## Findings\n\n"
+               "> ⚠ **NOT FROM THE EVIDENCE BASE — UNVERIFIED**\n"
+               ">\n"
+               "> From the wider literature (which this search did not "
+               "return): AAE and ESE position statements endorse epinephrine "
+               "— standard practice, not from the retrieved evidence base.\n"
+               ">\n"
+               "> **Consult directly:** the specialty guidelines for this "
+               "question — Curo has not retrieved or checked them.\n")
+        served, _ = e.finalise_answer_text(raw)
+        assert "wider literature" not in served.lower(), served
+        assert "AAE and ESE position statements" in served, (
+            "the strip removed the passage instead of the lead-in")
 
     def test_the_detector_still_matches_the_old_phrase(self):
         """Stored answers use it, and a model may still write it. Narrowing

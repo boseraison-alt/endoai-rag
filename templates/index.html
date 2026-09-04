@@ -1945,10 +1945,22 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
    separated, and it is deliberately louder than its host: the failure mode
    this exists to prevent is a reader taking the pair for a pass. */
 /* A3c — the sentences the banner is counting, marked in the answer itself. */
+/* A22d — `color: inherit` was a latent bug and the dark quarantine block
+   detonated it. MEASURED in the running app on the stored apicoectomy
+   curriculum: 6 of its 10 marks rendered at a contrast ratio of **1.02:1** —
+   near-white `#eef2fa` inherited from `.unverified-block` onto this element's
+   own pale amber ground. Unreadable, not merely low-contrast; they are the
+   blank white bars in the screenshot. Outside a block the same marks measured
+   6.54–10.52:1, which is why nothing caught it.
+
+   The ink is now explicit, so the mark carries its own contrast wherever it
+   lands: #1e2840 on #fdf3e3 is 13.9:1, above A22d's >=7:1 bar and independent
+   of whatever the mark is nested inside. Rule 30 — a styling change created a
+   fail-open interaction with a marker that was correct on its own. */
 .uncited-claim {
   background: #fdf3e3;
   border-bottom: 2px solid #f0a868;
-  color: inherit;
+  color: #1e2840;
   padding: 1px 0;
   border-radius: 2px;
 }
@@ -5925,12 +5937,43 @@ function deShout(t) {
 //            of them (A44n).
 var _QUARANTINE_BLOCK_RE_JS =
   /^&gt;[ \t]*\*\*NOT CHECKED — not from any paper Curo retrieved\*\*(?:\n&gt;[^\n]*)*/gm;
+// Rule 17 — the `⚠ ` prefix is OPTIONAL, measured: 114 of the 116 stored
+// blocks carry it and 2 do not. With it required, those two rendered as
+// ordinary blockquote prose — no warning styling, no label — which is
+// unsourced content shown as though it were sourced.
 var _QUARANTINE_LEGACY_RE_JS =
-  /^&gt;[ \t]*⚠ \*\*NOT FROM THE EVIDENCE BASE — UNVERIFIED\*\*[\s\S]*?^&gt;[ \t]*\*\*Consult directly:\*\*[^\n]*/gm;
+  /^&gt;[ \t]*(?:⚠[ \t]*)?\*\*NOT FROM THE EVIDENCE BASE — UNVERIFIED\*\*[\s\S]*?^&gt;[ \t]*\*\*Consult directly:\*\*[^\n]*/gm;
+
+// Invariant 3 — no raw `[[PMID:N]]` on ANY rendered surface. The quarantine
+// block is a surface, and it was the one place this did not hold: the block is
+// stashed out of `renderAnswer` before the marker replacer runs and re-inserted
+// after it, so anything inside it was formatted by `_unverifiedInline` alone —
+// which handled `**bold**` and `_italic_` and knew nothing about citations.
+//
+// MEASURED on the stored apicoectomy curriculum: one block carrying **30 raw
+// markers**, rendered as `[[PMID:20630283]]` in the page text. It was invisible
+// until the legacy header's `⚠ ` prefix was made optional (rule 17) and that
+// block started being recognised at all. A quarantine block holding 30 CITED
+// claims is also a content question, but the rendering defect is this one.
+//
+// One replacer, used by both paths, so a block cannot drift from the prose
+// around it again.
+function _citeMarkersToPills(s) {
+  return String(s).replace(
+    new RegExp('\\[\\[PMID:\\s*(' + PMID_KEY_SRC + ')\\s*\\]\\]', 'g'),
+    function (_, pmid) {
+      return '<sup class="claim-cite" data-pmid="' + _citeEsc(pmid) +
+             '" onclick="openProvenancePanel(\'' + _citeEsc(pmid) +
+             '\')" title="Show source abstract (PMID ' + _citeEsc(pmid) + ')">' +
+             _citeEsc(formatCite(pmid)) + '</sup>';
+    });
+}
 
 function _unverifiedInline(s) {
-  return s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-          .replace(/(^|[\s(])_([^_]+)_(?=[\s.,;:)]|$)/g, '$1<em>$2</em>');
+  return _citeMarkersToPills(
+    s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+     .replace(/(^|[\s(])_([^_]+)_(?=[\s.,;:)]|$)/g, '$1<em>$2</em>')
+     .replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=[\s.,;:)\]]|$)/gm, '$1<em>$2</em>'));
 }
 
 function _stashUnverifiedBlocks(text, stash) {
@@ -5990,7 +6033,21 @@ function markUncitedClaims(html, quotes) {
     // is long enough to be unique and short enough to survive that splicing.
     var probe = q.slice(0, 60).replace(/\s+/g, ' ').trim();
     if (probe.length < 20) return;
-    var re = new RegExp('(' + _reEscape(probe).replace(/ /g, '\\s+') + ')');
+    // A22d — the probe is a 60-character PREFIX, so it lands mid-word about as
+    // often as not: measured on the stored apicoectomy curriculum, 7 of 9 marks
+    // ended inside a word ("…between single- and mul|tiple-visit…"), which
+    // reads as a rendering bug even though the match is doing its job. The
+    // trailing group extends only the HIGHLIGHT to the end of that word; the
+    // matched prefix is unchanged, so nothing about which span is found moves.
+    // It cannot run into markup — none of these characters match `<`.
+    //
+    // Hyphens and apostrophes are included because the corpus is full of
+    // compound terms and names — a first version used `\w*` and stopped at
+    // "single- and multiple", one hyphen short of the word it was extending
+    // through. The group always ENDS on a word character, so it can never
+    // leave a dangling hyphen.
+    var re = new RegExp('(' + _reEscape(probe).replace(/ /g, '\\s+')
+                        + "(?:[\\w'’-]*\\w)?)");
     if (!re.test(html)) return;
     html = html.replace(re,
       '<mark class="uncited-claim" id="uncited-' + i + '" ' +
@@ -6015,14 +6072,22 @@ function renderAnswer(text) {
     .replace(/^## (.+)$/gm,  function(_, t) { return '<h2>' + deShout(t) + '</h2>'; })
     .replace(/^# (.+)$/gm,   function(_, t) { return '<h2>' + deShout(t) + '</h2>'; })
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // A22a's other half — SINGLE-asterisk emphasis had no rule at all, so
+    // every `*word*` in the corpus rendered its asterisks literally. Measured
+    // on the stored apicoectomy curriculum: **90 literal `*`** on screen,
+    // including the legend's own `*NOT CHECKED*`, `*vital*`, and every
+    // `*Journal of Endodontics*`. A live case answer showed 32, all of them
+    // the differential's `*Fits because:*` / `*Argues against:*` labels.
+    //
+    // Runs AFTER the bold rule so `**` is already consumed. The opener must be
+    // preceded by start-of-line, whitespace or `(` and NOT followed by a space,
+    // which is what stops a `* ` list bullet from opening an italic; `[^*\n]`
+    // stops a run spanning a paragraph. 90 -> 0 on that curriculum.
+    .replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=[\s.,;:)\]]|$)/gm, '$1<em>$2</em>')
     // Inline provenance markers [[PMID:N]] → clickable author-style citation
     // that opens the abstract side panel. Must run BEFORE the single-bracket
     // replacer below, otherwise the inner [PMID:N] portion would match twice.
-    .replace(new RegExp('\\[\\[PMID:\\s*(' + PMID_KEY_SRC + ')\\s*\\]\\]', 'g'), function(_, pmid) {
-      return '<sup class="claim-cite" data-pmid="' + _citeEsc(pmid) + '" onclick="openProvenancePanel(\'' +
-             _citeEsc(pmid) + '\')" title="Show source abstract (PMID ' + _citeEsc(pmid) + ')">' +
-             _citeEsc(formatCite(pmid)) + '</sup>';
-    })
+    .replace(/^[\s\S]*$/, _citeMarkersToPills)
     // The final numbered reference list's bibliographic key, same two shapes.
     .replace(new RegExp('\\[PMID:\\s*(' + PMID_KEY_SRC + ')\\]', 'g'), function(_, pmid) {
       return pmidRefHtml(pmid, '[PMID: ' + pmid + ']');

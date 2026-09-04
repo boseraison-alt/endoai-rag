@@ -5702,13 +5702,49 @@ _QUARANTINE_BLOCK_RE = re.compile(
 # written before today loses its block.
 _LEGACY_QUARANTINE_HEADER = "⚠ **NOT FROM THE EVIDENCE BASE — UNVERIFIED**"
 _LEGACY_QUARANTINE_FOOTER = "**Consult directly:**"
+
+# RULE 17 — MEASURED AGAINST THE VARIANTS THE CORPUS ACTUALLY CONTAINS.
+# The header exists in TWO shapes, not one: 114 blocks carry the `⚠ ` prefix
+# and **2 do not**. The constant above has the prefix baked in, so those two
+# blocks were invisible to every legacy-block reader — `_strip_quarantine_blocks`,
+# `_quarantine_content_only`, `_check_quarantine_reframe` and the browser's own
+# `_QUARANTINE_LEGACY_RE_JS`. They rendered as ORDINARY BLOCKQUOTE PROSE: no
+# warning styling, no label, and the A22f overclaim below sitting in plain text.
+# Unsourced content shown as if it were sourced is the exact failure the
+# quarantine exists to prevent.
+#
+# The prefix is optional in the PATTERN; the constant keeps its canonical form
+# for the `in` and `==` checks that emit it.
+_LEGACY_QUARANTINE_HEADER_BODY = "**NOT FROM THE EVIDENCE BASE — UNVERIFIED**"
 _LEGACY_QUARANTINE_BLOCK_RE = re.compile(
-    r"(?:^>[^\n]*\n?)*?^>[ \t]*"
-    + re.escape(_LEGACY_QUARANTINE_HEADER)
+    r"(?:^>[^\n]*\n?)*?^>[ \t]*(?:⚠[ \t]*)?"
+    + re.escape(_LEGACY_QUARANTINE_HEADER_BODY)
     + r"[\s\S]*?^>[ \t]*"
     + re.escape(_LEGACY_QUARANTINE_FOOTER)
     + r"[^\n]*\n?",
     re.MULTILINE)
+
+# A22f — "From the wider literature (which this search did not return)" asserts
+# that the passage IS in the published literature and merely went unretrieved.
+# Curo cannot know that: some of it is convention that never was published. The
+# block's own header already says what the passage is, so the lead-in is deleted
+# rather than reworded. MEASURED: 8 occurrences across the stored corpus, all
+# still rendering, because A22f fixed the GENERATOR and this text predates it.
+# Written to the variants the corpus contains, not to one example (rule 17).
+# The first attempt required a <=60-char parenthetical and a trailing colon and
+# stripped only 6 of the 12. The three real shapes are:
+#   "…(which this search did not return): "            colon
+#   "…(which this search did not return), the decision" comma, embedded
+#   "…(…, and which should be consulted directly): "    a 90-char parenthetical
+# The following letter is capitalised, so removing an embedded lead-in leaves a
+# sentence rather than a fragment starting mid-clause.
+_A22F_OVERCLAIM_RE = re.compile(
+    r"From the wider literature\s*\([^)]{0,200}\)\s*[:,]?\s*(?P<next>[A-Za-z])",
+    re.IGNORECASE)
+
+
+def _strip_a22f_overclaim(text: str) -> str:
+    return _A22F_OVERCLAIM_RE.sub(lambda m: m.group("next").upper(), text or "")
 
 
 def _any_quarantine_block_re():
@@ -5776,7 +5812,9 @@ def _repair_split_list_items(answer: str) -> str:
     block_re = re.compile(r"(?:^>[^\n]*\n?)+", re.MULTILINE)
     for m in block_re.finditer(answer):
         block = m.group(0)
-        if not (_LEGACY_QUARANTINE_HEADER in block
+        # The BODY of the legacy header, not the constant: 2 of the 116 stored
+        # blocks omit the `⚠ ` prefix (rule 17).
+        if not (_LEGACY_QUARANTINE_HEADER_BODY in block
                 or _QUARANTINE_HEADER in block):
             continue
 
@@ -6139,6 +6177,9 @@ def finalise_answer_text(answer: str):
     Returns `(answer, quarantined_blocks)`.
     """
     answer = strip_impact_factor(answer)
+    # A22f — the overclaiming lead-in goes before anything else reads the text,
+    # so no downstream pass can carry it into a quote, a block or a slide.
+    answer = _strip_a22f_overclaim(answer)
     # A22a — before the quarantine pass, not after: it unwraps the 30 stored
     # blocks that were cut away from their list number so the pass below can
     # re-treat them at the current level. Running it afterwards would re-split
