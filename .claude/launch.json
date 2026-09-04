@@ -24,6 +24,12 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["-c", "import app; app.app.run(debug=False, host='127.0.0.1', port=5004, threaded=True)"],
       "port": 5004
+    },
+    {
+      "name": "endo-ai-demo",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-c", "import app; app.app.run(debug=False, host='127.0.0.1', port=5000, threaded=True)"],
+      "port": 5000
     }
   ]
 }
