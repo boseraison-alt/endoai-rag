@@ -1081,6 +1081,26 @@ audio#mainAudioPlayer {
   min-height: 0;
 }
 
+/* A16d — an open case thread is content on screen, so the landing column comes
+   down. Without this the thread does not overlap the landing, it is STARVED by
+   it: `.case-section.active` is `flex:1; min-height:0`, the landing's 531px
+   leaves 11, and `.chat-container` collapses to zero with the conversation
+   inside it. See `_syncCaseLanding`. */
+body.case-thread-open #lockup,
+body.case-thread-open #modePromise,
+body.case-thread-open #welcomeSection { display: none !important; }
+/* …but NOT the whole input card. The mode chips live inside its composer bar
+   (A19 moved them there) and are the only way out of a case thread — hiding
+   the card traps the clinician in the conversation with no route back to
+   Literature or Curriculum. The card stays and loses its INPUT instead: the
+   thread's own composer is already the place follow-ups are typed (A15b), so
+   what is left is exactly a mode switcher. */
+body.case-thread-open #qInput,
+body.case-thread-open #askBtn { display: none !important; }
+/* The card's own padding is 0 — the composer bar carries it — so the chips
+   would sit flush against the card edge once the textarea is gone. */
+body.case-thread-open #inputCard { padding: 8px 12px; }
+
 /* Compact mode bar in Case Discussion — reclaim vertical space */
 body.mode-case .mode-tab-desc { display: none; }
 body.mode-case .mode-tab-icon { font-size: 14px; margin-bottom: 0; }
@@ -4711,6 +4731,10 @@ function setMode(m) {
   // A19f — the lockup and the cards are the landing screen and travel
   // together; one call so neither can be left behind by the other.
   setLandingVisible(modeShows(m, 'welcome') && !currentJob);
+  // A16d — …and an open case thread is content on screen, the same way a job
+  // is. Runs after the line above and after the input-card display is set, so
+  // it is the last word on both.
+  _syncCaseLanding();
 
   // A19e — History is a drawer reached from the top bar, and the bar itself
   // belongs to the search modes; Assessment and Profile are their own pages.
@@ -4763,6 +4787,35 @@ function setLandingVisible(on) {
   var lk = document.getElementById('lockup');
   if (ws) ws.style.display = on ? 'block' : 'none';
   if (lk) lk.style.display = on ? 'flex' : 'none';
+}
+
+// A16d — Case mode is the one mode whose thread does not scroll the page: the
+// `.content-scroll:has(#caseSection.active)` rule makes `.content` a column
+// flex box and gives `.case-section.active` `flex:1; min-height:0`. A landing
+// column left standing therefore does not OVERLAP the thread, it STARVES it —
+// lockup 188 + input card 198 + welcome cards 125 + promise 20 = 531 of 623px,
+// `.case-section` gets the 11px left over, and `.chat-container` collapses to
+// zero with the whole conversation inside it. Nothing is on screen and nothing
+// errors.
+//
+// Before A15 the only way into `sendCaseMessage` was the thread's own send
+// button, reached after `setMode` had already laid the page out. A15 made the
+// main bar a second entry point and that path skipped the teardown.
+//
+// One predicate, asked by both entry points and by `setMode`, so re-entering
+// Case with an open thread cannot resurrect the landing behind it.
+function _caseThreadOpen() {
+  return mode === 'case' && caseMessages.length > 0;
+}
+
+// A class, not a handful of inline `display:none`s. `setMode` restores
+// #inputCard and `setLandingVisible` restores #lockup/#welcomeSection, but
+// NOTHING restores #modePromise — an inline hide there would leak into every
+// later mode. A class toggled on both edges cannot leak, and the rule needs
+// `!important` only because the values it overrides are inline styles written
+// by those two functions.
+function _syncCaseLanding() {
+  document.body.classList.toggle('case-thread-open', _caseThreadOpen());
 }
 
 // A19d — the cards are read from the active mode's own MODES entry, so a mode
@@ -6799,6 +6852,11 @@ function sendCaseMessage() {
   // follow-ups. Routed through the same predicate rather than shown directly.
   var _composer = document.querySelector('.chat-input-card');
   if (_composer) _composer.style.display = modeShows(mode, 'caseComposer') ? '' : 'none';
+
+  // A16d — the thread existing is also what takes the landing column down.
+  // The `caseMessages.push` above has already run, so the predicate is true by
+  // the time it is asked — on the FIRST message, which is the one that needs it.
+  _syncCaseLanding();
 
   // Fade out welcome hint on first message
   var welcome = document.getElementById('caseWelcome');

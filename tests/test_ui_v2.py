@@ -488,6 +488,12 @@ function closeHistDrawer() {}
 """
 
 SHELL_FNS = ["MODES", "SEARCH_MODES", "modeShows", "_show",
+             # A16d — `setMode` calls `_syncCaseLanding` after the landing
+             # decision, so an open case thread cannot resurrect the landing
+             # column that would starve it. Both helpers are dependencies of
+             # `setMode` now; leaving them out is the exact drift the
+             # `js_harness` docstring describes, and it turned this file red.
+             "_caseThreadOpen", "_syncCaseLanding",
              "setMode", "setLandingVisible", "renderWhatCards"]
 
 
