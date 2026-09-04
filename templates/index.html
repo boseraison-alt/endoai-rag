@@ -2874,6 +2874,26 @@ body.mode-case .mode-tab      { padding: 7px 16px 6px; }
   color: #536176;
   margin-top: 4px;
 }
+/* A44d — the provenance a curriculum already computes, in one row instead of
+   scattered. Mono, because these are counts and identifiers, not prose. */
+.masthead-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.masthead-chip {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #1e2840;
+  background: #dfe5ee;
+  border: 1px solid #ccd6e4;
+  border-radius: 4px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+.masthead-chip b { font-weight: 700; }
 .profile-learn-viewer-close {
   background: none;
   border: none;
@@ -9009,21 +9029,74 @@ function profileOpenLearnViewer(filename) {
       }
       titleEl.textContent = rec.question || 'Untitled';
       var ts = rec.timestamp ? new Date(rec.timestamp).toLocaleString() : '';
-      metaEl.textContent = [
-        ts,
-        rec.total_papers ? (rec.total_papers + ' papers') : null,
-        rec.cost_usd ? ('$' + Number(rec.cost_usd).toFixed(2)) : null,
-      ].filter(Boolean).join(' · ');
+      metaEl.textContent = ts;
       setCitationMeta(rec.papers || []);
       // A16b — the same marking the live path applies, so a report opened from
       // history shows the sentences its banner is counting.
       bodyEl.innerHTML = markUncitedClaims(renderAnswer(rec.answer || ''),
                                            _uncitedClaimQuotes(rec.answer || ''));
       buildCurriculumToc(bodyEl, document.getElementById('ppLearnToc'));
+      buildMastheadChips(rec, bodyEl, document.getElementById('ppLearnChips'));
     })
     .catch(function() {
       bodyEl.innerHTML = '<div class="profile-list-empty">Failed to load.</div>';
     });
+}
+
+// A44d — PROVENANCE AS ONE MASTHEAD ROW, not scattered.
+//
+// Everything here is already computed; it was spread across a meta line, the
+// evidence-shape chip and nowhere. Counts that describe the DOCUMENT (modules,
+// citations) are read off the rendered page for the same reason the TOC is —
+// a count that can disagree with what is on screen eventually does.
+//
+// A chip is emitted only when its value exists. A11 asked for the build hash to
+// be visible and it is NOT here: `learn_history` records carry question,
+// timestamp, cost_usd, total_papers, avg_paper_score, top_pmids and papers, and
+// no build provenance at all. Showing "unknown" would be inventing a field;
+// the honest output is no chip, and the gap is recorded in the report.
+var TIER_LABELS = {
+  cochrane: 'Cochrane', level1: 'Level I', classic: 'Classic',
+  level2: 'Level II', level3a: 'Level IIIa', level3b: 'Level IIIb',
+  level4: 'Level IV', level5: 'Level V', invitro: 'In vitro',
+};
+
+function buildMastheadChips(rec, bodyEl, chipsEl) {
+  if (!chipsEl) return;
+  chipsEl.innerHTML = '';
+  rec = rec || {};
+  var chips = [];
+
+  var modules = [].slice.call((bodyEl || document).querySelectorAll('h2'))
+    .filter(function (h) { return /^module\s*\d/i.test((h.textContent || '').trim()); })
+    .length;
+  var cites = (bodyEl || document).querySelectorAll('.claim-cite').length;
+  var distinct = new Set([].slice.call(
+    (bodyEl || document).querySelectorAll('.claim-cite'))
+    .map(function (p) { return p.dataset.pmid; })).size;
+
+  if (rec.total_papers) chips.push(['papers', rec.total_papers]);
+  if (distinct)         chips.push(['cited', distinct + ' of ' + (rec.total_papers || '?')]);
+  if (modules)          chips.push(['modules', modules]);
+  if (cites)            chips.push(['citations', cites]);
+  if (rec.avg_paper_score) chips.push(['mean score', Number(rec.avg_paper_score).toFixed(1)]);
+
+  // Tier counts, strongest first, from the papers the record stored.
+  var tiers = {};
+  (rec.papers || []).forEach(function (p) {
+    var k = p && p.level_key; if (!k) return;
+    tiers[k] = (tiers[k] || 0) + 1;
+  });
+  Object.keys(TIER_LABELS).forEach(function (k) {
+    if (tiers[k]) chips.push([TIER_LABELS[k], tiers[k]]);
+  });
+
+  if (rec.cost_usd) chips.push(['cost', '$' + Number(rec.cost_usd).toFixed(2)]);
+
+  chipsEl.innerHTML = chips.map(function (c) {
+    return '<span class="masthead-chip">' + _citeEsc(String(c[0])) +
+           ' <b>' + _citeEsc(String(c[1])) + '</b></span>';
+  }).join('');
 }
 
 // A44b — TABLE OF CONTENTS FOR A DOCUMENT THAT HAD NO NAVIGATION.
@@ -9340,6 +9413,7 @@ loadProfile();
       <div>
         <div class="profile-learn-viewer-title" id="ppLearnViewerTitle"></div>
         <div class="profile-learn-viewer-meta" id="ppLearnViewerMeta"></div>
+        <div class="masthead-chips" id="ppLearnChips"></div>
       </div>
       <button class="profile-learn-viewer-close" onclick="closeLearnViewer()" aria-label="Close">×</button>
     </div>

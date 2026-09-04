@@ -158,6 +158,80 @@ class TestWidth:
         pg.close()
 
 
+class TestMastheadChips:
+    """A44d — the provenance a curriculum already computes, in one row.
+
+    Verified in the running app on the stored apicoectomy record:
+
+        papers 95 · cited 40 of 95 · modules 3 · citations 316 ·
+        mean score 60.9 · Cochrane 11 · Level I 30 · Level II 14 ·
+        Level IIIa 13 · Level IIIb 3 · Level IV 14 · Level V 10 · cost $1.82
+
+    The tier counts sum to 95, which is `total_papers`. And `modules 3`
+    independently corroborates the missing `## Module 2` heading — the document
+    claims four modules and carries three headings.
+    """
+
+    REC = {
+        "total_papers": 95, "cost_usd": 1.8203, "avg_paper_score": 60.9,
+        "papers": ([{"level_key": "cochrane"}] * 11
+                   + [{"level_key": "level1"}] * 30
+                   + [{"level_key": "level2"}] * 14),
+    }
+
+    def _chips(self, browser, rec, markdown):
+        pg = _page(browser)
+        out = pg.evaluate("""([rec, md]) => {
+            const body = document.getElementById('ppLearnViewerBody');
+            const chips = document.getElementById('ppLearnChips');
+            body.innerHTML = renderAnswer(md);
+            buildMastheadChips(rec, body, chips);
+            return [...chips.querySelectorAll('.masthead-chip')]
+                     .map(e => e.textContent.trim());
+        }""", [rec, markdown])
+        pg.close()
+        return out
+
+    def test_counts_and_tiers_render_strongest_first(self, browser):
+        chips = self._chips(browser, self.REC, CURRICULUM)
+        assert "papers 95" in chips, chips
+        assert "cost $1.82" in chips, chips
+        assert chips.index("Cochrane 11") < chips.index("Level I 30") \
+            < chips.index("Level II 14"), chips
+
+    def test_modules_are_counted_from_the_rendered_page(self, browser):
+        """CURRICULUM carries `Module 1` and `Module 3` and no `Module 2` —
+        the same gap the real document has. The chip must report 2, not 3."""
+        chips = self._chips(browser, self.REC, CURRICULUM)
+        assert "modules 2" in chips, chips
+
+    def test_a_missing_field_emits_no_chip_rather_than_unknown(self, browser):
+        """A11 wanted the build hash visible and `learn_history` does not store
+        it. Showing "unknown" would be inventing a field."""
+        chips = self._chips(browser, {"total_papers": 12}, CURRICULUM)
+        joined = " ".join(chips).lower()
+        assert "papers 12" in chips, chips
+        assert "cost" not in joined, chips
+        assert "unknown" not in joined and "n/a" not in joined, chips
+
+    def test_the_row_is_cleared_between_reports(self, browser):
+        pg = _page(browser)
+        out = pg.evaluate("""([rec, md]) => {
+            const body = document.getElementById('ppLearnViewerBody');
+            const chips = document.getElementById('ppLearnChips');
+            body.innerHTML = renderAnswer(md);
+            buildMastheadChips(rec, body, chips);
+            const first = chips.querySelectorAll('.masthead-chip').length;
+            buildMastheadChips({}, body, chips);
+            return [first, chips.querySelectorAll('.masthead-chip').length];
+        }""", [self.REC, CURRICULUM])
+        pg.close()
+        first, second = out
+        assert first > 5, first
+        assert second < first, (
+            "the previous report's chips are still in the masthead: %s" % out)
+
+
 class TestWhatTheTocRevealed:
     """A44b was a navigation fix. It is also an instrument, and the first thing
     it measured was that the generator's headings are not what they claim.
