@@ -3122,6 +3122,109 @@ def _demote_one_tier(level_key: str) -> str:
     return _DEMOTABLE_TIERS[min(i + 1, len(_DEMOTABLE_TIERS) - 1)]
 
 
+# ── G1 — A WITHDRAWN SOURCE IS NEVER CITED ──
+#
+# Cochrane sits at the TOP of the tier ladder, so a withdrawn Cochrane review
+# retrieved live would be presented as the strongest evidence in the answer.
+# Three endodontic reviews are withdrawn — CD007997 (post-endodontic pain),
+# CD005408 (traumatised permanent front teeth), CD004623 (posts) — and the
+# manifest carries a fourth withdrawn document, SDCEP-BISPHOSPHONATES-2011.
+#
+# MEASURED (A1): none of them is in the library today and none is cited, so
+# this gate is PROSPECTIVE. It exists because the next live search or the next
+# ingest can pull one in, and nothing would have stopped it.
+#
+# EXCLUDED, not badged. `has_retraction` already renders a badge, and a badge
+# is the right treatment for "treat with caution". Withdrawn is different: the
+# publisher has removed the conclusions, so there is nothing left to weigh.
+#
+# TWO INDEPENDENT SIGNALS, because rule 17 says match the variants the corpus
+# actually contains — and here it contains NONE, so the shapes cannot be
+# measured and a single hard-coded form would be a guess:
+#   1. the manifest's own withdrawn ids (CD numbers, resolved from the seed)
+#   2. PubMed's own marking — Cochrane titles a withdrawn review "(Withdrawn)"
+#      and tags the record with the "Withdrawn Publication" type
+_WITHDRAWN_SEED = None
+
+
+def _withdrawn_seed():
+    """CD numbers and ids the manifest marks withdrawn. Loaded once."""
+    global _WITHDRAWN_SEED
+    if _WITHDRAWN_SEED is None:
+        ids = set()
+        try:
+            import json as _json
+            import os as _os
+            path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                                 "data", "guidelines_seed.json")
+            with open(path, encoding="utf-8") as fh:
+                for g in _json.load(fh).get("guidelines", []):
+                    if (g.get("status") or "").lower() != "withdrawn":
+                        continue
+                    if g.get("pmid"):
+                        ids.add(str(g["pmid"]))
+                    # The manifest id itself, so a document ingested under its
+                    # slug is caught. SDCEP-BISPHOSPHONATES-2011 is the fourth
+                    # withdrawn entry and carries NEITHER a pmid nor a CD
+                    # number — without this it would be unmatchable, and the
+                    # gate would silently cover three of four.
+                    if g.get("id"):
+                        ids.add(str(g["id"]))
+                    m = re.search(r"(CD\d{6})", g.get("id") or "", re.I)
+                    if m:
+                        ids.add(m.group(1).upper())
+        except Exception as e:
+            print(f"  [G1] withdrawn seed unavailable: {e}")
+        _WITHDRAWN_SEED = ids
+    return _WITHDRAWN_SEED
+
+
+_WITHDRAWN_TITLE_RE = re.compile(
+    r"\bwithdrawn\b(?!\s+(?:consent|from\s+the\s+stud|participants?))", re.I)
+
+
+def is_withdrawn(paper: dict):
+    """(True, reason) when this source has been withdrawn by its publisher."""
+    seed = _withdrawn_seed()
+    pmid = str(paper.get("pmid") or "")
+    if pmid and pmid in seed:
+        return True, "manifest lists it as withdrawn"
+
+    hay = " ".join(str(paper.get(k) or "") for k in ("title", "journal", "doi"))
+    for cd in (i for i in seed if i.upper().startswith("CD")):
+        if cd.lower() in hay.lower():
+            return True, "%s is a withdrawn Cochrane review" % cd
+
+    # PubMed's own signal. Restricted to the TITLE: "withdrawn" appears in
+    # ordinary abstracts ("two participants withdrew"), and the negative
+    # lookahead above keeps "withdrawn consent" out.
+    if _WITHDRAWN_TITLE_RE.search(str(paper.get("title") or "")):
+        return True, "title carries a withdrawal marker"
+    for t in (paper.get("publication_types") or []):
+        if "withdrawn" in str(t).lower():
+            return True, "PubMed type: %s" % t
+    return False, ""
+
+
+def _exclude_withdrawn(scored_papers: list) -> list:
+    """Drop every withdrawn source, and say how many and why (rule 5)."""
+    if not scored_papers:
+        return scored_papers
+    kept, dropped = [], []
+    for p in scored_papers:
+        bad, why = is_withdrawn(p)
+        if bad:
+            dropped.append((p.get("pmid"), why))
+            continue
+        kept.append(p)
+    if dropped:
+        print("    [withdrawn] excluded %d source(s) — never cite a withdrawn "
+              "document:" % len(dropped))
+        for pmid, why in dropped:
+            print("      %s — %s" % (pmid, why))
+    return kept
+
+
 def _apply_supersession(scored_papers: list) -> list:
     """Live-path twin of the library's superseded_by exclusion.
 
@@ -4300,6 +4403,9 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 print(f"    [tier] demoted {demoted} non-Cochrane review(s) "
                       f"from the cochrane tier to level1")
 
+        # G1 before supersession: a withdrawn review must not survive long
+        # enough to be demoted-and-badged as merely superseded.
+        scored_papers = _exclude_withdrawn(scored_papers)
         scored_papers = _apply_supersession(scored_papers)
 
         if n_coi_papers:
