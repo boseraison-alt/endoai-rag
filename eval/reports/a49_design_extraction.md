@@ -259,5 +259,63 @@ Round-two effect on the distribution:
 the point themselves: false positives can only push the count *down*, never up,
 so no plausible error rate crosses a threshold of 60 from a measured max of 30.
 The direction that *could* have mattered is false negatives — genuine trials
-being dropped — and that is the one this round did not re-measure. It is the
-first thing the next session should look at.
+being dropped.
+
+---
+
+## ROUND THREE — the false-negative rate, which is the direction that mattered
+
+A stratified sample of **192 of the 858 rejected papers** was judged, covering
+every bucket a paper can be turned away into (in vitro 105, none-stated 26,
+level3a 17, level4 12, observational 9, animal 8, level5 6, unclear 6,
+protocol 2, level3b 1).
+
+```
+  raw                    9 false negatives / 192 judged = 4.7%
+  stratified estimate   ~42 genuine level2 papers turned away, of 858
+                        (band roughly 21-79)
+  recall                ~77%  -- the lane finds about three in four
+```
+
+**Zero level1 papers were missed anywhere in the sample.** No RCT, systematic
+review or meta-analysis was dropped. Every one of the nine misses is level2.
+
+**Where they concentrate, and it is not a veto over-firing.** Eight of nine sit
+in `(none stated)` — abstracts where *no pattern fired at all* — and one in
+`observational`. Every other bucket was clean: in vitro 0/105, retrospective
+0/17, animal 0/8, and the commentary veto correctly rejected all three of the
+hardest traps, papers quoting somebody else's RCT or systematic review
+verbatim.
+
+The systematic weakness is real and structural: **the extractor matches design
+LABELS, never design DESCRIPTIONS.** All eight misses return nothing matched
+while describing enrolment, arms, delivered treatment and scheduled follow-up
+in plain prose — e.g. 39932469, 143 teeth in three material arms with 6- and
+12-month follow-up.
+
+**The obvious fix was tested and rejected — by the auditor, on the code.** The
+proposal "read the title as design evidence" is a **no-op**: the title is
+already in the haystack (`extract_stated_design` builds it as
+`title + "\n" + abstract`). A probe of the real alternative — adding bare
+clinical-study phrases plus trial-registration identifiers — recovers only 3
+of the 8 known misses and sweeps in 5 others, one of which a judge confirmed
+is a *correct* rejection. The remaining five carry no design label anywhere and
+would need enrolment + intervention + follow-up inference, which a phrase
+matcher cannot do at any vocabulary size. **Not built**, and this is the reason.
+
+**Two instrument limits the audit surfaced, both now addressed or recorded:**
+
+- `PROVISIONAL_FETCH_DEPTH` was 200 against a measured maximum of 307
+  untyped-recent candidates, so ~107 candidates on that question were never
+  shown to the extractor — misses outside every recall measurement because
+  nothing ever judged them. **Raised to 400.**
+- `PROVISIONAL_MAX_ADMITTED` is 40, which sits **below** item 1's affordability
+  threshold of 60. The threshold test itself is unaffected —
+  `measure_design_all29.py` applies no cap and its max was 30 — but the lane
+  can never admit more than 40 however good recall becomes. Recorded in the
+  constant's comment so "max 30 against a threshold of 60" is never read as
+  headroom the lane would use.
+
+**Bottom line:** the lane under-delivers by about 1.4 papers per question, a
+1.26× volume gap. Real, bounded, and it changes no decision — recovering all of
+it leaves the top question at ~38 against a threshold of 60.
