@@ -40,9 +40,31 @@ QUARANTINED = [
     "AAE-PS-obturation", "AAE-PS-retreatment", "AAE-PS-safety",
 ]
 
+# A2 verified four records as naming real documents and kept them citeable.
+# THREE of those four still are. See QUARANTINED_LATER below for the fourth —
+# the A2 verdict on it was correct and was superseded by a different question.
 VERIFIED = [
-    "AAE-PS-diagnosis", "AAE-PS-vital-pulp", "ESE-QG-2006", "ESE-PS-VPT-2019",
+    "AAE-PS-diagnosis", "AAE-PS-vital-pulp", "ESE-QG-2006",
 ]
+
+# SUPERSEDED A2 VERDICT, recorded rather than edited away (rule 24).
+#
+# A2 asked "does this record name a real document?" and answered yes for
+# ESE-PS-VPT-2019, so it stayed citeable. That answer was right, and it was
+# not the only question. On 2026-09-05 the row was re-examined and the
+# document it names — ESE-DEEPCARIES-2019, PMID 30664240 — turned out to be
+# ALREADY IN THE LIBRARY from the verified manifest, with the verified title,
+# a confirmed accession and a NULL score. So the slug row is a second,
+# unverified copy of a document already present in verified form.
+#
+# It is quarantined for redundancy, NOT for the A2 failure modes: the document
+# is real, which is exactly why the duplicate is unnecessary. The reason string
+# names the survivor so a reader of the row can follow it.
+QUARANTINED_LATER = {
+    "ESE-PS-VPT-2019": ("duplicate_of:30664240",
+                        "A2-verified as real; later found to duplicate a "
+                        "manifest record already in the library"),
+}
 
 # Real, PubMed-indexed guidelines that also sit at level_key='guideline'.
 # They were never in scope and this is the guard that says so.
@@ -124,7 +146,7 @@ class TestTheRowsAreMarked:
         assert n == 12, f"only {n} of 12 quarantined rows still carry their text"
 
     @pytest.mark.parametrize("slug", VERIFIED)
-    def test_the_four_verified_are_untouched(self, slug):
+    def test_the_verified_records_are_untouched_by_A2(self, slug):
         conn = _db()
         cur = conn.cursor()
         try:
@@ -136,6 +158,32 @@ class TestTheRowsAreMarked:
             conn.close()
         assert row is not None, f"{slug} is missing from the library"
         assert row[0] == "", f"{slug} was quarantined; A2 verified it as real"
+
+    @pytest.mark.parametrize("slug", sorted(QUARANTINED_LATER))
+    def test_the_fourth_was_quarantined_later_for_a_different_reason(self, slug):
+        """A2's verdict stands and was superseded by a different question.
+
+        The distinction is load-bearing: quarantining this row for
+        `no_such_document` would assert the document is unreal, which is false
+        and would be a fabrication of the opposite kind. The reason string has
+        to say REDUNDANT, and it has to name the row that survives.
+        """
+        expected, _why = QUARANTINED_LATER[slug]
+        conn = _db()
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT COALESCE(quarantine_reason,'') "
+                        "FROM endo_papers_rag WHERE pmid = %s", (slug,))
+            row = cur.fetchone()
+        finally:
+            cur.close()
+            conn.close()
+        assert row is not None, f"{slug} was deleted; nothing here deletes rows"
+        assert row[0] == expected
+        assert not row[0].startswith(("wrong_year", "no_such_document")), (
+            "quarantined under an A2 failure mode, which would assert the "
+            "document is unreal — it is real, and that is why the copy is "
+            "redundant")
 
     @pytest.mark.parametrize("pmid", REAL_PMID_GUIDELINES)
     def test_real_indexed_guidelines_are_untouched(self, pmid):
@@ -169,7 +217,20 @@ class TestNoAnswerCanCiteOne:
         assert known is not None
         assert slug in known, (
             f"{slug} stopped resolving. A2 verified it against a real "
-            f"document and the batch requires the four to keep working.")
+            f"document and the batch requires those to keep working.")
+
+    @pytest.mark.parametrize("slug", sorted(QUARANTINED_LATER))
+    def test_the_later_quarantine_reaches_the_citation_gate_too(
+            self, slug, fresh_key_cache):
+        """Quarantining a row for redundancy has to make it uncitable by the
+        SAME mechanism as the A2 rows, not merely mark it in the table. This
+        row was citeable until 2026-09-05 and stored answers may reference it,
+        so the gate is what actually protects the reader."""
+        known = E._known_synthetic_keys()
+        assert known is not None, "gate disabled — DB unreachable"
+        assert slug not in known, (
+            f"{slug} is quarantined in the table but still resolves as a "
+            f"citation key — the gate reads a different source than the mark")
 
     def test_a_citation_to_a_quarantined_record_is_dropped(self, fresh_key_cache):
         text = ("Antibiotics are not indicated for a localised abscess "
@@ -253,10 +314,18 @@ def test_the_before_state_was_backed_up():
     try:
         cur.execute("SELECT COUNT(*) FROM endo_papers_rag_quarantine_backup")
         n = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM endo_papers_rag_quarantine_backup "
+                    "WHERE pmid = ANY(%s)", (QUARANTINED,))
+        n_a2 = cur.fetchone()[0]
     finally:
         cur.close()
         conn.close()
-    assert n == 12, f"backup table holds {n} rows, expected 12"
+    # The A2 twelve are the ones THIS script must be able to restore. The
+    # table is shared: 2026-09-05 added ESE-PS-VPT-2019 through
+    # null_guideline_scores.py, so a bare count of 12 stopped being the
+    # property worth asserting — it would fail on a correct, unrelated write.
+    assert n_a2 == 12, f"backup holds {n_a2} of the A2 twelve, expected 12"
+    assert n >= 12, f"backup table holds {n} rows, expected at least 12"
 
 
 def test_restore_is_a_documented_one_liner():
