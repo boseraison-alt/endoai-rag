@@ -1186,7 +1186,29 @@ RELEVANCE_GATE = {
     "min_relevant":     12,     # hits that must clear the floor to serve locally
     "min_hits":         20,     # raw KNN hits before relevance is even considered
     "max_topic_age_yr":  3,     # newest on-topic paper older than this -> go live
-    "max_per_tier":     25,     # cap per tier, mirrors the live path
+    # DOES NOT mirror the live path, and said it did for long enough that the
+    # claim is why nobody checked. MEASURED 2026-09-05
+    # (scripts/measure_library_route_floor.py):
+    #
+    #   library route     flat 25 per tier, and NO per-tier quality floor at
+    #                     all -- _apply_quality_threshold, _tier_floor,
+    #                     _tier_cap and MODE_TIER_QUOTAS have no caller in
+    #                     this module
+    #   live/curriculum   MODE_TIER_QUOTAS: level1 18, level4/level5/guideline 4,
+    #                     plus TIER_QUALITY_FLOORS per tier
+    #
+    # Consequence, measured against the live library: 516 of 3,346 rows
+    # (15.4%) sit below their own tier's floor and are served anyway,
+    # including 42 papers scoring 40.4-49.9 rendered under "Level I -- RCTs
+    # and Systematic Reviews". The weak tiers can contribute 25 each against
+    # level1's 25.
+    #
+    # NOT FIXED HERE deliberately: aligning it changes every library-routed
+    # answer and needs its own before/after across all three modes. And there
+    # is a trap -- 48 guideline rows store score NULL by design and
+    # rag_results_to_scored coalesces that to 0.0, so bolting on a quality
+    # floor naively deletes every guideline from library-served answers.
+    "max_per_tier":     25,
     # A1a. Every condition above is a question about the CORPUS — enough hits,
     # enough of them similar, at least one high tier, not stale. All four are
     # satisfiable by the endodontic HALF of a two-part question, which is how
