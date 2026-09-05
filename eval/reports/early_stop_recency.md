@@ -1,6 +1,8 @@
-# D1 — the early-stop recency exemption: MEASURED IN FULL, NOT SHIPPED
+# D1 — the early-stop recency exemption: NARROWED, AND SHIPPED
 
-**Date:** 2026-09-05 · **Verdict: both pre-declared thresholds breached. Parked.**
+**Date:** 2026-09-05, amended 2026-09-06
+**Verdict: the FULL exemption breached both thresholds. Narrowed to level2 +
+level3a it passes both, and is SHIPPED.**
 **Replay:** `python scripts/measure_early_stop_recency.py --json eval/reports/early_stop_recency.json`
 **Log:** `eval/logs/d1_full.log`
 
@@ -104,10 +106,75 @@ than every weak lane. That would cost a fraction of the 48 s and admit the
 papers the original concern was about. **It has not been measured and is not a
 recommendation — only the next hypothesis.**
 
-## Status
+## Status of the FULL exemption
 
-**PARKED.** No production code changed by D1. The harness
-(`scripts/measure_early_stop_recency.py`) and this measurement stand, so the
-next session can re-run a narrower variant against the same instrument. The
-test-pins the D1 spec asks for (a recent level2 paper survives the early stop,
-an old one does not) are **not written**, because nothing shipped to pin.
+**Rejected on both thresholds. Superseded by the amendment below**, which
+narrows it and passes. Everything above this line describes the full-exemption
+measurement and stands as the record of why the narrowing was necessary
+(rule 24) — the "if this comes back, narrow it" paragraph immediately above is
+what the next batch acted on.
+
+---
+
+# AMENDMENT, 2026-09-06 — narrowed, measured again, shipped
+
+**Replay:** `python scripts/measure_early_stop_recency.py --lanes level2,level3a --json eval/reports/early_stop_recency_narrow.json`
+
+## The result
+
+| | full exemption | **narrowed to level2 + level3a** | threshold |
+|---|---|---|---|
+| extra papers / question | 24.6 | **11.1** | ~15 → **PASS** |
+| extra latency / question | 48 s | **14 s** | ~30 s → **PASS** |
+| fires on | 17 of 20 | 17 of 20 | |
+| weak-lane papers in window | 419 | 189 | |
+
+**Both thresholds pass. Shipped**, with the test-pin the D1 spec asks for.
+
+## Why these two lanes
+
+They are the rungs where a Sulaiman-type paper lands once MEDLINE types it: a
+prospective trial or a retrospective cohort. **Sulaiman 2026** — the level2
+single-centre trial finding no association between haemostasis time and
+partial pulpotomy outcome up to 15 minutes — is the paper this exemption
+exists for, and the VPT curriculum builds a six-minute threshold into nine
+places.
+
+Case series, bench work and expert opinion from last year are rarely the paper
+that overturns a rule, and they were most of the 48 s.
+
+## The first narrowed measurement was wrong, and its own number gave it away
+
+`--lanes` filtered only what was **counted**. Pass 2 still swept every weak
+lane, so the harness reported **48 s** for the narrowed scope — *identical* to
+the full exemption. An exemption that fetches two lanes cannot cost the same
+as one that fetches eight; that equality is what exposed it.
+
+The harness now patches `tier_query_lanes` for pass 2 so the builder issues the
+strong lanes, the guideline lane (which survives the early stop in production)
+and the exempted lanes only, making **pass2 − pass1 exactly the cost of the
+lanes being exempted**. Re-measured: 14 s.
+
+The paper count from the broken run (12.1) was **valid** — it counted only
+level2/level3a papers. The latency was not, and a "both thresholds pass"
+verdict could not be claimed on it. Corrected figures: 11.1 papers, 14 s.
+
+## Implementation notes worth carrying
+
+- **The filter runs inside the fold, before the cap and before the text is
+  rebuilt.** Pruning after the fold would leave papers in `text` that are not
+  in `scored` — the 26%-visibility bug in a mirror.
+- **The window rounds outward.** PubMed metadata carries a year, not a month,
+  so 18 months is evaluated as 2 years and admits slightly *more* than stated.
+  The cost of that extra year is inside the 11.1; the cost of rounding the
+  other way is missing the paper the exemption exists for.
+- **An unreadable year fails closed.** A paper whose year cannot be read is not
+  evidence that it is recent, and admitting it would let the exemption widen on
+  bad metadata rather than on new literature.
+
+## What is still true from the original measurement
+
+The three questions where the early stop does **not** fire — `bisphosphonates`
+(6 strong), `pregnancy` (3), `sdf-pulp-outcomes` (10) — are the thin topics.
+**The exemption does nothing for the questions with the least evidence.** It is
+not a fix for sparse coverage, and the library floor still owns that problem.
