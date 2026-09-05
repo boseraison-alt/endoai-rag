@@ -119,8 +119,30 @@ def _esearch_hits_since(offset):
             # level1 records IS the term count for the run. This is how the
             # harness watches generator stability (1-term flapping was the
             # ±50% noise source) without needing a new field in the pipeline.
+            #
+            # ...EXCEPT that two things now write a level1 record that is not a
+            # generated term, and both postdate this counter. MEASURED
+            # 2026-09-05 on one 29-case run: of 131 level1 records, 77 were
+            # terms, 48 were `[broadened]` RE-queries of a term already
+            # counted, and 6 were the `early_stop` marker, which is not an
+            # esearch call at all. That inflated the count to 11-14 on seven
+            # LIVE cases and tripped the >10 contamination warning on every one
+            # of them — while the pid check, which is the real contamination
+            # detector, reported ZERO foreign rows on all 29.
+            #
+            # So the warning was firing on this harness's own correct work. The
+            # threshold is NOT relaxed (rule 6: a gate that rejects correct work
+            # has wrong logic, not a wrong bar); the counter is corrected to
+            # count what it always claimed to count.
+            #
+            # The two exclusions are enumerated rather than wildcarded, from
+            # the label forms the log actually contains (rule 17). A broadened
+            # query is a re-query of a term already counted; counting it again
+            # would double the generator's apparent output.
             if rec.get("level_key") == "level1":
-                terms += 1
+                _label = rec.get("label") or ""
+                if _label != "early_stop" and not _label.endswith("[broadened]"):
+                    terms += 1
 
     if foreign:
         print(f"  NOTE: {foreign} esearch call(s) ({foreign_returned} PMIDs) "
