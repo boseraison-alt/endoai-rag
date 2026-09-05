@@ -1203,11 +1203,31 @@ RELEVANCE_GATE = {
     # and Systematic Reviews". The weak tiers can contribute 25 each against
     # level1's 25.
     #
-    # NOT FIXED HERE deliberately: aligning it changes every library-routed
-    # answer and needs its own before/after across all three modes. And there
-    # is a trap -- 48 guideline rows store score NULL by design and
-    # rag_results_to_scored coalesces that to 0.0, so bolting on a quality
-    # floor naively deletes every guideline from library-served answers.
+    # NOT FIXED HERE, and now for a MEASURED reason rather than a cautious one.
+    # The before/after was run across all 29 eval questions forced onto this
+    # route (scripts/measure_library_floor_29.py, report
+    # eval/reports/library_floor_29.md). Aligning the route would take 8 of 29
+    # questions below min_evidence_papers 40 -- six of them newly -- against a
+    # pre-declared stop threshold of 5.
+    #
+    # WHY, and this is the part worth carrying: the two guards sit on
+    # DIFFERENT AXES and only one has a rescue. apply_evidence_floor runs on
+    # SIMILARITY, before banding, and tops a thin pool back up to 40. A quality
+    # floor would run on SCORE, after banding, on the pool that rescue just
+    # produced -- and nothing tops it up again. On the sparse diagnostic
+    # questions the sequence is 40 -> rescued to 40 -> cut to 26, with no guard
+    # noticing, because min_evidence_papers was satisfied upstream by a
+    # different measurement. It would cut hardest where the corpus is thinnest,
+    # which is where A5's false evidence gap gets manufactured.
+    #
+    # Each half breaches on its own (rule 22): the MODE_TIER_QUOTAS cap alone
+    # puts 7 questions under 40, the floor alone puts 7 under. Neither "just
+    # the cap" nor "just the floor" is the conservative option.
+    #
+    # And the trap is now a number: a floor reading the coalesced 0.0 that
+    # rag_results_to_scored returns for a NULL score cuts 44 of the 55 served
+    # guideline paper-instances across the 29 questions. Any fix needs the
+    # NULL-score exemption first.
     "max_per_tier":     25,
     # A1a. Every condition above is a question about the CORPUS — enough hits,
     # enough of them similar, at least one high tier, not stale. All four are
