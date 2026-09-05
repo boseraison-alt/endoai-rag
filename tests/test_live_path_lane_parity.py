@@ -312,7 +312,12 @@ class TestTheProvisionalLaneReachesTheLivePath:
         body = _live_path_body()
         i_early = body.index("[early_stop]")
         seg = body[i_early:body.index("else:", i_early)]
-        assert '_run_tiers([l for l in levels if l[0] == "guideline"])' in seg, (
+        # The PROPERTY, not the literal call. The first version pinned the
+        # exact one-line form and broke the day D1 added the recency lanes to
+        # the same call — while the guideline lane was still being fetched.
+        # A form-matching test reports a defect that is not there.
+        assert "_run_tiers(" in seg, "the early branch fetches nothing at all"
+        assert 'l[0] == "guideline"' in seg, (
             "the guideline lane is skipped when the early stop fires")
 
     def test_a_lane_failure_cannot_take_the_answer_down(self):

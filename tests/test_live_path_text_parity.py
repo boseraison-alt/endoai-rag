@@ -55,7 +55,11 @@ PMID_IN_TEXT = re.compile(r"PMID:?\s*(\d{5,9})")
 
 
 def _run_tiers_src(strip_comments=False):
-    i = APP.index("    def _run_tiers(tier_specs):")
+    # Located by NAME, not by full signature. The first version pinned
+    # `def _run_tiers(tier_specs):` exactly and broke the day D1 added a
+    # `recent_only` parameter — a locator that fails on a legitimate
+    # signature change reports a defect that is not there.
+    i = APP.index("    def _run_tiers(")
     j = APP.index("\n    if not is_aborted(job_id):", i)
     src = APP[i:j]
     if strip_comments:

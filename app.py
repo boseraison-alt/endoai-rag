@@ -1086,6 +1086,54 @@ TIER_FETCH_WORKERS = 6
 EARLY_STOP_TIERS      = ("level1",)   # cochrane is fetched before this loop
 EARLY_STOP_MIN_PAPERS = 15
 
+# D1 — THE RECENCY EXEMPTION. When the early stop fires, these lanes are still
+# fetched, and only papers inside the window are kept.
+#
+# WHY AN EXEMPTION AT ALL. The early stop's reasoning is that tier banding
+# means a case series cannot override a Level I finding, so once the top tiers
+# have supplied enough the weak ones cannot change the recommendation. That
+# holds for an OLD weak paper, which the literature has already absorbed or
+# refuted. It does not hold for a new one: a settled topic is exactly where a
+# new contradicting finding matters most, and Sulaiman 2026 -- the trial that
+# contests the six-minute haemostasis threshold nine places in the VPT
+# curriculum -- is a level2 paper on a well-covered question.
+#
+# WHY ONLY THESE TWO LANES, and the numbers that decided it. The FULL
+# exemption -- every weak lane -- was measured across 20 review-mode questions
+# and breached both pre-declared thresholds: 24.6 extra papers per question
+# against ~15, and +48 s against ~30 s. Narrowed to the two rungs where a
+# Sulaiman-type paper lands once MEDLINE types it -- a prospective trial or a
+# retrospective cohort -- it passes both:
+#
+#     extra papers   11.1 per question   (threshold ~15)
+#     extra latency    14 s per question (threshold ~30 s)
+#     fires on 17 of 20 review questions
+#
+# Case series, bench work and expert opinion from last year are rarely the
+# paper that overturns a rule, and they were most of the 48 s.
+EARLY_STOP_RECENCY_LANES  = ("level2", "level3a")
+EARLY_STOP_RECENCY_MONTHS = 18
+
+
+def _within_recency_window(paper, months=EARLY_STOP_RECENCY_MONTHS):
+    """Is this paper inside the recency window?
+
+    PubMed metadata carries a YEAR, not a month, so a month-granular window
+    cannot be evaluated exactly. It is applied at YEAR granularity and rounded
+    OUTWARD -- a paper is in if its year is within ceil(months/12) years of
+    now. That admits slightly MORE than the stated window rather than less,
+    which is the safe direction here: the exemption exists to catch the paper
+    that contradicts a settled answer, and the cost of one extra year of
+    level2 was measured at 11.1 papers per question.
+    """
+    try:
+        y = int(paper.get("year", 0))
+    except (ValueError, TypeError):
+        return False
+    if y <= 0:
+        return False
+    return (datetime.now().year - y) <= -(-months // 12)
+
 
 # ── Library relevance gate ───────────────────────────────
 # The floor and the count that interprets it are ONE setting, kept together
@@ -1662,9 +1710,17 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             print(f"  XX {label}: fetch failed ({e})")
             return level_key, None
 
-    def _run_tiers(tier_specs):
+    def _run_tiers(tier_specs, recent_only=()):
         """Fetch every (tier, term) pair concurrently, then fold the results
-        into `evidence` in strict tier order."""
+        into `evidence` in strict tier order.
+
+        `recent_only` names lanes whose papers are kept ONLY if they are inside
+        the recency window — D1's exemption. Filtering happens here, before the
+        cap and before the text is rebuilt, so `text` and `scored` stay
+        one-to-one by construction. Pruning after the fold would show Claude
+        papers that are not in `scored`, which is the 26%-visibility bug in a
+        mirror.
+        """
         raw = {lk: [] for lk, _t, _l, _p in tier_specs}
         jobs_list = [(lk, terms, label, term)
                      for lk, terms, label, _pct in tier_specs
@@ -1698,6 +1754,18 @@ def build_evidence_base_with_progress(job_id: str, question: str,
                 level_scored.extend(new_scored)
                 level_ids.extend(new_ids)
             level_scored.sort(key=lambda x: x["score"], reverse=True)
+
+            # D1's recency exemption. Standing rule 5: say what was dropped,
+            # including when nothing was.
+            if level_key in recent_only:
+                _before = len(level_scored)
+                level_scored = [p for p in level_scored
+                                if _within_recency_window(p)]
+                level_ids = [p["pmid"] for p in level_scored]
+                print(f"    [early_stop:recency] {level_key}: kept "
+                      f"{len(level_scored)} of {_before} paper(s) inside the "
+                      f"{EARLY_STOP_RECENCY_MONTHS}-month window; the early "
+                      f"stop skipped the rest")
 
             # THE PROMPT USED TO CARRY ONE SEARCH TERM'S PAPERS AND COUNT ALL
             # SEVEN. This fold ran once per (tier, term) — ~7 fetches per tier
@@ -1775,7 +1843,22 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # because nothing could reach one. Skipping it here would have
             # left it unreachable on exactly the well-covered Review questions
             # a clinician is most likely to ask.
-            _run_tiers([l for l in levels if l[0] == "guideline"])
+            # ...and D1's RECENCY EXEMPTION, for the same shape of reason.
+            # The early stop's premise is that a weak paper cannot override a
+            # Level I finding. That is true of an OLD weak paper, which the
+            # literature has already absorbed or refuted, and false of a new
+            # one: a settled topic is exactly where a new contradicting
+            # finding matters most. Sulaiman 2026 is a level2 paper on a
+            # well-covered question and it contests a threshold the VPT
+            # curriculum builds into nine places.
+            #
+            # Scoped to level2 and level3a because the full exemption was
+            # measured and breached both thresholds — see
+            # EARLY_STOP_RECENCY_LANES.
+            _run_tiers([l for l in levels
+                        if l[0] == "guideline"
+                        or l[0] in EARLY_STOP_RECENCY_LANES],
+                       recent_only=EARLY_STOP_RECENCY_LANES)
         else:
             _run_tiers([l for l in levels if l[0] not in EARLY_STOP_TIERS])
 

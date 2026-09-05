@@ -1,32 +1,182 @@
 [
  {
   "id": "single-vs-multiple-visit",
-  "n_strong": 15,
+  "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 40.1,
+  "seconds_base": 64.6,
+  "would_admit": 22,
+  "would_admit_recent": 9,
+  "per_tier": {
+   "level2": {
+    "all": 13,
+    "recent": 7
+   },
+   "level3a": {
+    "all": 9,
+    "recent": 2
+   }
+  },
+  "seconds_extra": -11.9
+ },
+ {
+  "id": "mta-vs-biodentine-pulpotomy",
+  "n_strong": 20,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 52.4,
+  "would_admit": 24,
+  "would_admit_recent": 13,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 6
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 7
+   }
+  },
+  "seconds_extra": 24.9
+ },
+ {
+  "id": "naocl-concentration",
+  "n_strong": 19,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 48.4,
+  "would_admit": 24,
+  "would_admit_recent": 15,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 12
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 3
+   }
+  },
+  "seconds_extra": 25.6
+ },
+ {
+  "id": "cbct-vs-periapical",
+  "n_strong": 19,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 51.5,
   "would_admit": 24,
   "would_admit_recent": 9,
   "per_tier": {
    "level2": {
     "all": 14,
+    "recent": 4
+   },
+   "level3a": {
+    "all": 10,
     "recent": 5
+   }
+  },
+  "seconds_extra": 1.1
+ },
+ {
+  "id": "bioceramic-vs-resin-sealer",
+  "n_strong": 18,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 44.9,
+  "would_admit": 24,
+  "would_admit_recent": 15,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 11
    },
    "level3a": {
     "all": 10,
     "recent": 4
    }
   },
-  "seconds_extra": 43.3
+  "seconds_extra": 24.3
  },
  {
-  "id": "mta-vs-biodentine-pulpotomy",
+  "id": "retreatment-vs-microsurgery",
+  "n_strong": 4,
+  "served_weak": 15,
+  "early_stop_fired": false,
+  "seconds_base": 77.9,
+  "would_admit": 0,
+  "would_admit_recent": 0,
+  "seconds_extra": 0.0
+ },
+ {
+  "id": "direct-pulp-capping",
+  "n_strong": 18,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 38.1,
+  "would_admit": 9,
+  "would_admit_recent": 0,
+  "per_tier": {
+   "level2": {
+    "all": 7,
+    "recent": 0
+   },
+   "level3a": {
+    "all": 2,
+    "recent": 0
+   }
+  },
+  "seconds_extra": 6.3
+ },
+ {
+  "id": "preemptive-nsaid",
+  "n_strong": 20,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 52.2,
+  "would_admit": 20,
+  "would_admit_recent": 9,
+  "per_tier": {
+   "level2": {
+    "all": 10,
+    "recent": 6
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 3
+   }
+  },
+  "seconds_extra": 20.8
+ },
+ {
+  "id": "regenerative-immature",
+  "n_strong": 21,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 58.5,
+  "would_admit": 24,
+  "would_admit_recent": 10,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 6
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 4
+   }
+  },
+  "seconds_extra": 23.7
+ },
+ {
+  "id": "cracked-tooth-prognosis",
   "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 44.7,
+  "seconds_base": 44.2,
   "would_admit": 24,
-  "would_admit_recent": 16,
+  "would_admit_recent": 17,
   "per_tier": {
    "level2": {
     "all": 14,
@@ -34,318 +184,158 @@
    },
    "level3a": {
     "all": 10,
-    "recent": 6
+    "recent": 7
    }
   },
-  "seconds_extra": 52.8
- },
- {
-  "id": "naocl-concentration",
-  "n_strong": 19,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 57.6,
-  "would_admit": 24,
-  "would_admit_recent": 15,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 11
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 4
-   }
-  },
-  "seconds_extra": 35.4
- },
- {
-  "id": "cbct-vs-periapical",
-  "n_strong": 19,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 37.0,
-  "would_admit": 24,
-  "would_admit_recent": 11,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 8
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 3
-   }
-  },
-  "seconds_extra": 78.5
- },
- {
-  "id": "bioceramic-vs-resin-sealer",
-  "n_strong": 19,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 47.4,
-  "would_admit": 24,
-  "would_admit_recent": 13,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 12
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 1
-   }
-  },
-  "seconds_extra": 40.5
- },
- {
-  "id": "retreatment-vs-microsurgery",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 33.5,
-  "would_admit": 14,
-  "would_admit_recent": 1,
-  "per_tier": {
-   "level2": {
-    "all": 4,
-    "recent": 1
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 0
-   }
-  },
-  "seconds_extra": 22.9
- },
- {
-  "id": "direct-pulp-capping",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 34.9,
-  "would_admit": 24,
-  "would_admit_recent": 9,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 4
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 5
-   }
-  },
-  "seconds_extra": 72.0
- },
- {
-  "id": "preemptive-nsaid",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 66.3,
-  "would_admit": 19,
-  "would_admit_recent": 8,
-  "per_tier": {
-   "level2": {
-    "all": 9,
-    "recent": 5
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 3
-   }
-  },
-  "seconds_extra": 38.9
- },
- {
-  "id": "regenerative-immature",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 47.1,
-  "would_admit": 24,
-  "would_admit_recent": 17,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 12
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 5
-   }
-  },
-  "seconds_extra": 55.8
- },
- {
-  "id": "cracked-tooth-prognosis",
-  "n_strong": 22,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 69.0,
-  "would_admit": 24,
-  "would_admit_recent": 12,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 8
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 4
-   }
-  },
-  "seconds_extra": 50.8
+  "seconds_extra": 25.6
  },
  {
   "id": "bisphosphonates",
-  "n_strong": 5,
-  "served_weak": 18,
-  "early_stop_fired": false,
-  "seconds_base": 78.6,
-  "would_admit": 0,
-  "would_admit_recent": 0,
-  "seconds_extra": 0.0
+  "n_strong": 18,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 49.7,
+  "would_admit": 20,
+  "would_admit_recent": 7,
+  "per_tier": {
+   "level2": {
+    "all": 10,
+    "recent": 4
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 3
+   }
+  },
+  "seconds_extra": 1.5
  },
  {
   "id": "pregnancy",
-  "n_strong": 6,
-  "served_weak": 9,
-  "early_stop_fired": false,
-  "seconds_base": 65.4,
-  "would_admit": 0,
-  "would_admit_recent": 0,
-  "seconds_extra": 0.0
+  "n_strong": 18,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 41.6,
+  "would_admit": 13,
+  "would_admit_recent": 2,
+  "per_tier": {
+   "level2": {
+    "all": 5,
+    "recent": 1
+   },
+   "level3a": {
+    "all": 8,
+    "recent": 1
+   }
+  },
+  "seconds_extra": 7.3
  },
  {
   "id": "pips-vs-ultrasonic",
   "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 48.6,
-  "would_admit": 21,
-  "would_admit_recent": 13,
+  "seconds_base": 31.0,
+  "would_admit": 24,
+  "would_admit_recent": 19,
   "per_tier": {
    "level2": {
     "all": 14,
     "recent": 12
    },
    "level3a": {
-    "all": 7,
-    "recent": 1
+    "all": 10,
+    "recent": 7
    }
   },
-  "seconds_extra": 36.1
+  "seconds_extra": 14.1
  },
  {
   "id": "intentional-replantation",
-  "n_strong": 12,
-  "served_weak": 16,
-  "early_stop_fired": false,
-  "seconds_base": 75.3,
-  "would_admit": 0,
-  "would_admit_recent": 0,
-  "seconds_extra": 0.0
+  "n_strong": 24,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 36.0,
+  "would_admit": 21,
+  "would_admit_recent": 10,
+  "per_tier": {
+   "level2": {
+    "all": 11,
+    "recent": 4
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 6
+   }
+  },
+  "seconds_extra": 7.6
  },
  {
   "id": "sdf-pulp-outcomes",
-  "n_strong": 7,
-  "served_weak": 1,
+  "n_strong": 8,
+  "served_weak": 2,
   "early_stop_fired": false,
-  "seconds_base": 50.6,
+  "seconds_base": 41.7,
   "would_admit": 0,
   "would_admit_recent": 0,
   "seconds_extra": 0.0
  },
  {
   "id": "sonic-vs-ultrasonic",
-  "n_strong": 19,
+  "n_strong": 18,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 47.2,
-  "would_admit": 23,
-  "would_admit_recent": 9,
+  "seconds_base": 41.0,
+  "would_admit": 22,
+  "would_admit_recent": 13,
   "per_tier": {
    "level2": {
-    "all": 13,
-    "recent": 6
+    "all": 14,
+    "recent": 10
+   },
+   "level3a": {
+    "all": 8,
+    "recent": 3
+   }
+  },
+  "seconds_extra": 6.3
+ },
+ {
+  "id": "dens-invaginatus",
+  "n_strong": 28,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 55.9,
+  "would_admit": 24,
+  "would_admit_recent": 14,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 11
    },
    "level3a": {
     "all": 10,
     "recent": 3
    }
   },
-  "seconds_extra": 39.2
- },
- {
-  "id": "dens-invaginatus",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 42.1,
-  "would_admit": 23,
-  "would_admit_recent": 12,
-  "per_tier": {
-   "level2": {
-    "all": 13,
-    "recent": 6
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 6
-   }
-  },
-  "seconds_extra": 50.0
+  "seconds_extra": 11.7
  },
  {
   "id": "diabetes-outcomes",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 51.6,
-  "would_admit": 24,
-  "would_admit_recent": 15,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 11
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 4
-   }
-  },
-  "seconds_extra": 46.5
+  "n_strong": 14,
+  "served_weak": 24,
+  "early_stop_fired": false,
+  "seconds_base": 58.5,
+  "would_admit": 0,
+  "would_admit_recent": 0,
+  "seconds_extra": 0.0
  },
  {
   "id": "review-followup-immature-teeth",
-  "n_strong": 19,
+  "n_strong": 18,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 35.9,
-  "would_admit": 24,
-  "would_admit_recent": 18,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 13
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 5
-   }
-  },
-  "seconds_extra": 40.6
- },
- {
-  "id": "review-newtopic-reset",
-  "n_strong": 20,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 42.5,
-  "would_admit": 24,
+  "seconds_base": 38.1,
+  "would_admit": 23,
   "would_admit_recent": 15,
   "per_tier": {
    "level2": {
@@ -353,10 +343,30 @@
     "recent": 11
    },
    "level3a": {
-    "all": 10,
+    "all": 9,
     "recent": 4
    }
   },
-  "seconds_extra": 60.5
+  "seconds_extra": 25.6
+ },
+ {
+  "id": "review-newtopic-reset",
+  "n_strong": 21,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 45.9,
+  "would_admit": 24,
+  "would_admit_recent": 12,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 9
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 3
+   }
+  },
+  "seconds_extra": 21.0
  }
 ]
