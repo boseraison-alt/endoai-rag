@@ -151,8 +151,23 @@ def main():
         # skipped lanes actually run and we can count what they would have
         # returned. The threshold is raised rather than the branch edited:
         # production code is not modified by a measurement.
+        #
+        # AND, WITH --lanes, THE LANE LIST IS NARROWED TOO. The first version
+        # filtered only what was COUNTED, so pass 2 still swept every weak lane
+        # and the wall-clock it reported was the cost of the FULL exemption --
+        # 48 s, identical for the narrowed scope, which is what gave it away.
+        # An exemption that fetches two lanes cannot cost the same as one that
+        # fetches eight. `tier_query_lanes` is patched for the duration so the
+        # builder issues the strong lanes, the guideline lane (which survives
+        # the early stop in production) and the exempted lanes ONLY, making
+        # pass2 - pass1 exactly the cost of the lanes being exempted.
         saved = A.EARLY_STOP_MIN_PAPERS
         A.EARLY_STOP_MIN_PAPERS = 10 ** 6
+        real_lanes = E.tier_query_lanes
+        if args.lanes:
+            keep = set(weak) | set(A.EARLY_STOP_TIERS) | {"guideline"}
+            E.tier_query_lanes = (
+                lambda _f=real_lanes: [l for l in _f() if l[0] in keep])
         t0 = time.time()
         try:
             ev2 = A.build_evidence_base_with_progress(
@@ -161,11 +176,13 @@ def main():
         except Exception as e:
             print("   PASS2 FAILED: %s" % e)
             A.EARLY_STOP_MIN_PAPERS = saved
+            E.tier_query_lanes = real_lanes
             row["error_pass2"] = str(e)
             rows.append(row)
             continue
         finally:
             A.EARLY_STOP_MIN_PAPERS = saved
+            E.tier_query_lanes = real_lanes
         t_full = time.time() - t0
 
         admitted, recent, per_tier = 0, 0, {}
