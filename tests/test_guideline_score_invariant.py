@@ -188,3 +188,73 @@ class TestTheRendererAlreadyHandlesIt:
         assert "NOT SCORED" in line
         assert "0.0/100" not in line
         assert "Evidence Score" not in line
+
+class TestItem3TheSlugIdSplit:
+    """31 citeable guideline rows carried a slug id, not a PMID, so on the
+    library route they could not satisfy the `[[PMID:nnnnnnn]]` citation format
+    at all. Item 3a split them by whether the seed manifest confirms a PMID for
+    that document, and the answer is much narrower than it looked:
+
+        31  slug rows
+         1  a CONFIRMED seed PMID exists -> ESE-QG-2006 -> 17180780
+        30  none does, and they stay
+
+    Of the 30: 18 are `confirmed` documents the seed carries NO pmid for at all
+    (AAE position statements, SDCEP, NICE — real documents PubMed does not
+    index), 10 are `unconfirmed_pmid` and must never be matched by PMID because
+    that accession is the one field nobody verified, and 2 have no seed record.
+    Re-keying any of them would be inventing bibliographic data.
+    """
+
+    SLUG = "ESE-QG-2006"
+    SURVIVOR = "17180780"
+
+    def test_the_duplicate_slug_row_is_quarantined(self):
+        rows = _q("SELECT COALESCE(quarantine_reason,'') FROM endo_papers_rag "
+                  "WHERE pmid = %s", (self.SLUG,))
+        assert rows and rows[0][0] == "duplicate_of:" + self.SURVIVOR
+
+    def test_the_survivor_is_present_verified_and_citeable(self):
+        """The quarantine is only safe BECAUSE this row is here. Without it,
+        this would remove the document from the library rather than dedupe."""
+        rows = _q("""SELECT guideline_id, guideline_confidence, score,
+                            COALESCE(quarantine_reason,'')
+                     FROM endo_papers_rag WHERE pmid = %s""", (self.SURVIVOR,))
+        assert rows, "the survivor is not in the library"
+        gid, conf, score, qr = rows[0]
+        assert qr == "" and conf == "confirmed" and gid == "ESE-QG-2006"
+        assert score is None, "and it obeys the guideline score invariant"
+
+    def test_nothing_was_deleted_or_renamed(self):
+        rows = _q("SELECT title FROM endo_papers_rag WHERE pmid = %s",
+                  (self.SLUG,))
+        assert len(rows) == 1
+        assert "ESE Quality Guidelines" in rows[0][0], "the row was renamed"
+
+    def test_no_slug_row_was_re_keyed_to_an_unconfirmed_accession(self):
+        """The 10 `unconfirmed_pmid` records are exactly the ones whose
+        accession nobody has verified. If a row ever appears under one of
+        those PMIDs, an inference was written into the library as a fact."""
+        import json as _json
+        man = _json.load(open("data/guidelines_seed.json", encoding="utf-8"))
+        unconfirmed = [str(g["pmid"]) for g in man["guidelines"]
+                       if g.get("pmid") and g.get("confidence") != "confirmed"]
+        if not unconfirmed:
+            pytest.skip("no unconfirmed accessions in the seed")
+        rows = _q("SELECT pmid FROM endo_papers_rag WHERE pmid = ANY(%s)",
+                  (unconfirmed,))
+        assert rows == [], (
+            "rows exist under unconfirmed accessions: %s" % rows)
+
+    def test_the_remaining_slug_rows_are_left_alone(self):
+        """Item 3c: they need a non-PMID citation form, which is A49 phase 1's
+        guidelines table. Leaving them is the decision, so it is pinned —
+        otherwise a later batch might read the silence as permission."""
+        n = _q("""SELECT COUNT(*) FROM endo_papers_rag
+                  WHERE level_key = 'guideline'
+                    AND COALESCE(quarantine_reason,'') = ''
+                    AND pmid !~ '^[0-9]+$'""")[0][0]
+        assert n == 30, (
+            "expected the 30 non-re-keyable slug rows to remain citeable, "
+            "found %d — either they were re-keyed (inventing accessions) or "
+            "quarantined (removing real documents from the library)" % n)

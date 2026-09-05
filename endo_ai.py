@@ -4725,6 +4725,66 @@ def parse_search_term_groups(term: str) -> list:
     return groups
 
 
+def _generic_share(terms: list) -> float:
+    """Fraction of a group's synonyms that are corpus-wide vocabulary."""
+    if not terms:
+        return 0.0
+    return sum(1 for t in terms
+               if t.rstrip("*").strip() in _COVERAGE_GENERIC) / len(terms)
+
+
+def guideline_topic(primary_term: str) -> str:
+    """The BROAD subject group of a generated query — for the guideline lane only.
+
+    ITEM 2, 2026-09-06. The guideline lane inherited the study lanes' topic
+    string: a three-group conjunction naming the intervention, the subject and
+    the population qualifier. That is the right shape for finding trials and
+    the wrong shape for finding guidelines, because a guideline is broad by
+    construction. "Treatment of pulpal and apical disease: the ESE S3-level
+    clinical practice guideline" cannot match a query built to find trials
+    about `nonsurgical retreatment AND apical microsurgery AND persistent
+    apical periodontitis`, even though it is the guideline that answers the
+    question.
+
+    MEASURED before this existed: 482 lane queries across the three v7
+    baseline runs, 415 of them empty -- 86%, against 47% for every other lane
+    together. Two documents that ARE PubMed-indexed and DO match the lane's
+    own `guideline[pt]` filter were missed on the questions they answer:
+    PMID 37772327 (ESE S3 2023) and PMID 26990236 (ESE revitalisation 2016).
+    So the emptiness was the topic half of the query, not the pubtype filter
+    and not the corpus.
+
+    WHICH GROUP IS "THE SUBJECT". Not the longest one -- more synonyms is not
+    the same as broader. `_group_is_generic` already encodes the answer: it
+    marks a group whose every synonym is corpus-wide endodontic vocabulary,
+    which is exactly what a subject group is and exactly what a scenario or
+    material qualifier is not. Where the generator produced no generic group,
+    the widest OR-list is the fallback, and a query with no boolean structure
+    is returned unchanged rather than guessed at.
+
+    The study lanes are untouched. This narrows nothing and widens one lane.
+    """
+    groups = parse_search_term_groups(primary_term)
+    if len(groups) < 2:
+        return primary_term
+    # HIGHEST GENERIC SHARE, not `_group_is_generic`, and the difference is a
+    # measurement I got wrong first. `_group_is_generic` requires EVERY synonym
+    # to be corpus-wide, and a real subject group rarely is:
+    # ("root canal" OR endodontic* OR "root canal treatment") scores 2 of 3,
+    # because "root canal treatment" is not in _COVERAGE_GENERIC. The all-or-
+    # nothing form returned False for every group on that query and the
+    # fallback then picked the five-synonym SCENARIO group -- the widest, and
+    # the wrong concept. Share is the signal; length only breaks ties.
+    chosen = max(groups, key=lambda g: (_generic_share(g), len(g)))
+    out = " OR ".join(chosen).strip()
+    # A lane with an empty topic queries the domain filter alone, which is
+    # every endodontic guideline on PubMed regardless of the question. Falling
+    # back to the unbroadened term is the safe direction: it retrieves too
+    # little, which is the failure this function is fixing, rather than
+    # retrieving everything, which would be a new and worse one.
+    return out or primary_term
+
+
 def _group_is_generic(terms: list) -> bool:
     """True when every synonym in the group is corpus-wide vocabulary."""
     return all(t.rstrip("*").strip() in _COVERAGE_GENERIC for t in terms)
@@ -4867,6 +4927,18 @@ def _pubmed_audit_log(label: str, level_key: str, search_term: str,
 
 def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="review",
                  question=None):
+    # ITEM 2 — the guideline lane gets the SUBJECT group, not the full
+    # conjunction. See `guideline_topic`. Applied HERE, at the one point both
+    # retrieval paths pass through, rather than at the two call sites: a
+    # broadening that lived in app.py would have reached Review and Case and
+    # not the curriculum, which is the divergence class this codebase has
+    # spent three batches removing.
+    if level_key == "guideline":
+        broad = guideline_topic(topic)
+        if broad != topic:
+            print(f"    [guideline_lane] topic broadened to the subject group: "
+                  f"{broad[:90]}")
+        topic = broad
     # Exclude retracted papers at the search level — free, no extra API call
     search_term = (
         f"({topic}) AND ({filter_term}) AND {ENDO_DOMAIN_FILTER} "
@@ -5731,6 +5803,29 @@ guidelines lag the literature by years by construction, so "the AAE position
 (2021) says X; the 2026 trial evidence says Y" is information the clinician
 needs, not a contradiction to resolve away.
 """
+
+# Item 1c, 2026-09-06. The A/B toggle for the DERIVED heading set: False
+# reproduces the pre-item-1 prompt, whose heading list named seven lanes and
+# omitted observational, classic, invitro and the provisional lane. Production
+# is True. scripts/ab_lane_headings.py toggles it.
+#
+# It is a separate flag from GUIDELINE_PROMPT_ENABLED on purpose: the two
+# changes shipped a day apart and each was measured on its own, so a single
+# flag would make neither attributable (rule 22).
+LANE_HEADINGS_ENABLED = True
+
+# The seven-lane list this replaced, kept ONLY so the A/B has a real control
+# arm to measure against. It is not a second source of truth -- nothing reads
+# it except the control arm, and test_prompt_lane_parity asserts the SHIPPED
+# prompt matches the lane set, never this.
+_LEGACY_EVIDENCE_HEADINGS = """**Cochrane Reviews**
+**Level I — RCTs and Systematic Reviews**
+**Level II — Prospective Studies**
+**Level IIIa — Retrospective Cohort Studies**
+**Level IIIb — Case-Control Studies**
+**Level IV — Case Series**
+**Level V — Expert Opinion**"""
+
 
 # Set False to reproduce the pre-item-3 prompt. The A/B in
 # eval/reports/a49_guideline_citation_ab.md toggles this; production is True.
@@ -9118,7 +9213,7 @@ This section is what the clinician acts on, so it MUST be traceable:
 
 Organized by evidence level, top-down. For each level write a short paragraph (3-6 sentences) summarising what the evidence shows — do not use terse bullet points. Cite authors inline as (Author et al.) or (Author Surname). Include study design, sample size, and follow-up where relevant. Discuss agreements and disagreements between studies. Skip levels with no relevant evidence.
 
-""" + render_evidence_headings() + """
+""" + (render_evidence_headings() if LANE_HEADINGS_ENABLED else _LEGACY_EVIDENCE_HEADINGS) + """
 """ + (GUIDELINE_PROMPT_BLOCK if GUIDELINE_PROMPT_ENABLED else "") + """
 
 ---

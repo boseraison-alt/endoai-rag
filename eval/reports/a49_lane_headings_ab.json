@@ -1,0 +1,177 @@
+[
+ {
+  "id": "apdt-primary-molars",
+  "guidelines_retrieved": 6,
+  "observational_retrieved": 10,
+  "control": {
+   "citations": 10,
+   "guideline_citations": 2,
+   "observational_citations": 0,
+   "observational_pmids": [],
+   "guideline_pmids": [
+    "22972129",
+    "29070150"
+   ],
+   "cost": 2.6013,
+   "has_guideline_heading": true,
+   "chars": 8558
+  },
+  "treated": {
+   "citations": 10,
+   "guideline_citations": 2,
+   "observational_citations": 0,
+   "observational_pmids": [],
+   "guideline_pmids": [
+    "29070150",
+    "29179372"
+   ],
+   "cost": 1.257,
+   "has_guideline_heading": true,
+   "chars": 6329
+  }
+ },
+ {
+  "id": "case-opening-sparse",
+  "guidelines_retrieved": 4,
+  "observational_retrieved": 6,
+  "control": {
+   "citations": 18,
+   "guideline_citations": 2,
+   "observational_citations": 0,
+   "observational_pmids": [],
+   "guideline_pmids": [
+    "37772327",
+    "41121563"
+   ],
+   "cost": 3.7717,
+   "has_guideline_heading": true,
+   "chars": 13422
+  },
+  "treated": {
+   "citations": 22,
+   "guideline_citations": 3,
+   "observational_citations": 1,
+   "observational_pmids": [
+    "41728912"
+   ],
+   "guideline_pmids": [
+    "30664240",
+    "37772327",
+    "41121563"
+   ],
+   "cost": 3.8038,
+   "has_guideline_heading": true,
+   "chars": 13832
+  }
+ },
+ {
+  "id": "case-opening-full",
+  "guidelines_retrieved": 4,
+  "observational_retrieved": 3,
+  "control": {
+   "citations": 16,
+   "guideline_citations": 4,
+   "observational_citations": 0,
+   "observational_pmids": [],
+   "guideline_pmids": [
+    "31668170",
+    "37772327",
+    "40217051",
+    "41407481"
+   ],
+   "cost": 1.1014,
+   "has_guideline_heading": true,
+   "chars": 11285
+  },
+  "treated": {
+   "citations": 20,
+   "guideline_citations": 4,
+   "observational_citations": 0,
+   "observational_pmids": [],
+   "guideline_pmids": [
+    "31668170",
+    "37772327",
+    "40217051",
+    "41407481"
+   ],
+   "cost": 1.1335,
+   "has_guideline_heading": true,
+   "chars": 11767
+  }
+ },
+ {
+  "id": "intentional-replantation",
+  "guidelines_retrieved": 4,
+  "observational_retrieved": 6,
+  "control": {
+   "citations": 15,
+   "guideline_citations": 2,
+   "observational_citations": 2,
+   "observational_pmids": [
+    "35078591",
+    "42126472"
+   ],
+   "guideline_pmids": [
+    "37772327",
+    "40217051"
+   ],
+   "cost": 0.8955,
+   "has_guideline_heading": true,
+   "chars": 10637
+  },
+  "treated": {
+   "citations": 14,
+   "guideline_citations": 2,
+   "observational_citations": 2,
+   "observational_pmids": [
+    "35078591",
+    "42126472"
+   ],
+   "guideline_pmids": [
+    "37772327",
+    "40217051"
+   ],
+   "cost": 1.8927,
+   "has_guideline_heading": true,
+   "chars": 11345
+  }
+ },
+ {
+  "id": "sdf-pulp-outcomes",
+  "guidelines_retrieved": 4,
+  "observational_retrieved": 4,
+  "control": {
+   "citations": 14,
+   "guideline_citations": 4,
+   "observational_citations": 0,
+   "observational_pmids": [],
+   "guideline_pmids": [
+    "37772327",
+    "41121563",
+    "42014635",
+    "42017497"
+   ],
+   "cost": 1.4084,
+   "has_guideline_heading": true,
+   "chars": 9893
+  },
+  "treated": {
+   "citations": 21,
+   "guideline_citations": 4,
+   "observational_citations": 2,
+   "observational_pmids": [
+    "24732081",
+    "40106016"
+   ],
+   "guideline_pmids": [
+    "37772327",
+    "41121563",
+    "42014635",
+    "42017497"
+   ],
+   "cost": 1.4802,
+   "has_guideline_heading": true,
+   "chars": 12144
+  }
+ }
+]

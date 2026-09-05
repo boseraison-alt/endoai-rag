@@ -70,6 +70,14 @@ def within_months(paper, months):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--months", type=int, default=18)
+    # ITEM 4, 2026-09-06. The FULL exemption breached both thresholds: 24.6
+    # papers and 48 s per question across 20 review questions. Narrowed to the
+    # rungs where a Sulaiman-type paper lands once MEDLINE types it — a
+    # prospective trial or a retrospective cohort. Case series, bench work and
+    # opinion from last year are rarely the paper that overturns a rule, and
+    # they are most of the 48 s.
+    ap.add_argument("--lanes", default="",
+                    help="comma-separated weak lanes to exempt; empty = all")
     ap.add_argument("--json", dest="json_out", default="")
     ap.add_argument("--limit", type=int, default=0)
     args = ap.parse_args()
@@ -87,8 +95,9 @@ def main():
     print("measure only; the exemption is NOT implemented")
     print("window %d months, evaluated at year granularity as %d year(s), "
           "rounded outward" % (args.months, span))
-    print("early stop: mode=review and cochrane+level1 >= %d\n"
+    print("early stop: mode=review and cochrane+level1 >= %d"
           % A.EARLY_STOP_MIN_PAPERS)
+    print("lanes exempted: %s\n" % (args.lanes or "ALL weak lanes"))
 
     rows = []
     for i, case in enumerate(cases, 1):
@@ -118,6 +127,12 @@ def main():
                        for t in ("cochrane", "level1"))
         weak = [t for t in E.TIER_ORDER
                 if t not in ("cochrane", "level1", "guideline")]
+        if args.lanes:
+            want = {x.strip() for x in args.lanes.split(",") if x.strip()}
+            missing = want - set(weak)
+            if missing:
+                raise SystemExit("not weak lanes: %s" % sorted(missing))
+            weak = [t for t in weak if t in want]
         served_weak = sum(len((ev.get(t) or {}).get("scored") or []) for t in weak)
         fired = (n_strong >= A.EARLY_STOP_MIN_PAPERS) and served_weak == 0
 

@@ -44,7 +44,7 @@ QUARANTINED = [
 # THREE of those four still are. See QUARANTINED_LATER below for the fourth —
 # the A2 verdict on it was correct and was superseded by a different question.
 VERIFIED = [
-    "AAE-PS-diagnosis", "AAE-PS-vital-pulp", "ESE-QG-2006",
+    "AAE-PS-diagnosis", "AAE-PS-vital-pulp",
 ]
 
 # SUPERSEDED A2 VERDICT, recorded rather than edited away (rule 24).
@@ -64,6 +64,21 @@ QUARANTINED_LATER = {
     "ESE-PS-VPT-2019": ("duplicate_of:30664240",
                         "A2-verified as real; later found to duplicate a "
                         "manifest record already in the library"),
+    # 2026-09-06, item 3. The SECOND of the four A2-verified records to turn
+    # out redundant, and the same shape: A2 asked "does this name a real
+    # document?" and answered yes, correctly. Item 3 asked a different
+    # question -- "can this row be CITED?" -- found it could not, because its
+    # id is a slug and the prompt requires [[PMID:n]], and then found the seed
+    # confirms PMID 17180780 for the same document AND that the verified row
+    # is already in the library with guideline_id ESE-QG-2006, org ESE, status
+    # superseded, confirmed, NULL score.
+    #
+    # Two of the four kept records were duplicates. That is worth noticing:
+    # verifying that a document is real does not establish that the ROW is
+    # needed, and nothing in the A2 pass was asking that.
+    "ESE-QG-2006": ("duplicate_of:17180780",
+                    "A2-verified as real; item 3 found the verified PMID row "
+                    "for the same document already present"),
 }
 
 # Real, PubMed-indexed guidelines that also sit at level_key='guideline'.
