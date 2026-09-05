@@ -147,6 +147,41 @@ class TestWhatItAdmits:
                         "patients treated between 2019 and 2023."})
 
 
+class TestItNeverWritesBackToTheLibrary:
+    """`fetch_papers` learns from live results and writes them into the
+    library. The provisional lane must NOT, and the reason is not caution:
+
+      * a stored row carries a `level_key`, and persisting these would give an
+        unclassified paper a permanent tier -- the exact assertion the lane
+        exists to avoid making;
+      * MEDLINE will classify them, often within months. A library row frozen
+        at 'provisional' would then be stale in a way nothing checks, and the
+        tier lanes would retrieve the same paper properly while the stale row
+        sat beside it;
+      * `app.build_evidence_base_with_progress` re-bands any library row whose
+        tier is not in TIER_ORDER to level5 -- so a persisted provisional row
+        would come back as Level V expert opinion, which it is not.
+
+    Re-fetching costs one esearch and a batched efetch per question.
+    """
+
+    def test_the_lane_does_not_call_the_write_back(self):
+        src = (Path(__file__).parent.parent / "endo_ai.py").read_text(encoding="utf-8")
+        i = src.index("def fetch_untyped_recent(")
+        j = src.index("\ndef ", i + 1)
+        body = src[i:j]
+        assert "learn_from_live_results" not in body, (
+            "the provisional lane writes back to the library, which would "
+            "give an unclassified paper a permanent stored tier")
+        assert "upsert_paper" not in body
+
+    def test_the_library_would_mis_band_one_if_it_ever_got_there(self):
+        """Documents WHY, by pinning the behaviour that makes it wrong."""
+        app_src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        assert 'if tier not in TIER_ORDER:' in app_src
+        assert 'tier = "level5"' in app_src
+
+
 class TestItRendersHonestly:
 
     @pytest.fixture
