@@ -2577,25 +2577,116 @@ LEVEL_5_TERMS = [
 # at level2 — still level2-or-above, so the paper is still admitted, for the
 # reason the authors actually gave.
 
+# ── WHAT THE ADVERSARIAL AUDIT CHANGED ───────────────────
+#
+# The first version of these patterns was audited by independent judges over
+# 74 admitted records and all 482 records of one question. It had a ~34% false
+# ADMISSION rate and a ~24% miss rate, and every failure below was verified
+# against the live record before being fixed, not taken on the audit's word.
+# One audit claim was REFUTED that way (40618152 was already correctly vetoed
+# as bench work) and is not fixed here.
+#
+# THE FINDING THAT MATTERS, and it is pure domain knowledge:
+#
+#     `RCT` IN ENDODONTICS MEANS ROOT CANAL TREATMENT.
+#
+# Not "randomised controlled trial". It is the standard abbreviation in this
+# literature, and matching it promoted a retrospective cohort (40509940), a
+# single case report (40213509), a diagnostic cohort (39880187) and a
+# cross-sectional questionnaire of ninety dentists (40729775) to Level I. The
+# token is gone. "randomised controlled trial" spelled out is unambiguous and
+# costs nothing.
+#
+# The other five confirmed false-admission modes, each with its worked example:
+#   COMMENTARY        Evidence-Based Dentistry publishes structured
+#                     commentaries whose "DESIGN: systematic review" describes
+#                     SOMEBODY ELSE'S paper (40258974, 41593409). Checked
+#                     first, because every later pattern reads that borrowed
+#                     design as if it were the paper's own.
+#   PROTOCOL          "Systematic Review Protocol on..." (40787614) reports no
+#                     results. The old pattern only knew "study protocol".
+#   ECONOMIC MODEL    a Markov cost-effectiveness model (41188638) draws its
+#                     inputs from other people's systematic reviews and was
+#                     admitted as one.
+#   REGISTRATION LABEL  "CLINICAL TRIAL NUMBER: Not applicable" (41249970) is
+#                     a structured-abstract heading whose own content says
+#                     there is no trial.
+#   MICROBIOLOGICAL BENCH  "48 teeth ... randomly divided", inoculated with
+#                     E. faecalis (40893990). Never says "in vitro".
+#
+# And the miss that mattered most, because it is the mirror image: genuine
+# randomised trials (40397221, 41941071, 42145341) came back `unclear`
+# because they failed a human-subject word check — dental trials count TEETH,
+# not always patients. A paper that CALLS ITSELF a randomised controlled
+# trial is now self-evidencing; the human check is kept only for the weaker
+# "randomly divided" wording, which is where bench confusion actually lives.
+
 _HUMAN_SUBJECT_RE = re.compile(
-    r"\b(patient|participant|subject|volunteer|children|adult|"
+    r"\b(patient|participant|subject|volunteer|children|child\b|adult|"
     r"recruit|enrol|enroll|informed consent|in\s+vivo\s+clinical|"
-    r"attend(?:ed|ing)?\s+the\s+clinic)", re.I)
+    r"ethic(?:s|al)\s+(?:committee|approval)|CONSORT|"
+    r"attend(?:ed|ing)?\s+the\s+clinic|"
+    # Outcomes only a living person can report. Dental trials often count
+    # TEETH and never name a patient, so the subject nouns alone lost genuine
+    # trials -- 42145341 randomises "teeth" and reports postoperative pain.
+    r"post[- ]?operative\s+pain|visual\s+analog|\bVAS\b|"
+    r"quality\s+of\s+life|patient[- ]reported)", re.I)
+
+# A paper that names its own design in these words is taken at its word. The
+# bench and animal vetoes still run first, so this cannot promote a laboratory
+# experiment; it only removes the human-subject word requirement.
+_SELF_LABELLED_TRIAL_RE = re.compile(
+    r"\brandomi[sz]ed\s+(?:controlled\s+|double[- ]blind\s+|triple[- ]blind\s+|"
+    r"single[- ]blind\s+|prospective\s+)*(?:clinical\s+)?trial\b|"
+    r"\brandomi[sz]ed\s+controlled\s+clinical\s+experiment\b", re.I)
 
 # Recognised first and allowed to win: a bench or animal study that randomises
 # its specimens is still a bench or animal study.
+#
+# `extracted teeth` was MOVED OUT of this set. It vetoed 42034624, a five-year
+# longitudinal cohort study of the REASONS FOR TOOTH EXTRACTION in a Swedish
+# county dental service — a clinical study about extraction, not a bench study
+# on extracted specimens. It now requires a laboratory co-marker (below).
 _BENCH_RE = re.compile(
     r"\b(in\s*[- ]?\s*vitro|ex\s*[- ]?\s*vivo|finite[- ]element|"
-    r"micro[- ]?ct\s+(?:analysis|evaluation)\s+of\s+extracted|"
-    r"extracted\s+(?:human\s+)?(?:teeth|molars|premolars|incisors)|"
     r"dentin[ae]\s+(?:blocks?|discs?|specimens?)|"
     r"bovine|laboratory\s+stud|bench\s+stud|"
-    r"agar\s+diffusion|scanning\s+electron\s+microscop)", re.I)
+    r"agar\s+diffusion|scanning\s+electron\s+microscop|"
+    # Microbiological bench work. 40893990 -- "48 anterior single-canal teeth
+    # ... randomly divided", inoculated with E. faecalis -- never says
+    # "in vitro" anywhere and was admitted at Level I on "randomly divided".
+    r"e\.?\s*faecalis|enterococcus|biofilm\s+model|"
+    r"inoculat(?:ed|ion)\s+with|artificially\s+infect|"
+    r"autoclav|thermocycl)", re.I)
+
+# `extracted teeth` only means bench work alongside one of these.
+_EXTRACTED_SPECIMEN_RE = re.compile(
+    r"extracted\s+(?:human\s+)?(?:teeth|tooth|molars?|premolars?|incisors?)|"
+    r"\b(?:teeth|specimens?)\s+were\s+(?:mounted|embedded|sectioned|"
+    r"decoronated|instrumented|stored)", re.I)
+_LAB_CONTEXT_RE = re.compile(
+    r"\b(specimen|mounted|embedded|sectioned|decoronat|micro[- ]?ct|"
+    r"stereomicroscop|incubat|steriliz|sterilis|saline|resin\s+block|"
+    r"root\s+canals?\s+were\s+(?:prepared|instrumented|shaped))", re.I)
 
 _ANIMAL_RE = re.compile(
     r"\b(animal\s+(?:model|stud|experiment)|"
     r"\b(?:rats?|mice|murine|rabbits?|dogs?|canine\s+model|beagle|"
     r"swine|porcine|sheep|ferrets?|primates?|zebrafish)\b)", re.I)
+
+# An Evidence-Based Dentistry structured commentary reports ANOTHER paper's
+# design in its own DESIGN field. Checked before everything except protocols.
+_COMMENTARY_RE = re.compile(
+    r"\bcommentary\s+on\b|\ba\s+commentary\s+on:|"
+    r"\bthis\s+(?:is\s+a\s+)?commentary\b|"
+    r"\bcritical\s+summary\s+of\b", re.I)
+
+# A health-economic model consumes other people's evidence; it is not that
+# evidence. 41188638 was admitted as a systematic review on that basis.
+_ECONOMIC_RE = re.compile(
+    r"\bmarkov\s+model|\bcost[- ]effectiveness\s+(?:analys|model|stud)|"
+    r"\bcost[- ]utility|\beconomic\s+evaluation|\bdecision[- ]analytic",
+    re.I)
 
 # Synthesis designs. Checked before primary designs because a systematic
 # review OF randomised trials says "randomised" many times.
@@ -2612,18 +2703,32 @@ _SYNTHESIS_PATTERNS = [
 _PRIMARY_PATTERNS = [
     (r"randomi[sz]ed\s+controlled\s+(?:clinical\s+)?trial|"
      r"\brandomi[sz]ed\s+clinical\s+trial|"
+     r"\brandomi[sz]ed\s+controlled\s+clinical\s+experiment|"
+     r"\bblock\s+randomi[sz]ation|"
      r"randomly\s+(?:allocated|assigned|divided|distributed)|"
-     r"\brandomi[sz]ed\s+(?:into|to)\b|"
-     r"\bRCT\b",
+     r"\brandomi[sz]ed\s+(?:into|to)\b",
+     # `\bRCT\b` DELIBERATELY ABSENT — in endodontics it means root canal
+     # treatment. See the note above; this is the single largest source of
+     # false admissions the audit found.
      "randomised controlled trial", "level1"),
     (r"\bcontrolled\s+clinical\s+trial|"
      r"\b(?:one|single|two|double)[- ]arm(?:ed)?\s+(?:clinical\s+)?(?:trial|study)|"
      r"\bnon[- ]randomi[sz]ed\s+(?:clinical\s+)?trial|"
-     r"\bclinical\s+trial\b|"
+     # "clinical trial" but NOT the structured-abstract heading
+     # "CLINICAL TRIAL NUMBER:" / "TRIAL REGISTRATION:", whose own content is
+     # routinely "Not applicable" (41249970).
+     r"\bclinical\s+trial\b(?!\s*(?:number|registration|registry|no\.?)\b)|"
      r"\bprospective(?:ly)?\s+(?:registered|recruited|enrolled)|"
-     r"\bprospective\s+(?:cohort|study|clinical|observational|"
-     r"comparative|multicent|single[- ]cent)|"
-     r"\bcomparative\s+(?:clinical\s+)?stud",
+     # Allow a comma and intervening adjectives: "prospective, clinical study"
+     # (40492718) was missed by requiring the noun to be adjacent.
+     # `[\w-]+` and not `\w+`: "prospective single-arm observational clinical
+     # study" (42644467) fell through because `\w+` does not span the hyphen
+     # in "single-arm", so the intervening word never matched.
+     r"\bprospective[,]?\s+(?:[\w-]+[,]?\s+){0,3}"
+     r"(?:cohort|study|clinical|observational|comparative|multicent|"
+     r"single[- ]cent|interventional|follow[- ]up|trial)|"
+     r"\bcomparative\s+(?:clinical\s+)?(?:stud|evaluation|assessment)|"
+     r"\bsplit[- ]mouth|\bcross[- ]over\s+(?:trial|design|stud)",
      "clinical trial (non-randomised) or prospective study", "level2"),
     (r"\bretrospective(?:ly)?\b|\bchart\s+review|\brecords?\s+review",
      "retrospective study", "level3a"),
@@ -2638,11 +2743,14 @@ _PRIMARY_PATTERNS = [
 
 # A protocol or registration announcement states a design but reports NO
 # result. Recognised so it can be excluded rather than admitted as though the
-# trial had reported.
+# trial had reported. "Systematic Review Protocol on ..." (40787614) was
+# admitted as a meta-analysis because only "study protocol" was known.
 _PROTOCOL_RE = re.compile(
-    r"\b(study\s+protocol|trial\s+protocol|protocol\s+for\s+a|"
-    r"will\s+be\s+randomi[sz]ed|will\s+be\s+recruited|"
-    r"this\s+protocol\s+describes)", re.I)
+    r"\b(study\s+protocol|trial\s+protocol|review\s+protocol|"
+    r"protocol\s+for\s+a|PRISMA[- ]P\b|"
+    r"will\s+be\s+randomi[sz]ed|will\s+be\s+recruited|will\s+be\s+conducted|"
+    r"this\s+protocol\s+describes|protocol\s+(?:was|has\s+been)\s+registered)",
+    re.I)
 
 # Rungs this extractor may emit, and the subset that counts as
 # "level2-or-above" for admission. Derived from TIER_ORDER rather than
@@ -2673,10 +2781,31 @@ def extract_stated_design(abstract: str, title: str = "") -> dict:
                 "rung": "protocol", "matched": m.group(0),
                 "basis": "protocol marker"}
 
+    # Before anything that reads a DESIGN field: a structured commentary
+    # reports the design of the paper it is commenting on, not its own.
+    m = _COMMENTARY_RE.search(hay)
+    if m:
+        return {"design": "commentary on another paper", "rung": "level5",
+                "matched": m.group(0), "basis": "commentary marker (precedence)"}
+
+    # A health-economic model consumes evidence; it is not that evidence.
+    m = _ECONOMIC_RE.search(hay)
+    if m:
+        return {"design": "health-economic model", "rung": "observational",
+                "matched": m.group(0), "basis": "economic-model marker"}
+
     m = _BENCH_RE.search(hay)
     if m:
         return {"design": "in vitro / bench study", "rung": "invitro",
                 "matched": m.group(0), "basis": "bench marker (precedence)"}
+
+    # `extracted teeth` needs a laboratory co-marker before it means bench
+    # work: a cohort study of the REASONS FOR EXTRACTION is a clinical study.
+    m = _EXTRACTED_SPECIMEN_RE.search(hay)
+    if m and _LAB_CONTEXT_RE.search(hay):
+        return {"design": "in vitro / bench study", "rung": "invitro",
+                "matched": m.group(0),
+                "basis": "extracted-specimen marker with laboratory context"}
 
     m = _ANIMAL_RE.search(hay)
     if m:
@@ -2690,20 +2819,29 @@ def extract_stated_design(abstract: str, title: str = "") -> dict:
                     "basis": "synthesis pattern"}
 
     human = bool(_HUMAN_SUBJECT_RE.search(hay))
+    self_labelled = bool(_SELF_LABELLED_TRIAL_RE.search(hay))
     for pat, design, rung in _PRIMARY_PATTERNS:
         m = re.search(pat, hay, re.I)
         if not m:
             continue
-        # Randomisation only means an RCT when there are human subjects. This
-        # is the guard that keeps "specimens were randomly assigned" out of
-        # Level I; the bench regex catches most of it, and this catches the
-        # rest.
-        if rung == "level1" and not human:
+        # Randomisation only means an RCT when there are human subjects --
+        # the guard that keeps "specimens were randomly assigned" out of
+        # Level I, backing up the bench veto above.
+        #
+        # BUT a paper that CALLS ITSELF a randomised controlled trial is taken
+        # at its word. Requiring a separate human-subject noun lost genuine
+        # trials, because dental trials count TEETH: 40397221 ("a randomized
+        # clinical trial" in its own title), 41941071 and 42145341 all came
+        # back `unclear`. The bench and animal vetoes have already run, so
+        # this cannot promote a laboratory experiment.
+        if rung == "level1" and not human and not self_labelled:
             return {"design": "randomisation stated without human subjects",
                     "rung": "unclear", "matched": m.group(0),
                     "basis": "randomisation without human-subject marker"}
         return {"design": design, "rung": rung, "matched": m.group(0),
-                "basis": "primary-design pattern"}
+                "basis": ("primary-design pattern (self-labelled trial)"
+                          if rung == "level1" and self_labelled and not human
+                          else "primary-design pattern")}
 
     return {}
 

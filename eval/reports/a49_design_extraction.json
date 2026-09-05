@@ -1,0 +1,1105 @@
+{
+ "threshold": 60,
+ "control": {
+  "design": "clinical trial (non-randomised) or prospective study",
+  "rung": "level2",
+  "matched": "one-arm clinical trial",
+  "basis": "primary-design pattern"
+ },
+ "rows": [
+  {
+   "id": "case-opening-sparse",
+   "n_untyped": 482,
+   "n_with_abstract": 482,
+   "no_design": 171,
+   "by_rung": {
+    "(none stated)": 171,
+    "level3a": 70,
+    "level1": 88,
+    "invitro": 62,
+    "level2": 19,
+    "observational": 19,
+    "level5": 5,
+    "unclear": 12,
+    "animal": 20,
+    "level3b": 3,
+    "level4": 13
+   },
+   "by_basis": {
+    "primary-design pattern": 206,
+    "bench marker (precedence)": 62,
+    "synthesis pattern": 11,
+    "randomisation without human-subject marker": 12,
+    "animal marker (precedence)": 20
+   },
+   "n_level2_or_above": 107,
+   "admitted": [
+    {
+     "pmid": "39255508",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "39510518",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized controlled trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "39828648",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective cohort",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "39880187",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40180318",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective clinical",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40185146",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40213509",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40258974",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomised clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40287087",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective cohort",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40297278",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40328981",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "systematic review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40422619",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40483300",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40507004",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40509940",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40511155",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": "Effect of Diode Laser on Postoperative Pain after Endodontic Treatment with Two Different File Systems Involvi"
+    },
+    {
+     "pmid": "40557029",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized into",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40604904",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective clinical",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40655579",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized controlled trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40655597",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40710151",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40712898",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40715053",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40729775",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40747149",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40787614",
+     "design": "meta-analysis",
+     "rung": "level1",
+     "matched": "meta-analys",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40843123",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40847584",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40863409",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized controlled clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40895880",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40904898",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40959835",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40964643",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40993494",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41063120",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41153629",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41164585",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41164633",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41188638",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "systematic review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41206809",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41225214",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41244655",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "comparative stud",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41249970",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "CLINICAL TRIAL",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41257148",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41275165",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41305935",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "Clinical Trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41322332",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41322333",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized into",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41379131",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41420171",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective cohort",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41438436",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41496672",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41509957",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41571087",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41573808",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospectively enrolled",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41593409",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "Systematic Review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41635348",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41636988",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41648709",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized controlled clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41660016",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41660024",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41717869",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized controlled trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41756792",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41759778",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41767975",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "Comparative stud",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41800019",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": "Comparative Evaluation of Clinical and Radiographic Success Rates of Direct Pulp Capping in Primary Molars Usi"
+    },
+    {
+     "pmid": "41803443",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "Randomised Controlled Trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41846721",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41901625",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41961683",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42004801",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42021436",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42028775",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42051585",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized controlled trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42083138",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42142092",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective observational",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42151954",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective cohort",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42245878",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42282380",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42287275",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42291653",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": "Comparison of Eggshell-derived Calcium Hydroxyapatite and Biodentine as Indirect Pulp-capping Agents in Primar"
+    },
+    {
+     "pmid": "42339034",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42360147",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "systematic review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42367443",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42370524",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42388091",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "one-arm clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42419678",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42426147",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "systematic review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42443876",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "CLINICAL TRIAL",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42449780",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42452734",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42473278",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42495805",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective clinical",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42516702",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42524043",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42528796",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "single-arm study",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42549324",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42551707",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42565287",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42575240",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized into",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42588273",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42592664",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42614935",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly allocated",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42662702",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42662992",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42686820",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomised controlled trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42688684",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    }
+   ]
+  },
+  {
+   "id": "diabetes-outcomes",
+   "n_untyped": 40,
+   "n_with_abstract": 40,
+   "no_design": 14,
+   "by_rung": {
+    "level3a": 11,
+    "(none stated)": 14,
+    "observational": 5,
+    "invitro": 3,
+    "animal": 3,
+    "level2": 1,
+    "level1": 2,
+    "unclear": 1
+   },
+   "by_basis": {
+    "primary-design pattern": 19,
+    "bench marker (precedence)": 3,
+    "animal marker (precedence)": 3,
+    "randomisation without human-subject marker": 1
+   },
+   "n_level2_or_above": 3,
+   "admitted": [
+    {
+     "pmid": "41090008",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective study",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41257148",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41275165",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    }
+   ]
+  },
+  {
+   "id": "sonic-vs-ultrasonic",
+   "n_untyped": 128,
+   "n_with_abstract": 128,
+   "no_design": 34,
+   "by_rung": {
+    "(none stated)": 34,
+    "invitro": 64,
+    "level2": 2,
+    "unclear": 11,
+    "level1": 15,
+    "observational": 1,
+    "level4": 1
+   },
+   "by_basis": {
+    "bench marker (precedence)": 64,
+    "primary-design pattern": 16,
+    "randomisation without human-subject marker": 11,
+    "synthesis pattern": 3
+   },
+   "n_level2_or_above": 17,
+   "admitted": [
+    {
+     "pmid": "40287087",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "prospective cohort",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40509940",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40618152",
+     "design": "clinical trial (non-randomised) or prospective study",
+     "rung": "level2",
+     "matched": "CLINICAL TRIAL",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40655620",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "systematic review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40746467",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "40893990",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": "Antibacterial Efficiency of three Different Irrigation Methods in Infected Roots Infected with Enterococcus Fa"
+    },
+    {
+     "pmid": "41049951",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41257148",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41321767",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41593409",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "Systematic Review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41660025",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41756800",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly divided",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41852957",
+     "design": "systematic review",
+     "rung": "level1",
+     "matched": "systematic review",
+     "basis": "synthesis pattern",
+     "title": ""
+    },
+    {
+     "pmid": "41899375",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "RCT",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42004786",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42118228",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomized clinical trial",
+     "basis": "primary-design pattern",
+     "title": ""
+    },
+    {
+     "pmid": "42415067",
+     "design": "randomised controlled trial",
+     "rung": "level1",
+     "matched": "randomly assigned",
+     "basis": "primary-design pattern",
+     "title": ""
+    }
+   ]
+  }
+ ]
+}

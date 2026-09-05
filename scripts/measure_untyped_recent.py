@@ -1,5 +1,30 @@
 """Item 4a — HOW BIG IS THE UNTYPED-RECENT BLIND SPOT? Measure only.
 
+CORRECTED 2026-09-04 (second batch). The first version of this script was
+WRONG IN TWO WAYS AT ONCE and its published median of 426 is withdrawn.
+
+  1. It called `generate_search_terms(q)`, which returns a STRING -- the single
+     primary PubMed query -- and then sliced it as `terms[:4]`, which takes the
+     first FOUR CHARACTERS. The queries actually issued were `("(") AND "last
+     18 months"[dp]`, `("l") AND ...` and so on. The list of topic groups comes
+     from `generate_multi_search_terms(question, primary_term)`, a different
+     function.
+  2. It omitted `ENDO_DOMAIN_FILTER`. Production ANDs it into every query
+     (`fetch_papers`), and without it nothing constrains results to dentistry.
+
+Together those made the "untyped recent papers on this topic" count into
+"recent papers in all of PubMed matching a single character". The pool it was
+measuring contained celery genomics, vanadium-oxide catalysis, Fusarium
+fungal genetics and Chinese health policy in Africa. The retmax cap of 200
+per group hid the absurdity by holding the totals near 600.
+
+The error was found by reading the abstracts the extractor could not classify
+rather than by trusting the count -- which is the only reason it was found at
+all. Eighth instrument error in this project; the first of them mine.
+
+This version issues PRODUCTION'S OWN QUERY SHAPE, built by the same
+expression `fetch_papers` uses, so the thing measured is the thing that runs.
+
 A paper MEDLINE has not yet indexed carries only `Journal Article`. Every
 generated query ANDs a tier filter, and no tier filter admits a bare
 `Journal Article`, so there is a rolling window -- MEDLINE's indexing lag --
@@ -39,16 +64,66 @@ import requests                   # noqa: E402
 import endo_ai as E               # noqa: E402
 
 MONTHS = 18
-RETMAX = 200
+RETMAX = 500
 MEDIAN_AFFORDABILITY_THRESHOLD = 40
+
+
+def topic_groups(question):
+    """The topic groups production would issue for this question.
+
+    Two calls, not one, and this is where the first version went wrong:
+    `generate_search_terms` returns the single primary query STRING, and
+    `generate_multi_search_terms` expands it into the list of groups. Slicing
+    the string gave four one-character queries.
+    """
+    primary = E.generate_search_terms(question)
+    groups = E.generate_multi_search_terms(question, primary)
+    if isinstance(groups, str):          # defensive: never slice a string
+        groups = [groups]
+    out, seen = [], set()
+    for g in [primary] + list(groups or []):
+        g = (g or "").strip()
+        if g and g not in seen:
+            seen.add(g)
+            out.append(g)
+    return out
+
+
+def untyped_lane_query(topic, months=MONTHS):
+    """Exactly what the untyped lane would issue: production's own query with
+    the tier filter replaced by the date window, domain filter and retraction
+    exclusions intact (`fetch_papers`)."""
+    return (f'({topic}) AND ("last {months} months"[dp]) '
+            f'AND {E.ENDO_DOMAIN_FILTER} '
+            f'NOT "Retracted Publication"[pt] NOT "Retraction of Publication"[pt]')
+
+
+def _get(url, params, timeout, what):
+    """One NCBI call with backoff.
+
+    At retmax=500 across seven topic groups and 29 questions this issues a few
+    thousand efetch batches, and NCBI resets the connection partway through
+    ("An existing connection was forcibly closed by the remote host"). A
+    measurement that dies at question 14 is a measurement that does not exist,
+    so every call retries with widening backoff rather than the run failing.
+    """
+    last = None
+    for attempt in range(5):
+        try:
+            r = requests.get(url, params=params, timeout=timeout)
+            r.raise_for_status()
+            return r
+        except Exception as e:
+            last = e
+            time.sleep(2.0 * (attempt + 1))
+    raise RuntimeError("%s failed after 5 attempts: %s" % (what, last))
 
 
 def esearch(term, retmax=RETMAX):
     url = f"{E.NCBI_EUTILS_BASE}/esearch.fcgi"
     p = E._ncbi_params({"db": "pubmed", "term": term, "retmax": retmax,
                         "retmode": "json", "sort": "relevance"})
-    r = requests.get(url, params=p, timeout=45)
-    r.raise_for_status()
+    r = _get(url, p, 45, "esearch")
     j = r.json().get("esearchresult", {})
     return j.get("idlist", []), int(j.get("count", 0))
 
@@ -61,15 +136,21 @@ def pubtypes(pmids):
         url = f"{E.NCBI_EUTILS_BASE}/efetch.fcgi"
         p = E._ncbi_params({"db": "pubmed", "id": ",".join(chunk),
                             "retmode": "xml"})
-        r = requests.get(url, params=p, timeout=60)
-        r.raise_for_status()
-        root = ET.fromstring(r.text)
+        try:
+            r = _get(url, p, 60, "efetch")
+        except Exception as e:
+            print("      efetch batch skipped: %s" % str(e)[:70])
+            continue
+        try:
+            root = ET.fromstring(r.text)
+        except Exception:
+            continue
         for art in root.findall(".//PubmedArticle"):
             pmid = art.findtext(".//PMID") or ""
             types = [(n.text or "").strip()
                      for n in art.findall(".//PublicationTypeList/PublicationType")]
             out[pmid] = types
-        time.sleep(0.35)
+        time.sleep(0.5)
     return out
 
 
@@ -82,14 +163,13 @@ def main():
     if limit:
         cases = cases[:limit]
 
-    # The date window production would apply. Expressed the way PubMed reads
-    # it, and the same string the lane itself would use.
-    window = f'"last {MONTHS} months"[dp]'
-
     print("=" * 78)
     print("ITEM 4a — UNTYPED RECENT PAPERS PER EVAL QUESTION (measure only)")
     print("=" * 78)
-    print("window: %s   retmax: %d   questions: %d" % (window, RETMAX, len(cases)))
+    print("window: last %d months   retmax: %d   questions: %d"
+          % (MONTHS, RETMAX, len(cases)))
+    print("query shape: production's own — topic AND window AND domain filter "
+          "NOT retracted")
     print("declared threshold: median > %d per query means the lane needs a "
           "relevance gate\n" % MEDIAN_AFFORDABILITY_THRESHOLD)
 
@@ -97,18 +177,15 @@ def main():
     for n, c in enumerate(cases, 1):
         q = c["question"]
         try:
-            terms = E.generate_search_terms(q)
+            groups = topic_groups(q)
         except Exception as e:
             print("  %2d. %-34s TERM GENERATION FAILED: %s" % (n, c["id"][:34], e))
             continue
 
-        # One query per topic group, each ANDed with the window and NO tier
-        # filter -- which is exactly what the untyped lane would issue.
         seen, total_hits = {}, 0
-        for t in terms[:4]:
-            term = "(%s) AND %s" % (t, window)
+        for t in groups:
             try:
-                ids, count = esearch(term)
+                ids, count = esearch(untyped_lane_query(t))
             except Exception as e:
                 print("      esearch failed: %s" % str(e)[:60])
                 continue
@@ -122,13 +199,14 @@ def main():
                          if [x.lower() for x in t] == ["journal article"])
         rows.append({
             "id": c["id"], "question": q, "mode": c.get("mode", ""),
-            "terms": terms[:4],
+            "n_groups": len(groups), "terms": groups,
+            "total_hits_reported": total_hits,
             "recent_returned": len(seen),
             "untyped_recent": len(untyped),
-            "untyped_pmids": untyped[:50],
+            "untyped_pmids": untyped,
         })
-        print("  %2d. %-38s recent=%-5d untyped=%-4d"
-              % (n, c["id"][:38], len(seen), len(untyped)))
+        print("  %2d. %-34s groups=%d recent=%-5d untyped=%-4d"
+              % (n, c["id"][:34], len(groups), len(seen), len(untyped)))
 
     counts = sorted(r["untyped_recent"] for r in rows)
     if not counts:
