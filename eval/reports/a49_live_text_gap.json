@@ -1,0 +1,34 @@
+{
+ "question": "sodium hypochlorite concentration for root canal irrigation",
+ "mode": "review",
+ "rows": [
+  {
+   "tier": "cochrane",
+   "scored": 2,
+   "in_text": 2,
+   "missing": 0
+  },
+  {
+   "tier": "level1",
+   "scored": 18,
+   "in_text": 18,
+   "missing": 0
+  },
+  {
+   "tier": "guideline",
+   "scored": 1,
+   "in_text": 1,
+   "missing": 0
+  },
+  {
+   "tier": "provisional",
+   "scored": 18,
+   "in_text": 18,
+   "missing": 0
+  }
+ ],
+ "total_scored": 39,
+ "total_in_text": 39,
+ "pct_shown": 100.0,
+ "header_total": 21
+}

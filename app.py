@@ -1242,6 +1242,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         generate_search_terms, generate_multi_search_terms,
         fetch_cochrane, fetch_papers,
         tier_query_lanes, fetch_untyped_recent, PROVISIONAL_KEY,
+        _tier_cap,
         COCHRANE_TERM, LEVEL_1_TERMS, LEVEL_2_TERMS,
         LEVEL_3A_TERMS, LEVEL_3B_TERMS,
         LEVEL_4_TERMS, LEVEL_5_TERMS,
@@ -1612,17 +1613,59 @@ def build_evidence_base_with_progress(job_id: str, question: str,
 
         added = 0
         for level_key, _terms, _label, _pct in tier_specs:
-            level_scored, level_ids, level_text = [], [], ""
-            for text, ids, scored in raw[level_key]:
+            level_scored, level_ids = [], []
+            for _text, ids, scored in raw[level_key]:
                 new_scored = [p for p in scored if p["pmid"] not in seen_pmids]
                 new_ids    = [i for i in ids    if i not in seen_pmids]
                 for p in new_scored:
                     seen_pmids.add(p["pmid"])
                 level_scored.extend(new_scored)
                 level_ids.extend(new_ids)
-                if text and not level_text:
-                    level_text = text
             level_scored.sort(key=lambda x: x["score"], reverse=True)
+
+            # THE PROMPT USED TO CARRY ONE SEARCH TERM'S PAPERS AND COUNT ALL
+            # SEVEN. This fold ran once per (tier, term) — ~7 fetches per tier
+            # — and accumulated `level_scored` over every one of them while
+            # keeping only the FIRST non-empty text block:
+            #
+            #     if text and not level_text:
+            #         level_text = text
+            #
+            # `_build_evidence_context` renders `block["text"]` and nothing
+            # else, so Claude read one term's papers per tier while
+            # `_summary` counted them all. MEASURED on a live Review
+            # retrieval for "sodium hypochlorite concentration":
+            #
+            #     level1     73 scored,  3 in the prompt   70 never shown
+            #     guideline   4 scored,  1 in the prompt    3 never shown
+            #     TOTAL      99 scored, 26 in the prompt
+            #     -> the model saw 26.3% of the retrieved evidence, under a
+            #        header telling it "Total papers: 80 | Avg score: 62.2"
+            #
+            # That is the A5 false-evidence-gap mechanism itself: the answer
+            # can state that no study addresses X while that study sits in
+            # `scored`, and the "Top paper per tier" panel can name a paper
+            # whose abstract was never in the prompt. Worse, `raw[lk]` is
+            # appended in `as_completed` order, so WHICH term's block survived
+            # was decided by whichever HTTP round trip finished first — the
+            # same question asked twice could answer differently.
+            #
+            # The text is now rebuilt from the deduped, capped `level_scored`
+            # with the renderer the library route and the differential merge
+            # already use, so text and scored are one-to-one by construction —
+            # the property `endo_ai.build_evidence_base` has always had.
+            #
+            # THE CAP MOVES WITH IT, and it has to. `fetch_papers` applies the
+            # per-tier cap per CALL, so seven calls could accumulate ~7x the
+            # intended quota; rendering all of that would have grown the
+            # prompt roughly 24x. Capping the deduped list restores the quota
+            # to what MODE_TIER_QUOTAS actually says and matches the
+            # curriculum path.
+            level_scored = cap_by_relevance(
+                level_scored, _tier_cap(mode, level_key), level_key)
+            level_text = _scored_to_text(
+                level_scored, TIER_LABEL.get(level_key, level_key.upper()))
+
             evidence[level_key] = {"text": level_text, "ids": level_ids,
                                    "scored": level_scored, "source": "pubmed"}
             all_scored.extend(level_scored)
