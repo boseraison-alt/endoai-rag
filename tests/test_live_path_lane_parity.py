@@ -118,6 +118,112 @@ class TestKnobsTheSharedHelperReadsAreForwarded:
             "worse than no parameter")
 
 
+class TestEnrichmentPresentOnOnePathOnly:
+    """Three behaviours that existed on one retrieval path and not the other.
+    Same class as the hardcoded lane list."""
+
+    def test_the_live_path_seeds_dedup_with_the_cochrane_tier(self):
+        """`seen_pmids` was created AFTER the Cochrane fetch, so a Cochrane
+        review re-found by level1 appeared in both blocks and was counted
+        twice -- a hole inside the one invariant this function's own comment
+        calls load-bearing, hitting the highest-authority papers in the base.
+        """
+        body = _live_path_body()
+        i_set = body.index("seen_pmids: set")
+        seg = body[i_set:i_set + 400]
+        assert 'evidence.get("cochrane")' in seg, (
+            "seen_pmids starts empty, so a Cochrane review re-found by level1 "
+            "is rendered twice")
+
+    def test_outlier_detection_runs_on_the_curriculum_path(self):
+        """`fetch_papers` hard-sets is_outlier=False with the comment 'set
+        later by detect_outliers()'. On this path there was no later -- the
+        only callers were in app.py -- so every curriculum module reached the
+        model with no outlier information while the prompt instructs it never
+        to present an outlier finding as established fact."""
+        src = (ROOT / "endo_ai.py").read_text(encoding="utf-8")
+        i = src.index("def build_evidence_base(topic")
+        j = src.index("\ndef ", i + 1)
+        assert "detect_outliers(all_scored)" in src[i:j], (
+            "detect_outliers never runs on the curriculum path")
+
+    def test_outliers_are_actually_flagged(self, monkeypatch):
+        """Behavioural: one clear outlier among peers must be tagged, and the
+        assembled context must carry the warning line."""
+        scores = [70, 71, 72, 69, 73, 70, 71, 72, 70, 15]
+
+        def paper(pmid, sc):
+            return {"pmid": pmid, "score": sc, "level_key": "level1",
+                    "title": "T", "abstract": "A", "authors": "X",
+                    "year": 2024, "journal": "J", "citations": 1,
+                    "sample_size": None, "followup_months": None,
+                    "impact_factor": None, "has_coi": False,
+                    "is_old": False, "is_outlier": False}
+
+        def fake(topic, filt, label, level_key, **kw):
+            if level_key != "level1":
+                return "", [], []
+            return ("txt", [str(i) for i in range(len(scores))],
+                    [paper(str(i), s) for i, s in enumerate(scores)])
+
+        monkeypatch.setattr(E, "fetch_papers", fake)
+        monkeypatch.setattr(E, "fetch_cochrane", lambda t: None)
+        monkeypatch.setattr(E, "generate_search_terms", lambda q, **k: "(t)")
+        monkeypatch.setattr(E, "label_and_expand", lambda q, t: t)
+        monkeypatch.setattr(E, "fetch_untyped_recent", lambda *a, **k: ("", [], []))
+
+        ev = E.build_evidence_base("q")
+        flagged = [p["pmid"] for p in ev["_summary"]["all_scored"]
+                   if p.get("is_outlier")]
+        assert flagged == ["9"], f"expected the score-15 paper flagged, got {flagged}"
+        assert "OUTLIER PAPERS" in E._build_evidence_context(ev)
+
+    def test_a_live_guideline_carries_its_status(self):
+        """Only the library path set guideline_*, so a guideline retrieved
+        LIVE rendered 'NOT SCORED -- ...' with an EMPTY detail. Two
+        consequences, the second clinical: the prompt orders the model to name
+        the issuing body, so with `org` absent it had to infer one from the
+        title; and a SUPERSEDED-but-not-withdrawn guideline was
+        indistinguishable from the current edition."""
+        fields = E._manifest_guideline_fields("17180780")   # ESE-QG-2006
+        assert fields.get("guideline_status") == "superseded"
+        assert fields.get("guideline_org") == "ESE"
+        line = E.format_paper_context_line({
+            "pmid": "17180780", "authors": "A", "year": 2006, "citations": 0,
+            "level_key": "guideline", "score": None,
+            "sample_size": None, "followup_months": None, **fields})
+        assert "superseded" in line, (
+            "a superseded guideline retrieved live reads as current")
+
+    def test_an_unconfirmed_accession_is_never_matched_by_pmid(self):
+        """Ten manifest records have an UNCONFIRMED PubMed accession. Matching
+        one by PMID would use the exact field nobody has verified."""
+        import json
+        seed = json.loads((ROOT / "data" / "guidelines_seed.json")
+                          .read_text(encoding="utf-8"))["guidelines"]
+        unconfirmed = [g for g in seed
+                       if g.get("confidence") == "unconfirmed_pmid" and g.get("pmid")]
+        for g in unconfirmed:
+            assert not E._manifest_guideline_fields(g["pmid"]), (
+                f"{g['id']} matched by an unconfirmed accession")
+
+    def test_an_ordinary_paper_gets_nothing(self):
+        assert E._manifest_guideline_fields("27759881") == {}
+        assert E._manifest_guideline_fields("99999999") == {}
+
+    def test_fetch_papers_actually_attaches_it(self):
+        """Rule 14, caught by a mutation that survived: the tests above all
+        exercise the HELPER. Deleting the call from `fetch_papers` left them
+        green, which is the same shape as the bug this whole file is about --
+        a correct helper that one caller does not call."""
+        src = (ROOT / "endo_ai.py").read_text(encoding="utf-8")
+        i = src.index("def fetch_papers(topic, filter_term")
+        j = src.index("\ndef ", i + 1)
+        assert "**_manifest_guideline_fields(pmid)" in src[i:j], (
+            "fetch_papers does not attach guideline identity, so a guideline "
+            "retrieved live carries no org, status or jurisdiction")
+
+
 class TestNoPaperAppearsInTwoTiersAtOnce:
     """A paper can carry several MEDLINE publication types -- a systematic
     review is both `Systematic Review[pt]` and `Review[pt]` -- so the same

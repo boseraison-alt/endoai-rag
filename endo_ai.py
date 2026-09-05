@@ -3676,6 +3676,43 @@ def _withdrawn_seed():
     return _WITHDRAWN_SEED
 
 
+_MANIFEST_BY_PMID = None
+
+
+def _manifest_guideline_fields(pmid: str) -> dict:
+    """Guideline identity for a LIVE-fetched paper, from the seed manifest.
+
+    Returns {} for anything the manifest does not name, so it is a no-op on
+    ordinary papers. Keyed by PMID and only for records whose accession is
+    CONFIRMED -- an `unconfirmed_pmid` entry must never be matched by PMID,
+    because that accession is exactly the thing nobody has verified.
+    """
+    global _MANIFEST_BY_PMID
+    if _MANIFEST_BY_PMID is None:
+        table = {}
+        try:
+            import json as _json
+            import os as _os
+            path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                                 "data", "guidelines_seed.json")
+            with open(path, encoding="utf-8") as fh:
+                for g in _json.load(fh).get("guidelines", []):
+                    if not g.get("pmid") or g.get("confidence") != "confirmed":
+                        continue
+                    table[str(g["pmid"])] = {
+                        "guideline_id":           g.get("id") or "",
+                        "guideline_org":          g.get("org") or "",
+                        "guideline_status":       g.get("status") or "",
+                        "guideline_jurisdiction": g.get("jurisdiction") or "",
+                        "guideline_url":          g.get("url") or "",
+                        "guideline_confidence":   "confirmed",
+                    }
+        except Exception as e:
+            print(f"  [guideline_meta] manifest unavailable: {e}")
+        _MANIFEST_BY_PMID = table
+    return dict(_MANIFEST_BY_PMID.get(str(pmid or ""), {}))
+
+
 _WITHDRAWN_TITLE_RE = re.compile(
     r"\bwithdrawn\b(?!\s+(?:consent|from\s+the\s+stud|participants?))", re.I)
 
@@ -4910,6 +4947,25 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 "is_old":          age > CURRENCY_THRESHOLD_YEARS,
                 "age_years":       age,
                 "is_outlier":      False,  # set later by detect_outliers()
+                # A49 item 4 — guideline identity, from the verified manifest.
+                # Only the LIBRARY path used to set these (rag.py's row
+                # mapping), so a guideline retrieved LIVE reached the model as
+                # "NOT SCORED — a guideline is a specialty's stated
+                # position..." with an EMPTY detail where a library-served one
+                # said "(ESE, current, EU)".
+                #
+                # Two consequences, and the second is a clinical hazard: the
+                # prompt orders the model to name the issuing body, so with
+                # `org` absent it had to infer one from the title — a
+                # fabrication surface on the field a clinician would act on;
+                # and a SUPERSEDED-but-not-withdrawn guideline retrieved live
+                # was indistinguishable from the current edition.
+                #
+                # Attached by PMID from data/guidelines_seed.json, which is
+                # already the authority for G1's withdrawn set. Metadata only:
+                # the tier and score are untouched, because matching the
+                # manifest says what a document IS, not where it sits.
+                **_manifest_guideline_fields(pmid),
             })
 
         # A paper only belongs in the cochrane tier if it was published in the
@@ -5576,6 +5632,24 @@ def build_evidence_base(topic, mode: str = "review"):
                 if p_papers else "",
         "ids": [p["pmid"] for p in p_papers],
         "scored": p_papers}
+
+    # OUTLIER DETECTION, which never ran on this path. `fetch_papers` hard-sets
+    # is_outlier=False with the comment "set later by detect_outliers()" -- and
+    # on this path there was no later: the only callers were in app.py. So
+    # every curriculum module and every CLI review reached the model with no
+    # OUTLIER PAPERS line and no [OUTLIER] tag, while the prompt instructs it
+    # never to present an outlier finding as established fact. It was told the
+    # rule and given nothing to apply it with.
+    #
+    # It runs across ALL tiers at once, which is the point: an outlier is
+    # defined relative to its peers, and per-tier it would have almost no
+    # sample. The provisional lane is excluded -- those papers carry no score,
+    # so they have nothing to be an outlier of.
+    #
+    # `apply_currency_tags` is NOT added here: `fetch_papers` already
+    # recomputes is_old/age_years per paper, so assuming the two are symmetric
+    # would have been wrong in the other direction.
+    all_scored = detect_outliers(all_scored)
 
     # Summary
     avg_score = 0

@@ -1594,7 +1594,16 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     #     applied afterwards, sequentially, in TIER_ORDER.
     #  2. EVIDENCE ORDER. evidence[] is built in tier order regardless of which
     #     fetch finished first, so completion order cannot leak into the answer.
-    seen_pmids: set = set()
+    # SEEDED WITH THE COCHRANE TIER, which it was not. Cochrane is fetched
+    # above, before this set exists, so a Cochrane review re-found by level1
+    # was rendered in BOTH blocks and counted twice in all_scored and
+    # avg_score. That is a hole inside the one invariant this function's own
+    # comment (below) calls load-bearing -- and it hits the highest-authority
+    # papers in the base, which are exactly the ones a duplicate presentation
+    # misleads most.
+    seen_pmids: set = {p["pmid"] for p in
+                       ((evidence.get("cochrane") or {}).get("scored") or [])
+                       if p.get("pmid")}
     _fetch_lock = threading.Lock()
 
     def _fetch_one(level_key, terms, label, term):
