@@ -89,6 +89,65 @@ It is admitted at level2, truthfully.
 The lane takes only what nothing else can reach. That is the whole point of it
 being separate.
 
+## ONE LANE, FIVE PLACES — the finding worth carrying forward
+
+Building the lane was the easy half. Wiring it took five separate fixes, and
+each was found by following the previous one rather than by a test:
+
+| site | what it does | how it was found |
+|---|---|---|
+| `endo_ai.build_evidence_base` | curriculum retrieval | built it here |
+| `app.build_evidence_base_with_progress` | **Review and Case** retrieval | asked which call sites reach `fetch_untyped_recent` |
+| `app.build_differential_evidence` | case-differential merge | followed the same question |
+| `endo_ai.merge_evidence_bases` | curriculum combine | the A/B reported `provisional_pool = 0` in **both** arms |
+| `endo_ai.stitch_curriculum` | reference list | followed the fourth |
+
+`PROVISIONAL_KEY`'s absence from `TIER_ORDER` is the property that makes the
+lane safe — it can never take a tier slot or be read as a rung. It is also
+exactly what makes it invisible to every `for tier in TIER_ORDER` loop in the
+codebase, and there are five that matter. **The safety property and the failure
+mode are the same fact.**
+
+`grep -n "in TIER_ORDER" app.py endo_ai.py` is the checklist. Any future lane
+that sits *beside* the ladder rather than on it inherits this.
+
+### And the one with history
+
+`app.py` carried its **own hardcoded copy** of the lane list, three lanes
+behind `tier_query_lanes()`:
+
+- **`observational`** (A31) — added so cross-sectional, morphometric, imaging
+  and diagnostic-accuracy designs would be reachable at all. Never reached a
+  Review or Case answer.
+- **`guideline`** (A49 item 5, the previous night) — the entire point was that
+  a clinical practice guideline had no query that could reach it. On this path
+  it still had none. **I reported that item as landed; it was landed on one of
+  two paths.**
+- **`provisional`** (this item).
+
+Every existing test passed and each was correct about what it asserted:
+`test_observational_tier` and `test_guideline_lane` check
+`tier_query_lanes()`; `test_provisional_lane` drives
+`endo_ai.build_evidence_base`. The helper was right and one of its two callers
+did not call it.
+
+### A second layer, found by measuring the fix
+
+With the lists merged, the guideline lane *still* did not run on Review,
+because the early stop skips every non-`level1` tier once `cochrane+level1`
+supply 15 papers — and it fired at 59 on the measured question. That reasoning
+("tier banding means a case series cannot override a Level I finding") does not
+cover a guideline, which is a specialty's stated **position**, a different axis.
+It now runs regardless, as the provisional lane already did by construction.
+
+Measured on `app.build_evidence_base_with_progress` itself, `force_route=live`:
+
+| | before | after |
+|---|---|---|
+| lanes issued | 3 | 4 (+guideline) |
+| provisional pool | 0 | 5 |
+| elapsed s | 48.7 | 48.2 |
+
 ## Rule 32 — when it finds nothing
 
 The lane logs its own arithmetic on every run, including the empty case:
