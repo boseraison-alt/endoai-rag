@@ -5174,8 +5174,17 @@ def _fetch_pubtypes_and_abstracts(ids: list) -> dict:
     return out
 
 
-def fetch_untyped_recent(topic: str, question: str = None,
+def fetch_untyped_recent(topic: str,
                          max_admitted: int = PROVISIONAL_MAX_ADMITTED) -> tuple:
+    # `question` was accepted here and never read. A divergence audit caught
+    # it: both callers passed it, so the signature implied a question-level
+    # relevance gate on this lane that does not exist. Removed rather than
+    # documented -- an unused parameter that names a safety property is worse
+    # than no parameter, because the next reader assumes the gate is there.
+    #
+    # If a relevance gate is wanted later it needs its own measurement: the
+    # design statement is the gate today, deliberately (evidence_floor 0.60
+    # already loses Komora, a Level I paper on the exact topic, at 0.5807).
     """The provisional lane. Returns (text, ids, papers), like fetch_papers.
 
     Papers come back carrying NO score and NO tier: `level_key` is
@@ -5501,6 +5510,31 @@ def build_evidence_base(topic, mode: str = "review"):
     # PubMed boolean, and that is a different mechanism.
     smart_topic = (label_and_expand(topic, [raw_topic]) or [raw_topic])[0]
 
+    # CROSS-TIER DEDUP. A paper can carry several MEDLINE publication types --
+    # a systematic review is both `Systematic Review[pt]` and `Review[pt]` --
+    # so the same PMID comes back from several lanes. Without this it was
+    # rendered in TWO tier blocks under two contradictory grades in one
+    # prompt, while the system prompt tells Claude to trust the tier label
+    # absolutely, and it double-counted in `total_scored` and skewed
+    # `avg_score`. Reproduced: synthesis_order [('111','level1'),
+    # ('111','level4')], total_scored 2 for one paper.
+    #
+    # `app.build_evidence_base_with_progress` has always carried this and its
+    # comment calls the property load-bearing; this path never did. Lanes are
+    # issued strongest-first, so first-seen wins is the correct resolution --
+    # the same rule the other path documents.
+    seen_pmids: set = set()
+
+    def _dedup(scored):
+        out = []
+        for p in scored or []:
+            pmid = p.get("pmid")
+            if not pmid or pmid in seen_pmids:
+                continue
+            seen_pmids.add(pmid)
+            out.append(p)
+        return out
+
     # Cochrane
     cochrane_direct = fetch_cochrane(raw_topic)
     if cochrane_direct:
@@ -5509,6 +5543,7 @@ def build_evidence_base(topic, mode: str = "review"):
         text, ids, scored = fetch_papers(smart_topic, COCHRANE_TERM,
                                          "Cochrane Reviews (PubMed)", "cochrane",
                                          mode=mode, question=topic)
+        scored = _dedup(scored)
         evidence["cochrane"] = {"text": text, "ids": ids, "scored": scored}
         all_scored.extend(scored)
 
@@ -5520,6 +5555,7 @@ def build_evidence_base(topic, mode: str = "review"):
             smart_topic, " OR ".join(terms), label, level_key, mode=mode,
             question=topic, max_results=TIER_FETCH_DEPTH.get(level_key, 50)
         )
+        scored = _dedup(scored)
         evidence[level_key] = {"text": text, "ids": ids, "scored": scored}
         all_scored.extend(scored)
 
@@ -5529,9 +5565,17 @@ def build_evidence_base(topic, mode: str = "review"):
     # which is the score-bearing list every average and "top paper" reads: they
     # carry no score, and mixing a None into that list is how a null-safety bug
     # reaches six call sites at once.
-    p_text, p_ids, p_papers = fetch_untyped_recent(smart_topic, question=topic)
-    evidence[PROVISIONAL_KEY] = {"text": p_text, "ids": p_ids,
-                                 "scored": p_papers}
+    p_text, p_ids, p_papers = fetch_untyped_recent(smart_topic)
+    # Deduped against the tiers too. The two sets should be disjoint by
+    # construction -- a paper a tier lane returns has a publication type, so
+    # it is not untyped -- but if one ever appears in both, MEDLINE has
+    # classified it and the TIERED copy is the correct one to keep.
+    p_papers = _dedup(p_papers)
+    evidence[PROVISIONAL_KEY] = {
+        "text": "".join(_provisional_context_line(p) for p in p_papers)
+                if p_papers else "",
+        "ids": [p["pmid"] for p in p_papers],
+        "scored": p_papers}
 
     # Summary
     avg_score = 0

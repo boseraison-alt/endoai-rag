@@ -1242,7 +1242,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         generate_search_terms, generate_multi_search_terms,
         fetch_cochrane, fetch_papers,
         tier_query_lanes, fetch_untyped_recent, PROVISIONAL_KEY,
-        _tier_cap,
+        _tier_cap, TIER_FETCH_DEPTH,
         COCHRANE_TERM, LEVEL_1_TERMS, LEVEL_2_TERMS,
         LEVEL_3A_TERMS, LEVEL_3B_TERMS,
         LEVEL_4_TERMS, LEVEL_5_TERMS,
@@ -1580,8 +1580,25 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         if is_aborted(job_id):
             return level_key, None
         try:
-            return level_key, fetch_papers(term, " OR ".join(terms), label,
-                                           level_key, question=question)
+            # `mode` and `max_results` were both dropped here, and both are
+            # knobs the shared helper reads. Same class as the hardcoded lane
+            # list: a setting added to endo_ai that one of its two callers
+            # never forwarded.
+            #
+            #   mode        selects MODE_TIER_QUOTAS. In production B is only
+            #               ever review or case, and those two tables are
+            #               key-for-key identical, so this is hygiene today --
+            #               but eval/run_eval.py can pass mode="learn", where
+            #               they are NOT identical.
+            #   max_results TIER_FETCH_DEPTH gives `observational` a depth of
+            #               100 because A31 measured that the designs it
+            #               admits sit deeper in the result list. The live
+            #               path was fetching 50, so half that depth never
+            #               existed on Review or Case.
+            return level_key, fetch_papers(
+                term, " OR ".join(terms), label, level_key,
+                mode=mode, question=question,
+                max_results=TIER_FETCH_DEPTH.get(level_key, 50))
         except Exception as e:
             print(f"  XX {label}: fetch failed ({e})")
             return level_key, None
@@ -1718,8 +1735,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         # from any tier: PROVISIONAL_KEY is not in TIER_ORDER.
         if not is_aborted(job_id):
             try:
-                p_text, p_ids, p_papers = fetch_untyped_recent(
-                    smart_topic, question=question)
+                p_text, p_ids, p_papers = fetch_untyped_recent(smart_topic)
                 evidence[PROVISIONAL_KEY] = {
                     "text": p_text, "ids": p_ids, "scored": p_papers,
                     "source": "pubmed"}

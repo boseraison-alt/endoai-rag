@@ -76,6 +76,97 @@ class TestTheLivePathDerivesItsLanes:
         assert lane in [k for k, _t, _l in E.tier_query_lanes()]
 
 
+class TestKnobsTheSharedHelperReadsAreForwarded:
+    """Same class as the hardcoded lane list: a setting added to
+    `endo_ai.fetch_papers` that one of its two callers never passed."""
+
+    def test_the_live_path_forwards_the_per_tier_fetch_depth(self):
+        """`TIER_FETCH_DEPTH` gives `observational` a depth of 100 because A31
+        measured that the designs it admits sit deeper in the result list. The
+        live path was fetching 50, so half that depth never existed on Review
+        or Case."""
+        body = _live_path_body()
+        assert "TIER_FETCH_DEPTH.get(level_key, 50)" in body, (
+            "the live path fetches a flat depth and ignores TIER_FETCH_DEPTH")
+        assert E.TIER_FETCH_DEPTH.get("observational") == 100
+
+    def test_the_live_path_forwards_the_mode(self):
+        """`mode` selects MODE_TIER_QUOTAS. Review and case are identical
+        today, so this is hygiene -- but eval/run_eval.py can pass
+        mode='learn', where they are not."""
+        body = _live_path_body()
+        assert "mode=mode, question=question" in body
+
+    def test_review_and_case_quotas_are_still_identical(self):
+        """The reason the dropped `mode` was harmless in production. If this
+        ever fails, the omission it excuses has become a real defect."""
+        review = E.MODE_TIER_QUOTAS["review"]
+        case = E.MODE_TIER_QUOTAS.get("case")
+        if case is None:
+            pytest.skip("no case quota table")
+        assert review == case, (
+            "review and case quotas have diverged, so forwarding `mode` now "
+            "changes behaviour -- check every caller passes it")
+
+    def test_the_provisional_lane_has_no_dead_parameter(self):
+        """`question` was accepted and never read, implying a question-level
+        relevance gate on the lane that does not exist."""
+        import inspect
+        params = list(inspect.signature(E.fetch_untyped_recent).parameters)
+        assert "question" not in params, (
+            "a parameter that names a safety property but is never read is "
+            "worse than no parameter")
+
+
+class TestNoPaperAppearsInTwoTiersAtOnce:
+    """A paper can carry several MEDLINE publication types -- a systematic
+    review is both `Systematic Review[pt]` and `Review[pt]` -- so the same
+    PMID comes back from several lanes.
+
+    `app.build_evidence_base_with_progress` has always carried a `seen_pmids`
+    set and its comment calls the property load-bearing.
+    `endo_ai.build_evidence_base` never did, so the same paper was rendered in
+    TWO tier blocks under two contradictory grades in one prompt, while the
+    system prompt tells Claude to trust the tier label absolutely -- and it
+    double-counted in `total_scored` and skewed `avg_score`.
+    """
+
+    @pytest.fixture
+    def evidence(self, monkeypatch):
+        def paper(pmid, lk, sc):
+            return {"pmid": pmid, "score": sc, "level_key": lk, "title": "T",
+                    "abstract": "A", "authors": "X", "year": 2024,
+                    "journal": "J", "citations": 1, "sample_size": None,
+                    "followup_months": None, "impact_factor": None,
+                    "has_coi": False, "is_old": False, "is_outlier": False}
+
+        def fake(topic, filt, label, level_key, **kw):
+            if level_key in ("level1", "level4"):
+                return "txt", ["111"], [
+                    paper("111", level_key, 80.0 if level_key == "level1" else 20.0)]
+            return "", [], []
+
+        monkeypatch.setattr(E, "fetch_papers", fake)
+        monkeypatch.setattr(E, "fetch_cochrane", lambda t: None)
+        monkeypatch.setattr(E, "generate_search_terms", lambda q, **k: "(t)")
+        monkeypatch.setattr(E, "label_and_expand", lambda q, t: t)
+        monkeypatch.setattr(E, "fetch_untyped_recent", lambda *a, **k: ("", [], []))
+        return E.build_evidence_base("q")
+
+    def test_it_appears_once(self, evidence):
+        order = [(p["pmid"], p["tier_key"])
+                 for p in evidence["_summary"]["synthesis_order"]]
+        assert order == [("111", "level1")], (
+            f"the same paper reached synthesis under two tier labels: {order}")
+
+    def test_the_strongest_tier_wins(self, evidence):
+        assert [p["pmid"] for p in evidence["level1"]["scored"]] == ["111"]
+        assert evidence["level4"]["scored"] == []
+
+    def test_it_is_not_double_counted(self, evidence):
+        assert evidence["_summary"]["total_scored"] == 1
+
+
 class TestTheProvisionalLaneReachesTheLivePath:
 
     def test_the_live_path_calls_it(self):
