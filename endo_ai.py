@@ -5076,12 +5076,28 @@ PROVISIONAL_KEY = "provisional"
 PROVISIONAL_LABEL = ("Provisional — recent, not yet classified by MEDLINE "
                      "(design as stated by the authors)")
 PROVISIONAL_WINDOW_MONTHS = 18
-# Bounded like every other lane. The measured median admitted is 4 and the
-# measured max 32, so this caps the tail rather than doing the selecting.
+# Bounded like every other lane. The measured median admitted is 3 and the
+# measured max 30, so this caps the tail rather than doing the selecting.
+#
+# NOTE THE RELATIONSHIP TO ITEM 1's THRESHOLD, because a false-negative audit
+# pointed out the trap: this cap (40) sits BELOW the affordability threshold
+# the build decision was taken against (60 per query). The threshold test
+# itself is unaffected -- `scripts/measure_design_all29.py` counts every
+# level2-or-above paper with no cap applied, and its max was 30 -- but the
+# LANE can never admit more than 40 however good recall becomes. That is
+# deliberate bounding, not a measurement artefact, and it is written down here
+# so nobody later reads "max 30 against a threshold of 60" as headroom the
+# lane would actually use.
 PROVISIONAL_MAX_ADMITTED = 40
-# How many recent candidates to look at before the design filter runs. The
-# measured max untyped-recent for one question was 307.
-PROVISIONAL_FETCH_DEPTH = 200
+# How many recent candidates to look at before the design filter runs.
+#
+# Raised from 200 to 400: the corrected 4a measurement found a maximum of 307
+# untyped-recent candidates for one question, so a depth of 200 left ~107
+# candidates on that question never shown to the extractor at all -- misses
+# that sit outside every recall measurement because nothing ever judged them.
+# 400 covers the measured maximum with margin, at the cost of two more efetch
+# batches on the one question that needs them.
+PROVISIONAL_FETCH_DEPTH = 400
 
 
 def untyped_recent_query(topic: str, months: int = PROVISIONAL_WINDOW_MONTHS) -> str:

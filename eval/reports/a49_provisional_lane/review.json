@@ -1,0 +1,78 @@
+{
+ "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+ "arms": {
+  "off": {
+   "lane": "off",
+   "elapsed_s": 144.5,
+   "cost_usd": 0.8025,
+   "tiered_pool": 38,
+   "provisional_pool": 0,
+   "total_pool": 38,
+   "citation_markers": 22,
+   "distinct_cited": [
+    "15910469",
+    "26272704",
+    "26687126",
+    "28148534",
+    "29603299",
+    "30711166",
+    "32047601",
+    "35488883",
+    "36162893",
+    "39151889",
+    "39313095",
+    "39589537",
+    "40497767",
+    "41545543",
+    "42126217"
+   ],
+   "n_distinct_cited": 15,
+   "provisional_cited": [],
+   "provisional_designs": [],
+   "answer_chars": 9418
+  },
+  "on": {
+   "lane": "on",
+   "elapsed_s": 141.2,
+   "cost_usd": 0.7673,
+   "tiered_pool": 29,
+   "provisional_pool": 2,
+   "total_pool": 31,
+   "citation_markers": 22,
+   "distinct_cited": [
+    "15910469",
+    "17974642",
+    "23130060",
+    "24858151",
+    "26272704",
+    "26687126",
+    "28148534",
+    "28349914",
+    "32047601",
+    "36512807",
+    "40708757",
+    "41460772",
+    "41852998",
+    "9594474"
+   ],
+   "n_distinct_cited": 14,
+   "provisional_cited": [
+    "40708757",
+    "41852998"
+   ],
+   "provisional_designs": [
+    {
+     "pmid": "40708757",
+     "year": 2025,
+     "design": "randomised controlled trial"
+    },
+    {
+     "pmid": "41852998",
+     "year": 2026,
+     "design": "randomised controlled trial"
+    }
+   ],
+   "answer_chars": 9746
+  }
+ }
+}

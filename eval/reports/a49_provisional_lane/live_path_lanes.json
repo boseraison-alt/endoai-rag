@@ -1,0 +1,67 @@
+{
+ "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+ "arms": {
+  "before": {
+   "arm": "before",
+   "elapsed_s": 48.7,
+   "lanes_present": [
+    "cochrane",
+    "level1",
+    "provisional"
+   ],
+   "per_lane": {
+    "cochrane": 1,
+    "level1": 30,
+    "provisional": 0
+   },
+   "tiered_pool": 31,
+   "provisional_pool": 0,
+   "provisional": []
+  },
+  "after": {
+   "arm": "after",
+   "elapsed_s": 48.2,
+   "lanes_present": [
+    "cochrane",
+    "guideline",
+    "level1",
+    "provisional"
+   ],
+   "per_lane": {
+    "cochrane": 1,
+    "level1": 50,
+    "guideline": 0,
+    "provisional": 5
+   },
+   "tiered_pool": 51,
+   "provisional_pool": 5,
+   "provisional": [
+    {
+     "pmid": "41908021",
+     "year": 2025,
+     "design": "clinical trial (non-randomised) or prospective study"
+    },
+    {
+     "pmid": "40297278",
+     "year": 2025,
+     "design": "randomised controlled trial"
+    },
+    {
+     "pmid": "41856982",
+     "year": 2026,
+     "design": "randomised controlled trial"
+    },
+    {
+     "pmid": "42644467",
+     "year": 2026,
+     "design": "clinical trial (non-randomised) or prospective study"
+    },
+    {
+     "pmid": "42526597",
+     "year": 2026,
+     "design": "randomised controlled trial"
+    }
+   ]
+  }
+ }
+}

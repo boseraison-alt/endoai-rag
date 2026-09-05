@@ -1241,6 +1241,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     from endo_ai import (
         generate_search_terms, generate_multi_search_terms,
         fetch_cochrane, fetch_papers,
+        tier_query_lanes, fetch_untyped_recent, PROVISIONAL_KEY,
         COCHRANE_TERM, LEVEL_1_TERMS, LEVEL_2_TERMS,
         LEVEL_3A_TERMS, LEVEL_3B_TERMS,
         LEVEL_4_TERMS, LEVEL_5_TERMS,
@@ -1526,14 +1527,34 @@ def build_evidence_base_with_progress(job_id: str, question: str,
                                 "source": "pubmed"}
         all_scored.extend(scored)
 
-    levels = [
-        ("level1",  LEVEL_1_TERMS,  TIER_LABEL["level1"],  30),
-        ("level2",  LEVEL_2_TERMS,  TIER_LABEL["level2"],  45),
-        ("level3a", LEVEL_3A_TERMS, TIER_LABEL["level3a"], 53),
-        ("level3b", LEVEL_3B_TERMS, TIER_LABEL["level3b"], 58),
-        ("level4",  LEVEL_4_TERMS,  TIER_LABEL["level4"],  65),
-        ("level5",  LEVEL_5_TERMS,  TIER_LABEL["level5"],  72),
-    ]
+    # A SECOND, HARDCODED COPY OF THE LANE LIST USED TO LIVE HERE, and it had
+    # silently fallen three lanes behind `endo_ai.tier_query_lanes()`.
+    #
+    # This function is the LIVE path for Review and Case. `build_evidence_base`
+    # in endo_ai.py is the curriculum path. They are two implementations of the
+    # same idea, and the list below was written out longhand in both — so every
+    # lane added to the ladder since had reached the curriculum and nothing
+    # else:
+    #
+    #   observational  A31. Added so cross-sectional, morphometric, imaging and
+    #                  diagnostic-accuracy designs would be REACHABLE at all.
+    #                  Never reached a Review or Case answer.
+    #   guideline      A49 item 5, added the previous night. The whole point was
+    #                  that a clinical practice guideline had no query that
+    #                  could reach it; it still had none here.
+    #   provisional    A49 item 4b, added tonight.
+    #
+    # Found by asking which call sites reach `fetch_untyped_recent`, not by a
+    # test — every test of the lanes exercised `tier_query_lanes()` or
+    # `endo_ai.build_evidence_base`, and both were correct. This is standing
+    # rule 14 exactly: the helper was right and one of its two callers did not
+    # call it. `tests/test_live_path_lane_parity.py` now pins the two lists
+    # together so a lane cannot be added to one and not the other again.
+    #
+    # The fourth tuple element is vestigial — see the note in `_run_tiers`,
+    # per-tier percentages are "a lie" once fetches run in parallel — so it is
+    # filled with a constant rather than reinvented per lane.
+    levels = [(lk, terms, label, 50) for lk, terms, label in tier_query_lanes()]
 
     # ── B2/B5: parallel tier fetches, in two phases ──────────────────────
     # Every (tier, search-term) pair is an independent HTTP round trip; there
@@ -1624,8 +1645,44 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             _pubmed_audit_log("early_stop", "level1",
                               f"n_strong={n_strong} threshold={EARLY_STOP_MIN_PAPERS}",
                               [], 200, 0)
+            # ...but the guideline lane is NOT a weak tier, and the early
+            # stop's reasoning does not cover it.
+            #
+            # That reasoning is "tier banding means a case series cannot
+            # override a Level I finding, so once the top tiers have supplied
+            # enough, the weak ones cannot change the recommendation". A
+            # guideline is not weaker evidence — it is a specialty's stated
+            # POSITION, a different axis entirely, and A49 item 5 exists
+            # because nothing could reach one. Skipping it here would have
+            # left it unreachable on exactly the well-covered Review questions
+            # a clinician is most likely to ask.
+            _run_tiers([l for l in levels if l[0] == "guideline"])
         else:
             _run_tiers([l for l in levels if l[0] not in EARLY_STOP_TIERS])
+
+        # A49 item 4b — the provisional lane, and DELIBERATELY OUTSIDE the
+        # early stop.
+        #
+        # The early stop skips the weak tiers once cochrane+level1 have
+        # supplied enough, on the reasoning that tier banding means a case
+        # series cannot override a Level I finding anyway. That reasoning does
+        # not transfer here. This lane exists to reach papers MEDLINE has not
+        # classified yet, and a new trial is MOST valuable precisely when there
+        # is established evidence for it to contradict — skipping it on
+        # well-covered questions would skip it exactly where it matters.
+        #
+        # It costs one esearch and a batched efetch, ~5s, and it takes no slot
+        # from any tier: PROVISIONAL_KEY is not in TIER_ORDER.
+        if not is_aborted(job_id):
+            try:
+                p_text, p_ids, p_papers = fetch_untyped_recent(
+                    smart_topic, question=question)
+                evidence[PROVISIONAL_KEY] = {
+                    "text": p_text, "ids": p_ids, "scored": p_papers,
+                    "source": "pubmed"}
+            except Exception as e:
+                # Never let the newest-literature lane take an answer down.
+                print(f"  [provisional] lane failed, continuing without it: {e}")
 
     # Apply outlier detection and currency tags to PubMed results
     all_scored = detect_outliers(apply_currency_tags(all_scored))
