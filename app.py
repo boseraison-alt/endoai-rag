@@ -2020,6 +2020,20 @@ def _scored_to_text(scored_papers: list, label: str) -> str:
     citation-support flag rate (39.4% -> 8.5%) was taken with both present, so
     aligning the two paths means re-measuring, and the sensible direction is to
     give the LIVE path the title as well rather than take it away here.
+
+    2026-09-05, item 2 — AND THAT CHANGED THE CASE DIFFERENTIAL, which is the
+    third caller of this function and was not considered above. Papers reaching
+    `build_differential_evidence` from the LIVE route carried no `title` and no
+    `abstract` on their dicts at all, because `fetch_papers` did not put them
+    there. So the two loops below found nothing to emit and a live-sourced
+    candidate paper reached Claude through this renderer as a metadata line and
+    NOTHING ELSE — the exact defect the 2026-08-31 fix above describes, still
+    live on one path, on the mode where a paper is retrieved specifically to
+    speak for a candidate cause.
+    Item 2 added both fields to `fetch_papers` for a different reason (the
+    PRISMA nomination needed text to embed) and closed this as a side effect.
+    It is a real prompt change on the Case differential path and the v6
+    baseline prediction names it.
     """
     from endo_ai import format_paper_context_line
     text = f"\n[{label}]\n"
