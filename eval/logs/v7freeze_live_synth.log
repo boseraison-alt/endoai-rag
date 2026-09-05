@@ -1,0 +1,1242 @@
+mode: SYNTHESIS
+
+======================================================================
+retreatment-vs-microsurgery   [pinned: live]
+======================================================================
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git dd570c7+dirty (imported 2026-09-05T10:55:18)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+[intent] kind=standard retrieval=both clarify=False reason=Common retreatment comparison with established evidence; benefits from recent outcome literature.
+  [rag_gate] force_route=live — library skipped
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  Smart search terms: '("nonsurgical retreatment" OR "endodontic retreatment" OR "root canal retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "apicoectomy" OR "surgical endodontic*") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "apical pathosis" OR "periapical lesion*")'
+  [group_roles] query 1: subject | subject | scenario
+  [group_roles] query 2: qualifier | subject | scenario
+  [group_roles] query 3: scenario | subject | scenario
+  [group_roles] query 4: qualifier | subject | scenario
+  [group_roles] query 5: subject | subject | scenario
+  [group_roles] query 6: qualifier | subject | scenario
+  [group_roles] query 7: scenario | subject | scenario
+  Multi-term search: ['("nonsurgical retreatment" OR "endodontic retreatment" OR "root canal retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "apicoectomy" OR "surgical endodontic*") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "apical pathosis" OR "periapical lesion*")', '("root canal therapy" OR "endodontic treatment" OR "pulp therapy") AND ("periapical surgery" OR "apical surgery" OR "retrograde filling" OR "retrofill*") AND ("treatment failure*" OR "failed endodontic*" OR "post-treatment disease")', '("secondary endodontic infection*" OR "reinfection" OR "persistent infection") AND ("microsurgical approach*" OR "surgical retreatment" OR "apical debridement") AND ("healing" OR "success rate*" OR "clinical outcome*")', '("gutta-percha removal" OR "obturation removal" OR "post removal") AND ("apical surgery" OR "endoscopic surgery" OR "surgical management") AND ("chronic apical periodontitis" OR "apical bone loss" OR "radiolucency")', '("nonsurgical endodontic therapy" OR "conventional retreatment" OR "conservative management") AND ("surgical intervention" OR "surgical option*" OR "operative treatment") AND ("apical inflammation" OR "periapical disease" OR "apical pathology")', '("retreatment case*" OR "re-treatment" OR "redo") AND ("endodontic microsurgery" OR "periapical microsurgery" OR "surgical correction") AND ("recurrent apical periodontitis" OR "treatment-resistant lesion*" OR "resistant disease")', '("coronal leakage" OR "bacterial contamination" OR "internal resorption") AND ("apical surgical approach" OR "transseptal surgery" OR "surgical exposure") AND ("lesion resolution" OR "bone regeneration" OR "radiographic healing")']
+  Searching Cochrane for: '("nonsurgical retreatment" OR "endodontic retreatment" OR "root canal retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "apicoectomy" OR "surgical endodontic*") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "apical pathosis" OR "periapical lesion*")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 582ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical retreatment" OR "endodontic retreatment" OR "r
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 503ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (subject | subject | scenario)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 817ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 987ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1052ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal therapy" OR "endodontic treatment" OR "pulp therapy")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1114ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1179ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 613ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 576ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 728ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 794ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 3 papers...
+    Fetching metadata for 1 papers...
+    Fetching metadata for 1 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 690ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    [abstract_cache] persisted 1 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 68.9/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 68.1/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 59.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 66.7/100
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 73.7/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 1 PMIDs in 672ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (subject | subject | scenario)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 2 PMIDs in 786ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal therapy" OR "endodontic treatment" OR "pulp therapy")
+  ~~ Level II — Prospective Studies: 2 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 977ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1162ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1173ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 1194ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 4 PMIDs in 611ms
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 6 PMIDs in 619ms
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 603ms
+  -- Level II — Prospective Studies: 0 results found
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 3 PMIDs in 860ms
+    Fetching metadata for 4 papers...
+    Fetching metadata for 6 papers...
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 722ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+    Fetching metadata for 3 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 557ms
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 1 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel II — Prospective Studies: 1 papers -- top score 60.7/100
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 10 PMIDs in 869ms (HTTP 200)
+    Fetching metadata for 10 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+  OKLevel II — Prospective Studies: 1 papers -- top score 58.9/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 3 PMIDs in 645ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal therapy" OR "endodontic treatment" OR "pulp therapy")
+  ~~ Level IIIa — Retrospective Cohort: 3 hits, broadening once
+    [abstract_cache] persisted 6 abstracts from this batch
+    [COI] 'Fkg' mentioned somewhere in Level II — Prospective Studies — evaluating per paper
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+    [quality] kept 3 of 6 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 6 papers -- top score 65.3/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 6 PMIDs in 610ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 581ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    Fetching metadata for 6 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 44.4/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 14 PMIDs in 560ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 1 PMIDs in 681ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Level IIIa — Retrospective Cohort: 1 hits, broadening once
+    Fetching metadata for 14 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 5 PMIDs in 614ms
+    Fetching metadata for 5 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 1 with registry entries
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 4 papers -- top score 52.2/100
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel II — Prospective Studies: 3 papers -- top score 60.4/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 560ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 673ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  -- Level IIIa — Retrospective Cohort: 0 results found
+    [abstract_cache] persisted 6 abstracts from this batch
+    [quality] kept 3 of 6 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 6 papers -- top score 50.6/100
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+  -- Level IIIa — Retrospective Cohort: 0 results found
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 607ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 6 PMIDs in 630ms (HTTP 200)
+    [abstract_cache] persisted 10 abstracts from this batch
+    [quality] kept 5 of 10 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 10 papers -- top score 66.5/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 537ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal therapy" OR "endodontic treatment" OR "pulp therapy")
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 4 PMIDs in 682ms
+    Fetching metadata for 6 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 652ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 1 PMIDs in 705ms
+    Fetching metadata for 4 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 4 PMIDs in 716ms
+    Fetching metadata for 1 papers...
+    Fetching metadata for 4 papers...
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 4 papers -- top score 50.6/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIb — Case-Control: 1 papers -- top score 38.1/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 651ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 645ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 1 PMIDs in 635ms
+  -- Level IIIb — Case-Control: 0 results found
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 554ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+  -- Level IIIb — Case-Control: 0 results found
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 590ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 14 abstracts from this batch
+    [COI] 'Fkg' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 7 of 14 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 14 papers -- top score 63.1/100
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+  -- Level IIIb — Case-Control: 0 results found
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 17 PMIDs in 634ms (HTTP 200)
+    [abstract_cache] persisted 5 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level IIIa — Retrospective Cohort — evaluating per paper
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 5 papers -- top score 56.5/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 11 PMIDs in 577ms (HTTP 200)
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 593ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    Fetching metadata for 17 papers...
+    Fetching metadata for 11 papers...
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 23 PMIDs in 503ms
+    Fetching metadata for 23 papers...
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 4 papers -- top score 55.8/100
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 817ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 30 PMIDs in 749ms
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+    Fetching metadata for 30 papers...
+    [abstract_cache] persisted 6 abstracts from this batch
+    [quality] kept 3 of 6 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 6 papers -- top score 60.6/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 593ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 3 PMIDs in 542ms
+    Fetching metadata for 3 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIb — Case-Control: 1 papers -- top score 44.0/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 668ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 2 PMIDs in 568ms
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel IV — Case Series: 3 papers -- top score 42.4/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 640ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 18 PMIDs in 927ms
+    Fetching metadata for 18 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IV — Case Series: 2 papers -- top score 35.9/100
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 615ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical retreatment" OR "endodontic retreatment" OR "r
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+    [abstract_cache] persisted 17 abstracts from this batch
+    [cap] level4: 11 above the quality floor, keeping the 4 most relevant; dropped 7 (best dropped PubMed rank 10)
+    [quality] kept 4 of 17 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 17 papers -- top score 43.7/100
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+    [abstract_cache] persisted 11 abstracts from this batch
+    [cap] level4: 6 above the quality floor, keeping the 4 most relevant; dropped 2 (best dropped PubMed rank 8)
+    [quality] kept 4 of 11 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 11 papers -- top score 43.7/100
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 635ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal therapy" OR "endodontic treatment" OR "pulp therapy")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 534ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 699ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+    [abstract_cache] persisted 23 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level4: 15 above the quality floor, keeping the 4 most relevant; dropped 11 (best dropped PubMed rank 8)
+    [quality] kept 4 of 23 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 23 papers -- top score 43.7/100
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 517ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 675ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 692ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 2 PMIDs in 603ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (subject | subject | scenario)
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 8 PMIDs in 867ms (HTTP 200)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 563ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Citation fetch error (non-critical): HTTPSConnectionPool(host='eutils.ncbi.nlm.nih.gov', port=443): Read timed out. (read timeout=10)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 543ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 8 PMIDs in 708ms
+    [abstract_cache] persisted 18 abstracts from this batch
+    [COI] 'Septodont' mentioned somewhere in Level IV — Case Series — evaluating per paper
+    [cap] level4: 15 above the quality floor, keeping the 4 most relevant; dropped 11 (best dropped PubMed rank 8)
+    [quality] kept 4 of 18 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 18 papers -- top score 43.7/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 2 PMIDs in 663ms
+    Fetching metadata for 8 papers...
+    [abstract_cache] persisted 30 abstracts from this batch
+    [cap] level4: 25 above the quality floor, keeping the 4 most relevant; dropped 21 (best dropped PubMed rank 5)
+    [quality] kept 4 of 30 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 30 papers -- top score 42.4/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 726ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 2 papers -- top score 36.5/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 655ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 2 PMIDs in 752ms
+  -- Level V — Expert Opinion / Reviews: 0 results found
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 806ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 9 PMIDs in 554ms (HTTP 200)
+  -- Level V — Expert Opinion / Reviews: 0 results found
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 8 papers -- top score 27.6/100
+    Fetching metadata for 9 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 2 papers -- top score 39.8/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 8 PMIDs in 572ms (HTTP 200)
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 577ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("secondary endodontic infection*" OR "reinfection" OR "pers
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 8 papers -- top score 38.7/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 560ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("gutta-percha removal" OR "obturation removal" OR "post removal")
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 9 PMIDs in 624ms
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 2 papers -- top score 17.6/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 629ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("nonsurgical endodontic therapy" OR "conventional retreatme
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 12 PMIDs in 741ms
+    Fetching metadata for 9 papers...
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 676ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("retreatment case*" OR "re-treatment" OR "redo")
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 1 PMIDs in 634ms
+    Fetching metadata for 12 papers...
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 1 PMIDs in 657ms
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 6 of 9 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 9 papers -- top score 50.1/100
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 651ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("coronal leakage" OR "bacterial contamination" OR "internal
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 8 papers -- top score 41.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 1 papers -- top score 31.3/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 3 PMIDs in 578ms
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 5 of 9 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 9 papers -- top score 42.4/100
+    Fetching metadata for 3 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 1 papers -- top score 31.3/100
+    [abstract_cache] persisted 12 abstracts from this batch
+    [cap] observational: 7 above the quality floor, keeping the 6 most relevant; dropped 1 (best dropped PubMed rank 10)
+    [quality] kept 6 of 12 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 12 papers -- top score 39.0/100
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 3 papers -- top score 31.3/100
+  [cap] level3a: 16 above the floor, keeping the 10 most relevant; dropped 6, best dropped similarity 0.000 (PMID 25257456)
+  [cap] level4: 22 above the floor, keeping the 4 most relevant; dropped 18, best dropped similarity 0.000 (PMID 39429432)
+  [cap] level5: 10 above the floor, keeping the 4 most relevant; dropped 6, best dropped similarity 0.000 (PMID 32190471)
+  [cap] observational: 14 above the floor, keeping the 6 most relevant; dropped 8, best dropped similarity 0.000 (PMID 35078591)
+  [NCBI_LIVE] Provisional (untyped, recent): esearch returned 6 recent PMIDs in 722ms (HTTP 200)
+    [provisional] 1 of 6 recent papers are unclassified by MEDLINE; 0 state a level2-or-above design, 1 state none or a weaker one
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 11769.24it/s]
+  Embedding model ready.
+  [PRISMA dedup] review PMID 10726528 (1999) chosen by relevance (7 similarities computed here); 0 reference(s) known; 0 of 0 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+
+Asking Claude: 'Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis'
+============================================================
+  Cost: $0.8674 (34319 in / 4701 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=True score=100 cited=23 fabricated=0 unattributed=0 gaps=0
+  [citation_support] all 31 claim-citation pairs OK
+  Answer saved to: answers/answer_20260905_105759.txt
+  [audit] wrote 26 claim citations -> audit_20260905_105759_c580c1b258.json
+  route  None
+  papers 40   {}
+  broaden  50 attempt(s): 21 dropped a declared qualifier, 26 narrowest-at-zero, 0 unlabelled, 0 not broadenable, REFUSED 3 (6.0%)
+  support  0/31 flagged = 0.0%  (1 check(s), $0.8875)
+  vs stale point baseline in questions.json: 58 -> 40 (-18) — use --diff for the tracked range
+  PASS
+
+======================================================================
+cracked-tooth-prognosis   [pinned: live]
+======================================================================
+[intent] kind=standard retrieval=both clarify=True reason=Prognosis varies by crack type/extent; needs tooth anatomy, location, and baseline vitality specified.
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR RCT)
+  Smart search terms: '(crack* OR fracture* OR split OR "cracked tooth") AND (prognosis OR outcome* OR success* OR survival OR longevity OR "long-term") AND (extent OR severity OR classification OR depth OR "crack propagation")'
+  [group_roles] query 1: subject | scenario | qualifier
+  [group_roles] query 2: subject | scenario
+  [group_roles] query 3: subject | qualifier | scenario
+  [group_roles] query 4: scenario | subject | qualifier
+  [group_roles] query 5: subject | scenario | qualifier
+  [group_roles] query 6: 2/3 group(s) labelled — unlabelled, position fallback
+  [group_roles] query 7: subject | qualifier | scenario
+  Multi-term search: ['(crack* OR fracture* OR split OR "cracked tooth") AND (prognosis OR outcome* OR success* OR survival OR longevity OR "long-term") AND (extent OR severity OR classification OR depth OR "crack propagation")', '("vertical root fracture" OR "longitudinal crack" OR "radicular fracture" OR VRF) AND ("treatment outcome" OR "clinical outcome" OR "therapeutic success" OR healing OR "tooth retention")', '(fractur* OR crack* OR split) AND (gutta-percha OR obturation OR "root canal filling" OR sealer) AND (periapical OR "bone loss" OR "lesion size" OR radiolucency)', '("tooth survival" OR "tooth loss" OR extraction OR "treatment failure" OR relapse) AND (fractur* OR crack*) AND (ferrule OR "crown restoration" OR "post and core" OR reinforcement)', '(crack* OR fractur*) AND ("load-bearing capacity" OR "fracture resistance" OR stress OR strain) AND ("finite element" OR FEA OR biomechanical OR mechanical strength)', '("cracked tooth syndrome" OR CTS OR "incomplete fracture") AND (diagnosis OR detection OR "cone beam computed tomography" OR CBCT OR "radiographic") AND (treatment OR prognosis OR management)', '(fractur* OR crack* OR split) AND ("follow-up" OR "longitudinal study" OR "long-term follow" OR "observational study" OR retrospective) AND (complication* OR recurrence OR progression OR "tooth survival rate")']
+  Searching Cochrane for: '(crack* OR fracture* OR split OR "cracked tooth") AND (prognosis OR outcome* OR success* OR survival OR longevity OR "long-term") AND (extent OR severity OR classification OR depth OR "crack propagation")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 1 PMIDs in 696ms (HTTP 200)
+    [broaden] dropping the declared qualifier: (extent OR severity OR classification OR depth OR "crack propagation")
+  ~~ Cochrane Reviews (PubMed): 1 hits, broadening once
+  [NCBI_LIVE] Cochrane Reviews (PubMed) [broadened]: 13 PMIDs in 676ms
+    Fetching metadata for 13 papers...
+    [abstract_cache] persisted 13 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Cochrane Reviews (PubMed) — evaluating per paper
+    [withdrawn] excluded 2 source(s) — never cite a withdrawn document:
+      27892626 — title carries a withdrawal marker
+      31339555 — title carries a withdrawal marker
+    [superseded] dropped 3 outdated version(s) whose current version is in the same batch
+  OKCochrane Reviews (PubMed): 13 papers -- top score 92.2/100
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 793ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (subject | scenario)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 46 PMIDs in 923ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 15 PMIDs in 980ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 48 PMIDs in 1134ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 50 PMIDs in 1164ms (HTTP 200)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 9 PMIDs in 1295ms (HTTP 200)
+    Fetching metadata for 1 papers...
+    Fetching metadata for 46 papers...
+    Fetching metadata for 15 papers...
+    Fetching metadata for 48 papers...
+    Fetching metadata for 9 papers...
+    Fetching metadata for 50 papers...
+    [pubmed_xml] 2 paper(s) with corrections, 2 with registry entries
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 70.0/100
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [pubmed_xml] 2 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 47 PMIDs in 674ms (HTTP 200)
+    Fetching metadata for 47 papers...
+    [abstract_cache] persisted 15 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [quality] kept 10 of 15 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 15 papers -- top score 84.4/100
+    [abstract_cache] persisted 9 abstracts from this batch
+    [quality] kept 8 of 9 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 9 papers -- top score 81.1/100
+    [pubmed_xml] 1 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 46 abstracts from this batch
+    [COI] 'Brasseler' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 4 pre-registered, 2 with corrections/retractions
+    [cap] level1: 40 above the quality floor, keeping the 18 most relevant; dropped 22 (best dropped PubMed rank 22)
+    [quality] kept 18 of 46 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 46 papers -- top score 78.9/100
+  Bulk abstract cache write error: deadlock detected
+DETAIL:  Process 19696 waits for ShareLock on transaction 365549; blocked by process 17511.
+Process 17511 waits for ShareLock on transaction 365550; blocked by process 19696.
+HINT:  See server log for query details.
+CONTEXT:  while inserting index tuple (3072,6) in relation "abstract_cache"
+
+    [abstract_cache] persisted 14 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [provenance] 0 pre-registered, 2 with corrections/retractions
+    [quality] kept 14 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 74.8/100
+    [abstract_cache] persisted 48 abstracts from this batch
+    [COI] 'Coltene' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [withdrawn] excluded 1 source(s) — never cite a withdrawn document:
+      27892626 — title carries a withdrawal marker
+    [provenance] 4 pre-registered, 0 with corrections/retractions
+    [cap] level1: 24 above the quality floor, keeping the 18 most relevant; dropped 6 (best dropped PubMed rank 40)
+    [quality] kept 18 of 47 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 48 papers -- top score 77.0/100
+    [abstract_cache] persisted 47 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level I — RCTs and Systematic Reviews — evaluating per paper
+    [superseded] dropped 1 outdated version(s) whose current version is in the same batch
+    [COI] 1 of 47 papers carry an industry-funder mention — 15% penalty applied to those only
+    [provenance] 3 pre-registered, 1 with corrections/retractions
+    [cap] level1: 43 above the quality floor, keeping the 18 most relevant; dropped 25 (best dropped PubMed rank 20)
+    [quality] kept 18 of 46 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 47 papers -- top score 77.0/100
+  [cap] level1: 71 above the floor, keeping the 18 most relevant; dropped 53, best dropped similarity 0.000 (PMID 39798105)
+  [early_stop] 26 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 619ms (HTTP 200)
+    [broaden] dropping the declared qualifier: (extent OR severity OR classification OR depth OR "crack propagation")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 697ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("vertical root fracture" OR "longitudinal crack" OR "radicu
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 848ms (HTTP 200)
+    [broaden] dropping the declared qualifier: (gutta-percha OR obturation OR "root canal filling" OR sealer)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1008ms (HTTP 200)
+    [broaden] dropping the declared qualifier: (ferrule OR "crown restoration" OR "post and core" OR reinforcement)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1039ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("finite element" OR FEA OR biomechanical OR mechanical strength)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1154ms (HTTP 200)
+    [broaden] unlabelled query, dropping the trailing group: (treatment OR prognosis OR management)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study) [broadened]: 7 PMIDs in 695ms
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study) [broadened]: 2 PMIDs in 780ms
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study) [broadened]: 1 PMIDs in 770ms
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+    Fetching metadata for 7 papers...
+    Fetching metadata for 2 papers...
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 696ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("follow-up" OR "longitudinal study" OR "long-term follow" OR "observa
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+    [pubmed_xml] 2 paper(s) with corrections, 0 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 2 papers -- top score 29.7/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 40.6/100
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 0 pre-registered, 2 with corrections/retractions
+    [cap] guideline: 5 above the quality floor, keeping the 4 most relevant; dropped 1 (best dropped PubMed rank 6)
+    [quality] kept 4 of 7 papers above threshold (mode=review, tier=guideline)
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 7 papers -- top score 39.5/100
+  [cap] guideline: 7 above the floor, keeping the 4 most relevant; dropped 3, best dropped similarity 0.000 (PMID 22230724)
+  [NCBI_LIVE] Provisional (untyped, recent): esearch returned 86 recent PMIDs in 672ms (HTTP 200)
+    [provisional] 42 of 86 recent papers are unclassified by MEDLINE; 3 state a level2-or-above design, 39 state none or a weaker one
+  [PRISMA dedup] review PMID 31797172 (2020) chosen by relevance (26 similarities computed here); 2 reference(s) known; 0 of 0 older primary studies verified as cited by it
+
+Asking Claude: 'Cracked tooth prognosis after root canal treatment by crack extent'
+============================================================
+  Cost: $0.8459 (41698 in / 2939 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=True score=100 cited=8 fabricated=0 unattributed=0 gaps=0
+  [citation_support] 3 of 21 claim-citation pairs flagged as not supported
+  Answer saved to: answers/answer_20260905_105930.txt
+  [audit] wrote 15 claim citations -> audit_20260905_105930_788665f153.json
+  route  None
+  papers 30   {}
+  broaden  9 attempt(s): 6 dropped a declared qualifier, 1 narrowest-at-zero, 1 unlabelled, 0 not broadenable, REFUSED 1 (11.1%)
+  support  3/21 flagged = 14.3%  (1 check(s), $0.8622)
+  vs stale point baseline in questions.json: 83 -> 30 (-53) — use --diff for the tracked range
+  PASS
+
+======================================================================
+bisphosphonates   [pinned: live]
+======================================================================
+[intent] kind=complex retrieval=both clarify=True reason=Systemic drug interaction with endodontic outcomes; needs specific patient context (medication type, duration, bisphosphonate-related osteonecrosis risk).
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '(bisphosphonate* OR antiresorptive* OR "medication-related osteonecrosis" OR MRONJ OR "bisphosphonate-related osteonecrosis" OR BRONJ) AND ("root canal" OR endodontic* OR "periapical" OR "apical surgery") AND (management OR treatment OR therapy OR complication* OR outcome*)'
+  [group_roles] query 1: scenario | qualifier | subject
+  [group_roles] query 2: scenario | qualifier | subject
+  [group_roles] query 3: scenario | qualifier | subject
+  [group_roles] query 4: qualifier | qualifier | subject
+  [group_roles] query 5: scenario | subject | subject
+  [group_roles] query 6: scenario | qualifier | subject
+  [group_roles] query 7: scenario | subject | subject
+  Multi-term search: ['(bisphosphonate* OR antiresorptive* OR "medication-related osteonecrosis" OR MRONJ OR "bisphosphonate-related osteonecrosis" OR BRONJ) AND ("root canal" OR endodontic* OR "periapical" OR "apical surgery") AND (management OR treatment OR therapy OR complication* OR outcome*)', '("jaw osteonecrosis" OR "medication-induced osteonecrosis" OR "antiresorptive agent osteonecrosis" OR ARONJ) AND ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodontitis" OR "periapical disease") AND (prevention OR risk OR diagnosis OR management)', '(denosumab OR zoledronic acid OR alendronate OR pamidronate OR risedronate OR ibandronate) AND ("dental extraction" OR "tooth extraction" OR "endodontic treatment" OR "root canal therapy") AND (complication* OR adverse OR outcome*)', '("bone-modifying agent*" OR "antiresorptive drug*" OR "RANKL inhibitor*") AND ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery" OR "apicoectomy") AND (feasibility OR safety OR success OR healing)', '(bisphosphonate* OR antiresorptive*) AND ("pulpal necrosis" OR "periapical pathology" OR "apical infection" OR "radicular cyst") AND ("endodontic management" OR "tooth retention" OR "clinical decision")', '("osteonecrosis of jaw" OR "medication-related bone necrosis" OR "drug-induced osteonecrosis") AND ("root canal" OR "endodontic" OR "periapical") AND (protocol* OR guideline* OR recommendation* OR best practice*)', '(diphosphonate* OR bisphosphonate* OR denosumab OR "long-term antiresorptive therapy") AND ("tooth survival" OR "endodontic success" OR "treatment outcome*" OR "clinical management") AND ("risk assessment" OR "patient selection" OR "contraindication*")']
+  Searching Cochrane for: '(bisphosphonate* OR antiresorptive* OR "medication-related osteonecrosis" OR MRONJ OR "bisphosphonate-related osteonecrosis" OR BRONJ) AND ("root canal" OR endodontic* OR "periapical" OR "apical surgery") AND (management OR treatment OR therapy OR complication* OR outcome*)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 665ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR endodontic* OR "periapical" OR "apical surgery")
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 693ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodont
+  ~~ Level I — RCTs and Systematic Reviews: 1 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 4 PMIDs in 718ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR endodontic* OR "periapical" OR "apical surgery")
+  ~~ Level I — RCTs and Systematic Reviews: 4 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 843ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("dental extraction" OR "tooth extraction" OR "endodontic treatment" O
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1061ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1081ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1179ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 3 PMIDs in 656ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 5 PMIDs in 793ms
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 4 PMIDs in 679ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 3 papers...
+    Fetching metadata for 5 papers...
+    Fetching metadata for 4 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 687ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 595ms
+    Fetching metadata for 2 papers...
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 3 papers -- top score 74.8/100
+    [abstract_cache] persisted 5 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 5 papers -- top score 74.8/100
+    [abstract_cache] persisted 4 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 4 papers -- top score 75.6/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 75.6/100
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 741ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodont
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 15 PMIDs in 798ms (HTTP 200)
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 3 PMIDs in 863ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("dental extraction" OR "tooth extraction" OR "endodontic treatment" O
+  ~~ Level II — Prospective Studies: 3 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 951ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 994ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 1 PMIDs in 1288ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Level II — Prospective Studies: 1 hits, broadening once
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 5 PMIDs in 710ms
+    Fetching metadata for 15 papers...
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 8 PMIDs in 745ms
+  -- Level II — Prospective Studies: 0 results found
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 1 PMIDs in 868ms
+    Fetching metadata for 5 papers...
+    Fetching metadata for 8 papers...
+  [NCBI_LIVE] Level II — Prospective Studies: esearch returned 0 PMIDs in 834ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Level II — Prospective Studies: 0 hits, broadening once
+    Fetching metadata for 1 papers...
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level II — Prospective Studies [broadened]: 4 PMIDs in 624ms
+    Fetching metadata for 4 papers...
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 4 of 5 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 5 papers -- top score 70.4/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 37.0/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel II — Prospective Studies: 1 papers -- top score 70.4/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 38 PMIDs in 774ms (HTTP 200)
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 2 PMIDs in 773ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodont
+  ~~ Level IIIa — Retrospective Cohort: 2 hits, broadening once
+    [abstract_cache] persisted 15 abstracts from this batch
+    [quality] kept 6 of 15 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 15 papers -- top score 70.4/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 11 PMIDs in 899ms (HTTP 200)
+    [abstract_cache] persisted 8 abstracts from this batch
+    [quality] kept 3 of 8 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 8 papers -- top score 70.4/100
+    Fetching metadata for 38 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 24 PMIDs in 750ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 592ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level2)
+  OKLevel II — Prospective Studies: 4 papers -- top score 67.8/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 530ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    Fetching metadata for 11 papers...
+    Fetching metadata for 24 papers...
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 1 PMIDs in 796ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 4 PMIDs in 872ms
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 3 PMIDs in 1230ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Level IIIa — Retrospective Cohort: 3 hits, broadening once
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 1 papers...
+    Fetching metadata for 4 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    Fetching metadata for 3 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 1 papers -- top score 63.1/100
+    [abstract_cache] persisted 11 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 6 of 11 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 11 papers -- top score 66.5/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort: esearch returned 0 PMIDs in 512ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Level IIIa — Retrospective Cohort: 0 hits, broadening once
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 4 papers -- top score 48.3/100
+  [NCBI_LIVE] Level IIIa — Retrospective Cohort [broadened]: 5 PMIDs in 713ms
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 2 PMIDs in 619ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodont
+  ~~ Level IIIb — Case-Control: 2 hits, broadening once
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel IIIa — Retrospective Cohort: 3 papers -- top score 66.5/100
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 24 PMIDs in 984ms (HTTP 200)
+    Fetching metadata for 5 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 14 PMIDs in 876ms
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 7 PMIDs in 834ms (HTTP 200)
+    Fetching metadata for 24 papers...
+    [abstract_cache] persisted 24 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level3a: 13 above the quality floor, keeping the 10 most relevant; dropped 3 (best dropped PubMed rank 20)
+    [quality] kept 10 of 24 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 24 papers -- top score 66.5/100
+    Fetching metadata for 14 papers...
+    Fetching metadata for 7 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 498ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 38 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level3a: 23 above the quality floor, keeping the 10 most relevant; dropped 13 (best dropped PubMed rank 16)
+    [quality] kept 10 of 38 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 38 papers -- top score 59.8/100
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 1 PMIDs in 627ms
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 549ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level3a)
+  OKLevel IIIa — Retrospective Cohort: 5 papers -- top score 62.8/100
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 1 PMIDs in 625ms
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 2 PMIDs in 752ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Level IIIb — Case-Control: 2 hits, broadening once
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 7 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 7 papers -- top score 57.3/100
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level IIIb — Case-Control: esearch returned 0 PMIDs in 604ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Level IIIb — Case-Control: 0 hits, broadening once
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIb — Case-Control: 1 papers -- top score 57.3/100
+    [abstract_cache] persisted 14 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 14 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 14 papers -- top score 57.3/100
+  [NCBI_LIVE] Level IIIb — Case-Control [broadened]: 3 PMIDs in 665ms
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IIIb — Case-Control: 1 papers -- top score 27.3/100
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 31 PMIDs in 762ms (HTTP 200)
+    [abstract_cache] persisted 24 abstracts from this batch
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 2 PMIDs in 774ms (HTTP 200)
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level3b: 8 above the quality floor, keeping the 6 most relevant; dropped 2 (best dropped PubMed rank 22)
+    [quality] kept 6 of 24 papers above threshold (mode=review, tier=level3b)
+  OKLevel IIIb — Case-Control: 24 papers -- top score 60.6/100
+    [broaden] dropping the declared qualifier: ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodont
+  ~~ Level IV — Case Series: 2 hits, broadening once
+    Fetching metadata for 3 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 6 PMIDs in 773ms (HTTP 200)
+    Fetching metadata for 31 papers...
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 534ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 21 PMIDs in 820ms
+    Fetching metadata for 6 papers...
+  -- Level IV — Case Series: 0 results found
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IIIb — Case-Control: 2 papers -- top score 57.3/100
+    Fetching metadata for 21 papers...
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 946ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Level IV — Case Series: 0 hits, broadening once
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 1 PMIDs in 714ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Level IV — Case Series: 1 hits, broadening once
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel IIIb — Case-Control: 3 papers -- top score 41.4/100
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 25 PMIDs in 632ms
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 2 PMIDs in 792ms
+    [pubmed_xml] 1 paper(s) with corrections, 0 with registry entries
+  [NCBI_LIVE] Level IV — Case Series: esearch returned 0 PMIDs in 576ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Level IV — Case Series: 0 hits, broadening once
+    Fetching metadata for 25 papers...
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level IV — Case Series [broadened]: 1 PMIDs in 711ms
+    [abstract_cache] persisted 6 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [quality] kept 4 of 6 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 6 papers -- top score 43.3/100
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 1 PMIDs in 665ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR endodontic* OR "periapical" OR "apical surgery")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 1 hits, broadening once
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel IV — Case Series: 2 papers -- top score 45.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel IV — Case Series: 1 papers -- top score 45.3/100
+    [abstract_cache] persisted 31 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level4: 23 above the quality floor, keeping the 4 most relevant; dropped 19 (best dropped PubMed rank 6)
+    [quality] kept 4 of 31 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 31 papers -- top score 43.7/100
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 631ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("nonsurgical root canal" OR "endodontic therapy" OR "apical periodont
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 640ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("dental extraction" OR "tooth extraction" OR "endodontic treatment" O
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 592ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+    [abstract_cache] persisted 21 abstracts from this batch
+    [provenance] 0 pre-registered, 1 with corrections/retractions
+    [cap] level4: 14 above the quality floor, keeping the 4 most relevant; dropped 10 (best dropped PubMed rank 6)
+    [quality] kept 4 of 21 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 21 papers -- top score 43.7/100
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study) [broadened]: 1 PMIDs in 546ms
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study) [broadened]: 1 PMIDs in 873ms
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 773ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 27.3/100
+    Fetching metadata for 1 papers...
+    Fetching metadata for 1 papers...
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 1 PMIDs in 798ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 1 hits, broadening once
+    [abstract_cache] persisted 25 abstracts from this batch
+    [cap] level4: 21 above the quality floor, keeping the 4 most relevant; dropped 17 (best dropped PubMed rank 6)
+    [quality] kept 4 of 25 papers above threshold (mode=review, tier=level4)
+  OKLevel IV — Case Series: 25 papers -- top score 43.7/100
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 867ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 36 PMIDs in 795ms (HTTP 200)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 7 PMIDs in 725ms (HTTP 200)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study) [broadened]: 1 PMIDs in 730ms
+    Fetching metadata for 7 papers...
+    Fetching metadata for 36 papers...
+    Fetching metadata for 1 papers...
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 27.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 27.3/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 5 PMIDs in 776ms (HTTP 200)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 669ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    Fetching metadata for 5 papers...
+  -- Level V — Expert Opinion / Reviews: 0 results found
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 27.3/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 39.4/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 0 PMIDs in 562ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Level V — Expert Opinion / Reviews: 0 hits, broadening once
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 7 papers -- top score 50.9/100
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 4 PMIDs in 748ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Level V — Expert Opinion / Reviews: 4 hits, broadening once
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews: esearch returned 1 PMIDs in 738ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (scenario | subject | subject)
+  [NCBI_LIVE] Level V — Expert Opinion / Reviews [broadened]: 3 PMIDs in 811ms
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 48 PMIDs in 861ms (HTTP 200)
+    Fetching metadata for 1 papers...
+    Fetching metadata for 3 papers...
+    Fetching metadata for 48 papers...
+    Fetching metadata for 4 papers...
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 5 papers -- top score 50.9/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 5 PMIDs in 805ms (HTTP 200)
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    Fetching metadata for 5 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 1 papers -- top score 39.8/100
+    [abstract_cache] persisted 3 abstracts from this batch
+  OKLevel V — Expert Opinion / Reviews: 3 papers -- top score 39.8/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 7 PMIDs in 735ms (HTTP 200)
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 470ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("apical surgery" OR "endodontic microsurgery" OR "periapical surgery"
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+    [abstract_cache] persisted 36 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+    [cap] level5: 10 above the quality floor, keeping the 4 most relevant; dropped 6 (best dropped PubMed rank 22)
+    [quality] kept 4 of 36 papers above threshold (mode=review, tier=level5)
+  OKLevel V — Expert Opinion / Reviews: 36 papers -- top score 40.9/100
+    Fetching metadata for 7 papers...
+    [abstract_cache] persisted 4 abstracts from this batch
+    [COI] 'Dentsply' mentioned somewhere in Level V — Expert Opinion / Reviews — evaluating per paper
+  OKLevel V — Expert Opinion / Reviews: 4 papers -- top score 50.9/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 1 PMIDs in 783ms
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 541ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (bisphosphonate* OR antiresorptive*)
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 2 PMIDs in 788ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR "endodontic" OR "periapical")
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 2 hits, broadening once
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 5 abstracts from this batch
+    [quality] kept 3 of 5 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 5 papers -- top score 39.0/100
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 7 PMIDs in 565ms
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence): esearch returned 0 PMIDs in 694ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("risk assessment" OR "patient selection" OR "contraindicati
+  ~~ Observational / Anatomical — Descriptive Studies (not comparative evidence): 0 hits, broadening once
+    Fetching metadata for 7 papers...
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Observational / Anatomical — Descriptive Studies (not comparative evidence) [broadened]: 4 PMIDs in 714ms
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 4 of 7 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 7 papers -- top score 46.8/100
+    Fetching metadata for 4 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 1 papers -- top score 46.8/100
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 2 papers -- top score 46.8/100
+    [abstract_cache] persisted 7 abstracts from this batch
+    [quality] kept 3 of 7 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 7 papers -- top score 41.3/100
+    [abstract_cache] persisted 48 abstracts from this batch
+    [cap] observational: 26 above the quality floor, keeping the 6 most relevant; dropped 20 (best dropped PubMed rank 8)
+    [quality] kept 6 of 48 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 48 papers -- top score 50.1/100
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=observational)
+  OKObservational / Anatomical — Descriptive Studies (not comparative evidence): 4 papers -- top score 47.6/100
+  [cap] level3a: 16 above the floor, keeping the 10 most relevant; dropped 6, best dropped similarity 0.000 (PMID 35698910)
+  [cap] level4: 14 above the floor, keeping the 4 most relevant; dropped 10, best dropped similarity 0.000 (PMID 41870277)
+  [cap] level5: 9 above the floor, keeping the 4 most relevant; dropped 5, best dropped similarity 0.000 (PMID 42512962)
+  [cap] observational: 10 above the floor, keeping the 6 most relevant; dropped 4, best dropped similarity 0.000 (PMID 25093262)
+  [NCBI_LIVE] Provisional (untyped, recent): esearch returned 16 recent PMIDs in 650ms (HTTP 200)
+    [provisional] 6 of 16 recent papers are unclassified by MEDLINE; 0 state a level2-or-above design, 6 state none or a weaker one
+  [PRISMA dedup] review PMID 27960049 (2017) chosen by relevance (6 similarities computed here); 0 reference(s) known; 0 of 3 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+
+Asking Claude: 'Endodontic management in patients on bisphosphonates or antiresorptives'
+============================================================
+  Cost: $0.9777 (35181 in / 6000 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=False score=90 cited=24 fabricated=0 unattributed=0 gaps=0
+  RETRY — validation failed: UNTRACEABLE_RECOMMENDATION: CLINICAL RECOMMENDATION does not state the strength of evidence it rests on (e.g. "Based on Level I evidence")
+  Retry mapping:    passed=True score=100 cited=24 fabricated=0 unattributed=0 gaps=0
+  [citation_support] 1 of 31 claim-citation pairs flagged as not supported (1 more pair(s) not checked)
+  Answer saved to: answers/answer_20260905_110324.txt
+  [audit] wrote 29 claim citations -> audit_20260905_110324_17f8aa170c.json
+  route  None
+  papers 41   {}
+  broaden  44 attempt(s): 28 dropped a declared qualifier, 15 narrowest-at-zero, 0 unlabelled, 0 not broadenable, REFUSED 1 (2.3%)
+  support  1/31 flagged = 3.2%  (1 check(s), $2.0938)
+  vs stale point baseline in questions.json: 47 -> 41 (-6) — use --diff for the tracked range
+  PASS
+
+======================================================================
+pregnancy   [pinned: live]
+======================================================================
+[intent] kind=complex retrieval=both clarify=False reason=Multifaceted question combining trimester-specific timing, anesthetic safety, and maternal-fetal considerations.
+  [rag_gate] force_route=live — library skipped
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR "pulp treatment")
+  Smart search terms: '(pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment planning") AND ("local anesthetic*" OR "lidocaine" OR "prilocaine" OR "articaine" OR anesthetic choice)'
+  [group_roles] query 1: scenario | subject | subject
+  [group_roles] query 2: scenario | qualifier | subject
+  [group_roles] query 3: scenario | subject | subject
+  [group_roles] query 4: scenario | subject | subject
+  [group_roles] query 5: scenario | subject | subject
+  [group_roles] query 6: scenario | subject | subject
+  [group_roles] query 7: scenario | subject | subject
+  Multi-term search: ['(pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment planning") AND ("local anesthetic*" OR "lidocaine" OR "prilocaine" OR "articaine" OR anesthetic choice)', '(pregnancy OR maternal OR gravida* OR expectant mother*) AND ("endodontic treatment" OR "root canal" OR "pulpal intervention") AND ("anesthetic safety" OR "drug safety in pregnancy" OR "teratogenic risk" OR "fetal exposure")', '(pregnant OR obstetric* OR perinatal) AND ("pain management" OR analgesia OR "pain control") AND (lidocaine OR bupivacaine OR prilocaine OR mepivacaine OR "local infiltration")', '(gestation* OR trimester* OR "intrauterine development") AND ("emergency dental" OR "urgent treatment" OR "acute dental infection") AND (vasoconstricor* OR epinephrine OR "norepinephrine" OR "preservative free")', '(pregnancy OR pregnant OR maternal) AND ("treatment deferral" OR "provisional restoration" OR "palliative treatment" OR postpone*) AND ("infection control" OR "pulpal necrosis" OR "periapical pathology")', '(maternal health OR "pregnant patient*" OR "obstetric concern*") AND ("injection technique" OR "nerve block" OR infiltration OR supraperiosteal) AND (lidocaine OR articaine OR prilocaine OR mepivacaine)', '(pregnancy OR gravida* OR "maternal condition*") AND ("clinical outcome*" OR safety OR efficacy OR adverse effect* OR complication*) AND ("dental anesthetic*" OR "local agent*" OR "injectable anesthetic*")']
+  Searching Cochrane for: '(pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "emergency treatment" OR "elective treatment" OR "treatment planning") AND ("local anesthetic*" OR "lidocaine" OR "prilocaine" OR "articaine" OR anesthetic choice)'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 682ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnan* OR "pregnant patient*" OR gestation* OR trimester*
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 612ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnan* OR "pregnant patient*" OR gestation* OR trimester*
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 782ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("endodontic treatment" OR "root canal" OR "pulpal intervention")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 824ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnant OR obstetric* OR perinatal)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 992ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (gestation* OR trimester* OR "intrauterine development")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1032ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnancy OR pregnant OR maternal)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1195ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (maternal health OR "pregnant patient*" OR "obstetric concer
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 752ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 42 PMIDs in 806ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 50 PMIDs in 706ms
+    Fetching metadata for 2 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 721ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnancy OR gravida* OR "maternal condition*")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 42 papers...
+    Fetching metadata for 50 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 2 PMIDs in 686ms
+    Fetching metadata for 2 papers...
+    [pubmed_xml] 0 paper(s) with corrections, 3 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 54.8/100
+    [pubmed_xml] 0 paper(s) with corrections, 2 with registry entries
+    [abstract_cache] persisted 2 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 2 papers -- top score 70.4/100
+    [abstract_cache] persisted 42 abstracts from this batch
+    [provenance] 5 pre-registered, 0 with corrections/retractions
+    [cap] level1: 32 above the quality floor, keeping the 18 most relevant; dropped 14 (best dropped PubMed rank 23)
+    [quality] kept 18 of 42 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 42 papers -- top score 73.9/100
+    [abstract_cache] persisted 50 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [cap] level1: 34 above the quality floor, keeping the 18 most relevant; dropped 16 (best dropped PubMed rank 28)
+    [quality] kept 18 of 50 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 50 papers -- top score 74.8/100
+  [cap] level1: 36 above the floor, keeping the 18 most relevant; dropped 18, best dropped similarity 0.000 (PMID 27837343)
+  [early_stop] 18 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 609ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnan* OR "pregnant patient*" OR gestation* OR trimester*
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 732ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("endodontic treatment" OR "root canal" OR "pulpal intervention")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 830ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnant OR obstetric* OR perinatal)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 952ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (gestation* OR trimester* OR "intrauterine development")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1019ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnancy OR pregnant OR maternal)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1173ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (maternal health OR "pregnant patient*" OR "obstetric concer
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 625ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (pregnancy OR gravida* OR "maternal condition*")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  [NCBI_LIVE] Provisional (untyped, recent): esearch returned 0 recent PMIDs in 564ms (HTTP 200)
+  [PRISMA dedup] review PMID 31491042 (2020) chosen by relevance (18 similarities computed here); 0 reference(s) known; 0 of 0 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+
+Asking Claude: 'Root canal treatment in pregnancy timing and local anesthetic choice'
+============================================================
+  Cost: $0.4499 (19099 in / 2179 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=False score=90 cited=7 fabricated=0 unattributed=0 gaps=0
+  RETRY — validation failed: UNREFRAMED_QUARANTINE in "CLINICAL RECOMMENDATION": content labelled as outside the evidence base is not followed by any cited claim. State the decision the retrieved literature DOES support, with its [[PMID:N]] marker, after it.
+  Retry mapping:    passed=True score=100 cited=7 fabricated=0 unattributed=0 gaps=0
+  [citation_support] all 9 claim-citation pairs OK
+  Answer saved to: answers/answer_20260905_110503.txt
+  [audit] wrote 9 claim citations -> audit_20260905_110503_3868c26e72.json
+  route  None
+  papers 18   {}
+  broaden  15 attempt(s): 2 dropped a declared qualifier, 13 narrowest-at-zero, 0 unlabelled, 0 not broadenable, REFUSED 0 (0.0%)
+  support  0/9 flagged = 0.0%  (1 check(s), $0.9650)
+  vs stale point baseline in questions.json: 3 -> 18 (+15) — use --diff for the tracked range
+  PASS
+
+======================================================================
+intentional-replantation   [pinned: live]
+======================================================================
+[intent] kind=complex retrieval=both clarify=True reason=Niche procedure requiring case context; combines surgical contraindications with replantation indications.
+  [rag_gate] force_route=live — library skipped
+  Smart search terms: '("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "anatomical limitation*" OR "esthetic zone")'
+  [group_roles] query 1: subject | qualifier | scenario
+  [group_roles] query 2: subject | scenario | scenario
+  [group_roles] query 3: scenario | subject | subject
+  [group_roles] query 4: subject | subject | qualifier
+  [group_roles] query 5: subject | qualifier | scenario
+  [group_roles] query 6: scenario | subject | scenario
+  [group_roles] query 7: scenario | subject | scenario
+  Multi-term search: ['("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "anatomical limitation*" OR "esthetic zone")', '("tooth replantation" OR "dental replantation" OR "auto-transplantation" OR autotransplant*) AND ("failed root canal" OR "retreatment" OR "periapical pathology" OR "apical lesion") AND (alternative OR bypass OR "avoid surgery" OR conservative)', '("exodontia" OR extraction OR removed tooth) AND ("extraoral endodontic*" OR "bench endodontic*" OR "ex vivo treatment") AND (replant* OR reimplant* OR "tooth banking")', '("surgical extraction" OR hemisection OR "root separation") AND (replant* OR reimplant*) AND ("esthetic zone" OR anterior OR incisor* OR "smile line")', '(autotransplant* OR "tooth autotransplantation" OR "self-transplantation") AND (endodontic* OR "root canal" OR "apical" OR "periapical") AND (success OR outcome* OR "survival rate*" OR progno*)', '("vertical root fracture" OR VRF OR "root perforation" OR "calcified canal*") AND (replant* OR reimplant* OR extraction) AND ("intentional removal" OR "deliberate extraction" OR therapeutic)', '("maxillofacial trauma" OR "dental trauma" OR "tooth luxation") AND (replant* OR reimplant* OR "reimplantation" OR repositioning) AND ("endodontic treatment" OR "root canal" OR "pulp management" OR devital*)']
+  Searching Cochrane for: '("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "anatomical limitation*" OR "esthetic zone")'...
+  OKCochrane API unavailable (status 403), using PubMed fallback
+  [NCBI_LIVE] Cochrane Reviews (PubMed): esearch returned 0 PMIDs in 518ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR endodontic* OR periapical)
+  ~~ Cochrane Reviews (PubMed): 0 hits, broadening once
+  -- Cochrane Reviews (PubMed): 0 results found
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 697ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR endodontic* OR periapical)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 1 PMIDs in 807ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (subject | scenario | scenario)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 812ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("exodontia" OR extraction OR removed tooth)
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 1191ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("esthetic zone" OR anterior OR incisor* OR "smile line")
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 4 PMIDs in 1226ms (HTTP 200)
+    [broaden] dropping the declared qualifier: (endodontic* OR "root canal" OR "apical" OR "periapical")
+  ~~ Level I — RCTs and Systematic Reviews: 4 hits, broadening once
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 4 PMIDs in 1312ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (scenario | subject | scenario)
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 711ms
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 1 PMIDs in 719ms
+  -- Level I — RCTs and Systematic Reviews: 0 results found
+    Fetching metadata for 4 papers...
+    Fetching metadata for 1 papers...
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews: esearch returned 0 PMIDs in 669ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("maxillofacial trauma" OR "dental trauma" OR "tooth luxatio
+  ~~ Level I — RCTs and Systematic Reviews: 0 hits, broadening once
+    Fetching metadata for 4 papers...
+  [NCBI_LIVE] Level I — RCTs and Systematic Reviews [broadened]: 10 PMIDs in 807ms
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 65.9/100
+    Fetching metadata for 10 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 49.3/100
+    [abstract_cache] persisted 4 abstracts from this batch
+    [quality] kept 3 of 4 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 4 papers -- top score 78.1/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKLevel I — RCTs and Systematic Reviews: 1 papers -- top score 55.9/100
+    [pubmed_xml] 0 paper(s) with corrections, 1 with registry entries
+    [abstract_cache] persisted 4 abstracts from this batch
+    [provenance] 1 pre-registered, 0 with corrections/retractions
+  OKLevel I — RCTs and Systematic Reviews: 4 papers -- top score 78.5/100
+    [abstract_cache] persisted 10 abstracts from this batch
+    [provenance] 2 pre-registered, 0 with corrections/retractions
+    [quality] kept 8 of 10 papers above threshold (mode=review, tier=level1)
+  OKLevel I — RCTs and Systematic Reviews: 10 papers -- top score 70.4/100
+  [early_stop] 16 papers from cochrane+level1 >= 15; skipping weaker tiers (mode=review)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 1 PMIDs in 621ms (HTTP 200)
+    [broaden] dropping the declared qualifier: ("root canal" OR endodontic* OR periapical)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 1 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 705ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("tooth replantation" OR "dental replantation" OR "auto-tran
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 923ms (HTTP 200)
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 921ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: ("exodontia" OR extraction OR removed tooth)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+    [broaden] dropping the declared qualifier: ("esthetic zone" OR anterior OR incisor* OR "smile line")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1135ms (HTTP 200)
+    [broaden] dropping the declared qualifier: (endodontic* OR "root canal" OR "apical" OR "periapical")
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 0 PMIDs in 1211ms (HTTP 200)
+    [broaden] no qualifier declared and the tier returned NOTHING — dropping the narrowest group rather than staying empty: (replant* OR reimplant* OR extraction)
+  ~~ Specialty Guidelines & Position Statements (consensus, not a study): 0 hits, broadening once
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+  -- Specialty Guidelines & Position Statements (consensus, not a study): 0 results found
+    Fetching metadata for 1 papers...
+  [NCBI_LIVE] Specialty Guidelines & Position Statements (consensus, not a study): esearch returned 1 PMIDs in 640ms (HTTP 200)
+    [broaden] labelled query has no qualifier — not broadening (scenario | subject | scenario)
+    Fetching metadata for 1 papers...
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 35.0/100
+    [abstract_cache] persisted 1 abstracts from this batch
+  OKSpecialty Guidelines & Position Statements (consensus, not a study): 1 papers -- top score 21.7/100
+  [NCBI_LIVE] Provisional (untyped, recent): esearch returned 1 recent PMIDs in 508ms (HTTP 200)
+    [provisional] 0 of 1 recent papers are unclassified by MEDLINE; 0 state a level2-or-above design, 0 state none or a weaker one
+  [PRISMA dedup] review PMID 35294790 (2023) chosen by relevance (16 similarities computed here); 0 reference(s) known; 0 of 0 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+
+Asking Claude: 'Intentional replantation for teeth unsuitable for surgery'
+============================================================
+  Cost: $0.4412 (18564 in / 2170 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=True score=100 cited=5 fabricated=0 unattributed=0 gaps=0
+  [citation_support] 1 of 12 claim-citation pairs flagged as not supported
+  Answer saved to: answers/answer_20260905_110612.txt
+  [audit] wrote 8 claim citations -> audit_20260905_110612_f107998bf4.json
+  route  None
+  papers 18   {}
+  broaden  15 attempt(s): 7 dropped a declared qualifier, 5 narrowest-at-zero, 0 unlabelled, 0 not broadenable, REFUSED 3 (20.0%)
+  support  1/12 flagged = 8.3%  (1 check(s), $0.4494)
+  vs stale point baseline in questions.json: 59 -> 18 (-41) — use --diff for the tracked range
+  PASS
+
+======================================================================
+CITATION SUPPORT
+======================================================================
+  case                                       flagged   checked     rate      cost
+  retreatment-vs-microsurgery                      0        31     0.0%   $0.8875
+  cracked-tooth-prognosis                          3        21    14.3%   $0.8622
+  bisphosphonates                                  1        31     3.2%   $2.0938
+  pregnancy                                        0         9     0.0%   $0.9650
+  intentional-replantation                         1        12     8.3%   $0.4494
+  TOTAL                                            5       104     4.8% $5.2579
+
+5/5 cases passed  [SYNTHESIS]

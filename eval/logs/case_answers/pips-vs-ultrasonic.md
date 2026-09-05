@@ -2,55 +2,66 @@
 
 > Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes
 
-intent: None  |  papers: 110  |  cost: $1.6027
+intent: None  |  papers: 60  |  cost: $1.083
 
 ---
 ## CLINICAL RECOMMENDATION
 
-Based on Level I evidence, laser-activated irrigation (LAI) using PIPS or SWEEPS and ultrasonic activation (UAI) both improve periapical healing compared with conventional needle irrigation, but head-to-head evidence does not consistently favour LAI over UAI for the primary outcome of radiographic periapical healing [[PMID:42001923]] [[PMID:42513311]]. A recent meta-analysis of RCTs found activated irrigation (PUI or LAI) roughly doubled the odds of periapical healing versus conventional irrigation (OR 2.25), with a numerically larger point estimate for LAI (OR 6.77) than PUI (OR 1.95), though CIs overlap and heterogeneity within the LAI subgroup limits certainty [[PMID:42513311]]. For postoperative pain — a secondary but patient-relevant outcome — PIPS/SWEEPS show a modest short-term advantage over UAI in the first 6–48 h [[PMID:35267110]] [[PMID:33595920]]. Choose either modality based on availability and operator familiarity; do not expect a clinically decisive periapical-healing advantage of PIPS/SWEEPS over UAI on current evidence.
-
-Assumed: the question concerns primary non-surgical root canal treatment (and retreatment) of teeth with apical periodontitis, comparing Er:YAG PIPS/SWEEPS LAI with passive ultrasonic irrigation for periapical healing outcomes.
+Based on Level I evidence, laser-activated irrigation (PIPS/SWEEPS) and ultrasonic activation both improve periapical healing over conventional needle irrigation, but there is **no convincing evidence that laser-activated irrigation is superior to ultrasonic activation for the primary outcome of periapical healing** [[PMID:41833582]] [[PMID:42001923]]. Choose the modality based on availability, cost, and operator familiarity; if laser is available, PIPS/SWEEPS may offer modest advantages in postoperative pain reduction and smear-layer removal, but not in radiographic healing rates [[PMID:35267110]] [[PMID:41432813]]. Both should be paired with adequate NaOCl concentration and volume — the activation method does not compensate for inadequate irrigant chemistry.
 
 ---
 
 ## EVIDENCE SUMMARY
 
 **Cochrane Reviews**
-The 2016 Cochrane review by Del Fabbro et al. addressed surgical and non-surgical retreatment protocols and did not directly evaluate LAI vs UAI for periapical healing; it concluded overall that available evidence was insufficient to give reliable protocol guidance and highlighted the need for standardised RCTs [[PMID:27759881]]. The 2012 Cochrane review on irrigants (Fedorowicz et al.) similarly found insufficient evidence to favour any specific irrigant regimen and did not evaluate activation modalities as a primary comparison [[PMID:22972129]]. Neither Cochrane review directly answers the PIPS/SWEEPS vs UAI question for periapical healing.
+
+No Cochrane review directly addresses PIPS/SWEEPS versus ultrasonic activation for periapical healing. The 2012 Cochrane review on root canal irrigants (Fedorowicz et al.) found insufficient evidence to establish superiority of any specific irrigant protocol, and did not evaluate activation methods per se [[PMID:22972129]]. The 2016 Cochrane review on retreatment (Del Fabbro et al.) is also silent on this specific comparison [[PMID:27759881]].
 
 **Level I — RCTs and Systematic Reviews**
-The most relevant synthesis is the 2026 systematic review and meta-analysis by Fernández-Moreno et al., which pooled five RCTs (n=451 teeth) with ≥6-month follow-up and found activated irrigation significantly improved periapical healing versus conventional irrigation (OR 2.25; 95% CI 1.29–3.93; I²=0%); subgroup analysis showed PUI OR 1.95 (1.08–3.54) and LAI OR 6.77 (1.63–28.12), suggesting both are effective but with wide CIs precluding a definitive claim that LAI outperforms PUI [[PMID:42513311]]. Creazzo et al.'s 2026 SR/MA of six studies found no significant additional benefit of adjunctive laser therapy over conventional endodontic treatment on PAI-based healing (MD 0.17; 95% CI −0.14 to 0.47; low certainty) [[PMID:42001923]]. Duarte et al.'s 2026 umbrella review of 9 SRs on LAI concluded evidence is heterogeneous and inconsistent, and LAI should currently be regarded as an adjunct with unproven clinical benefit [[PMID:41833582]]. For postoperative pain, Schmidt et al.'s meta-analysis found PIPS Er:YAG significantly reduced pain at 48 h vs needle irrigation but not at 1, 3 or 7 days (low certainty) [[PMID:39849275]]; McGillivray & Dutta reported diode LAI reduced pain at 6–48 h and noted PIPS mitigated pain better than manual/sonic/ultrasonic activation, though this was a qualitative synthesis with high risk of bias in most included trials [[PMID:38484867]]. Elmsmari et al.'s meta-analysis found intraoral laser therapy showed no significant advantage over conventional treatments for pain but outperformed placebo [[PMID:39472604]]. In a direct head-to-head RCT (n=56), Liapis et al. found UAI and Er:YAG LAI produced comparably low postoperative pain overall, with LAI significantly lower only at 6 h [[PMID:33595920]].
+
+The most recent and highest-scoring umbrella review (Duarte et al. 2026) synthesised 9 systematic reviews on laser-activated irrigation and concluded that evidence remains "limited and heterogeneous," with inconsistent findings on canal disinfection and postoperative outcomes, and that laser-activated irrigation should currently be regarded as "an adjunct with unproven clinical benefit" [[PMID:41833582]]. Creazzo et al. (2026) meta-analysed 6 studies specifically on periapical lesion healing (PAI reduction) with adjunctive laser therapy versus conventional endodontic treatment and found **no significant difference** (mean difference 0.17; 95% CI −0.14 to 0.47; p=0.28), concluding conventional treatment is sufficient for periapical healing [[PMID:42001923]]. A separate umbrella review of LLLT as an adjunct (Santos Pereira et al. 2025) found that while LLLT reduces postoperative pain and microbial load, evidence for standardised protocols and healing outcomes remains weak [[PMID:41071201]]. Regarding ultrasonic activation, Silva et al. found no evidence that passive ultrasonic irrigation improves periapical healing over non-activated irrigation, though only one clinical outcome study was available [[PMID:31399682]]. In a direct head-to-head RCT of activation techniques (Erkan et al., n=200), PIPS and SWEEPS produced significantly lower postoperative pain than PUI, sonic (EDDY), or manual dynamic activation, but this trial did not report periapical healing [[PMID:35267110]]. A systematic review of PIPS for smear-layer removal (Brum et al. 2025) found PIPS generally superior to conventional syringe irrigation, particularly in the cervical and middle thirds, with limited apical benefit [[PMID:41432813]]. The Fiegler-Rudol Er:YAG review reached similar conclusions for disinfection but did not evaluate healing outcomes [[PMID:40136729]].
 
 **Level II — Prospective Studies**
-Erkan et al.'s RCT (n=200 mandibular premolars with symptomatic irreversible pulpitis) directly compared SWEEPS, PIPS, sonic (EDDY), PUI and manual dynamic activation and found PIPS and SWEEPS produced significantly lower postoperative pain levels than PUI, sonic, and MDA groups, with no difference in analgesic intake — supporting a short-term pain advantage of laser activation but this study did not assess periapical healing [[PMID:35267110]]. Zhao et al.'s RCT (n=60 teeth with apical periodontitis) compared PIPS with 1% NaOCl vs CNI and found PIPS produced significantly greater ATP-based bacterial reduction, but the 7-day follow-up is insufficient for periapical healing outcomes [[PMID:38431616]]. Kolberg-Babrzynska et al. (n=40 retreatment cases) reported significantly smaller periapical lesions at 6 months with Er:YAG LAI plus photobiomodulation vs conventional retreatment, though the study bundles LAI with PBM, obscuring the LAI-specific contribution [[PMID:40135760]].
 
-**Level IIIa — Retrospective Cohort**
-Montero et al.'s prospective cohort of 230 molars comparing GentleWave (multisonic) with UA + negative pressure irrigation found no significant differences in healing (70.6% vs 72.9% strict criteria; 83.5% vs 87.1% loose), suggesting contemporary activated disinfection systems perform similarly for periapical healing at ~15 months [[PMID:40287087]]. Artaza et al. reported 89% (loose) / 67% (rigid) success rates for non-surgical treatment of large apical periodontitis lesions using conventional NaOCl irrigation, indicating high baseline success without laser activation and setting the ceiling any adjunct must exceed [[PMID:39151889]].
+Arikan et al. (n=140, 12-month follow-up) compared sonic activation (EndoActivator) with conventional needle irrigation in teeth with apical periodontitis and found significantly greater lesion size reduction and PAI improvement with sonic activation, though overall success rates (95% vs 91%) did not differ significantly [[PMID:39589537]]. Zhao et al. (n=60) reported PIPS with 1% NaOCl produced significantly greater ATP-measured bacterial reduction than conventional needle irrigation, though clinical follow-up was only 7 days [[PMID:38431616]]. Kaplan et al. (n=80) found neither sonic activation (EDDY) nor 980-nm diode laser adjunct significantly reduced postoperative pain compared to conventional irrigation in mandibular molars [[PMID:36514017]]. Direct comparisons of PIPS/SWEEPS against ultrasonic activation for periapical healing outcomes at ≥12 months are essentially absent from the retrieved evidence.
+
+**Level IIIa — Retrospective Cohort Studies**
+
+Montero et al. (n=230 molars) compared GentleWave (multisonic) with ultrasonic activation plus negative pressure irrigation and found **no significant difference** in healing outcomes at ~15 months (strict success 70.6% vs 72.9%; loose 83.5% vs 87.1%) [[PMID:40287087]]. Amber et al. (n=46, 12-month follow-up) similarly found no difference in success rates between GentleWave and conventional syringe irrigation (69% vs 70% strict criteria) [[PMID:42260197]]. Pelozo et al. RCT (n=30, 12-month follow-up) of adjunctive 980-nm diode laser during retreatment showed 45% more healed cases at 12 months than placebo, suggesting some laser benefit for retreatment healing, though sample was small [[PMID:36823417]]. Pažin & Bago (n=36) found no additional benefit of PDT after ultrasonic activation for lesion volume reduction at 12 months [[PMID:38013016]].
 
 **Level V — Expert Opinion / Reviews**
-Fernández-Moreno et al.'s meta-analysis (categorised here as Level V by the evidence base but methodologically Level I) is the single most direct synthesis addressing the question and is discussed above [[PMID:42513311]].
+
+A recent meta-analysis (Fernández-Moreno et al. 2026, 5 RCTs, n=451) reported that activated irrigation (pooled PUI + LAI) significantly improved periapical healing versus conventional irrigation (OR 2.25; 95% CI 1.29-3.93), with subgroup effects for both PUI (OR 1.95) and LAI (OR 6.77) — but the direct LAI vs PUI head-to-head comparison was not the pooled endpoint, and certainty was rated moderate [[PMID:42513311]]. The wide LAI confidence interval reflects sparse data rather than a robust superiority signal.
 
 ---
 
 ## REFERENCES
 
-1. [PMID: 27759881] Del Fabbro M, Corbella S, Sequeira-Byron P et al. — Cochrane review of endodontic retreatment procedures. Cochrane Database Syst Rev, 2016. Follow-up: 120 mo. (Score: 73.3/100)
-2. [PMID: 22972129] Fedorowicz Z, Nasser M, Sequeira-Byron P et al. — Cochrane review of irrigants for non-surgical root canal treatment. Cochrane Database Syst Rev, 2012. n=851. (Score: 64.8/100)
-3. [PMID: 41833582] Duarte MA, Neves JA, Caçador M et al. — Umbrella review of SRs on lasers in endodontics. 2026. (Score: 78.5/100)
-4. [PMID: 39849275] Schmidt LS, Ferreira LDS, Junior FAV et al. — SR/MA of PIPS Er:YAG LAI vs needle irrigation on postoperative pain. 2025. (Score: 78.5/100)
-5. [PMID: 42001923] Creazzo G, Salmon B, Almeida J et al. — SR/MA of adjunctive laser therapy on PAI-based periapical healing. 2026. (Score: 74.8/100)
-6. [PMID: 38484867] McGillivray A, Dutta A — SR on LAI and postoperative pain after primary RCT. 2024. (Score: 74.8/100)
-7. [PMID: 39472604] Elmsmari F, Shujaie H, Alzaabi R et al. — SR/MA on lasers for pain after primary and secondary RCT. 2024. (Score: 74.8/100)
-8. [PMID: 33595920] Liapis D, De Bruyne MAA, De Moor RJG et al. — RCT of UAI vs Er:YAG LAI on postoperative pain. 2021. n=56. (Score: 66.9/100)
-9. [PMID: 35267110] Erkan E, Gündoğar M, Uslu G et al. — RCT of SWEEPS, PIPS, sonic, PUI and MDA on postoperative pain. 2022. n=100. (Score: 62.6/100)
-10. [PMID: 38431616] Zhao J, Wu S, Huang Y et al. — RCT of CNI vs PIPS with 1% NaOCl on bacterial reduction in apical periodontitis. 2024. n=60. (Score: 71.5/100)
-11. [PMID: 40135760] Kolberg-Babrzynska I, Grzech-Lesniak K, Kiryk J et al. — RCT of conventional vs Er:YAG LAI + PBM in retreatment. 2025. n=40. Follow-up: 6 mo. (Score: 68.9/100)
-12. [PMID: 40287087] Montero LQ, Basrani B, Ellis DA et al. — Prospective cohort of GentleWave vs UA+NPI in molars. 2025. n=230. (Score: 66.5/100)
-13. [PMID: 39151889] Artaza L, Campello AF, Soimu G et al. — Retrospective cohort of NSRCT for large apical periodontitis lesions. 2024. n=199. Follow-up: 32 mo. (Score: 68.3/100)
-14. [PMID: 42513311] Fernández-Moreno P, Areal-Quecuty V, Segura-Raya C et al. — SR/MA of PUI and LAI without systemic antibiotics on periapical healing. 2026. n=451. Follow-up: 6 mo. (Score: 50.1/100)
+1. [PMID: 41833582] Duarte MA, Neves JA, Caçador M et al. — Umbrella review of 9 systematic reviews on laser-activated irrigation in endodontics; evidence limited and heterogeneous. 2026. (Score: 78.5/100)
+2. [PMID: 42001923] Creazzo G, Salmon B, Almeida J et al. — Systematic review/meta-analysis (6 studies) of adjunctive laser therapy for periapical lesion healing; no significant difference vs conventional treatment. 2026. (Score: 74.8/100)
+3. [PMID: 39589537] Arikan NS, Hepsenoglu YE, Ersahan S et al. — RCT of sonic activation vs conventional needle irrigation, n=140, 12-month follow-up. 2024. (Score: 74.4/100)
+4. [PMID: 40136729] Fiegler-Rudol J et al. — Systematic review of Er:YAG laser-assisted disinfection (15 studies). 2025. (Score: 72.6/100)
+5. [PMID: 38431616] Zhao J et al. — RCT of PIPS vs CNI with 1% NaOCl, n=60, 7-day follow-up. 2024. (Score: 71.5/100)
+6. [PMID: 27759881] Del Fabbro M et al. — Cochrane review of endodontic retreatment procedures, 20 RCTs. 2016. (Score: 73.3/100)
+7. [PMID: 22972129] Fedorowicz Z et al. — Cochrane review of irrigants for non-surgical RCT, 11 trials, n=851. 2012. (Score: 64.8/100)
+8. [PMID: 35267110] Erkan E, Gündoğar M, Uslu G et al. — RCT of SWEEPS, PIPS, sonic, PUI, MDA for postoperative pain, n=200. 2022. (Score: 62.6/100)
+9. [PMID: 36514017] Kaplan T, Kaplan SS, Sezgin GP — RCT of irrigation/disinfection methods on postoperative pain, n=80. 2022. (Score: 66.9/100)
+10. [PMID: 31399682] Silva EJNL et al. — Systematic review of PUI vs non-activated irrigation, n=346 studies screened. 2019. (Score: 65.9/100)
+11. [PMID: 41432813] Brum NF et al. — Systematic review of PIPS smear-layer removal (14 studies). 2025. (Score: 67.0/100)
+12. [PMID: 41071201] Santos Pereira B et al. — Umbrella review of LLLT as adjunct in root canal treatment (18 SRs). 2025. (Score: 67.0/100)
+13. [PMID: 40287087] Montero LQ, Basrani B et al. — Prospective cohort of GentleWave vs UA+NPI in molars, n=230, ~15-month follow-up. 2025. (Score: 66.5/100)
+14. [PMID: 42260197] Amber A et al. — Retrospective study of GentleWave vs conventional irrigation, n=46, 12-month follow-up. 2026. (Score: 63.3/100)
+15. [PMID: 36823417] Pelozo LL et al. — RCT of 980-nm diode laser adjunct in retreatment, n=30, 12-month follow-up. 2023. (Score: 62.2/100)
+16. [PMID: 38013016] Pažin B, Lauc T, Bago I — RCT of UAI+PDT vs UAI for periapical healing, n=36, 12-month CBCT follow-up. 2024. (Score: 56.5/100)
+17. [PMID: 42513311] Fernández-Moreno P et al. — Systematic review/meta-analysis (5 RCTs, n=451) of activated irrigation vs conventional for periapical healing. 2026. (Score: 50.1/100)
 
 ---
 
-> ⚠ **Citation support: 1 of 20 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
+> ⚠ **Citation support: 1 of 21 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:
 >
-> - [[PMID:42001923]] cited for: "Based on Level I evidence, laser-activated irrigation (LAI) using PIPS or SWEEPS and ultrasonic activation (UAI) both improve periapical hea"
+> - [[PMID:41833582]] cited for: "Based on Level I evidence, laser-activated irrigation (PIPS/SWEEPS) and ultrasonic activation both improve periapical healing over conventio"
+>
+> ⚠ **2 claims not from the evidence base.** They carry no citation, so no abstract was checked against them — not part of the count above:
+>
+> - "Both should be paired with adequate NaOCl concentration and volume — the activation method does not compensate for inadequate irrigant chemi"
+> - "Direct comparisons of PIPS/SWEEPS against ultrasonic activation for periapical healing outcomes at ≥12 months are essentially absent from th"
