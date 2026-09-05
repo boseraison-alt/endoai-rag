@@ -1740,7 +1740,9 @@ def build_differential_evidence(job_id: str, case_description: str,
     """
     from endo_ai import (TIER_ORDER, TIER_LABEL, build_synthesis_order,
                          detect_outliers, apply_currency_tags,
-                         flag_superseded_by_review)
+                         flag_superseded_by_review,
+                         PROVISIONAL_KEY, PROVISIONAL_MAX_ADMITTED,
+                         _provisional_context_line)
     # RELEVANCE_GATE is this module's, and reading it here rather than copying
     # a number is the point: a per-tier cap that drifted between the two paths
     # would mean a differential answer silently sees more or fewer papers per
@@ -1778,7 +1780,14 @@ def build_differential_evidence(job_id: str, case_description: str,
             continue
 
         found = []
-        for tier in TIER_ORDER:
+        # TIER_ORDER + the provisional lane. PROVISIONAL_KEY is deliberately
+        # NOT in TIER_ORDER -- that absence is what stops it competing for a
+        # tier slot -- but the same absence made this merge DROP every
+        # provisional paper the retrieval above had just found. They would
+        # have been fetched, paid for, and then silently discarded on the
+        # differential path, and because the merge also builds the evidence
+        # base, citing one would have scored as a FABRICATION.
+        for tier in list(TIER_ORDER) + [PROVISIONAL_KEY]:
             for p in ((ev.get(tier) or {}).get("scored") or []):
                 pmid = p.get("pmid")
                 if not pmid:
@@ -1827,6 +1836,20 @@ def build_differential_evidence(job_id: str, case_description: str,
             "source": "differential",
         }
         all_scored.extend(bucket)
+
+    # The provisional lane, rebuilt as its own block after the tier loop. It
+    # is NOT added to `all_scored`: those papers carry score=None, and
+    # `sum(p["score"] for p in all_scored)` two lines below would raise on the
+    # first one. Same reasoning as endo_ai.build_evidence_base.
+    prov_bucket = merged.get(PROVISIONAL_KEY) or []
+    if prov_bucket:
+        prov_bucket = prov_bucket[:PROVISIONAL_MAX_ADMITTED]
+        evidence[PROVISIONAL_KEY] = {
+            "text": "".join(_provisional_context_line(p) for p in prov_bucket),
+            "ids": [p["pmid"] for p in prov_bucket],
+            "scored": prov_bucket,
+            "source": "differential",
+        }
 
     all_scored = detect_outliers(apply_currency_tags(all_scored))
     flag_superseded_by_review(evidence)

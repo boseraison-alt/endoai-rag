@@ -125,6 +125,38 @@ class TestTheProvisionalLaneReachesTheLivePath:
         assert "except Exception" in seg, (
             "the newest-literature lane must never be able to fail an answer")
 
+    def test_the_case_differential_merge_does_not_drop_it(self):
+        """A THIRD place the lane could vanish, and the subtlest.
+
+        `build_differential_evidence` calls the live path once per candidate
+        and merges the results with `for tier in TIER_ORDER`. PROVISIONAL_KEY
+        is deliberately NOT in TIER_ORDER -- that absence is what stops it
+        competing for a tier slot -- and the same absence made this merge drop
+        every provisional paper the retrieval had just found. They would have
+        been fetched, paid for and discarded; and because this merge also
+        BUILDS the evidence base, citing one would then have scored as a
+        fabrication.
+        """
+        i = APP.index("def build_differential_evidence(")
+        j = APP.index("\ndef ", i + 1)
+        body = APP[i:j]
+        assert "list(TIER_ORDER) + [PROVISIONAL_KEY]" in body, (
+            "the differential merge iterates TIER_ORDER alone, which silently "
+            "drops every provisional paper")
+        assert 'evidence[PROVISIONAL_KEY]' in body, (
+            "the differential path never rebuilds a provisional block, so the "
+            "papers cannot reach synthesis")
+
+    def test_the_differential_keeps_provisional_out_of_all_scored(self):
+        i = APP.index("def build_differential_evidence(")
+        j = APP.index("\ndef ", i + 1)
+        body = APP[i:j]
+        seg = body[body.index("prov_bucket = merged.get"):]
+        seg = seg[:seg.index("detect_outliers")]
+        assert "all_scored.extend" not in seg, (
+            "provisional papers with score=None entered all_scored; "
+            "`sum(p['score'] for p in all_scored)` raises on the first one")
+
     def test_provisional_papers_do_not_enter_all_scored(self):
         """`all_scored` is summed and averaged. A provisional paper carries
         score=None, and one None in that list raises on every consumer."""
