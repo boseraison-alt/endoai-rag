@@ -253,6 +253,20 @@ def setup_table():
             # Stored as the successor's PMID rather than a bare boolean so the
             # answer can name the version the clinician should read instead.
             ("superseded_by",   "TEXT DEFAULT ''"),
+            # A49/A2 quarantine. Non-empty means this row must never reach a
+            # clinician: it names a document that could not be verified against
+            # the 60-entry manifest in data/guidelines_seed.json. The string is
+            # the REASON, not a flag, because the twelve rows fail in two
+            # distinct ways — six are dated to an edition that does not exist,
+            # six name no document at all — and a bare boolean would erase the
+            # distinction that decides what happens to each of them.
+            #
+            # QUARANTINE, NOT DELETION. The rows stay, with their scores and
+            # their text, so that `UPDATE ... SET quarantine_reason = ''`
+            # restores the previous behaviour exactly and RB decides removal
+            # separately. 103 stored answers cite one of these records; whoever
+            # decides their fate needs to be able to read them.
+            ("quarantine_reason", "TEXT DEFAULT ''"),
         ):
             cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""
@@ -514,6 +528,7 @@ def search(
                     citations, level_key, score, is_curated,
                     medline_indexed, has_erratum, has_retraction, registry,
                     coi_flag, coi_funder, coi_status, superseded_by,
+                    quarantine_reason,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE level_key = %s
@@ -523,6 +538,13 @@ def search(
                   -- (Same reasoning as the unfiltered branch below — keep both
                   -- in step.)
                   AND COALESCE(superseded_by, '') = ''
+                  -- A49/A2 quarantine. A row whose named document could not be
+                  -- verified against the manifest never enters a candidate
+                  -- pool. Excluded here, in the same clause as retracted and
+                  -- withdrawn, because this is the only place all three
+                  -- retrieval branches pass through — a downstream filter
+                  -- would be one `if` away from a path that skips it.
+                  AND COALESCE(quarantine_reason, '') = ''
                   AND 1 - (embedding <=> %s::vector) >= %s
                 -- A30/rule 19. This LIMIT decides MEMBERSHIP of the
                 -- candidate pool, so it is ordered by relevance alone. It
@@ -551,6 +573,7 @@ def search(
                     citations, level_key, score, is_curated,
                     medline_indexed, has_erratum, has_retraction, registry,
                     coi_flag, coi_funder, coi_status, superseded_by,
+                    quarantine_reason,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE NOT COALESCE(has_retraction, FALSE)
@@ -569,6 +592,13 @@ def search(
                   -- this filter the ranker can hand a clinician a decade-old
                   -- conclusion the authors have since revised.
                   AND COALESCE(superseded_by, '') = ''
+                  -- A49/A2 quarantine. A row whose named document could not be
+                  -- verified against the manifest never enters a candidate
+                  -- pool. Excluded here, in the same clause as retracted and
+                  -- withdrawn, because this is the only place all three
+                  -- retrieval branches pass through — a downstream filter
+                  -- would be one `if` away from a path that skips it.
+                  AND COALESCE(quarantine_reason, '') = ''
                   AND 1 - (embedding <=> %s::vector) >= %s
                 -- A30/rule 19. This LIMIT decides MEMBERSHIP of the
                 -- candidate pool, so it is ordered by relevance alone. It
@@ -635,12 +665,20 @@ def search_by_pmids(query: str, pmids: list) -> list[dict]:
                 citations, level_key, score, is_curated,
                 medline_indexed, has_erratum, has_retraction, registry,
                 coi_flag, coi_funder, coi_status, superseded_by,
+                quarantine_reason,
                 1 - (embedding <=> %s::vector) AS similarity
             FROM endo_papers_rag
             WHERE pmid = ANY(%s)
               AND NOT COALESCE(has_retraction, FALSE)
               AND title NOT ILIKE 'WITHDRAWN:%%'
               AND COALESCE(superseded_by, '') = ''
+              -- A49/A2 quarantine, and this is the copy that matters most.
+              -- A follow-up question seeds itself with the PMIDs the previous
+              -- answer cited. 103 stored answers cite a quarantined record, so
+              -- without this clause every one of them would re-admit it on the
+              -- next turn — invisible, and only on follow-ups, which is the
+              -- exact bypass the docstring above warns about.
+              AND COALESCE(quarantine_reason, '') = ''
               AND embedding IS NOT NULL;
         """, (query_vec, pmids))
         return [dict(r) for r in cur.fetchall()]
@@ -721,6 +759,12 @@ def rag_results_to_scored(rows: list[dict]) -> list[dict]:
             # still round-trip through learn_from_live_results() without the
             # flag being silently dropped.
             "superseded_by":   r.get("superseded_by") or "",
+            # Same reasoning as superseded_by directly above: every retrieval
+            # branch already filters these out, so a non-empty value here means
+            # the caller bypassed search(), and carrying it lets the citation
+            # gate refuse the row rather than silently trusting the WHERE
+            # clause it did not go through.
+            "quarantine_reason": r.get("quarantine_reason") or "",
             "medline_indexed": r.get("medline_indexed", True),
             "is_curated":      bool(r.get("is_curated")),
             "breakdown":       {},

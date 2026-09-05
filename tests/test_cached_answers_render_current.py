@@ -47,10 +47,19 @@ ROOT = Path(__file__).parent.parent
 # 1, so it carries an impact factor, a pseudo-id marker, an out-of-domain
 # paragraph, a support block with only the first number, and a paper pool
 # larger than its citation set.
+#
+# The synthetic-key marker was `ESE-QG-2023` until the A49/A2 quarantine, and
+# the swap is deliberate rather than cosmetic. This fixture needs a synthetic
+# key that RESOLVES — that is the property it was chosen to exercise — and
+# ESE-QG-2023 stopped being one: A2 found no such document, so it is now
+# quarantined and G2 correctly drops it. `AAE-PS-vital-pulp` is one of the four
+# A2 verified against a real document (AAE-VPT-2021), so it carries the same
+# property the fixture was built for. The quarantined case has its own test in
+# `TestAQuarantinedCitationNeverReachesAServedAnswer` below.
 PRE_STAGE1_ANSWER = (
     "## CLINICAL RECOMMENDATION\n\n"
     "Apical surgery is low-risk for major bleeding [[PMID:27759881]], and the "
-    "ESE guidance endorses magnification [[PMID:ESE-QG-2023]].\n\n"
+    "AAE guidance endorses magnification [[PMID:AAE-PS-vital-pulp]].\n\n"
     "From the wider literature: bridging with LMWH is not indicated for "
     "apixaban. INR testing is not applicable.\n\n"
     "Non-surgical retreatment remains an option [[PMID:35762859]].\n\n"
@@ -64,7 +73,7 @@ PRE_STAGE1_ANSWER = (
 
 PRE_STAGE1_PAPERS = [
     {"pmid": "27759881", "score": 73.3, "level_key": "cochrane"},
-    {"pmid": "ESE-QG-2023", "score": 87.0, "level_key": "level1"},
+    {"pmid": "AAE-PS-vital-pulp", "score": 90.0, "level_key": "guideline"},
     {"pmid": "35762859", "score": 80.9, "level_key": "level1"},
     {"pmid": "2084204", "score": 74.0, "level_key": "classic"},      # never cited
     {"pmid": "38243912", "score": 73.9, "level_key": "level3a"},     # never cited
@@ -174,7 +183,7 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         assert "cited_pmids" in body, (
             "the History route serves papers without saying which were cited, "
             "so the bibliography falls back to the whole retrieval pool")
-        assert set(body["cited_pmids"]) == {"27759881", "ESE-QG-2023", "35762859"}
+        assert set(body["cited_pmids"]) == {"27759881", "AAE-PS-vital-pulp", "35762859"}
         assert "(IF:" not in body["answer"], "the stored answer was served unrendered"
         assert re.search(r"\d+ claims? not from the evidence base", body["answer"])
 
@@ -188,7 +197,7 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
         body = client.get("/learn_history/20260101_000000_q.json").get_json()
         assert "cited_pmids" in body
-        assert set(body["cited_pmids"]) == {"27759881", "ESE-QG-2023", "35762859"}
+        assert set(body["cited_pmids"]) == {"27759881", "AAE-PS-vital-pulp", "35762859"}
         assert "(IF:" not in body["answer"]
         assert (endo_ai._QUARANTINE_HEADER in body["answer"]
                 or endo_ai._QUARANTINE_INLINE_MARK in body["answer"])
@@ -198,6 +207,90 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         i = src.index("cached = get_cached_answer(")
         j = src.index("return", i)
         assert "finalise_answer_text" in src[i:j]
+
+
+class TestAQuarantinedCitationNeverReachesAServedAnswer:
+    """A49/A2, and this is the reason re-rendering at READ time was worth
+    building in the first place.
+
+    Twelve guideline records name documents that could not be verified. The
+    stored answers that cite them are already written and are not being
+    rewritten — the quarantine reaches them because every serve path re-renders
+    through `finalise_answer_text`, and the citation is dropped there.
+
+    Pinned on the ROUTES, not on the helper: this file's whole subject is that
+    a fix which exists is not the same as a fix that reaches what is already
+    saved.
+    """
+
+    QUARANTINED_ANSWER = (
+        "## CLINICAL RECOMMENDATION\n\n"
+        "CBCT is indicated before surgical retreatment "
+        "[[PMID:AAE-PS-cbct]], and pulp status is assessed first "
+        "[[PMID:AAE-PS-diagnosis]].\n\n"
+    )
+    PAPERS = [
+        {"pmid": "AAE-PS-cbct", "score": 90.0, "level_key": "guideline"},
+        {"pmid": "AAE-PS-diagnosis", "score": 90.0, "level_key": "guideline"},
+    ]
+
+    @pytest.fixture(autouse=True)
+    def _fresh_key_cache(self):
+        endo_ai._KNOWN_SYNTHETIC_KEYS = None
+        yield
+        endo_ai._KNOWN_SYNTHETIC_KEYS = None
+
+    @pytest.fixture
+    def client(self):
+        import app as app_mod
+        app_mod.app.config["TESTING"] = True
+        return app_mod.app.test_client()
+
+    def test_the_history_route_drops_it(self, client, monkeypatch):
+        # Load the real key set BEFORE the route's connection is stubbed. The
+        # stub stands in for the history query, not for the library, and
+        # without this G2 sees a cursor with no fetchall, fails OPEN by design
+        # and the test would pass for the wrong reason.
+        assert endo_ai._known_synthetic_keys() is not None, "library unreachable"
+
+        class _Cur:
+            def execute(self, *a, **k): pass
+            def fetchone(self):
+                return ("[review] q", self_outer.QUARANTINED_ANSWER,
+                        self_outer.PAPERS)
+            def close(self): pass
+
+        class _Conn:
+            def cursor(self): return _Cur()
+            def close(self): pass
+
+        self_outer = self
+        monkeypatch.setattr("rag.get_conn", lambda: _Conn())
+        body = client.get("/history/1").get_json()
+        assert "AAE-PS-cbct" not in body["answer"], (
+            "a stored answer served a citation to a record A2 could not "
+            "verify — there is no 2021 AAE CBCT statement")
+        assert "AAE-PS-cbct" not in set(body.get("cited_pmids") or [])
+        assert "AAE-PS-diagnosis" in body["answer"], (
+            "the verified record was dropped too — the gate is too broad")
+
+    def test_the_learn_history_route_drops_it(self, client, tmp_path, monkeypatch):
+        import app as app_mod
+        rec = {"question": "q", "answer": self.QUARANTINED_ANSWER,
+               "papers": self.PAPERS}
+        p = tmp_path / "20260101_000000_q.json"
+        p.write_text(json.dumps(rec), encoding="utf-8")
+        monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
+        body = client.get("/learn_history/20260101_000000_q.json").get_json()
+        assert "AAE-PS-cbct" not in body["answer"]
+        assert "AAE-PS-diagnosis" in body["answer"]
+
+    def test_the_stored_row_is_not_rewritten(self):
+        """Reversible: the drop happens at read time, so clearing
+        `quarantine_reason` restores the citation without a data migration."""
+        before = self.QUARANTINED_ANSWER
+        endo_ai.finalise_answer_text(before)
+        assert self.QUARANTINED_ANSWER == before
 
 
 class TestTheBrowserHistoryLoadersUseTheSameRenderer:

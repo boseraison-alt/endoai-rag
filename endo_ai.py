@@ -6328,7 +6328,24 @@ _KNOWN_SYNTHETIC_KEYS = None
 
 
 def _known_synthetic_keys():
-    """Non-numeric ids that actually exist in the library. Loaded once."""
+    """Non-numeric ids that actually exist in the library AND are citeable.
+
+    A49/A2 — a QUARANTINED row is deliberately not in this set, and that one
+    exclusion is what enforces "no answer may cite a quarantined record".
+
+    It is done here rather than with a new gate because this is the only place
+    both paths pass through. `finalise_answer_text` runs on freshly synthesised
+    answers AND on the cached-answer serve path, so excluding the twelve slugs
+    from the resolvable set reaches the 103 STORED answers that already cite
+    one — without rewriting a single stored row. The citation drops at render
+    time; the claim it was attached to becomes unattributed, which the existing
+    detectors report. That is the loud failure, and it is reversible: clear
+    `quarantine_reason` and the citations resolve again.
+
+    The twelve are all non-numeric slugs, so they are all inside this gate's
+    scope. Nothing here touches the four verified records or the five real
+    PubMed-indexed guidelines.
+    """
     global _KNOWN_SYNTHETIC_KEYS
     if _KNOWN_SYNTHETIC_KEYS is None:
         try:
@@ -6337,7 +6354,8 @@ def _known_synthetic_keys():
             cur = conn.cursor()
             try:
                 cur.execute("SELECT pmid FROM endo_papers_rag "
-                            "WHERE pmid !~ '^[0-9]+$'")
+                            "WHERE pmid !~ '^[0-9]+$' "
+                            "  AND COALESCE(quarantine_reason, '') = ''")
                 _KNOWN_SYNTHETIC_KEYS = {r[0] for r in cur.fetchall()}
             finally:
                 cur.close()
@@ -6372,6 +6390,22 @@ def drop_unresolvable_citations(answer: str, known=None):
     out = _PMID_RE.sub(_check, answer)
     out = _REF_PMID_RE.sub(_check, out)
     if dropped:
+        # Removing a marker leaves the space that preceded it stranded in
+        # front of the sentence's punctuation — "...mineralisation ." — and a
+        # later normaliser in `finalise_answer_text` then closes that gap, so
+        # rendering the same stored answer twice produced two different
+        # strings. The gate has always had this property; it only became
+        # visible when the A49 quarantine made it fire on twelve identifiers
+        # across thirteen stored answers instead of on two rare ones.
+        #
+        # Repaired HERE rather than by relaxing the idempotence test, which is
+        # load-bearing: a served answer that keeps changing under re-render is
+        # how a cached row and a fresh one drift apart. Scoped to runs where
+        # something was actually dropped, and to the two shapes a removal can
+        # leave behind — stranded space before punctuation, and a doubled
+        # space where a marker sat mid-sentence.
+        out = re.sub(r"[ \t]+([.,;:!?])", r"\1", out)
+        out = re.sub(r"[ \t]{2,}", " ", out)
         import collections
         tally = collections.Counter(dropped)
         print("  [G2] dropped %d citation(s) that resolve to nothing: %s"
