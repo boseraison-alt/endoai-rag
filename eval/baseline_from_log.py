@@ -27,6 +27,23 @@ ESEARCH_RE = re.compile(
     r"\((\d+) returned nothing, (\d+) search terms")
 
 
+# The provisional lane, recovered from the log body rather than the summary.
+#
+# `run_eval.py` looped TIER_ORDER when these logs were written, and
+# PROVISIONAL_KEY is not in TIER_ORDER, so the `papers N {...}` summary line
+# EXCLUDES every provisional paper. The lane still ran and still printed what
+# it admitted, so the number is recoverable:
+#
+#     [provisional] 43 of 400 recent papers are unclassified by MEDLINE;
+#                   43 state a level2-or-above design, 0 state none or weaker
+#     [provisional] cap 40: dropped 3 admitted paper(s) beyond the cap
+#
+# The admitted count is the SECOND number, and the cap line (when present) is
+# what actually reached the evidence base.
+PROV_RE = re.compile(r"^\s*\[provisional\].*?; (\d+) state a level2-or-above")
+PROV_CAP_RE = re.compile(r"^\s*\[provisional\] cap (\d+): dropped (\d+)")
+
+
 def parse(path):
     """Return {case_id: measurement} for one run log."""
     out, cur = {}, None
@@ -38,6 +55,12 @@ def parse(path):
             continue
         if cur is None:
             continue
+        m = PROV_RE.match(line)
+        if m:
+            cur["_prov_admitted"] = cur.get("_prov_admitted", 0) + int(m.group(1))
+        m = PROV_CAP_RE.match(line)
+        if m:
+            cur["_prov_admitted"] = int(m.group(1))
         m = ROUTE_RE.match(line)
         if m:
             cur["route"] = m.group(1) or None
@@ -48,6 +71,16 @@ def parse(path):
                 cur["per_tier"] = json.loads(m.group(2).replace("'", '"'))
             except json.JSONDecodeError:
                 pass
+            # ONLY when the summary does not already carry the lane. Logs
+            # written after run_eval.py was fixed include `provisional` in
+            # per_tier, and adding the recovered number to those would double
+            # count it. Self-correcting rather than dated: the condition is
+            # "does this log already say", not "is this log old".
+            n = cur.pop("_prov_admitted", 0)
+            if n and "provisional" not in (cur.get("per_tier") or {}):
+                cur.setdefault("per_tier", {})["provisional"] = n
+                cur["papers"] += n
+                cur["_provisional_recovered"] = n
         m = ESEARCH_RE.match(line)
         if m:
             cur.update(esearch_hits=int(m.group(1)), esearch_queries=int(m.group(2)),

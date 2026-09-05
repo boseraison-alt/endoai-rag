@@ -34,6 +34,8 @@ class TestTierPlacement:
 
     def test_is_in_tier_order_and_ordering_stays_monotonic(self):
         assert "invitro" in TIER_ORDER
+        # TIER_ORDER only: this asserts the ladder's scores are monotonic.
+        # PROVISIONAL_KEY carries no score, so it has nothing to order.
         scores = [LEVEL_SCORES.get(t, 0) for t in TIER_ORDER]
         assert scores == sorted(scores, reverse=True), \
             f"TIER_ORDER not strongest-first: {list(zip(TIER_ORDER, scores))}"

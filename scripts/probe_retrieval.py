@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from app import build_evidence_base_with_progress, jobs
-from endo_ai import TIER_ORDER
+from endo_ai import TIER_ORDER, PROVISIONAL_KEY
 
 question = " ".join(sys.argv[1:]) or "Use of lasers in root canal disinfection"
 
@@ -28,7 +28,10 @@ summary = evidence.get("_summary", {})
 
 print("\n" + "=" * 70 + "\nTIER SHAPE\n" + "=" * 70)
 total = 0
-for tier in TIER_ORDER:
+# PROVISIONAL_KEY included: this is the diagnostic that answers "what did
+# retrieval actually return", and the lane is exactly the part that was
+# invisible for a whole batch.
+for tier in list(TIER_ORDER) + [PROVISIONAL_KEY]:
     block = evidence.get(tier)
     if not block:
         continue

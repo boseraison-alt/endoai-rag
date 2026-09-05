@@ -58,6 +58,8 @@ def slide_typography(prs):
     # Tier chip ladder — every chip carries its text label, never colour alone.
     y += px_in(10)
     x = _PX
+    # TIER_ORDER only: deck chart rows are ladder rungs, and PROVISIONAL_KEY
+    # is not one — see the same reasoning in presentations/chart_data.py.
     for tier in TIER_ORDER:
         x += add_tier_chip(slide, tier, x, y) + px_in(10)
 

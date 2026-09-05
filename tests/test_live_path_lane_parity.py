@@ -511,50 +511,129 @@ class TestEveryTierOrderLoopAccountsForTheProvisionalLane:
 
     So every such loop must either handle the lane or say in a comment why it
     need not. This test is the grep, so a SIXTH site cannot be added silently.
+
+    2026-09-05 — IT SCANS THE WHOLE REPOSITORY NOW, and that is the point of
+    standing rule 36. The first version listed `("app.py", "endo_ai.py")`,
+    which were the two files I happened to be looking at. It passed while
+    `eval/run_eval.py` dropped every provisional paper from `per_tier` AND
+    from the `papers` total, in every baseline the harness had ever produced —
+    the v7 run logs show the lane admitting up to `147 of 400` against a
+    recorded zero. A checklist that enumerates a set has to enumerate it
+    everywhere, or it certifies the files the author already had open.
     """
 
-    SOURCES = ("app.py", "endo_ai.py")
+    # Everything except the virtualenv, git internals and caches. Listing
+    # DIRECTORIES to skip rather than files to scan is the load-bearing choice:
+    # a new module under eval/ or scripts/ is covered the day it is written,
+    # which an allow-list would not have been.
+    SKIP_DIRS = {".git", "__pycache__", ".venv", "venv", "node_modules",
+                 ".pytest_cache", "site-packages"}
+
+    @classmethod
+    def _sources(cls):
+        out = []
+        for path in ROOT.rglob("*.py"):
+            if any(part in cls.SKIP_DIRS for part in path.parts):
+                continue
+            out.append(path)
+        return sorted(out)
 
     def _loops(self, src, text):
-        """(line_no, enclosing top-level function body) per TIER_ORDER loop.
+        """(line_no, window) per TIER_ORDER loop, scoped TIGHTLY to that loop.
 
-        Scoped to the FUNCTION, not to a fixed window. A window is the wrong
-        instrument and it produced a false positive the first time this ran:
-        the differential merge handles the lane 26 lines after its loop
-        starts, which a 22-line window called a defect. Widening the window
-        only moves the boundary; the honest unit is "does the code that builds
-        this evidence base deal with the lane at all".
+        The window is the contiguous comment block DIRECTLY ABOVE the loop,
+        plus the loop statement and the few lines it governs. Two earlier
+        scopes were both wrong and both let a real bug through:
 
-        Comment lines are skipped when looking for the loop itself, so prose
-        quoting the construct is not counted as one — standing rule 33, where
-        a source-grep test matched the fix's own comment and reported the bug
-        as still present.
+          a fixed 22-line window   called a correct site a defect, because the
+                                   differential merge handles the lane 26
+                                   lines after its loop starts.
+
+          the enclosing function   let a mutation SURVIVE. `run_case` in
+                                   eval/run_eval.py holds three TIER_ORDER
+                                   sites with three different dispositions, so
+                                   one site's comment satisfied the check for
+                                   the site that had none — which is exactly
+                                   the bug this test exists to catch, passing
+                                   its own mutation check.
+
+        Per-site is the only granularity that means anything here: the question
+        is whether THIS loop accounted for the lane, and a neighbour's reason
+        is not this loop's reason.
         """
-        out = []
         lines = text.splitlines()
-        starts = [i for i, l in enumerate(lines)
-                  if re.match(r"(async )?def \w+", l) is not None]
-        for i, line in enumerate(lines):
-            if line.strip().startswith("#"):
-                continue
-            if re.search(r"for \w+ in TIER_ORDER\b", line) is None:
-                continue
-            lo = max([s for s in starts if s <= i], default=0)
-            hi = min([s for s in starts if s > i], default=len(lines))
-            out.append((i + 1, "\n".join(lines[lo:hi])))
+
+        def is_site(l):
+            return (not l.strip().startswith('#')
+                    and 'for ' in l and ' in TIER_ORDER' in l)
+
+        def stmt_start(i):
+            # A comprehension's `for ... in TIER_ORDER` is often the
+            # SECOND line of its statement, and the comment explaining
+            # the site sits above the FIRST. Walk up to the statement
+            # start before looking for the comment, or every multi-line
+            # comprehension reads as unjustified.
+            lo = i
+            while lo > 0:
+                prev = lines[lo - 1].rstrip()
+                cur = lines[lo].strip()
+                if (prev.endswith(('(', '[', '{', ',', '=')) or
+                        cur.startswith(('for ', 'if ', 'in ', 'and ',
+                                        'or ', ')', ']', '}'))):
+                    lo -= 1
+                    continue
+                break
+            return lo
+
+        def block_start(i):
+            lo = stmt_start(i)
+            while lo > 0 and lines[lo - 1].strip().startswith('#'):
+                lo -= 1
+            return lo
+
+        sites = [i for i, l in enumerate(lines) if is_site(l)]
+        starts = [block_start(i) for i in sites]
+        out = []
+        for n, i in enumerate(sites):
+            # This site OWNS from its own comment block down to the start of
+            # the next site's comment block. That boundary is the whole point:
+            # a neighbour's reason belongs to the neighbour, so one justified
+            # loop cannot vouch for an unjustified one three lines later --
+            # which is precisely how a mutation of eval/run_eval.py SURVIVED
+            # when this window was the enclosing function.
+            hi = starts[n + 1] if n + 1 < len(sites) else min(len(lines), i + 40)
+            out.append((i + 1, chr(10).join(lines[starts[n]:hi])))
         return out
 
     def test_every_loop_handles_the_lane_or_says_why_not(self):
-        checked = 0
-        for name in self.SOURCES:
-            text = (ROOT / name).read_text(encoding="utf-8")
-            for lineno, window in self._loops(name, text):
+        checked, offenders = 0, []
+        for path in self._sources():
+            if path.name == Path(__file__).name:
+                continue          # this file quotes the construct in prose
+            text = path.read_text(encoding="utf-8")
+            rel = path.relative_to(ROOT).as_posix()
+            for lineno, window in self._loops(rel, text):
                 checked += 1
-                assert "PROVISIONAL" in window, (
-                    f"{name}:{lineno} loops over TIER_ORDER and never mentions "
-                    f"PROVISIONAL_KEY — it either drops the provisional lane "
-                    f"silently, or it needs a comment saying why it need not. "
-                    f"Five sites did the former.")
+                # Case-insensitive: "the provisional lane is always
+                # fetched from PubMed" is a perfectly good reason and
+                # should not have to shout to be accepted.
+                if "provisional" not in window.lower():
+                    offenders.append(f"{rel}:{lineno}")
+        assert not offenders, (
+            "these loop over TIER_ORDER and never mention PROVISIONAL_KEY — "
+            "each either drops the provisional lane silently, or needs a "
+            "comment saying why it need not:\n  " + "\n  ".join(offenders))
         # Rule 4: if the regex stops matching, this test passes vacuously and
-        # the checklist it encodes is gone.
-        assert checked >= 6, f"expected at least 6 TIER_ORDER loops, found {checked}"
+        # the checklist it encodes is gone. The floor is well above the six
+        # that the two-file version saw.
+        assert checked >= 20, (
+            f"expected at least 20 TIER_ORDER loops repo-wide, found {checked} "
+            f"— the scanner has stopped matching")
+
+    def test_it_actually_scans_beyond_the_two_original_files(self):
+        """Rule 36, pinned. The bug was the SCOPE, so the scope is asserted."""
+        rels = {p.relative_to(ROOT).as_posix() for p in self._sources()}
+        for expected in ("eval/run_eval.py", "scripts/probe_retrieval.py",
+                         "presentations/chart_data.py"):
+            assert expected in rels, f"{expected} is not being scanned"
+        assert len(rels) > 50, f"only {len(rels)} python files found"

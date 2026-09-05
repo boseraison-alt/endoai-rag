@@ -1,13 +1,13 @@
 {
   "_README": [
-    "Baseline: retrieval-freeze-20260905b: PRISMA unified on relevance, title+abstract on live dicts, guideline scores NULL, ESE-PS-VPT-2019 quarantined - 29 cases x3 runs (2026-09-05)",
+    "Baseline: retrieval-freeze-20260905b: PRISMA unified on relevance, title+abstract on live dicts, guideline scores NULL, ESE-PS-VPT-2019 quarantined; provisional lane recovered from log bodies - 29 cases x3 runs (2026-09-05)",
     "Folded from 3 run log(s): v7freeze_run1.log, v7freeze_run2.log, v7freeze_run3.log.",
     "",
     "Retrieval-only \u2014 no answers were generated, so must_contain, banner, modules_non_empty and max_unsourced_numeric_modules were NOT evaluated. A green run here is not evidence that they hold.",
     "",
     "Search terms are LLM-generated: live-route counts move up to 3x between runs on the same question. Compare shape, not digits."
   ],
-  "label": "retrieval-freeze-20260905b: PRISMA unified on relevance, title+abstract on live dicts, guideline scores NULL, ESE-PS-VPT-2019 quarantined - 29 cases x3 runs (2026-09-05)",
+  "label": "retrieval-freeze-20260905b: PRISMA unified on relevance, title+abstract on live dicts, guideline scores NULL, ESE-PS-VPT-2019 quarantined; provisional lane recovered from log bodies - 29 cases x3 runs (2026-09-05)",
   "n_runs": 3,
   "provisional": false,
   "cases": {
@@ -18,12 +18,12 @@
       ],
       "papers": {
         "runs": [
-          63,
-          69,
-          75
+          68,
+          74,
+          80
         ],
-        "min": 63,
-        "max": 75
+        "min": 68,
+        "max": 80
       },
       "esearch_hits": {
         "runs": [
@@ -79,7 +79,8 @@
           "level3b": 2,
           "level4": 6,
           "level5": 20,
-          "observational": 10
+          "observational": 10,
+          "provisional": 5
         },
         {
           "cochrane": 1,
@@ -89,7 +90,8 @@
           "level3b": 3,
           "level4": 6,
           "level5": 25,
-          "observational": 10
+          "observational": 10,
+          "provisional": 5
         },
         {
           "cochrane": 1,
@@ -100,7 +102,8 @@
           "level4": 6,
           "guideline": 5,
           "level5": 25,
-          "observational": 10
+          "observational": 10,
+          "provisional": 5
         }
       ]
     },
@@ -437,12 +440,12 @@
       ],
       "papers": {
         "runs": [
-          18,
-          18,
-          18
+          19,
+          19,
+          20
         ],
-        "min": 18,
-        "max": 18
+        "min": 19,
+        "max": 20
       },
       "esearch_hits": {
         "runs": [
@@ -491,13 +494,16 @@
       },
       "per_tier_runs": [
         {
-          "level1": 18
+          "level1": 18,
+          "provisional": 1
         },
         {
-          "level1": 18
+          "level1": 18,
+          "provisional": 1
         },
         {
-          "level1": 18
+          "level1": 18,
+          "provisional": 2
         }
       ]
     },
@@ -662,12 +668,12 @@
       ],
       "papers": {
         "runs": [
-          23,
-          23,
-          24
+          24,
+          32,
+          38
         ],
-        "min": 23,
-        "max": 24
+        "min": 24,
+        "max": 38
       },
       "esearch_hits": {
         "runs": [
@@ -718,17 +724,20 @@
         {
           "cochrane": 1,
           "level1": 18,
-          "guideline": 4
+          "guideline": 4,
+          "provisional": 1
         },
         {
           "cochrane": 2,
           "level1": 18,
-          "guideline": 3
+          "guideline": 3,
+          "provisional": 9
         },
         {
           "cochrane": 4,
           "level1": 18,
-          "guideline": 2
+          "guideline": 2,
+          "provisional": 14
         }
       ]
     },
@@ -741,10 +750,10 @@
         "runs": [
           59,
           50,
-          65
+          66
         ],
         "min": 50,
-        "max": 65
+        "max": 66
       },
       "esearch_hits": {
         "runs": [
@@ -816,7 +825,8 @@
           "level3b": 2,
           "level4": 6,
           "level5": 25,
-          "observational": 10
+          "observational": 10,
+          "provisional": 1
         }
       ]
     },
@@ -1037,10 +1047,10 @@
       "papers": {
         "runs": [
           37,
-          23,
+          24,
           31
         ],
-        "min": 23,
+        "min": 24,
         "max": 37
       },
       "esearch_hits": {
@@ -1102,7 +1112,8 @@
         {
           "cochrane": 1,
           "level1": 18,
-          "guideline": 4
+          "guideline": 4,
+          "provisional": 1
         },
         {
           "level1": 1,
@@ -1380,12 +1391,12 @@
       ],
       "papers": {
         "runs": [
-          73,
-          76,
-          76
+          99,
+          116,
+          116
         ],
-        "min": 73,
-        "max": 76
+        "min": 99,
+        "max": 116
       },
       "esearch_hits": {
         "runs": [
@@ -1442,7 +1453,8 @@
           "level4": 4,
           "guideline": 4,
           "level5": 4,
-          "observational": 6
+          "observational": 6,
+          "provisional": 26
         },
         {
           "cochrane": 10,
@@ -1453,7 +1465,8 @@
           "level4": 4,
           "guideline": 4,
           "level5": 4,
-          "observational": 6
+          "observational": 6,
+          "provisional": 40
         },
         {
           "cochrane": 10,
@@ -1464,7 +1477,8 @@
           "level4": 4,
           "guideline": 4,
           "level5": 4,
-          "observational": 6
+          "observational": 6,
+          "provisional": 40
         }
       ]
     },

@@ -107,6 +107,9 @@ class TestTheProductionPathUsesIt:
 
     def _tier_loop(self):
         src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
+        # These two lines SCAN app.py's source for its banding loop; they are
+        # not themselves loops over the ladder. PROVISIONAL_KEY needs no
+        # handling here — the loop they locate has its own stated reason.
         i = src.index("            for tier in TIER_ORDER:")
         return src[i:src.index("all_scored.extend(bucket)", i)]
 
@@ -139,6 +142,9 @@ class TestTheDifferentialMergeAlsoCapsByRelevance:
     def _merge_loop(self):
         src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
         i = src.index('"source": "differential"')
+        # This LOCATES app.py's merge loop by scanning its source; it is not
+        # itself a loop over the ladder, so the provisional lane needs no
+        # handling here. The loop it finds carries its own reason.
         j = src.rindex("for tier in TIER_ORDER:", 0, i)
         return src[j:i]
 

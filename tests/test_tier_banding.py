@@ -114,6 +114,7 @@ class TestTierOrderIsComplete:
     def test_order_is_strongest_first(self):
         """TIER_ORDER must be monotonically non-increasing in design strength,
         or 'higher tier leads' means nothing."""
+        # TIER_ORDER only: ladder monotonicity. PROVISIONAL_KEY has no score.
         scores = [LEVEL_SCORES.get(t, 0) for t in TIER_ORDER]
         assert scores == sorted(scores, reverse=True), \
             f"TIER_ORDER is not strongest-first: {list(zip(TIER_ORDER, scores))}"

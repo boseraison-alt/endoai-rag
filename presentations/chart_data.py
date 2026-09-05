@@ -395,6 +395,9 @@ def evidence_shape(tier_counts: dict) -> ChartSpec | None:
     if not tier_counts:
         return None
     labels, values, tiers = [], [], []
+    # TIER_ORDER only, DELIBERATELY. This chart is the evidence LADDER, and
+    # PROVISIONAL_KEY is not a rung on it — a paper MEDLINE has not classified
+    # has no bar to occupy. Adding one would assert a tier it does not have.
     for key in TIER_ORDER:
         n = int(tier_counts.get(key, 0) or 0)
         if n <= 0:

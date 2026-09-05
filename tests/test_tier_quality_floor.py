@@ -55,6 +55,8 @@ class TestFloorsCanOnlyLoosen:
 
 class TestItIsAConfigNotLiterals:
     def test_every_tier_in_tier_order_has_an_entry(self):
+        # TIER_ORDER only: every LADDER tier needs a quality floor.
+        # PROVISIONAL_KEY has no score, so a floor for it would be unreachable.
         missing = [t for t in TIER_ORDER if t not in TIER_QUALITY_FLOORS]
         assert not missing, f"tiers with no configured floor: {missing}"
 

@@ -545,7 +545,7 @@ def run_case(case):
     """Execute one case's retrieval and return (measured, failures)."""
     import endo_ai
     from app import build_evidence_base_with_progress, jobs
-    from endo_ai import TIER_ORDER
+    from endo_ai import TIER_ORDER, PROVISIONAL_KEY
 
     # An eval run must not mutate the thing it measures. With write-back on,
     # the live cases deposit their results into the library, so case N+1 and
@@ -576,14 +576,33 @@ def run_case(case):
         context_block=context_block, prior_pmids=prior_pmids) or {}
     esearch_total, n_queries, n_empty, n_terms, n_failed = _esearch_hits_since(offset)
 
+    # `list(TIER_ORDER) + [PROVISIONAL_KEY]`, the same idiom as the five
+    # production sites, and for the same reason.
+    #
+    # PROVISIONAL_KEY's absence from TIER_ORDER is what makes the lane safe —
+    # it can never take a tier slot — and exactly what made it invisible here.
+    # This loop counted every tier and silently dropped every provisional
+    # paper, so `per_tier` recorded the lane as absent and `papers` UNDERSTATED
+    # the evidence base on every live and curriculum case, in every baseline
+    # this harness has ever produced. The v7 run logs show the lane admitting
+    # up to `147 of 400` while the baseline recorded zero.
+    #
+    # Found 2026-09-05 by the v6/v7 comparison, which predicted "provisional
+    # citations at zero" as a surprise and got a number that turned out to be
+    # the instrument rather than the system (rule 34: fires-never and
+    # matches-nothing look identical from outside).
     per_tier, papers = {}, []
-    for tier in TIER_ORDER:
+    for tier in list(TIER_ORDER) + [PROVISIONAL_KEY]:
         block = evidence.get(tier) or {}
         scored = block.get("scored") or []
         if scored:
             per_tier[tier] = len(scored)
             papers.extend(scored)
 
+    # TIER_ORDER only, DELIBERATELY. The provisional lane is always fetched
+    # from PubMed, so including it here would give every library-routed
+    # curriculum case a "pubmed" source and misclassify its route as live.
+    # Route is a question about where the TIERS came from.
     sources = {(evidence.get(t) or {}).get("source")
                for t in TIER_ORDER if evidence.get(t)}
     route = "library" if sources == {"rag"} else ("live" if "pubmed" in sources
@@ -687,6 +706,9 @@ def run_case(case):
     # see from outside whether the early stop fired.
     floor = exp.get("min_tiers_below_level1")
     if floor is not None:
+        # TIER_ORDER only, DELIBERATELY: PROVISIONAL_KEY is not a rung on the
+        # ladder, so it cannot be a "tier below level1". Counting it would let
+        # a case satisfy a tier-depth floor without a single classified study.
         lower = [t for t in TIER_ORDER
                  if t not in ("cochrane", "level1") and per_tier.get(t)]
         if len(lower) < floor:
@@ -702,15 +724,19 @@ def run_case(case):
     # a term the thread is about and the retrieved TITLES must contain it.
     topic_terms = [t.lower() for t in (exp.get("evidence_must_mention") or [])]
     if topic_terms:
+        # PROVISIONAL_KEY included: this asks whether the conversation context
+        # reached the SEARCH TERMS, and a provisional paper is retrieved by
+        # those same terms. Excluding it could fail a case for missing a term
+        # that a retrieved paper does mention.
         titles = " ".join(
             (p.get("title") or "").lower()
-            for t in TIER_ORDER
+            for t in list(TIER_ORDER) + [PROVISIONAL_KEY]
             for p in ((evidence.get(t) or {}).get("scored") or []))
         # Live-path papers carry no title in the scored dict; fall back to the
         # annotated text block, which does.
         if not titles.strip():
             titles = " ".join(((evidence.get(t) or {}).get("text") or "").lower()
-                              for t in TIER_ORDER)
+                              for t in list(TIER_ORDER) + [PROVISIONAL_KEY])
         missing = [t for t in topic_terms if t not in titles]
         if missing:
             failures.append(
@@ -720,8 +746,11 @@ def run_case(case):
     # A follow-up that RESETS to a new topic must not be dragged back to the
     # old one. Same measurement, opposite assertion.
     for term in (exp.get("evidence_must_not_be_dominated_by") or []):
+        # PROVISIONAL_KEY included, same reasoning as the must_mention check
+        # above: this measures what the RETRIEVED pool is about, and a
+        # provisional paper is part of that pool and reaches the prompt.
         titles = [(p.get("title") or "").lower()
-                  for t in TIER_ORDER
+                  for t in list(TIER_ORDER) + [PROVISIONAL_KEY]
                   for p in ((evidence.get(t) or {}).get("scored") or [])]
         if titles:
             share = sum(term.lower() in ttl for ttl in titles) / len(titles)
@@ -733,6 +762,10 @@ def run_case(case):
     # A6: named papers that must survive query variance. Retrieval-side.
     want = exp.get("must_include_pmid") or []
     if want:
+        # TIER_ORDER only, DELIBERATELY. A must-include fixture names a paper
+        # whose DESIGN is known, so it belongs to a tier. A provisional paper
+        # is by definition one MEDLINE has not classified, so it can never be
+        # the thing this assertion is looking for.
         got = {p.get("pmid") for t in TIER_ORDER
                for p in ((evidence.get(t) or {}).get("scored") or [])}
         missing = [x for x in want if x not in got]

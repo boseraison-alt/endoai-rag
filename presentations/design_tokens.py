@@ -365,6 +365,9 @@ def tier_key(raw: str | None) -> str | None:
     if s in TIER_ORDER:
         return s
     # level3a / level3b collapse onto level3
+    # TIER_ORDER only, DELIBERATELY: this normalises a TIER LABEL onto the
+    # ladder. PROVISIONAL_LABEL is not a tier label and must not normalise to
+    # one, or an unclassified paper would render with a rung's styling.
     for key in TIER_ORDER:
         if s.startswith(key):
             return key

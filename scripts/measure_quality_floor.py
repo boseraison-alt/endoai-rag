@@ -50,6 +50,9 @@ def main():
         print(f"  {'tier':<10} {'design':>6} {'n':>5} {'survive':>8} {'share':>7} "
               f"{'median':>7} {'p90':>6}  {'verdict'}")
         proposal = {}
+        # TIER_ORDER only, DELIBERATELY: this fits per-tier QUALITY FLOORS from
+        # a score distribution, and PROVISIONAL_KEY papers carry score=None by
+        # design. There is no distribution to fit and no floor to propose.
         for tier in TIER_ORDER:
             v = by_tier.get(tier)
             if not v:
@@ -71,6 +74,8 @@ def main():
 
         print(f"\nPROPOSED per-tier floors (keep the top ~60% within each tier)")
         print(f"  {'tier':<10} {'flat':>6} {'proposed':>9} {'keeps':>7} {'was':>6}")
+        # TIER_ORDER only — same reason as above: a provisional paper
+        # carries no score, so there is no floor to propose for it.
         for tier in TIER_ORDER:
             v = by_tier.get(tier)
             if not v:

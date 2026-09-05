@@ -257,12 +257,16 @@ class TestTierHierarchyHoldsEndToEnd:
         evidence = build_evidence_base_with_progress(
             "banding-probe", "Single visit versus multiple visit endodontic treatment?")
 
+        # TIER_ORDER only: this asserts where a paper lands on the LADDER.
+        # PROVISIONAL_KEY is not a rung, and this case pins the library route
+        # where the lane does not run at all.
         placed = [t for t in TIER_ORDER
                   if "1004" in ((evidence.get(t) or {}).get("ids") or [])]
         assert placed == ["level5"], \
             f"unlabelled paper banded into {placed or 'no tier at all'}, expected ['level5']"
 
         # And it must not have been silently dropped on the way in.
+        # TIER_ORDER only — same reason: library route, no PROVISIONAL_KEY lane.
         every_id = {i for t in TIER_ORDER for i in ((evidence.get(t) or {}).get("ids") or [])}
         assert "1001" in every_id and "1004" in every_id
 
@@ -341,6 +345,9 @@ class TestEvalRoutePinning:
             "pin-lib", "Single visit versus multiple visit endodontic treatment?",
             force_route="library")
 
+        # TIER_ORDER only, DELIBERATELY: the provisional lane is always
+        # PubMed-sourced, so including PROVISIONAL_KEY here would break the
+        # library-only assertion this test exists to make.
         sources = {(evidence.get(t) or {}).get("source")
                    for t in TIER_ORDER if evidence.get(t)}
         assert sources == {"rag"}, f"expected library-only, got sources {sources}"
@@ -494,6 +501,9 @@ class TestNoUnlabelledPaperReachesTheEvidenceBase:
             "Single visit versus multiple visit endodontic treatment?",
             force_route="library")
 
+        # TIER_ORDER only: a PROVISIONAL_KEY paper has no level_key BY DESIGN,
+        # so including it would fail this assertion for the one reason that is
+        # not a defect. Library route here regardless, so the lane never runs.
         unlabelled = [(t, p.get("pmid"))
                       for t in TIER_ORDER
                       for p in ((evidence.get(t) or {}).get("scored") or [])
@@ -504,6 +514,7 @@ class TestNoUnlabelledPaperReachesTheEvidenceBase:
 
         # And the migrated rows actually made it in — an empty evidence base
         # would satisfy the assertion above for the wrong reason.
+        # TIER_ORDER only — library route, no PROVISIONAL_KEY lane.
         served = {p.get("pmid")
                   for t in TIER_ORDER
                   for p in ((evidence.get(t) or {}).get("scored") or [])}
@@ -513,6 +524,7 @@ class TestNoUnlabelledPaperReachesTheEvidenceBase:
         # 39885347 is a critical summary of somebody else's RCT. If it ever
         # shows up at level1 the cue matcher has read the summarised trial's
         # design off the summarising paper.
+        # TIER_ORDER only — asserts a LADDER position; PROVISIONAL_KEY has none.
         placed = {p["pmid"]: t
                   for t in TIER_ORDER
                   for p in ((evidence.get(t) or {}).get("scored") or [])}
