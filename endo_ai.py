@@ -2497,6 +2497,40 @@ LEVEL_OBS_TERMS = [
     '"sensitivity and specificity"[mh]',
 ]
 
+# A49 item 5 — THE GUIDELINE RUNG.
+#
+# `level_key='guideline'` already existed: LEVEL_SCORES gives it 12, TIER_ORDER
+# places it between invitro and level5, TIER_LABEL names it. What did not exist
+# was any query that could reach one. `practice guideline[pt]`, `guideline[pt]`
+# and `consensus development conference[pt]` appeared in NO tier filter, so a
+# clinical practice guideline was reachable only by accident: PubMed's
+# publication-type tree makes `review[pt]` admit `Practice Guideline`, and the
+# EFCD-ESE-ORCA S3 deep-caries guideline — the current European guideline on
+# the exact question a VPT curriculum answers — surfaced there at rank 521 of
+# 608 reviews. A tier nothing queries is a tier that does not exist.
+#
+# This is the retrieval half of the same hole A49 is about, and it is why
+# `ingest_aae_guidelines.py` was written: the live path could not reach a
+# guideline, so sixteen were hardcoded instead, twelve of which named documents
+# that could not be verified.
+#
+# MEASURED before adding (scripts/measure_guideline_lane.py), 8 eval questions:
+# 200-396 candidates admitted per question, median 295. Supply is never the
+# constraint, so the lane is bounded the way every other lane is — its own
+# query, its own TIER_FETCH_DEPTH cap, its own quota. It is PURELY ADDITIVE:
+# the taxonomy does not change, no tier moves, and nothing already retrieved is
+# displaced, because a guideline row scores 12 and sits second-from-bottom.
+#
+# `consensus development conference[pt]` is kept even though it did not admit
+# the EFCD document: it is the publication type NIH-style consensus statements
+# carry, and its absence would be the same "no rung for this shape" gap one
+# document class over. Measured, not assumed — it was probed individually.
+LEVEL_GUIDELINE_TERMS = [
+    "practice guideline[pt]",
+    "guideline[pt]",
+    "consensus development conference[pt]",
+]
+
 LEVEL_5_TERMS = [
     "review[pt]",
     "editorial[pt]",
@@ -4538,6 +4572,12 @@ def tier_query_lanes() -> list:
         ("level3a", LEVEL_3A_TERMS, TIER_LABEL["level3a"]),
         ("level3b", LEVEL_3B_TERMS, TIER_LABEL["level3b"]),
         ("level4",  LEVEL_4_TERMS,  TIER_LABEL["level4"]),
+        # A49 item 5. Issued BEFORE level5 for the same reason it sits before
+        # level5 in TIER_ORDER — a specialty's stated position outranks one
+        # expert's opinion — and after invitro, which is where LEVEL_SCORES
+        # already put it at 12. Additive: its own query, its own cap, and it
+        # takes no slot from any tier above it.
+        ("guideline", LEVEL_GUIDELINE_TERMS, TIER_LABEL["guideline"]),
         ("level5",  LEVEL_5_TERMS,  TIER_LABEL["level5"]),
         # A31 — last in the list and last in TIER_ORDER. Its own query,
         # its own quota, its own floor; it takes nothing from the tiers

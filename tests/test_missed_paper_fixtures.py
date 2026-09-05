@@ -184,23 +184,25 @@ def test_komora_reaches_pool_from_library_path():
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="EFCD-ESE-ORCA S3 42018467 — the current European guideline on the "
-           "exact question — is reachable only by accident. Its publication "
-           "types are `Journal Article` and `Practice Guideline`; "
-           "`practice guideline[pt]`, `guideline[pt]` and `consensus "
-           "development conference[pt]` appear in no lane. It is admitted "
-           "ONLY by level5, because `review[pt]` explodes down the "
-           "publication-type tree — and there it ranked 521 of 608 reviews, "
-           "nowhere near the top 50 production takes. level_key='guideline' "
-           "already exists as a tier; what is missing is a query filter that "
-           "can reach one.",
-)
 def test_efcd_guideline_reachable_by_a_guideline_lane():
     """A current S3-level clinical practice guideline must be reachable by a
     lane that selects for guidelines, not by accident through the review
-    bucket at rank 521."""
+    bucket at rank 521.
+
+    FIXED by item 5 — this was xfail(strict=True) and now passes.
+
+    It failed because `practice guideline[pt]`, `guideline[pt]` and `consensus
+    development conference[pt]` appeared in no lane, so this guideline was
+    admitted ONLY by level5, and only because `review[pt]` explodes down
+    PubMed's publication-type tree. Among 608 reviews it ranked 521, nowhere
+    near the top 50 production takes. `level_key='guideline'` already existed
+    as a tier — score 12, in TIER_ORDER, with a label — so what was missing
+    was never the taxonomy, only a query that could reach one.
+
+    Kept as a passing test rather than deleted: it is the regression guard for
+    the lane, and if the lane is ever removed this goes red with the whole
+    story attached.
+    """
     rec = load(EFCD)
     assert "Practice Guideline" in rec["publication_types"]
     lanes = admitting_lanes(EFCD)
