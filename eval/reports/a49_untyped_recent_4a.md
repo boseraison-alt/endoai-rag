@@ -1,7 +1,48 @@
 # Item 4a — how big is the untyped-recent blind spot?
 
+> # ⚠ WITHDRAWN — EVERY NUMBER BELOW THIS LINE IS WRONG
+>
+> **The median in this report is 426. The real figure is 26.**
+>
+> The script that produced it was wrong in two ways at once:
+>
+> 1. It called `generate_search_terms(q)`, which returns the single primary
+>    PubMed query as a **string**, and then sliced it `terms[:4]` — taking the
+>    first **four characters**. The queries actually issued were
+>    `("(") AND "last 18 months"[dp]`, `("l") AND …`. The list of topic groups
+>    comes from `generate_multi_search_terms(question, primary_term)`, a
+>    different function.
+> 2. It omitted `ENDO_DOMAIN_FILTER`, which production ANDs into every query.
+>
+> So it measured *"recent papers anywhere in PubMed matching a single
+> character"*. The pool contained celery genomics, vanadium-oxide catalysis,
+> *Fusarium* fungal genetics and Chinese health policy in Africa. The
+> `retmax=200` cap hid it by holding every total near 600.
+>
+> **The corrected distribution** (production's own query shape, `retmax=500`):
+>
+> ```
+>   min 0 | p25 3 | MEDIAN 26 | p75 48 | max 307 | total 1,454
+> ```
+>
+> The blind spot is real but roughly **16× smaller** than this report claims,
+> and the corrected median sits *under* the affordability line this report
+> uses to argue against building the lane.
+>
+> **The conclusion is therefore also withdrawn.** Item 4b WAS built, on
+> 2026-09-05, after a separate measurement of the design filter cleared its
+> own pre-declared threshold (max 30 level2-or-above per query against 60).
+>
+> Kept rather than deleted because the error is the point: it was found by
+> *reading the abstracts the extractor could not classify*, not by re-checking
+> the count. Superseded by
+> **`eval/reports/a49_design_extraction.md`** and
+> **`eval/reports/a49_provisional_lane.md`**.
+
 **Measure only. Nothing changed by this item.**
 Replay: `python scripts/measure_untyped_recent.py --json eval/reports/a49_untyped_recent_4a.json`
+(the script itself is fixed; re-running it now produces the corrected numbers,
+not the ones below)
 
 ---
 
