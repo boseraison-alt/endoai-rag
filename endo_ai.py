@@ -10498,10 +10498,23 @@ def merge_evidence_bases(per_module_evidence: list) -> dict:
     Combine N tier-organised evidence dicts into one. Used by the curriculum
     builder to give the stitcher a single deduplicated _summary for references.
     """
-    combined = {key: {"text": "", "ids": [], "scored": []} for key in TIER_ORDER}
+    # TIER_ORDER + the provisional lane. A fourth site where PROVISIONAL_KEY's
+    # deliberate absence from TIER_ORDER silently dropped the lane: each
+    # module's own evidence base DID fetch provisional papers and they DID
+    # reach that module's synthesis context, but this merge threw them away,
+    # so the combined evidence the stitcher and the reference list see had none
+    # of them. Measured: a curriculum A/B reported provisional_pool 0 in both
+    # arms while the per-module logs showed the lane admitting papers.
+    #
+    # It matters beyond the bibliography. `_extract_evidence_pmids` reads this
+    # combined dict, so a module that cited a provisional paper would have had
+    # that citation scored as a FABRICATION against evidence it was never
+    # given.
+    merge_keys = list(TIER_ORDER) + [PROVISIONAL_KEY]
+    combined = {key: {"text": "", "ids": [], "scored": []} for key in merge_keys}
     seen_pmids = set()
     for ev in per_module_evidence:
-        for tier_key in TIER_ORDER:
+        for tier_key in merge_keys:
             block = ev.get(tier_key, {}) or {}
             for p in (block.get("scored") or []):
                 pmid = p.get("pmid")
@@ -10512,6 +10525,10 @@ def merge_evidence_bases(per_module_evidence: list) -> dict:
             if block.get("text"):
                 combined[tier_key]["text"] += "\n" + block["text"]
 
+    # all_scored stays TIER_ORDER-only: provisional papers carry score=None
+    # and the average two lines below would raise on the first one. They are
+    # reachable through combined[PROVISIONAL_KEY] and through
+    # _extract_evidence_pmids, which is what citation validation reads.
     all_scored = []
     for tk in TIER_ORDER:
         all_scored.extend(combined[tk]["scored"])

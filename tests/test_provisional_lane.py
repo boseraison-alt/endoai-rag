@@ -262,6 +262,47 @@ class TestThroughBuildEvidenceBase:
         assert "Level I" in block          # named as the thing not to call it
         assert "override a systematic review" in block
 
+    def test_merge_evidence_bases_carries_the_lane(self):
+        """The FOURTH place the lane could vanish, and it did.
+
+        The curriculum builder retrieves per module and then merges with
+        `merge_evidence_bases`, which keyed off TIER_ORDER alone. Each
+        module's own evidence DID contain provisional papers and they DID
+        reach that module's synthesis, but the combined dict handed to the
+        stitcher and the reference list had none of them. Measured: a
+        curriculum A/B reported provisional_pool 0 in BOTH arms while the
+        per-module logs showed the lane admitting papers.
+
+        It matters beyond the bibliography: `_extract_evidence_pmids` reads
+        the combined dict, so a module citing a provisional paper would have
+        had that citation scored as a FABRICATION against evidence it was
+        never given.
+        """
+        m1 = {"level1": {"text": "A", "ids": ["1"],
+                         "scored": [{"pmid": "1", "score": 80.0}]},
+              E.PROVISIONAL_KEY: {"text": "P1", "ids": ["9"],
+                                  "scored": [{"pmid": "9", "score": None}]}}
+        m2 = {"level1": {"text": "B", "ids": ["2"],
+                         "scored": [{"pmid": "2", "score": 70.0}]},
+              E.PROVISIONAL_KEY: {"text": "P2", "ids": ["8"],
+                                  "scored": [{"pmid": "8", "score": None}]}}
+        combined = E.merge_evidence_bases([m1, m2])
+
+        assert combined[E.PROVISIONAL_KEY]["ids"] == ["9", "8"]
+        # ...and citation validation can see them, which is the property that
+        # stops a legitimate citation being called a fabrication.
+        assert {"8", "9"} <= E._extract_evidence_pmids(combined)
+
+    def test_the_merge_keeps_null_scores_out_of_the_average(self):
+        """`avg_score` sums all_scored. One None raises."""
+        m = {"level1": {"text": "A", "ids": ["1"],
+                        "scored": [{"pmid": "1", "score": 80.0}]},
+             E.PROVISIONAL_KEY: {"text": "P", "ids": ["9"],
+                                 "scored": [{"pmid": "9", "score": None}]}}
+        combined = E.merge_evidence_bases([m])
+        assert [p["pmid"] for p in combined["_summary"]["all_scored"]] == ["1"]
+        assert combined["_summary"]["avg_score"] == 80.0
+
     def test_the_bibliography_handles_a_null_score(self, evidence):
         """A provisional paper carries score=None, and the bibliography sorts
         and splits papers. It must survive that without a coercion error and
