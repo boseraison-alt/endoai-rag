@@ -147,25 +147,33 @@ def test_fetch_pmc_corpus_build_record_stores_full_abstract(long_abstract, meta)
 
 # ── ingest_aae_guidelines.py ──────────────────────────────────────────────
 
-def test_aae_pubmed_guideline_stores_full_abstract(long_abstract, meta, monkeypatch):
-    """ingest_aae_guidelines.ingest_pubmed_guidelines — was abstract[:1200]."""
+def test_the_aae_pubmed_guideline_ingest_path_is_gone(monkeypatch):
+    """`ingest_pubmed_guidelines` was removed by A49 item 4a.
+
+    This test used to drive that path and assert it stored the abstract
+    intact rather than `abstract[:1200]`. The path no longer exists, and the
+    reason matters more than the truncation guarantee did:
+
+      * PubMed-INDEXED guidelines now arrive through the live guideline lane
+        added in item 5 (`LEVEL_GUIDELINE_TERMS`), so hardcoding a sweep for
+        them only duplicated what retrieval already returns.
+      * The records that path wrote carried a hand-set score of 85, an
+        impact_factor of 6.0 and a `level1` tier — the three things the A2
+        audit found had put fabricated documents above every real paper in
+        the library.
+
+    Converted rather than deleted, so the removal is recorded where someone
+    looking for the old coverage will find it. The truncation guarantee for
+    every path that DOES still store an abstract is unaffected and is
+    asserted by the other tests in this file.
+    """
     import ingest_aae_guidelines as aae
 
-    capture = _Capture()
-    monkeypatch.setattr(aae, "PUBMED_GUIDELINE_QUERIES", ["one query"])
-    monkeypatch.setattr(aae, "pubmed_search", lambda q, max_results=15: [FIXTURE_PMID])
-    monkeypatch.setattr(aae, "pubmed_fetch_meta", lambda pmids: {FIXTURE_PMID: meta})
-    monkeypatch.setattr(aae, "pubmed_fetch_abstracts",
-                        lambda pmids: {FIXTURE_PMID: long_abstract})
-    monkeypatch.setattr(aae, "embed", _stub_embed)
-    monkeypatch.setattr(aae, "upsert_paper", capture)
-    monkeypatch.setattr(aae.time, "sleep", lambda *_a: None)
-
-    added = aae.ingest_pubmed_guidelines(dry_run=False)
-
-    assert added == 1
-    _assert_intact(capture.only["abstract"], long_abstract,
-                   "ingest_aae_guidelines.ingest_pubmed_guidelines")
+    assert not hasattr(aae, "ingest_pubmed_guidelines")
+    assert not hasattr(aae, "PUBMED_GUIDELINE_QUERIES")
+    # The fetch machinery it used is deliberately kept.
+    for fn in ("pubmed_search", "pubmed_fetch_abstracts", "pubmed_fetch_meta"):
+        assert callable(getattr(aae, fn, None)), f"{fn} should have been kept"
 
 
 # ── repair_abstracts.py ───────────────────────────────────────────────────

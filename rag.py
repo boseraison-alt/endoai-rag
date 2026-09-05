@@ -267,6 +267,27 @@ def setup_table():
             # separately. 103 stored answers cite one of these records; whoever
             # decides their fate needs to be able to read them.
             ("quarantine_reason", "TEXT DEFAULT ''"),
+            # A49 item 4 — guideline identity, from data/guidelines_seed.json.
+            #
+            # A guideline is not a paper and does not belong on the study-design
+            # ladder, but it does have to live somewhere the retrieval paths can
+            # already see. These columns carry what a guideline IS, so that a
+            # row can be rendered as a pointer a clinician can follow -- org,
+            # title, year, status, URL -- rather than as a paraphrase nothing
+            # can verify.
+            #
+            # `guideline_status` is the field that matters clinically: a
+            # SUPERSEDED guideline cited as current is a hazard, not a
+            # formatting defect. `guideline_confidence` gates identifier
+            # rendering -- ten manifest records have a DOI and journal verified
+            # but the PubMed accession NOT confirmed, and those must never be
+            # emitted as [PMID:N].
+            ("guideline_id",           "TEXT DEFAULT ''"),
+            ("guideline_org",          "TEXT DEFAULT ''"),
+            ("guideline_status",       "TEXT DEFAULT ''"),
+            ("guideline_jurisdiction", "TEXT DEFAULT ''"),
+            ("guideline_url",          "TEXT DEFAULT ''"),
+            ("guideline_confidence",   "TEXT DEFAULT ''"),
         ):
             cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""
@@ -529,6 +550,8 @@ def search(
                     medline_indexed, has_erratum, has_retraction, registry,
                     coi_flag, coi_funder, coi_status, superseded_by,
                     quarantine_reason,
+                    guideline_id, guideline_org, guideline_status,
+                    guideline_jurisdiction, guideline_url, guideline_confidence,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE level_key = %s
@@ -574,6 +597,8 @@ def search(
                     medline_indexed, has_erratum, has_retraction, registry,
                     coi_flag, coi_funder, coi_status, superseded_by,
                     quarantine_reason,
+                    guideline_id, guideline_org, guideline_status,
+                    guideline_jurisdiction, guideline_url, guideline_confidence,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE NOT COALESCE(has_retraction, FALSE)
@@ -666,6 +691,8 @@ def search_by_pmids(query: str, pmids: list) -> list[dict]:
                 medline_indexed, has_erratum, has_retraction, registry,
                 coi_flag, coi_funder, coi_status, superseded_by,
                 quarantine_reason,
+                guideline_id, guideline_org, guideline_status,
+                guideline_jurisdiction, guideline_url, guideline_confidence,
                 1 - (embedding <=> %s::vector) AS similarity
             FROM endo_papers_rag
             WHERE pmid = ANY(%s)
@@ -748,7 +775,12 @@ def rag_results_to_scored(rows: list[dict]) -> list[dict]:
             "pages":           "",
             "impact_factor":   r.get("impact_factor"),
             # Stored score already includes every provenance adjustment.
-            "score":           round(float(r.get("score", 0)), 1),
+            # `or 0` and not `.get("score", 0)`: a guideline row stores score
+            # as NULL ON PURPOSE (A49 item 4 — guidelines carry no hand-set
+            # number and rank by authority, never by study design), and the
+            # default form returns None for a present-but-null column, which
+            # float() then raises on.
+            "score":           round(float(r.get("score") or 0), 1),
             "is_registered":   bool(r.get("registry")),
             "registry":        r.get("registry") or "",
             "has_erratum":     bool(r.get("has_erratum")),
@@ -765,6 +797,15 @@ def rag_results_to_scored(rows: list[dict]) -> list[dict]:
             # gate refuse the row rather than silently trusting the WHERE
             # clause it did not go through.
             "quarantine_reason": r.get("quarantine_reason") or "",
+            # A49 item 4 — guideline identity. Carried through so a renderer
+            # can show what the record IS (organisation, status, jurisdiction,
+            # a URL a clinician can follow) instead of a score it does not have.
+            "guideline_id":           r.get("guideline_id") or "",
+            "guideline_org":          r.get("guideline_org") or "",
+            "guideline_status":       r.get("guideline_status") or "",
+            "guideline_jurisdiction": r.get("guideline_jurisdiction") or "",
+            "guideline_url":          r.get("guideline_url") or "",
+            "guideline_confidence":   r.get("guideline_confidence") or "",
             "medline_indexed": r.get("medline_indexed", True),
             "is_curated":      bool(r.get("is_curated")),
             "breakdown":       {},
