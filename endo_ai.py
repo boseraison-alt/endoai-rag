@@ -3652,10 +3652,38 @@ def format_paper_context_line(paper: dict) -> str:
     # weight; showing the number next to a score contradicts that on the one
     # surface a clinician reads it. Handing it to the model at all is the
     # mechanism, so the fix starts here rather than at the renderer.
+    # A49 item 4 — A GUIDELINE HAS NO SCORE, AND "0.0/100" IS NOT THAT.
+    #
+    # Guideline rows are stored with score NULL on purpose: a specialty's
+    # stated position is not on the study-design ladder and carries no number.
+    # But `rag_results_to_scored` coalesces NULL to 0.0 so downstream sorts do
+    # not raise, and rendering that coalesced value produced
+    # "Evidence Score: 0.0/100" — which a reader, and a model, will take as a
+    # quality judgement rather than an absence. Zero is the worst possible
+    # number to show for "not applicable".
+    #
+    # So the field is omitted and replaced by what the record IS. Measured
+    # consequence of not doing this: COCHRANE-CD004969 had the HIGHEST
+    # similarity in its pool (0.819) and would have been presented as scoring
+    # zero out of a hundred.
+    score = paper.get("score")
+    if paper.get("level_key") == "guideline" or score is None:
+        org = (paper.get("guideline_org") or "").strip()
+        status = (paper.get("guideline_status") or "").strip()
+        juris = (paper.get("guideline_jurisdiction") or "").strip()
+        bits = [b for b in (org, status, juris) if b]
+        detail = f" ({', '.join(bits)})" if bits else ""
+        scored_part = (
+            "NOT SCORED — a guideline is a specialty's stated position, not a "
+            f"study design, and carries no evidence score{detail}"
+            if paper.get("level_key") == "guideline"
+            else "NOT SCORED")
+    else:
+        scored_part = f"Evidence Score: {score}/100"
     return (
         f"\nPMID: {paper['pmid']} | Authors: {auth} | Year: {paper.get('year')} | "
         f"Citations: {paper.get('citations', 0)} | {ss} | {fu} | "
-        f"Evidence Score: {paper.get('score')}/100{format_provenance_badges(paper)}\n"
+        f"{scored_part}{format_provenance_badges(paper)}\n"
     )
 
 

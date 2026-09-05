@@ -114,6 +114,61 @@ class TestGuidelinesCarryNoNumber:
         assert sorted(scored, key=lambda x: x["score"], reverse=True)
 
 
+class TestNoScoreIsNotAScoreOfZero:
+    """`rag_results_to_scored` coalesces a NULL score to 0.0 so downstream
+    sorts do not raise. Rendering that coalesced value gave
+    "Evidence Score: 0.0/100" for every guideline -- which a reader, and a
+    model, takes as a quality judgement rather than an absence. Zero is the
+    worst possible number to show for "not applicable".
+
+    Measured consequence of not fixing it: COCHRANE-CD004969 had the HIGHEST
+    similarity in its pool (0.819) and would have been presented as scoring
+    zero out of a hundred.
+    """
+
+    GUIDELINE = {
+        "pmid": "AAE-VPT-2021", "authors": "AAE", "year": 2021,
+        "citations": 0, "level_key": "guideline", "score": 0.0,
+        "guideline_org": "AAE", "guideline_status": "current",
+        "guideline_jurisdiction": "US",
+        "sample_size": None, "followup_months": None,
+    }
+    PAPER = {
+        "pmid": "27759881", "authors": "A B", "year": 2016, "citations": 40,
+        "level_key": "cochrane", "score": 73.3,
+        "sample_size": 100, "followup_months": 12,
+    }
+
+    def test_a_guideline_shows_no_number(self):
+        line = E.format_paper_context_line(self.GUIDELINE)
+        assert "0.0/100" not in line
+        assert "/100" not in line
+        assert "NOT SCORED" in line
+
+    def test_it_says_why_rather_than_going_silent(self):
+        line = E.format_paper_context_line(self.GUIDELINE)
+        assert "stated position" in line
+        assert "not a study design" in line
+
+    def test_it_surfaces_organisation_status_and_jurisdiction(self):
+        """A UK clinician shown only US guidance has been given the wrong
+        answer, so jurisdiction travels with the record."""
+        line = E.format_paper_context_line(self.GUIDELINE)
+        assert "AAE" in line and "current" in line and "US" in line
+
+    def test_a_real_paper_still_shows_its_score(self):
+        line = E.format_paper_context_line(self.PAPER)
+        assert "Evidence Score: 73.3/100" in line
+
+    def test_a_null_score_on_a_non_guideline_is_also_not_zero(self):
+        p = dict(self.PAPER)
+        p["score"] = None
+        p["level_key"] = "level1"
+        line = E.format_paper_context_line(p)
+        assert "/100" not in line
+        assert "NOT SCORED" in line
+
+
 class TestNothingIsParaphrased:
 
     def test_pointer_records_say_what_they_are(self):
