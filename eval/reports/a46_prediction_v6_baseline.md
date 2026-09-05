@@ -8,6 +8,19 @@ is a test rather than a rubber stamp.**
 `fix/retrieval-blindspot`. **The baseline has NOT been run.** It is 3.5 h and
 is the next batch on its own.
 
+> **AMENDED 2026-09-05, re-tagged `retrieval-freeze-20260905b`.** Five citeable
+> guideline rows had their fabricated or mis-scaled scores nulled
+> (`AAE-PS-diagnosis` 90.0, `AAE-PS-vital-pulp` 90.0, `ESE-PS-VPT-2019` 87.0,
+> `ESE-QG-2006` 50.4, `39578680` 59.3) and `ESE-PS-VPT-2019` was quarantined as
+> `duplicate_of:30664240`, so the citeable corpus is one row smaller.
+> **Nothing in the predictions below depends on guideline ordering**, and every
+> prediction stands unchanged: the guideline tier's cap is 4–6 and selection
+> within it is by relevance, not score, so nulling a score changes which
+> guideline is listed first and not which are retrieved. The one place it could
+> show is a **guideline citation count moving by ±1** on a question where the
+> model previously followed the 90.0 as an authority signal — which is the
+> defect being removed, and would be a welcome rather than a surprising result.
+
 Reference point: `baseline_v6.json`, recorded **2026-08-31**, 25 cases × 3 runs,
 retrieval-only. Everything below is measured against it and against the changes
 since `8da8823`.
