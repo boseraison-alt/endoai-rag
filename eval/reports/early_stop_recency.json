@@ -4,57 +4,57 @@
   "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 38.7,
-  "would_admit": 35,
-  "would_admit_recent": 16,
+  "seconds_base": 44.6,
+  "would_admit": 28,
+  "would_admit_recent": 14,
   "per_tier": {
    "level2": {
-    "all": 10,
-    "recent": 5
+    "all": 6,
+    "recent": 4
    },
    "level3a": {
-    "all": 10,
-    "recent": 6
+    "all": 8,
+    "recent": 0
    },
    "level3b": {
-    "all": 1,
-    "recent": 0
+    "all": 3,
+    "recent": 2
    },
    "level4": {
     "all": 4,
-    "recent": 2
+    "recent": 4
    },
    "level5": {
     "all": 4,
-    "recent": 2
+    "recent": 3
    },
    "observational": {
-    "all": 6,
+    "all": 3,
     "recent": 1
    }
   },
-  "seconds_extra": 40.3
+  "seconds_extra": 12.7
  },
  {
   "id": "mta-vs-biodentine-pulpotomy",
   "n_strong": 20,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 37.3,
-  "would_admit": 44,
-  "would_admit_recent": 26,
+  "seconds_base": 40.3,
+  "would_admit": 39,
+  "would_admit_recent": 24,
   "per_tier": {
    "level2": {
-    "all": 14,
-    "recent": 6
+    "all": 9,
+    "recent": 4
    },
    "level3a": {
     "all": 10,
-    "recent": 3
+    "recent": 5
    },
    "level3b": {
     "all": 6,
-    "recent": 6
+    "recent": 4
    },
    "level4": {
     "all": 4,
@@ -69,99 +69,63 @@
     "recent": 5
    }
   },
-  "seconds_extra": 61.8
+  "seconds_extra": 35.7
  },
  {
   "id": "naocl-concentration",
-  "n_strong": 21,
+  "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 44.1,
+  "seconds_base": 38.0,
   "would_admit": 44,
   "would_admit_recent": 31,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 9
+    "recent": 11
    },
    "level3a": {
     "all": 10,
-    "recent": 8
+    "recent": 5
    },
    "level3b": {
     "all": 6,
-    "recent": 3
+    "recent": 4
    },
    "level4": {
     "all": 4,
-    "recent": 4
+    "recent": 3
    },
    "level5": {
     "all": 4,
-    "recent": 1
+    "recent": 2
    },
    "observational": {
     "all": 6,
     "recent": 6
    }
   },
-  "seconds_extra": 56.8
+  "seconds_extra": 61.6
  },
  {
   "id": "cbct-vs-periapical",
   "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 38.3,
+  "seconds_base": 30.4,
   "would_admit": 42,
-  "would_admit_recent": 15,
+  "would_admit_recent": 25,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 1
+    "recent": 4
    },
    "level3a": {
     "all": 10,
-    "recent": 3
+    "recent": 9
    },
    "level3b": {
     "all": 4,
-    "recent": 2
-   },
-   "level4": {
-    "all": 4,
-    "recent": 3
-   },
-   "level5": {
-    "all": 4,
-    "recent": 1
-   },
-   "observational": {
-    "all": 6,
-    "recent": 5
-   }
-  },
-  "seconds_extra": 37.8
- },
- {
-  "id": "bioceramic-vs-resin-sealer",
-  "n_strong": 19,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 42.4,
-  "would_admit": 44,
-  "would_admit_recent": 32,
-  "per_tier": {
-   "level2": {
-    "all": 14,
-    "recent": 13
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 5
-   },
-   "level3b": {
-    "all": 6,
     "recent": 2
    },
    "level4": {
@@ -174,67 +138,99 @@
    },
    "observational": {
     "all": 6,
+    "recent": 4
+   }
+  },
+  "seconds_extra": 50.1
+ },
+ {
+  "id": "bioceramic-vs-resin-sealer",
+  "n_strong": 18,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 37.5,
+  "would_admit": 44,
+  "would_admit_recent": 30,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 14
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 2
+   },
+   "level3b": {
+    "all": 6,
+    "recent": 2
+   },
+   "level4": {
+    "all": 4,
+    "recent": 3
+   },
+   "level5": {
+    "all": 4,
+    "recent": 3
+   },
+   "observational": {
+    "all": 6,
     "recent": 6
    }
   },
-  "seconds_extra": 41.0
+  "seconds_extra": 57.9
  },
  {
   "id": "retreatment-vs-microsurgery",
   "n_strong": 18,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 25.8,
-  "would_admit": 34,
-  "would_admit_recent": 13,
+  "seconds_base": 34.4,
+  "would_admit": 24,
+  "would_admit_recent": 8,
   "per_tier": {
    "level2": {
-    "all": 7,
-    "recent": 2
+    "all": 3,
+    "recent": 0
    },
    "level3a": {
     "all": 10,
     "recent": 1
    },
-   "level3b": {
-    "all": 3,
-    "recent": 0
-   },
    "level4": {
     "all": 4,
-    "recent": 4
+    "recent": 3
    },
    "level5": {
-    "all": 4,
-    "recent": 2
+    "all": 3,
+    "recent": 1
    },
    "observational": {
-    "all": 6,
-    "recent": 4
+    "all": 4,
+    "recent": 3
    }
   },
-  "seconds_extra": 36.6
+  "seconds_extra": 21.1
  },
  {
   "id": "direct-pulp-capping",
-  "n_strong": 18,
+  "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 26.9,
-  "would_admit": 42,
-  "would_admit_recent": 22,
+  "seconds_base": 31.0,
+  "would_admit": 43,
+  "would_admit_recent": 14,
   "per_tier": {
    "level2": {
-    "all": 12,
-    "recent": 3
+    "all": 14,
+    "recent": 5
    },
    "level3a": {
     "all": 10,
-    "recent": 4
+    "recent": 2
    },
    "level3b": {
-    "all": 6,
-    "recent": 6
+    "all": 5,
+    "recent": 1
    },
    "level4": {
     "all": 4,
@@ -242,39 +238,39 @@
    },
    "level5": {
     "all": 4,
-    "recent": 0
+    "recent": 1
    },
    "observational": {
     "all": 6,
-    "recent": 5
+    "recent": 1
    }
   },
-  "seconds_extra": 70.6
+  "seconds_extra": 44.0
  },
  {
   "id": "preemptive-nsaid",
   "n_strong": 20,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 40.2,
-  "would_admit": 30,
-  "would_admit_recent": 10,
+  "seconds_base": 43.8,
+  "would_admit": 41,
+  "would_admit_recent": 21,
   "per_tier": {
    "level2": {
-    "all": 5,
-    "recent": 2
+    "all": 14,
+    "recent": 8
    },
    "level3a": {
-    "all": 10,
-    "recent": 1
+    "all": 7,
+    "recent": 0
    },
    "level3b": {
-    "all": 1,
-    "recent": 0
+    "all": 6,
+    "recent": 3
    },
    "level4": {
     "all": 4,
-    "recent": 4
+    "recent": 3
    },
    "level5": {
     "all": 4,
@@ -282,19 +278,19 @@
    },
    "observational": {
     "all": 6,
-    "recent": 1
+    "recent": 5
    }
   },
-  "seconds_extra": 23.7
+  "seconds_extra": 33.1
  },
  {
   "id": "regenerative-immature",
   "n_strong": 18,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 38.6,
+  "seconds_base": 34.2,
   "would_admit": 44,
-  "would_admit_recent": 26,
+  "would_admit_recent": 27,
   "per_tier": {
    "level2": {
     "all": 14,
@@ -302,11 +298,11 @@
    },
    "level3a": {
     "all": 10,
-    "recent": 1
+    "recent": 4
    },
    "level3b": {
     "all": 6,
-    "recent": 5
+    "recent": 4
    },
    "level4": {
     "all": 4,
@@ -318,67 +314,31 @@
    },
    "observational": {
     "all": 6,
-    "recent": 6
+    "recent": 5
    }
   },
-  "seconds_extra": 53.9
+  "seconds_extra": 80.1
  },
  {
   "id": "cracked-tooth-prognosis",
-  "n_strong": 22,
+  "n_strong": 21,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 38.4,
+  "seconds_base": 46.6,
   "would_admit": 44,
-  "would_admit_recent": 29,
+  "would_admit_recent": 33,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 10
+    "recent": 9
    },
    "level3a": {
     "all": 10,
-    "recent": 10
+    "recent": 9
    },
    "level3b": {
     "all": 6,
-    "recent": 1
-   },
-   "level4": {
-    "all": 4,
-    "recent": 4
-   },
-   "level5": {
-    "all": 4,
-    "recent": 2
-   },
-   "observational": {
-    "all": 6,
-    "recent": 2
-   }
-  },
-  "seconds_extra": 95.1
- },
- {
-  "id": "bisphosphonates",
-  "n_strong": 18,
-  "served_weak": 0,
-  "early_stop_fired": true,
-  "seconds_base": 36.7,
-  "would_admit": 37,
-  "would_admit_recent": 23,
-  "per_tier": {
-   "level2": {
-    "all": 7,
-    "recent": 4
-   },
-   "level3a": {
-    "all": 10,
-    "recent": 4
-   },
-   "level3b": {
-    "all": 6,
-    "recent": 4
+    "recent": 3
    },
    "level4": {
     "all": 4,
@@ -390,43 +350,43 @@
    },
    "observational": {
     "all": 6,
-    "recent": 4
+    "recent": 5
    }
   },
-  "seconds_extra": 56.9
+  "seconds_extra": 67.1
+ },
+ {
+  "id": "bisphosphonates",
+  "n_strong": 6,
+  "served_weak": 37,
+  "early_stop_fired": false,
+  "seconds_base": 64.2,
+  "would_admit": 0,
+  "would_admit_recent": 0,
+  "seconds_extra": 0.0
  },
  {
   "id": "pregnancy",
-  "n_strong": 7,
-  "served_weak": 16,
+  "n_strong": 3,
+  "served_weak": 25,
   "early_stop_fired": false,
-  "seconds_base": 47.4,
+  "seconds_base": 50.9,
   "would_admit": 0,
   "would_admit_recent": 0,
   "seconds_extra": 0.0
  },
  {
   "id": "pips-vs-ultrasonic",
-  "n_strong": 10,
-  "served_weak": 19,
-  "early_stop_fired": false,
-  "seconds_base": 61.4,
-  "would_admit": 0,
-  "would_admit_recent": 0,
-  "seconds_extra": 0.0
- },
- {
-  "id": "intentional-replantation",
-  "n_strong": 18,
+  "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 41.3,
+  "seconds_base": 33.9,
   "would_admit": 43,
-  "would_admit_recent": 21,
+  "would_admit_recent": 30,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 6
+    "recent": 12
    },
    "level3a": {
     "all": 10,
@@ -434,7 +394,7 @@
    },
    "level3b": {
     "all": 5,
-    "recent": 3
+    "recent": 1
    },
    "level4": {
     "all": 4,
@@ -442,21 +402,57 @@
    },
    "level5": {
     "all": 4,
-    "recent": 1
+    "recent": 4
    },
    "observational": {
     "all": 6,
-    "recent": 4
+    "recent": 6
    }
   },
-  "seconds_extra": 59.8
+  "seconds_extra": 28.1
+ },
+ {
+  "id": "intentional-replantation",
+  "n_strong": 18,
+  "served_weak": 0,
+  "early_stop_fired": true,
+  "seconds_base": 36.7,
+  "would_admit": 39,
+  "would_admit_recent": 15,
+  "per_tier": {
+   "level2": {
+    "all": 14,
+    "recent": 3
+   },
+   "level3a": {
+    "all": 10,
+    "recent": 5
+   },
+   "level3b": {
+    "all": 1,
+    "recent": 1
+   },
+   "level4": {
+    "all": 4,
+    "recent": 2
+   },
+   "level5": {
+    "all": 4,
+    "recent": 3
+   },
+   "observational": {
+    "all": 6,
+    "recent": 1
+   }
+  },
+  "seconds_extra": 34.4
  },
  {
   "id": "sdf-pulp-outcomes",
-  "n_strong": 9,
-  "served_weak": 18,
+  "n_strong": 10,
+  "served_weak": 21,
   "early_stop_fired": false,
-  "seconds_base": 51.5,
+  "seconds_base": 58.2,
   "would_admit": 0,
   "would_admit_recent": 0,
   "seconds_extra": 0.0
@@ -466,21 +462,21 @@
   "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 35.6,
-  "would_admit": 34,
-  "would_admit_recent": 24,
+  "seconds_base": 37.9,
+  "would_admit": 40,
+  "would_admit_recent": 27,
   "per_tier": {
    "level2": {
-    "all": 13,
-    "recent": 10
+    "all": 14,
+    "recent": 13
    },
    "level3a": {
-    "all": 5,
-    "recent": 1
+    "all": 6,
+    "recent": 2
    },
    "level3b": {
-    "all": 2,
-    "recent": 0
+    "all": 6,
+    "recent": 4
    },
    "level4": {
     "all": 4,
@@ -488,39 +484,39 @@
    },
    "level5": {
     "all": 4,
-    "recent": 3
+    "recent": 2
    },
    "observational": {
     "all": 6,
-    "recent": 6
+    "recent": 2
    }
   },
-  "seconds_extra": 36.5
+  "seconds_extra": 34.9
  },
  {
   "id": "dens-invaginatus",
   "n_strong": 28,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 48.2,
+  "seconds_base": 55.8,
   "would_admit": 44,
-  "would_admit_recent": 26,
+  "would_admit_recent": 24,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 7
+    "recent": 10
    },
    "level3a": {
     "all": 10,
-    "recent": 6
+    "recent": 3
    },
    "level3b": {
     "all": 6,
-    "recent": 4
+    "recent": 2
    },
    "level4": {
     "all": 4,
-    "recent": 4
+    "recent": 3
    },
    "level5": {
     "all": 4,
@@ -528,31 +524,31 @@
    },
    "observational": {
     "all": 6,
-    "recent": 4
+    "recent": 5
    }
   },
-  "seconds_extra": 86.9
+  "seconds_extra": 107.5
  },
  {
   "id": "diabetes-outcomes",
   "n_strong": 20,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 44.1,
-  "would_admit": 44,
-  "would_admit_recent": 29,
+  "seconds_base": 47.4,
+  "would_admit": 43,
+  "would_admit_recent": 30,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 12
+    "recent": 9
    },
    "level3a": {
     "all": 10,
-    "recent": 4
+    "recent": 6
    },
    "level3b": {
-    "all": 6,
-    "recent": 6
+    "all": 5,
+    "recent": 4
    },
    "level4": {
     "all": 4,
@@ -560,85 +556,85 @@
    },
    "level5": {
     "all": 4,
-    "recent": 0
+    "recent": 2
    },
    "observational": {
     "all": 6,
-    "recent": 3
+    "recent": 5
    }
   },
-  "seconds_extra": 72.2
+  "seconds_extra": 32.6
  },
  {
   "id": "review-followup-immature-teeth",
   "n_strong": 19,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 37.2,
-  "would_admit": 35,
-  "would_admit_recent": 28,
+  "seconds_base": 36.2,
+  "would_admit": 41,
+  "would_admit_recent": 33,
   "per_tier": {
    "level2": {
     "all": 14,
-    "recent": 12
+    "recent": 14
    },
    "level3a": {
-    "all": 5,
-    "recent": 2
+    "all": 10,
+    "recent": 7
    },
    "level3b": {
-    "all": 2,
+    "all": 3,
     "recent": 0
    },
    "level4": {
     "all": 4,
-    "recent": 4
+    "recent": 3
    },
    "level5": {
     "all": 4,
-    "recent": 4
+    "recent": 3
    },
    "observational": {
     "all": 6,
     "recent": 6
    }
   },
-  "seconds_extra": 34.7
+  "seconds_extra": 52.9
  },
  {
   "id": "review-newtopic-reset",
   "n_strong": 21,
   "served_weak": 0,
   "early_stop_fired": true,
-  "seconds_base": 41.1,
-  "would_admit": 38,
-  "would_admit_recent": 21,
+  "seconds_base": 38.2,
+  "would_admit": 44,
+  "would_admit_recent": 33,
   "per_tier": {
    "level2": {
-    "all": 8,
-    "recent": 2
+    "all": 14,
+    "recent": 11
    },
    "level3a": {
     "all": 10,
-    "recent": 5
+    "recent": 7
    },
    "level3b": {
     "all": 6,
-    "recent": 4
+    "recent": 5
    },
    "level4": {
     "all": 4,
-    "recent": 4
+    "recent": 2
    },
    "level5": {
     "all": 4,
-    "recent": 1
+    "recent": 2
    },
    "observational": {
     "all": 6,
-    "recent": 5
+    "recent": 6
    }
   },
-  "seconds_extra": 43.9
+  "seconds_extra": 70.0
  }
 ]

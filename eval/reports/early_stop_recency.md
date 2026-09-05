@@ -1,75 +1,113 @@
-# D1 — the early-stop recency exemption: PARKED, harness built, n=1 only
+# D1 — the early-stop recency exemption: MEASURED IN FULL, NOT SHIPPED
 
-**Date:** 2026-09-05 · **Status: NOT IMPLEMENTED. Measurement incomplete.**
+**Date:** 2026-09-05 · **Verdict: both pre-declared thresholds breached. Parked.**
 **Replay:** `python scripts/measure_early_stop_recency.py --json eval/reports/early_stop_recency.json`
+**Log:** `eval/logs/d1_full.log`
 
-## The decision this was to implement
+---
 
-> **D1** The early stop stays, with a RECENCY EXEMPTION. When cochrane +
-> level1 reach the early-stop threshold, weaker tiers are still fetched for
-> papers published in the last 18 months only. […] Measure first. Pre-declared:
-> if it adds more than ~15 papers per question on average, report before
-> shipping.
+## The proposal
 
-## Why it is parked
+In Review mode, once cochrane + level1 supply `EARLY_STOP_MIN_PAPERS` (15), the
+weaker lanes are skipped entirely. D1 keeps that but exempts recency: weaker
+lanes are still fetched and papers from the last 18 months are kept, older ones
+dropped as before. The reasoning is sound — a settled topic is exactly where a
+new contradicting finding matters most, and an old contradicting paper has
+already been absorbed or refuted.
 
-**The measurement did not finish inside the batch, and D1 says measure first.**
-It is a live-path behaviour — the early stop decides which lanes are fetched
-from PubMed — so there is no library-side proxy, and each question costs two
-full live retrievals (production, then the same question with the stop
-disabled). Measured rate: **~8–15 minutes per question** against 20 review-mode
-questions. It did not fit in the remaining window.
+## The result, against the thresholds declared before the run
 
-**Alternative rejected:** implementing the exemption on the n=1 result below.
-That would put an unmeasured retrieval change into the freeze this batch exists
-to produce, and the n=1 number is *over* the pre-declared threshold, so the
-honest reading of it is "report before shipping", not "ship".
+| | measured | threshold | verdict |
+|---|---|---|---|
+| extra papers per question | **24.6** | ~15 | **OVER** |
+| extra wall-clock per question | **48 s** | ~30 s | **OVER** |
 
-## What n=1 says — a HYPOTHESIS, not a finding (rule 27)
+**Both breached, so it is reported and not shipped**, exactly as the batch
+specified. This is not a close call in either dimension: 1.6× the paper budget
+and 1.6× the latency budget.
 
-`single-vs-multiple-visit`, review mode, live route:
+- 20 review-mode questions measured
+- the early stop **fired on 17 of them** — this is the common case, not an edge
+- weak lanes would return **687 papers** in total, **419** inside the window
 
-```
-early stop FIRED (strong=19). Weak lanes would return 44; 19 within 18mo. +40s
-level2 8/14, level3a 3/10, level3b 2/6, level4 2/4, level5 0/4, observational 4/6
-```
+## Per question
 
-**19 recent papers, against a pre-declared threshold of ~15.** One question.
-Rule 27 exists precisely for this shape — A42a's "the floor is free" came from
-a convenient subset and was wrong on the full set. Treat 19 as a reason to
-finish the measurement, not as the answer.
+| question | strong | fired | recent | all |
+|---|---|---|---|---|
+| single-vs-multiple-visit | 19 | YES | 14 | 28 |
+| mta-vs-biodentine-pulpotomy | 20 | YES | 24 | 39 |
+| naocl-concentration | 19 | YES | 31 | 44 |
+| cbct-vs-periapical | 19 | YES | 25 | 42 |
+| bioceramic-vs-resin-sealer | 18 | YES | 30 | 44 |
+| retreatment-vs-microsurgery | 18 | YES | 8 | 24 |
+| direct-pulp-capping | 19 | YES | 14 | 43 |
+| preemptive-nsaid | 20 | YES | 21 | 41 |
+| regenerative-immature | 18 | YES | 27 | 44 |
+| cracked-tooth-prognosis | 21 | YES | 33 | 44 |
+| bisphosphonates | 6 | — | 0 | 0 |
+| pregnancy | 3 | — | 0 | 0 |
+| pips-vs-ultrasonic | 19 | YES | 30 | 43 |
+| intentional-replantation | 18 | YES | 15 | 39 |
+| sdf-pulp-outcomes | 10 | — | 0 | 0 |
+| sonic-vs-ultrasonic | 19 | YES | 27 | 40 |
+| dens-invaginatus | 28 | YES | 24 | 44 |
+| diabetes-outcomes | 20 | YES | 30 | 43 |
+| review-followup-immature-teeth | 19 | YES | 33 | 41 |
+| review-newtopic-reset | 21 | YES | 33 | 44 |
 
-Two things it does establish, both useful:
+The three questions where it does not fire — `bisphosphonates` (6 strong),
+`pregnancy` (3), `sdf-pulp-outcomes` (10) — are the thin topics that never
+reach the threshold. **The exemption does nothing for exactly the questions
+with the least evidence**, which is worth knowing: it is not a fix for sparse
+coverage, only for well-covered topics.
 
-- **The early stop does fire on a real eval question**, so this is not a guard
-  measuring nothing (rule 34).
-- **`observational` contributes 4 of its 6 papers inside the window.** That is
-  the lane the previous handover flagged as the one the early stop should
-  arguably not skip, and the recency exemption would reach most of it.
+## The n=1 hypothesis was directionally right and understated both numbers
 
-## Cost, measured
+The earlier single-question probe gave **19 papers at +40 s** and was recorded
+as a hypothesis under rule 27. The full set gives **24.6 papers at +48 s** —
+same direction, both worse. Rule 27 earned its keep in the safe direction here:
+the hypothesis would have led to the same "report, do not ship" decision, but
+the honest number is 30% higher on papers and 20% on time.
 
-**+40 s per question** where the stop fires. On a Review answer that is
-material — it is roughly a third of the answer's wall-clock — and it is the
-number the ship/park decision should weigh alongside the paper count. This is
-not visible in the paper counts at all and would have been missed by a
-measurement that only counted papers.
+## The embedding-model load, measured separately as instructed
 
-## An item 2 cost that surfaced here
+| | |
+|---|---|
+| cold-process model load | **9.4 / 10.6 / 11.1 s — mean 10.4 s** |
+| first embed after load | 0.037 s |
 
-The run pays a **sentence-transformer model load** on a pure-live process,
-because item 2's PRISMA similarity backfill calls `rag.embed` and the live path
-otherwise never touches the embedding model. In the server this is once per
-process and already paid by the library route; in a **cold, live-only process**
-(this harness, a CLI review, a cron job) it is a new one-off cost. Not a
-defect, but it is new and it belongs on the record.
+It is a **one-off per process**, not per question, and it does **not** inflate
+the +48 s figure: both passes of a question run in the same process, and the
+load happens in the first pass, which makes the measured delta if anything
+slightly conservative.
 
-## What the next session needs
+Where it does cost: a cold live-only process — a CLI review, a cron job, this
+harness — now pays ~10 s that it did not before item 2's PRISMA similarity
+backfill. The long-lived server pays it once at first use and the library route
+already did.
 
-1. Run the harness to completion — budget **~3 h**, or run it against the
-   `--limit`ed subset in stages and record how many questions each stage
-   covered.
-2. If the mean lands **over ~15**, the ORDER says report before shipping. The
-   n=1 point suggests it will.
-3. If it ships, the test-pins D1 asks for are still owed: **a recent level2
-   paper survives the early stop and an old one does not.**
+## Why 48 s is the number that should decide this, not 24.6 papers
+
+The paper count is arguable — 24.6 more papers on a well-covered question is
+not obviously bad, and they are the *recent* ones, which is the whole point.
+
+**The latency is not arguable.** A Review answer is a chairside interaction.
+Adding 48 s to the retrieval of a question that already has 18+ Level I papers,
+to admit weak-tier evidence that tier banding says cannot override them, is a
+poor trade on the path where the user is waiting. And it would apply to 17 of
+20 Review questions.
+
+If this comes back, the version worth measuring is **narrower**: exempt only
+the `observational` lane (the one the previous handover actually flagged, and
+the only lane admitting diagnostic-accuracy and morphometric designs), rather
+than every weak lane. That would cost a fraction of the 48 s and admit the
+papers the original concern was about. **It has not been measured and is not a
+recommendation — only the next hypothesis.**
+
+## Status
+
+**PARKED.** No production code changed by D1. The harness
+(`scripts/measure_early_stop_recency.py`) and this measurement stand, so the
+next session can re-run a narrower variant against the same instrument. The
+test-pins the D1 spec asks for (a recent level2 paper survives the early stop,
+an old one does not) are **not written**, because nothing shipped to pin.
