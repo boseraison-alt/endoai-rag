@@ -196,6 +196,31 @@ Opening instruction for the agent session:
     a correct guard against an idiom this library does not contain, not a wrong
     token shape. Kept under rule 6. Only measuring the input separates the two.)
 
+
+35. **A prediction names its reference baseline and that baseline's date.** A
+    prediction against an unnamed reference is not falsifiable. (Origin: the
+    v7 comparison. The A46 prediction's own change table said A5b/A30b give
+    "papers UP, ~3.2x on library-routed cases"; its per-route section then
+    predicted "+0 to +8" because "retrieval is unchanged this batch". Both
+    were about a different question — the second measured against the last
+    BATCH, while the reference file was `baseline_v6`, recorded 2026-08-31 and
+    predating A5b, A30b, A31, A7, A42 and the level_key backfill. 13 of 14
+    library cases then moved by more than +10, mean +48, and the "surprise"
+    fired on a mechanism the same document had already named.)
+
+36. **Any test that enumerates a set — tiers, lanes, paths, call sites —
+    scans the whole repository, not the files the author was looking at.**
+    (Origin: `TestEveryTierOrderLoopAccountsForTheProvisionalLane` listed
+    `SOURCES = ("app.py", "endo_ai.py")`. It saw 6 of the 25 `TIER_ORDER`
+    loops in the repo and passed while `eval/run_eval.py` dropped every
+    provisional paper from `per_tier` AND from the `papers` total — in every
+    baseline the harness had ever produced. A checklist scoped to the files
+    already under suspicion certifies the author's attention, not the code.
+    Note the second half, learned the same day: repo-wide is necessary and not
+    sufficient. Scoping each hit to its ENCLOSING FUNCTION let a mutation
+    survive, because one justified site vouched for an unjustified neighbour.
+    Scope to the site.)
+
 ---
 
 ## §2 EXECUTION ORDER AND PARALLELISM
