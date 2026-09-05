@@ -262,6 +262,25 @@ class TestThroughBuildEvidenceBase:
         assert "Level I" in block          # named as the thing not to call it
         assert "override a systematic review" in block
 
+    def test_the_bibliography_handles_a_null_score(self, evidence):
+        """A provisional paper carries score=None, and the bibliography sorts
+        and splits papers. It must survive that without a coercion error and
+        must list a cited provisional paper as CITED, not as surplus."""
+        answer = ("## X\n\nA recent trial supports this [[PMID:42388091]] "
+                  "and so does the review [[PMID:27759881]].\n")
+        papers = [
+            {"pmid": "27759881", "score": 73.3, "level_key": "cochrane",
+             "title": "A review", "year": 2016},
+            {"pmid": "42388091", "score": None,
+             "level_key": E.PROVISIONAL_KEY, "title": "Sulaiman",
+             "year": 2026, "is_provisional": True},
+            {"pmid": "99999999", "score": 50.0, "level_key": "level2",
+             "title": "Uncited", "year": 2020},
+        ]
+        split = E.assemble_bibliography(answer, papers)
+        assert {p["pmid"] for p in split["cited"]} == {"27759881", "42388091"}
+        assert [p["pmid"] for p in split["uncited"]] == ["99999999"]
+
     def test_the_top_paper_per_tier_block_never_names_one(self, evidence):
         ctx = E._build_evidence_context(evidence)
         if "Top paper per tier" not in ctx:

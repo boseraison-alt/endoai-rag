@@ -2647,6 +2647,15 @@ _SELF_LABELLED_TRIAL_RE = re.compile(
 # longitudinal cohort study of the REASONS FOR TOOTH EXTRACTION in a Swedish
 # county dental service — a clinical study about extraction, not a bench study
 # on extracted specimens. It now requires a laboratory co-marker (below).
+#
+# ROUND TWO. A re-audit of the fixed extractor found five bench studies still
+# admitted at level2, and the cause was vocabulary: none of them says "in
+# vitro" or "ex vivo". They say "sixty single roots—human mandibular
+# premolars", "52 extracted mandibular molar distal roots", "Sixty-four curved
+# mesial root canals", and four of five name micro-CT, SEM or a goniometer.
+# The markers were keyed to words these papers do not use. The INSTRUMENT and
+# the MEASURAND turn out to be the reliable signals — no clinical trial reports
+# a contact angle or a push-out bond strength.
 _BENCH_RE = re.compile(
     r"\b(in\s*[- ]?\s*vitro|ex\s*[- ]?\s*vivo|finite[- ]element|"
     r"dentin[ae]\s+(?:blocks?|discs?|specimens?)|"
@@ -2657,22 +2666,95 @@ _BENCH_RE = re.compile(
     # "in vitro" anywhere and was admitted at Level I on "randomly divided".
     r"e\.?\s*faecalis|enterococcus|biofilm\s+model|"
     r"inoculat(?:ed|ion)\s+with|artificially\s+infect|"
-    r"autoclav|thermocycl)", re.I)
+    r"autoclav|thermocycl|"
+    # Instruments and measurands that exist ONLY on a bench. No clinical
+    # trial reports a contact angle or a push-out bond strength.
+    r"micro[- ]?ct\b|stereomicroscop|goniometer|profilometer|"
+    r"contact\s+angle|wettability|push[- ]?out\s+bond|shear\s+bond|"
+    r"universal\s+testing\s+machine|dye\s+penetration|apical\s+microleakage|"
+    r"simulated\s+(?:canal|root)|resin\s+block)", re.I)
 
-# `extracted teeth` only means bench work alongside one of these.
+# AMBIGUOUS MEASURANDS — bench work OFTEN reports these, and so do clinical
+# studies. `sealing ability` vetoed 41169767, which is titled "An in VIVO
+# study" and whose abstract reads "In this prospective randomized trial, 52
+# patients with deep caries" -- a clinical trial describing a clinical
+# outcome. They now count only alongside a specimen marker.
+_AMBIGUOUS_BENCH_RE = re.compile(
+    r"\b(sealing\s+abilit|fracture\s+resistance|surface\s+roughness|"
+    r"microleakage|marginal\s+adaptation)", re.I)
+
+# `extracted teeth` only means bench work alongside one of these. The gap
+# between "extracted" and its noun is widened because the corpus writes
+# "52 extracted mandibular molar distal roots" and "Seventy-five extracted
+# single-rooted human premolars".
 _EXTRACTED_SPECIMEN_RE = re.compile(
-    r"extracted\s+(?:human\s+)?(?:teeth|tooth|molars?|premolars?|incisors?)|"
-    r"\b(?:teeth|specimens?)\s+were\s+(?:mounted|embedded|sectioned|"
-    r"decoronated|instrumented|stored)", re.I)
+    r"extracted\s+(?:[\w\-]+\s+){0,4}?(?:teeth|tooth|molars?|premolars?|"
+    r"incisors?|roots?|canals?)|"
+    r"\b(?:teeth|specimens?|roots?)\s+were\s+(?:mounted|embedded|sectioned|"
+    r"decoronated|instrumented|stored|prepared|randomly\s+divided)", re.I)
 _LAB_CONTEXT_RE = re.compile(
     r"\b(specimen|mounted|embedded|sectioned|decoronat|micro[- ]?ct|"
     r"stereomicroscop|incubat|steriliz|sterilis|saline|resin\s+block|"
     r"root\s+canals?\s+were\s+(?:prepared|instrumented|shaped))", re.I)
 
 _ANIMAL_RE = re.compile(
-    r"\b(animal\s+(?:model|stud|experiment)|"
+    r"\b(animal\s+(?:model|stud|experiment)|veterinary|"
+    # Round two: an alpaca study (41227468) and an equine one (42554364) both
+    # reached a HUMAN clinical evidence pool. Nothing checked species.
     r"\b(?:rats?|mice|murine|rabbits?|dogs?|canine\s+model|beagle|"
-    r"swine|porcine|sheep|ferrets?|primates?|zebrafish)\b)", re.I)
+    r"swine|porcine|sheep|ovine|ferrets?|primates?|zebrafish|"
+    r"alpacas?|llamas?|horses?|equine|bovines?|cattle|camels?|"
+    r"cats?\s+and\s+dogs?|non[- ]human)\b)", re.I)
+
+# ── SENTENCES THAT DESCRIBE SOMEBODY ELSE'S STUDY ────────
+#
+# The single largest residual failure after round one, and it is one mechanism
+# wearing several hats: a design phrase that appears in a sentence about what
+# SHOULD be done, where the data CAME from, or what the wider literature
+# contains is not a statement about THIS paper's design.
+#
+#   "Further investigation through randomized controlled trials ... are
+#    warranted"            -> a four-patient CASE SERIES, admitted at level1
+#   "Future studies should include multicentre randomised controlled trials"
+#   "A prospective, multi-centre study ... is warranted"
+#   "In the original randomised clinical trials from which the data were
+#    derived"              -> a machine-learning model on someone else's trial
+#   "there were more systematic review and/or meta-analyses ... after 2017"
+#                          -> a scientometric survey of the literature
+#   "Narrative literature synthesis integrating ... systematic reviews"
+#   "This study provides one of the first comparative evaluations of ..."
+#                          -> a conclusion, not a methods statement
+#
+# Note the last one: making a self-declared trial self-evidencing (round one's
+# fix for trials that count teeth rather than patients) removed the location
+# check along with it, so any paper ending "RCTs are needed" became
+# admissible. That was a defect introduced BY the previous fix, which is why
+# this is scoped by SENTENCE rather than by another keyword.
+_OTHER_STUDY_SENTENCE_RE = re.compile(
+    r"\b(warrant|is\s+needed|are\s+needed|should\s+(?:be|include)|"
+    r"future\s+(?:stud|research|work|trial)|"
+    r"further\s+(?:investigation|research|stud|trial|work)|"
+    r"we\s+recommend|call(?:s)?\s+for|remains?\s+to\s+be|"
+    r"data\s+(?:were|was)\s+(?:derived|obtained|drawn|extracted)\s+from|"
+    r"from\s+which\s+the\s+data|original\s+randomi|"
+    r"synthesis\s+integrating|"
+    r"scientometric|bibliometric|research\s+trends|publication\s+trends|"
+    r"this\s+study\s+provides\s+one\s+of\s+the\s+first)", re.I)
+
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.;])\s+")
+
+
+def _own_design_text(hay: str) -> str:
+    """The abstract with other-study sentences removed.
+
+    Design patterns are matched against THIS, so a phrase can only count when
+    it sits in a sentence describing the paper's own work. Structured-abstract
+    labels are preserved because "METHODS:" is part of the sentence that
+    carries the design.
+    """
+    keep = [s for s in _SENTENCE_SPLIT_RE.split(hay or "")
+            if not _OTHER_STUDY_SENTENCE_RE.search(s)]
+    return " ".join(keep)
 
 # An Evidence-Based Dentistry structured commentary reports ANOTHER paper's
 # design in its own DESIGN field. Checked before everything except protocols.
@@ -2683,9 +2765,22 @@ _COMMENTARY_RE = re.compile(
 
 # A health-economic model consumes other people's evidence; it is not that
 # evidence. 41188638 was admitted as a systematic review on that basis.
+#
+# Extended in round two to two neighbouring shapes that are the same mistake:
+#   a SCIENTOMETRIC / BIBLIOMETRIC survey counts what the literature contains.
+#   42689119 was admitted at level1 on the sentence "there were more
+#   systematic review and/or meta-analyses ... after 2017" -- a finding ABOUT
+#   the literature, read as this paper's own design.
+#   a MODEL BAKE-OFF compares algorithms, not treatments. 42642693 compared
+#   YOLOv8 against Faster R-CNN on 1,498 radiographs and was admitted as a
+#   comparative clinical study.
 _ECONOMIC_RE = re.compile(
     r"\bmarkov\s+model|\bcost[- ]effectiveness\s+(?:analys|model|stud)|"
-    r"\bcost[- ]utility|\beconomic\s+evaluation|\bdecision[- ]analytic",
+    r"\bcost[- ]utility|\beconomic\s+evaluation|\bdecision[- ]analytic|"
+    r"\bscientometric|\bbibliometric|"
+    r"\byolo\w*\b|\bfaster\s+r[- ]?cnn|\bconvolutional\s+neural|"
+    r"\bdeep[- ]learning\s+(?:model|architectur|algorithm)|"
+    r"\bmachine[- ]learning\s+(?:model|algorithm)",
     re.I)
 
 # Synthesis designs. Checked before primary designs because a systematic
@@ -2704,6 +2799,11 @@ _PRIMARY_PATTERNS = [
     (r"randomi[sz]ed\s+controlled\s+(?:clinical\s+)?trial|"
      r"\brandomi[sz]ed\s+clinical\s+trial|"
      r"\brandomi[sz]ed\s+controlled\s+clinical\s+experiment|"
+     # "prospective randomized trial" (41169767) fell through to the level2
+     # prospective pattern and was reported as "non-randomised" -- admitted
+     # either way, but described wrongly, and the description is what a
+     # clinician reads.
+     r"\b(?:prospective\s+)?randomi[sz]ed\s+trial|"
      r"\bblock\s+randomi[sz]ation|"
      r"randomly\s+(?:allocated|assigned|divided|distributed)|"
      r"\brandomi[sz]ed\s+(?:into|to)\b",
@@ -2717,7 +2817,13 @@ _PRIMARY_PATTERNS = [
      # "clinical trial" but NOT the structured-abstract heading
      # "CLINICAL TRIAL NUMBER:" / "TRIAL REGISTRATION:", whose own content is
      # routinely "Not applicable" (41249970).
-     r"\bclinical\s+trial\b(?!\s*(?:number|registration|registry|no\.?)\b)|"
+     # Round two: the negative lookahead only knew the word forms. 41523571
+     # matched "Clinical Trial" inside "(Clinical Trial: NCT06676358)" -- a
+     # registration line -- and overrode the abstract's own opening words,
+     # "This cross-sectional study". A colon or an NCT number is the same
+     # thing as the word "number".
+     r"\bclinical\s+trial\b"
+     r"(?!\s*[:\-]?\s*(?:number|registration|registry|no\.?|NCT|ISRCTN|CTRI)\b)|"
      r"\bprospective(?:ly)?\s+(?:registered|recruited|enrolled)|"
      # Allow a comma and intervening adjectives: "prospective, clinical study"
      # (40492718) was missed by requiring the noun to be adjacent.
@@ -2727,19 +2833,45 @@ _PRIMARY_PATTERNS = [
      r"\bprospective[,]?\s+(?:[\w-]+[,]?\s+){0,3}"
      r"(?:cohort|study|clinical|observational|comparative|multicent|"
      r"single[- ]cent|interventional|follow[- ]up|trial)|"
-     r"\bcomparative\s+(?:clinical\s+)?(?:stud|evaluation|assessment)|"
-     r"\bsplit[- ]mouth|\bcross[- ]over\s+(?:trial|design|stud)",
+     r"\bcross[- ]over\s+(?:trial|design|stud)",
      "clinical trial (non-randomised) or prospective study", "level2"),
+    # RETROSPECTIVE BEATS COMPARATIVE, and therefore sits above it.
+    # "Retrospective comparative study" is a level3a study that compared
+    # things, not a level2 comparison that happened to be retrospective.
+    # 42110319 was admitted at level2 with the word "retrospective" sitting
+    # inside the same matched span.
     (r"\bretrospective(?:ly)?\b|\bchart\s+review|\brecords?\s+review",
      "retrospective study", "level3a"),
+    # "COMPARATIVE" IS SEPARATED AND REQUIRES A HUMAN ANCHOR.
+    #
+    # Round two found it had become the dominant single cause of false
+    # admissions, exactly as `RCT` had been before it: 11 of 20 survivors.
+    # "Comparative evaluation" says two things were compared and nothing about
+    # substrate, species or timing. It admitted a wettability bench test, a
+    # micro-CT sealing-ability study, a study of 19 ALPACAS and a bake-off
+    # between YOLOv8 and Faster R-CNN on 1,498 radiographs.
+    #
+    # The bench and animal vetoes run first; this is the third guard, and it
+    # is the one that catches a comparison whose subjects are images or
+    # devices rather than people.
+    (r"\bcomparative\s+(?:clinical\s+)?(?:stud|evaluation|assessment)|"
+     r"\bsplit[- ]mouth",
+     "comparative clinical study", "level2", True),
     (r"\bcase[- ]control\s+stud", "case-control study", "level3b"),
     (r"\bcase\s+series\b", "case series", "level4"),
     (r"\bcase\s+report\b|\bwe\s+(?:report|present)\s+(?:a|the)\s+case\b",
      "case report", "level4"),
-    (r"\bcross[- ]sectional|\bquestionnaire\s+(?:survey|stud)|"
+    (r"\bquestionnaire\s+(?:survey|stud)|"
      r"\bsurvey\s+(?:was\s+)?(?:conducted|distributed)|\bobservational\s+stud",
      "cross-sectional / observational", "observational"),
 ]
+
+# Checked BEFORE the primary patterns, because a design word beats a timing
+# word: "This multicenter, CROSS-SECTIONAL prospective study" (41090008) was
+# admitted at level2 on "prospective study" while "cross-sectional" sat in the
+# same sentence and in the title. Prospective describes WHEN data were
+# collected; cross-sectional describes the design.
+_CROSS_SECTIONAL_RE = re.compile(r"\bcross[- ]sectional", re.I)
 
 # A protocol or registration announcement states a design but reports NO
 # result. Recognised so it can be excluded rather than admitted as though the
@@ -2807,21 +2939,43 @@ def extract_stated_design(abstract: str, title: str = "") -> dict:
                 "matched": m.group(0),
                 "basis": "extracted-specimen marker with laboratory context"}
 
+    # An ambiguous measurand counts as bench work only alongside a specimen.
+    m = _AMBIGUOUS_BENCH_RE.search(hay)
+    if m and _EXTRACTED_SPECIMEN_RE.search(hay):
+        return {"design": "in vitro / bench study", "rung": "invitro",
+                "matched": m.group(0),
+                "basis": "bench measurand with a specimen marker"}
+
     m = _ANIMAL_RE.search(hay)
     if m:
         return {"design": "animal study", "rung": "animal",
                 "matched": m.group(0), "basis": "animal marker (precedence)"}
 
+    # From here on, match only against sentences describing THIS paper's own
+    # work. Everything above is a veto and reads the whole text; everything
+    # below is a design CLAIM, and a claim in a "further trials are warranted"
+    # sentence is a claim about somebody else's study.
+    own = _own_design_text(hay)
+
     for pat, design, rung in _SYNTHESIS_PATTERNS:
-        m = re.search(pat, hay, re.I)
+        m = re.search(pat, own, re.I)
         if m:
             return {"design": design, "rung": rung, "matched": m.group(0),
                     "basis": "synthesis pattern"}
 
+    # A design word beats a timing word.
+    m = _CROSS_SECTIONAL_RE.search(own)
+    if m:
+        return {"design": "cross-sectional / observational",
+                "rung": "observational", "matched": m.group(0),
+                "basis": "cross-sectional beats a prospective timing word"}
+
     human = bool(_HUMAN_SUBJECT_RE.search(hay))
-    self_labelled = bool(_SELF_LABELLED_TRIAL_RE.search(hay))
-    for pat, design, rung in _PRIMARY_PATTERNS:
-        m = re.search(pat, hay, re.I)
+    self_labelled = bool(_SELF_LABELLED_TRIAL_RE.search(own))
+    for entry in _PRIMARY_PATTERNS:
+        pat, design, rung = entry[0], entry[1], entry[2]
+        requires_human = entry[3] if len(entry) > 3 else False
+        m = re.search(pat, own, re.I)
         if not m:
             continue
         # Randomisation only means an RCT when there are human subjects --
@@ -2833,11 +2987,17 @@ def extract_stated_design(abstract: str, title: str = "") -> dict:
         # trials, because dental trials count TEETH: 40397221 ("a randomized
         # clinical trial" in its own title), 41941071 and 42145341 all came
         # back `unclear`. The bench and animal vetoes have already run, so
-        # this cannot promote a laboratory experiment.
+        # this cannot promote a laboratory experiment -- and `own` has already
+        # removed the future-work sentences that made the self-labelling
+        # exemption dangerous in round one.
         if rung == "level1" and not human and not self_labelled:
             return {"design": "randomisation stated without human subjects",
                     "rung": "unclear", "matched": m.group(0),
                     "basis": "randomisation without human-subject marker"}
+        if requires_human and not human:
+            return {"design": "comparison stated without human subjects",
+                    "rung": "unclear", "matched": m.group(0),
+                    "basis": "comparative pattern without human-subject marker"}
         return {"design": design, "rung": rung, "matched": m.group(0),
                 "basis": ("primary-design pattern (self-labelled trial)"
                           if rung == "level1" and self_labelled and not human

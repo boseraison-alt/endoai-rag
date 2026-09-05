@@ -172,11 +172,92 @@ extractor in its own right.
 
 ### VERDICT
 
-**Threshold: ≤60 level2-or-above per query → build. Measured max: 32.**
+**Threshold: ≤60 level2-or-above per query → build. Measured max: 30.**
 
 Every one of the 29 questions clears it, most of them by an order of magnitude.
 **BUILD 4b.**
 
-The design filter is a real gate, not a formality: it removes **87.6%** of the
-untyped-recent pool (1,454 → 180). It does so by reading what the authors
+The design filter is a real gate, not a formality: it removes **88.7%** of the
+untyped-recent pool (1,454 → 164). It does so by reading what the authors
 wrote, not by scoring anything.
+
+---
+
+## ROUND TWO — the fixed extractor was re-audited, and it was not finished
+
+The obvious mistake after round one would have been to stop. The fixed
+extractor was put back in front of independent judges over **all 133 admitted
+papers**, and the verdict was blunt: *"Do not treat this fix as finished."*
+
+**False-admission rate: 34% → 15%** (20 of 133). Roughly halved, on a
+denominator 1.8× larger.
+
+**The RCT mode is verifiably dead.** At least 15 abstracts in the after-set
+still use `RCT` in the root-canal-treatment sense, and **not one** produced a
+level1 verdict. Every surviving level1 traced to explicit random allocation of
+humans.
+
+But three things survived, and one of them was **introduced by the round-one
+fix**:
+
+| what | how it showed |
+|---|---|
+| **bench work, still admitted** — markers keyed to vocabulary these papers do not use | *"52 extracted mandibular molar distal roots"*, *"Sixty-four curved mesial root canals"*; four of five named micro-CT, SEM or a goniometer, and none said "in vitro" |
+| **`comparative` had become the new `RCT`** — 11 of 20 survivors | admitted a wettability bench test, a micro-CT sealing study, a study of **19 alpacas**, and a bake-off between YOLOv8 and Faster R-CNN on 1,498 radiographs |
+| **self-evidencing RCT removed the location check** — *my own fix* | 42641947, a **four-patient case series**, admitted at level1 on *"Further investigation through randomized controlled trials … are warranted"* |
+| registration strings, half-fixed | *"(Clinical Trial: NCT06676358)"* overrode the abstract's own opening words, *"This cross-sectional study"* |
+| no species check at all | two animal studies (alpacas, horses) entered a **human** clinical evidence pool |
+| a design word losing to a timing word | *"This multicenter, CROSS-SECTIONAL prospective study"* admitted at level2 on "prospective" |
+
+### What changed in response
+
+- **Sentence scoping.** Design claims are now matched only against sentences
+  describing the paper's *own* work. A phrase inside *"further trials are
+  warranted"*, *"future studies should include…"*, *"the original trials from
+  which the data were derived"* or *"there were more systematic reviews after
+  2017"* is a statement about somebody else's study. This is the fix for the
+  defect round one introduced, and it is scoped by **sentence** rather than by
+  another keyword precisely because keywords were what broke it.
+- **Instruments and measurands as the bench signal.** No clinical trial reports
+  a contact angle, a push-out bond strength or a goniometer reading.
+- **`comparative` requires a human anchor**, behind the bench and animal vetoes.
+- **`retrospective` beats `comparative`** — a retrospective comparative study is
+  level3a that compared things, not level2 that happened to be retrospective.
+- **Species check**, including alpaca, equine, ovine, camelid.
+- **Scientometric/bibliometric surveys and model bake-offs** join the
+  economic-model veto: all three consume other people's evidence rather than
+  producing it.
+
+### And a false veto the fix itself caused, caught the same way
+
+`sealing ability` was added as a bench marker and immediately vetoed 41169767 —
+whose title ends *"An in vivo study"* and whose abstract reads *"In this
+prospective randomized trial, 52 patients with deep caries"*. Ambiguous
+measurands (`sealing ability`, `fracture resistance`, `surface roughness`,
+`marginal adaptation`) now count only alongside a specimen marker. That paper
+is back at level1, and correctly labelled randomised rather than
+non-randomised.
+
+### Where it stands
+
+Of the 19 records named across both audits, **16 are now correctly rejected**.
+The three still admitted (40510995, 42656893, 42523855) are human comparative
+studies the judges themselves called borderline or arguable — tuning to those
+is how a detector stops generalising.
+
+Round-two effect on the distribution:
+
+```
+                     round one    round two
+  in vitro             47.7%        54.2%     better bench detection
+  (none stated)        15.7%        11.8%
+  unclear               2.5%         0.5%
+  level2-or-above max     32           30
+```
+
+**The build/stop decision was never in doubt and is not now.** The judges make
+the point themselves: false positives can only push the count *down*, never up,
+so no plausible error rate crosses a threshold of 60 from a measured max of 30.
+The direction that *could* have mattered is false negatives — genuine trials
+being dropped — and that is the one this round did not re-measure. It is the
+first thing the next session should look at.

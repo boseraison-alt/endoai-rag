@@ -6,9 +6,8 @@
    "n_untyped": 112,
    "no_abstract": 0,
    "by_rung": {
-    "invitro": 92,
-    "(none stated)": 12,
-    "unclear": 1,
+    "invitro": 96,
+    "(none stated)": 9,
     "level2": 1,
     "protocol": 1,
     "level1": 4,
@@ -28,10 +27,9 @@
    "n_untyped": 132,
    "no_abstract": 0,
    "by_rung": {
-    "invitro": 103,
+    "invitro": 109,
     "animal": 1,
-    "(none stated)": 17,
-    "unclear": 1,
+    "(none stated)": 12,
     "level2": 1,
     "protocol": 1,
     "level1": 6,
@@ -86,15 +84,15 @@
    "n_untyped": 44,
    "no_abstract": 0,
    "by_rung": {
-    "observational": 3,
+    "observational": 4,
     "(none stated)": 5,
     "level4": 8,
-    "animal": 4,
-    "level1": 9,
+    "animal": 3,
+    "level1": 10,
     "protocol": 1,
-    "level3a": 8,
-    "level2": 3,
-    "invitro": 3
+    "level3a": 7,
+    "invitro": 4,
+    "level2": 2
    },
    "n_level2_or_above": 12,
    "admitted": [
@@ -117,20 +115,17 @@
    "n_untyped": 141,
    "no_abstract": 0,
    "by_rung": {
-    "invitro": 111,
-    "(none stated)": 16,
-    "unclear": 6,
+    "invitro": 124,
     "protocol": 1,
+    "(none stated)": 10,
     "animal": 2,
     "level1": 2,
-    "observational": 2,
-    "level2": 1
+    "observational": 2
    },
-   "n_level2_or_above": 3,
+   "n_level2_or_above": 2,
    "admitted": [
     "41438436",
-    "41660025",
-    "42095004"
+    "41660025"
    ]
   },
   {
@@ -138,21 +133,20 @@
    "n_untyped": 26,
    "no_abstract": 0,
    "by_rung": {
-    "level3a": 5,
+    "level3a": 6,
     "(none stated)": 5,
     "observational": 2,
-    "level2": 4,
+    "level2": 3,
     "level4": 5,
     "animal": 3,
     "level1": 2
    },
-   "n_level2_or_above": 6,
+   "n_level2_or_above": 5,
    "admitted": [
     "40510995",
     "41231207",
     "41717191",
     "41940358",
-    "42110319",
     "42662992"
    ]
   },
@@ -161,19 +155,19 @@
    "n_untyped": 307,
    "no_abstract": 0,
    "by_rung": {
-    "invitro": 183,
-    "animal": 7,
-    "(none stated)": 51,
+    "invitro": 224,
+    "animal": 8,
     "observational": 5,
-    "unclear": 16,
+    "unclear": 5,
     "level3a": 9,
     "level1": 16,
+    "(none stated)": 26,
     "protocol": 1,
-    "level2": 8,
+    "level2": 2,
     "level4": 10,
     "level5": 1
    },
-   "n_level2_or_above": 24,
+   "n_level2_or_above": 18,
    "admitted": [
     "40281736",
     "40557029",
@@ -182,23 +176,17 @@
     "40860382",
     "41041012",
     "41169767",
-    "41206808",
     "41322332",
     "41375569",
     "41466650",
-    "41597473",
     "41660016",
     "42004802",
-    "42109436",
     "42245173",
     "42426769",
     "42516702",
-    "42554364",
     "42568232",
     "42588273",
-    "42591012",
-    "42628716",
-    "42689226"
+    "42591012"
    ]
   },
   {
@@ -217,8 +205,8 @@
     "(none stated)": 3,
     "animal": 1,
     "invitro": 1,
-    "level1": 8,
-    "level2": 3,
+    "level1": 9,
+    "level2": 2,
     "level3a": 1
    },
    "n_level2_or_above": 11,
@@ -241,22 +229,22 @@
    "n_untyped": 11,
    "no_abstract": 0,
    "by_rung": {
-    "level1": 9,
+    "level1": 7,
     "invitro": 1,
-    "level2": 1
+    "level2": 1,
+    "observational": 1,
+    "level4": 1
    },
-   "n_level2_or_above": 10,
+   "n_level2_or_above": 8,
    "admitted": [
     "40422619",
     "40446843",
     "41018479",
     "41322333",
     "41420134",
-    "41622592",
     "41636988",
     "42473278",
-    "42575240",
-    "42641947"
+    "42575240"
    ]
   },
   {
@@ -268,8 +256,9 @@
     "invitro": 3,
     "(none stated)": 3,
     "level1": 3,
-    "level3a": 2,
+    "observational": 1,
     "animal": 1,
+    "level3a": 1,
     "level2": 1
    },
    "n_level2_or_above": 4,
@@ -286,7 +275,8 @@
    "no_abstract": 0,
    "by_rung": {
     "(none stated)": 2,
-    "level3a": 9,
+    "level3a": 8,
+    "observational": 1,
     "invitro": 2
    },
    "n_level2_or_above": 0,
@@ -311,8 +301,8 @@
    "no_abstract": 0,
    "by_rung": {
     "(none stated)": 5,
-    "animal": 4,
-    "invitro": 6,
+    "animal": 2,
+    "invitro": 8,
     "observational": 1
    },
    "n_level2_or_above": 0,
@@ -333,10 +323,9 @@
    "n_untyped": 32,
    "no_abstract": 0,
    "by_rung": {
-    "invitro": 22,
+    "invitro": 23,
     "(none stated)": 6,
     "level1": 2,
-    "unclear": 1,
     "level2": 1
    },
    "n_level2_or_above": 3,
@@ -351,12 +340,10 @@
    "n_untyped": 1,
    "no_abstract": 0,
    "by_rung": {
-    "level1": 1
+    "observational": 1
    },
-   "n_level2_or_above": 1,
-   "admitted": [
-    "42689119"
-   ]
+   "n_level2_or_above": 0,
+   "admitted": []
   },
   {
    "id": "sdf-pulp-outcomes",
@@ -371,14 +358,14 @@
    "n_untyped": 121,
    "no_abstract": 0,
    "by_rung": {
-    "(none stated)": 20,
-    "invitro": 83,
+    "invitro": 96,
+    "(none stated)": 12,
     "level2": 2,
     "level3a": 1,
     "level1": 5,
-    "unclear": 6,
     "observational": 2,
-    "level4": 2
+    "level4": 2,
+    "unclear": 1
    },
    "n_level2_or_above": 7,
    "admitted": [
@@ -396,10 +383,10 @@
    "n_untyped": 13,
    "no_abstract": 0,
    "by_rung": {
-    "(none stated)": 3,
+    "observational": 2,
     "level4": 7,
+    "(none stated)": 2,
     "level3a": 1,
-    "observational": 1,
     "invitro": 1
    },
    "n_level2_or_above": 0,
@@ -410,17 +397,16 @@
    "n_untyped": 38,
    "no_abstract": 0,
    "by_rung": {
-    "level3a": 13,
+    "level3a": 9,
     "(none stated)": 11,
-    "observational": 5,
+    "observational": 10,
     "invitro": 3,
-    "level2": 3,
+    "level2": 2,
     "level1": 1,
     "animal": 2
    },
-   "n_level2_or_above": 4,
+   "n_level2_or_above": 3,
    "admitted": [
-    "41090008",
     "41275165",
     "41853009",
     "42656893"
@@ -431,18 +417,17 @@
    "n_untyped": 138,
    "no_abstract": 0,
    "by_rung": {
-    "level3a": 21,
+    "level3a": 20,
     "level1": 18,
-    "invitro": 23,
-    "animal": 13,
-    "(none stated)": 22,
+    "invitro": 30,
+    "animal": 14,
+    "(none stated)": 15,
     "level5": 4,
+    "observational": 5,
     "level4": 20,
-    "level2": 14,
-    "observational": 2,
-    "unclear": 1
+    "level2": 12
    },
-   "n_level2_or_above": 32,
+   "n_level2_or_above": 30,
    "admitted": [
     "39510518",
     "40422619",
@@ -452,12 +437,10 @@
     "40904898",
     "41127765",
     "41206809",
-    "41227468",
     "41275165",
     "41321767",
     "41322333",
     "41379131",
-    "41523571",
     "41635348",
     "41660024",
     "41717191",
@@ -484,12 +467,12 @@
    "no_abstract": 0,
    "by_rung": {
     "(none stated)": 9,
-    "unclear": 2,
+    "invitro": 9,
     "level1": 2,
     "level3a": 16,
-    "invitro": 8,
     "level2": 3,
-    "level4": 8
+    "level4": 8,
+    "unclear": 1
    },
    "n_level2_or_above": 5,
    "admitted": [
@@ -505,17 +488,17 @@
    "n_untyped": 114,
    "no_abstract": 0,
    "by_rung": {
-    "level2": 7,
-    "level3a": 17,
+    "level2": 6,
+    "level3a": 16,
     "level5": 6,
-    "invitro": 24,
-    "(none stated)": 20,
+    "invitro": 28,
+    "(none stated)": 17,
     "level4": 20,
-    "level1": 13,
-    "animal": 4,
-    "observational": 3
+    "level1": 12,
+    "observational": 6,
+    "animal": 3
    },
-   "n_level2_or_above": 20,
+   "n_level2_or_above": 18,
    "admitted": [
     "39255508",
     "40397221",
@@ -528,12 +511,10 @@
     "41164583",
     "41342208",
     "41908021",
-    "42110319",
     "42245173",
     "42291015",
     "42388956",
     "42524043",
-    "42642693",
     "42655977",
     "42662295",
     "42662996"
@@ -544,10 +525,9 @@
    "n_untyped": 33,
    "no_abstract": 0,
    "by_rung": {
-    "invitro": 20,
+    "invitro": 22,
     "(none stated)": 6,
     "level2": 1,
-    "unclear": 2,
     "animal": 1,
     "level1": 2,
     "level4": 1
@@ -624,39 +604,39 @@
   0,
   0,
   0,
+  0,
   1,
-  1,
+  2,
   3,
   3,
   3,
   4,
-  4,
   5,
   5,
   5,
-  6,
+  5,
   7,
   7,
-  10,
+  8,
   11,
   12,
   17,
-  20,
-  24,
-  32
+  18,
+  18,
+  30
  ],
  "rung_totals": {
-  "invitro": 693,
-  "(none stated)": 229,
-  "unclear": 36,
-  "level2": 61,
+  "invitro": 788,
+  "(none stated)": 171,
+  "level2": 47,
   "protocol": 5,
-  "level1": 119,
-  "level3a": 116,
-  "animal": 44,
+  "level1": 117,
+  "level3a": 108,
+  "animal": 42,
   "level5": 12,
-  "level4": 107,
-  "observational": 31,
+  "level4": 108,
+  "observational": 48,
+  "unclear": 7,
   "level3b": 1
  }
 }
