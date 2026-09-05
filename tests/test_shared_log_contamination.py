@@ -92,7 +92,7 @@ class TestEsearchWindowIdentifiesItsWriter:
             _esearch_row(pid=mine + 99999, n=500),   # another process
             _esearch_row(pid=mine, n=60),
         ])
-        total, n, empty, terms, failed = harness._esearch_hits_since(0)
+        total, n, empty, terms, failed, _g, _ge = harness._esearch_hits_since(0)
         assert n == 2, "the foreign query was counted as one of ours"
         assert total == 100, f"a foreign process's 500 PMIDs leaked in: {total}"
 
@@ -108,7 +108,7 @@ class TestEsearchWindowIdentifiesItsWriter:
             _esearch_row(pid=mine, n=10, ts="2026-09-01T01:00:01.100000"),
             _esearch_row(pid=mine, n=10, ts="2026-09-01T01:00:01.400000"),
         ])
-        total, n, empty, terms, failed = harness._esearch_hits_since(0)
+        total, n, empty, terms, failed, _g, _ge = harness._esearch_hits_since(0)
         assert n == 4, "concurrent modules from THIS process were dropped"
         assert total == 40
 
@@ -116,7 +116,7 @@ class TestEsearchWindowIdentifiesItsWriter:
         """Historical rows predate the field. Dropping them would rewrite
         every before/after comparison that spans the change."""
         _write(harness.AUDIT_LOG, [_esearch_row(pid=None, n=25)])
-        total, n, _e, _t, _f = harness._esearch_hits_since(0)
+        total, n, _e, _t, _f, _g, _ge = harness._esearch_hits_since(0)
         assert n == 1 and total == 25
 
     def test_a_failed_request_is_still_not_a_query(self, harness):
@@ -130,7 +130,7 @@ class TestEsearchWindowIdentifiesItsWriter:
                 harness.AUDIT_LOG.read_text(encoding="utf-8").splitlines()]
         rows[0]["http_status"] = 0
         _write(harness.AUDIT_LOG, rows)
-        total, n, empty, _t, failed = harness._esearch_hits_since(0)
+        total, n, empty, _t, failed, _g, _ge = harness._esearch_hits_since(0)
         assert (n, empty, failed) == (1, 0, 1)
 
 

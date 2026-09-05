@@ -222,7 +222,8 @@ class TestNetworkFailuresAreNotMisreadAsBadQueries:
     def test_failed_calls_are_excluded_from_query_counts(self, tmp_path, monkeypatch):
         recs = ([{"http_status": 0, "n_returned": 0, "level_key": "level1"}] * 8 +
                 [{"http_status": 200, "n_returned": 50, "level_key": "level1"}] * 2)
-        total, n, empty, terms, failed = self._log(tmp_path, monkeypatch, recs)
+        total, n, empty, terms, failed, _g, _ge = self._log(
+            tmp_path, monkeypatch, recs)
         assert failed == 8
         assert n == 2, "never-sent calls must not count as queries"
         assert empty == 0, "a call that never left the machine did not 'return nothing'"
@@ -231,14 +232,43 @@ class TestNetworkFailuresAreNotMisreadAsBadQueries:
     def test_hits_per_query_reflects_only_real_responses(self, tmp_path, monkeypatch):
         recs = ([{"http_status": 0, "n_returned": 0, "level_key": "level1"}] * 9 +
                 [{"http_status": 200, "n_returned": 40, "level_key": "level1"}])
-        total, n, _e, _t, failed = self._log(tmp_path, monkeypatch, recs)
+        total, n, _e, _t, failed, _g, _ge = self._log(
+            tmp_path, monkeypatch, recs)
         assert total / n == 40.0, "outage must not drag the per-query average down"
         assert failed == 9
 
     def test_healthy_log_reports_no_failures(self, tmp_path, monkeypatch):
         recs = [{"http_status": 200, "n_returned": 30, "level_key": "level1"}] * 5
-        _t, n, _e, terms, failed = self._log(tmp_path, monkeypatch, recs)
+        _t, n, _e, terms, failed, _g, _ge = self._log(
+            tmp_path, monkeypatch, recs)
         assert (failed, n, terms) == (0, 5, 5)
+
+
+    def test_the_guideline_lane_is_kept_out_of_the_empty_fraction(
+            self, tmp_path, monkeypatch):
+        """Item 2, 2026-09-05. The guideline lane is 86% empty across the v7
+        runs -- 482 queries, 415 of them returning nothing -- against 47% for
+        every pre-existing lane together. It supplied 35% of all empties and
+        pushed the corpus rate from 46% to 55%, through a 50% ceiling written
+        before the lane existed.
+
+        A specialty body either has published on this exact topic or it has
+        not, so an empty result is the EXPECTED case on a narrow clinical
+        question, not the malformed-query signature the assertion detects.
+        The threshold is untouched (rule 6); the denominator is corrected to
+        the lanes it was written for, and the lane gets its own REPORTED
+        metric so removing it from the assertion is not the same as not
+        measuring it.
+        """
+        recs = ([{"http_status": 200, "n_returned": 0, "level_key": "guideline"}] * 8 +
+                [{"http_status": 200, "n_returned": 30, "level_key": "guideline"}] * 2 +
+                [{"http_status": 200, "n_returned": 30, "level_key": "level1"}] * 4)
+        total, n, empty, terms, failed, gl_n, gl_empty = self._log(
+            tmp_path, monkeypatch, recs)
+        assert (gl_n, gl_empty) == (10, 8), "the lane is counted on its own"
+        assert n == 4, "guideline queries must not be in the assertion denominator"
+        assert empty == 0, "and neither must their empties"
+        assert total == 120, "nor their hits"
 
 
 class TestSynthesisModeIsActuallyWired:

@@ -5597,6 +5597,50 @@ def live_path_filters() -> dict:
         filters[key] = " OR ".join(terms)
     return filters
 
+# Item 3, 2026-09-05 — WHY GUIDELINES WERE RETRIEVED AND NEVER CITED.
+#
+# The synthesis prompt enumerates the ladder twice: once as "Synthesise the
+# evidence in tier order: Cochrane -> Level I -> ... -> Level V", and once as
+# the literal set of EVIDENCE SUMMARY headings the answer must be written
+# under. Neither list mentioned guidelines. The model was handed a guideline
+# block, an instruction to write under named headings, and an instruction to
+# "skip levels with no relevant evidence" -- and no heading a guideline could
+# go under. MEASURED: the lane populates the guideline tier on 21 of 29
+# questions and was cited ONCE across five live Review questions.
+#
+# This is the same defect class as app.py's hardcoded lane list: an
+# enumeration of the tiers that drifted three lanes behind retrieval. The
+# retrieval was fixed to reach guidelines; the prompt's own list of what to
+# write about was never updated.
+#
+# The wording deliberately does NOT say "cite guidelines". A model told to
+# cite them will cite them irrelevantly. It is told what they ARE -- a
+# different axis from the trials, neither outranking nor outranked -- so it
+# cites them where they bear. Divergence between the specialty's position and
+# the trial evidence is stated as first-class output, which is A49's
+# "where the specialty stands" and something no competitor produces.
+GUIDELINE_PROMPT_BLOCK = """**Specialty Guidelines & Position Statements** — use this heading whenever the evidence carries that block. Place it last; it is not a rung on the ladder.
+
+SPECIALTY GUIDELINES ARE A DIFFERENT AXIS, NOT A RUNG ON THE LADDER:
+The evidence may include a "Specialty Guidelines & Position Statements" block.
+A guideline is not a study and carries no evidence score, so it neither
+outranks nor is outranked by the tiers above -- the tier hierarchy does not
+apply to it and it is not "weak evidence". It is what a professional body has
+formally stated, which is a different kind of fact: it tells the clinician
+what the standard of care currently is in that jurisdiction.
+Use it where it bears on the question, and say which body and which year.
+Where a guideline and the trial evidence AGREE, say so briefly.
+Where they DIVERGE, that divergence is a finding and belongs in the answer:
+guidelines lag the literature by years by construction, so "the AAE position
+(2021) says X; the 2026 trial evidence says Y" is information the clinician
+needs, not a contradiction to resolve away.
+"""
+
+# Set False to reproduce the pre-item-3 prompt. The A/B in
+# eval/reports/a49_guideline_citation_ab.md toggles this; production is True.
+GUIDELINE_PROMPT_ENABLED = True
+
+
 TIER_QUALITY_FLOORS = {
     # A7 — permissive on purpose. These rows score 30.9-90.0 on a scorer
     # built for therapy designs; the score is not what makes a specialty
@@ -8985,6 +9029,7 @@ Organized by evidence level, top-down. For each level write a short paragraph (3
 **Level IIIb — Case-Control Studies**
 **Level IV — Case Series**
 **Level V — Expert Opinion**
+""" + (GUIDELINE_PROMPT_BLOCK if GUIDELINE_PROMPT_ENABLED else "") + """
 
 ---
 

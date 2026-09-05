@@ -1,0 +1,124 @@
+[
+ {
+  "id": "retreatment-vs-microsurgery",
+  "guidelines_retrieved": 1,
+  "control": {
+   "citations": 14,
+   "guideline_citations": 1,
+   "guideline_pmids": [
+    "40217051"
+   ],
+   "cost": 0.6662,
+   "has_guideline_heading": false,
+   "chars": 9850
+  },
+  "treated": {
+   "citations": 17,
+   "guideline_citations": 1,
+   "guideline_pmids": [
+    "40217051"
+   ],
+   "cost": 0.6963,
+   "has_guideline_heading": true,
+   "chars": 11093
+  }
+ },
+ {
+  "id": "cracked-tooth-prognosis",
+  "guidelines_retrieved": 2,
+  "control": {
+   "citations": 3,
+   "guideline_citations": 0,
+   "guideline_pmids": [],
+   "cost": 0.7718,
+   "has_guideline_heading": false,
+   "chars": 6156
+  },
+  "treated": {
+   "citations": 6,
+   "guideline_citations": 2,
+   "guideline_pmids": [
+    "22230724",
+    "7995643"
+   ],
+   "cost": 0.8072,
+   "has_guideline_heading": true,
+   "chars": 7748
+  }
+ },
+ {
+  "id": "bisphosphonates",
+  "guidelines_retrieved": 2,
+  "control": {
+   "citations": 7,
+   "guideline_citations": 2,
+   "guideline_pmids": [
+    "22041409",
+    "41985837"
+   ],
+   "cost": 1.0388,
+   "has_guideline_heading": true,
+   "chars": 7937
+  },
+  "treated": {
+   "citations": 6,
+   "guideline_citations": 2,
+   "guideline_pmids": [
+    "22041409",
+    "41985837"
+   ],
+   "cost": 1.0517,
+   "has_guideline_heading": true,
+   "chars": 8261
+  }
+ },
+ {
+  "id": "pregnancy",
+  "guidelines_retrieved": 2,
+  "control": {
+   "citations": 9,
+   "guideline_citations": 1,
+   "guideline_pmids": [
+    "38325969"
+   ],
+   "cost": 1.2238,
+   "has_guideline_heading": true,
+   "chars": 9152
+  },
+  "treated": {
+   "citations": 11,
+   "guideline_citations": 1,
+   "guideline_pmids": [
+    "38325969"
+   ],
+   "cost": 1.3446,
+   "has_guideline_heading": true,
+   "chars": 10711
+  }
+ },
+ {
+  "id": "intentional-replantation",
+  "guidelines_retrieved": 2,
+  "control": {
+   "citations": 16,
+   "guideline_citations": 1,
+   "guideline_pmids": [
+    "28436043"
+   ],
+   "cost": 0.5895,
+   "has_guideline_heading": true,
+   "chars": 11220
+  },
+  "treated": {
+   "citations": 16,
+   "guideline_citations": 2,
+   "guideline_pmids": [
+    "17803487",
+    "28436043"
+   ],
+   "cost": 0.5907,
+   "has_guideline_heading": true,
+   "chars": 9864
+  }
+ }
+]

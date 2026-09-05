@@ -83,10 +83,11 @@ def _esearch_hits_since(offset):
     looks like — which is exactly why this is a pid check and not a clock one.
     """
     if not AUDIT_LOG.exists():
-        return None, 0, 0, 0, 0
+        return None, 0, 0, 0, 0, 0, 0
     import os
     mine = os.getpid()
     total = n = empty = terms = failed = 0
+    gl_n = gl_empty = 0
     foreign = foreign_returned = 0
     with AUDIT_LOG.open("r", encoding="utf-8") as fh:
         fh.seek(offset)
@@ -111,6 +112,25 @@ def _esearch_hits_since(offset):
                 failed += 1
                 continue
             got = int(rec.get("n_returned") or 0)
+            # The guideline lane is counted SEPARATELY and kept out of the
+            # empty-fraction denominator. It is not a study lane and it is
+            # not asked a study lane's question: a specialty body either
+            # has published on this exact topic or it has not, so an empty
+            # result is the EXPECTED case on a narrow clinical question,
+            # not the malformed-query signature the assertion detects.
+            #
+            # MEASURED across the three v7 baseline runs (2,172 esearch
+            # calls): the guideline lane is 482 queries, 415 of them empty
+            # -- 86%, against 47% for every pre-existing lane together. It
+            # supplied 35% of all empties and dragged the corpus rate from
+            # 46% to 55%, straight through a 50% ceiling written before the
+            # lane existed. The threshold is NOT moved (rule 6); the
+            # denominator is corrected to the lanes it was written for.
+            if (rec.get("level_key") or "") == "guideline":
+                gl_n += 1
+                if got == 0:
+                    gl_empty += 1
+                continue
             total += got
             n += 1
             if got == 0:
@@ -148,7 +168,7 @@ def _esearch_hits_since(offset):
         print(f"  NOTE: {foreign} esearch call(s) ({foreign_returned} PMIDs) "
               f"in this window were made by another process and are EXCLUDED. "
               f"Something else is hitting PubMed while the eval runs.")
-    return total, n, empty, terms, failed
+    return total, n, empty, terms, failed, gl_n, gl_empty
 
 
 EVMAP_LOG = ROOT / "evidence_mapping.jsonl"
@@ -574,7 +594,8 @@ def run_case(case):
         job_id, case["question"], force_route=case.get("force_route"),
         mode=case.get("mode", "review"),
         context_block=context_block, prior_pmids=prior_pmids) or {}
-    esearch_total, n_queries, n_empty, n_terms, n_failed = _esearch_hits_since(offset)
+    (esearch_total, n_queries, n_empty, n_terms, n_failed,
+     gl_queries, gl_empty) = _esearch_hits_since(offset)
 
     # `list(TIER_ORDER) + [PROVISIONAL_KEY]`, the same idiom as the five
     # production sites, and for the same reason.
@@ -617,6 +638,17 @@ def run_case(case):
         "esearch_hits":    esearch_total,
         "esearch_queries": n_queries,
         "esearch_empty":   n_empty,
+        # REPORTED, NEVER ASSERTED. The guideline lane's yield is a real
+        # signal -- 86% empty across the v7 runs -- but it is a signal about
+        # whether a specialty body has published on this topic, not about
+        # whether the query is well formed. Asserting on it would fail a case
+        # for a silence that is the correct answer. Rule 32: a gate that can
+        # decline logs how often it declines, beside the measurement it
+        # affects.
+        "guideline_queries":   gl_queries,
+        "guideline_empty":     gl_empty,
+        "guideline_hit_rate":  (round(1.0 - gl_empty / gl_queries, 3)
+                                if gl_queries else None),
         # Hits PER QUERY, not total. generate_multi_search_terms is not
         # deterministic in how many terms it emits — observed 1 term (7 queries)
         # and 8 terms (56 queries) for the same question minutes apart — so a
@@ -1061,6 +1093,14 @@ def main():
                   f"{measured['search_terms_used']} search terms"
                   + (f", {measured['esearch_failed']} NEVER SENT — network"
                      if measured.get("esearch_failed") else "") + ")")
+            # Standing rule 5: the lane excluded from the denominator above
+            # still has to say what it did, or removing it from the assertion
+            # would be the same as not measuring it.
+            if measured.get("guideline_queries"):
+                print(f"  guideline  {measured['guideline_queries']} lane "
+                      f"quer(ies), {measured['guideline_empty']} returned "
+                      f"nothing = {measured['guideline_hit_rate']:.0%} hit rate "
+                      f"(reported, not asserted — see _esearch_hits_since)")
 
         if args.synthesis_subset:
             checked = measured.get("support_checked") or 0
