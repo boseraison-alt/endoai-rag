@@ -1005,18 +1005,91 @@ def _reset_sr_refs_cache() -> None:
         _sr_refs_cache.clear()
 
 
-def flag_superseded_by_review(evidence: dict, verify: bool = True) -> dict:
+def _candidate_similarities(question: str, candidates: list) -> int:
+    """Give SR candidates a relevance signal when the route did not supply one.
+
+    Item 2, 2026-09-05. This function used to nominate by relevance where a
+    similarity existed and by year where none did, which is not a rule — it is
+    two rules, chosen by which retrieval path happened to run. Library rows
+    come from cosine KNN and carry a similarity; live rows come from
+    `fetch_papers` and do not. Measured across the 29 eval questions the two
+    rules pick a DIFFERENT review on 27, and a blind three-vote panel judging
+    the review titles against the question preferred the relevance pick on
+    **23 of 27**. So the divergence is resolved by giving the live path the
+    signal, not by demoting the library path to the weaker rule.
+
+    The embedding is the SAME one the library was indexed with
+    (`rag.embed`, all-MiniLM-L6-v2, normalised), so the number computed here is
+    on the same scale as a stored cosine rather than a second notion of
+    similarity that happens to share a name.
+
+    Bounded and fails safe: at most `_SIM_BACKFILL_MAX` candidates are embedded
+    (the SR tiers are quota-capped at 28 between them), and any failure leaves
+    the similarities at 0.0, which drops the caller back to the year rule
+    exactly as before. Returns how many candidates were given a similarity.
+    """
+    if not question or not candidates:
+        return 0
+    try:
+        from rag import embed as _embed
+        qv = _embed(question)
+    except Exception as ex:
+        print(f"    [prisma] could not embed the question ({ex}) — "
+              f"falling back to the year rule")
+        return 0
+
+    n = no_text = failed = 0
+    for i, (p, y, sim) in enumerate(candidates[:_SIM_BACKFILL_MAX]):
+        if sim > 0:
+            continue
+        text = f"{p.get('title', '')}\n{p.get('abstract', '')}".strip()
+        if not text:
+            no_text += 1
+            continue
+        try:
+            pv = _embed(text)
+        except Exception:
+            failed += 1
+            continue
+        # Both vectors are L2-normalised by `embed`, so the dot product IS the
+        # cosine. Computed inline rather than pulled from numpy to keep this
+        # off the import path of every caller.
+        dot = sum(a * b for a, b in zip(qv, pv))
+        candidates[i] = (p, y, float(dot))
+        n += 1
+    # Standing rule 5. Without this the loop can drop every candidate on the
+    # floor and the caller reports "the question could not be embedded", which
+    # is a different fault with a different fix — and that misdiagnosis is
+    # exactly what this print caught during item 2.
+    if no_text or failed:
+        print(f"    [prisma] similarity backfill: {n} computed, "
+              f"{no_text} candidate(s) had no title or abstract, "
+              f"{failed} embedding call(s) failed")
+    return n
+
+
+_SIM_BACKFILL_MAX = 40   # SR tiers are quota-capped at 10 + 18; headroom above it
+
+
+def flag_superseded_by_review(evidence: dict, verify: bool = True,
+                              question: str = "") -> dict:
     """Name the most relevant recent review, and mark ONLY the papers it is
     known to cite. Mutates the passed evidence dict in place and returns it.
 
     `verify=False` skips the network lookup; nothing is then marked
     `superseded_by_review`, which is the correct degradation — without linkage
     there is no verified inclusion to report.
+
+    `question` lets a route that carries no cosine similarity (the live and
+    curriculum paths) still nominate by relevance; see
+    `_candidate_similarities`. Omitting it is safe and reproduces the old year
+    rule, which is why the parameter defaults rather than being required.
     """
-    # A38c. Pick the review by relevance to the question where the route
-    # supplies one. The live path has no similarity, so it keeps the year rule
-    # — and says which rule it used, because the two disagree on 26 of 29
-    # questions and a reader of the log needs to know which they are seeing.
+    # A38c, amended by item 2 (2026-09-05). ONE rule now: relevance to the
+    # question. Where the route supplies no similarity the question is embedded
+    # and one is computed, rather than silently switching to a different rule.
+    # The log still says which rule was used, because a fallback to year is now
+    # a degradation worth seeing rather than a routine path.
     candidates = []
     for tier_key in SR_TIER_KEYS:
         for p in (evidence.get(tier_key, {}) or {}).get("scored", []) or []:
@@ -1030,12 +1103,29 @@ def flag_superseded_by_review(evidence: dict, verify: bool = True) -> dict:
     if not candidates:
         return evidence  # no SR to compare against
 
+    backfilled = 0
+    if not any(sim > 0 for _p, _y, sim in candidates):
+        backfilled = _candidate_similarities(question, candidates)
+
     if any(sim > 0 for _p, _y, sim in candidates):
         chosen, sr_year, _sim = max(candidates, key=lambda c: (c[2], c[1]))
-        rule = "relevance"
+        rule = ("relevance (%d similarities computed here)" % backfilled
+                if backfilled else "relevance")
     else:
         chosen, sr_year, _sim = max(candidates, key=lambda c: c[1])
-        rule = "year (no similarity on this route)"
+        # Standing rule 5 / 32: this is now the DEGRADED branch, not a second
+        # supported rule, so it says so and says why it was reached. The three
+        # causes are distinguished because they have three different fixes,
+        # and an earlier version of this line asserted the second one for all
+        # of them — which sent me looking at the embedder while the real fault
+        # was upstream.
+        if not question:
+            why = "no question passed"
+        elif backfilled == 0:
+            why = "no candidate could be given a similarity"
+        else:
+            why = "every computed similarity was zero"
+        rule = "year — DEGRADED: no similarity on this route and " + why
     sr_pmid = chosen.get("pmid", "")
     cutoff = sr_year - PRISMA_BUFFER_YEARS
 
@@ -4922,6 +5012,23 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 # level5 regardless of the tier the search ran under.)
                 "level_key":       eff_level,
                 "is_reference_text": is_book,
+                # THE PAPER ITSELF. Found by item 2 (2026-09-05): the library
+                # path's `rag_results_to_scored` carries title and abstract and
+                # this path did not, so a live-path paper dict knew its
+                # authors, journal, year, citations, sample size and score —
+                # and not what the paper was called. The title reached Claude
+                # only through the separate `annotated_text` block, so nothing
+                # downstream that reads the DICT could see it.
+                #
+                # That is what made the PRISMA nomination fall back to the year
+                # rule on this path: `_candidate_similarities` had no text to
+                # embed. It is the same field pair, for the same reason, as the
+                # library-side fix — and the two paths are now symmetric.
+                #
+                # `_safe_papers` whitelists what leaves the server and neither
+                # of these is on it, so the abstract stops at the prompt.
+                "title":           _parts.get("title") or "",
+                "abstract":        paper_text,
                 "year":            meta["year"],
                 "citations":       meta["citations"],
                 "authors":         meta.get("authors", ""),
@@ -5664,7 +5771,10 @@ def build_evidence_base(topic, mode: str = "review"):
             print(f"  Top journal:         {top_paper['journal']} (IF={top_paper.get('impact_factor', 'unknown')})")
 
     # PRISMA-style dedup — flag primary studies already synthesised in a newer SR
-    flag_superseded_by_review(evidence)
+    # `question=` — the curriculum path fetches from PubMed and so carries no
+    # cosine similarity either. Item 2: without it this path nominates by year
+    # while the library path nominates by relevance.
+    flag_superseded_by_review(evidence, question=topic)
 
     # synthesis_order = strict tier hierarchy (Cochrane → L1 → L2 → L3a → L3b → L4 → L5)
     # all_scored      = legacy flat-by-score list (retained for status panels / downstream code)

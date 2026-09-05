@@ -1527,7 +1527,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             update_job(job_id, message="Library search complete — asking Claude...", progress=75)
             # Apply outlier detection and currency tags to RAG results
             all_scored = detect_outliers(apply_currency_tags(all_scored))
-            flag_superseded_by_review(evidence)
+            flag_superseded_by_review(evidence, question=question)
             avg_score = sum(p["score"] for p in all_scored) / len(all_scored) if all_scored else 0
             evidence["_summary"] = {
                 "total_scored":    len(all_scored),
@@ -1796,7 +1796,11 @@ def build_evidence_base_with_progress(job_id: str, question: str,
 
     # Apply outlier detection and currency tags to PubMed results
     all_scored = detect_outliers(apply_currency_tags(all_scored))
-    flag_superseded_by_review(evidence)
+    # `question=` is what stops this path nominating by YEAR while the library
+    # branch 300 lines up nominates by RELEVANCE — item 2. Without it the two
+    # branches of the SAME function pick a different review on 27 of 29
+    # questions, and the blind panel preferred the relevance pick 23 times.
+    flag_superseded_by_review(evidence, question=question)
     avg_score = sum(p["score"] for p in all_scored) / len(all_scored) if all_scored else 0
     evidence["_summary"] = {
         "total_scored":    len(all_scored),
@@ -1962,7 +1966,10 @@ def build_differential_evidence(job_id: str, case_description: str,
         }
 
     all_scored = detect_outliers(apply_currency_tags(all_scored))
-    flag_superseded_by_review(evidence)
+    # The differential's "question" is the case description: it is what every
+    # candidate retrieval was seeded from, so it is the right thing for the
+    # nominated review to be relevant TO.
+    flag_superseded_by_review(evidence, question=case_description)
     avg = (sum(p["score"] for p in all_scored) / len(all_scored)
            if all_scored else 0)
     evidence["_summary"] = {

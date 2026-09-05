@@ -1,0 +1,848 @@
+[
+ {
+  "id": "laser-root-canal-disinfection-live",
+  "question": "Use of lasers in root canal disinfection",
+  "n_candidates": 26,
+  "differ": true,
+  "relevance": {
+   "pmid": "34936823",
+   "year": 2022,
+   "sim": 0.855,
+   "title": "In Vivo Efficacy of Diode Laser as a Monotherapy in Root Canal Disinfection: A Systematic Review and Meta-Analysis."
+  },
+  "year": {
+   "pmid": "41833582",
+   "year": 2026,
+   "sim": 0.77,
+   "title": "Clinical Efficiency of Lasers in Endodontic Treatment of Primary Endodontic Cases: An Umbrella Review of Systematic Reviews."
+  },
+  "votes": [
+   "year",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "laser-root-canal-disinfection-library",
+  "question": "Use of lasers in root canal disinfection",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "34936823",
+   "year": 2022,
+   "sim": 0.855,
+   "title": "In Vivo Efficacy of Diode Laser as a Monotherapy in Root Canal Disinfection: A Systematic Review and Meta-Analysis."
+  },
+  "year": {
+   "pmid": "41833582",
+   "year": 2026,
+   "sim": 0.77,
+   "title": "Clinical Efficiency of Lasers in Endodontic Treatment of Primary Endodontic Cases: An Umbrella Review of Systematic Reviews."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "single-vs-multiple-visit",
+  "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+  "n_candidates": 28,
+  "differ": true,
+  "relevance": {
+   "pmid": "18291270",
+   "year": 2008,
+   "sim": 0.799,
+   "title": "Outcome of one-visit and two-visit endodontic treatment of necrotic teeth with apical periodontitis: a randomized controlled trial with one-year evaluation."
+  },
+  "year": {
+   "pmid": "41856391",
+   "year": 2026,
+   "sim": 0.725,
+   "title": "Single-visit versus multiple-visit root canal therapy: Post-endodontic pain outcomes from an umbrella review."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "year"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "mta-vs-biodentine-pulpotomy",
+  "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+  "n_candidates": 26,
+  "differ": true,
+  "relevance": {
+   "pmid": "36149016",
+   "year": 2023,
+   "sim": 0.799,
+   "title": "The treatment of mature permanent teeth with irreversible pulpitis by cervical pulpotomy: A systematic review"
+  },
+  "year": {
+   "pmid": "42188992",
+   "year": 2026,
+   "sim": 0.753,
+   "title": "Clinical Evaluation of Three Direct Pulp Capping Materials in Caries-Induced Pulpitis of Mature Permanent Teeth: A Randomized Controlled Trial."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "naocl-concentration",
+  "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
+  "n_candidates": 26,
+  "differ": true,
+  "relevance": {
+   "pmid": "39133080",
+   "year": 2024,
+   "sim": 0.809,
+   "title": "The use of 0.5% or 3% NaOCl for irrigation during root canal treatment results in similar clinical outcome: A 6-year follow-up of a quasi-randomized clinical trial."
+  },
+  "year": {
+   "pmid": "41733459",
+   "year": 2026,
+   "sim": 0.753,
+   "title": "Effect of Different Sodium Hypochlorite Concentrations on Post Endodontic Pain: A Systematic Review and Meta-Analysis of Randomized Controlled Trials."
+  },
+  "votes": [
+   "year",
+   "year",
+   "year"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "year"
+ },
+ {
+  "id": "cbct-vs-periapical",
+  "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "37067066",
+   "year": 2023,
+   "sim": 0.789,
+   "title": "Efficacy of imaging techniques for the diagnosis of apical periodontitis: A systematic review."
+  },
+  "year": {
+   "pmid": "42063099",
+   "year": 2026,
+   "sim": 0.612,
+   "title": "Endodontic treatment outcomes in apical periodontitis cases by the lateral condensation versus warm vertical compaction techniques: a one-year follow-up study."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "bioceramic-vs-resin-sealer",
+  "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "33523574",
+   "year": 2021,
+   "sim": 0.727,
+   "title": "Solubility of bioceramic- and epoxy resin-based root canal sealers: A systematic review and meta-analysis"
+  },
+  "year": {
+   "pmid": "41928175",
+   "year": 2026,
+   "sim": 0.707,
+   "title": "Effect of calcium silicate and epoxy resin-based sealers on postoperative pain: a randomized clinical trial."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "retreatment-vs-microsurgery",
+  "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+  "n_candidates": 27,
+  "differ": true,
+  "relevance": {
+   "pmid": "36349644",
+   "year": 2022,
+   "sim": 0.764,
+   "title": "Influence of cone beam computed tomography on endodontic treatment planning: A systematic review."
+  },
+  "year": {
+   "pmid": "42063099",
+   "year": 2026,
+   "sim": 0.688,
+   "title": "Endodontic treatment outcomes in apical periodontitis cases by the lateral condensation versus warm vertical compaction techniques: a one-year follow-up study."
+  },
+  "votes": [
+   "year",
+   "year",
+   "year"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "year"
+ },
+ {
+  "id": "direct-pulp-capping",
+  "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
+  "n_candidates": 26,
+  "differ": true,
+  "relevance": {
+   "pmid": "33970319",
+   "year": 2021,
+   "sim": 0.815,
+   "title": "Vital pulp therapy in carious pulp-exposed permanent teeth: an umbrella review."
+  },
+  "year": {
+   "pmid": "40898413",
+   "year": 2025,
+   "sim": 0.734,
+   "title": "Outcome Following Complete and Partial Pulpotomy in Managing Cariously Exposed Mature Permanent Molars With Symptomatic Irreversible Pulpitis: A 5-Year Follow-Up of a Randomised Clinical Trial."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "preemptive-nsaid",
+  "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "29972451",
+   "year": 2018,
+   "sim": 0.779,
+   "title": "Effect of Premedication with Anti-inflammatory Drugs on Post-Endodontic Pain: A Randomized Clinical Trial."
+  },
+  "year": {
+   "pmid": "40497500",
+   "year": 2025,
+   "sim": 0.667,
+   "title": "Effect of occlusal reduction on post-operative pain of symptomatic and asymptomatic molar teeth."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "regenerative-immature",
+  "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "24461403",
+   "year": 2014,
+   "sim": 0.768,
+   "title": "Regenerative potential of immature permanent teeth with necrotic pulps after different regenerative protocols."
+  },
+  "year": {
+   "pmid": "42288014",
+   "year": 2026,
+   "sim": 0.706,
+   "title": "Association of Apical Maturity With Clinical and Biological Outcomes After Regenerative Endodontic Procedures: A Systematic Review and Meta-Analysis."
+  },
+  "votes": [
+   "relevance",
+   "year",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "cracked-tooth-prognosis",
+  "question": "Cracked tooth prognosis after root canal treatment by crack extent",
+  "n_candidates": 27,
+  "differ": true,
+  "relevance": {
+   "pmid": "31797172",
+   "year": 2020,
+   "sim": 0.757,
+   "title": "Outcomes of endodontically treated cracked teeth: a systematic review and meta-analysis."
+  },
+  "year": {
+   "pmid": "41872366",
+   "year": 2026,
+   "sim": 0.639,
+   "title": "Effect of root canal filling techniques and materials on endodontic treatment outcomes: a systematic review and meta-analysis."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "apdt-primary-molars",
+  "question": "Antimicrobial photodynamic therapy as an adjunct in primary molars with necrotic pulps",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "36681260",
+   "year": 2023,
+   "sim": 0.807,
+   "title": "Effect of antimicrobial photodynamic therapy on the reduction of bacteria and virulence factors in teeth with primary endodontic infection."
+  },
+  "year": {
+   "pmid": "42076141",
+   "year": 2026,
+   "sim": 0.661,
+   "title": "Hypericin-Mediated Antimicrobial Photodynamic Therapy in Dentistry: A Systematic Review of Applications Against Oral Biofilms and Infections."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "bisphosphonates",
+  "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+  "n_candidates": 14,
+  "differ": true,
+  "relevance": {
+   "pmid": "41390055",
+   "year": 2026,
+   "sim": 0.729,
+   "title": "Untreated Apical Periodontitis and the Risk of Medication-related Osteonecrosis of the Jaws (MRONJ): A Systematic Review with Mechanistic Insights from Preclinical Studies."
+  },
+  "year": {
+   "pmid": "42512863",
+   "year": 2026,
+   "sim": 0.623,
+   "title": "Regenerative Potential of Biodentine in Complex Endodontic Conditions: A Systematic Review of Clinical and Radiological Evidence."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "pregnancy",
+  "question": "Root canal treatment in pregnancy timing and local anesthetic choice",
+  "n_candidates": 27,
+  "differ": true,
+  "relevance": {
+   "pmid": "14641427",
+   "year": 2003,
+   "sim": 0.656,
+   "title": "The relationship of intracanal medicaments to postoperative pain in endodontics."
+  },
+  "year": {
+   "pmid": "38643087",
+   "year": 2024,
+   "sim": 0.611,
+   "title": "Postoperative pain after single-visit root canal treatments in necrotic teeth comparing instruments' kinematics and apical instrumentation limits - a prospective randomized multicenter clinical trial."
+  },
+  "votes": [
+   "relevance",
+   "year",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "pips-vs-ultrasonic",
+  "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
+  "n_candidates": 27,
+  "differ": false,
+  "relevance": {
+   "pmid": "41833582",
+   "year": 2026,
+   "sim": 0.694,
+   "title": "Clinical Efficiency of Lasers in Endodontic Treatment of Primary Endodontic Cases: An Umbrella Review of Systematic Reviews."
+  },
+  "year": {
+   "pmid": "41833582",
+   "year": 2026,
+   "sim": 0.694,
+   "title": "Clinical Efficiency of Lasers in Endodontic Treatment of Primary Endodontic Cases: An Umbrella Review of Systematic Reviews."
+  }
+ },
+ {
+  "id": "intentional-replantation",
+  "question": "Intentional replantation for teeth unsuitable for surgery",
+  "n_candidates": 27,
+  "differ": true,
+  "relevance": {
+   "pmid": "27759881",
+   "year": 2016,
+   "sim": 0.691,
+   "title": "Endodontic procedures for retreatment of periapical lesions."
+  },
+  "year": {
+   "pmid": "40122230",
+   "year": 2025,
+   "sim": 0.627,
+   "title": "CBCT-Assessed Outcomes and Prognostic Factors of Primary Endodontic Treatment and Retreatment: A Systematic Review and Meta-Analysis."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "sdf-pulp-outcomes",
+  "question": "Silver diamine fluoride and pulp outcomes in deep carious lesions in adult teeth",
+  "n_candidates": 26,
+  "differ": true,
+  "relevance": {
+   "pmid": "41026563",
+   "year": 2025,
+   "sim": 0.839,
+   "title": "Evaluation of silver diamine fluoride and biodentine as agents for indirect pulp therapy in primary teeth - A randomized controlled trial."
+  },
+  "year": {
+   "pmid": "41288117",
+   "year": 2026,
+   "sim": 0.604,
+   "title": "Three-Year Clinical and Economic Evaluation of Selective Caries Removal and Full Pulpotomy for Extensive Caries: An Exploratory Randomised Controlled Trial."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "sonic-vs-ultrasonic",
+  "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
+  "n_candidates": 24,
+  "differ": true,
+  "relevance": {
+   "pmid": "22972129",
+   "year": 2012,
+   "sim": 0.687,
+   "title": "Irrigants for non-surgical root canal treatment in mature permanent teeth."
+  },
+  "year": {
+   "pmid": "41514415",
+   "year": 2026,
+   "sim": 0.609,
+   "title": "Effectiveness of the GentleWave system in root canal disinfection: a systematic review."
+  },
+  "votes": [
+   "relevance",
+   "year",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "dens-invaginatus",
+  "question": "Dens invaginatus type III management",
+  "n_candidates": 14,
+  "differ": true,
+  "relevance": {
+   "pmid": "21752247",
+   "year": 2011,
+   "sim": 0.659,
+   "title": "Mineral trioxyde aggregate versus calcium hydroxide in apexification of non vital immature teeth: study protocol for a randomized controlled trial."
+  },
+  "year": {
+   "pmid": "41235564",
+   "year": 2025,
+   "sim": 0.616,
+   "title": "Evaluation of clinical and radiographic outcome of premixed injectable mineral trioxide aggregate and conventional mineral trioxide aggregate as pulpotomy medicaments in primary molars - A split-mouth randomized control trial."
+  },
+  "votes": [
+   "year",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "diabetes-outcomes",
+  "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
+  "n_candidates": 26,
+  "differ": true,
+  "relevance": {
+   "pmid": "37154421",
+   "year": 2022,
+   "sim": 0.793,
+   "title": "Association between apical periodontitis and root canal treatment in patients with type II diabetes. A systematic review."
+  },
+  "year": {
+   "pmid": "42063099",
+   "year": 2026,
+   "sim": 0.655,
+   "title": "Endodontic treatment outcomes in apical periodontitis cases by the lateral condensation versus warm vertical compaction techniques: a one-year follow-up study."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "case-opening-sparse",
+  "question": "Tooth 36 hurts.",
+  "n_candidates": 15,
+  "differ": true,
+  "relevance": {
+   "pmid": "41345947",
+   "year": 2025,
+   "sim": 0.653,
+   "title": "Histological evaluation of vital full pulpotomy techniques in permanent mature teeth with symptomatic irreversible pulpitis using three calcium silicate cements: a randomized controlled trial."
+  },
+  "year": {
+   "pmid": "42383590",
+   "year": 2026,
+   "sim": 0.605,
+   "title": "Tissue response in hemisectioned primary mandibular second molars."
+  },
+  "votes": [
+   "relevance",
+   "year",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": false,
+  "winner": "relevance"
+ },
+ {
+  "id": "case-opening-full",
+  "question": "62-year-old female, well-controlled type 2 diabetes, no other medical history, no bisphosphonates. Tooth 26, previously root treated 8 years ago, now tender to percussion for 3 weeks. Periapical radiograph and CBCT show a 6mm periapical radiolucency on the MB root with an untreated MB2. Tooth is non-vital (previously treated), restorable with an adequate ferrule and existing crown is sound. No sinus tract. Patient has taken amoxicillin from her GP with partial relief.",
+  "n_candidates": 30,
+  "differ": true,
+  "relevance": {
+   "pmid": "27759881",
+   "year": 2016,
+   "sim": 0.751,
+   "title": "Endodontic procedures for retreatment of periapical lesions."
+  },
+  "year": {
+   "pmid": "41510689",
+   "year": 2026,
+   "sim": 0.692,
+   "title": "Effect of Voxel Size on Cone-Beam Computed Tomography-Based Assessment of Root Canal Anatomy: A Systematic Review and Meta-Analysis."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "review-followup-immature-teeth",
+  "question": "What about in immature teeth?",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "31809911",
+   "year": 2020,
+   "sim": 0.686,
+   "title": "Evaluation of the outcome of various laser therapy applications in root canal disinfection: A systematic review."
+  },
+  "year": {
+   "pmid": "41833582",
+   "year": 2026,
+   "sim": 0.639,
+   "title": "Clinical Efficiency of Lasers in Endodontic Treatment of Primary Endodontic Cases: An Umbrella Review of Systematic Reviews."
+  },
+  "votes": [
+   "year",
+   "year",
+   "year"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "year"
+ },
+ {
+  "id": "review-newtopic-reset",
+  "question": "What is the evidence for sodium hypochlorite concentration in primary root canal treatment?",
+  "n_candidates": 27,
+  "differ": true,
+  "relevance": {
+   "pmid": "39133080",
+   "year": 2024,
+   "sim": 0.757,
+   "title": "The use of 0.5% or 3% NaOCl for irrigation during root canal treatment results in similar clinical outcome: A 6-year follow-up of a quasi-randomized clinical trial."
+  },
+  "year": {
+   "pmid": "41733459",
+   "year": 2026,
+   "sim": 0.719,
+   "title": "Effect of Different Sodium Hypochlorite Concentrations on Post Endodontic Pain: A Systematic Review and Meta-Analysis of Randomized Controlled Trials."
+  },
+  "votes": [
+   "year",
+   "year",
+   "year"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "year"
+ },
+ {
+  "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+  "question": "20-year-old, necrotic tooth, no restoration, no caries \u00e2\u20ac\u201d what could the cause be?",
+  "n_candidates": 11,
+  "differ": true,
+  "relevance": {
+   "pmid": "22429152",
+   "year": 2012,
+   "sim": 0.653,
+   "title": "Radiological diagnosis of periapical bone tissue lesions in endodontics: a systematic review."
+  },
+  "year": {
+   "pmid": "41367407",
+   "year": 2025,
+   "sim": 0.61,
+   "title": "Application and performance of artificial intelligence-based models in the detection, segmentation and classification of periapical lesions: a systematic review."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "year-first",
+   "relevance-first",
+   "year-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "bisphosphonate-extraction-vs-rct-treatment",
+  "question": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
+  "n_candidates": 13,
+  "differ": false,
+  "relevance": {
+   "pmid": "41390055",
+   "year": 2026,
+   "sim": 0.687,
+   "title": "Untreated Apical Periodontitis and the Risk of Medication-related Osteonecrosis of the Jaws (MRONJ): A Systematic Review with Mechanistic Insights from Preclinical Studies."
+  },
+  "year": {
+   "pmid": "41390055",
+   "year": 2026,
+   "sim": 0.687,
+   "title": "Untreated Apical Periodontitis and the Risk of Medication-related Osteonecrosis of the Jaws (MRONJ): A Systematic Review with Mechanistic Insights from Preclinical Studies."
+  }
+ },
+ {
+  "id": "dens-evaginatus-premolar-diagnostic",
+  "question": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
+  "n_candidates": 14,
+  "differ": true,
+  "relevance": {
+   "pmid": "33378579",
+   "year": 2021,
+   "sim": 0.69,
+   "title": "The global prevalence of apical periodontitis: a systematic review and meta-analysis."
+  },
+  "year": {
+   "pmid": "41390055",
+   "year": 2026,
+   "sim": 0.602,
+   "title": "Untreated Apical Periodontitis and the Risk of Medication-related Osteonecrosis of the Jaws (MRONJ): A Systematic Review with Mechanistic Insights from Preclinical Studies."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ },
+ {
+  "id": "dens-evaginatus-prevention-followup",
+  "question": "oh i do see a possible dens evaginatu sin tooth #20. Is there anything a dentist can do to present pulp necrosis from setting in?",
+  "n_candidates": 25,
+  "differ": true,
+  "relevance": {
+   "pmid": "31146622",
+   "year": 2019,
+   "sim": 0.675,
+   "title": "Which procedures and materials could be applied for full pulpotomy in permanent mature teeth? A systematic review."
+  },
+  "year": {
+   "pmid": "40297278",
+   "year": 2025,
+   "sim": 0.622,
+   "title": "Effects of intracanal cryotherapy on postoperative pain in necrotic teeth with symptomatic apical periodontitis: a randomized controlled clinical trial."
+  },
+  "votes": [
+   "relevance",
+   "relevance",
+   "relevance"
+  ],
+  "vote_orders": [
+   "relevance-first",
+   "year-first",
+   "relevance-first"
+  ],
+  "unanimous": true,
+  "winner": "relevance"
+ }
+]
