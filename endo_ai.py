@@ -5597,6 +5597,95 @@ def live_path_filters() -> dict:
         filters[key] = " OR ".join(terms)
     return filters
 
+# ── THE PROMPT'S LANE ENUMERATIONS, DERIVED ──────────────
+#
+# Item 1, 2026-09-06. FOUR hand-written copies of the lane set had drifted
+# behind it by the time this was written: app.py's tier list (three lanes
+# behind), eval/run_eval.py's TIER_ORDER loop (blind to provisional), and the
+# synthesis prompt's own enumerations -- TWICE, once as the tier-order line
+# and once as the set of EVIDENCE SUMMARY headings. The prompt copies are why
+# guidelines were retrieved on 21 of 29 questions and cited on 1 in 5: the
+# model was handed a block, told to write under named headings, told to skip
+# levels with no relevant evidence, and given no heading the block could go
+# under.
+#
+# So the prompt stops writing them by hand. Both enumerations are rendered
+# from ONE table below, and `tests/test_prompt_lane_parity.py` asserts the
+# rendered heading set equals the lane set exactly -- no lane without a
+# heading, no heading without a lane. That is the prompt's version of the
+# builder-agreement test.
+#
+# THE SOURCE IS `TIER_ORDER + PROVISIONAL_KEY`, NOT `tier_query_lanes()`,
+# and the difference matters. tier_query_lanes() is the FETCH set: eight lanes
+# that get a PubMed query. TIER_ORDER is the RENDER set: it also carries
+# `cochrane` (fetched by its own function), and `classic`, `level3` and
+# `invitro`, which no lane queries but which library rows are banded into and
+# which therefore DO reach the prompt. A heading list built from the fetch set
+# would omit exactly the lanes that only ever arrive from the library -- the
+# same class of bug one layer along.
+#
+# Labels are NOT restated here; they come from TIER_LABEL and
+# PROVISIONAL_LABEL. A second copy of the labels would be the very thing this
+# table exists to remove.
+LANE_PROMPT_NOTE = {
+    "cochrane":   "",
+    "level1":     "",
+    "classic":    "foundational papers; weigh them for context, not currency",
+    "level2":     "",
+    "level3a":    "",
+    "level3":     "legacy band; treat as retrospective evidence",
+    "level3b":    "",
+    "level4":     "",
+    "invitro":    "bench work: it can explain a mechanism, and it can never "
+                  "establish a clinical outcome",
+    "guideline":  "",          # its guidance is the block below, verbatim
+    "level5":     "",
+    "observational": "descriptive and anatomical work: prevalence, morphology, "
+                     "imaging and diagnostic-accuracy designs. It answers "
+                     "'how common' and 'what does it look like', never "
+                     "'does it work better' -- report it as description, and "
+                     "do not read a comparison into it",
+    PROVISIONAL_KEY: "recent papers MEDLINE has not classified yet. The design "
+                     "is the authors' own claim, not a verified tier, so say "
+                     "so when you use one",
+}
+
+
+def prompt_lane_keys() -> list:
+    """Every lane that can appear in an evidence base, in render order."""
+    return list(TIER_ORDER) + [PROVISIONAL_KEY]
+
+
+def lane_label(key: str) -> str:
+    return (PROVISIONAL_LABEL if key == PROVISIONAL_KEY
+            else TIER_LABEL.get(key, key))
+
+
+def render_synthesis_order_line() -> str:
+    """The tier-order instruction, derived.
+
+    Only the lanes that ARE rungs appear here. `guideline`, `observational`,
+    `invitro` and the provisional lane are deliberately excluded from the
+    ORDERING: none of them is a rung, and putting them in a hierarchy the
+    prompt then tells the model to obey is the score-as-membership category
+    error in a different costume. They get headings, and their own guidance,
+    without being ranked.
+    """
+    rungs = [k for k in TIER_ORDER
+             if k not in ("guideline", "observational", "invitro")]
+    return " → ".join(lane_label(k).split(" —")[0].split(" /")[0].strip()
+                      for k in rungs)
+
+
+def render_evidence_headings() -> str:
+    """The EVIDENCE SUMMARY heading set, derived, one per lane."""
+    out = []
+    for k in prompt_lane_keys():
+        note = LANE_PROMPT_NOTE.get(k, "")
+        out.append("**%s**%s" % (lane_label(k), (" — " + note) if note else ""))
+    return "\n".join(out)
+
+
 # Item 3, 2026-09-05 — WHY GUIDELINES WERE RETRIEVED AND NEVER CITED.
 #
 # The synthesis prompt enumerates the ladder twice: once as "Synthesise the
@@ -5619,8 +5708,15 @@ def live_path_filters() -> dict:
 # cites them where they bear. Divergence between the specialty's position and
 # the trial evidence is stated as first-class output, which is A49's
 # "where the specialty stands" and something no competitor produces.
-GUIDELINE_PROMPT_BLOCK = """**Specialty Guidelines & Position Statements** — use this heading whenever the evidence carries that block. Place it last; it is not a rung on the ladder.
-
+# ITEM 1, 2026-09-06: the first line of this block used to be a hand-written
+# heading, `**Specialty Guidelines & Position Statements** — use this heading
+# whenever the evidence carries that block.` It is gone because
+# `render_evidence_headings()` now emits that heading for every lane including
+# this one, from TIER_LABEL, so keeping it here printed the heading TWICE and
+# under a shortened label. The instruction it carried is not lost — it moved
+# into the derived list, which states it for all twelve lanes instead of one.
+# Everything below is the wording the 2026-09-05 A/B measured, verbatim.
+GUIDELINE_PROMPT_BLOCK = """
 SPECIALTY GUIDELINES ARE A DIFFERENT AXIS, NOT A RUNG ON THE LADDER:
 The evidence may include a "Specialty Guidelines & Position Statements" block.
 A guideline is not a study and carries no evidence score, so it neither
@@ -8980,7 +9076,7 @@ Each paper has been pre-scored 0-100 based on:
 __SCORE_WEIGHTS__
 
 CRITICAL — STRICT TIER HIERARCHY (read this carefully):
-Synthesise the evidence in tier order: Cochrane → Level I → Level II → Level IIIa (retrospective cohort) → Level IIIb (case-control) → Level IV → Level V.
+Synthesise the evidence in tier order: """ + render_synthesis_order_line() + """.
 A high-scoring lower-tier paper must NEVER override a finding that a higher tier already addresses, even if its 0-100 score is numerically higher. Scores rank papers WITHIN a tier — they do not promote a tier. If Level I evidence answers the question, use it; only fall through to lower tiers when higher tiers are silent or genuinely insufficient.
 
 CONTRADICTION SURFACING:
@@ -9022,13 +9118,7 @@ This section is what the clinician acts on, so it MUST be traceable:
 
 Organized by evidence level, top-down. For each level write a short paragraph (3-6 sentences) summarising what the evidence shows — do not use terse bullet points. Cite authors inline as (Author et al.) or (Author Surname). Include study design, sample size, and follow-up where relevant. Discuss agreements and disagreements between studies. Skip levels with no relevant evidence.
 
-**Cochrane Reviews**
-**Level I — RCTs and Systematic Reviews**
-**Level II — Prospective Studies**
-**Level IIIa — Retrospective Cohort Studies**
-**Level IIIb — Case-Control Studies**
-**Level IV — Case Series**
-**Level V — Expert Opinion**
+""" + render_evidence_headings() + """
 """ + (GUIDELINE_PROMPT_BLOCK if GUIDELINE_PROMPT_ENABLED else "") + """
 
 ---
