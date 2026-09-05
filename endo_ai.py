@@ -5641,6 +5641,17 @@ def build_synthesis_order(evidence: dict) -> list:
     Returns a single flattened list of papers with strict tier hierarchy:
     every cochrane paper, then every level1 paper, etc. Within each tier,
     papers are sorted by score descending.
+
+    PROVISIONAL_KEY is not in TIER_ORDER and is deliberately NOT added here.
+    Two reasons, and the first alone settles it: a provisional paper carries
+    `score: None`, and `sorted(..., key=lambda p: p.get("score", 0))` returns
+    that None rather than the default — the key is present — so one such paper
+    raises `TypeError: '<' not supported between 'NoneType' and 'float'` and
+    takes the whole answer down. Second, this list IS the tier hierarchy the
+    system prompt tells Claude to trust absolutely, and a paper whose design
+    MEDLINE has not classified has no rung on it. The lane reaches the prompt
+    through `build_evidence_context`, after every tier and outside the
+    hierarchy, which is where it belongs.
     """
     ordered = []
     for tier_key in TIER_ORDER:

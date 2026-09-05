@@ -1510,6 +1510,14 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # So: SELECT the survivors by similarity to this question, then
             # order them by score for display, which is invariant 1 unchanged
             # — tier by study design, score ranking only within a tier.
+            # PROVISIONAL_KEY is not in TIER_ORDER and needs no handling HERE,
+            # unlike every other loop over this list. The provisional lane is
+            # `fetch_untyped_recent`, a live PubMed query for papers MEDLINE
+            # has not yet classified, and it never writes back to the library
+            # (pinned by test_provisional_lane). So no library row can carry
+            # that key and there is nothing on this branch for the lane to
+            # drop. If write-back ever admits one, this loop is where it would
+            # silently vanish.
             for tier in TIER_ORDER:
                 bucket = by_tier.get(tier)
                 if not bucket:

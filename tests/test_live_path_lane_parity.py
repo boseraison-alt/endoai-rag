@@ -414,3 +414,147 @@ class TestTheProvisionalLaneReachesTheLivePath:
         assert "all_scored.extend" not in seg, (
             "provisional papers were added to all_scored; their score is None "
             "and `sum(p['score'] for p in all_scored)` will raise")
+
+
+class TestTheTwoBuildersIssueTheSameLaneSet:
+    """THE AGREEMENT TEST — item 3, 2026-09-05.
+
+    Every other test in this file asserts something about ONE builder, or
+    about the source shape of one. That is what let the original defect
+    through: `test_observational_tier` and `test_guideline_lane` were correct
+    about `tier_query_lanes()`, `test_provisional_lane` was correct about
+    `endo_ai.build_evidence_base`, and the live path had its own hardcoded
+    list three lanes behind while all three stayed green.
+
+    This asserts the thing none of them did: that the two builders, actually
+    RUN, request the same set of lanes. Not a test of each — a test of their
+    agreement. A source-shape test cannot do this; the previous list was
+    hardcoded and looked perfectly well-formed.
+
+    Both are driven offline with every fetcher stubbed, so what is compared is
+    the lane keys each builder asked for, not what PubMed returned.
+    """
+
+    @pytest.fixture
+    def lanes_issued(self, monkeypatch):
+        """Run both builders with the fetchers recording, and return
+        {"curriculum": set, "live": set}."""
+        import app as A
+
+        seen = {"curriculum": set(), "live": set()}
+        current = {"which": None}
+
+        def fake_fetch_papers(topic, filter_term, label, level_key,
+                              max_results=50, mode="review", question=None):
+            seen[current["which"]].add(level_key)
+            return "", [], []
+
+        def fake_fetch_cochrane(topic):
+            seen[current["which"]].add("cochrane:direct")
+            return ""
+
+        def fake_untyped(topic, max_admitted=E.PROVISIONAL_MAX_ADMITTED):
+            seen[current["which"]].add(E.PROVISIONAL_KEY)
+            return "", [], []
+
+        monkeypatch.setattr(E, "fetch_papers", fake_fetch_papers)
+        monkeypatch.setattr(E, "fetch_cochrane", fake_fetch_cochrane)
+        monkeypatch.setattr(E, "fetch_untyped_recent", fake_untyped)
+        monkeypatch.setattr(E, "generate_search_terms",
+                            lambda q, context_block="": "topic")
+        monkeypatch.setattr(E, "generate_multi_search_terms",
+                            lambda q, s, context_block="": ["topic"])
+        monkeypatch.setattr(E, "label_and_expand", lambda terms, *a, **k: terms)
+        monkeypatch.setattr(E, "LIBRARY_WRITE_BACK", False)
+
+        current["which"] = "curriculum"
+        E.build_evidence_base("a topic", mode="review")
+
+        current["which"] = "live"
+        job = "lane-parity"
+        A.jobs[job] = {"status": "running", "steps": [], "progress": 0}
+        A.build_evidence_base_with_progress(job, "a question",
+                                            force_route="live", mode="review")
+        return seen
+
+    def test_the_two_builders_request_the_same_lanes(self, lanes_issued):
+        curriculum = lanes_issued["curriculum"] - {"cochrane:direct"}
+        live = lanes_issued["live"] - {"cochrane:direct"}
+        assert curriculum == live, (
+            "the two evidence-base builders issue DIFFERENT lane sets.\n"
+            f"  only on the curriculum path: {sorted(curriculum - live)}\n"
+            f"  only on the live path      : {sorted(live - curriculum)}\n"
+            "This is the defect this whole file exists for: a lane added to "
+            "the ladder that reaches one path and not the other.")
+
+    def test_the_agreed_set_is_the_declared_set(self, lanes_issued):
+        """Rule 4 — the assertion above goes vacuous if both builders issue
+        nothing (a stub that silently stopped matching, an early return). This
+        fails when that happens."""
+        declared = {lk for lk, _t, _l in E.tier_query_lanes()}
+        declared |= {"cochrane", E.PROVISIONAL_KEY}
+        live = lanes_issued["live"] - {"cochrane:direct"}
+        assert live == declared, (
+            f"issued {sorted(live)} but tier_query_lanes declares "
+            f"{sorted(declared)}")
+        assert len(live) >= 10, "lane set implausibly small — stub not firing?"
+
+
+class TestEveryTierOrderLoopAccountsForTheProvisionalLane:
+    """`grep -n "in TIER_ORDER"` is the checklist, written down.
+
+    PROVISIONAL_KEY's absence from TIER_ORDER is what makes the lane safe — it
+    can never take a tier slot — and is exactly what makes it invisible to
+    every `for tier in TIER_ORDER` loop. The safety property and the failure
+    mode are the same fact, which is why five wiring sites dropped the lane
+    while every test of the lane passed.
+
+    So every such loop must either handle the lane or say in a comment why it
+    need not. This test is the grep, so a SIXTH site cannot be added silently.
+    """
+
+    SOURCES = ("app.py", "endo_ai.py")
+
+    def _loops(self, src, text):
+        """(line_no, enclosing top-level function body) per TIER_ORDER loop.
+
+        Scoped to the FUNCTION, not to a fixed window. A window is the wrong
+        instrument and it produced a false positive the first time this ran:
+        the differential merge handles the lane 26 lines after its loop
+        starts, which a 22-line window called a defect. Widening the window
+        only moves the boundary; the honest unit is "does the code that builds
+        this evidence base deal with the lane at all".
+
+        Comment lines are skipped when looking for the loop itself, so prose
+        quoting the construct is not counted as one — standing rule 33, where
+        a source-grep test matched the fix's own comment and reported the bug
+        as still present.
+        """
+        out = []
+        lines = text.splitlines()
+        starts = [i for i, l in enumerate(lines)
+                  if re.match(r"(async )?def \w+", l) is not None]
+        for i, line in enumerate(lines):
+            if line.strip().startswith("#"):
+                continue
+            if re.search(r"for \w+ in TIER_ORDER\b", line) is None:
+                continue
+            lo = max([s for s in starts if s <= i], default=0)
+            hi = min([s for s in starts if s > i], default=len(lines))
+            out.append((i + 1, "\n".join(lines[lo:hi])))
+        return out
+
+    def test_every_loop_handles_the_lane_or_says_why_not(self):
+        checked = 0
+        for name in self.SOURCES:
+            text = (ROOT / name).read_text(encoding="utf-8")
+            for lineno, window in self._loops(name, text):
+                checked += 1
+                assert "PROVISIONAL" in window, (
+                    f"{name}:{lineno} loops over TIER_ORDER and never mentions "
+                    f"PROVISIONAL_KEY — it either drops the provisional lane "
+                    f"silently, or it needs a comment saying why it need not. "
+                    f"Five sites did the former.")
+        # Rule 4: if the regex stops matching, this test passes vacuously and
+        # the checklist it encodes is gone.
+        assert checked >= 6, f"expected at least 6 TIER_ORDER loops, found {checked}"
