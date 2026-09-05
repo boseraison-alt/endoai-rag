@@ -58,6 +58,39 @@ stochastic term generator. It means the arms are not perfectly matched and the
 cost and latency deltas are within noise — which is itself the finding: **the
 lane costs nothing measurable.** One extra esearch and a batched efetch, ~5s.
 
+## Curriculum — A/B on the same code
+
+| | lane OFF | lane ON | delta |
+|---|---|---|---|
+| tiered pool | 139 | 123 | −16 |
+| **provisional pool** | **0** | **42** | **+42** |
+| total pool | 139 | 165 | +26 |
+| citation markers | 332 | 288 | −44 |
+| distinct cited | 35 | 30 | −5 |
+| answer chars | 86,023 | 75,638 | −10,385 |
+| elapsed s | 828.1 | 806.3 | −21.8 |
+| cost USD | 2.2808 | 2.5585 | **+0.2777** |
+
+**Four provisional papers were cited**: 42051585, 42426147, 42688917, and
+**42388091 — Sulaiman**. The paper this entire batch started from is now
+retrieved and cited in the VPT curriculum.
+
+**The cost is real and worth stating plainly: +$0.28, about +12%** on a
+curriculum. That is the price of four extra live queries (one per module) plus
+their efetch batches and 42 more abstracts in context.
+
+**And the honest caveat.** Distinct citations went *down*, 35 → 30, while the
+pool grew — and the answer is 10,000 characters shorter. That is not the lane
+removing evidence; it is a stochastic generator producing a different, tighter
+document on one run. `tiered_pool` also moved 139 → 123, which the lane cannot
+cause (it issues a separate query). n=1 per arm: read the +42 pool and the four
+citations, not the −5.
+
+**This A/B had to be run twice.** The first run reported `provisional_pool = 0`
+in *both* arms — which is how the fourth wiring gap
+(`merge_evidence_bases`, below) was found. The measurement caught a bug the
+tests did not.
+
 ## What it admits, live
 
 On a VPT haemostasis query, 200 recent candidates → 66 unclassified by MEDLINE
