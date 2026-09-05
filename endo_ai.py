@@ -4858,6 +4858,240 @@ QUALITY_FLOOR    = 50   # global ceiling on any per-tier floor (see below)
 TIER_FETCH_DEPTH = {"observational": 100}
 
 
+# ── A49 item 4b — THE UNTYPED-RECENT LANE ────────────────
+#
+# THE DEFECT. A paper MEDLINE has not yet indexed carries only
+# `Journal Article`. Every tier lane ANDs a publication-type filter, and no
+# tier filter admits a bare `Journal Article`. So there was a rolling window --
+# MEDLINE's indexing lag -- in which NO new paper on ANY topic could enter the
+# pool, however good the topic terms were. Sulaiman 42388091 carries five of a
+# VPT question's own terms in its title and was structurally unreachable.
+#
+# WHY THIS IS A SEPARATE LANE AND NOT A TIER. These papers have no MEDLINE
+# classification, so putting them on the study-design ladder would mean
+# ASSERTING a rung the indexer has not assigned. They get their own query,
+# their own cap and their own render block; `PROVISIONAL_KEY` is deliberately
+# NOT in TIER_ORDER, which is this codebase's mechanism for "never competes
+# for a tier slot". Nothing already retrieved is displaced.
+#
+# THE GATE IS THE DESIGN STATEMENT, and nothing else. Measured across all 29
+# eval questions (eval/reports/a49_design_extraction.md): 1,454 untyped-recent
+# papers, of which 180 state a level2-or-above design -- the filter removes
+# 87.6% of the pool, median 4 per query, max 32, against a threshold of 60
+# declared before the measurement.
+#
+# NO SIMILARITY FLOOR. `evidence_floor` 0.60 is on the do-not-change list, was
+# tuned on tiered papers, and already loses Komora -- a network meta-analysis
+# on the exact topic -- at 0.5807. A floor that loses a Level I paper on topic
+# is not the instrument for selecting untyped ones.
+PROVISIONAL_KEY = "provisional"
+PROVISIONAL_LABEL = ("Provisional — recent, not yet classified by MEDLINE "
+                     "(design as stated by the authors)")
+PROVISIONAL_WINDOW_MONTHS = 18
+# Bounded like every other lane. The measured median admitted is 4 and the
+# measured max 32, so this caps the tail rather than doing the selecting.
+PROVISIONAL_MAX_ADMITTED = 40
+# How many recent candidates to look at before the design filter runs. The
+# measured max untyped-recent for one question was 307.
+PROVISIONAL_FETCH_DEPTH = 200
+
+
+def untyped_recent_query(topic: str, months: int = PROVISIONAL_WINDOW_MONTHS) -> str:
+    """Production's own query shape with the tier filter replaced by the date
+    window. Domain filter and retraction exclusions intact."""
+    return (f'({topic}) AND ("last {months} months"[dp]) '
+            f"AND {ENDO_DOMAIN_FILTER} "
+            f'NOT "Retracted Publication"[pt] NOT "Retraction of Publication"[pt]')
+
+
+def untyped_recent_admits(record: dict) -> bool:
+    """Would the lane admit this paper? Used by the regression fixtures.
+
+    Two conditions, both necessary: MEDLINE has assigned it no design type,
+    and its abstract states a level2-or-above design in the authors' words.
+    """
+    types = [str(t).strip().lower()
+             for t in (record.get("publication_types") or [])]
+    if types and types != ["journal article"]:
+        return False
+    design = extract_stated_design(record.get("abstract", "") or "",
+                                   record.get("title", "") or "")
+    return design.get("rung") in DESIGN_RUNGS_AT_OR_ABOVE_LEVEL2
+
+
+def _fetch_pubtypes_and_abstracts(ids: list) -> dict:
+    """{pmid: {publication_types, title, abstract, journal, year, authors}}."""
+    from defusedxml import ElementTree as DET
+    out = {}
+    for i in range(0, len(ids), 100):
+        chunk = ids[i:i + 100]
+        try:
+            resp = ncbi_get(f"{NCBI_EUTILS_BASE}/efetch.fcgi",
+                            params=_ncbi_params({"db": "pubmed",
+                                                 "id": ",".join(chunk),
+                                                 "retmode": "xml"}),
+                            timeout=40)
+            if resp.status_code != 200:
+                continue
+            root = DET.fromstring(resp.text)
+        except Exception as e:
+            print(f"    [provisional] efetch batch failed: {e}")
+            continue
+        for art in root.iter("PubmedArticle"):
+            el = art.find(".//MedlineCitation/PMID")
+            if el is None or not el.text:
+                continue
+            pmid = el.text.strip()
+            parts = []
+            for ab in art.iter("AbstractText"):
+                label = ab.get("Label") or ab.get("NlmCategory") or ""
+                txt = "".join(ab.itertext()).strip()
+                if txt:
+                    parts.append(f"{label}: {txt}" if label else txt)
+            t = art.find(".//ArticleTitle")
+            j = art.find(".//Journal/ISOAbbreviation")
+            y = art.find(".//JournalIssue/PubDate/Year")
+            authors = []
+            for a in art.iter("Author"):
+                ln = a.findtext("LastName") or ""
+                ini = a.findtext("Initials") or ""
+                if ln:
+                    authors.append(f"{ln} {ini}".strip())
+            out[pmid] = {
+                "publication_types": [
+                    (n.text or "").strip()
+                    for n in art.iter("PublicationType")],
+                "title": "".join(t.itertext()).strip() if t is not None else "",
+                "abstract": "\n".join(parts),
+                "journal": (j.text or "").strip() if j is not None else "",
+                "year": (y.text or "").strip() if y is not None else "",
+                "authors": "; ".join(authors[:5]),
+            }
+    return out
+
+
+def fetch_untyped_recent(topic: str, question: str = None,
+                         max_admitted: int = PROVISIONAL_MAX_ADMITTED) -> tuple:
+    """The provisional lane. Returns (text, ids, papers), like fetch_papers.
+
+    Papers come back carrying NO score and NO tier: `level_key` is
+    PROVISIONAL_KEY, which is not in TIER_ORDER, so they cannot take a slot
+    from a classified paper. What they carry instead is the design their own
+    authors stated, and the fact that MEDLINE has not classified them --
+    both of which are rendered, not held back.
+    """
+    label = "Provisional (untyped, recent)"
+    search_term = untyped_recent_query(topic)
+    params = _ncbi_params({"db": "pubmed", "term": search_term,
+                           "retmax": PROVISIONAL_FETCH_DEPTH,
+                           "retmode": "json", "sort": "relevance"})
+    try:
+        t0 = _time.perf_counter()
+        resp = ncbi_get(f"{NCBI_EUTILS_BASE}/esearch.fcgi", params=params,
+                        timeout=20)
+        ms = int((_time.perf_counter() - t0) * 1000)
+        if resp.status_code != 200:
+            _pubmed_audit_log(label, PROVISIONAL_KEY, search_term, [],
+                              resp.status_code, ms)
+            print(f"  XX {label}: esearch HTTP {resp.status_code}")
+            return "", [], []
+        raw = resp.json().get("esearchresult", {}).get("idlist", []) or []
+    except Exception as e:
+        print(f"  XX {label}: esearch failed: {e}")
+        return "", [], []
+
+    ids = [p for p in raw if _PMID_FORMAT_RE.match(str(p))]
+    _pubmed_audit_log(label, PROVISIONAL_KEY, search_term, ids, 200, ms)
+    print(f"  [NCBI_LIVE] {label}: esearch returned {len(ids)} recent PMIDs "
+          f"in {ms}ms (HTTP 200)")
+    if not ids:
+        return "", [], []
+
+    recs = _fetch_pubtypes_and_abstracts(ids)
+
+    untyped, admitted, no_design = 0, [], 0
+    for pmid in ids:
+        r = recs.get(pmid)
+        if not r:
+            continue
+        types = [t.strip().lower() for t in (r["publication_types"] or [])]
+        if types and types != ["journal article"]:
+            continue          # MEDLINE HAS classified it — the tier lanes own it
+        untyped += 1
+        design = extract_stated_design(r["abstract"], r["title"])
+        if design.get("rung") not in DESIGN_RUNGS_AT_OR_ABOVE_LEVEL2:
+            no_design += 1
+            continue
+        year = 0
+        try:
+            year = int(r["year"])
+        except (TypeError, ValueError):
+            pass
+        admitted.append({
+            "pmid": pmid,
+            "title": r["title"],
+            "abstract": r["abstract"],
+            "authors": r["authors"] or "Unknown author",
+            "year": year or r["year"] or "",
+            "journal": r["journal"],
+            "citations": 0,
+            "sample_size": None,
+            "followup_months": None,
+            "impact_factor": None,
+            # No tier and no score. Both absent on purpose; see the block
+            # comment above PROVISIONAL_KEY.
+            "level_key": PROVISIONAL_KEY,
+            "score": None,
+            "is_provisional": True,
+            "medline_unclassified": True,
+            "stated_design": design["design"],
+            "stated_design_rung": design["rung"],
+            "stated_design_quote": design["matched"],
+            "stated_design_basis": design["basis"],
+            "has_coi": False, "coi_funder": "", "registry": "",
+            "has_erratum": False, "has_retraction": False,
+            "superseded_by": "", "medline_indexed": False,
+            "is_old": False, "age_years": 0, "is_outlier": False,
+        })
+
+    # Rule 5 / rule 32: say what the gate did, including when it finds nothing.
+    print(f"    [provisional] {untyped} of {len(ids)} recent papers are "
+          f"unclassified by MEDLINE; {len(admitted)} state a level2-or-above "
+          f"design, {no_design} state none or a weaker one")
+
+    dropped = 0
+    if len(admitted) > max_admitted:
+        dropped = len(admitted) - max_admitted
+        admitted = admitted[:max_admitted]
+        print(f"    [provisional] cap {max_admitted}: dropped {dropped} "
+              f"admitted paper(s) beyond the cap")
+    if not admitted:
+        return "", [], []
+
+    text = "".join(_provisional_context_line(p) for p in admitted)
+    return text, [p["pmid"] for p in admitted], admitted
+
+
+def _provisional_context_line(paper: dict) -> str:
+    """One provisional paper as Claude sees it.
+
+    States the two things that make it different from every other paper in the
+    context, in the order a reader needs them: that MEDLINE has not classified
+    it, and what its own authors say the design is. Never a score, never a
+    tier.
+    """
+    return (
+        f"\nPMID: {paper['pmid']} | Authors: {paper.get('authors')} | "
+        f"Year: {paper.get('year')} | Journal: {paper.get('journal')}\n"
+        f"  NOT YET CLASSIFIED BY MEDLINE — no publication type has been "
+        f"assigned, so this paper has no evidence tier.\n"
+        f"  DESIGN AS STATED BY THE AUTHORS: {paper.get('stated_design')} "
+        f"(from the phrase \"{paper.get('stated_design_quote')}\")\n"
+        f"  Title: {paper.get('title')}\n"
+        f"  Abstract: {(paper.get('abstract') or '')[:1400]}\n"
+    )
+
+
 # ── THE LANES THE LIVE PATH ISSUES ───────────────────────
 # `build_evidence_base` used to hold this list inline. It is a function so that
 # a test can ask production what it will actually query instead of restating
@@ -5085,6 +5319,16 @@ def build_evidence_base(topic, mode: str = "review"):
         evidence[level_key] = {"text": text, "ids": ids, "scored": scored}
         all_scored.extend(scored)
 
+    # A49 item 4b — the provisional lane, LAST and separate. Its own query, its
+    # own cap, and PROVISIONAL_KEY is not in TIER_ORDER, so it can take no slot
+    # from a classified paper. Papers from it are kept OUT of `all_scored`,
+    # which is the score-bearing list every average and "top paper" reads: they
+    # carry no score, and mixing a None into that list is how a null-safety bug
+    # reaches six call sites at once.
+    p_text, p_ids, p_papers = fetch_untyped_recent(smart_topic, question=topic)
+    evidence[PROVISIONAL_KEY] = {"text": p_text, "ids": p_ids,
+                                 "scored": p_papers}
+
     # Summary
     avg_score = 0
     if all_scored:
@@ -5131,6 +5375,32 @@ def _build_evidence_context(evidence: dict) -> str:
         if block.get("text"):
             label = TIER_LABEL.get(key, key.upper())
             context += f"\n\n=== {label} ===\n" + block["text"]
+
+    # A49 item 4b — the provisional lane, AFTER every tier and outside the
+    # hierarchy. PROVISIONAL_KEY is not in TIER_ORDER, so the loop above never
+    # reaches it and it can never be read as a rung. The instruction to Claude
+    # is explicit about what it may and may not be used for, because "recent
+    # and unclassified" is exactly the kind of thing a model will otherwise
+    # either ignore entirely or treat as breaking news.
+    prov = evidence.get(PROVISIONAL_KEY, {}) or {}
+    if prov.get("text"):
+        context += (
+            f"\n\n=== {PROVISIONAL_LABEL} ===\n"
+            "These papers were published in the last 18 months and MEDLINE has "
+            "NOT yet assigned them a publication type, so they have no evidence "
+            "tier and none is implied here. They are included because a tier "
+            "filter cannot reach an unclassified paper, which made the newest "
+            "literature on every topic structurally invisible.\n"
+            "The design shown for each is quoted from what the AUTHORS wrote in "
+            "the abstract. It has not been verified by an indexer and it is not "
+            "a quality judgement.\n"
+            "USE THEM: cite them where they bear on the question, and say in "
+            "the text that the paper is recent and not yet classified.\n"
+            "DO NOT: rank them against tiered evidence, describe them as "
+            "Level I / Level II, or let one override a systematic review. "
+            "Where a provisional paper disagrees with tiered evidence, report "
+            "both and say which is which.\n"
+            + prov["text"])
 
     summary    = evidence.get("_summary", {}) or {}
     all_scored = summary.get("all_scored", []) or []

@@ -112,9 +112,22 @@ def parse(pmid, xml_text):
         for q in mh.findall("QualifierName"):
             subheads.append(txt(q))
 
+    # The abstract, with its structured-section LABELS kept. A49 item 4b's
+    # lane admits on the design the AUTHORS state, and that statement lives in
+    # the METHODS label as often as in the prose ("METHODOLOGY: This single
+    # centre, one-arm clinical trial..."), so stripping labels would lose the
+    # very sentence the extractor reads.
+    abstract_parts = []
+    for ab in art.findall(".//Abstract/AbstractText"):
+        lab = ab.get("Label") or ab.get("NlmCategory") or ""
+        body = "".join(ab.itertext()).strip()
+        if body:
+            abstract_parts.append(f"{lab}: {body}" if lab else body)
+
     return {
         "pmid": pmid,
         "title": txt(art.find(".//ArticleTitle")),
+        "abstract": "\n".join(abstract_parts),
         "journal": txt(art.find(".//Journal/Title")),
         "journal_iso": txt(art.find(".//Journal/ISOAbbreviation")),
         "year": txt(art.find(".//JournalIssue/PubDate/Year"))

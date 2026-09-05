@@ -122,19 +122,29 @@ def untyped_lane_reaches(pmid: str) -> bool:
 
 # ── the fixtures themselves ──────────────────────────────
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="Sulaiman 42388091 is unreachable by the live path: its only PubMed "
-           "publication type is `Journal Article`, and no tier lane admits a "
-           "bare Journal Article. Published 2026-07-02, MEDLINE has not yet "
-           "assigned it a study-design type. Every generated query ANDs a tier "
-           "filter, so the paper is structurally invisible however good the "
-           "topic terms are — and its title carries five of the topic's own "
-           "terms. This is not a VPT defect; it is a rolling blind spot over "
-           "the newest literature on every topic.",
-)
 def test_sulaiman_reachable_by_live_path():
-    """A 2026 partial-pulpotomy trial must reach the pool for a VPT question."""
+    """A 2026 partial-pulpotomy trial must reach the pool for a VPT question.
+
+    FIXED by item 4b — this was xfail(strict=True) and now passes.
+
+    It failed because the paper's only PubMed publication type is
+    `Journal Article`: MEDLINE had not yet assigned it a study-design type,
+    every generated query ANDs a tier filter, and no tier filter admits a bare
+    Journal Article. A paper carrying five of the topic's own terms in its
+    title was structurally unreachable — and not only this paper. It was a
+    rolling window, the width of MEDLINE's indexing lag, in which no new paper
+    on any topic could enter the pool.
+
+    The untyped-recent lane reaches it now, and reaches it on the design its
+    own authors stated. Note what that design IS: the batch called this an
+    RCT, and it is not one. The abstract says "this single centre, one-arm
+    clinical trial", and the strings randomis/randomiz/randomly do not appear
+    in it. It is admitted at level2 as a non-randomised prospective clinical
+    trial — the truth, and still above the admission bar.
+
+    Kept as a passing test rather than deleted: it is the regression guard for
+    the lane, and if the lane is removed this goes red with the story attached.
+    """
     rec = load(SULAIMAN)
     assert rec["publication_types"] == ["Journal Article"], (
         "fixture drift: this test exists because the paper is UNTYPED. If "
