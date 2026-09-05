@@ -4520,6 +4520,44 @@ QUALITY_FLOOR    = 50   # global ceiling on any per-tier floor (see below)
 # and the tier's own cap still keeps only the most relevant 6-10 of them.
 TIER_FETCH_DEPTH = {"observational": 100}
 
+
+# ── THE LANES THE LIVE PATH ISSUES ───────────────────────
+# `build_evidence_base` used to hold this list inline. It is a function so that
+# a test can ask production what it will actually query instead of restating
+# the list and then passing against a restatement — two suites passed against a
+# broken fix on 2026-09-04 for exactly that reason (standing rule 14).
+#
+# Anything returned here is ANDed with a topic group and issued to PubMed. A
+# paper no lane admits is unreachable by the live path however good the topic
+# terms are, which is the defect `tests/test_missed_paper_fixtures.py` pins.
+def tier_query_lanes() -> list:
+    """(level_key, terms, label) for every tier lane, in issue order."""
+    return [
+        ("level1",  LEVEL_1_TERMS,  TIER_LABEL["level1"]),
+        ("level2",  LEVEL_2_TERMS,  TIER_LABEL["level2"]),
+        ("level3a", LEVEL_3A_TERMS, TIER_LABEL["level3a"]),
+        ("level3b", LEVEL_3B_TERMS, TIER_LABEL["level3b"]),
+        ("level4",  LEVEL_4_TERMS,  TIER_LABEL["level4"]),
+        ("level5",  LEVEL_5_TERMS,  TIER_LABEL["level5"]),
+        # A31 — last in the list and last in TIER_ORDER. Its own query,
+        # its own quota, its own floor; it takes nothing from the tiers
+        # above it.
+        ("observational", LEVEL_OBS_TERMS, TIER_LABEL["observational"]),
+    ]
+
+
+def live_path_filters() -> dict:
+    """{lane_key: filter string} for every filter the live path ANDs to a topic.
+
+    Includes the Cochrane lane, which `build_evidence_base` issues separately
+    because it tries the Cochrane Library's own API first. The filter strings
+    here are the ones that reach PubMed.
+    """
+    filters = {"cochrane": COCHRANE_TERM}
+    for key, terms, _label in tier_query_lanes():
+        filters[key] = " OR ".join(terms)
+    return filters
+
 TIER_QUALITY_FLOORS = {
     # A7 — permissive on purpose. These rows score 30.9-90.0 on a scorer
     # built for therapy designs; the score is not what makes a specialty
@@ -4694,18 +4732,7 @@ def build_evidence_base(topic, mode: str = "review"):
         all_scored.extend(scored)
 
     # Levels 1-5 (Tier 3 split into 3a retrospective cohort + 3b case-control)
-    levels = [
-        ("level1",  LEVEL_1_TERMS,  TIER_LABEL["level1"]),
-        ("level2",  LEVEL_2_TERMS,  TIER_LABEL["level2"]),
-        ("level3a", LEVEL_3A_TERMS, TIER_LABEL["level3a"]),
-        ("level3b", LEVEL_3B_TERMS, TIER_LABEL["level3b"]),
-        ("level4",  LEVEL_4_TERMS,  TIER_LABEL["level4"]),
-        ("level5",  LEVEL_5_TERMS,  TIER_LABEL["level5"]),
-        # A31 — last in the list and last in TIER_ORDER. Its own query,
-        # its own quota, its own floor; it takes nothing from the tiers
-        # above it.
-        ("observational", LEVEL_OBS_TERMS, TIER_LABEL["observational"]),
-    ]
+    levels = tier_query_lanes()
 
     for level_key, terms, label in levels:
         text, ids, scored = fetch_papers(

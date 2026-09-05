@@ -1,0 +1,75 @@
+{
+  "pmid": "39117767",
+  "title": "Comparison of bioactive material failure rates in vital pulp treatment of permanent matured teeth - a systematic review and network meta-analysis.",
+  "journal": "Scientific reports",
+  "journal_iso": "Sci Rep",
+  "year": "2024",
+  "publication_types": [
+    "Comparative Study",
+    "Journal Article",
+    "Network Meta-Analysis",
+    "Systematic Review"
+  ],
+  "mesh_headings": [
+    "Aluminum Compounds",
+    "Biocompatible Materials",
+    "Calcium Compounds",
+    "Calcium Hydroxide",
+    "Dental Pulp",
+    "Dental Pulp Capping",
+    "Dentition, Permanent",
+    "Drug Combinations",
+    "Humans",
+    "Oxides",
+    "Pulpitis",
+    "Randomized Controlled Trials as Topic",
+    "Silicates"
+  ],
+  "mesh_subheadings": [
+    "drug effects",
+    "drug therapy",
+    "methods",
+    "therapeutic use",
+    "therapy"
+  ],
+  "fetched_by": "scripts/fetch_missed_paper_fixtures.py",
+  "label": "Komora 2024 — network meta-analysis, bioactive materials, Sci Rep",
+  "admission_map": {
+    "cochrane": {
+      "filter": "\"Cochrane Database Syst Rev\"[jour]",
+      "admits": false
+    },
+    "guideline": {
+      "filter": "practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]",
+      "admits": false
+    },
+    "level1": {
+      "filter": "randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]",
+      "admits": true
+    },
+    "level2": {
+      "filter": "controlled clinical trial[pt] OR prospective studies[mh] OR comparative study[pt]",
+      "admits": true
+    },
+    "level3a": {
+      "filter": "retrospective studies[pt] OR cohort studies[mh] OR longitudinal studies[mh]",
+      "admits": false
+    },
+    "level3b": {
+      "filter": "case-control studies[pt] OR case-control studies[mh]",
+      "admits": false
+    },
+    "level4": {
+      "filter": "case series[pt] OR case reports[pt]",
+      "admits": false
+    },
+    "level5": {
+      "filter": "review[pt] OR editorial[pt] OR comment[pt] OR letter[pt]",
+      "admits": true
+    },
+    "observational": {
+      "filter": "cross-sectional studies[mh] OR observational study[pt] OR \"cone-beam computed tomography\"[mh] OR \"imaging, three-dimensional\"[mh] OR \"anatomy and histology\"[sh] OR \"sensitivity and specificity\"[mh]",
+      "admits": false
+    }
+  }
+}

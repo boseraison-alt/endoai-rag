@@ -1,0 +1,53 @@
+{
+  "pmid": "42018467",
+  "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+  "journal": "Caries research",
+  "journal_iso": "Caries Res",
+  "year": "2026",
+  "publication_types": [
+    "Journal Article",
+    "Practice Guideline"
+  ],
+  "mesh_headings": [],
+  "mesh_subheadings": [],
+  "fetched_by": "scripts/fetch_missed_paper_fixtures.py",
+  "label": "EFCD-ESE-ORCA S3 deep caries guideline, Caries Res",
+  "admission_map": {
+    "cochrane": {
+      "filter": "\"Cochrane Database Syst Rev\"[jour]",
+      "admits": false
+    },
+    "guideline": {
+      "filter": "practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]",
+      "admits": true
+    },
+    "level1": {
+      "filter": "randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]",
+      "admits": false
+    },
+    "level2": {
+      "filter": "controlled clinical trial[pt] OR prospective studies[mh] OR comparative study[pt]",
+      "admits": false
+    },
+    "level3a": {
+      "filter": "retrospective studies[pt] OR cohort studies[mh] OR longitudinal studies[mh]",
+      "admits": false
+    },
+    "level3b": {
+      "filter": "case-control studies[pt] OR case-control studies[mh]",
+      "admits": false
+    },
+    "level4": {
+      "filter": "case series[pt] OR case reports[pt]",
+      "admits": false
+    },
+    "level5": {
+      "filter": "review[pt] OR editorial[pt] OR comment[pt] OR letter[pt]",
+      "admits": true
+    },
+    "observational": {
+      "filter": "cross-sectional studies[mh] OR observational study[pt] OR \"cone-beam computed tomography\"[mh] OR \"imaging, three-dimensional\"[mh] OR \"anatomy and histology\"[sh] OR \"sensitivity and specificity\"[mh]",
+      "admits": false
+    }
+  }
+}

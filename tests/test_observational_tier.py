@@ -52,11 +52,33 @@ class TestTheTierExists:
 
     def test_it_is_actually_fetched_and_not_merely_declared(self):
         """A tier in the ladder that no query ever runs is a tier that does
-        not exist — the shape of the bug this item is fixing."""
+        not exist — the shape of the bug this item is fixing.
+
+        This used to grep `build_evidence_base`'s source for the lane tuple.
+        The lane list moved into `tier_query_lanes()` so that the missed-paper
+        fixtures could read production's own lanes rather than restate them,
+        and a source grep would have gone quietly green-on-absence: the string
+        vanishes from that function body whether the lane still runs or not.
+        Asserting on the object the loop iterates is what the test meant, and
+        it survives the next move of the list.
+        """
+        lanes = e.tier_query_lanes()
+        by_key = {k: (terms, label) for k, terms, label in lanes}
+        assert "observational" in by_key, (
+            "the observational lane is declared in TIER_ORDER but is not in "
+            "the list build_evidence_base iterates — it would never be queried."
+        )
+        terms, label = by_key["observational"]
+        assert terms is e.LEVEL_OBS_TERMS
+        assert label == e.TIER_LABEL["observational"]
+
+    def test_build_evidence_base_issues_exactly_those_lanes(self):
+        """And the loop really is fed by that function, not by a stale copy."""
         src = (Path(__file__).parent.parent / "endo_ai.py").read_text(encoding="utf-8")
         body = src[src.index("def build_evidence_base(topic"):]
         body = body[:body.index("\ndef ")]
-        assert '("observational", LEVEL_OBS_TERMS, TIER_LABEL["observational"])' in body
+        assert "tier_query_lanes()" in body
+        assert "for level_key, terms, label in levels:" in body
 
 
 class TestItTakesNothingFromTheTiersAboveIt:

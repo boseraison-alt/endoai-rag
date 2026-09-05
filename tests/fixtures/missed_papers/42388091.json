@@ -1,0 +1,52 @@
+{
+  "pmid": "42388091",
+  "title": "Effect of Pulpal Haemostasis Time on Partial Pulpotomy Outcome in Cariously Exposed Mature Permanent Teeth With Symptomatic Irreversible Pulpitis.",
+  "journal": "International endodontic journal",
+  "journal_iso": "Int Endod J",
+  "year": "2026",
+  "publication_types": [
+    "Journal Article"
+  ],
+  "mesh_headings": [],
+  "mesh_subheadings": [],
+  "fetched_by": "scripts/fetch_missed_paper_fixtures.py",
+  "label": "Sulaiman 2026 — haemostasis time / partial pulpotomy, Int Endod J",
+  "admission_map": {
+    "cochrane": {
+      "filter": "\"Cochrane Database Syst Rev\"[jour]",
+      "admits": false
+    },
+    "guideline": {
+      "filter": "practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]",
+      "admits": false
+    },
+    "level1": {
+      "filter": "randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]",
+      "admits": false
+    },
+    "level2": {
+      "filter": "controlled clinical trial[pt] OR prospective studies[mh] OR comparative study[pt]",
+      "admits": false
+    },
+    "level3a": {
+      "filter": "retrospective studies[pt] OR cohort studies[mh] OR longitudinal studies[mh]",
+      "admits": false
+    },
+    "level3b": {
+      "filter": "case-control studies[pt] OR case-control studies[mh]",
+      "admits": false
+    },
+    "level4": {
+      "filter": "case series[pt] OR case reports[pt]",
+      "admits": false
+    },
+    "level5": {
+      "filter": "review[pt] OR editorial[pt] OR comment[pt] OR letter[pt]",
+      "admits": false
+    },
+    "observational": {
+      "filter": "cross-sectional studies[mh] OR observational study[pt] OR \"cone-beam computed tomography\"[mh] OR \"imaging, three-dimensional\"[mh] OR \"anatomy and histology\"[sh] OR \"sensitivity and specificity\"[mh]",
+      "admits": false
+    }
+  }
+}
