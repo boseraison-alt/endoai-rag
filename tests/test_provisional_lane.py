@@ -293,6 +293,23 @@ class TestThroughBuildEvidenceBase:
         # stops a legitimate citation being called a fabrication.
         assert {"8", "9"} <= E._extract_evidence_pmids(combined)
 
+    def test_the_stitcher_reference_list_includes_them(self):
+        """FIFTH site. `stitch_curriculum` builds the REFERENCES metadata from
+        `_summary.all_scored`, which provisional papers are deliberately kept
+        out of. Without an explicit pass they reach a module's synthesis, get
+        cited, and then have no entry in the reference list -- a citation the
+        reader cannot follow."""
+        src = (Path(__file__).parent.parent / "endo_ai.py").read_text(encoding="utf-8")
+        i = src.index("def stitch_curriculum(")
+        j = src.index("\ndef ", i + 1)
+        body = src[i:j]
+        assert "all_evidence.get(PROVISIONAL_KEY)" in body, (
+            "the stitcher's reference list never sees provisional papers")
+        assert "NOT SCORED" in body, (
+            "a provisional paper must not be given a score in the reference "
+            "list; it has none")
+        assert "PROVISIONAL_LABEL" in body
+
     def test_the_merge_keeps_null_scores_out_of_the_average(self):
         """`avg_score` sums all_scored. One None raises."""
         m = {"level1": {"text": "A", "ids": ["1"],

@@ -10262,11 +10262,32 @@ def stitch_curriculum(parent_question: str, modules_with_scripts: list,
         if pmid and pmid not in seen:
             seen[pmid] = p
 
+    # A49 item 4b — provisional papers are deliberately NOT in `all_scored`
+    # (score=None would break every average that reads it), so without this
+    # they reach a module's synthesis, get cited, and then have no entry in
+    # the REFERENCES list the stitcher builds: a citation the reader cannot
+    # follow. They are added here with their own tier label and no score.
+    for p in ((all_evidence.get(PROVISIONAL_KEY) or {}).get("scored") or []):
+        pmid = p.get("pmid")
+        if pmid and pmid not in seen:
+            seen[pmid] = p
+            pmid_to_tier.setdefault(pmid, PROVISIONAL_KEY)
+
     refs_block = ""
     for p in seen.values():
         pmid = p.get("pmid", "")
         tier_key = pmid_to_tier.get(pmid, "")
         tier_lbl = TIER_LABEL.get(tier_key, tier_key) if tier_key else "—"
+        if tier_key == PROVISIONAL_KEY:
+            # No score, and the reason stated rather than a blank: this row
+            # has no evidence tier because MEDLINE has not classified it.
+            refs_block += (
+                f"PMID {pmid} | TIER: {PROVISIONAL_LABEL} | "
+                f"{p.get('authors','')} | Year: {p.get('year','')} | "
+                f"NOT SCORED (design as stated by the authors: "
+                f"{p.get('stated_design','unstated')}) | "
+                f"Journal: {p.get('journal','')}\n")
+            continue
         refs_block += (
             f"PMID {pmid} | TIER: {tier_lbl} | {p.get('authors','')} | "
             f"Year: {p.get('year','')} | Score: {p.get('score','?')}/100 | "
