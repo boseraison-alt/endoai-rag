@@ -1,6 +1,6 @@
 {
  "n_docs": 36,
- "n_concentration_conflicts": 25,
+ "n_concentration_conflicts": 33,
  "n_haemostasis_conflicts": 4,
  "rows": [
   {
@@ -62,11 +62,54 @@
    "doc": "query_cache:4126",
    "question": "[learn] vital pulp therapy in mature permanent teeth",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 3 \u2014 Vital Pulp Therapy Techniques in Mature Permanent Dentition",
+        "## Module 4 \u2014 Clinical Outcomes, Healing, and Complications of Vital Pulp Interventions"
+       ],
+       "example": "(2024), in a randomized trial of 96 adults, found that lavage with 2.5% NaOCl before MTA DPC yielded estimated 4-year pulp survival of 55% (95% CI 30\u2013100%) versus 7% (95% CI 1\u201340%) with physiological saline [[PMID:378906"
+      },
+      {
+       "value": 5.0,
+       "modules": [
+        "## Module 1 \u2014 Pathobiology of Caries Exposure and Pulp Inflammation in Mature Teeth"
+       ],
+       "example": "**Irrigate exposure site with 5% NaOCl.** Taha et al."
+      }
+     ]
+    },
+    {
+     "agent": "sodium hypochlorite",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 4 \u2014 Clinical Outcomes, Healing, and Complications of Vital Pulp Interventions"
+       ],
+       "example": "**Pulp lavage** \u2014 Before capping, wash the exposed pulp site with 2.5% sodium hypochlorite (NaOCl) solution."
+      },
+      {
+       "value": 5.0,
+       "modules": [
+        "## Module 1 \u2014 Pathobiology of Caries Exposure and Pulp Inflammation in Mature Teeth"
+       ],
+       "example": "(2017) used 5% sodium hypochlorite for field disinfection before caries excavation in their RCT of 50 mature permanent molars [[PMID:28673494]]."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 2,
    "haemostasis_values": {
     "6.0": [
      "## Module 1 \u2014 Pathobiology of Caries Exposure and Pulp Inflammation in Mature Teeth",
+     "## Module 2 \u2014 Clinical Diagnosis and Assessment of Vital Pulp Status",
      "## Module 3 \u2014 Vital Pulp Therapy Techniques in Mature Permanent Dentition"
     ],
     "4.0": [
@@ -89,7 +132,8 @@
        "modules": [
         "## Module 1 \u2014 Vital Pulp Pathology and Exposure Classification",
         "## Module 2 \u2014 Clinical Diagnosis and Vital Pulp Assessment",
-        "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection"
+        "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection",
+        "## Module 4 \u2014 Vital Pulp Treatment Outcomes and Complication Management"
        ],
        "example": "(RCT, n=96) demonstrated that lavage with 2.5% NaOCl for 60 seconds produced estimated pulp survival of 55% (95% CI 30\u2013100%) versus 7% (95% CI 1\u201340%) at 1500 days compared with physiological saline, and reduced painful f"
       },
@@ -99,18 +143,29 @@
         "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection"
        ],
        "example": "(2017) documented hemostasis using 5% NaOCl applied to the pulp stump for partial pulpotomy in molars with irreversible pulpitis [[PMID:28673494]]."
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 2 \u2014 Clinical Diagnosis and Vital Pulp Assessment"
+       ],
+       "example": "Do not use 5.25% NaOCl \u2014 the evidence base does not report this concentration for pulp wound lavage."
       }
      ]
     }
    ],
    "n_conflicts": 1,
    "haemostasis_values": {
+    "10.0": [
+     "## Module 1 \u2014 Vital Pulp Pathology and Exposure Classification"
+    ],
     "6.0": [
      "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection",
      "## Module 4 \u2014 Vital Pulp Treatment Outcomes and Complication Management"
     ],
     "4.0": [
-     "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection"
+     "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection",
+     "## Module 4 \u2014 Vital Pulp Treatment Outcomes and Complication Management"
     ]
    },
    "haemostasis_conflict": true
@@ -253,15 +308,44 @@
    "modules": 4,
    "conflicts": [],
    "n_conflicts": 0,
-   "haemostasis_values": {},
+   "haemostasis_values": {
+    "5.0": [
+     "## Module 1 \u2014 Perforation Etiology, Classification, and Pathophysiology",
+     "## Module 4 \u2014 Healing Outcomes, Prognosis, and Long-Term Complications"
+    ]
+   },
    "haemostasis_conflict": false
   },
   {
    "doc": "learn_history\\20260829_174553_use_of_lasers_in_root_canal_disinfection.json",
    "question": "Use of lasers in root canal disinfection",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 1 \u2014 Background & Pathophysiology",
+        "## Module 2 \u2014 Diagnosis & Clinical Findings",
+        "## Module 3 \u2014 Treatment & Technique"
+       ],
+       "example": "faecalis* + *Candida albicans* display augmented resistance to standard disinfection methods, with 2.5% NaOCl serving as the positive-control benchmark in in vitro comparisons [[PMID:41465429]]\n- **Dentinal tubule refuge"
+      },
+      {
+       "value": 3.0,
+       "modules": [
+        "## Module 2 \u2014 Diagnosis & Clinical Findings",
+        "## Module 3 \u2014 Treatment & Technique"
+       ],
+       "example": "used 3% NaOCl as the irrigation standard throughout retreatment;"
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 1,
    "haemostasis_values": {},
    "haemostasis_conflict": false
   },
@@ -402,9 +486,10 @@
       {
        "value": 2.0,
        "modules": [
+        "## Module 2 \u2014 Clinical Assessment and Laser Selection for Canal Disinfection",
         "## Module 4 \u2014 Clinical Outcomes, Efficacy and Adverse Effects"
        ],
-       "example": "(2025, n=40) found that Er:YAG LAI with 2% NaOCl and 17% EDTA \u2014 laser parameters: 50 mJ, 25 Hz, 1 W, 300 \u03bcs, 300-\u03bcm tip, fluence 71.4 J/cm\u00b2, power density 1,428.6 W/cm\u00b2 \u2014 combined with 635-nm photobiomodulation (400 mW, "
+       "example": "Kolberg-Babrzy\u0144ska et al., 2025 used 2% NaOCl for Er:YAG LAI and 17% EDTA for smear layer removal [[PMID:40135760]]."
       },
       {
        "value": 2.5,
@@ -413,6 +498,14 @@
         "## Module 2 \u2014 Clinical Assessment and Laser Selection for Canal Disinfection"
        ],
        "example": "Traditional chemomechanical preparation with 2.5% NaOCl and 17% EDTA achieves a mean microbial load reduction of 87.24 \u00b1 21.86% across 148 clinical studies, yet complete eradication is never guaranteed [[PMID:41845274]]."
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser Physics and Microbial Pathophysiology in Endodontics",
+        "## Module 3 \u2014 Laser Disinfection Techniques and Delivery Systems"
+       ],
+       "example": "faecalis* infection (culture or molecular testing)\nTHEN escalate to 5.25% NaOCl (instead of 1\u20132.5%) for final irrigation, activated with Er:YAG LAI;"
       }
      ]
     }
@@ -425,8 +518,37 @@
    "doc": "learn_history\\20260831_200627_use_of_lasers_in_root_canal_disinfection.json",
    "question": "Use of lasers in root canal disinfection",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 1.0,
+       "modules": [
+        "## Module 2 \u2014 Laser systems, wavelengths, and clinical selection criteria"
+       ],
+       "example": "used 1% NaOCl specifically in the PIPS arm of their RCT (n = 60), demonstrating that PIPS with 1% NaOCl achieved superior ATP reduction versus conventional needle irrigation with 1% NaOCl (P < 0.001) [[PMID:38431616]]."
+      },
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 1 \u2014 Laser physics and microbial pathophysiology in root canals",
+        "## Module 2 \u2014 Laser systems, wavelengths, and clinical selection criteria"
+       ],
+       "example": "albicans* dual-species biofilms, achieving disinfection outcomes approaching 2.5% NaOCl [[PMID:41465429]]."
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 3 \u2014 Laser-activated irrigation techniques and operative protocol"
+       ],
+       "example": "**Deliver primary irrigant: 5.25% NaOCl.** Flood the canal using a side-vented needle."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 1,
    "haemostasis_values": {},
    "haemostasis_conflict": false
   },
@@ -434,8 +556,31 @@
    "doc": "learn_history\\20260831_231522_use_of_lasers_in_root_canal_disinfection.json",
    "question": "Use of lasers in root canal disinfection",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.0,
+       "modules": [
+        "## Module 1 \u2014 Laser types, mechanisms, and endodontic application",
+        "## Module 2 \u2014 Clinical assessment and laser selection for disinfection",
+        "## Module 3 \u2014 Laser disinfection protocols, parameters, and delivery techniques"
+       ],
+       "example": "**Irrigate with 2% NaOCl.** Deliver 2 mL per canal via side-vented needle placed 2 mm short of working length;"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 3 \u2014 Laser disinfection protocols, parameters, and delivery techniques"
+       ],
+       "example": "Irrigate with 5.25% NaOCl throughout preparation, delivering 3 ml per canal per exchange via side-vented needle placed 1 mm short of working length."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 1,
    "haemostasis_values": {
     "5.0": [
      "## Module 2 \u2014 Clinical assessment and laser selection for disinfection"
@@ -456,6 +601,7 @@
        "value": 2.0,
        "modules": [
         "## Module 1 \u2014 Laser Physics and Mechanisms in Root Canal Disinfection",
+        "## Module 2 \u2014 Laser Systems and Clinical Selection Criteria",
         "## Module 3 \u2014 Laser-Assisted Disinfection Protocols and Techniques"
        ],
        "example": "2025 (n=40 RCT) applied Er:YAG LAI at exactly 50 mJ, 25 Hz, 1 W, 300 \u00b5s, with a 300-\u00b5m tip (fluence 71.4 J/cm\u00b2), using 2% NaOCl and 17% EDTA, producing significantly smaller periapical lesion size at 6 months (1.55 \u00b10.51"
@@ -466,6 +612,14 @@
         "## Module 3 \u2014 Laser-Assisted Disinfection Protocols and Techniques"
        ],
        "example": "Coelho et al., 2019 [[PMID:31301436]] (n = 60) used 2.5% NaOCl irrigation with methylene blue at 1.56 \u03bcM/mL, an optical fibre inserted to working length, activated at 100 mW for 3 minutes (total energy 18 J), and reporte"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser Physics and Mechanisms in Root Canal Disinfection",
+        "## Module 2 \u2014 Laser Systems and Clinical Selection Criteria"
+       ],
+       "example": "2020 reference 5.25% NaOCl for conventional irrigation without laser activation [[PMID:31809911]];"
       }
      ]
     }
@@ -494,7 +648,8 @@
        "value": 2.5,
        "modules": [
         "## Module 1 \u2014 Laser Physics and Endodontic Microbiology",
-        "## Module 2 \u2014 Laser Systems and Clinical Selection"
+        "## Module 2 \u2014 Laser Systems and Clinical Selection",
+        "## Module 3 \u2014 Laser-Assisted Disinfection Protocols and Technique"
        ],
        "example": "940 nm diode combined with Er,Cr:YSGG outperformed 2.5% NaOCl/17% EDTA for aerobic and anaerobic counts in vivo [[PMID:38403667]]\n\n**The driving physical mechanism of laser-activated irrigation (LAI) is cavitation** \u2014 gr"
       },
@@ -504,6 +659,13 @@
         "## Module 3 \u2014 Laser-Assisted Disinfection Protocols and Technique"
        ],
        "example": "RCT (n = 36), adding aPDT after UAI with 3% NaOCl produced no significant difference in periapical lesion volume reduction at 12 months (median 86.98% UAI vs."
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 3 \u2014 Laser-Assisted Disinfection Protocols and Technique"
+       ],
+       "example": "Deliver primary irrigant: 2% NaOCl (with Er:YAG LAI) or 2.5\u20135.25% NaOCl (with diode or conventional)**\nUse 2% NaOCl when employing Er:YAG LAI, as validated alongside PIPS/SWEEPS activation without sacrificing antimicrobi"
       }
      ]
     }
@@ -516,8 +678,45 @@
    "doc": "learn_history\\20260901_002547_use_of_lasers_in_root_canal_disinfection.json",
    "question": "Use of lasers in root canal disinfection",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.0,
+       "modules": [
+        "## Module 1 \u2014 Laser physics and endodontic disinfection mechanisms",
+        "## Module 2 \u2014 Laser systems and clinical delivery technologies"
+       ],
+       "example": "**Load canal with 2% NaOCl (conventional needle delivery)**\n   Deliver 2% NaOCl via side-vented needle to within 2 mm of working length to fill the canal prior to laser activation."
+      },
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 3 \u2014 Laser disinfection efficacy and clinical protocols"
+       ],
+       "example": "Coelho et al., 2019 used 2.5% NaOCl;"
+      },
+      {
+       "value": 3.0,
+       "modules": [
+        "## Module 2 \u2014 Laser systems and clinical delivery technologies",
+        "## Module 3 \u2014 Laser disinfection efficacy and clinical protocols"
+       ],
+       "example": "Irrigate with 2\u20133% NaOCl throughout shaping;"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser physics and endodontic disinfection mechanisms"
+       ],
+       "example": "used 5.25% NaOCl activated by Er:YAG [[PMID:41777928]]."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 1,
    "haemostasis_values": {},
    "haemostasis_conflict": false
   },
@@ -618,8 +817,38 @@
    "doc": "learn_history\\20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
    "question": "Use of lasers in root canal disinfection",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 1.0,
+       "modules": [
+        "## Module 4 \u2014 Clinical outcomes, limitations, and adverse effects of laser disinfection"
+       ],
+       "example": "(2024) used 1% NaOCl for PIPS activation [[PMID:38431616]]."
+      },
+      {
+       "value": 2.0,
+       "modules": [
+        "## Module 2 \u2014 Clinical protocols for laser-assisted root canal disinfection",
+        "## Module 3 \u2014 Efficacy and Bacterial Reduction Outcomes with Laser Therapy",
+        "## Module 4 \u2014 Clinical outcomes, limitations, and adverse effects of laser disinfection"
+       ],
+       "example": "(2025) in 40 patients undergoing molar retreatment found that Er:YAG LAI (50 mJ, 25 Hz, 1 W, 300 \u03bcs, 300-\u03bcm tip diameter, fluence 71.4 J/cm\u00b2, power density 1,428.6 W/cm\u00b2) with 2% NaOCl and 17% EDTA, combined with post-tr"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 3 \u2014 Efficacy and Bacterial Reduction Outcomes with Laser Therapy"
+       ],
+       "example": "Irrigate throughout with 5.25% NaOCl delivered via side-vented needle to within 1 mm of working length."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 1,
    "haemostasis_values": {},
    "haemostasis_conflict": false
   },
@@ -635,9 +864,10 @@
       {
        "value": 2.0,
        "modules": [
+        "## Module 2 \u2014 Clinical Assessment and Laser Selection Criteria",
         "## Module 3 \u2014 Laser-Activated Disinfection Techniques and Protocols"
        ],
-       "example": "(2025, n=40, 6-month CBCT) using Er:YAG LAI at 50 mJ, 25 Hz, 1 W, 300 \u00b5s, 300 \u00b5m tip with 2% NaOCl and 17% EDTA showed significantly smaller mean periapical lesion size at 6 months versus conventional retreatment (1.55 \u00b1"
+       "example": "did not specify total volume, but used 2% NaOCl for LAI activation) [[PMID:40135760]]."
       },
       {
        "value": 2.5,
@@ -653,6 +883,27 @@
         "## Module 1 \u2014 Laser Physics and Bacterial Biofilm Pathophysiology"
        ],
        "example": "NaOCl at 2.6% and 5.2% concentrations eliminated all cultivable organisms from root canals in clinical samples, whereas 0.5% and 1.0% concentrations left residual streptococcal species [[PMID:38976717]]."
+      },
+      {
+       "value": 3.0,
+       "modules": [
+        "## Module 3 \u2014 Laser-Activated Disinfection Techniques and Protocols"
+       ],
+       "example": "used 3% NaOCl for the UAI/PDT retreatment protocol [[PMID:38013016]]."
+      },
+      {
+       "value": 5.2,
+       "modules": [
+        "## Module 1 \u2014 Laser Physics and Bacterial Biofilm Pathophysiology"
+       ],
+       "example": "confirmed zero cultivable organisms at 5.2% NaOCl concentration in clinical samples [[PMID:38976717]];"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser Physics and Bacterial Biofilm Pathophysiology"
+       ],
+       "example": "**Primary NaOCl irrigation.** Deliver 5.25% NaOCl via side-vented needle."
       }
      ]
     }
@@ -665,8 +916,52 @@
    "doc": "learn_history\\20260901_014227_use_of_lasers_in_root_canal_disinfection.json",
    "question": "Use of lasers in root canal disinfection",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 1.0,
+       "modules": [
+        "## Module 1 \u2014 Laser physics and bacterial pathogenesis in endodontics"
+       ],
+       "example": "used 1% NaOCl with PIPS in 60 patients with apical periodontitis [[PMID:38431616]]."
+      },
+      {
+       "value": 2.0,
+       "modules": [
+        "## Module 2 \u2014 Clinical assessment and laser selection criteria",
+        "## Module 3 \u2014 Laser-activated disinfection protocols and techniques"
+       ],
+       "example": "Kolberg-Babrzy\u0144ska et al., 2025 used 50 mJ, 25 Hz, 1 W, 300 \u00b5s, 300 \u00b5m tip, fluence 71.4 J/cm\u00b2, for Er:YAG LAI with 2% NaOCl and 17% EDTA [[PMID:40135760]]."
+      },
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 1 \u2014 Laser physics and bacterial pathogenesis in endodontics",
+        "## Module 2 \u2014 Clinical assessment and laser selection criteria"
+       ],
+       "example": "**Primary irrigant delivery \u2014 NaOCl.** Deliver 2.5% NaOCl via needle throughout instrumentation."
+      },
+      {
+       "value": 3.0,
+       "modules": [
+        "## Module 3 \u2014 Laser-activated disinfection protocols and techniques"
+       ],
+       "example": "Pa\u017ein et al., 2024 (n = 36, asymptomatic chronic apical periodontitis, periapical lesions > 5 mm) found no significant difference in periapical lesion reduction after one year between UAI alone (3% NaOCl, EDTA, 3% NaOCl)"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 2 \u2014 Clinical assessment and laser selection criteria"
+       ],
+       "example": "**Deliver conventional irrigant to full working length.** Use 2.5% NaOCl (as used in the comparative arm of Fahim et al., 2024) or 5.25% NaOCl (as used by Hanna et al., 2025 for LAI activation) before laser activation."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 1,
    "haemostasis_values": {},
    "haemostasis_conflict": false
   },
@@ -699,6 +994,13 @@
         "## Module 3 \u2014 Laser-Assisted Disinfection Protocols and Techniques"
        ],
        "example": "However, Pa\u017ein et al., 2024 (n = 36, RCT, periapical lesions > 5 mm, irrigated with 3% NaOCl) found no significant difference in periapical lesion reduction at 12 months between UAI alone (median reduction 86.98%) and UA"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser Physics and Mechanisms in Endodontics"
+       ],
+       "example": "Irrigate with 5.25% NaOCl after each file sequence [[PMID:39053791]] [[PMID:39888502]]."
       },
       {
        "value": 6.0,
@@ -777,16 +1079,26 @@
       {
        "value": 2.0,
        "modules": [
+        "## Module 1 \u2014 Laser Physics and Endodontic Disinfection Mechanisms",
+        "## Module 2 \u2014 Clinical Assessment and Laser Selection for Canal Treatment",
         "## Module 4 \u2014 Clinical Outcomes, Success Rates, and Adverse Effects"
        ],
-       "example": "(2025, n = 40, 6-month CBCT) found periapical lesion size was significantly smaller in the group receiving Er:YAG LAI with 2% NaOCl (50 mJ, 25 Hz, 1 W, 300 \u03bcs, tip diameter 300 \u03bcm, fluence 71.4 J/cm\u00b2) plus 635 nm photobi"
+       "example": "**Primary irrigation with 5.25% NaOCl.** Irrigate with 5.25% NaOCl (or 2% NaOCl for LAI protocols per Kolberg-Babrzy\u0144ska et al.) using a side-vented needle placed 1 mm short of working length [[PMID:40135760]]."
       },
       {
        "value": 2.5,
        "modules": [
+        "## Module 3 \u2014 Laser Activation Protocols and Disinfection Technique",
         "## Module 4 \u2014 Clinical Outcomes, Success Rates, and Adverse Effects"
        ],
-       "example": "(2024, n = 86, 18-month follow-up) found that diode laser pulpotomy (GaAlAs 980 nm) with 2.5% NaOCl achieved 93.0% success versus 88.4% for conventional crown pulpotomy;"
+       "example": "used 2.5% NaOCl with 17% EDTA as the conventional disinfection protocol;"
+      },
+      {
+       "value": 3.0,
+       "modules": [
+        "## Module 3 \u2014 Laser Activation Protocols and Disinfection Technique"
+       ],
+       "example": "used 3% NaOCl throughout the UAI protocol before PDT application [[PMID:38013016]]."
       },
       {
        "value": 5.25,
@@ -891,6 +1203,15 @@
        "example": "However, when 2.5% NaOCl is substituted for saline, all activated techniques produce equivalent >2.2 log\u2081\u2080 reductions with no statistically significant difference between LAI and ultrasonic activation [[PMID:27014832]]."
       },
       {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser Physics and Endodontic Disinfection Mechanisms",
+        "## Module 2 \u2014 Clinical Applications and Laser Delivery Systems in Canals",
+        "## Module 4 \u2014 Clinical Outcomes, Safety Concerns, and Complications of Endodontic Laser Use"
+       ],
+       "example": "For retreatment of teeth with post-treatment apical periodontitis, 5.25% NaOCl has been reported as the primary irrigant in laser-assisted protocols [[PMID:41777928]]."
+      },
+      {
        "value": 6.0,
        "modules": [
         "## Module 1 \u2014 Laser Physics and Endodontic Disinfection Mechanisms",
@@ -917,16 +1238,25 @@
       {
        "value": 2.0,
        "modules": [
-        "## Module 2 \u2014 Laser systems, parameters, and irrigation activation techniques"
+        "## Module 2 \u2014 Laser systems, parameters, and irrigation activation techniques",
+        "## Module 3 \u2014 Clinical Efficacy of Laser Disinfection Against Endodontic Pathogens"
        ],
        "example": "**Erbium LAI in Retreatment: Clinical Evidence**\n\nA 40-patient RCT of retreatment cases (Kolberg-Babrzy\u0144ska et al., 2025) in mandibular molars with chronic periapical lesions applied Er:YAG LAI at parameters of 50 mJ, 25"
       },
       {
        "value": 2.5,
        "modules": [
-        "## Module 1 \u2014 Laser physics, wavelengths, and endodontic photobiology"
+        "## Module 1 \u2014 Laser physics, wavelengths, and endodontic photobiology",
+        "## Module 2 \u2014 Laser systems, parameters, and irrigation activation techniques"
        ],
        "example": "At 940 nm paired with 2,780 nm Er,Cr:YSGG, the dual-laser protocol produced significantly lower mean log\u2081\u2080 CFU/mL of aerobic and anaerobic bacteria than conventional 2.5% NaOCl / 17% EDTA in an in vivo RCT (n = 30) [[PMI"
+      },
+      {
+       "value": 5.0,
+       "modules": [
+        "## Module 2 \u2014 Laser systems, parameters, and irrigation activation techniques"
+       ],
+       "example": "**Select irrigant concentration and flood canal**\n   Deliver 2% NaOCl for retreatment cases using Er:YAG LAI [[PMID:40135760]], or 5% NaOCl for primary RCT PIPS protocols [[PMID:28756961]]."
       },
       {
        "value": 5.25,
@@ -970,9 +1300,25 @@
       {
        "value": 3.0,
        "modules": [
-        "## Module 3 \u2014 Laser-Activated Disinfection Protocols and Techniques"
+        "## Module 3 \u2014 Laser-Activated Disinfection Protocols and Techniques",
+        "## Module 4 \u2014 Clinical Outcomes and Efficacy Assessment Studies"
        ],
        "example": "Despite microbiological benefit, an RCT (n = 36) using 3% NaOCl with UAI found no significant difference in periapical lesion volume reduction at 12 months between UAI alone (86.98% reduction) and UAI + aPDT (79.72% redu"
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 3 \u2014 Laser-Activated Disinfection Protocols and Techniques",
+        "## Module 4 \u2014 Clinical Outcomes and Efficacy Assessment Studies"
+       ],
+       "example": "Irrigate throughout with 2.5%\u20135.25% NaOCl [[PMID:34749318]] [[PMID:31301436]]."
+      },
+      {
+       "value": 6.0,
+       "modules": [
+        "## Module 4 \u2014 Clinical Outcomes and Efficacy Assessment Studies"
+       ],
+       "example": "(2011) used 6% NaOCl as the irrigant base for laser-activated disinfection [[PMID:21689561]]."
       }
      ]
     }
@@ -1007,10 +1353,12 @@
       {
        "value": 2.5,
        "modules": [
+        "## Module 1 \u2014 Laser physics and bactericidal mechanisms in endodontics",
+        "## Module 2 \u2014 Clinical Assessment of Endodontic Biofilm and Infection Complexity",
         "## Module 3 \u2014 Laser-activated irrigation protocols and technical parameters",
         "## Module 4 \u2014 Clinical outcomes, microbiological success and adverse effects of laser disinfection"
        ],
-       "example": "with 2.5% NaOCl, all groups achieved >2.2 log\u2081\u2080 reductions with no significant difference between LAI and UAI [[PMID:27014832]]."
+       "example": "underpin use of 2.5% NaOCl [[PMID:38634795]] [[PMID:32413440]]."
       },
       {
        "value": 5.0,
@@ -1018,6 +1366,13 @@
         "## Module 1 \u2014 Laser physics and bactericidal mechanisms in endodontics"
        ],
        "example": "An ex vivo study using 5% NaOCl for 30 seconds confirmed that PIPS combined with 5% NaOCl produced the greatest CFU reduction, though this difference over 5% NaOCl alone did not reach significance [[PMID:22486805]]."
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 1 \u2014 Laser physics and bactericidal mechanisms in endodontics"
+       ],
+       "example": "treat as provisional pending higher-tier confirmation\n\n**IF** post-treatment apical periodontitis is confirmed radiographically and retreatment is selected\n\nThe 5.25% NaOCl concentration in this branch applies solely to "
       }
      ]
     }
@@ -1030,11 +1385,54 @@
    "doc": "learn_history\\20260904_061755_vital_pulp_therapy_in_mature_permanent_teeth.json",
    "question": "vital pulp therapy in mature permanent teeth",
    "modules": 4,
-   "conflicts": [],
-   "n_conflicts": 0,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 3 \u2014 Vital Pulp Therapy Techniques in Mature Permanent Dentition",
+        "## Module 4 \u2014 Clinical Outcomes, Healing, and Complications of Vital Pulp Interventions"
+       ],
+       "example": "(2024), in a randomized trial of 96 adults, found that lavage with 2.5% NaOCl before MTA DPC yielded estimated 4-year pulp survival of 55% (95% CI 30\u2013100%) versus 7% (95% CI 1\u201340%) with physiological saline [[PMID:378906"
+      },
+      {
+       "value": 5.0,
+       "modules": [
+        "## Module 1 \u2014 Pathobiology of Caries Exposure and Pulp Inflammation in Mature Teeth"
+       ],
+       "example": "**Irrigate exposure site with 5% NaOCl.** Taha et al."
+      }
+     ]
+    },
+    {
+     "agent": "sodium hypochlorite",
+     "unit": "%",
+     "values": [
+      {
+       "value": 2.5,
+       "modules": [
+        "## Module 4 \u2014 Clinical Outcomes, Healing, and Complications of Vital Pulp Interventions"
+       ],
+       "example": "**Pulp lavage** \u2014 Before capping, wash the exposed pulp site with 2.5% sodium hypochlorite (NaOCl) solution."
+      },
+      {
+       "value": 5.0,
+       "modules": [
+        "## Module 1 \u2014 Pathobiology of Caries Exposure and Pulp Inflammation in Mature Teeth"
+       ],
+       "example": "(2017) used 5% sodium hypochlorite for field disinfection before caries excavation in their RCT of 50 mature permanent molars [[PMID:28673494]]."
+      }
+     ]
+    }
+   ],
+   "n_conflicts": 2,
    "haemostasis_values": {
     "6.0": [
      "## Module 1 \u2014 Pathobiology of Caries Exposure and Pulp Inflammation in Mature Teeth",
+     "## Module 2 \u2014 Clinical Diagnosis and Assessment of Vital Pulp Status",
      "## Module 3 \u2014 Vital Pulp Therapy Techniques in Mature Permanent Dentition"
     ],
     "4.0": [
@@ -1057,7 +1455,8 @@
        "modules": [
         "## Module 1 \u2014 Vital Pulp Pathology and Exposure Classification",
         "## Module 2 \u2014 Clinical Diagnosis and Vital Pulp Assessment",
-        "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection"
+        "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection",
+        "## Module 4 \u2014 Vital Pulp Treatment Outcomes and Complication Management"
        ],
        "example": "(RCT, n=96) demonstrated that lavage with 2.5% NaOCl for 60 seconds produced estimated pulp survival of 55% (95% CI 30\u2013100%) versus 7% (95% CI 1\u201340%) at 1500 days compared with physiological saline, and reduced painful f"
       },
@@ -1067,18 +1466,29 @@
         "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection"
        ],
        "example": "(2017) documented hemostasis using 5% NaOCl applied to the pulp stump for partial pulpotomy in molars with irreversible pulpitis [[PMID:28673494]]."
+      },
+      {
+       "value": 5.25,
+       "modules": [
+        "## Module 2 \u2014 Clinical Diagnosis and Vital Pulp Assessment"
+       ],
+       "example": "Do not use 5.25% NaOCl \u2014 the evidence base does not report this concentration for pulp wound lavage."
       }
      ]
     }
    ],
    "n_conflicts": 1,
    "haemostasis_values": {
+    "10.0": [
+     "## Module 1 \u2014 Vital Pulp Pathology and Exposure Classification"
+    ],
     "6.0": [
      "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection",
      "## Module 4 \u2014 Vital Pulp Treatment Outcomes and Complication Management"
     ],
     "4.0": [
-     "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection"
+     "## Module 3 \u2014 Vital Pulp Therapy Technique and Material Selection",
+     "## Module 4 \u2014 Vital Pulp Treatment Outcomes and Complication Management"
     ]
    },
    "haemostasis_conflict": true
@@ -1166,16 +1576,26 @@
       {
        "value": 2.0,
        "modules": [
+        "## Module 1 \u2014 Laser Physics and Endodontic Disinfection Mechanisms",
+        "## Module 2 \u2014 Clinical Assessment and Laser Selection for Canal Treatment",
         "## Module 4 \u2014 Clinical Outcomes, Success Rates, and Adverse Effects"
        ],
-       "example": "(2025, n = 40, 6-month CBCT) found periapical lesion size was significantly smaller in the group receiving Er:YAG LAI with 2% NaOCl (50 mJ, 25 Hz, 1 W, 300 \u03bcs, tip diameter 300 \u03bcm, fluence 71.4 J/cm\u00b2) plus 635 nm photobi"
+       "example": "**Primary irrigation with 5.25% NaOCl.** Irrigate with 5.25% NaOCl (or 2% NaOCl for LAI protocols per Kolberg-Babrzy\u0144ska et al.) using a side-vented needle placed 1 mm short of working length [[PMID:40135760]]."
       },
       {
        "value": 2.5,
        "modules": [
+        "## Module 3 \u2014 Laser Activation Protocols and Disinfection Technique",
         "## Module 4 \u2014 Clinical Outcomes, Success Rates, and Adverse Effects"
        ],
-       "example": "(2024, n = 86, 18-month follow-up) found that diode laser pulpotomy (GaAlAs 980 nm) with 2.5% NaOCl achieved 93.0% success versus 88.4% for conventional crown pulpotomy;"
+       "example": "used 2.5% NaOCl with 17% EDTA as the conventional disinfection protocol;"
+      },
+      {
+       "value": 3.0,
+       "modules": [
+        "## Module 3 \u2014 Laser Activation Protocols and Disinfection Technique"
+       ],
+       "example": "used 3% NaOCl throughout the UAI protocol before PDT application [[PMID:38013016]]."
       },
       {
        "value": 5.25,
@@ -1205,6 +1625,7 @@
        "value": 2.0,
        "modules": [
         "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics",
+        "## Module 2 \u2014 Clinical Assessment and Indication Selection for Laser Disinfection",
         "## Module 3 \u2014 Laser Disinfection Techniques and Treatment Protocols"
        ],
        "example": "(2024) in their retreatment UAI/conventional arm [[PMID:38013016]], 2% NaOCl is the concentration used by Kolberg-Babrzy\u0144ska et al."
@@ -1212,21 +1633,26 @@
       {
        "value": 2.5,
        "modules": [
-        "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics"
+        "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics",
+        "## Module 2 \u2014 Clinical Assessment and Indication Selection for Laser Disinfection",
+        "## Module 4 \u2014 Clinical Outcomes, Efficacy, and Adverse Events"
        ],
        "example": "(2025) during Er:YAG LAI activation [[PMID:40135760]], and 2.5% NaOCl is the concentration used by Swetha et al."
       },
       {
        "value": 3.0,
        "modules": [
-        "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics"
+        "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics",
+        "## Module 3 \u2014 Laser Disinfection Techniques and Treatment Protocols"
        ],
        "example": "[[PMID:39955574]]), 3% NaOCl is the concentration used by Pa\u017ein et al."
       },
       {
        "value": 5.25,
        "modules": [
-        "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics"
+        "## Module 1 \u2014 Laser Physics and Bactericidal Mechanisms in Endodontics",
+        "## Module 2 \u2014 Clinical Assessment and Indication Selection for Laser Disinfection",
+        "## Module 3 \u2014 Laser Disinfection Techniques and Treatment Protocols"
        ],
        "example": "**Conventional Irrigation Remains Standard of Care**\n\nAcross this curriculum, NaOCl is cited at four concentrations (2%, 2.5%, 3%, and 5.25%), each tied to a distinct study context: 5.25% NaOCl is the primary irrigant co"
       }
@@ -1234,7 +1660,11 @@
     }
    ],
    "n_conflicts": 1,
-   "haemostasis_values": {},
+   "haemostasis_values": {
+    "5.0": [
+     "## Module 2 \u2014 Clinical Assessment and Indication Selection for Laser Disinfection"
+    ]
+   },
    "haemostasis_conflict": false
   }
  ]

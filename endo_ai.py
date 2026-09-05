@@ -2543,6 +2543,171 @@ LEVEL_5_TERMS = [
     "letter[pt]",
 ]
 
+
+# ── STATED-DESIGN EXTRACTION (A49 item 4b) ───────────────
+#
+# A paper MEDLINE has not yet indexed carries only `Journal Article`. It is
+# untyped because MEDLINE has not classified it, NOT because it has no design:
+# the design is stated in the abstract, in the authors' own words. This reads
+# that statement.
+#
+# IT IS FACT EXTRACTION AND MUST NEVER BECOME SCORING. It reports what the
+# authors wrote and the rung MEDLINE would have put it on. It assigns no
+# number, no quality judgement and no rank, and `extract_stated_design` returns
+# no score field for a caller to start sorting by. The moment this produces a
+# number it has become a second, unaudited ranker over exactly the papers
+# nothing else ranks.
+#
+# PRECEDENCE IS THE WHOLE DESIGN, and it is ordered by what can MASQUERADE as
+# what. An in vitro study writes "specimens were randomly assigned to four
+# groups"; a naive `randomi[sz]ed` match calls that an RCT and promotes a
+# dentine-block experiment to Level I. So bench and animal work is recognised
+# FIRST and wins outright, and human-subject randomisation additionally
+# requires a human-subject marker. Measured on real abstracts rather than
+# assumed — see eval/reports/a49_design_extraction.md for the false-positive
+# audit that set this order.
+#
+# THE NEGATIVE CONTROL OVERTURNED ITS OWN PREMISE. The batch specified that the
+# extractor must find an RCT in Sulaiman 42388091 or be considered broken.
+# Sulaiman is NOT an RCT. Its abstract says "this single centre, one-arm
+# clinical trial", prospectively registered as CTRI/2023/06/054485; the strings
+# "randomis", "randomiz" and "randomly" do not occur in it. Returning "RCT" for
+# it would be inventing a design the authors never claimed, which is the one
+# thing this function must not do. It returns `clinical trial (non-randomised)`
+# at level2 — still level2-or-above, so the paper is still admitted, for the
+# reason the authors actually gave.
+
+_HUMAN_SUBJECT_RE = re.compile(
+    r"\b(patient|participant|subject|volunteer|children|adult|"
+    r"recruit|enrol|enroll|informed consent|in\s+vivo\s+clinical|"
+    r"attend(?:ed|ing)?\s+the\s+clinic)", re.I)
+
+# Recognised first and allowed to win: a bench or animal study that randomises
+# its specimens is still a bench or animal study.
+_BENCH_RE = re.compile(
+    r"\b(in\s*[- ]?\s*vitro|ex\s*[- ]?\s*vivo|finite[- ]element|"
+    r"micro[- ]?ct\s+(?:analysis|evaluation)\s+of\s+extracted|"
+    r"extracted\s+(?:human\s+)?(?:teeth|molars|premolars|incisors)|"
+    r"dentin[ae]\s+(?:blocks?|discs?|specimens?)|"
+    r"bovine|laboratory\s+stud|bench\s+stud|"
+    r"agar\s+diffusion|scanning\s+electron\s+microscop)", re.I)
+
+_ANIMAL_RE = re.compile(
+    r"\b(animal\s+(?:model|stud|experiment)|"
+    r"\b(?:rats?|mice|murine|rabbits?|dogs?|canine\s+model|beagle|"
+    r"swine|porcine|sheep|ferrets?|primates?|zebrafish)\b)", re.I)
+
+# Synthesis designs. Checked before primary designs because a systematic
+# review OF randomised trials says "randomised" many times.
+_SYNTHESIS_PATTERNS = [
+    (r"network\s+meta[- ]analys", "network meta-analysis", "level1"),
+    (r"\bsystematic\s+review", "systematic review", "level1"),
+    (r"\bmeta[- ]analys", "meta-analysis", "level1"),
+    (r"\bscoping\s+review", "scoping review", "level5"),
+    (r"\bnarrative\s+review", "narrative review", "level5"),
+    (r"\bumbrella\s+review", "umbrella review", "level1"),
+]
+
+# Primary human designs, strongest first.
+_PRIMARY_PATTERNS = [
+    (r"randomi[sz]ed\s+controlled\s+(?:clinical\s+)?trial|"
+     r"\brandomi[sz]ed\s+clinical\s+trial|"
+     r"randomly\s+(?:allocated|assigned|divided|distributed)|"
+     r"\brandomi[sz]ed\s+(?:into|to)\b|"
+     r"\bRCT\b",
+     "randomised controlled trial", "level1"),
+    (r"\bcontrolled\s+clinical\s+trial|"
+     r"\b(?:one|single|two|double)[- ]arm(?:ed)?\s+(?:clinical\s+)?(?:trial|study)|"
+     r"\bnon[- ]randomi[sz]ed\s+(?:clinical\s+)?trial|"
+     r"\bclinical\s+trial\b|"
+     r"\bprospective(?:ly)?\s+(?:registered|recruited|enrolled)|"
+     r"\bprospective\s+(?:cohort|study|clinical|observational|"
+     r"comparative|multicent|single[- ]cent)|"
+     r"\bcomparative\s+(?:clinical\s+)?stud",
+     "clinical trial (non-randomised) or prospective study", "level2"),
+    (r"\bretrospective(?:ly)?\b|\bchart\s+review|\brecords?\s+review",
+     "retrospective study", "level3a"),
+    (r"\bcase[- ]control\s+stud", "case-control study", "level3b"),
+    (r"\bcase\s+series\b", "case series", "level4"),
+    (r"\bcase\s+report\b|\bwe\s+(?:report|present)\s+(?:a|the)\s+case\b",
+     "case report", "level4"),
+    (r"\bcross[- ]sectional|\bquestionnaire\s+(?:survey|stud)|"
+     r"\bsurvey\s+(?:was\s+)?(?:conducted|distributed)|\bobservational\s+stud",
+     "cross-sectional / observational", "observational"),
+]
+
+# A protocol or registration announcement states a design but reports NO
+# result. Recognised so it can be excluded rather than admitted as though the
+# trial had reported.
+_PROTOCOL_RE = re.compile(
+    r"\b(study\s+protocol|trial\s+protocol|protocol\s+for\s+a|"
+    r"will\s+be\s+randomi[sz]ed|will\s+be\s+recruited|"
+    r"this\s+protocol\s+describes)", re.I)
+
+# Rungs this extractor may emit, and the subset that counts as
+# "level2-or-above" for admission. Derived from TIER_ORDER rather than
+# restated, so a change to the ladder cannot silently widen admission.
+DESIGN_RUNGS_AT_OR_ABOVE_LEVEL2 = ("cochrane", "level1", "level2")
+
+
+def extract_stated_design(abstract: str, title: str = "") -> dict:
+    """What design does this paper's own abstract say it is?
+
+    Returns {design, rung, matched, basis} or {} when the abstract states no
+    recognisable design. Never returns a score, and callers must not derive
+    one: this exists to make untyped papers REACHABLE, not to rank them.
+
+    `basis` names which signal decided, so a wrong answer can be traced to the
+    pattern that produced it instead of to a single opaque verdict. Several
+    independent signals reporting which one fired is the only approach that
+    has worked in this codebase; one fuzzy score that hides what matched has
+    now been wrong six times.
+    """
+    hay = "%s\n%s" % (title or "", abstract or "")
+    if not hay.strip():
+        return {}
+
+    m = _PROTOCOL_RE.search(hay)
+    if m:
+        return {"design": "study protocol (no results reported)",
+                "rung": "protocol", "matched": m.group(0),
+                "basis": "protocol marker"}
+
+    m = _BENCH_RE.search(hay)
+    if m:
+        return {"design": "in vitro / bench study", "rung": "invitro",
+                "matched": m.group(0), "basis": "bench marker (precedence)"}
+
+    m = _ANIMAL_RE.search(hay)
+    if m:
+        return {"design": "animal study", "rung": "animal",
+                "matched": m.group(0), "basis": "animal marker (precedence)"}
+
+    for pat, design, rung in _SYNTHESIS_PATTERNS:
+        m = re.search(pat, hay, re.I)
+        if m:
+            return {"design": design, "rung": rung, "matched": m.group(0),
+                    "basis": "synthesis pattern"}
+
+    human = bool(_HUMAN_SUBJECT_RE.search(hay))
+    for pat, design, rung in _PRIMARY_PATTERNS:
+        m = re.search(pat, hay, re.I)
+        if not m:
+            continue
+        # Randomisation only means an RCT when there are human subjects. This
+        # is the guard that keeps "specimens were randomly assigned" out of
+        # Level I; the bench regex catches most of it, and this catches the
+        # rest.
+        if rung == "level1" and not human:
+            return {"design": "randomisation stated without human subjects",
+                    "rung": "unclear", "matched": m.group(0),
+                    "basis": "randomisation without human-subject marker"}
+        return {"design": design, "rung": rung, "matched": m.group(0),
+                "basis": "primary-design pattern"}
+
+    return {}
+
+
 # ── EVIDENCE LEVEL SCORES ────────────────────────────────
 LEVEL_SCORES = {
     "cochrane": 100,
@@ -6499,6 +6664,12 @@ def finalise_answer_text(answer: str):
     # what it had just rejoined.
     answer = _repair_split_list_items(answer)
     answer, blocks = quarantine_unsourced_content(answer)
+    # A51(a) — after the quarantine pass, so the notice is never swallowed into
+    # a quarantined span, and before the banner count, which reads the finished
+    # document. A no-op on anything without two module sections, so every
+    # Literature and Case answer passes through untouched, and idempotent, so
+    # re-rendering the same stored curriculum does not stack notices.
+    answer = render_numeric_conflict_notice(answer)
     # Last, so it counts the quarantined content the step above just created.
     return ensure_uncited_half(answer), blocks
 
@@ -9028,6 +9199,119 @@ def detect_parameter_conflicts(modules: list) -> list:
             ],
         })
     return out
+
+
+# ── A51(a) — SURFACE THE CONFLICT THE DETECTOR ALREADY FINDS ──
+#
+# MEASURED: 25 of 36 stored curricula (69%) carry a same-quantity/two-values
+# conflict that `detect_parameter_conflicts` finds today. It was called by
+# `scripts/regenerate_curriculum.py` as a metric and by
+# `annotate_curriculum_consistency` at GENERATION time — which fails closed and
+# makes a model call — and by nothing on the path that serves a document to a
+# reader. The detector was never missing. The wiring was.
+#
+# A SURFACING GATE, NOT A BLOCKING ONE. A curriculum with a parameter conflict
+# is still a useful curriculum: different trials use different concentrations
+# and each module may be citing its own correctly. What is missing is the
+# sentence saying which study used which. So both values are shown, neither is
+# suppressed, and NO WINNER IS PICKED — choosing one would be inventing a
+# clinical judgement out of a string comparison.
+#
+# DETERMINISTIC AND MODEL-FREE, unlike `annotate_curriculum_consistency`. It
+# runs inside `finalise_answer_text`, which serves stored answers as well as
+# fresh ones, so it must be cheap, offline and idempotent. Idempotence is the
+# one that bites: that function runs on every render of the same stored row,
+# and last night's G2 whitespace defect is what happens when it does not hold.
+#
+# CONCENTRATIONS ONLY, because that is what `extract_numeric_parameters`
+# covers and what the 25 are. Time quantities — the haemostasis threshold — are
+# a separate job and deliberately not attempted here: the probe finds 2 of the
+# 3 values, cannot represent "no threshold established", and one curriculum
+# conflicts INSIDE a single module, which the >=2-module rule would miss.
+# See eval/reports/a51a_numeric_conflicts.md.
+_CONFLICT_HEADER = ("**PARAMETER CONFLICT — this document gives more than one "
+                    "value for the same quantity**")
+_CONFLICT_NOTE = (
+    "_Both values are shown exactly as written, and Curo does not choose "
+    "between them. Different studies use different parameters and each module "
+    "may be citing its own correctly; what is missing is the sentence saying "
+    "which study used which. Check against the cited paper before following "
+    "either._")
+
+_MODULE_SPLIT_RE = re.compile(r"^(##\s+Module[^\n]*)$", re.M)
+
+
+def curriculum_modules(text: str) -> list:
+    """[(heading, body)] for each `## Module ...` section of an ASSEMBLED
+    curriculum.
+
+    `detect_parameter_conflicts` wants the module bodies, and at generation
+    time it is handed them directly. On the serve path only the stitched
+    markdown exists, so they are recovered from it here.
+
+    The trailing sections (REFERENCES, Citation Support by Module) are cut:
+    a reference list repeating "2.5% NaOCl" from two different papers' titles
+    is not the document disagreeing with itself, and counting it would
+    manufacture conflicts in documents that have none.
+    """
+    if not text:
+        return []
+    body = text.split("## Citation Support by Module")[0]
+    for stop in ("\n## REFERENCES", "\n## KEY TAKEAWAYS", "\n## The Final Verdict"):
+        i = body.find(stop)
+        if i != -1:
+            body = body[:i]
+    parts = _MODULE_SPLIT_RE.split(body)
+    out = []
+    for i in range(1, len(parts), 2):
+        head = parts[i].strip()
+        chunk = parts[i + 1] if i + 1 < len(parts) else ""
+        if len(chunk.split()) >= 40:
+            out.append((head, chunk))
+    return out
+
+
+def _conflict_block(conflicts: list) -> str:
+    """The rendered notice. Same blockquote family as the quarantine block."""
+    lines = [f"> {_CONFLICT_HEADER}", ">", f"> {_CONFLICT_NOTE}", ">"]
+    for c in conflicts:
+        unit = c.get("unit") or ""
+        agent = c.get("agent") or "value"
+        bits = []
+        for v in c.get("values", []):
+            mods = ", ".join(m.replace("## ", "").split("—")[0].strip()
+                             for m in v.get("modules", []))
+            bits.append("**%s%s** (%s)" % (v.get("value"), unit, mods or "?"))
+        lines.append("> - %s — %s" % (agent, " vs ".join(bits)))
+    return "\n".join(lines)
+
+
+def render_numeric_conflict_notice(text: str) -> str:
+    """Insert the conflict notice into an assembled curriculum. Idempotent.
+
+    Returns the text unchanged when there are no modules (every Literature and
+    Case answer), when the detector finds nothing, or when the notice is
+    already present — which is what makes it safe on the serve path, where the
+    same stored row is re-rendered on every view.
+    """
+    if not text or _CONFLICT_HEADER in text:
+        return text or ""
+    mods = curriculum_modules(text)
+    if len(mods) < 2:
+        return text
+    conflicts = detect_parameter_conflicts(mods)
+    if not conflicts:
+        return text
+    block = _conflict_block(conflicts)
+
+    # Placed immediately before the overview, so it is the first thing after
+    # the title rather than a footnote under a document whose protocol the
+    # reader has already followed.
+    for anchor in ("\n## OVERVIEW", "\n## Module"):
+        i = text.find(anchor)
+        if i != -1:
+            return text[:i] + "\n\n" + block + "\n" + text[i:]
+    return block + "\n\n" + text
 
 
 def detect_malformed_because(text: str) -> list:

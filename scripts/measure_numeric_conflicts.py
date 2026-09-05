@@ -43,14 +43,19 @@ _HAEMOSTASIS_RE = re.compile(
 
 
 def modules_of(text):
-    body = text.split("## Citation Support by Module")[0]
-    parts = re.split(r"^(## [^\n]*)$", body, flags=re.M)
-    out = []
-    for i in range(1, len(parts), 2):
-        head = parts[i].strip()
-        if head.startswith("## Module") and len(parts[i + 1].split()) >= 40:
-            out.append((head, parts[i + 1]))
-    return out
+    """CORRECTED — now `endo_ai.curriculum_modules`.
+
+    The version this replaced split on EVERY `## ` heading and kept those
+    beginning `## Module`. Curricula put `## Clinical Application` (an h2)
+    INSIDE each module, so a module body was truncated at its first subheading
+    -- 767 words where the module holds 2,128 -- and the protocol sections
+    where the concentrations live were never scanned. That is why the first
+    run of this script reported 25 of 36 rather than 33 of 36.
+
+    Where a curriculum has no h2 subheadings the two agree exactly, which is
+    what made the undercount invisible.
+    """
+    return E.curriculum_modules(text)
 
 
 def load_curricula():

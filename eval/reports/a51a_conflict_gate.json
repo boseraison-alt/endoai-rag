@@ -1,0 +1,658 @@
+{
+ "fired": [
+  {
+   "doc": "query_cache:2346",
+   "modules": 4,
+   "n_conflicts": 2,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "lidocaine",
+     "unit": "%",
+     "values": [
+      1.8,
+      2.0
+     ]
+    },
+    {
+     "agent": "mepivacaine",
+     "unit": "%",
+     "values": [
+      2.0,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "query_cache:4126",
+   "modules": 4,
+   "n_conflicts": 2,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      5.0
+     ]
+    },
+    {
+     "agent": "sodium hypochlorite",
+     "unit": "%",
+     "values": [
+      2.5,
+      5.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "query_cache:4471",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      5.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260428_200007_treatment_of_failed_regenerative_endodontic_therapy_in_immat.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      1.5,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260429_231324_use_of_laser_in_endodontics_additional_clinical_context_prov.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      0.5,
+      1.0,
+      2.5,
+      2.6,
+      5.25,
+      6.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260429_235956_vital_pulp_therapy_in_adults_additional_clinical_context_pro.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260829_174553_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260830_110319_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 2,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "methylene blue",
+     "unit": "%",
+     "values": [
+      0.005,
+      0.01
+     ]
+    },
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260830_135717_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260831_195239_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      2.0,
+      2.5,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260831_200627_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      2.5,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260831_231522_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260831_232314_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260831_234343_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_002547_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_003332_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_005932_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_010712_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      2.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_013436_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      2.6,
+      3.0,
+      5.2,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_014227_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_133022_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25,
+      6.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_133830_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_135817_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260901_203619_anesthesia_for_endodontics_different_techniques_when_to_use_.json",
+   "modules": 4,
+   "n_conflicts": 2,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "lidocaine",
+     "unit": "%",
+     "values": [
+      1.8,
+      2.0
+     ]
+    },
+    {
+     "agent": "mepivacaine",
+     "unit": "%",
+     "values": [
+      2.0,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260902_232041_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      5.25,
+      6.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260902_234650_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      5.0,
+      5.25,
+      6.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260903_000727_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      3.0,
+      5.25,
+      6.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260903_113143_use_of_lasers_in_root_canal_disinfection.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      1.0,
+      2.0,
+      2.5,
+      5.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260904_061755_vital_pulp_therapy_in_mature_permanent_teeth.json",
+   "modules": 4,
+   "n_conflicts": 2,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      5.0
+     ]
+    },
+    {
+     "agent": "sodium hypochlorite",
+     "unit": "%",
+     "values": [
+      2.5,
+      5.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "learn_history\\20260904_181328_vital_pulp_therapy_in_adult_teeth.json",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.5,
+      5.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "eval/fixtures/curricula\\anesthesia_20260901_before.txt",
+   "modules": 4,
+   "n_conflicts": 2,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "lidocaine",
+     "unit": "%",
+     "values": [
+      1.8,
+      2.0
+     ]
+    },
+    {
+     "agent": "mepivacaine",
+     "unit": "%",
+     "values": [
+      2.0,
+      3.0
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "eval/fixtures/curricula\\laser_disinfection_20260901_before.txt",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  },
+  {
+   "doc": "eval/fixtures/curricula\\laser_disinfection_after.txt",
+   "modules": 4,
+   "n_conflicts": 1,
+   "block_rendered": true,
+   "conflicts": [
+    {
+     "agent": "naocl",
+     "unit": "%",
+     "values": [
+      2.0,
+      2.5,
+      3.0,
+      5.25
+     ]
+    }
+   ]
+  }
+ ],
+ "silent": [
+  {
+   "doc": "learn_history\\20260430_190228_perforation_in_molars_and_premolars.json",
+   "modules": 4,
+   "n_conflicts": 0,
+   "block_rendered": false,
+   "conflicts": []
+  },
+  {
+   "doc": "learn_history\\20260902_200429_apicoectomy_of_mandibular_teeth.json",
+   "modules": 4,
+   "n_conflicts": 0,
+   "block_rendered": false,
+   "conflicts": []
+  },
+  {
+   "doc": "eval/fixtures/curricula\\anesthesia_after.txt",
+   "modules": 4,
+   "n_conflicts": 0,
+   "block_rendered": false,
+   "conflicts": []
+  }
+ ],
+ "skipped": [],
+ "idempotent": true
+}
