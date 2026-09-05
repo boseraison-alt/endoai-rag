@@ -3803,6 +3803,85 @@ def _manifest_guideline_fields(pmid: str) -> dict:
     return dict(_MANIFEST_BY_PMID.get(str(pmid or ""), {}))
 
 
+_MANIFEST_BY_ID = None
+_SUPERSEDED_ID_RE = re.compile(r"^([A-Z]+)-.*?-(\d{4})$")
+
+
+def _guideline_supersession_notice(guideline_id: str) -> str:
+    """"Replaces ESE 2006 statement." for a guideline that supersedes another.
+
+    ITEM 4, and the decision behind it. D2 keeps superseded guidelines
+    EXCLUDED from evidence: a clinician shown the 2015 CBCT statement as
+    current is a clinical hazard, and all four successors are in the library,
+    so exclusion delivers the CURRENT document. But exclusion alone never tells
+    a clinician who knows the old statement that it was replaced — it just
+    silently fails to mention it. The notice goes on the SUCCESSOR, which is
+    the record that is actually rendered.
+
+    Keyed by `guideline_id` rather than PMID on purpose: it is the field both
+    retrieval paths carry (the library reads it from its own column, the live
+    path attaches it from the manifest), and four of the thirteen superseding
+    records have no PMID at all.
+
+    Resolving the superseded document's org and year, in strict order of how
+    much is actually KNOWN:
+
+      1. the seed names it as its own record  -> its org and year, verbatim
+      2. its id follows the documented ORG-TOPIC-YEAR scheme -> read them off
+      3. neither (e.g. "CD005296.pub2 (2007)") -> emit the identifier as given
+
+    Step 3 is why this never invents. Only five of the sixteen superseded
+    identifiers are themselves seed records; the rest are historical documents
+    the manifest names without carrying, and making up an organisation for one
+    would be the same error as retitling ESE-PS-VPT-2019 by inference.
+    """
+    global _MANIFEST_BY_ID
+    if _MANIFEST_BY_ID is None:
+        table = {}
+        try:
+            import json as _json
+            import os as _os
+            path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                                 "data", "guidelines_seed.json")
+            with open(path, encoding="utf-8") as fh:
+                for g in _json.load(fh).get("guidelines", []):
+                    if g.get("id"):
+                        table[str(g["id"])] = g
+        except Exception as e:
+            print(f"  [guideline_meta] manifest unavailable for supersession: {e}")
+        _MANIFEST_BY_ID = table
+
+    rec = _MANIFEST_BY_ID.get(str(guideline_id or ""))
+    if not rec:
+        return ""
+    names, all_named = [], True
+    for old_id in (rec.get("supersedes") or []):
+        old = _MANIFEST_BY_ID.get(str(old_id))
+        if old and old.get("org") and old.get("year"):
+            names.append(f"{old['org']} {old['year']}")
+            continue
+        m = _SUPERSEDED_ID_RE.match(str(old_id))
+        if m:
+            names.append(f"{m.group(1)} {m.group(2)}")
+        else:
+            names.append(str(old_id))
+            all_named = False
+    if not names:
+        return ""
+    joined = (names[0] if len(names) == 1
+              else ", ".join(names[:-1]) + f" and {names[-1]}")
+    # The noun is dropped where an identifier could not be resolved to an
+    # organisation and a year. COCHRANE-CD005296 supersedes "CD005296.pub2
+    # (2007)" and "CD005296.pub3 (2016)" — earlier VERSIONS of the same
+    # Cochrane review, which are not "statements", and it is stored at
+    # level_key `guideline` so it does reach this line. Calling them
+    # statements would be a small false claim about what the document is, in
+    # the one sentence whose whole job is to describe a document accurately.
+    if not all_named:
+        return f"Replaces {joined}."
+    return f"Replaces {joined} statement{'s' if len(names) > 1 else ''}."
+
+
 _WITHDRAWN_TITLE_RE = re.compile(
     r"\bwithdrawn\b(?!\s+(?:consent|from\s+the\s+stud|participants?))", re.I)
 
@@ -3960,9 +4039,16 @@ def format_paper_context_line(paper: dict) -> str:
         juris = (paper.get("guideline_jurisdiction") or "").strip()
         bits = [b for b in (org, status, juris) if b]
         detail = f" ({', '.join(bits)})" if bits else ""
+        # ITEM 4 — the supersession notice, on the SUCCESSOR. D2 keeps
+        # superseded guidelines out of the evidence, so the only record that
+        # ever renders is the current one; without this line a clinician who
+        # knows the 2015 CBCT statement is never told it was replaced.
+        # Additive and render-only: it changes no retrieval and no score.
+        notice = _guideline_supersession_notice(paper.get("guideline_id") or "")
         scored_part = (
             "NOT SCORED — a guideline is a specialty's stated position, not a "
             f"study design, and carries no evidence score{detail}"
+            + (f" {notice}" if notice else "")
             if paper.get("level_key") == "guideline"
             else "NOT SCORED")
     else:
