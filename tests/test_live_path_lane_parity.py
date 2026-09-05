@@ -147,6 +147,57 @@ class TestTheProvisionalLaneReachesTheLivePath:
             "the differential path never rebuilds a provisional block, so the "
             "papers cannot reach synthesis")
 
+    def test_the_differential_merge_really_carries_it(self, monkeypatch):
+        """Behavioural, not source-shape: drive the real function.
+
+        The test above asserts the merge iterates the right keys. This one
+        asserts what comes OUT, which is what the source-shape check is a
+        proxy for — and the two failure modes differ: a merge could iterate
+        the key and still drop the block when rebuilding `evidence`.
+        """
+        import app as A
+
+        tiered = {"pmid": "111", "score": 80.0, "level_key": "level1",
+                  "title": "A trial", "year": 2020, "authors": "X Y",
+                  "journal": "J Endod", "citations": 5}
+        prov = {"pmid": "999", "score": None, "level_key": E.PROVISIONAL_KEY,
+                "title": "A 2026 trial MEDLINE has not typed", "year": 2026,
+                "authors": "Z A", "journal": "Int Endod J", "citations": 0,
+                "is_provisional": True,
+                "stated_design": "randomised controlled trial",
+                "stated_design_quote": "randomised controlled trial"}
+
+        def fake_build(job_id, query, mode="case", prior_pmids=None, **kw):
+            return {
+                "level1": {"text": "t", "ids": ["111"], "scored": [dict(tiered)]},
+                E.PROVISIONAL_KEY: {"text": "p", "ids": ["999"],
+                                    "scored": [dict(prov)]},
+                "_summary": {"total_scored": 1, "avg_score": 80.0,
+                             "all_scored": [dict(tiered)],
+                             "synthesis_order": []},
+            }
+
+        monkeypatch.setattr(A, "build_evidence_base_with_progress", fake_build)
+        with A.jobs_lock:
+            A.jobs["parity-probe"] = {"status": "running", "abort": False}
+
+        ev = A.build_differential_evidence(
+            "parity-probe", "a case",
+            [{"name": "candidate one", "query": "q1"},
+             {"name": "candidate two", "query": "q2"}])
+
+        prov_out = (ev.get(E.PROVISIONAL_KEY) or {}).get("scored") or []
+        assert [p["pmid"] for p in prov_out] == ["999"], (
+            "the provisional paper was dropped by the differential merge")
+        assert "NOT YET CLASSIFIED BY MEDLINE" in (
+            (ev.get(E.PROVISIONAL_KEY) or {}).get("text") or "")
+        # out of the scored list, in the evidence base
+        assert [p["pmid"] for p in ev["_summary"]["all_scored"]] == ["111"]
+        assert ev["_summary"]["avg_score"] == 80.0
+        assert {"111", "999"} <= E._extract_evidence_pmids(ev), (
+            "a provisional paper cited on the differential path would be "
+            "scored as a fabrication")
+
     def test_the_differential_keeps_provisional_out_of_all_scored(self):
         i = APP.index("def build_differential_evidence(")
         j = APP.index("\ndef ", i + 1)
