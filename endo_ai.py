@@ -4873,7 +4873,24 @@ def _build_evidence_context(evidence: dict) -> str:
             p = per_tier_top[tk]
             ss   = f", n={p['sample_size']}" if p.get('sample_size') else ""
             fu   = f", {p['followup_months']}mo follow-up" if p.get('followup_months') else ""
-            jif  = f", IF={p['impact_factor']}" if p.get('impact_factor') else ""
+            # A49/A4 — the impact factor USED TO BE APPENDED HERE, and this
+            # comment is the record of why it is gone rather than a silent
+            # deletion.
+            #
+            # Invariant 22 says nothing ranks by journal identity, and nothing
+            # did: USE_IMPACT_FACTOR is off, scoring never reads the field,
+            # there is no ORDER BY and no sort key on it — all test-asserted.
+            # But this block reaches Claude on ALL FOUR answer paths
+            # (ask_clinical_question, ask_learn_question, write_curriculum_module,
+            # ask_case_question), and 1,572 of 3,208 library rows carry a value,
+            # so on roughly half the evidence the synthesiser was handed the
+            # journal's prestige and asked to weigh the papers. Keeping the
+            # letter of the invariant while handing the signal to the model is
+            # the same influence one step later.
+            #
+            # Do not reintroduce it in any form — not as a number, not as a
+            # journal-quality band, not as a "high-impact" tag.
+            # `tests/test_no_journal_identity_in_context.py` pins the absence.
             tags = []
             if p.get("has_coi"):    tags.append("INDUSTRY FUNDED")
             if p.get("is_old"):     tags.append(f"{p.get('age_years', '?')}yr old")
@@ -4881,7 +4898,7 @@ def _build_evidence_context(evidence: dict) -> str:
             tag_str = f" [{', '.join(tags)}]" if tags else ""
             context += (
                 f"  [{TIER_LABEL.get(tk, tk)}] PMID {p['pmid']} — {p['score']}/100 "
-                f"(Year: {p['year']}, Citations: {p['citations']}{ss}{fu}{jif}){tag_str}\n"
+                f"(Year: {p['year']}, Citations: {p['citations']}{ss}{fu}){tag_str}\n"
             )
 
     return context
