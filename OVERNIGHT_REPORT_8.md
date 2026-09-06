@@ -439,15 +439,15 @@ its live count; `scripts/dump_db.py` exits non-zero if any differs.
 
 ```
 C:\Users\boser\endo-ai-backups\endo-ai-rag-20260906-night.bundle
-5,519,236 bytes, --all (every branch and tag)
+--all (every branch and tag). Regenerated as the LAST action of the night, so
+its HEAD is the tag `night-20260906-end`.
 
 $ git bundle verify endo-ai-rag-20260906-night.bundle
-a9a721d5b1401a2acccd319e3cc3e7f70b9dc062 HEAD
 The bundle records a complete history.
 The bundle uses this hash algorithm: sha1
 ```
 
-Tag: `night-20260906-end` at `a9a721d`. Branch pushed to `origin`.
+Tag: `night-20260906-end`. Branch and tag pushed to `origin`.
 
 The 2026-09-05 backups both still exist and were re-verified at the start of
 the night; they are the restore point for the ingest, since
