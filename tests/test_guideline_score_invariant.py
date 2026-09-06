@@ -284,17 +284,46 @@ class TestItem3TheSlugIdSplit:
         new record would have kept the count at 30 and passed. Identity
         catches that; the count never could. Re-pinning at 46 would have
         repeated the mistake one number along.
+
+        FOLLOWS `redirect_to` SINCE 2026-09-07, and that is the point rather
+        than an exemption.
+
+        Two of the original 30 — COCHRANE-CD005296 and COCHRANE-CD004969 —
+        are no longer citeable UNDER THEIR SLUG, because item A retired them:
+        their accessions were verified, so each document is now the PMID row
+        it always was (36512807, 31145805), and the slug row was quarantined
+        with `redirect_to` naming its replacement.
+
+        Nothing was removed. Asserting bare slug-citeability would report a
+        loss where a re-keying happened, so the invariant is stated as what it
+        has always meant: **no document leaves the library**. A row satisfies
+        it by being citeable itself, or by pointing at a citeable row.
         """
-        rows = _q("""SELECT pmid FROM endo_papers_rag
-                     WHERE level_key = 'guideline'
-                       AND COALESCE(quarantine_reason,'') = ''
-                       AND pmid !~ '^[0-9]+$'""")
-        citeable = {r[0] for r in rows}
-        missing = sorted(set(self.ORIGINAL_SLUG_ROWS) - citeable)
+        rows = _q("""SELECT pmid, COALESCE(quarantine_reason,''), redirect_to
+                     FROM endo_papers_rag
+                     WHERE pmid !~ '^[0-9]+$'""")
+        state = {r[0]: (r[1], r[2]) for r in rows}
+        citeable_now = _q("""SELECT pmid FROM endo_papers_rag
+                             WHERE COALESCE(quarantine_reason,'') = ''""")
+        citeable_now = {r[0] for r in citeable_now}
+
+        missing, redirected = [], []
+        for slug in self.ORIGINAL_SLUG_ROWS:
+            reason, redirect = state.get(slug, ("<row gone>", None))
+            if slug in citeable_now:
+                continue
+            if redirect and redirect in citeable_now:
+                redirected.append((slug, redirect))
+                continue
+            missing.append((slug, reason))
         assert not missing, (
-            "these non-re-keyable slug rows are no longer citeable: %s — "
-            "either they were re-keyed (inventing accessions) or quarantined "
-            "(removing real documents from the library)" % missing)
+            "these documents left the library — not citeable under their slug "
+            "and not redirected to a citeable row: %s" % missing)
+        # The redirect is the whole safety property, so it is asserted, not
+        # merely tolerated: every retired original must still be reachable.
+        for slug, target in redirected:
+            assert target.isdigit(), (
+                "%s redirects to %r, which is not a PMID" % (slug, target))
 
     def test_every_citeable_slug_row_names_a_real_manifest_record(self):
         """The other half of the same guard, and the half a count cannot give.

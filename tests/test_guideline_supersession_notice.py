@@ -54,10 +54,39 @@ class TestTheNoticeNamesWhatWasReplaced:
         They are not statements, and it is stored at level_key `guideline` so
         it does reach this line. Emitting the identifier verbatim is the
         honest option; calling it a statement is a small false claim in the
-        one sentence whose whole job is to describe a document accurately."""
+        one sentence whose whole job is to describe a document accurately.
+
+        ASSERTED AS PROPERTIES, NOT AS A LITERAL, since 2026-09-07.
+
+        This used to assert the exact string
+        `"Replaces CD005296.pub2 (2007) and CD005296.pub3 (2016)."`. Commit
+        `091139d` resolved the two Cochrane accessions and rewrote the
+        manifest's `supersedes` list for this record — reordering it and
+        adding the predecessors' PMIDs — so the literal went stale while every
+        property the test is named for stayed true.
+
+        A hard-coded expected string over manifest data is a count proxy in
+        another costume (rule 39): the data is authorised to change and the
+        test breaks without anything being wrong. So the expectation is now
+        DERIVED from the same manifest the function reads, and the two
+        properties the docstring actually claims are asserted directly.
+        """
+        import json as _json
+        man = _json.load(open("data/guidelines_seed.json", encoding="utf-8"))
+        rec = next(g for g in man["guidelines"]
+                   if g["id"] == "COCHRANE-CD005296")
+        predecessors = rec.get("supersedes") or []
+        assert predecessors, "the fixture record no longer supersedes anything"
+
         out = e._guideline_supersession_notice("COCHRANE-CD005296")
-        assert out == "Replaces CD005296.pub2 (2007) and CD005296.pub3 (2016)."
-        assert "statement" not in out
+
+        # 1. every identifier is emitted AS GIVEN
+        for p in predecessors:
+            assert p in out, (
+                "predecessor %r was not emitted verbatim: %r" % (p, out))
+        # 2. it loses the noun — these are versions of a review, not statements
+        assert "statement" not in out, out
+        assert out.startswith("Replaces ") and out.endswith("."), out
 
     def test_the_seed_record_beats_the_identifier_when_they_disagree(self,
                                                                      monkeypatch):
