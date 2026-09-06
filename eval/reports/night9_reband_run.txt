@@ -1,0 +1,561 @@
+==============================================================================
+ITEM C — REBAND FROM PUBLICATION TYPES.  DRY RUN. NO --apply.
+==============================================================================
+  candidate rows (numeric pmid, citeable, not curated)  3323
+    fetched 100/3323
+    fetched 200/3323
+    fetched 300/3323
+    fetched 400/3323
+    fetched 500/3323
+    fetched 600/3323
+    fetched 700/3323
+    fetched 800/3323
+    fetched 900/3323
+    fetched 1000/3323
+    fetched 1100/3323
+    fetched 1200/3323
+    fetched 1300/3323
+    fetched 1400/3323
+    fetched 1500/3323
+    fetched 1600/3323
+    fetched 1700/3323
+    fetched 1800/3323
+    fetched 1900/3323
+    fetched 2000/3323
+    fetched 2100/3323
+    fetched 2200/3323
+    fetched 2300/3323
+    fetched 2400/3323
+    fetched 2500/3323
+    fetched 2600/3323
+    fetched 2700/3323
+    fetched 2800/3323
+    fetched 2900/3323
+    fetched 3000/3323
+    fetched 3100/3323
+    fetched 3200/3323
+    fetched 3300/3323
+    fetched 3323/3323
+  TERMINAL, never moved (retracted / quarantined)       16
+      23613983   retracted    retracted
+      24244598   retracted    retracted
+      24358294   retracted    retracted
+      24692545   retracted    retracted
+      28365680   retracted    retracted
+      29131087   retracted    retracted
+      30728888   retracted    retracted
+      31004424   retracted    retracted
+      33149412   retracted    retracted
+      36132084   retracted    retracted
+      36299924   retracted    retracted
+      36925517   retracted    retracted
+      37437962   retracted    retracted
+      37736930   retracted    retracted
+      38870628   retracted    retracted
+      40861276   retracted    retracted
+  derived == stored (agree)                             1667
+  no publication types / not derivable                  1194
+  WOULD CHANGE                                          446
+
+  SPLIT 2 — BY DIRECTION
+    off-ladder         185
+    down               154
+    up                 103
+    to guideline         4
+
+  SPLIT 3 — vs THE ABSTRACT-EXTRACTED DESIGN
+    disagree           208
+    no extraction      174
+    agree               64
+
+  MANIFEST CANDIDATES — pubtype says guideline, no manifest record
+  (NOT moved. The manifest is the only authority on what is a
+   guideline; these are for RB to consider adding.)  4
+    29984369        The journal of adhesive dentistry  Direct and Indirect Restorations for Endodontically Treated 
+    34301229        BMC Oral Health                    Reporting stAndards for research in PedIatric Dentistry (RAP
+    39487671        Dent Traumatol                     Appropriate Terminology for the Time Elapsed From Avulsion o
+    39743567        International journal of oral scie Expert consensus on apical microsurgery.
+
+  TOTALS BY TIER PAIR  (stored -> derived)
+    level2         -> level3a          100   
+    invitro        -> level3a           94   
+    level2         -> level1            61   
+    classic        -> level3a           48   
+    level3a        -> level4            24   
+    classic        -> level4            21   
+    level3         -> level3a           11   
+    level3b        -> level3a           11   
+    level3         -> level5            10   
+    level3a        -> level1             9   
+    level2         -> level4             8   
+    classic        -> level2             7   
+    classic        -> level1             6   
+    level3         -> level4             6   
+    level3         -> level1             5   
+    level3a        -> level2             4   
+    level2         -> level3b            2   
+    level3         -> level3b            2   
+    invitro        -> level4             2   
+    invitro        -> level1             2   
+    level2         -> guideline          2   ONTO the guideline rung
+    classic        -> level5             2   
+    invitro        -> level3b            1   
+    level5         -> level3a            1   
+    invitro        -> level2             1   
+    level1         -> guideline          1   ONTO the guideline rung
+    observational  -> level5             1   
+    level3a        -> level5             1   
+    level3b        -> level2             1   
+    level1         -> level3a            1   
+    level5         -> guideline          1   ONTO the guideline rung
+
+  EVERY ROW THAT WOULD CHANGE
+  pmid       stored        derived          score    after  why
+  10321189   classic       level4            62.9  rescore  pubtype:case reports
+  10348523   classic       level4            62.9  rescore  pubtype:case reports
+  10379279   classic       level4            68.1  rescore  pubtype:case reports
+  10530246   classic       level3a           62.9  rescore  pubtype:comparative study
+  10530266   classic       level1            64.0  rescore  pubtype:randomized controlled trial
+  10530268   classic       level4            62.9  rescore  pubtype:case reports
+  1061523    classic       level3a           62.9  rescore  pubtype:comparative study
+  1063205    classic       level4            62.9  rescore  pubtype:case reports
+  1063352    classic       level4            62.9  rescore  pubtype:case reports
+  1068207    classic       level3a           62.9  rescore  pubtype:comparative study
+  10697472   classic       level3a           62.9  rescore  pubtype:comparative study
+  11174578   invitro       level3a           25.1  rescore  pubtype:comparative study
+  11475947   level3        level3a           33.4  rescore  pubtype:comparative study
+  11716081   invitro       level3a           18.4  rescore  pubtype:comparative study
+  12406378   invitro       level3a           17.3  rescore  pubtype:comparative study
+  12656859   level2        level4            34.8  rescore  pubtype:case reports
+  14700397   invitro       level3a           15.1  rescore  pubtype:comparative study
+  14718885   invitro       level3a           17.3  rescore  pubtype:comparative study
+  15055436   invitro       level3a           17.3  rescore  pubtype:comparative study
+  15185801   level2        level3a           50.4  rescore  pubtype:comparative study
+  15479256   invitro       level3a           17.3  rescore  pubtype:comparative study
+  15773888   level2        level3b           35.9  rescore  pubtype:evaluation study
+  16499632   level2        level3a           38.1  rescore  pubtype:comparative study
+  16793468   invitro       level3a           18.4  rescore  pubtype:comparative study
+  16872392   level2        level4            36.7  rescore  pubtype:case reports
+  17023739   level3        level3b           32.3  rescore  pubtype:evaluation study
+  17227384   level2        level4            43.3  rescore  pubtype:case reports
+  17320712   invitro       level3a           20.6  rescore  pubtype:comparative study
+  175124     classic       level4            62.9  rescore  pubtype:case reports
+  17635354   invitro       level3a           20.6  rescore  pubtype:comparative study
+  1804995    classic       level3a           60.6  rescore  pubtype:comparative study
+  1811035    classic       level3a           62.9  rescore  pubtype:comparative study
+  18215667   level2        level3a           57.0  rescore  pubtype:comparative study
+  18269124   invitro       level3a           20.6  rescore  pubtype:comparative study
+  18278299   invitro       level3a           20.6  rescore  pubtype:comparative study
+  18352926   invitro       level3a           18.4  rescore  pubtype:comparative study
+  18557747   level2        level4            43.3  rescore  pubtype:case reports
+  18557757   level2        level4            38.1  rescore  pubtype:case reports
+  18721196   invitro       level3a           20.6  rescore  pubtype:comparative study
+  19106466   invitro       level3a           20.6  rescore  pubtype:comparative study
+  19168373   invitro       level3a           20.6  rescore  pubtype:comparative study
+  19302203   level2        level3a           38.1  rescore  pubtype:comparative study
+  1940735    classic       level3a           62.9  rescore  pubtype:comparative study
+  19685086   level2        level3a           57.0  rescore  pubtype:comparative study
+  19725236   invitro       level3a           20.6  rescore  pubtype:comparative study
+  19884709   invitro       level3a           20.6  rescore  pubtype:comparative study
+  2015993    classic       level3a           62.9  rescore  pubtype:comparative study
+  20464317   level3        level3a           32.3  rescore  pubtype:comparative study
+  20478451   level2        level3a           50.4  rescore  pubtype:comparative study
+  20630299   invitro       level3a           20.6  rescore  pubtype:comparative study
+  20711157   level3        level3a           32.3  rescore  pubtype:comparative study
+  20728727   invitro       level3a           20.6  rescore  pubtype:comparative study
+  20738428   level2        level3a           53.7  rescore  pubtype:comparative study
+  20813364   level2        level3a           51.5  rescore  pubtype:comparative study
+  20813556   level2        level3a           53.7  rescore  pubtype:comparative study
+  2098464    classic       level3a           62.9  rescore  pubtype:comparative study
+  21359241   invitro       level3a           20.6  rescore  pubtype:comparative study
+  21409760   invitro       level3a           20.6  rescore  pubtype:comparative study
+  21689561   invitro       level3a           32.9  rescore  pubtype:comparative study
+  21712627   level3        level3a           32.3  rescore  pubtype:comparative study
+  21915706   level3a       level2            57.2  rescore  pubtype:multicenter study
+  22099893   level2        level3a           50.4  rescore  pubtype:comparative study
+  22132218   level2        level3a           53.7  rescore  pubtype:comparative study
+  22236150   invitro       level3a           18.4  rescore  pubtype:comparative study
+  22251277   level2        level3a           43.3  rescore  pubtype:comparative study
+  22322495   invitro       level3b           20.6  rescore  pubtype:evaluation study
+  22443169   level2        level3a           49.3  rescore  pubtype:comparative study
+  22515881   level2        level3a           61.1  rescore  pubtype:comparative study
+  22926478   level3        level3a           43.4  rescore  pubtype:comparative study
+  23953293   invitro       level3a           31.8  rescore  pubtype:comparative study
+  24118357   invitro       level3a           22.9  rescore  pubtype:comparative study
+  24407553   level2        level3a           52.6  rescore  pubtype:comparative study
+  24461420   invitro       level3a           36.2  rescore  pubtype:comparative study
+  24565653   level2        level3a           58.1  rescore  pubtype:comparative study
+  24666897   level2        level3a           57.8  rescore  pubtype:comparative study
+  24666915   invitro       level3a           25.1  rescore  pubtype:comparative study
+  24767566   invitro       level3a           25.1  rescore  pubtype:comparative study
+  24910176   level2        level4            42.6  rescore  pubtype:case reports
+  24960377   level2        level3a           51.5  rescore  pubtype:comparative study
+  25069928   invitro       level3a           25.1  rescore  pubtype:comparative study
+  25146015   invitro       level3a           21.4  rescore  pubtype:comparative study
+  25146016   level2        level3a           51.5  rescore  pubtype:comparative study
+  25146035   invitro       level3a           26.2  rescore  pubtype:comparative study
+  25227216   level2        level3a           61.5  rescore  pubtype:comparative study
+  25231145   invitro       level3a           25.1  rescore  pubtype:comparative study
+  25312886   level2        level3a           58.1  rescore  pubtype:comparative study
+  25350596   level3        level3a           36.8  rescore  pubtype:comparative study
+  25355775   level2        level3a           64.6  rescore  pubtype:observational study
+  25500924   invitro       level3a           26.2  rescore  pubtype:comparative study
+  25500925   level5        level3a           23.1  rescore  pubtype:comparative study
+  25517781   invitro       level3a           25.1  rescore  pubtype:comparative study
+  25523959   invitro       level3a           25.1  rescore  pubtype:comparative study
+  25571947   level3        level3a           41.2  rescore  pubtype:comparative study
+  25863407   level2        level3a           51.5  rescore  pubtype:comparative study
+  25963721   invitro       level4            25.1  rescore  pubtype:case reports
+  26134932   level2        level4            42.6  rescore  pubtype:case reports
+  26577872   level2        level3a           58.1  rescore  pubtype:observational study
+  269901     classic       level4            62.9  rescore  pubtype:case reports
+  27014832   invitro       level3a           32.9  rescore  pubtype:comparative study
+  27434920   level2        level3a           53.7  rescore  pubtype:comparative study
+  27556683   level2        level3a           55.9  rescore  pubtype:observational study
+  27598303   level2        level3a           52.6  rescore  pubtype:comparative study
+  28068207   invitro       level1            35.1  rescore  pubtype:randomized controlled trial
+  28097666   invitro       level3a           22.9  rescore  pubtype:comparative study
+  28139286   invitro       level3a           26.2  rescore  pubtype:comparative study
+  28190286   level2        level3a           42.6  rescore  pubtype:comparative study
+  28216272   invitro       level3a           22.9  rescore  pubtype:comparative study
+  28294701   invitro       level3a           35.1  rescore  pubtype:comparative study
+  283186     classic       level4            62.9  rescore  pubtype:case reports
+  28650788   invitro       level2            26.2  rescore  pubtype:controlled clinical trial
+  28940721   invitro       level3a           29.5  rescore  pubtype:comparative study
+  29233700   level2        level3a           52.6  rescore  pubtype:comparative study
+  29336883   level3a       level4            57.2  rescore  pubtype:case reports
+  29455471   level2        level1            42.6  rescore  pubtype:meta-analysis
+  29567927   level3        level5            35.7  rescore  pubtype:editorial
+  29609572   level2        level3a           61.1  rescore  pubtype:comparative study
+  29772749   level3        level5            35.7  rescore  pubtype:editorial
+  29777391   invitro       level3a           34.0  rescore  pubtype:comparative study
+  29984369   level1        guideline         58.1     NULL  pubtype:consensus statement
+  30135248   level2        level1            60.0  rescore  pubtype:randomized controlled trial
+  30384982   invitro       level3a           26.2  rescore  pubtype:comparative study
+  30390973   invitro       level3a           25.1  rescore  pubtype:comparative study
+  30444709   level3a       level4            46.1  rescore  pubtype:case reports
+  30708091   invitro       level3a           34.0  rescore  pubtype:comparative study
+  30939736   level3        level5            40.0  rescore  pubtype:editorial
+  3100675    classic       level2            74.0  rescore  pubtype:controlled clinical trial
+  31026615   invitro       level3a           35.1  rescore  pubtype:comparative study
+  31027424   level2        level3a           58.1  rescore  pubtype:comparative study
+  31050927   level3a       level1            52.0  rescore  pubtype:randomized controlled trial
+  31301436   level3a       level1            55.4  rescore  pubtype:randomized controlled trial
+  31306506   level3a       level1            55.4  rescore  pubtype:randomized controlled trial
+  31397897   level3a       level4            57.2  rescore  pubtype:case reports
+  31471996   level2        level1            44.8  rescore  pubtype:systematic review
+  3162933    classic       level3a           62.9  rescore  pubtype:comparative study
+  31757341   level3a       level4            50.6  rescore  pubtype:case reports
+  32011510   invitro       level4            29.5  rescore  pubtype:case reports
+  32176431   level2        level1            47.0  rescore  pubtype:meta-analysis
+  32235685   level3        level5            41.2  rescore  pubtype:editorial
+  32260114   level3        level5            40.0  rescore  pubtype:editorial
+  3255779    classic       level4            62.9  rescore  pubtype:case reports
+  32585263   level2        level1            61.8  rescore  pubtype:randomized controlled trial
+  33091454   level3a       level2            55.4  rescore  pubtype:multicenter study
+  33247881   level3a       level4            50.6  rescore  pubtype:case reports
+  3327906    classic       level2            62.9  rescore  pubtype:clinical trial
+  33671343   level3        level5            40.0  rescore  pubtype:editorial
+  33997909   level3a       level2            56.9  rescore  pubtype:multicenter study
+  34045632   level2        level1            61.1  rescore  pubtype:randomized controlled trial
+  34201328   level3        level1            45.3  rescore  pubtype:randomized controlled trial
+  34204620   level3        level4            40.0  rescore  pubtype:case reports
+  34275184   level2        level1            49.4  rescore  pubtype:meta-analysis
+  34301229   level2        guideline         47.0     NULL  pubtype:consensus statement
+  34378269   level2        level1            64.4  rescore  pubtype:randomized controlled trial
+  34539639   level2        level3a           51.5  rescore  pubtype:comparative study
+  3462297    classic       level3a           62.9  rescore  pubtype:comparative study
+  34626612   level3a       level4            55.0  rescore  pubtype:case reports
+  3471493    classic       level2            62.9  rescore  pubtype:controlled clinical trial
+  3473373    classic       level4            62.9  rescore  pubtype:case reports
+  3474350    classic       level4            62.9  rescore  pubtype:case reports
+  3475351    classic       level5            62.9  rescore  pubtype:letter
+  3477751    classic       level3a           62.9  rescore  pubtype:comparative study
+  3481807    classic       level3a           62.9  rescore  pubtype:comparative study
+  348212     classic       level4            62.9  rescore  pubtype:case reports
+  3482226    classic       level3a           62.9  rescore  pubtype:comparative study
+  34971819   level2        level3a           54.8  rescore  pubtype:comparative study
+  35030270   level2        level1            61.8  rescore  pubtype:randomized controlled trial
+  35267110   level2        level1            62.6  rescore  pubtype:randomized controlled trial
+  35294790   level2        level1            58.1  rescore  pubtype:systematic review
+  35566459   level3        level5            40.0  rescore  pubtype:editorial
+  35869721   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  35904463   observational level5            30.1  rescore  pubtype:comment
+  36156313   invitro       level1            40.6  rescore  pubtype:randomized controlled trial
+  36375202   level3b       level3a           50.6  rescore  pubtype:observational study
+  36421046   level3a       level1            50.9  rescore  pubtype:randomized controlled trial
+  36533889   level3a       level4            53.9  rescore  pubtype:case reports
+  36641741   level3        level3a           55.6  rescore  pubtype:observational study
+  36661548   level3        level5            40.0  rescore  pubtype:editorial
+  36833161   level3        level5            43.2  rescore  pubtype:editorial
+  36862198   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  36943498   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  36990758   level3        level3b           44.5  rescore  pubtype:evaluation study
+  37010205   level2        level1            48.1  rescore  pubtype:randomized controlled trial
+  37047978   level3        level5            44.5  rescore  pubtype:editorial
+  37085142   level3b       level3a           55.2  rescore  pubtype:observational study
+  37107890   level3        level1            44.5  rescore  pubtype:systematic review
+  37154002   level2        level1            53.3  rescore  pubtype:randomized controlled trial
+  37209012   level2        level3a           59.3  rescore  pubtype:comparative study
+  37330967   level3        level3a           44.5  rescore  pubtype:observational study
+  37355163   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  37468060   level3a       level4            56.1  rescore  pubtype:case reports
+  37470399   level2        level3a           50.4  rescore  pubtype:comparative study
+  37612879   level2        level1            57.0  rescore  pubtype:randomized controlled trial
+  37642034   level3a       level2            66.5  rescore  pubtype:multicenter study
+  37746745   level2        level1            54.8  rescore  pubtype:randomized controlled trial
+  37885117   level2        level3a           59.3  rescore  pubtype:comparative study
+  37893558   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  37924021   level2        level1            57.1  rescore  pubtype:randomized controlled trial
+  37968968   level2        level1            70.4  rescore  pubtype:meta-analysis
+  38013016   level3a       level1            56.5  rescore  pubtype:randomized controlled trial
+  38157279   level3a       level1            62.8  rescore  pubtype:randomized controlled trial
+  38195412   invitro       level3a           39.5  rescore  pubtype:comparative study
+  38233887   level3        level1            54.5  rescore  pubtype:randomized controlled trial
+  38281658   level2        level1            63.3  rescore  pubtype:randomized controlled trial
+  38403667   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  38481211   level2        level1            63.0  rescore  pubtype:randomized controlled trial
+  38512015   level3b       level3a           60.6  rescore  pubtype:comparative study
+  38582806   level2        level1            62.3  rescore  pubtype:randomized controlled trial
+  38591808   level2        level3a           70.4  rescore  pubtype:observational study
+  38604473   level2        level3a           63.3  rescore  pubtype:observational study
+  38622629   level2        level1            67.0  rescore  pubtype:randomized controlled trial
+  3864912    classic       level3a           62.9  rescore  pubtype:comparative study
+  38651781   level2        level1            59.3  rescore  pubtype:systematic review
+  38657726   level2        level3a           59.3  rescore  pubtype:comparative study
+  38670333   level2        level3a           63.7  rescore  pubtype:comparative study
+  38678244   level2        level3a           60.4  rescore  pubtype:comparative study
+  38734197   level3a       level5            55.4  rescore  pubtype:comment
+  38739591   invitro       level3a           41.8  rescore  pubtype:comparative study
+  38739825   invitro       level3a           30.6  rescore  pubtype:comparative study
+  38745548   invitro       level3a           41.8  rescore  pubtype:comparative study
+  38755996   level3a       level4            56.1  rescore  pubtype:case reports
+  38758416   level2        level3a           70.4  rescore  pubtype:comparative study
+  38773504   invitro       level3a           39.5  rescore  pubtype:comparative study
+  38795077   level2        level3a           63.7  rescore  pubtype:comparative study
+  38795217   level2        level3a           67.0  rescore  pubtype:comparative study
+  38802852   invitro       level3a           41.8  rescore  pubtype:comparative study
+  38803063   invitro       level3a           41.8  rescore  pubtype:comparative study
+  38804663   level3a       level4            62.8  rescore  pubtype:case reports
+  38829548   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  38878998   level3b       level2            60.6  rescore  pubtype:multicenter study
+  38957911   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  39026272   level3a       level4            58.3  rescore  pubtype:case reports
+  39034542   level2        level3a           59.3  rescore  pubtype:comparative study
+  39053791   invitro       level3a           41.8  rescore  pubtype:comparative study
+  3908643    classic       level1            64.0  rescore  pubtype:randomized controlled trial
+  39118082   level2        level1            63.4  rescore  pubtype:randomized controlled trial
+  39135317   level2        level3a           59.3  rescore  pubtype:comparative study
+  39168604   invitro       level3a           39.5  rescore  pubtype:comparative study
+  39179988   level1        level3a           78.1  rescore  pubtype:observational study
+  39231718   level2        level1            70.4  rescore  pubtype:meta-analysis
+  39250203   invitro       level3a           41.8  rescore  pubtype:comparative study
+  39289653   level2        level3a           60.4  rescore  pubtype:comparative study
+  39294680   level2        level1            59.3  rescore  pubtype:systematic review
+  39319904   level2        level1            66.5  rescore  pubtype:randomized controlled trial
+  39334222   level2        level3a           59.3  rescore  pubtype:comparative study
+  39417259   level2        level3a           59.3  rescore  pubtype:observational study
+  39448991   level2        level1            79.4  rescore  pubtype:randomized controlled trial
+  39462424   level2        level3a           59.3  rescore  pubtype:comparative study
+  39476051   level3        level1            53.4  rescore  pubtype:systematic review
+  39484795   level2        level3a           57.0  rescore  pubtype:comparative study
+  39487671   level2        guideline         59.3     NULL  pubtype:consensus statement
+  39489637   level2        level3a           59.3  rescore  pubtype:comparative study
+  39503145   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  39523312   level3        level1            61.2  rescore  pubtype:randomized controlled trial
+  39533942   level2        level3a           60.0  rescore  pubtype:comparative study
+  39538161   level3        level3a           58.6  rescore  pubtype:comparative study
+  39553722   level3b       level3a           60.6  rescore  pubtype:comparative study
+  39630537   invitro       level3a           39.5  rescore  pubtype:comparative study
+  39690774   level2        level1            63.7  rescore  pubtype:randomized controlled trial
+  39699498   level2        level3a           59.3  rescore  pubtype:comparative study
+  39704628   level2        level3a           59.3  rescore  pubtype:comparative study
+  39704629   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  39707926   level3a       level4            60.6  rescore  pubtype:case reports
+  39729517   invitro       level3a           41.8  rescore  pubtype:comparative study
+  39733816   invitro       level3a           41.8  rescore  pubtype:comparative study
+  39743567   level5        guideline         39.8     NULL  pubtype:consensus statement
+  39754111   level2        level3a           63.7  rescore  pubtype:comparative study
+  39799308   invitro       level3a           41.8  rescore  pubtype:comparative study
+  39815035   level2        level1            63.4  rescore  pubtype:randomized controlled trial
+  39847087   level3a       level1            55.4  rescore  pubtype:randomized controlled trial
+  39888502   invitro       level3a           42.9  rescore  pubtype:comparative study
+  39892740   level2        level3a           59.3  rescore  pubtype:comparative study
+  39905611   level2        level3a           60.4  rescore  pubtype:comparative study
+  39917697   level3        level4            51.8  rescore  pubtype:case reports
+  39917708   level3        level4            56.8  rescore  pubtype:case reports
+  39923092   level2        level3a           60.4  rescore  pubtype:comparative study
+  39938345   invitro       level3a           41.8  rescore  pubtype:comparative study
+  39955574   level2        level3a           57.0  rescore  pubtype:comparative study
+  39962452   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  39969589   level3a       level1            55.4  rescore  pubtype:randomized controlled trial
+  40022083   invitro       level3a           46.2  rescore  pubtype:comparative study
+  40120797   level2        level1            65.6  rescore  pubtype:randomized controlled trial
+  40132966   invitro       level3a           39.5  rescore  pubtype:comparative study
+  40158110   level2        level3a           59.3  rescore  pubtype:comparative study
+  40170041   level2        level1            59.3  rescore  pubtype:systematic review
+  40197934   level2        level3a           59.3  rescore  pubtype:comparative study
+  40199825   invitro       level3a           46.2  rescore  pubtype:comparative study
+  40240881   level3a       level4            55.4  rescore  pubtype:case reports
+  40261531   invitro       level3a           49.5  rescore  pubtype:comparative study
+  40275217   invitro       level3a           46.2  rescore  pubtype:comparative study
+  40317970   level3b       level3a           60.6  rescore  pubtype:comparative study
+  40335983   level2        level1            62.3  rescore  pubtype:randomized controlled trial
+  40349908   level2        level3a           57.0  rescore  pubtype:comparative study
+  40390283   level2        level3a           59.3  rescore  pubtype:comparative study
+  40391985   invitro       level3a           41.8  rescore  pubtype:comparative study
+  40399906   invitro       level3a           49.5  rescore  pubtype:comparative study
+  40407835   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  40445053   level3a       level4            53.1  rescore  pubtype:case reports
+  40464528   level3a       level4            55.4  rescore  pubtype:case reports
+  40466763   level3b       level3a           54.7  rescore  pubtype:observational study
+  40488605   level2        level3b           59.3  rescore  pubtype:evaluation study
+  40509944   level2        level3a           63.7  rescore  pubtype:comparative study
+  40565825   level3        level4            51.8  rescore  pubtype:case reports
+  40583431   invitro       level3a           39.5  rescore  pubtype:comparative study
+  40616059   level2        level3a           60.4  rescore  pubtype:comparative study
+  40618078   invitro       level3a           41.8  rescore  pubtype:comparative study
+  40629328   level2        level4            59.3  rescore  pubtype:case reports
+  40653154   level2        level1            70.4  rescore  pubtype:randomized controlled trial
+  40684155   invitro       level3a           46.2  rescore  pubtype:comparative study
+  40685492   level2        level3a           59.3  rescore  pubtype:comparative study
+  40691703   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  40705450   invitro       level3a           46.2  rescore  pubtype:comparative study
+  40713572   invitro       level3a           42.9  rescore  pubtype:comparative study
+  40713599   level2        level3a           60.4  rescore  pubtype:comparative study
+  40713650   level2        level1            70.4  rescore  pubtype:meta-analysis
+  40726276   level2        level3a           62.3  rescore  pubtype:observational study
+  40739139   level2        level1            70.4  rescore  pubtype:randomized controlled trial
+  40748025   level3a       level4            60.6  rescore  pubtype:case reports
+  40755177   level2        level3a           59.3  rescore  pubtype:comparative study
+  40770775   level2        level1            63.4  rescore  pubtype:randomized controlled trial
+  40835176   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  40843632   level2        level1            67.0  rescore  pubtype:randomized controlled trial
+  40859457   level3a       level4            62.8  rescore  pubtype:case reports
+  40859461   level3b       level3a           68.1  rescore  pubtype:observational study
+  40884136   level3a       level4            55.4  rescore  pubtype:case reports
+  40899082   level2        level3a           63.7  rescore  pubtype:comparative study
+  40931202   level2        level1            67.0  rescore  pubtype:randomized controlled trial
+  40995720   level2        level1            63.3  rescore  pubtype:randomized controlled trial
+  40997611   level2        level3a           70.4  rescore  pubtype:comparative study
+  40999722   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41075007   invitro       level3a           39.5  rescore  pubtype:comparative study
+  41085390   level3b       level3a           60.6  rescore  pubtype:observational study
+  41121124   level2        level3a           63.4  rescore  pubtype:observational study
+  41131302   level3a       level4            55.4  rescore  pubtype:case reports
+  41152831   level2        level3a           63.3  rescore  pubtype:comparative study
+  41193688   level2        level1            57.0  rescore  pubtype:randomized controlled trial
+  41276245   level3b       level3a           62.5  rescore  pubtype:comparative study
+  41277643   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  41278367   level3        level4            51.8  rescore  pubtype:case reports
+  41287941   level2        level3a           59.3  rescore  pubtype:comparative study
+  41293132   level3        level4            54.7  rescore  pubtype:case reports
+  41299627   level2        level3a           70.4  rescore  pubtype:comparative study
+  41320703   level2        level1            60.0  rescore  pubtype:randomized controlled trial
+  41338470   level3a       level4            55.4  rescore  pubtype:case reports
+  41350378   level2        level1            62.3  rescore  pubtype:randomized controlled trial
+  41379411   level2        level1            60.4  rescore  pubtype:randomized controlled trial
+  41383164   level3a       level4            53.9  rescore  pubtype:case reports
+  41389357   invitro       level3a           42.9  rescore  pubtype:comparative study
+  41398996   level2        level3a           59.3  rescore  pubtype:comparative study
+  41436629   level2        level1            61.8  rescore  pubtype:randomized controlled trial
+  41454423   level3a       level4            60.6  rescore  pubtype:case reports
+  41465429   invitro       level3a           42.9  rescore  pubtype:comparative study
+  41466242   level2        level1            62.3  rescore  pubtype:randomized controlled trial
+  41484894   level2        level3a           59.3  rescore  pubtype:comparative study
+  41493880   level3a       level1            55.4  rescore  pubtype:randomized controlled trial
+  41499671   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41507884   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41519256   level2        level3a           57.0  rescore  pubtype:comparative study
+  41540957   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41544801   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41545543   level3b       level3a           50.6  rescore  pubtype:observational study
+  41556496   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41571083   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41582837   level2        level3a           70.4  rescore  pubtype:comparative study
+  41637255   level2        level3a           59.3  rescore  pubtype:comparative study
+  41668039   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41685842   level2        level3a           57.0  rescore  pubtype:comparative study
+  41704064   level2        level3a           59.3  rescore  pubtype:comparative study
+  41796933   invitro       level3a           41.8  rescore  pubtype:comparative study
+  41803838   level2        level3a           60.4  rescore  pubtype:comparative study
+  41808105   level3        level3a           51.2  rescore  pubtype:comparative study
+  41820297   invitro       level3a           42.9  rescore  pubtype:comparative study
+  41822979   level2        level3a           67.0  rescore  pubtype:comparative study
+  41934165   invitro       level3a           42.9  rescore  pubtype:comparative study
+  41942129   level3a       level4            53.9  rescore  pubtype:case reports
+  41942971   level2        level3a           70.4  rescore  pubtype:comparative study
+  41980892   invitro       level3a           42.9  rescore  pubtype:comparative study
+  42091938   level2        level1            59.3  rescore  pubtype:randomized controlled trial
+  42126160   level2        level3a           60.4  rescore  pubtype:comparative study
+  42163172   level2        level3a           59.3  rescore  pubtype:comparative study
+  42175523   level2        level3a           59.3  rescore  pubtype:comparative study
+  42203145   invitro       level3a           41.8  rescore  pubtype:comparative study
+  42214667   level2        level3a           59.3  rescore  pubtype:comparative study
+  42241134   level3a       level4            55.4  rescore  pubtype:case reports
+  42260197   level2        level3a           63.3  rescore  pubtype:comparative study
+  42260554   level2        level3a           59.3  rescore  pubtype:comparative study
+  42335331   level2        level3a           59.3  rescore  pubtype:comparative study
+  42412227   level3b       level3a           54.0  rescore  pubtype:comparative study
+  42443859   invitro       level3a           41.8  rescore  pubtype:comparative study
+  42457554   level2        level3a           59.3  rescore  pubtype:comparative study
+  42497401   level2        level3a           59.3  rescore  pubtype:comparative study
+  42507243   level2        level3a           59.3  rescore  pubtype:comparative study
+  42622918   level2        level3a           59.3  rescore  pubtype:comparative study
+  42649529   level2        level3a           57.0  rescore  pubtype:comparative study
+  4573135    classic       level4            62.9  rescore  pubtype:case reports
+  5275511    classic       level3a           62.9  rescore  pubtype:comparative study
+  6572884    classic       level3a           60.6  rescore  pubtype:comparative study
+  6590744    classic       level3a           62.9  rescore  pubtype:comparative study
+  6770316    classic       level3a           62.9  rescore  pubtype:comparative study
+  6929468    classic       level3a           62.9  rescore  pubtype:comparative study
+  6935375    classic       level4            62.9  rescore  pubtype:case reports
+  6938620    classic       level3a           62.9  rescore  pubtype:comparative study
+  6948902    classic       level3a           62.9  rescore  pubtype:comparative study
+  6948905    classic       level3a           62.9  rescore  pubtype:comparative study
+  6951912    classic       level4            62.9  rescore  pubtype:case reports
+  7561651    classic       level3a           62.9  rescore  pubtype:comparative study
+  7642327    invitro       level3a           25.1  rescore  pubtype:comparative study
+  7643036    classic       level3a           62.9  rescore  pubtype:comparative study
+  7660318    classic       level2            62.9  rescore  pubtype:clinical trial
+  7673842    classic       level3a           62.9  rescore  pubtype:comparative study
+  7751067    classic       level3a           62.9  rescore  pubtype:comparative study
+  7776159    classic       level2            74.0  rescore  pubtype:controlled clinical trial
+  7931012    classic       level3a           62.9  rescore  pubtype:comparative study
+  8028874    classic       level1            74.0  rescore  pubtype:randomized controlled trial
+  8062814    classic       level3a           62.9  rescore  pubtype:comparative study
+  8108098    classic       level4            62.9  rescore  pubtype:case reports
+  8182382    classic       level3a           62.9  rescore  pubtype:comparative study
+  8225640    classic       level3a           62.9  rescore  pubtype:comparative study
+  8225641    classic       level4            62.9  rescore  pubtype:case reports
+  824397     classic       level3a           62.9  rescore  pubtype:comparative study
+  8262499    classic       level3a           62.9  rescore  pubtype:comparative study
+  8530996    classic       level1            67.3  rescore  pubtype:randomized controlled trial
+  8531151    classic       level3a           70.6  rescore  pubtype:comparative study
+  8655754    classic       level5            62.9  rescore  pubtype:editorial
+  8665319    invitro       level3a           17.3  rescore  pubtype:comparative study
+  8668572    classic       level3a           74.0  rescore  pubtype:comparative study
+  8670024    classic       level3a           62.9  rescore  pubtype:comparative study
+  8699518    classic       level2            74.0  rescore  pubtype:controlled clinical trial
+  8719535    classic       level2            62.9  rescore  pubtype:clinical trial
+  8843458    classic       level4            62.9  rescore  pubtype:case reports
+  8934989    classic       level3a           62.9  rescore  pubtype:comparative study
+  9105139    level2        level3a           53.3  rescore  pubtype:comparative study
+  9161164    classic       level3a           62.9  rescore  pubtype:comparative study
+  9198425    classic       level1            62.9  rescore  pubtype:randomized controlled trial
+  9198442    classic       level3a           62.9  rescore  pubtype:comparative study
+  9394387    level2        level3a           50.4  rescore  pubtype:comparative study
+  9477798    classic       level3a           62.9  rescore  pubtype:comparative study
+  9487848    classic       level3a           62.9  rescore  pubtype:comparative study
+  9587293    classic       level3a           62.9  rescore  pubtype:comparative study
+  9587320    classic       level3a           62.9  rescore  pubtype:comparative study
+  9587321    classic       level3a           62.9  rescore  pubtype:comparative study
+  9594761    classic       level1            62.9  rescore  pubtype:randomized controlled trial
+  9619679    classic       level3a           62.9  rescore  pubtype:comparative study
+  9759019    classic       level3a           62.9  rescore  pubtype:comparative study
+  9768425    classic       level4            62.9  rescore  pubtype:case reports
+  9823113    classic       level3a           62.9  rescore  pubtype:comparative study
+  9823141    classic       level4            62.9  rescore  pubtype:case reports
+  9855824    classic       level3a           62.9  rescore  pubtype:comparative study
+
+  wrote eval/reports/e_reband_stage1.md

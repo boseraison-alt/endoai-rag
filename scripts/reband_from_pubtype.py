@@ -28,6 +28,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from collections import Counter
 from pathlib import Path
 
@@ -41,19 +42,33 @@ import rag           # noqa: E402
 
 
 def fetch_pubtypes(pmids):
-    out = {}
+    """({pmid: [types]}, {pmid: abstract}) — both come from the same fetch, so
+    split 3 costs no extra call."""
+    out, abstracts = {}, {}
     B = 100
     for i in range(0, len(pmids), B):
         chunk = pmids[i:i + B]
-        try:
-            recs = E._fetch_pubtypes_and_abstracts(chunk)
-        except Exception as ex:
-            print("    [warn] pubtype fetch failed for a chunk: %s" % ex)
-            recs = {}
+        # PRECONDITION 2 — RETRY A FAILED BATCH. The 2026-09-06 run lost one
+        # batch to "Response ended prematurely" and reported up to 100 rows as
+        # "not derivable", which blamed the corpus for a dropped connection.
+        recs = {}
+        for attempt in (1, 2, 3):
+            try:
+                recs = E._fetch_pubtypes_and_abstracts(chunk)
+                if recs:
+                    break
+            except Exception as ex:
+                print("    [warn] pubtype fetch failed (attempt %d): %s"
+                      % (attempt, ex))
+                time.sleep(2 * attempt)
+        if not recs:
+            print("    [warn] chunk of %d could not be fetched after 3 tries"
+                  % len(chunk))
         for p in chunk:
             out[p] = (recs.get(p) or {}).get("publication_types", []) or []
+            abstracts[p] = (recs.get(p) or {}).get("abstract", "") or ""
         print("    fetched %d/%d" % (min(i + B, len(pmids)), len(pmids)))
-    return out
+    return out, abstracts
 
 
 def main():
@@ -61,6 +76,10 @@ def main():
     ap.add_argument("--limit", type=int, default=0,
                     help="0 = every numeric-PMID citeable row")
     ap.add_argument("--out", default="eval/reports/c_reband_dryrun.md")
+    ap.add_argument("--pmids", default="",
+                    help="comma-separated PMIDs; restricts the run so a test "
+                         "can exercise the terminal guard without fetching "
+                         "3,323 rows")
     args = ap.parse_args()
 
     conn = rag.get_conn()
@@ -72,6 +91,9 @@ def main():
                      AND NOT COALESCE(is_curated, FALSE)
                    ORDER BY pmid""")
     rows = cur.fetchall()
+    if args.pmids:
+        want = {p.strip() for p in args.pmids.split(",") if p.strip()}
+        rows = [r for r in rows if r[0] in want]
     if args.limit:
         rows = rows[:args.limit]
 
@@ -81,11 +103,28 @@ def main():
     print("  candidate rows (numeric pmid, citeable, not curated)  %d"
           % len(rows))
 
-    pts = fetch_pubtypes([r[0] for r in rows])
+    pts, abstracts = fetch_pubtypes([r[0] for r in rows])
 
     changes, pairs = [], Counter()
     undecidable = agree = 0
+    terminal = []
     for pmid, stored, score, journal, title in rows:
+        # ITEM E PRECONDITION 1 (2026-09-07) — TERMINAL STATUSES.
+        #
+        # `retracted` is not a tier this can move a row off. A retracted paper
+        # is retracted whatever its publication types say, and the 2026-09-06
+        # dry run would have moved two of them to `level1` — promoting
+        # retracted work to the top of the evidence ladder, which is the worst
+        # single move this script could make.
+        #
+        # A quarantined row is likewise terminal: it has been taken out of
+        # retrieval deliberately, and rebanding it would silently re-band a
+        # row somebody removed on purpose. (The query already excludes
+        # quarantined rows; the check is here so that widening the query can
+        # never re-admit them by accident.)
+        if stored == "retracted":
+            terminal.append((pmid, stored, "retracted"))
+            continue
         derived, why = E.tier_from_pubtypes(pts.get(pmid), journal or "")
         if derived is None:
             undecidable += 1
@@ -101,6 +140,10 @@ def main():
                         "journal": journal, "title": (title or "")[:90]})
         pairs[(stored, derived)] += 1
 
+    print("  TERMINAL, never moved (retracted / quarantined)       %d"
+          % len(terminal))
+    for pmid, stored, why in terminal:
+        print("      %-10s %-12s %s" % (pmid, stored, why))
     print("  derived == stored (agree)                             %d" % agree)
     print("  no publication types / not derivable                  %d"
           % undecidable)
@@ -112,6 +155,68 @@ def main():
         print("  *** NOT REPORTING A RATE: only %d of %d rows were decidable,"
               % (decidable, len(rows)))
         print("      so the fetch failed rather than the corpus being untyped.")
+
+    # ── PRECONDITION 3 — the three splits ──
+    LADDER = ["level5", "level4", "level3b", "level3", "level3a",
+              "level2", "level1", "cochrane"]
+
+    def direction(stored, derived):
+        if derived == "guideline":
+            return "to guideline"
+        if stored not in LADDER or derived not in LADDER:
+            return "off-ladder"
+        return "up" if LADDER.index(derived) > LADDER.index(stored) else "down"
+
+    by_dir = Counter(direction(c["stored"], c["derived"]) for c in changes)
+    by_agree = Counter()
+    for c in changes:
+        st = E.extract_stated_design(abstracts.get(c["pmid"], "") or "")             if hasattr(E, "extract_stated_design") else None
+        stated = ""
+        if isinstance(st, dict):
+            stated = (st.get("design") or "").lower()
+        elif isinstance(st, tuple) and st:
+            stated = str(st[0] or "").lower()
+        if not stated:
+            by_agree["no extraction"] += 1
+            c["abstract_design"] = ""
+        else:
+            c["abstract_design"] = stated
+            hit = (stated in (c["derived"] or "")) or                   (c["derived"] == "level1" and
+                   ("systematic review" in stated or "meta-analysis" in stated
+                    or "randomi" in stated)) or                   (c["derived"] == "level4" and "case" in stated)
+            by_agree["agree" if hit else "disagree"] += 1
+
+    print()
+    print("  SPLIT 2 — BY DIRECTION")
+    for k, n in by_dir.most_common():
+        print("    %-16s %5d" % (k, n))
+    print()
+    print("  SPLIT 3 — vs THE ABSTRACT-EXTRACTED DESIGN")
+    for k, n in by_agree.most_common():
+        print("    %-16s %5d" % (k, n))
+
+    # ── PRECONDITION 4 — manifest candidates ──
+    man_ids = set()
+    try:
+        import json as _json
+        man = _json.load(open("data/guidelines_seed.json", encoding="utf-8"))
+        for g in man["guidelines"]:
+            if g.get("pmid"):
+                man_ids.add(str(g["pmid"]))
+            for a in (g.get("alt_pmid") or []):
+                man_ids.add(str(a))
+    except Exception as ex:
+        print("  [warn] manifest unreadable: %s" % ex)
+    candidates = [c for c in changes
+                  if c["derived"] == "guideline" and c["pmid"] not in man_ids]
+    print()
+    print("  MANIFEST CANDIDATES — pubtype says guideline, no manifest record")
+    print("  (NOT moved. The manifest is the only authority on what is a")
+    print("   guideline; these are for RB to consider adding.)  %d"
+          % len(candidates))
+    for c in candidates:
+        print("    %-10s %-4s %-34s %s"
+              % (c["pmid"], "", (c["journal"] or "")[:34], c["title"][:60]))
 
     print()
     print("  TOTALS BY TIER PAIR  (stored -> derived)")
