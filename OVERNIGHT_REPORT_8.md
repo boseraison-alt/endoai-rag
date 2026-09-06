@@ -435,4 +435,20 @@ endo_papers_rag  3435 live / 3435 dumped  OK
 Every table's dumped row count was re-read with the `csv` module and matched
 its live count; `scripts/dump_db.py` exits non-zero if any differs.
 
-**Git bundle — path and verification line in the section below.**
+**Git bundle — verified.**
+
+```
+C:\Users\boser\endo-ai-backups\endo-ai-rag-20260906-night.bundle
+5,519,236 bytes, --all (every branch and tag)
+
+$ git bundle verify endo-ai-rag-20260906-night.bundle
+a9a721d5b1401a2acccd319e3cc3e7f70b9dc062 HEAD
+The bundle records a complete history.
+The bundle uses this hash algorithm: sha1
+```
+
+Tag: `night-20260906-end` at `a9a721d`. Branch pushed to `origin`.
+
+The 2026-09-05 backups both still exist and were re-verified at the start of
+the night; they are the restore point for the ingest, since
+`db-20260906-night/` is post-write.
