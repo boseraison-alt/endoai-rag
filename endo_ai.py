@@ -7053,6 +7053,10 @@ _REF_PMID_RE      = re.compile(r"\[PMID:\s*(" + _PMID_ID_PAT + r")\s*\]")
 # category error.
 _GL_ID_PAT = r"[A-Za-z][A-Za-z0-9._-]{1,63}"
 _GL_RE = re.compile(r"\[\[GL:\s*(" + _GL_ID_PAT + r")\s*\]\]")
+# Either shape — the engine's `[[GL:id]]` or the rendered
+# `[GL:id · Org — title (year; status; jurisdiction)]`. Used by the citation
+# extractor so the bibliography is the same set before and after rendering.
+_GL_ANY_RE = re.compile(r"\[\[?GL:\s*(" + _GL_ID_PAT + r")")
 _HEADING_RE       = re.compile(r"^(#{2,4})\s+(.+?)\s*$", re.MULTILINE)
 
 # A period inside an abbreviation is not a sentence end. Each lookbehind is
@@ -7350,8 +7354,22 @@ def _extract_evidence_pmids(evidence: dict) -> set:
 
 
 def _extract_cited_pmids(answer: str) -> list:
-    """Return every PMID inside [[PMID:N]] markers in order, with duplicates."""
-    return [m.group(1).strip() for m in _PMID_RE.finditer(answer or "")]
+    """Every cited library key in order, with duplicates.
+
+    ITEM B, 2026-09-07 — GUIDELINE MARKERS COUNT. This scanned `[[PMID:N]]`
+    only, and `assemble_bibliography` builds the reference list from it, so a
+    guideline cited as `[[GL:id]]` was attributed in the prose and ABSENT from
+    the references. A clinician reading "the AAE position says X" and finding
+    nothing to follow is the failure A49 phase 1 exists to remove, not one to
+    introduce.
+
+    Both marker shapes are scanned — the engine's `[[GL:id]]` and the rendered
+    `[GL:id · Org — title (...)]` — because the archive routes re-render on
+    every read and the citation set must be identical either side of that.
+    """
+    ids = [m.group(1).strip() for m in _PMID_RE.finditer(answer or "")]
+    ids += [m.group(1).strip() for m in _GL_ANY_RE.finditer(answer or "")]
+    return ids
 
 
 def _split_sections(answer: str) -> list:
@@ -8408,18 +8426,41 @@ def render_gl_citations(answer: str, mapping=None):
         org = (rec.get("org") or "").strip()
         title = _gl_short_title(rec.get("title"))
         head = ("%s — %s" % (org, title)) if org else title
-        # BRACKETED, because an unbracketed rendering is not distinguishable
-        # from prose. Measured on the real case: the stored sentence
-        # "...foundational to the AAE classification of apical periodontitis
-        # [[PMID:AAE-PS-diagnosis]]." rendered as "...apical periodontitis
-        # Endodontic Diagnosis (2009)." — a title dropped mid-sentence, which
-        # reads as a garbled clause rather than a citation. It bites hardest
-        # on the two grandfathered rows that carry no organisation, where
-        # there is no "AAE — " prefix to signal a source at all.
+        # `[GL: ...]` — BRACKETED AND PREFIXED, and both halves were forced by
+        # a failing test rather than chosen.
         #
-        # Square brackets match the reference list's own `[PMID: n]`
-        # convention, so a clinician reads one citation shape throughout.
-        return "[%s%s]" % (head, detail)
+        # Bracketed, because unbracketed it is not distinguishable from prose:
+        # "...foundational to the AAE classification of apical periodontitis
+        # Endodontic Diagnosis (2009)." reads as a garbled clause, worst on
+        # the two grandfathered rows that carry no organisation and so have no
+        # "AAE — " prefix to signal a source at all.
+        #
+        # PREFIXED `GL:`, because `test_re_rendering_twice_changes_nothing`
+        # caught the rendering breaking IDEMPOTENCE. The archive routes
+        # re-render on every read (rule 18). On the first pass the marker was
+        # an attribution; rendering it to bare text meant the SECOND pass saw
+        # a claim with no citation and appended a "1 claim not from the
+        # evidence base" banner line, so the same stored answer rendered
+        # differently every other time it was served.
+        #
+        # The rendered form therefore stays recognisable to
+        # `_ANY_CITATION_RE`, exactly as the reference list's single-bracket
+        # `[PMID: n]` already is. Re-rendering is then a genuine no-op: no
+        # `[[GL:id]]` remains, and the attribution survives.
+        # THE ID STAYS IN THE RENDERED FORM, and a failing test is why.
+        #
+        # `test_q5_the_bibliography_is_the_citation_set` dropped from 3 cited
+        # sources to 2: `assemble_bibliography` builds the reference list by
+        # scanning the SERVED answer for ids, so a guideline whose id had been
+        # rendered away was cited in the prose and absent from the references.
+        # That is a real loss — the clinician reads a claim attributed to a
+        # body and finds nothing to follow.
+        #
+        # For these documents the manifest id IS the citation key: there is no
+        # accession, which is the whole reason this marker exists. Showing it
+        # is consistent with the reference list already showing a bare
+        # `[PMID: 12345678]`.
+        return "[GL:%s · %s%s]" % (m.group(1).strip(), head, detail)
 
     out = _GL_RE.sub(_sub, answer)
     if n:
@@ -8756,7 +8797,12 @@ _ANY_CITATION_RE = re.compile(
     # prose. The marker is rendered to text at the very END of the finaliser
     # for exactly this reason: every detector in between must still be able to
     # see it.
-    r"|\[\[GL:\s*" + _GL_ID_PAT + r"\s*\]\]",
+    r"|\[\[GL:\s*" + _GL_ID_PAT + r"\s*\]\]"
+    # ...and its RENDERED form, `[GL: AAE — Vital Pulp Therapy (2021; ...)]`,
+    # for the same reason the single-bracket `[PMID: n]` is accepted above:
+    # the archive routes re-render on every read, so the count has to be
+    # identical on the marker and on the text a clinician is looking at.
+    r"|\[GL:\s*[^\]]{1,200}\]",
     re.IGNORECASE)
 
 # ── what makes a claim DIRECTIVE ──
