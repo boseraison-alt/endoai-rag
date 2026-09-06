@@ -71,10 +71,41 @@ class TestTheSubjectGroupIsWhatTheLaneAsksFor:
         one = '("root canal" OR endodontic*)'
         assert E.guideline_topic(one) == one
 
-    def test_the_widest_group_is_the_fallback_when_none_is_generic(self):
+    def test_no_domain_noun_anywhere_ands_the_groups_rather_than_guessing(self):
+        """REPLACES `test_the_widest_group_is_the_fallback_when_none_is_generic`,
+        2026-09-06, because that test pinned the defect.
+
+        It asserted that with no generic group, the WIDEST group wins. That
+        length fallback is what chose `tooth #20 OR maxillary right first molar
+        ...` — a tooth identifier — as the subject of a dens evaginatus
+        question, and it decided the topic on 13 of 32 measured questions.
+        Item B's instruction is to remove it, so the behaviour it pinned no
+        longer exists and the test cannot be repaired, only replaced.
+
+        The fixture was also invented — `alpha OR beta OR gamma` — which is why
+        it read as a reasonable property. Nothing about real generated terms
+        makes the longest OR-list the subject; that was only ever true of a
+        query where the synonyms carry no meaning.
+
+        What replaces it is the documented new behaviour: when NO group names
+        an endodontic subject, the lane narrows by ANDing rather than guessing
+        at one, and the question is logged.
+        """
         term = '(alpha OR beta OR gamma OR delta) AND (zeta OR eta)'
         got = E.guideline_topic(term)
-        assert "alpha" in got and "zeta" not in got
+        assert " AND " in got, (
+            "expected a conjunction when no group names a subject, got %r"
+            % got)
+        assert "alpha" in got and "zeta" in got, got
+
+    def test_a_real_subject_group_beats_a_longer_qualifier_group(self):
+        """The property the old length test should have had. The subject group
+        here is the SHORTEST one, and it must still win."""
+        term = ('(prognosis OR outcome* OR healing OR survival OR success* OR '
+                'efficacy) AND (avuls* OR "tooth avulsion")')
+        got = E.guideline_topic(term)
+        assert "avuls" in got, got
+        assert "prognosis" not in got, "chose the longer outcome group: %r" % got
 
     def test_a_non_empty_topic_never_becomes_empty(self):
         """An empty topic would make the lane query the domain filter ALONE —

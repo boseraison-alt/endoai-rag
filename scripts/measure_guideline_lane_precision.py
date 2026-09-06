@@ -293,8 +293,13 @@ def main():
         chosen_terms = [x.strip() for x in re.split(r"\s+OR\s+", chosen,
                                                     flags=re.I) if x.strip()]
         ok, which = has_domain_noun(chosen_terms, nouns)
+        # The species guard is read from the module, never re-typed here: a
+        # measurement that rebuilds the query it measures can drift from the
+        # product silently. Before the fix ships the attribute is absent and
+        # this is the empty string, which is exactly the before-arm query.
         query = (f"({chosen}) AND ({filt}) AND {E.ENDO_DOMAIN_FILTER} "
-                 f'NOT "Retracted Publication"[pt]')
+                 f'NOT "Retracted Publication"[pt]'
+                 f"{getattr(E, 'GUIDELINE_SPECIES_GUARD', '')}")
         pmids, total = esearch(query)
         meta = summaries(pmids)
         pool = []

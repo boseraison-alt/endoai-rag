@@ -4733,6 +4733,153 @@ def _generic_share(terms: list) -> float:
                if t.rstrip("*").strip() in _COVERAGE_GENERIC) / len(terms)
 
 
+# ── THE SUBJECT VOCABULARY (item B, 2026-09-06) ──────────────────────────
+#
+# `_COVERAGE_GENERIC` above is ONE list doing TWO jobs, and that is the whole
+# defect. It was built for the coverage gate, where it means "vocabulary with
+# no discriminating power", and it therefore mixes two unlike things:
+#
+#   domain nouns    root canal, pulp, periapical, endodontic
+#   research nouns  outcome, efficacy, success, treatment, management, tooth
+#
+# `guideline_topic` then selected the group with the HIGHEST share of that
+# mixed list and called it "the subject". Measured across 32 questions on
+# 2026-09-06, that picked a group containing no domain noun at all on 13 of
+# them -- the outcome group on `regenerative-immature` (`success OR survival
+# OR outcome* OR efficacy`), a tooth identifier on `dens-evaginatus-premolar-
+# diagnostic`, and `prognosis OR outcome* OR healing OR survival` on the
+# avulsion probe. With the topic that broad, ENDO_DOMAIN_FILTER is the only
+# discriminator left, and it was built as a floor: one matching term is
+# enough. A feline veterinary dental guideline and a paediatric brain-tumour
+# radiotherapy guideline both reached endodontic pools through it.
+#
+# So the two jobs get two lists. DOMAIN_NOUNS is what a guideline is ABOUT:
+# anatomy, pathology and procedure. It is built from the 29 eval questions'
+# OWN generated term groups (`eval/logs/night8_terms.json`, 32 questions, 280
+# distinct synonyms) plus the batch's seed list -- not from memory, which is
+# how the last two assumptions about this helper went wrong.
+#
+# BRAND AND MATERIAL NAMES ARE DELIBERATELY ABSENT. `mta`, `biodentine`,
+# `bioceramic`, `ah plus`, `sodium hypochlorite` are all in the questions'
+# vocabulary and none of them is here. A guideline is indexed by the condition
+# or the procedure, not by the product: on `mta-vs-biodentine-pulpotomy`,
+# including materials would select `(mta OR mineral trioxide aggregate OR
+# biodentine OR calcium silicate)` over `(pulpotomy OR pulp amputation)`, and
+# the second is the one that finds a vital-pulp-therapy guideline. The cost is
+# recorded: it leaves `naocl-concentration` with no domain noun in any group,
+# and that question is named in the fallback log rather than papered over.
+DOMAIN_NOUNS = frozenset({
+    # pulp and periapex
+    "pulp", "pulpal", "pulpitis", "pulpotomy", "pulpectomy", "periapical",
+    "periradicular", "apical periodontitis", "apical lesion",
+    "apical radiolucency", "apical pathology", "apical surgery",
+    "apical microsurgery", "periodontitis", "necrotic", "necrosis",
+    "vital pulp", "pulp cap", "pulp therapy", "devitaliz", "devitalis",
+    # the canal itself
+    "root canal", "intracanal", "canal sealer", "obturation", "irrigation",
+    "irrigant", "mesiobuccal", "missed canal", "additional canal",
+    "perforation",
+    # THE NAMED IRRIGANTS, and the one place this list was extended after a
+    # measurement rather than before it. The first run scored 28 of 32 against
+    # a target of 30, and two of the four misses were irrigant groups:
+    # `naocl-concentration` chose `(efficacy OR outcome* OR success ...)` over
+    # `(sodium hypochlorite OR naocl OR chlorine dioxide)`, and
+    # `review-newtopic-reset` likewise.
+    #
+    # This is an extension for consistency, not to reach the number: the
+    # batch's own seed list already carries `irrigation` and `irrigant`, and
+    # naming the procedure while excluding the agent that performs it is an
+    # inconsistency, not a policy. Sodium hypochlorite is THE root canal
+    # irrigant and ESE and AAE both publish irrigation guidance, so
+    # `(sodium hypochlorite OR naocl)` is a good guideline query and
+    # `(efficacy OR outcome)` is not.
+    #
+    # `sodium chloride`, `bleach` and `chlorine dioxide` sit in the same
+    # generated groups and are deliberately NOT here -- saline and household
+    # bleach are not endodontic subjects. The two questions that still have no
+    # domain noun after this are named in the fallback log rather than chased.
+    "hypochlorite", "naocl", "chlorhexidine", "edta",
+    # endodontics as a named field
+    "endodontic", "endodontics", "retreatment", "re-treatment",
+    "apicoectomy", "apicectomy",
+    # trauma
+    "avuls", "luxation", "extrusion", "intrusion", "replant", "reimplant",
+    "crown fracture", "root fracture", "coronal fracture", "enamel fracture",
+    "complicated fracture", "cracked tooth", "tooth crack", "dental trauma",
+    "traumatic injury", "traumatic dental injur", "resorption",
+    # development and regeneration
+    "immature tooth", "immature teeth", "open apex", "blunderbuss apex",
+    "apexification", "apexogenesis", "apical development",
+    "incomplete root formation", "revitali", "revascular", "regenerat",
+    # caries and hard tissue
+    "caries", "carious", "dentin", "dentine", "odontogenic", "odontodystrophy",
+    "dens invaginatus", "dens evaginatus", "dens in dente", "dens evaginatous",
+    # jaw pathology that is an endodontic differential
+    "osteonecrosis", "mronj", "bronj",
+})
+
+# The other half of the split: vocabulary that describes a STUDY or a
+# CONNECTIVE, never a subject. A group made only of these can never be the
+# subject however long it is.
+GENERIC_QUALIFIERS = frozenset({
+    "outcome", "outcomes", "efficacy", "effectiveness", "success", "failure",
+    "survival", "prognosis", "healing", "heal", "treatment", "treatments",
+    "therapy", "therap", "management", "manage", "clinical", "safety",
+    "study", "studies", "trial", "trials", "rct",
+    "randomized controlled trial", "placebo", "control", "comparative",
+    "tooth", "teeth", "dental", "dentistry", "oral", "patient", "patients",
+    "adult", "adults", "human", "humans", "child", "children",
+    "timing", "delay", "prevent", "preventive", "conserv", "decision",
+    "diagnosis", "etiology", "cause", "classification", "severity", "extent",
+    "protocol", "strateg", "consideration", "precaution", "complication",
+    "treatment outcome", "success rate", "clinical outcome", "treatment planning",
+})
+
+
+# PREFIX MATCH AT A WORD BOUNDARY, not a bare substring, and the difference is
+# a bug the test caught rather than a preference. The generator writes
+# `regenerative endodontic*`, `vertical root fracture` and `pulp necrosis`,
+# none of which EQUALS a list entry, so equality is useless here — it is what
+# made `_group_is_generic` return False for every group on a real query.
+#
+# But bare `in` is worse: `dentin` is a substring of `bioDENTINe`, so the
+# material this list deliberately excludes was being counted as a subject.
+# `\bdentin` does not match `biodentine`, because the `d` there follows a word
+# character. Trailing boundary is deliberately NOT required — `avuls` has to
+# match `avulsion` and `avulsed`.
+_DOMAIN_NOUN_RE = re.compile(
+    r"\b(?:%s)" % "|".join(sorted((re.escape(d) for d in DOMAIN_NOUNS),
+                                  key=len, reverse=True)))
+
+
+def _domain_noun_hits(terms: list) -> int:
+    """How many of a group's synonyms name an endodontic subject."""
+    n = 0
+    for t in terms:
+        s = t.rstrip("*").strip().lower()
+        if _DOMAIN_NOUN_RE.search(s):
+            n += 1
+    return n
+
+
+def _is_qualifier_group(terms: list) -> bool:
+    """True when every synonym is study/connective vocabulary."""
+    if not terms:
+        return True
+    for t in terms:
+        s = t.rstrip("*").strip().lower()
+        if not any(q == s or s.startswith(q) for q in GENERIC_QUALIFIERS):
+            return False
+    return True
+
+
+# Questions whose generated terms contain no endodontic subject in ANY group.
+# Appended to rather than counted, because the LIST is the finding: these are
+# the questions whose term generation is the actual problem, and a bare count
+# would not say which.
+GUIDELINE_TOPIC_NO_SUBJECT = []
+
+
 def guideline_topic(primary_term: str) -> str:
     """The BROAD subject group of a generated query — for the guideline lane only.
 
@@ -4767,22 +4914,48 @@ def guideline_topic(primary_term: str) -> str:
     groups = parse_search_term_groups(primary_term)
     if len(groups) < 2:
         return primary_term
-    # HIGHEST GENERIC SHARE, not `_group_is_generic`, and the difference is a
-    # measurement I got wrong first. `_group_is_generic` requires EVERY synonym
-    # to be corpus-wide, and a real subject group rarely is:
-    # ("root canal" OR endodontic* OR "root canal treatment") scores 2 of 3,
-    # because "root canal treatment" is not in _COVERAGE_GENERIC. The all-or-
-    # nothing form returned False for every group on that query and the
-    # fallback then picked the five-synonym SCENARIO group -- the widest, and
-    # the wrong concept. Share is the signal; length only breaks ties.
-    chosen = max(groups, key=lambda g: (_generic_share(g), len(g)))
-    out = " OR ".join(chosen).strip()
-    # A lane with an empty topic queries the domain filter alone, which is
-    # every endodontic guideline on PubMed regardless of the question. Falling
-    # back to the unbroadened term is the safe direction: it retrieves too
-    # little, which is the failure this function is fixing, rather than
-    # retrieving everything, which would be a new and worse one.
-    return out or primary_term
+
+    # THE SUBJECT IS THE GROUP WITH THE MOST DOMAIN NOUNS. Not the highest
+    # generic share, which is what this line used to say and which selected
+    # the OUTCOME group about a fifth of the time -- `_COVERAGE_GENERIC` holds
+    # `outcome`, `efficacy`, `success`, `treatment`, `management`, `tooth` and
+    # `dental` alongside the real domain vocabulary, so selecting FOR it
+    # selects for research nouns. See DOMAIN_NOUNS above for the measurement.
+    scored = [(_domain_noun_hits(g), g) for g in groups]
+    best = max(n for n, _g in scored)
+
+    if best > 0:
+        # THE LENGTH TIEBREAK IS GONE. It was the fallback that chose
+        # `tooth #20 OR maxillary right first molar ...` -- a tooth
+        # identifier -- on `dens-evaginatus-premolar-diagnostic`, because more
+        # synonyms is not the same as broader. Ties now break on ORDER, which
+        # is the generator's own: it is told to write the subject first.
+        chosen = next(g for n, g in scored if n == best)
+        out = " OR ".join(chosen).strip()
+        return out or primary_term
+
+    # NO GROUP NAMES AN ENDODONTIC SUBJECT. That is a term-generation failure,
+    # not a selection problem, and the honest response is to say so rather
+    # than to pick the least-bad group. AND the two longest groups that are
+    # not pure qualifier vocabulary: a conjunction is narrower than either
+    # half alone, which is the safe direction when nothing here can be
+    # trusted to discriminate.
+    if primary_term not in GUIDELINE_TOPIC_NO_SUBJECT:
+        GUIDELINE_TOPIC_NO_SUBJECT.append(primary_term)
+    substantive = [g for g in groups if not _is_qualifier_group(g)]
+    if len(substantive) >= 2:
+        substantive.sort(key=len, reverse=True)
+        a, b = substantive[0], substantive[1]
+        print("    [guideline_lane] no domain noun in any group; ANDing the "
+              "two longest non-qualifier groups")
+        return "(%s) AND (%s)" % (" OR ".join(a), " OR ".join(b))
+    # One or none. A lane with an empty topic queries the domain filter alone,
+    # which is every endodontic guideline on PubMed regardless of the
+    # question. Falling back to the unbroadened term is the safe direction: it
+    # retrieves too little, which is the failure this function was written to
+    # fix, rather than retrieving everything, which would be a new and worse
+    # one.
+    return primary_term
 
 
 def _group_is_generic(terms: list) -> bool:
@@ -4863,6 +5036,12 @@ ENDO_DOMAIN_FILTER = (
     'OR "pulp therapy"[tiab] OR "pulp capping"[tiab])'
 )
 
+# PubMed's own animal exclusion, ANDed into the guideline lane only. See the
+# long note at its use site in `fetch_papers`. Floor-preserving by
+# construction: it drops records MeSH-indexed as animal-only and leaves
+# unindexed records alone.
+GUIDELINE_SPECIES_GUARD = " NOT (animals[mh] NOT humans[mh])"
+
 _PMID_FORMAT_RE = re.compile(r"^\d{1,9}$")
 
 
@@ -4933,16 +5112,49 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
     # broadening that lived in app.py would have reached Review and Case and
     # not the curriculum, which is the divergence class this codebase has
     # spent three batches removing.
+    species_guard = ""
     if level_key == "guideline":
         broad = guideline_topic(topic)
         if broad != topic:
             print(f"    [guideline_lane] topic broadened to the subject group: "
                   f"{broad[:90]}")
         topic = broad
+        # THE SPECIES GUARD (item B, 2026-09-06).
+        #
+        # "2025 FelineVMA feline oral health and dental care guidelines"
+        # reached a human crown-fracture pool, in 13 of the 32 pools measured.
+        # It matched ENDO_DOMAIN_FILTER through `endodontic*[tiab]`, correctly
+        # -- cats get root canals. Nothing in this codebase kept it out:
+        # `animal_subjects.detect_animal_subject` is a LIBRARY classifier run
+        # by `scripts/classify_animal_subjects.py`, and the live path has
+        # never called it, so no lane carries a species restriction at query
+        # time. The guideline lane is where it does most damage, because a
+        # veterinary guideline is still a real guideline from a real body and
+        # nothing downstream will doubt it.
+        #
+        # `NOT (animals[mh] NOT humans[mh])` is PubMed's own animal exclusion
+        # and is the floor-preserving form: it drops only records MeSH-indexed
+        # as animal-only. Requiring `humans[mh]` instead would also drop every
+        # record NLM has not yet indexed, which is 6-18 months of new
+        # guidelines -- the exact recall damage ENDO_DOMAIN_FILTER's hybrid
+        # MeSH-OR-tiab shape exists to avoid.
+        #
+        # Verified on real accessions before shipping: the feline guideline
+        # (41319038) is excluded; IADT avulsion 2020 (32460393), IADT
+        # fractures/luxations 2020 (32475015), IADT intro 2020 (32472740), ESE
+        # S3 2023 (37772327), ESE revitalisation 2016 (26990236), EFCD deep
+        # caries (42018467) and AAE/AAOMR CBCT 2025 (41412684) all survive.
+        #
+        # Module-level so the measurement script appends the SHIPPED string
+        # rather than its own copy of it. A measurement that hand-rebuilds the
+        # query it is measuring is one edit away from measuring something the
+        # product does not do.
+        species_guard = GUIDELINE_SPECIES_GUARD
     # Exclude retracted papers at the search level — free, no extra API call
     search_term = (
         f"({topic}) AND ({filter_term}) AND {ENDO_DOMAIN_FILTER} "
         f'NOT "Retracted Publication"[pt] NOT "Retraction of Publication"[pt]'
+        f"{species_guard}"
     )
 
     search_url    = f"{NCBI_EUTILS_BASE}/esearch.fcgi"
