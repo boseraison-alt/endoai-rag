@@ -957,6 +957,79 @@ SR_TIER_KEYS         = ("cochrane", "level1")
 PRIMARY_TIER_KEYS    = ("level2", "level3a", "level3b", "level3", "level4")
 
 
+_OFF_DOMAIN_BLOCKLIST = None
+
+
+def off_domain_blocklist() -> dict:
+    """{pmid: reason} — documents that must not reach any pool.
+
+    ITEM G, 2026-09-07. Two documents reach endodontic pools through a
+    CORRECT filter match:
+
+      29729847  SIOPE paediatric brain-tumour radiotherapy. Its abstract says
+                "no need to include sacral root canals in the spinal CTV", and
+                ENDO_DOMAIN_FILTER carries "root canal"[tiab]. A spinal nerve
+                root canal is a root canal.
+      29268916  Society for Vascular Surgery, abdominal aortic aneurysm. Not
+                off-domain by the abstract test — it really does carry a
+                dental-prophylaxis recommendation — and off-topic for every
+                endodontic question measured.
+
+    A NAMED LIST, NOT A FILTER CHANGE, on purpose. `ENDO_DOMAIN_FILTER` is
+    shared by every lane; narrowing it to exclude spinal root canals would
+    change what the study lanes retrieve too, and that needs its own A/B.
+
+    THIS STRENGTHENS A GATE. It only ever removes rows. Nothing here can admit
+    a document, so it cannot be used to widen a pool.
+    """
+    global _OFF_DOMAIN_BLOCKLIST
+    if _OFF_DOMAIN_BLOCKLIST is None:
+        table = {}
+        try:
+            import json as _json
+            path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                "data", "off_domain_blocklist.json")
+            with open(path, encoding="utf-8") as fh:
+                for e in _json.load(fh).get("entries", []):
+                    if e.get("pmid"):
+                        table[str(e["pmid"]).strip()] = e.get("reason", "")
+        except Exception as e:
+            # Fail OPEN, like the other gates here: an unreadable blocklist
+            # must not empty every pool.
+            print(f"  [blocklist] unavailable, not filtering: {e}")
+        _OFF_DOMAIN_BLOCKLIST = table
+    return _OFF_DOMAIN_BLOCKLIST
+
+
+def _reset_off_domain_blocklist():
+    """Test hook."""
+    global _OFF_DOMAIN_BLOCKLIST
+    _OFF_DOMAIN_BLOCKLIST = None
+
+
+def drop_off_domain(scored_papers: list, lane: str = "") -> list:
+    """Remove blocklisted documents from a pool, loudly.
+
+    Applied to EVERY lane, not only the guideline lane: the SIOPE document
+    matches `"root canal"[tiab]`, which every lane's query carries, so a
+    guideline-only guard would leave it reachable everywhere else.
+    """
+    block = off_domain_blocklist()
+    if not block or not scored_papers:
+        return scored_papers
+    kept, dropped = [], []
+    for p in scored_papers:
+        pid = str((p or {}).get("pmid") or "").strip()
+        if pid in block:
+            dropped.append(pid)
+        else:
+            kept.append(p)
+    if dropped:
+        print("  [blocklist] dropped %d off-domain document(s) from %s: %s"
+              % (len(dropped), lane or "a pool", ", ".join(dropped)))
+    return kept
+
+
 def flagship_guidelines_for(question: str) -> list:
     """Manifest ids of `flagship: true` records whose scope the question hits.
 
@@ -5813,6 +5886,9 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
 
         # ── Dynamic retrieval limits ──
         # Mode-aware per-tier cap. Review biases Tiers I-III; Learn promotes Tier V.
+        # ITEM G — the off-domain blocklist, before the quality cut so a
+        # blocklisted row can never occupy a slot in any lane.
+        scored_papers = drop_off_domain(scored_papers, level_key)
         kept = _apply_quality_threshold(scored_papers, mode=mode, tier_key=level_key)
         if len(kept) < len(scored_papers):
             print(f"    [quality] kept {len(kept)} of {len(scored_papers)} papers above threshold (mode={mode}, tier={level_key})")

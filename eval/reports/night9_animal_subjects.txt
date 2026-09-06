@@ -1,0 +1,173 @@
+==============================================================================
+ITEM G(b) — ANIMAL-SUBJECT ROWS IN THE LIBRARY
+==============================================================================
+  rows in endo_papers_rag                      3435
+  with any abstract text                       3431
+  with >= 20 words (what the detector can read) 3339
+  the detector cannot classify the other       96
+
+  ANIMAL-SUBJECT ROWS DETECTED                 81
+
+  by tier
+    invitro            47
+    classic            19
+    level1              6
+    level2              4
+    level5              2
+    retracted           2
+    level3a             1
+
+  by cue (top 10)
+    title: in rats                                         4
+    title: in dogs                                         4
+    title: dog teeth                                       3
+    abstract: in dogs                                      3
+    title: in monkeys                                      3
+    title: in rat                                          2
+    abstract: of bovine                                    2
+    abstract: bovine incisors                              2
+    abstract: bovine root                                  2
+    abstract: in rats                                      2
+
+  DO THEY REACH A POOL? (the 29 eval questions, library route)
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 657462f+dirty (imported 2026-09-06T09:16:59)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)'
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14060.19it/s]
+  Embedding model ready.
+  [rag] 2 queries -> 143 distinct papers (best similarity kept per PMID)
+  [ 1/29] laser-root-canal-disinfection-live           6 animal row(s) in the pool
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)'
+  [rag] 2 queries -> 143 distinct papers (best similarity kept per PMID)
+  [ 2/29] laser-root-canal-disinfection-library        6 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: (necrotic OR "vital status" OR "pulp necrosis") | ("root canal" OR endodontic*)
+  Smart search terms: '("single visit" OR "single-visit" OR "one visit" OR "one-visit" OR "same day" OR "same-day" OR "single appointment" OR RCT-S) AND ("multiple visit" OR "multiple-visit" OR "multi-visit" OR "conventional treatment" OR RCT-M) AND ("apical periodontitis" OR "periapical lesion" OR "periapical pathology" OR AP)'
+  [rag] 2 queries -> 152 distinct papers (best similarity kept per PMID)
+  [ 3/29] single-vs-multiple-visit                     0 animal row(s) in the pool
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR Biodentine OR "calcium silicate") AND (pulpotomy OR "pulp amputation") AND ("irreversible pulpitis" OR "mature permanent teeth" OR "permanent dentition")'
+  [rag] 2 queries -> 153 distinct papers (best similarity kept per PMID)
+  [ 4/29] mta-vs-biodentine-pulpotomy                  3 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("sodium hypochlorite" OR NaOCl OR "hypochlorite solution") AND (concentration* OR "low concentration" OR "high concentration" OR dose OR potency) AND (efficacy OR outcome* OR success OR effectiveness OR disinfect*)'
+  [rag] 2 queries -> 140 distinct papers (best similarity kept per PMID)
+  [ 5/29] naocl-concentration                          2 animal row(s) in the pool
+  Smart search terms: '(CBCT OR "cone beam computed tomography" OR "cone-beam CT" OR CBCT OR "volumetric tomography") AND ("periapical radiograph*" OR "intraoral radiograph*" OR "conventional radiograph*" OR "2D radiograph*") AND ("apical periodontitis" OR "periapical lesion*" OR "periapical pathology" OR "apical pathology" OR "apical osteolysis")'
+  [rag] 2 queries -> 141 distinct papers (best similarity kept per PMID)
+  [ 6/29] cbct-vs-periapical                           0 animal row(s) in the pool
+  Smart search terms: '("calcium silicate" OR bioceramic* OR "epoxy resin" OR AH Plus OR "AH-Plus" OR Gutta Flow OR "Gutta-Flow" OR BC Sealer OR "BC-Sealer" OR iRoot OR "Smart Seal" OR "TotalFill") AND ("root canal" OR endodontic*) AND (seal* OR obtura* OR outcome* OR efficac* OR success* OR leakage OR "apical seal*" OR "marginal seal*")'
+  [rag] 2 queries -> 143 distinct papers (best similarity kept per PMID)
+  [ 7/29] bioceramic-vs-resin-sealer                   1 animal row(s) in the pool
+  Smart search terms: '("nonsurgical retreatment" OR "retreatment" OR "root canal retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "apical periodontitis" OR "periapical lesion" OR "treatment failure" OR "refractory periapical pathosis")'
+  [rag] 2 queries -> 156 distinct papers (best similarity kept per PMID)
+  [ 8/29] retreatment-vs-microsurgery                  3 animal row(s) in the pool
+  Smart search terms: '("vital pulp therapy" OR "pulp capping" OR "direct pulp capping" OR DPC) AND (caries OR carious OR "caries exposure" OR "pulp exposure") AND (mature OR permanent OR adult)'
+  [rag] 2 queries -> 121 distinct papers (best similarity kept per PMID)
+  [ 9/29] direct-pulp-capping                          2 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("postoperative pain" OR "post-operative pain" OR "post-treatment pain" OR "endodontic pain") AND (NSAID* OR "nonsteroidal anti-inflammatory" OR ibuprofen OR naproxen OR indomethacin OR ketorolac OR diclofenac) AND (placebo OR control OR preemptive OR preventive OR prophylactic)'
+  [rag] 2 queries -> 138 distinct papers (best similarity kept per PMID)
+  [10/29] preemptive-nsaid                             1 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("necrotic pulp" OR "pulp necrosis" OR "nonvital" OR "dead t
+  Smart search terms: '("regenerative endodontic*" OR "revascularization" OR "revitalization" OR "tissue engineering" OR "stem cell" OR "apexogenesis" OR "apexification") AND ("immature tooth" OR "immature teeth" OR "open apex" OR "incomplete root formation" OR "primary teeth" OR "deciduous teeth") AND ("success" OR "survival" OR "outcome*" OR "efficacy" OR "healing" OR "prognosis")'
+  [rag] 2 queries -> 142 distinct papers (best similarity kept per PMID)
+  [11/29] regenerative-immature                        1 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR RCT)
+  Smart search terms: '("cracked tooth" OR "tooth fracture" OR "vertical root fracture" OR VRF OR "crack propagation") AND (prognosis OR outcome* OR "survival rate" OR longevity OR success OR "healing potential") AND (extent OR severity OR depth OR "crack length" OR classification)'
+  [rag] 2 queries -> 140 distinct papers (best similarity kept per PMID)
+  [12/29] cracked-tooth-prognosis                      0 animal row(s) in the pool
+  Smart search terms: '("photodynamic therapy" OR aPDT OR PDT OR "antimicrobial photodynamic therapy") AND ("primary molar*" OR "deciduous molar*" OR "baby tooth" OR "baby teeth" OR "primary tooth" OR "primary teeth") AND ("necrotic pulp*" OR "pulp necrosis" OR "non-vital" OR "devital*")'
+  [rag] 2 queries -> 147 distinct papers (best similarity kept per PMID)
+  [13/29] apdt-primary-molars                          5 animal row(s) in the pool
+  Smart search terms: '(bisphosphonate* OR "antiresorptive agent*" OR "bone resorption inhibitor*" OR alendronate OR risedronate OR zoledronate OR denosumab OR RANKL) AND ("root canal" OR endodontic* OR pulp* OR periapical) AND (management OR treatment OR therap* OR outcome* OR complication* OR "osteonecrosis of the jaw" OR ONJ OR "medication-related osteonecrosis")'
+  [rag] 2 queries -> 173 distinct papers (best similarity kept per PMID)
+  [14/29] bisphosphonates                              2 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '(pregnant OR pregnancy OR prenatal OR "with child") AND (timing OR "trimester" OR "second trimester" OR scheduling OR "emergency treatment") AND ("local anesthetic*" OR lidocaine OR prilocaine OR "articaine" OR epinephrine OR "vasoconstrictor")'
+  [rag] 2 queries -> 145 distinct papers (best similarity kept per PMID)
+  [15/29] pregnancy                                    0 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic* OR intracanal)
+  Smart search terms: '(laser* OR PIPS OR SWEEPS OR "photodynamic therapy" OR aPDT OR "laser-activated irrigation") AND (ultrasonic* OR "sonic activation" OR "passive ultrasonic irrigation" OR PUI) AND ("periapical healing" OR "periapical lesion*" OR "apical periodontitis" OR "healing outcome*" OR "treatment success")'
+  [rag] 2 queries -> 134 distinct papers (best similarity kept per PMID)
+  [16/29] pips-vs-ultrasonic                           0 animal row(s) in the pool
+  Smart search terms: '("intentional replantation" OR "intentional reimplantation" OR "surgical exodontia" OR "tooth extraction and replantation") AND ("root canal" OR endodontic* OR periapical) AND (unsuitable OR contraindicated OR "surgical access" OR "conventional treatment" OR alternative)'
+  [rag] 2 queries -> 164 distinct papers (best similarity kept per PMID)
+  [17/29] intentional-replantation                     0 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: (adult* OR permanent)
+  Smart search terms: '("silver diamine fluoride" OR SDF OR "silver diammine fluoride") AND ("pulp vitality" OR "pulp survival" OR "pulp necrosis" OR "pulp inflammation" OR "pulp outcomes") AND ("deep caries" OR "deep carious lesion*" OR "caries proximity" OR "caries removal")'
+  [rag] 2 queries -> 146 distinct papers (best similarity kept per PMID)
+  [18/29] sdf-pulp-outcomes                            1 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: (irrigat* OR activation)
+  Smart search terms: '(sonic* OR ultrasonic* OR "passive ultrasonic irrigation" OR PUI OR "sonic activation" OR "ultrasonic activation") AND ("root canal" OR endodontic*) AND (bacterial* OR "bacterial reduction" OR disinfect* OR CFU OR biofilm)'
+  [rag] 2 queries -> 142 distinct papers (best similarity kept per PMID)
+  [19/29] sonic-vs-ultrasonic                          0 animal row(s) in the pool
+  Smart search terms: '("dens invaginatus" OR "dens in dente" OR "gestant odontome" OR invaginated tooth OR invagination) AND (type III OR "type 3" OR classification OR management OR treatment OR therapy OR endodontic*)'
+  [rag] 2 queries -> 107 distinct papers (best similarity kept per PMID)
+  [20/29] dens-invaginatus                             0 animal row(s) in the pool
+  Smart search terms: '(diabetes OR diabetic) AND ("root canal" OR endodontic* OR "apical periodontitis") AND (healing OR outcome* OR success OR prognosis OR "periapical healing")'
+  [rag] 2 queries -> 145 distinct papers (best similarity kept per PMID)
+  [21/29] diabetes-outcomes                            1 animal row(s) in the pool
+  Smart search terms: '(tooth OR teeth OR dental OR odontol*) AND (pain OR ache OR hurt* OR discomfort OR symptom*) AND (etiology OR etiolог* OR diagnosis OR cause* OR differential)'
+  [rag] 2 queries -> 158 distinct papers (best similarity kept per PMID)
+  [22/29] case-opening-sparse                          0 animal row(s) in the pool
+  Smart search terms: '(retreatment OR "non-surgical retreatment" OR "root canal retreatment") AND ("missed canal" OR "MB2" OR "second mesiobuccal" OR "anatomical variation" OR "canal anatomy") AND ("periapical lesion" OR "periapical radiolucency" OR "apical periodontitis" OR "chronic apical periodontitis")'
+  [rag] 2 queries -> 180 distinct papers (best similarity kept per PMID)
+  [23/29] case-opening-full                            0 animal row(s) in the pool
+  Smart search terms: '("immature teeth" OR "immature tooth" OR "open apex" OR "open apices" OR "incomplete root formation" OR "incompletely formed root" OR "blunderbuss apex") AND ("root canal" OR endodontic* OR apexification OR revascularization OR regeneration)'
+  [rag] 2 queries -> 165 distinct papers (best similarity kept per PMID)
+  [24/29] review-followup-immature-teeth               0 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("sodium hypochlorite" OR NaOCl OR "sodium hypochlorous") AND (concentrat* OR "irrigation protocol" OR efficacy) AND ("primary tooth" OR "primary teeth" OR "deciduous tooth" OR "deciduous teeth" OR "primary dentin")'
+  [rag] 2 queries -> 133 distinct papers (best similarity kept per PMID)
+  [25/29] review-newtopic-reset                        2 animal row(s) in the pool
+  Smart search terms: '(trauma* OR "pulp necrosis" OR "pulpal necrosis" OR idiopathic OR "internal resorption" OR "external resorption" OR "systemic disease*" OR medication* OR "developmental defect*") AND ("root canal" OR endodontic* OR pulp) AND (etiology OR etio* OR cause* OR origin OR pathogenesis)'
+  [rag] 2 queries -> 183 distinct papers (best similarity kept per PMID)
+  [26/29] necrotic-virgin-tooth-young-adult-diagnostic 1 animal row(s) in the pool
+  Smart search terms: '(extraction OR "root canal treatment" OR endodontic* OR RCT) AND (periapical lesion* OR periapical pathosis OR "periapical disease") AND (osteoporosis OR bisphosphonate* OR alendronate OR "medication-related osteonecrosis" OR MRONJ OR "bisphosphonate-related osteonecrosis")'
+  [rag] 2 queries -> 145 distinct papers (best similarity kept per PMID)
+  [27/29] bisphosphonate-extraction-vs-rct-treatment   2 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: ("tooth#20" OR "maxillary molar*" OR "first molar*")
+  Smart search terms: '("periapical lesion*" OR "periapical radiolucency" OR "apical periodontitis" OR "apical pathosis") AND ("cold test*" OR "vitality test*" OR "pulp test*" OR "sensibility test*") AND (diagnosis OR diagnostic* OR differenti* OR assessment)'
+  [rag] 2 queries -> 170 distinct papers (best similarity kept per PMID)
+  [28/29] dens-evaginatus-premolar-diagnostic          0 animal row(s) in the pool
+  [search_terms] capped to 3 AND-groups, dropped: (pulp* OR endodontic*)
+  Smart search terms: '("dens evaginatus" OR "dens in dente" OR "dilated odontoid process") AND (tooth OR dental) AND (necrosis OR vitality OR viability OR prevention OR management OR treatment)'
+  [rag] 2 queries -> 184 distinct papers (best similarity kept per PMID)
+  [29/29] dens-evaginatus-prevention-followup          1 animal row(s) in the pool
+
+  distinct animal rows reaching any of the 29 pools   24
+    14718885   invitro      Histologic analysis of pulpal revascularization of autot
+    15025689   invitro      Pulp revascularization of replanted immature dog teeth a
+    16793468   invitro      Healing of apical periodontitis after endodontic treatme
+    17635354   invitro      Morphometric and microscopic evaluation of the effect of
+    19459923   invitro      Intracanal bisphosphonate does not inhibit replacement r
+    20126907   invitro      Periapical repair after root canal filling with differen
+    20728727   invitro      Tissue dissolution by sodium hypochlorite: effect of con
+    22236150   invitro      Root surface treatment using diode laser in delayed toot
+    25146016   level2       Comparison of pulpal responses to pulpotomy and pulp cap
+    25517781   invitro      Physicochemical properties and interfacial adaptation of
+    25771743   invitro      Histological observations of pulpal replacement tissue i
+    26275599   level1       Evaluation of Root Canal Debridement of Human Molars Usi
+    28294701   invitro      The Impact of a 940 nm Diode Laser with Radial Firing Ti
+    36949460   invitro      Regenerative endodontic therapy in mature teeth with nec
+    38407663   level1       Biological response to endodontic treatment in one versu
+    39484795   level2       Microtomographic and histological evaluation of two bioc
+    39580417   invitro      Regenerative endodontic therapy in immature teeth using 
+    39754111   level2       Comparative study of pulpal response following direct pu
+    40683315   level5       Vital pulp therapy in dogs maintains an 80% success rate
+    40684155   invitro      Pulp response following direct pulp capping with Tideglu
+    41465429   invitro      Comparative Antimicrobial and Oxidative Damage of Indocy
+    41493880   level3a      Comparative Efficacy of Opioid-Free and Opioid-Sparing A
+    8245756    classic      Wound healing following demineralization of resected roo
+    8665319    invitro      Healing of apical periodontitis in dogs after apicoectom
+
+  wrote eval/reports/night9_animal_subjects.json
+
+  NO FIX. A species guard on the paper lanes is a retrieval
+  change and needs its own A/B; this number decides whether that
+  A/B is worth running.

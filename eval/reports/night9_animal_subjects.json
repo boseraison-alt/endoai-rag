@@ -1,0 +1,697 @@
+{
+ "rows_total": 3435,
+ "readable": 3339,
+ "animal_rows": 81,
+ "by_tier": {
+  "invitro": 47,
+  "classic": 19,
+  "level5": 2,
+  "level1": 6,
+  "level2": 4,
+  "retracted": 2,
+  "level3a": 1
+ },
+ "reaching_a_pool": [
+  "14718885",
+  "15025689",
+  "16793468",
+  "17635354",
+  "19459923",
+  "20126907",
+  "20728727",
+  "22236150",
+  "25146016",
+  "25517781",
+  "25771743",
+  "26275599",
+  "28294701",
+  "36949460",
+  "38407663",
+  "39484795",
+  "39580417",
+  "39754111",
+  "40683315",
+  "40684155",
+  "41465429",
+  "41493880",
+  "8245756",
+  "8665319"
+ ],
+ "per_question": {
+  "laser-root-canal-disinfection-live": [
+   "22236150",
+   "26275599",
+   "28294701",
+   "36949460",
+   "39580417",
+   "41465429"
+  ],
+  "laser-root-canal-disinfection-library": [
+   "22236150",
+   "26275599",
+   "28294701",
+   "36949460",
+   "39580417",
+   "41465429"
+  ],
+  "single-vs-multiple-visit": [],
+  "mta-vs-biodentine-pulpotomy": [
+   "25146016",
+   "39484795",
+   "40684155"
+  ],
+  "naocl-concentration": [
+   "20126907",
+   "20728727"
+  ],
+  "cbct-vs-periapical": [],
+  "bioceramic-vs-resin-sealer": [
+   "25517781"
+  ],
+  "retreatment-vs-microsurgery": [
+   "16793468",
+   "8245756",
+   "8665319"
+  ],
+  "direct-pulp-capping": [
+   "40683315",
+   "40684155"
+  ],
+  "preemptive-nsaid": [
+   "41493880"
+  ],
+  "regenerative-immature": [
+   "25771743"
+  ],
+  "cracked-tooth-prognosis": [],
+  "apdt-primary-molars": [
+   "15025689",
+   "25771743",
+   "36949460",
+   "39580417",
+   "41465429"
+  ],
+  "bisphosphonates": [
+   "17635354",
+   "19459923"
+  ],
+  "pregnancy": [],
+  "pips-vs-ultrasonic": [],
+  "intentional-replantation": [],
+  "sdf-pulp-outcomes": [
+   "39754111"
+  ],
+  "sonic-vs-ultrasonic": [],
+  "dens-invaginatus": [],
+  "diabetes-outcomes": [
+   "38407663"
+  ],
+  "case-opening-sparse": [],
+  "case-opening-full": [],
+  "review-followup-immature-teeth": [],
+  "review-newtopic-reset": [
+   "20126907",
+   "20728727"
+  ],
+  "necrotic-virgin-tooth-young-adult-diagnostic": [
+   "14718885"
+  ],
+  "bisphosphonate-extraction-vs-rct-treatment": [
+   "17635354",
+   "19459923"
+  ],
+  "dens-evaginatus-premolar-diagnostic": [],
+  "dens-evaginatus-prevention-followup": [
+   "25771743"
+  ]
+ },
+ "hits": [
+  {
+   "pmid": "18721196",
+   "level_key": "invitro",
+   "title": "Effect of root surface treatment with propolis and fluoride in delayed tooth rep",
+   "cue": "title: in rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "40618078",
+   "level_key": "invitro",
+   "title": "Pulp tissue dissolution capacities of two hypochlorite-based irrigants at differ",
+   "cue": "abstract: bovine pulp",
+   "quarantined": false
+  },
+  {
+   "pmid": "40684155",
+   "level_key": "invitro",
+   "title": "Pulp response following direct pulp capping with Tideglusib and mineral trioxide",
+   "cue": "title: an animal study",
+   "quarantined": false
+  },
+  {
+   "pmid": "108377",
+   "level_key": "classic",
+   "title": "Histopathologic and bacterial evaluation of conventional and new copper amalgams",
+   "cue": "abstract: in monkeys",
+   "quarantined": false
+  },
+  {
+   "pmid": "40787673",
+   "level_key": "invitro",
+   "title": "Motors vs. operators in simulated root canal shaping.",
+   "cue": "abstract: in bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "1380713",
+   "level_key": "classic",
+   "title": "Effects of dental trauma on pulpal and periodontal nerve morphology",
+   "cue": "abstract: rat molar",
+   "quarantined": false
+  },
+  {
+   "pmid": "41257088",
+   "level_key": "invitro",
+   "title": "Effects of cavity depth (moderate vs. deep with pulp exposure) on the release of",
+   "cue": "title: in rat",
+   "quarantined": false
+  },
+  {
+   "pmid": "20728727",
+   "level_key": "invitro",
+   "title": "Tissue dissolution by sodium hypochlorite: effect of concentration, temperature,",
+   "cue": "abstract: of bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "40683315",
+   "level_key": "level5",
+   "title": "Vital pulp therapy in dogs maintains an 80% success rate independent of patient ",
+   "cue": "title: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "8665319",
+   "level_key": "invitro",
+   "title": "Healing of apical periodontitis in dogs after apicoectomy and retrofilling with ",
+   "cue": "title: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "28294701",
+   "level_key": "invitro",
+   "title": "The Impact of a 940\u2009nm Diode Laser with Radial Firing Tip and Bare End Fiber Tip",
+   "cue": "title: of Bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "41465429",
+   "level_key": "invitro",
+   "title": "Comparative Antimicrobial and Oxidative Damage of Indocyanine Green, Methylene B",
+   "cue": "abstract: bovine incisors",
+   "quarantined": false
+  },
+  {
+   "pmid": "30101818",
+   "level_key": "invitro",
+   "title": "Leachables and cytotoxicity of root canal sealers.",
+   "cue": "abstract: of murine",
+   "quarantined": false
+  },
+  {
+   "pmid": "19106466",
+   "level_key": "invitro",
+   "title": "In vitro evaluation of the cytotoxicity of ProRoot MTA and MTA Angelus.",
+   "cue": "abstract: rat pulp",
+   "quarantined": false
+  },
+  {
+   "pmid": "33760451",
+   "level_key": "level5",
+   "title": "Artificial Corneal Transplantation.",
+   "cue": "abstract: in rabbit",
+   "quarantined": false
+  },
+  {
+   "pmid": "25146015",
+   "level_key": "invitro",
+   "title": "Effect of conditioned medium from preameloblasts on regenerative cellular differ",
+   "cue": "abstract: 3 beagles",
+   "quarantined": false
+  },
+  {
+   "pmid": "25771743",
+   "level_key": "invitro",
+   "title": "Histological observations of pulpal replacement tissue in immature dog teeth aft",
+   "cue": "title: dog teeth",
+   "quarantined": false
+  },
+  {
+   "pmid": "26275599",
+   "level_key": "level1",
+   "title": "Evaluation of Root Canal Debridement of Human Molars Using the GentleWave System",
+   "cue": "abstract: bovine muscle",
+   "quarantined": false
+  },
+  {
+   "pmid": "2094759",
+   "level_key": "classic",
+   "title": "Cervical root resorption following bleaching of endodontically treated teeth",
+   "cue": "abstract: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "15025689",
+   "level_key": "invitro",
+   "title": "Pulp revascularization of replanted immature dog teeth after treatment with mino",
+   "cue": "title: dog teeth",
+   "quarantined": false
+  },
+  {
+   "pmid": "2321557",
+   "level_key": "classic",
+   "title": "An investigation of lymphatic vessels in the feline dental pulp",
+   "cue": "title: in the feline",
+   "quarantined": false
+  },
+  {
+   "pmid": "39484795",
+   "level_key": "level2",
+   "title": "Microtomographic and histological evaluation of two bioceramics as pulp capping ",
+   "cue": "abstract: 12 male Wistar rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "20126907",
+   "level_key": "invitro",
+   "title": "Periapical repair after root canal filling with different root canal sealers.",
+   "cue": "abstract: the animals were",
+   "quarantined": false
+  },
+  {
+   "pmid": "12406378",
+   "level_key": "invitro",
+   "title": "Comparison of Diaket and MTA when used as root-end filling materials to support ",
+   "cue": "abstract: Seven dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "2493491",
+   "level_key": "classic",
+   "title": "Inhibition of bacterial growth under composite restorations following GLUMA pret",
+   "cue": "abstract: five adult monkeys",
+   "quarantined": false
+  },
+  {
+   "pmid": "16793468",
+   "level_key": "invitro",
+   "title": "Healing of apical periodontitis after endodontic treatment with and without obtu",
+   "cue": "title: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "17635354",
+   "level_key": "invitro",
+   "title": "Morphometric and microscopic evaluation of the effect of a solution of alendrona",
+   "cue": "title: in rat",
+   "quarantined": false
+  },
+  {
+   "pmid": "35262553",
+   "level_key": "invitro",
+   "title": "Subcutaneous tissue reaction and gene expression of inflammatory markers after B",
+   "cue": "abstract: isogenic mice",
+   "quarantined": false
+  },
+  {
+   "pmid": "35573139",
+   "level_key": "invitro",
+   "title": "Deficiency of Mineralization-Regulating Transcription Factor Trps1 Compromises Q",
+   "cue": "abstract: female mice",
+   "quarantined": false
+  },
+  {
+   "pmid": "18173671",
+   "level_key": "invitro",
+   "title": "The effect of intracanal anti-inflammatory medicaments on external root resorpti",
+   "cue": "title: dog teeth",
+   "quarantined": false
+  },
+  {
+   "pmid": "35662418",
+   "level_key": "invitro",
+   "title": "Effect of systemic antibiotic therapy on pulp repair following extrusive luxatio",
+   "cue": "title: in a murine",
+   "quarantined": false
+  },
+  {
+   "pmid": "35766714",
+   "level_key": "invitro",
+   "title": "Does ultrasonic activation improve the bond strength and root canal filling qual",
+   "cue": "abstract: six bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "15479256",
+   "level_key": "invitro",
+   "title": "A comparative histological evaluation of the biocompatibility of materials used ",
+   "cue": "abstract: Thirty guinea-pigs",
+   "quarantined": false
+  },
+  {
+   "pmid": "24244598",
+   "level_key": "retracted",
+   "title": "Mouse-induced pluripotent stem cells differentiate into odontoblast-like cells w",
+   "cue": "abstract: of mouse",
+   "quarantined": false
+  },
+  {
+   "pmid": "29656537",
+   "level_key": "invitro",
+   "title": "Histological evaluation of the repair process of replanted rat teeth after stora",
+   "cue": "title: rat teeth",
+   "quarantined": false
+  },
+  {
+   "pmid": "1940735",
+   "level_key": "classic",
+   "title": "The solvent effects of calcium hydroxide irrigating solution on bovine pulp tiss",
+   "cue": "title: bovine pulp",
+   "quarantined": false
+  },
+  {
+   "pmid": "14718885",
+   "level_key": "invitro",
+   "title": "Histologic analysis of pulpal revascularization of autotransplanted immature tee",
+   "cue": "abstract: beagle dog",
+   "quarantined": false
+  },
+  {
+   "pmid": "19459923",
+   "level_key": "invitro",
+   "title": "Intracanal bisphosphonate does not inhibit replacement resorption associated wit",
+   "cue": "title: of monkey",
+   "quarantined": false
+  },
+  {
+   "pmid": "22236150",
+   "level_key": "invitro",
+   "title": "Root surface treatment using diode laser in delayed tooth replantation: radiogra",
+   "cue": "title: in rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "38470103",
+   "level_key": "level1",
+   "title": "Influence of dental bleaching on the pulp tissue: A systematic review of in\u00a0vivo",
+   "cue": "abstract: in rat",
+   "quarantined": false
+  },
+  {
+   "pmid": "25517781",
+   "level_key": "invitro",
+   "title": "Physicochemical properties and interfacial adaptation of root canal sealers.",
+   "cue": "abstract: bovine incisors",
+   "quarantined": false
+  },
+  {
+   "pmid": "23229263",
+   "level_key": "invitro",
+   "title": "The effect of pregnancy on orthodontic tooth movement in rats.",
+   "cue": "title: in rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "31340221",
+   "level_key": "invitro",
+   "title": "Cytotoxicity, Biocompatibility and Biomineralization of a New Ready-for-Use Bioc",
+   "cue": "abstract: of rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "18278299",
+   "level_key": "invitro",
+   "title": "Periradicular repair after two-visit endodontic treatment using two different in",
+   "cue": "abstract: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "25069928",
+   "level_key": "invitro",
+   "title": "Tissue dissolution by a novel multisonic ultracleaning system and sodium hypochl",
+   "cue": "abstract: of bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "25290558",
+   "level_key": "invitro",
+   "title": "Effect of fibroblast growth factor and enamel matrix derivative treatment on roo",
+   "cue": "abstract: beagle dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "271284",
+   "level_key": "classic",
+   "title": "A microangiographic study of vascular changes in replanted and autotransplanted ",
+   "cue": "title: young dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "3254125",
+   "level_key": "classic",
+   "title": "Effects of phenolic dental medicaments on prostaglandin synthesis by microsomes ",
+   "cue": "title: of bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "27982226",
+   "level_key": "invitro",
+   "title": "Effect of Silver Nanoparticles on Physicochemical and Antibacterial Properties o",
+   "cue": "abstract: bovine root",
+   "quarantined": false
+  },
+  {
+   "pmid": "28365680",
+   "level_key": "retracted",
+   "title": "Pro-Inflammatory Cytokine TNF-alpha Attenuates BMP9-Induced Osteo/ Odontoblastic",
+   "cue": "abstract: Rat model",
+   "quarantined": false
+  },
+  {
+   "pmid": "3478029",
+   "level_key": "classic",
+   "title": "Microscopy and X-ray microanalysis of subcutaneously implanted conventional and ",
+   "cue": "title: in the guinea pig",
+   "quarantined": false
+  },
+  {
+   "pmid": "35246103",
+   "level_key": "invitro",
+   "title": "Pulpal and periapical tissue response after direct pulp capping with endosequenc",
+   "cue": "abstract: 6 rabbits",
+   "quarantined": false
+  },
+  {
+   "pmid": "36807827",
+   "level_key": "invitro",
+   "title": "Histological analysis for pulp mineralisation after severe intrusive luxation of",
+   "cue": "title: in rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "6770316",
+   "level_key": "classic",
+   "title": "Hard-tissue resorption and deposition after endodontic instrumentation",
+   "cue": "abstract: one monkey",
+   "quarantined": false
+  },
+  {
+   "pmid": "36949460",
+   "level_key": "invitro",
+   "title": "Regenerative endodontic therapy in mature teeth with necrotic pulp and apical pe",
+   "cue": "abstract: in a dog",
+   "quarantined": false
+  },
+  {
+   "pmid": "29479026",
+   "level_key": "invitro",
+   "title": "Histologic comparison of direct pulp capping of rat molars with MTA and differen",
+   "cue": "title: of rat",
+   "quarantined": false
+  },
+  {
+   "pmid": "26992821",
+   "level_key": "level1",
+   "title": "Use of micro-computed tomography for the assessment of periapical lesions in sma",
+   "cue": "abstract: in rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "36716786",
+   "level_key": "invitro",
+   "title": "Evaluation of the Efficacy of Human Dental Pulp Stem Cell Transplantation in Spr",
+   "cue": "title: Sprague-Dawley Rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "24331984",
+   "level_key": "level1",
+   "title": "Human cytomegalovirus and Epstein-Barr virus in etiopathogenesis of apical perio",
+   "cue": "abstract: an experimental animal model",
+   "quarantined": false
+  },
+  {
+   "pmid": "37909642",
+   "level_key": "invitro",
+   "title": "Analysis of pH, calcium ion release, and energy dispersive spectroscopy of a bio",
+   "cue": "abstract: five bovine",
+   "quarantined": false
+  },
+  {
+   "pmid": "37641630",
+   "level_key": "invitro",
+   "title": "Prolyl-hydroxylase inhibitor-induced regeneration of alveolar bone and soft tiss",
+   "cue": "title: in a mouse",
+   "quarantined": false
+  },
+  {
+   "pmid": "38407663",
+   "level_key": "level1",
+   "title": "Biological response to endodontic treatment in one versus two-visit: a systemati",
+   "cue": "abstract: SYRCLE",
+   "quarantined": false
+  },
+  {
+   "pmid": "29168301",
+   "level_key": "level1",
+   "title": "Animal models used in furcation perforation studies: A systematic review and com",
+   "cue": "abstract: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "31027424",
+   "level_key": "level2",
+   "title": "Comparative characterization of mesenchymal stem cells from human dental pulp an",
+   "cue": "abstract: of a rat",
+   "quarantined": false
+  },
+  {
+   "pmid": "41493880",
+   "level_key": "level3a",
+   "title": "Comparative Efficacy of Opioid-Free and Opioid-Sparing Anesthesia in Dogs Underg",
+   "cue": "title: in Dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "34198370",
+   "level_key": "invitro",
+   "title": "Periodontal ligament repair after active splinting of replanted dogs' teeth.",
+   "cue": "title: dogs' teeth",
+   "quarantined": false
+  },
+  {
+   "pmid": "39045992",
+   "level_key": "invitro",
+   "title": "Effects of blood and root-dentin cleaning on the porosity and bond strength of a",
+   "cue": "abstract: bovine root",
+   "quarantined": false
+  },
+  {
+   "pmid": "3920162",
+   "level_key": "classic",
+   "title": "The effect of apicoectomy before replantation on periodontal and pulpal healing ",
+   "cue": "title: in monkeys",
+   "quarantined": false
+  },
+  {
+   "pmid": "39580417",
+   "level_key": "invitro",
+   "title": "Regenerative endodontic therapy in immature teeth using photobiomodulation and p",
+   "cue": "title: in canine model",
+   "quarantined": false
+  },
+  {
+   "pmid": "39614243",
+   "level_key": "invitro",
+   "title": "Fecal microbiota transplantation validates the importance of gut microbiota in a",
+   "cue": "title: mouse model",
+   "quarantined": false
+  },
+  {
+   "pmid": "25146016",
+   "level_key": "level2",
+   "title": "Comparison of pulpal responses to pulpotomy and pulp capping with biodentine and",
+   "cue": "title: in dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "39754111",
+   "level_key": "level2",
+   "title": "Comparative study of pulpal response following direct pulp capping using synthes",
+   "cue": "abstract: of rabbit",
+   "quarantined": false
+  },
+  {
+   "pmid": "35764993",
+   "level_key": "invitro",
+   "title": "Role of NOD2 and hepcidin in inflammatory periapical periodontitis.",
+   "cue": "abstract: in rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "7876425",
+   "level_key": "classic",
+   "title": "Reduction of infection-stimulated periapical bone resorption by the biological r",
+   "cue": "abstract: Sprague-Dawley rats",
+   "quarantined": false
+  },
+  {
+   "pmid": "6951246",
+   "level_key": "classic",
+   "title": "Influence on periapical tissues of indigenous oral bacteria and necrotic pulp ti",
+   "cue": "title: in monkeys",
+   "quarantined": false
+  },
+  {
+   "pmid": "6960463",
+   "level_key": "classic",
+   "title": "Circulating antibodies after experimental chronic infection in the root canal of",
+   "cue": "title: in monkeys",
+   "quarantined": false
+  },
+  {
+   "pmid": "8245756",
+   "level_key": "classic",
+   "title": "Wound healing following demineralization of resected root ends in periradicular ",
+   "cue": "abstract: six mongrel dogs",
+   "quarantined": false
+  },
+  {
+   "pmid": "8245759",
+   "level_key": "classic",
+   "title": "Healing of furcation perforations in primate teeth after repair with decalcified",
+   "cue": "title: in primate",
+   "quarantined": false
+  },
+  {
+   "pmid": "8670024",
+   "level_key": "classic",
+   "title": "Effect of inferior alveolar nerve axotomy on immune cells and nerve fibres in yo",
+   "cue": "title: young rat",
+   "quarantined": false
+  },
+  {
+   "pmid": "8934989",
+   "level_key": "classic",
+   "title": "Periapical changes after orthodontic movement of root-filled ferret canines",
+   "cue": "title: ferret canines",
+   "quarantined": false
+  },
+  {
+   "pmid": "9587293",
+   "level_key": "classic",
+   "title": "Oral bone loss is increased in ovariectomized rats",
+   "cue": "title: rats Alveolar bone",
+   "quarantined": false
+  }
+ ]
+}

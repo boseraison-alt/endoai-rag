@@ -1339,7 +1339,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         detect_outliers, apply_currency_tags,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review, collapse_guideline_copies,
-        admit_flagship_guidelines, _pubmed_audit_log,
+        admit_flagship_guidelines, drop_off_domain, _pubmed_audit_log,
         label_and_expand,
     )
     from rag import (search as rag_search, rag_results_to_scored, library_stats,
@@ -1392,6 +1392,11 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             print(f"  [rag] multi-term generation failed, using primary only: {_te}")
             _terms = [smart_topic]
         rag_results = multi_query_search(question, _terms, limit=100)
+        # ITEM G — the blocklist applies to the LIBRARY route's candidate
+        # set too, before the coverage test counts it: a blocklisted row
+        # helping a question pass the coverage gate would be the same
+        # document doing damage one layer earlier.
+        rag_results = drop_off_domain(rag_results, 'library')
 
         # Coverage test, not just a count: enough genuinely-similar papers, and
         # at least one high-tier design among them. A library that answers with
@@ -1961,7 +1966,7 @@ def build_differential_evidence(job_id: str, case_description: str,
     from endo_ai import (TIER_ORDER, TIER_LABEL, build_synthesis_order,
                          detect_outliers, apply_currency_tags,
                          flag_superseded_by_review, collapse_guideline_copies,
-                         admit_flagship_guidelines,
+                         admit_flagship_guidelines, drop_off_domain,
                          PROVISIONAL_KEY, PROVISIONAL_MAX_ADMITTED,
                          _provisional_context_line)
     # RELEVANCE_GATE is this module's, and reading it here rather than copying
@@ -2048,6 +2053,8 @@ def build_differential_evidence(job_id: str, case_description: str,
         # Papers arriving from the library route carry a similarity;
         # cap_by_relevance ties-breaks on score, so ones from the live route
         # (no similarity) fall back to exactly the score order used before.
+        # ITEM G — the off-domain blocklist, on this builder too.
+        bucket = drop_off_domain(bucket, tier)
         bucket = cap_by_relevance(bucket, max_per_tier, tier)
         bucket.sort(key=lambda x: x.get("score") or 0, reverse=True)
         evidence[tier] = {

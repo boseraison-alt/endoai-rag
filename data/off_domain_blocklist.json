@@ -1,0 +1,24 @@
+{
+  "$schema_version": "1",
+  "purpose": "Documents that reach endodontic pools through a correct filter match and do not belong in an endodontic answer. This STRENGTHENS a gate: it removes rows, never admits them. It is deliberately a named list rather than a filter change, because ENDO_DOMAIN_FILTER is shared by every lane and narrowing it needs its own A/B.",
+  "rules": "One entry per document. `reason` says why it is off-domain in this corpus, not merely why it matched. `judged_by` and `judged` are required: a blocklist nobody signed is a filter nobody can audit. Removing an entry is as reversible as adding one.",
+  "not_for": "Documents that are merely off-TOPIC for one question. Those are an admission problem, not a domain problem, and blocklisting them would hide a retrieval defect behind a hand-maintained list.",
+  "entries": [
+    {
+      "pmid": "29729847",
+      "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy",
+      "journal": "Radiotherapy and Oncology",
+      "reason": "Paediatric neuro-oncology radiotherapy planning. It reaches endodontic guideline pools because its abstract contains the sentence 'There is no need to include sacral root canals in the spinal CTV' — ENDO_DOMAIN_FILTER carries \"root canal\"[tiab], and a spinal nerve root canal matches it. The match is correct; the document addresses no oral or dental care. Measured 2026-09-06: present in 7 of 32 guideline-lane pools after the item-B subject fix, 11 before.",
+      "judged": "2026-09-07",
+      "judged_by": "night batch 2026-09-07, item G"
+    },
+    {
+      "pmid": "29268916",
+      "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm",
+      "journal": "Journal of Vascular Surgery",
+      "reason": "Abdominal aortic aneurysm care. It is NOT off-domain by the abstract test — its abstract carries a real recommendation about antibiotic prophylaxis before dental procedures for patients with an aortic prosthesis, so the 2026-09-06 measurement correctly declined to convict it. It is nonetheless off-topic for every endodontic question in the eval set, and it appeared in 11 guideline pools before the item-B fix and 4 after. Listed because the domain test cannot express 'one dental sentence inside a vascular-surgery guideline'; the AHA infective-endocarditis guideline is deliberately NOT listed, because prophylaxis before dental procedures is that document's whole subject.",
+      "judged": "2026-09-07",
+      "judged_by": "night batch 2026-09-07, item G"
+    }
+  ]
+}
