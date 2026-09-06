@@ -1,0 +1,93 @@
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 10cfaa4+dirty (imported 2026-09-06T00:50:18)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+==============================================================================
+STATE 3 — probe1-avulsion
+==============================================================================
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  [search_terms] capped to 3 AND-groups, dropped: ("closed apex" OR "mature apex" OR "apical closure")
+  Smart search terms: '(avulsion OR avulsed OR replantation OR replanted OR "tooth reimplantation") AND ("maxillary central incisor" OR "permanent incisor" OR "anterior tooth" OR "maxillary incisor") AND (prognosis OR outcome OR "healing" OR "periodontal healing" OR "root resorption" OR ankylosis OR survival)'
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14733.92it/s]
+  Embedding model ready.
+  [rag] 8 queries -> 430 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   42 paper(s) mention ['avulsion', 'avulsed', 'replantation', 'replanted']
+    [rag_gate:coverage]   26 paper(s) mention ['maxillary central incisor', 'permanent incisor', 'anterior tooth', 'maxillary incisor']
+    [rag_gate:coverage]  166 paper(s) mention ['prognosis', 'outcome', 'healing', 'periodontal healing']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 128 clear the evidence floor 0.6; dropped 72 (best dropped 0.600)
+  [cap] level1: 32 above the floor, keeping the 25 most relevant; dropped 7, best dropped similarity 0.605 (PMID 40603366)
+  [PRISMA dedup] review PMID 29866405 (2018) chosen by relevance; 0 reference(s) known; 0 of 34 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  guideline pool: 9
+    32458553   IADT-PRIMARY-2020                current    International Association of Dental Traumato
+    32475015   IADT-FRACTURES-LUXATIONS-2020    current    International Association of Dental Traumato
+    36942472   ESE-RESORPTION-2023              current    ESE position statement on root resorption.
+    32460393   IADT-AVULSION-2020               current    International Association of Dental Traumato
+    AAO-CPG-20 AAO-CPG-2023                     current    Clinical Practice Guidelines for Orthodontic
+    32472740   IADT-INTRO-2020                  current    International Association of Dental Traumato
+    AAE-TRAUMA AAE-TRAUMA-2026                  current    Recommended Guidelines of the American Assoc
+    ESE-TRAUMA ESE-TRAUMA-2021                  current    European Society of Endodontology position s
+    37772327   ESE-S3-2023                      current    Treatment of pulpal and apical disease: The 
+  watched: {'IADT-AVULSION-2020': True, 'AAE-TRAUMA-2026': True, 'ESE-TRAUMA-2021': True}
+  superseded leaked: none
+  off-domain: none
+==============================================================================
+STATE 3 — probe2-crown-fracture
+==============================================================================
+  [search_terms] capped to 3 AND-groups, dropped: (premolar* OR "permanent tooth" OR mature tooth)
+  Smart search terms: '("crown fracture" OR "coronal fracture" OR "complicated fracture") AND ("pulp exposure" OR "pulp capping" OR "direct pulp capping" OR DPC OR pulpotomy) AND (management OR treatment OR therap* OR prognosis)'
+  [rag] 8 queries -> 388 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   21 paper(s) mention ['crown fracture', 'coronal fracture', 'complicated fracture']
+    [rag_gate:coverage]  114 paper(s) mention ['pulp exposure', 'pulp capping', 'direct pulp capping', 'dpc']
+    [rag_gate:coverage]  168 paper(s) mention ['management', 'treatment', 'therap*', 'prognosis']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 154 clear the evidence floor 0.6; dropped 46 (best dropped 0.600)
+  [cap] level1: 77 above the floor, keeping the 25 most relevant; dropped 52, best dropped similarity 0.688 (PMID 34633590)
+  [PRISMA dedup] review PMID 31146622 (2019) chosen by relevance; 0 reference(s) known; 0 of 17 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  guideline pool: 5
+    AAE-VPT-20 AAE-VPT-2021                     current    AAE Position Statement on Vital Pulp Therapy
+    ESE-TRAUMA ESE-TRAUMA-2021                  current    European Society of Endodontology position s
+    AAO-CPG-20 AAO-CPG-2023                     current    Clinical Practice Guidelines for Orthodontic
+    38449041   AAPD-VPT-PRIMARY-2024            current    Use of Vital Pulp Therapies in Primary Teeth
+    32475015   IADT-FRACTURES-LUXATIONS-2020    current    International Association of Dental Traumato
+  watched: {'IADT-FRACTURES-LUXATIONS-2020': True, 'AAE-TRAUMA-2026': False, 'ESE-TRAUMA-2021': True}
+  superseded leaked: none
+  off-domain: none
+==============================================================================
+STATE 3 — probe3-retreat-implant
+==============================================================================
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("tooth extraction" OR exodontia OR "surgical removal") AND (implant* OR "dental implant*") AND (decision* OR prognosis OR outcome* OR "treatment planning" OR retreatment OR failure)'
+  [rag] 8 queries -> 377 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   15 paper(s) mention ['tooth extraction', 'exodontia', 'surgical removal']
+    [rag_gate:coverage]   33 paper(s) mention ['implant*', 'dental implant*']
+    [rag_gate:coverage]  133 paper(s) mention ['decision*', 'prognosis', 'outcome*', 'treatment planning']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] only 18 of 200 clear 0.6; keeping the 40 most similar instead (min_evidence_papers=40)
+  [PRISMA dedup] review PMID 19254132 (2009) chosen by relevance; 0 reference(s) known; 0 of 3 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  guideline pool: 4
+    29926946   AAP-EFP-CLASSIFICATION-2018      current    A new classification scheme for periodontal 
+    AAO-CPG-20 AAO-CPG-2023                     current    Clinical Practice Guidelines for Orthodontic
+    ACP-ASYMPT ACP-ASYMPTOMATIC-EXTRACTION-2016 current    Position Statement: Extractions of Asymptoma
+    ACP-DENTAL ACP-DENTAL-IMPLANTS-2019         current    Position Statement: Dental Implants
+  watched: {'ACP-ASYMPTOMATIC-EXTRACTION-2016': True, 'ESE-S3-2023': False, 'AAE-TREATMENTSTANDARDS-2018': False}
+  superseded leaked: none
+  off-domain: none
+
+  synthesising (probe 3 only — the question is about whether the prose labels two specialties or blends them)
+
+Asking Claude: 'Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?'
+============================================================
+  Cost: $0.8333 (33680 in / 4375 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=True score=95 cited=13 fabricated=0 unattributed=2 gaps=0
+  [citation_support] 1 of 23 claim-citation pairs flagged as not supported
+  answer: 12465 chars
+
+  wrote eval/reports/night8_item_d_state3.json

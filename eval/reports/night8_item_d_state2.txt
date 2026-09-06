@@ -1,0 +1,85 @@
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 5fb5bd2+dirty (imported 2026-09-06T00:54:43)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+==============================================================================
+STATE 2 — probe1-avulsion
+==============================================================================
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  [search_terms] capped to 3 AND-groups, dropped: ("closed apex" OR "mature apex" OR "root complete")
+  Smart search terms: '(avulsed OR avulsion OR replanted OR replantation OR "tooth reimplantation") AND ("maxillary central incisor" OR "permanent incisor" OR "anterior tooth") AND ("extra-oral dry time" OR "dry storage" OR "extraoral time" OR "out of socket")'
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 9574.55it/s]
+  Embedding model ready.
+  [rag] 8 queries -> 450 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=193>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   44 paper(s) mention ['avulsed', 'avulsion', 'replanted', 'replantation']
+    [rag_gate:coverage]   17 paper(s) mention ['maxillary central incisor', 'permanent incisor', 'anterior tooth']
+    [rag_gate:coverage]    3 paper(s) mention ['extra-oral dry time', 'dry storage', 'extraoral time', 'out of socket']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] only 35 of 193 clear 0.6; keeping the 40 most similar instead (min_evidence_papers=40)
+  [PRISMA dedup] review PMID 34544249 (2021) chosen by relevance; 0 reference(s) known; 0 of 18 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  guideline pool: 3
+    AAE-TRAUMA AAE-TRAUMA-2026                  current    Recommended Guidelines of the American Assoc
+    32458553   IADT-PRIMARY-2020                current    International Association of Dental Traumato
+    32460393   IADT-AVULSION-2020               current    International Association of Dental Traumato
+  watched: {'IADT-AVULSION-2020': True, 'AAE-TRAUMA-2026': True, 'ESE-TRAUMA-2021': False}
+  superseded leaked: none
+  off-domain: none
+==============================================================================
+STATE 2 — probe2-crown-fracture
+==============================================================================
+  [search_terms] capped to 3 AND-groups, dropped: (mature tooth OR permanent tooth) | (premolar OR "bicuspid")
+  Smart search terms: '("crown fracture" OR "coronal fracture" OR "complicated fracture") AND (pulp OR endodontic*) AND (management OR treatment OR therap* OR intervention*)'
+  [rag] 7 queries -> 382 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   25 paper(s) mention ['crown fracture', 'coronal fracture', 'complicated fracture']
+    [rag_gate:coverage]  164 paper(s) mention ['management', 'treatment', 'therap*', 'intervention*']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 130 clear the evidence floor 0.6; dropped 70 (best dropped 0.600)
+  [cap] level1: 38 above the floor, keeping the 25 most relevant; dropped 13, best dropped similarity 0.616 (PMID 39264795)
+  [PRISMA dedup] review PMID 35076954 (2022) chosen by relevance; 116 reference(s) known; 0 of 33 older primary studies verified as cited by it
+  guideline pool: 7
+    AAE-VPT-20 AAE-VPT-2021                     current    AAE Position Statement on Vital Pulp Therapy
+    32475015   IADT-FRACTURES-LUXATIONS-2020    current    International Association of Dental Traumato
+    32472740   IADT-INTRO-2020                  current    International Association of Dental Traumato
+    AAE-TRAUMA AAE-TRAUMA-2026                  current    Recommended Guidelines of the American Assoc
+    41121563   AAPD-VPT-PERMANENT-2025          current    Guideline for Use of Vital Pulp Therapy in P
+    ESE-TRAUMA ESE-TRAUMA-2021                  current    European Society of Endodontology position s
+    AAO-CPG-20 AAO-CPG-2023                     current    Clinical Practice Guidelines for Orthodontic
+  watched: {'IADT-FRACTURES-LUXATIONS-2020': True, 'AAE-TRAUMA-2026': True, 'ESE-TRAUMA-2021': True}
+  superseded leaked: none
+  off-domain: none
+==============================================================================
+STATE 2 — probe3-retreat-implant
+==============================================================================
+  [search_terms] capped to 3 AND-groups, dropped: (implant* OR "dental implant" OR "implant restoration")
+  Smart search terms: '("tooth extraction" OR "dental extraction" OR exodontia OR exodontic*) AND ("root canal treatment" OR endodontic* OR "failed treatment" OR retreatment OR "treatment failure") AND (molar* OR "posterior tooth" OR "tooth retention" OR prognosis OR decision* OR outcome*)'
+  [rag] 8 queries -> 355 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   13 paper(s) mention ['tooth extraction', 'dental extraction', 'exodontia', 'exodontic*']
+    [rag_gate:coverage]  171 paper(s) mention ['root canal treatment', 'endodontic*', 'failed treatment', 'retreatment']
+    [rag_gate:coverage]  147 paper(s) mention ['molar*', 'posterior tooth', 'tooth retention', 'prognosis']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 62 clear the evidence floor 0.6; dropped 138 (best dropped 0.600)
+  [PRISMA dedup] review PMID 25306305 (2015) chosen by relevance; 0 reference(s) known; 0 of 7 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  guideline pool: 2
+    AAO-CPG-20 AAO-CPG-2023                     current    Clinical Practice Guidelines for Orthodontic
+    ACP-ASYMPT ACP-ASYMPTOMATIC-EXTRACTION-2016 current    Position Statement: Extractions of Asymptoma
+  watched: {'ACP-ASYMPTOMATIC-EXTRACTION-2016': True, 'ESE-S3-2023': False, 'AAE-TREATMENTSTANDARDS-2018': False}
+  superseded leaked: none
+  off-domain: none
+
+  synthesising (probe 3 only — the question is about whether the prose labels two specialties or blends them)
+
+Asking Claude: 'Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?'
+============================================================
+  Cost: $1.2104 (53245 in / 5489 out)
+  [quarantine] 1 span(s) labelled outside the evidence base, lifted into their own block
+  Evidence mapping: passed=True score=100 cited=23 fabricated=0 unattributed=1 gaps=0
+  [citation_support] 3 of 35 claim-citation pairs flagged as not supported
+  answer: 14798 chars
+
+  wrote eval/reports/night8_item_d_state2.json

@@ -1,0 +1,191 @@
+{
+ "probe1-avulsion": {
+  "question": "Avulsed maxillary central incisor with a closed apex, replanted after 40 minutes of extra-oral dry time. How should it be managed and what is the prognosis?",
+  "pool_size": 3,
+  "rows": [
+   {
+    "pmid": "AAE-TRAUMA-2026",
+    "guideline_id": "AAE-TRAUMA-2026",
+    "status": "current",
+    "org": "AAE",
+    "title": "Recommended Guidelines of the American Association of Endodontists for the Treatment of Tr",
+    "journal": "J Endod 2026;52(8):1237-1253"
+   },
+   {
+    "pmid": "32458553",
+    "guideline_id": "IADT-PRIMARY-2020",
+    "status": "current",
+    "org": "IADT",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumati",
+    "journal": "Dent Traumatol 2020;36(4):343-359"
+   },
+   {
+    "pmid": "32460393",
+    "guideline_id": "IADT-AVULSION-2020",
+    "status": "current",
+    "org": "IADT",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumati",
+    "journal": "Dent Traumatol 2020;36(4):331-342"
+   }
+  ],
+  "manifest_ids": [
+   "AAE-TRAUMA-2026",
+   "IADT-AVULSION-2020",
+   "IADT-PRIMARY-2020"
+  ],
+  "watched_present": {
+   "IADT-AVULSION-2020": true,
+   "AAE-TRAUMA-2026": true,
+   "ESE-TRAUMA-2021": false
+  },
+  "superseded_leaked": [],
+  "offdomain_present": [],
+  "tier_sizes": {
+   "level1": 2,
+   "classic": 1,
+   "level2": 8,
+   "level3a": 8,
+   "level3": 2,
+   "level3b": 2,
+   "level4": 11,
+   "guideline": 3,
+   "level5": 3
+  }
+ },
+ "probe2-crown-fracture": {
+  "question": "Complicated crown fracture with pulp exposure in a mature premolar, 6 hours old. What is the management?",
+  "pool_size": 7,
+  "rows": [
+   {
+    "pmid": "AAE-VPT-2021",
+    "guideline_id": "AAE-VPT-2021",
+    "status": "current",
+    "org": "AAE",
+    "title": "AAE Position Statement on Vital Pulp Therapy",
+    "journal": "J Endod 2021;47(9):1340-1344"
+   },
+   {
+    "pmid": "32475015",
+    "guideline_id": "IADT-FRACTURES-LUXATIONS-2020",
+    "status": "current",
+    "org": "IADT",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumati",
+    "journal": "Dent Traumatol 2020;36(4):314-330"
+   },
+   {
+    "pmid": "32472740",
+    "guideline_id": "IADT-INTRO-2020",
+    "status": "current",
+    "org": "IADT",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumati",
+    "journal": "Dent Traumatol 2020;36(4):309-313"
+   },
+   {
+    "pmid": "AAE-TRAUMA-2026",
+    "guideline_id": "AAE-TRAUMA-2026",
+    "status": "current",
+    "org": "AAE",
+    "title": "Recommended Guidelines of the American Association of Endodontists for the Treatment of Tr",
+    "journal": "J Endod 2026;52(8):1237-1253"
+   },
+   {
+    "pmid": "41121563",
+    "guideline_id": "AAPD-VPT-PERMANENT-2025",
+    "status": "current",
+    "org": "AAPD",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth",
+    "journal": "Pediatr Dent 2025;47(5):299-311"
+   },
+   {
+    "pmid": "ESE-TRAUMA-2021",
+    "guideline_id": "ESE-TRAUMA-2021",
+    "status": "current",
+    "org": "ESE",
+    "title": "European Society of Endodontology position statement: endodontic management of traumatized",
+    "journal": "Int Endod J 2021;54(9):1473-1481"
+   },
+   {
+    "pmid": "AAO-CPG-2023",
+    "guideline_id": "AAO-CPG-2023",
+    "status": "current",
+    "org": "AAO",
+    "title": "Clinical Practice Guidelines for Orthodontics and Dentofacial Orthopedics",
+    "journal": "AAO guideline"
+   }
+  ],
+  "manifest_ids": [
+   "AAE-TRAUMA-2026",
+   "AAE-VPT-2021",
+   "AAO-CPG-2023",
+   "AAPD-VPT-PERMANENT-2025",
+   "ESE-TRAUMA-2021",
+   "IADT-FRACTURES-LUXATIONS-2020",
+   "IADT-INTRO-2020"
+  ],
+  "watched_present": {
+   "IADT-FRACTURES-LUXATIONS-2020": true,
+   "AAE-TRAUMA-2026": true,
+   "ESE-TRAUMA-2021": true
+  },
+  "superseded_leaked": [],
+  "offdomain_present": [],
+  "tier_sizes": {
+   "level1": 25,
+   "classic": 7,
+   "level2": 22,
+   "level3a": 22,
+   "level3": 8,
+   "level3b": 5,
+   "level4": 16,
+   "guideline": 7,
+   "level5": 4,
+   "observational": 1
+  }
+ },
+ "probe3-retreat-implant": {
+  "question": "Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?",
+  "pool_size": 2,
+  "rows": [
+   {
+    "pmid": "AAO-CPG-2023",
+    "guideline_id": "AAO-CPG-2023",
+    "status": "current",
+    "org": "AAO",
+    "title": "Clinical Practice Guidelines for Orthodontics and Dentofacial Orthopedics",
+    "journal": "AAO guideline"
+   },
+   {
+    "pmid": "ACP-ASYMPTOMATIC-EXTRACTION-2016",
+    "guideline_id": "ACP-ASYMPTOMATIC-EXTRACTION-2016",
+    "status": "current",
+    "org": "ACP",
+    "title": "Position Statement: Extractions of Asymptomatic Natural Teeth to Facilitate Prosthodontic ",
+    "journal": "ACP guideline"
+   }
+  ],
+  "manifest_ids": [
+   "AAO-CPG-2023",
+   "ACP-ASYMPTOMATIC-EXTRACTION-2016"
+  ],
+  "watched_present": {
+   "ACP-ASYMPTOMATIC-EXTRACTION-2016": true,
+   "ESE-S3-2023": false,
+   "AAE-TREATMENTSTANDARDS-2018": false
+  },
+  "superseded_leaked": [],
+  "offdomain_present": [],
+  "tier_sizes": {
+   "cochrane": 1,
+   "level1": 15,
+   "level2": 8,
+   "level3a": 23,
+   "level3": 1,
+   "level3b": 6,
+   "level4": 2,
+   "guideline": 2,
+   "level5": 3,
+   "observational": 1
+  },
+  "answer": "('> **NOT CHECKED** \u2014 passages marked \u00b0 below, and the blocks headed *NOT CHECKED*, are general clinical practice from the model\\'s own knowledge. Curo did not retrieve a paper for them and has checked nothing in them against an abstract.\\n\\n## CLINICAL RECOMMENDATION\\n\\n**The literature is currently divided on this topic.** Some comparative studies show implant-supported single crowns achieve higher long-term survival than retained endodontically compromised teeth, while others show equivalent or superior survival for endodontically treated teeth with more complications on the implant side [[PMID:38443242]] [[PMID:28343928]]. Based on Level I and Level IIIa evidence, the decision should not default to extraction simply because retreatment has failed \u2014 a mature molar with a failed non-surgical retreatment still has a legitimate salvage pathway through endodontic microsurgery, which achieves ~91% pooled success in RCTs and ~78% in prospective cohorts at 2\u201313 years, and 81.5% healing at 10 years with MTA root-end filling [[PMID:32899437]] [[PMID:30827766]]. Extraction and implant becomes the preferred choice when the tooth is unrestorable, has a vertical root fracture, has inadequate ferrule / crown-root ratio, has a combined endo-perio lesion, or when patient-level factors (uncontrolled diabetes, smoking) equally jeopardise both options \u2014 because those same systemic factors dominate the failure risk of either salvage attempt [[PMID:41455543]] [[PMID:36683563]].\\n\\nAn additional consideration the clinician must weigh: extracting this molar and placing an implant creates a documented 13-fold higher risk of loss for the *adjacent* teeth, primarily from root fracture, over ~10 years [[PMID:39154079]] [[PMID:38742582]]. This shifts the calculus toward tooth retention when the adjacent dentition is itself endodontically treated or heavily restored.\\n\\n---\\n\\n## EVIDENCE SUMMARY\\n\\n**Cochrane Reviews**\\nThe 2016 Cochrane review by Del Fabbro et al. addressing surgical vs non-surgical retreatment for post-treatment apical periodontitis included only two RCTs directly comparing the approaches (n=126) and found no clear superiority of either at 1-year or 4\u201310-year follow-up, though evidence quality was very low [[PMID:27759881]]. It did find better healing when MTA was used as the root-end filling material versus smoothed orthograde gutta-percha (RR 1.60, 95% CI 1.14\u20132.24), and weak evidence favouring ultrasonic root-end preparation. The review does not address the tooth-vs-implant question directly, but establishes that surgical retreatment is a legitimate second-line option with a defined evidence base.\\n\\n**Level I \u2014 RCTs and Systematic Reviews**\\nThe Sinsareekul et al. 2025 systematic review of 8 observational studies comparing endodontically treated teeth (ETT) with implant-supported prostheses reached a genuinely divided conclusion: three studies showed no survival difference in the first 3 years but declining ETT survival thereafter, while three others reported *lower* survival and *more* complications for implants [[PMID:38443242]]. Patient-reported quality of life favoured endodontic treatment. Chercoles-Ruiz et al. (2017) reviewed 60 articles and concluded that single-implant survival exceeded conservative treatment success rates but that no meaningful difference emerged before ~8 years [[PMID:28343928]]. Torabinejad et al. (2015) found implants had higher survival than endodontic microsurgery at 4\u20136 years but could not compare success rates because criteria differed [[PMID:25306305]]. The Pinto et al. 2020 meta-analysis of endodontic microsurgery outcomes reported a pooled success rate of 91.3% in RCTs and 78.4% in prospective studies over 2\u201313 years \u2014 highly relevant here because microsurgery is the salvage option for a failed retreatment [[PMID:32899437]]. Ng et al.\\'s systematic review of secondary root canal treatment reported a pooled success rate of 77% [[PMID:19133093]].\\n\\n**Level II \u2014 Prospective Studies**\\nNg et al.\\'s prospective cohort of 858 secondary RCT cases (postgraduate operators) reported 4-year cumulative tooth survival of 95.3% following non-surgical retreatment \u2014 nearly identical to primary treatment survival [[PMID:21366627]]. Von Arx et al.\\'s 5-year prospective follow-up of 191 apical microsurgery cases showed 75.9% healed at 5 years (down from 83.8% at 1 year), with MTA outperforming SuperEBA as root-end filling material [[PMID:22515881]]. The Toronto study (de Chevigny et al.) found 82% healing after orthograde retreatment across four phases, with root filling quality, perforation, and pre-existing radiolucency as significant predictors [[PMID:18215667]].\\n\\n**Level IIIa \u2014 Retrospective Cohort**\\nL\u00f3pez-Valverde et al.\\'s 5- to 37-year retrospective cohort of 598 ETT reported cumulative survival of 97%, 81%, 76%, and 68% at 10, 20, 30, and 37 years, respectively \u2014 demonstrating that retained ETT can perform extremely well over decades [[PMID:36933044]]. Van Nieuwenhuysen et al.\\'s 25-year cohort of 2500 treatments found survival ~90% at 5 years and 50% at 20 years, with combined endo-perio lesions (HR 3.37) and pre-existing complications (HR 1.67) being the dominant predictors of extraction [[PMID:36683563]]. Von Arx et al.\\'s 10-year follow-up of 119 apical surgery cases with MTA reported 81.5% healed \u2014 supporting microsurgery as a durable salvage option after failed retreatment [[PMID:30827766]]. Chatzopoulos & Wolff\\'s 7-year comparative cohort of 1250 endodontic re-treatments vs 600 implant re-implantations found no significant difference in survival after adjusting for baseline factors (aHR 1.25, 95% CI 0.98\u20131.60); diabetes (aHR 2.50) and tobacco use (aHR 1.85) were the dominant predictors of failure regardless of treatment modality [[PMID:41455543]]. Two large cohorts (Afrashtehfar et al., Chen et al.) reported that teeth adjacent to dental implants have a 13-fold higher risk of loss, primarily from root fracture, over ~10 years \u2014 a critical consideration when the neighbouring teeth themselves have prior endodontic or restorative compromise [[PMID:39154079]] [[PMID:38742582]]. Olivieri et al.\\'s cohort of nonsurgical retreatments reported 80.6% success under strict criteria at 2\u20133 years, with molars and teeth with lesions >5 mm having poorer outcomes [[PMID:37315780]]. Restrepo-Restrepo et al. reported only 53.6% success for treatment of teeth with pre-operative apical periodontitis, with mandibular location, lesion size >10 mm, poor coronal restoration, and lack of magnification as key predictors [[PMID:31211862]].\\n\\n**Level IIIb \u2014 Case-Control**\\nTuran G\u00f6kduman et al.\\'s large retrospective study of 408 non-surgical retreatments followed \u22655 years reported survival and success rates both of 73.5%, with coronal restoration quality and initial obturation status as key prognostic factors; root/crown fractures accounted for 66.7% of extractions [[PMID:41062676]]. De Kuijper et al. found 91.7% cumulative survival at 89 months for molars requiring complex endodontic treatment, with deviant canal morphology and inadequate coronal seal reducing healing probability [[PMID:33617944]]. Oh et al. reported that teeth with RCT following crown lengthening had a 6.3-fold higher hazard of loss than non-RCT teeth [[PMID:38874285]].\\n\\n**Level V \u2014 Expert Opinion / Reviews**\\nSetzer & Kim\\'s review emphasises that survival and success are not interchangeable outcomes, and that modern endodontic microsurgery has substantially improved long-term prognosis for retained teeth [[PMID:24065635]]. Avila et al. proposed a decision-making chart integrating tooth-level and patient-level factors for the retain-versus-extract decision [[PMID:19254132]].\\n\\n**Guideline context (not tier-ranked)**\\nThe ACP position statement on extraction of asymptomatic natural teeth to facilitate prosthodontic treatment reinforces that extraction of a tooth for prosthetic convenience \u2014 including implant placement \u2014 should be justified, not defaulted to [[PMID:ACP-ASYMPTOMATIC-EXTRACTION-2016]]. This applies here: the patient\\'s *request* for extraction does not by itself constitute a clinical indication.\\n\\n---\\n\\n**A framework for this decision (standard practice, not from the retrieved evidence base):**\\nNot from the retrieved evidence base, but reflecting AAE and ESE consensus positions: the retain-vs-extract decision for a molar with failed retreatment turns on (1) restorability \u2014 presence of \u22651.5\u20132 mm ferrule, absence of vertical root fracture, adequate crown-to-root ratio; (2) periodontal status \u2014 attachment level, furcation involvement, mobility; (3) endodontic factors \u2014 whether the failure has an identifiable, correctable cause (missed canal, coronal leak, iatrogenic error) that microsurgery or selective root retreatment could address; (4) strategic value \u2014 position in arch, opposing dentition, role in a planned prosthesis; and (5) patient factors \u2014 diabetes control, smoking, bruxism, medications affecting bone healing. \u00b0\\n\\nWhen restorability and endodontic salvageability are both favourable, the retrieved evidence supports attempting endodontic microsurgery before proceeding to extraction, because 5- to 10-year healing rates of 76\u201391% are reproducibly reported [[PMID:32899437]] [[PMID:22515881]] [[PMID:30827766]]. When restorability is compromised or a correctable cause of failure cannot be identified, extraction and implant placement is the defensible path, provided the patient understands the elevated risk this creates for the adjacent teeth [[PMID:39154079]].\\n\\n---\\n\\n## REFERENCES\\n\\n1. [PMID: 27759881] Del Fabbro M, Corbella S, Sequeira-Byron P et al. \u2014 Cochrane review of endodontic retreatment procedures for periapical lesions. Cochrane Database Syst Rev, 2016. Follow-up: up to 120 months. (Score: 73.3/100)\\n2. [PMID: 38443242] Sinsareekul C, Saengthong-Aram P, Limpuangthip N. \u2014 Systematic review comparing ETT vs implant-supported prostheses; 8 observational studies. J Prosthet Dent, 2025. (Score: 74.8/100)\\n3. [PMID: 32899437] Pinto D, Marques A, Pereira JF et al. \u2014 Systematic review and meta-analysis of endodontic microsurgery long-term prognosis. Medicina, 2020. n=839 (PCS pool) / 453 (RCT pool). (Score: 65.9/100)\\n4. [PMID: 28343928] Chercoles-Ruiz A, Sanchez-Torres A, Gay-Escoda C. \u2014 Systematic review of endodontics vs implant placement. J Endod, 2017. Follow-up: \u226512 months. (Score: 61.1/100)\\n5. [PMID: 25306305] Torabinejad M, Landaez M, Milan M et al. \u2014 Systematic review comparing endodontic microsurgery vs single implants. J Endod, 2015. (Score: 60.4/100)\\n6. [PMID: 19133093] Ng YL, Mann V, Gulabivala K. \u2014 Systematic review of secondary RCT outcomes; 77% pooled success. Int Endod J, 2008. (Score: 53.7/100)\\n7. [PMID: 21366627] Ng YL, Mann V, Gulabivala K. \u2014 Prospective study of tooth survival after primary/secondary RCT. Int Endod J, 2011. n=858 secondary cases. (Score: 60.4/100)\\n8. [PMID: 22515881] von Arx T, Jensen SS, H\u00e4nni S et al. \u2014 5-year prospective outcome of apical microsurgery. J Endod, 2012. n=191, 60mo. (Score: 61.1/100)\\n9. [PMID: 18215667] de Chevigny C, Dao TT, Basrani BR et al. \u2014 Toronto study phases 3 & 4: orthograde retreatment outcome. J Endod, 2008. n=477. (Score: 57.0/100)\\n10. [PMID: 36933044] L\u00f3pez-Valverde I, Vignoletti F et al. \u2014 5- to 37-year retrospective cohort of primary RCT survival. Clin Oral Investig, 2023. n=598. (Score: 76.1/100)\\n11. [PMID: 36683563] Van Nieuwenhuysen JP, D\\'Hoore W, Leprince JG. \u2014 25-year cohort of RCT success and tooth preservation. Int Endod J, 2023. n=2500. (Score: 72.8/100)\\n12. [PMID: 30827766] von Arx T, Jensen SS, Janner SFM et al. \u2014 10-year follow-up of apical surgery with MTA. J Endod, 2019. n=119 at 10yr. (Score: 66.1/100)\\n13. [PMID: 41455543] Chatzopoulos GS, Wolff LF. \u2014 7-year comparative survival: endo retreatment vs implant re-implantation. J Prosthodont Res, 2026. n=1850. (Score: 66.5/100)\\n14. [PMID: 39154079] Afrashtehfar KI, Kazma JM, Yahia I et al. \u2014 Dental implants and adjacent tooth loss (root fracture). Evid Based Dent, 2024. n=15,637 nonadjacent teeth. (Score: 66.5/100)\\n15. [PMID: 38742582] Chen HH, Lin GH, Kao RT et al. \u2014 Survival of teeth adjacent vs nonadjacent to implants. J Periodontol, 2024. n=787 patients. (Score: 66.5/100)\\n16. [PMID: 37315780] Olivieri JG, Feijoo Pato N, Labraca P et al. \u2014 Nonsurgical retreatment outcomes at 2\u20133 years. J Endod, 2023. n=129, 36mo. (Score: 63.9/100)\\n17. [PMID: 31211862] Restrepo-Restrepo FA et al. \u2014 RCT prognosis in teeth with pre-op apical periodontitis (CBCT+DPR). Int Endod J, 2019. n=125, up to 144mo. (Score: 66.1/100)\\n18. [PMID: 41062676] Turan G\u00f6kduman C et al. \u2014 Long-term (\u22655yr) survival and success of non-surgical retreatment. Clin Oral Investig, 2025. n=408. (Score: 60.6/100)\\n19. [PMID: 33617944] de Kuijper MCFM et al. \u2014 Molar survival following complex endodontic treatment. J Dent, 2021. n=268, 89mo. (Score: 58.1/100)\\n20. [PMID: 38874285] Oh SL, Hu J, Kwak KH et al. \u2014 Survival after crown lengthening; RCT teeth had 6.3\u00d7 hazard. J Periodontol, 2024. n=268, 120mo. (Score: 68.1/100)\\n21. [PMID: 24065635] Setzer FC, Kim S. \u2014 Comparison of long-term survival of implants and ETT. J Dent Res, 2014. (Score: 50.4/100)\\n22. [PMID: 19254132] Avila G, Galindo-Moreno P et al. \u2014 Decision-making chart for tooth retention or extraction. J Periodontol, 2009. (Score: 45.9/100)\\n23. [PMID: ACP-ASYMPTOMATIC-EXTRACTION-2016] ACP Position Statement \u2014 Extractions of Asymptomatic Natural Teeth to Facilitate Prosthodontic Treatment. American College of Prosthodontists, 2016.\\n\\n> **What Curo did not check.** 1 passage above came from the model\\'s own knowledge rather than from a retrieved paper. For those, consult directly: AAE \u00b7 ESE \u2014 Curo has not retrieved or checked these sources.\\n\\n---\\n\\n> \u26a0 **Citation support: 3 of 35 flagged.** An automated review of each cited abstract found these may not directly support the claim they are attached to. Verify before relying on them:\\n>\\n> - [[PMID:32899437]] cited for: \"Not from the retrieved evidence base, but reflecting AAE and ESE consensus positions: the retain-vs-extract decision for a molar with failed\"\\n> - [[PMID:22515881]] cited for: \"Not from the retrieved evidence base, but reflecting AAE and ESE consensus positions: the retain-vs-extract decision for a molar with failed\"\\n> - [[PMID:30827766]] cited for: \"Not from the retrieved evidence base, but reflecting AAE and ESE consensus positions: the retain-vs-extract decision for a molar with failed\"\\n>\\n> \u26a0 **1 claim not from the evidence base.** It carries no citation, so no abstract was checked against it \u2014 not part of the count above:\\n>\\n> - \"Not from the retrieved evidence base, but reflecting AAE and ESE consensus positions: the retain-vs-extract decision for a molar with failed\"', 1.233674)"
+ }
+}
