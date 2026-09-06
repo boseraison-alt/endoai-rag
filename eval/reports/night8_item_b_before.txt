@@ -1,0 +1,188 @@
+==============================================================================
+ITEM B — GUIDELINE LANE PRECISION,  ARM = BEFORE
+==============================================================================
+  domain-noun list: 46 terms, source: script candidate list (fix not yet shipped)
+  apexification, apexogenesis, apical, apicectomy, apicoectomy, avulsed, avulsion, crown fracture, dens evaginatus, dens invaginatus, dental trauma, endodontic, endodontically, endodontics, intracanal, irrigant, irrigation, luxation, necrosis, necrotic pulp, obturation, odontogenic, perforation, periapical, periodontitis, periradicular, post-treatment disease, pulp, pulp cap, pulp capping, pulpal, pulpectomy, pulpitis, pulpotomy, replantation, replanted, resorption, retreatment, revascularisation, revascularization, revitalisation, revitalization, root canal, root canals, root fracture, traumatic dental injur
+
+  term groups: 32 from cache, 0 newly generated (eval\logs\night8_terms.json)
+  guideline lane filter: practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]
+
+[ 1/32] laser-root-canal-disinfection-live       groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic*
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[ 2/32] laser-root-canal-disinfection-library    groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic* OR intracanal
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[ 3/32] single-vs-multiple-visit                 groups=3  domain_noun=False  pool=0   off=0
+        chose: single-visit OR one-visit OR single visit OR one visit OR same-day OR same day
+[ 4/32] mta-vs-biodentine-pulpotomy              groups=3  domain_noun=False  pool=7   off=0
+        chose: mta OR mineral trioxide aggregate OR biodentine OR calcium silicate
+[ 5/32] naocl-concentration                      groups=3  domain_noun=False  pool=20  off=0
+        chose: efficacy OR outcome* OR success OR disinfect* OR antibacterial
+[ 6/32] cbct-vs-periapical                       groups=3  domain_noun=False  pool=7   off=0
+        chose: cbct OR cone beam computed tomography OR cone-beam ct OR cbct
+[ 7/32] bioceramic-vs-resin-sealer               groups=3  domain_noun=True   pool=20  off=0
+        chose: outcome* OR efficacy OR success OR periapical OR healing OR treatment outcome* OR prognosis
+[ 8/32] retreatment-vs-microsurgery              groups=3  domain_noun=True   pool=19  off=0
+        chose: persistent apical periodontitis OR refractory apical periodontitis OR symptomatic apical periodontitis OR trea
+[ 9/32] direct-pulp-capping                      groups=3  domain_noun=True   pool=16  off=0
+        chose: vital pulp therapy OR pulp capping OR direct pulp capping OR pulpotomy OR partial pulpotomy
+[10/32] preemptive-nsaid                         groups=3  domain_noun=False  pool=20  off=1
+        chose: nsaid* OR nonsteroidal anti-inflammatory OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive 
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+[11/32] regenerative-immature                    groups=3  domain_noun=False  pool=20  off=0
+        chose: success OR survival OR outcome* OR efficacy OR healing OR treatment outcome
+[12/32] cracked-tooth-prognosis                  groups=3  domain_noun=False  pool=20  off=0
+        chose: prognosis OR treatment outcome* OR clinical outcome* OR success* OR failure* OR survival OR longevity
+[13/32] apdt-primary-molars                      groups=3  domain_noun=False  pool=0   off=0
+        chose: photodynamic therapy OR pdt OR apdt OR antimicrobial photodynamic OR photochemical disinfection
+[14/32] bisphosphonates                          groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic* OR pulp treatment OR apical surgery OR apicoectomy
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[15/32] pregnancy                                groups=3  domain_noun=False  pool=1   off=0
+        chose: local anesthetic* OR local anaesthetic* OR lidocaine OR prilocaine OR articaine OR bupivacaine OR epinephrine 
+[16/32] pips-vs-ultrasonic                       groups=3  domain_noun=True   pool=3   off=0
+        chose: laser* OR photodynamic therapy OR apdt OR pips OR sweeps OR laser-activated irrigation
+[17/32] intentional-replantation                 groups=3  domain_noun=False  pool=20  off=0
+        chose: outcome* OR success* OR prognosis OR survival OR complication*
+[18/32] sdf-pulp-outcomes                        groups=3  domain_noun=True   pool=20  off=0
+        chose: pulp OR pulpal OR vital* OR vitality OR pulp cap*
+[19/32] sonic-vs-ultrasonic                      groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic* OR intracanal
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[20/32] dens-invaginatus                         groups=3  domain_noun=False  pool=20  off=2
+        chose: manag* OR treat* OR therap* OR surgical OR orthodontic* OR restor*
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[21/32] diabetes-outcomes                        groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic* OR apical periodontitis OR periapical
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[22/32] case-opening-sparse                      groups=3  domain_noun=False  pool=20  off=1
+        chose: tooth OR teeth OR dental OR molar
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+[23/32] case-opening-full                        groups=3  domain_noun=True   pool=20  off=0
+        chose: periapical* OR apical lesion* OR apical radiolucency OR periapical pathology
+[24/32] review-followup-immature-teeth           groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic* OR intracanal
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[25/32] review-newtopic-reset                    groups=3  domain_noun=False  pool=20  off=1
+        chose: primary teeth OR deciduous teeth OR baby teeth OR pediatric* OR child*
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[26/32] necrotic-virgin-tooth-young-adult-diagno groups=3  domain_noun=True   pool=17  off=1
+        chose: traumatic injury OR trauma OR mechanical injury OR luxation OR intrusion OR extrusion OR crown fracture OR roo
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+[27/32] bisphosphonate-extraction-vs-rct-treatme groups=3  domain_noun=True   pool=20  off=2
+        chose: extraction OR root canal treatment OR endodontic* OR rct
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[28/32] dens-evaginatus-premolar-diagnostic      groups=3  domain_noun=True   pool=4   off=0
+        chose: pulp vitality OR cold test* OR thermal test* OR vitality test*
+[29/32] dens-evaginatus-prevention-followup      groups=3  domain_noun=True   pool=12  off=0
+        chose: pulp necrosis OR pulp death OR pulp vitality OR vital pulp
+[30/32] probe-avulsion-40min                     groups=3  domain_noun=True   pool=20  off=0
+        chose: prognosis OR outcome* OR healing OR root resorption OR survival OR success*
+[31/32] probe-crown-fracture-6h                  groups=3  domain_noun=True   pool=20  off=2
+        chose: pulpotomy OR pulp capping OR direct pulp capping OR endodontic* OR root canal
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[32/32] probe-retreat-implant                    groups=3  domain_noun=True   pool=20  off=2
+        chose: root canal OR endodontic* OR retreatment
+        OFF-DOMAIN  41319038  2025 FelineVMA feline oral health and dental care guidelines.
+                    journal: J Feline Med Surg
+                    reason : non-human subject population: 'feline' in the title
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+
+==============================================================================
+RESULT — ARM BEFORE
+==============================================================================
+  questions measured                         32
+  chosen group CONTAINS a domain noun        19  (target >= 30)
+  chosen group contains NONE                 13
+      no domain noun: single-vs-multiple-visit                 chose single-visit OR one-visit OR single visit OR one visit OR sa
+      no domain noun: mta-vs-biodentine-pulpotomy              chose mta OR mineral trioxide aggregate OR biodentine OR calcium s
+      no domain noun: naocl-concentration                      chose efficacy OR outcome* OR success OR disinfect* OR antibacteri
+      no domain noun: cbct-vs-periapical                       chose cbct OR cone beam computed tomography OR cone-beam ct OR cbc
+      no domain noun: preemptive-nsaid                         chose nsaid* OR nonsteroidal anti-inflammatory OR ibuprofen OR nap
+      no domain noun: regenerative-immature                    chose success OR survival OR outcome* OR efficacy OR healing OR tr
+      no domain noun: cracked-tooth-prognosis                  chose prognosis OR treatment outcome* OR clinical outcome* OR succ
+      no domain noun: apdt-primary-molars                      chose photodynamic therapy OR pdt OR apdt OR antimicrobial photody
+      no domain noun: pregnancy                                chose local anesthetic* OR local anaesthetic* OR lidocaine OR pril
+      no domain noun: intentional-replantation                 chose outcome* OR success* OR prognosis OR survival OR complicatio
+      no domain noun: dens-invaginatus                         chose manag* OR treat* OR therap* OR surgical OR orthodontic* OR r
+      no domain noun: case-opening-sparse                      chose tooth OR teeth OR dental OR molar
+      no domain noun: review-newtopic-reset                    chose primary teeth OR deciduous teeth OR baby teeth OR pediatric*
+  guideline-lane pool EMPTY                  2  (6%, target <= 15%)
+  OFF-DOMAIN guideline rows in any pool      24  (target 0)
+  questions with >=1 off-domain row          14  ['laser-root-canal-disinfection-live', 'laser-root-canal-disinfection-library', 'preemptive-nsaid', 'bisphosphonates', 'sonic-vs-ultrasonic', 'dens-invaginatus', 'diabetes-outcomes', 'case-opening-sparse', 'review-followup-immature-teeth', 'review-newtopic-reset', 'necrotic-virgin-tooth-young-adult-diagnostic', 'bisphosphonate-extraction-vs-rct-treatment', 'probe-crown-fracture-6h', 'probe-retreat-implant']
+  cross-specialty rows KEPT (not off-domain) 24
+      17446442  Prevention of infective endocarditis: guidelines from the Am
+                cross-specialty but DOES address dental care: 10 unambiguous dental mentions in its own abstract (dental, gingival, oral mucosa, periapical, teeth)
+      29268916  The Society for Vascular Surgery practice guidelines on the 
+                cross-specialty but DOES address dental care: 5 unambiguous dental mentions in its own abstract (dental, gingival, oral mucosa, periapical, teeth)
+
+  WATCHLIST — appearances across the 32 pools
+    17446442  AHA infective endocarditis 2007 (superseded by AHA-IE-2021) 13 pools  off_domain=False
+              naocl-concentration, bioceramic-vs-resin-sealer, retreatment-vs-microsurgery, preemptive-nsaid, regenerative-immature, cracked-tooth-prognosis ...
+    29268916  Society for Vascular Surgery, abdominal aortic aneurysm    11 pools  off_domain=False
+              naocl-concentration, bioceramic-vs-resin-sealer, retreatment-vs-microsurgery, regenerative-immature, cracked-tooth-prognosis, intentional-replantation ...
+    29729847  SIOPE paediatric brain-tumour craniospinal radiotherapy    11 pools  off_domain=True
+              laser-root-canal-disinfection-live, laser-root-canal-disinfection-library, bisphosphonates, sonic-vs-ultrasonic, dens-invaginatus, diabetes-outcomes ...
+    41319038  FelineVMA feline dental guidelines (veterinary)            13 pools  off_domain=True
+              laser-root-canal-disinfection-live, laser-root-canal-disinfection-library, preemptive-nsaid, bisphosphonates, sonic-vs-ultrasonic, dens-invaginatus ...
+
+  AVULSION PROBE — the lane's final PubMed query string:
+    (prognosis OR outcome* OR healing OR root resorption OR survival OR success*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR "dental pulp"[MeSH] OR "periapical diseases"[MeSH] OR endodontic*[tiab] OR "root canal"[tiab] OR "root canals"[tiab] OR "dental pulp"[tiab] OR pulpitis[tiab] OR "periapical"[tiab] OR "pulp therapy"[tiab] OR "pulp capping"[tiab]) NOT "Retracted Publication"[pt]
+
+  wrote eval/reports/night8_item_b_before.json

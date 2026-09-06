@@ -92,9 +92,40 @@ _DENTAL_JOURNAL = re.compile(
     r"stomatol|odontol|traumatol|j\s*am\s*dent|jada|caries)", re.I)
 
 _DENTAL_TITLE = re.compile(
-    r"(dental|dentist|oral|tooth|teeth|endodont|periodont|pulp|caries|"
-    r"periapical|root canal|maxillofac|orthodont|prosthodont|gingiv|"
-    r"odontogenic|jaw|mandib|maxill|osteonecrosis of the jaw)", re.I)
+    r"\b(dental|dentist\w*|oral|tooth|teeth|endodont\w*|periodont\w*|pulp\w*|"
+    r"caries|periapical|root canals?|maxillofacial|orthodont\w*|"
+    r"prosthodont\w*|gingiv\w*|odontogenic|jaw|mandib\w*|maxill\w*)\b", re.I)
+
+# THE STRICTER LIST, USED ONLY TO EXONERATE A CROSS-SPECIALTY DOCUMENT.
+#
+# Exonerating is the dangerous direction: it says "this vascular-surgery
+# guideline belongs in an endodontic pool". So it requires vocabulary that
+# CANNOT mean anything else. The broad list above is fine for a title, where
+# "oral" is the cavity, and wrong for an abstract, where it is a route of
+# administration. Measured, not assumed — the loose version exonerated two
+# documents on these two matches alone:
+#
+#   "the most inferior part of the temp|oral| lobes"     -> `oral`
+#   "no need to include sacral |root canals| in the CTV" -> `root canal`
+#
+# Both are in the SIOPE paediatric brain-tumour radiotherapy guideline, and
+# the second one is also HOW THAT DOCUMENT REACHES AN ENDODONTIC POOL AT ALL:
+# `ENDO_DOMAIN_FILTER` carries `"root canal"[tiab]`, and a spinal nerve root
+# canal matches it. Reported as a finding in its own right.
+_DENTAL_UNAMBIGUOUS = re.compile(
+    r"\b(dental|dentist\w*|tooth|teeth|endodont\w*|periodont\w*|caries|"
+    r"periapical|gingiv\w*|odontogenic|oral (?:cavity|mucosa|surgery|health|"
+    r"hygiene)|dental pulp|maxillofacial|osteonecrosis of the jaw)\b", re.I)
+
+# The four documents the 2026-09-11 handover named, plus the two found tonight.
+# Tracked by PMID across both arms so the fix is judged on the actual documents
+# the complaint was about, not only on a label.
+WATCHLIST = {
+    "41319038": "FelineVMA feline dental guidelines (veterinary)",
+    "29268916": "Society for Vascular Surgery, abdominal aortic aneurysm",
+    "29729847": "SIOPE paediatric brain-tumour craniospinal radiotherapy",
+    "17446442": "AHA infective endocarditis 2007 (superseded by AHA-IE-2021)",
+}
 
 
 def judge_off_domain(title, journal, abstract=""):
@@ -124,15 +155,18 @@ def judge_off_domain(title, journal, abstract=""):
     if _DENTAL_JOURNAL.search(j) or _DENTAL_TITLE.search(t):
         return False, ""
     # Journal and title are both outside the domain. Does the DOCUMENT address
-    # oral or dental care? Counted, not eyeballed: a passing mention is not
-    # enough, so require the dental vocabulary to appear more than once.
-    hits = _DENTAL_TITLE.findall(a)
+    # oral or dental care? Counted, not eyeballed, and counted with the strict
+    # vocabulary: a passing mention is not enough, so require two.
+    hits = _DENTAL_UNAMBIGUOUS.findall(a)
     if len(hits) >= 2:
-        return False, ("cross-specialty but addresses dental care: %d dental "
-                       "mentions in its own abstract" % len(hits))
+        return False, ("cross-specialty but DOES address dental care: %d "
+                       "unambiguous dental mentions in its own abstract (%s)"
+                       % (len(hits), ", ".join(sorted({h.lower() for h in hits
+                                                       if isinstance(h, str)
+                                                       })[:5])))
     return True, ("issuing journal %r is outside dentistry / oral medicine / "
                   "head-and-neck, and the document does not address oral or "
-                  "dental care (%d dental mentions in its abstract)"
+                  "dental care (%d unambiguous dental mentions in its abstract)"
                   % (j or "(unknown)", len(hits)))
 
 
@@ -176,22 +210,30 @@ def esearch(term, retmax=20):
 
 
 def summaries(pmids):
-    """{pmid: (title, journal)} via esummary."""
+    """{pmid: (title, journal, abstract)}.
+
+    Abstract included deliberately. The off-domain test's second half asks
+    whether the DOCUMENT addresses oral or dental care, and a title alone
+    cannot answer that: the AHA infective-endocarditis guideline is titled
+    entirely in cardiology vocabulary and is about antibiotic prophylaxis
+    before dental procedures. Judging on the title was what convicted it.
+
+    esummary carries no abstract, so this goes through the repo's own efetch
+    client, which returns title, journal and abstract in one call.
+    """
     if not pmids:
         return {}
     out = {}
     try:
-        r = E.ncbi_get(f"{E.NCBI_EUTILS_BASE}/esummary.fcgi",
-                       params=E._ncbi_params({"db": "pubmed",
-                                              "id": ",".join(pmids),
-                                              "retmode": "json"}), timeout=25)
-        res = r.json().get("result", {})
+        recs = E._fetch_pubtypes_and_abstracts(list(pmids))
         for p in pmids:
-            e = res.get(p) or {}
-            out[p] = (e.get("title", "") or "",
-                      e.get("fulljournalname", "") or e.get("source", "") or "")
+            r = recs.get(p) or {}
+            out[p] = (r.get("title", "") or "", r.get("journal", "") or "",
+                      r.get("abstract", "") or "")
     except Exception as ex:
-        print("      esummary failed: %s" % ex)
+        print("      efetch failed: %s" % ex)
+    for p in pmids:
+        out.setdefault(p, ("", "", ""))
     return out
 
 
@@ -257,10 +299,11 @@ def main():
         meta = summaries(pmids)
         pool = []
         for p in pmids:
-            title, journal = meta.get(p, ("", ""))
-            off, reason = judge_off_domain(title, journal)
+            title, journal, abstract = meta.get(p, ("", "", ""))
+            off, reason = judge_off_domain(title, journal, abstract)
             pool.append({"pmid": p, "title": title, "journal": journal,
-                         "off_domain": off, "reason": reason})
+                         "off_domain": off, "reason": reason,
+                         "cross_specialty_kept": (not off and reason != "")})
         n_off = sum(1 for x in pool if x["off_domain"])
         rows.append({"id": cid, "n_groups": len(groups),
                      "chosen": chosen, "has_domain_noun": ok,
@@ -298,6 +341,29 @@ def main():
     print("  OFF-DOMAIN guideline rows in any pool      %d  (target 0)" % tot_off)
     print("  questions with >=1 off-domain row          %d  %s"
           % (len(q_off), q_off))
+    kept = [(x["pmid"], x["title"][:60], x["reason"])
+            for r in rows for x in r["rows"] if x.get("cross_specialty_kept")]
+    print("  cross-specialty rows KEPT (not off-domain) %d" % len(kept))
+    for pmid, title, reason in sorted(set(kept)):
+        print("      %-9s %-60s" % (pmid, title))
+        print("                %s" % reason)
+
+    # THE WATCHLIST. The off-domain label is a judgement; an appearance count
+    # is not. These are the documents the complaint was actually about, so
+    # they are counted whatever the label says about them.
+    print()
+    print("  WATCHLIST — appearances across the 32 pools")
+    for pmid, what in sorted(WATCHLIST.items()):
+        n = sum(1 for r in rows for x in r["rows"] if x["pmid"] == pmid)
+        qs = [r["id"] for r in rows
+              if any(x["pmid"] == pmid for x in r["rows"])]
+        off = any(x["off_domain"] for r in rows for x in r["rows"]
+                  if x["pmid"] == pmid)
+        print("    %-9s %-58s %2d pools  off_domain=%s"
+              % (pmid, what, n, off))
+        if qs:
+            print("              %s" % ", ".join(qs[:6])
+                  + (" ..." if len(qs) > 6 else ""))
     print()
     print("  AVULSION PROBE — the lane's final PubMed query string:")
     for r in rows:
