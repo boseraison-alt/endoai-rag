@@ -1,0 +1,53 @@
+{
+ "total_answers": 207,
+ "per_key": {
+  "COCHRANE-CD005296": 0,
+  "COCHRANE-CD004969": 0,
+  "CD005296": 3,
+  "CD004969": 1
+ },
+ "findings": {
+  "COCHRANE-CD005296": {
+   "target_pmid": "36512807",
+   "hits": []
+  },
+  "COCHRANE-CD004969": {
+   "target_pmid": "31145805",
+   "hits": []
+  },
+  "CD005296": {
+   "target_pmid": "36512807",
+   "hits": [
+    {
+     "corpus": "query_cache",
+     "where": "query_cache#3069",
+     "line": "[{\"pmid\": \"36512807\", \"year\": \"2022\", \"issue\": \"12\", \"pages\": \"CD005296\", \"score\": 84.4, \"is_old\": false, \"volume\": \"12\", \"authors\": \"Mergoni G, Ganim M, Lodi G et al.\", \"has_coi\": false, \"journal\": \"The Cochrane databas",
+     "kind": "pages-field"
+    },
+    {
+     "corpus": "query_cache",
+     "where": "query_cache#2797",
+     "line": "[{\"pmid\": \"36512807\", \"year\": \"2022\", \"issue\": \"12\", \"pages\": \"CD005296\", \"score\": 92.2, \"is_old\": false, \"volume\": \"12\", \"authors\": \"Mergoni G, Ganim M, Lodi G et al.\", \"has_coi\": false, \"journal\": \"The Cochrane databas",
+     "kind": "pages-field"
+    },
+    {
+     "corpus": "query_cache",
+     "where": "query_cache#2797",
+     "line": "[{\"pmid\": \"36512807\", \"year\": \"2022\", \"issue\": \"12\", \"pages\": \"CD005296\", \"score\": 92.2, \"is_old\": false, \"volume\": \"12\", \"authors\": \"Mergoni G, Ganim M, Lodi G et al.\", \"has_coi\": false, \"journal\": \"The Cochrane databas",
+     "kind": "pages-field"
+    }
+   ]
+  },
+  "CD004969": {
+   "target_pmid": "31145805",
+   "hits": [
+    {
+     "corpus": "query_cache",
+     "where": "query_cache#4126",
+     "line": "[{\"pmid\": \"29852056\", \"year\": \"2018\", \"issue\": \"5\", \"pages\": \"CD003220\", \"score\": 83.3, \"is_old\": false, \"volume\": \"5\", \"authors\": \"Sma\\u00efl-Faugeron V, Glenny AM, Courson F et al.\", \"has_coi\": false, \"journal\": \"The C",
+     "kind": "pages-field"
+    }
+   ]
+  }
+ }
+}
