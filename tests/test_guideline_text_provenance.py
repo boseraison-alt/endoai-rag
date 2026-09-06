@@ -114,6 +114,96 @@ class TestEveryStoredGuidelineTextDeclaresItsSource:
             assert got == sha, "%s: stored text does not match stored hash" % pmid
 
 
+class TestBrowserFetchedTextIsTraceableToItsFile:
+    """`org_page_browser` rows came from `data/guideline_text/<id>.txt`, fetched
+    through a real Chrome session because aae.org returns 403 and
+    prosthodontics.org returns an Imperva notice to anything else.
+
+    `abstract_sha256` MEANS SOMETHING DIFFERENT FOR THESE ROWS and that is
+    worth stating rather than discovering. For `org_page` it hashes the STORED
+    SPAN; for `org_page_browser` it hashes the SOURCE FILE, as the batch
+    specified. So the chain that can be re-verified is file -> sidecar -> row,
+    and it is verified here rather than assumed.
+    """
+
+    def test_every_row_matches_its_sidecar_and_its_file(self):
+        import glob
+        import json
+        rows = _q("""SELECT pmid, abstract, abstract_sha256, abstract_url,
+                            abstract_fetched
+                     FROM endo_papers_rag
+                     WHERE abstract_source = 'org_page_browser'""")
+        assert rows, ("no org_page_browser rows — the input is zero, so this "
+                      "proves nothing (rule 34)")
+        files = {os.path.basename(p)[:-5]
+                 for p in glob.glob("data/guideline_text/*.json")}
+        assert files, "no sidecars on disk"
+        for pmid, text, sha, url, fetched in rows:
+            assert pmid in files, (
+                "%s claims browser provenance with no sidecar on disk" % pmid)
+            meta = json.load(open("data/guideline_text/%s.json" % pmid,
+                                  encoding="utf-8"))
+            raw = open("data/guideline_text/%s.txt" % pmid, "rb").read()
+            assert hashlib.sha256(raw).hexdigest() == meta["sha256"], (
+                "%s: the .txt no longer matches its sidecar hash" % pmid)
+            assert sha == meta["sha256"], (
+                "%s: stored hash is not the sidecar's" % pmid)
+            assert url == meta["url"], "%s: stored url is not the sidecar's" % pmid
+            assert fetched == meta["fetched_at"], pmid
+
+    def test_the_stored_text_is_verbatim_from_the_file(self):
+        """The whole claim. Every stored word must appear, in order, in the
+        file RB fetched — no paraphrase, no reflow, no repair."""
+        rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
+                     WHERE abstract_source = 'org_page_browser'""")
+        assert rows
+        for pmid, text in rows:
+            src = open("data/guideline_text/%s.txt" % pmid,
+                       encoding="utf-8").read()
+            # Compared against the file WITH `[[PAGE n]]` lines removed, which
+            # is the one transform the ingest performs. Comparing against the
+            # raw file fails on every PDF whose span crosses a page break —
+            # the first version of this test did, and the failure was the
+            # test's, not the ingest's.
+            import re as _re
+            src = "\n".join(
+                l for l in src.splitlines()
+                if not _re.match(r"\s*\[\[PAGE \d+\]\]\s*$", l))
+            flat_src = " ".join(src.split())
+            flat_txt = " ".join((text or "").split())
+            assert flat_txt and flat_txt in flat_src, (
+                "%s: stored text is not a verbatim span of its source file"
+                % pmid)
+
+    def test_no_page_marker_survives_into_a_stored_abstract(self):
+        """RB's `[[PAGE n]]` markers are the fetch's, not the document's."""
+        rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
+                     WHERE abstract_source = 'org_page_browser'""")
+        for pmid, text in rows:
+            assert "[[PAGE" not in (text or ""), pmid
+
+    def test_no_span_ends_in_page_furniture(self):
+        """AAE-VPT-2021's summary ends at '...also warranted.' and ran on into
+        'Position StatementPage 5AAE Position S tatement - V ital Pulp Therapy'
+        before the tail trim — the PDF's running head, not the document's
+        summary.
+
+        ASSERTED ON FURNITURE, NOT ON A FULL STOP. The first version required
+        every span to end on sentence punctuation, and the six `first_300_words`
+        spans end mid-sentence BY DESIGN — they are cut at a word budget. That
+        assertion would have forced the ingest to distort a documented rule to
+        satisfy a test.
+        """
+        import re as _re
+        FURNITURE = _re.compile(r"(Page\s?\d|Position S\s?tatement|"
+                                r"AAE Position|www\.|\.org)", _re.I)
+        rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
+                     WHERE abstract_source = 'org_page_browser'""")
+        assert rows
+        bad = [p for p, t in rows if FURNITURE.search((t or "")[-80:])]
+        assert not bad, "spans ending in page furniture: %s" % bad
+
+
 class TestAFailedFetchStaysAPointer:
 
     def test_a_failed_row_still_says_pointer_only(self):
