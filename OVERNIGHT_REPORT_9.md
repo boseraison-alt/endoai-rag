@@ -369,7 +369,21 @@ A pre-item-A dump was also taken before any write tonight:
 `db-20260907-preA/`, 14 tables, 27,574 rows, all verified. That is the restore
 point for item A.
 
-**Git bundle — verified.** Path and verification line below.
+**Git bundle — verified.**
+
+```
+C:\Users\boser\endo-ai-backups\endo-ai-rag-20260907-night.bundle
+5,774,496 bytes, --all (every branch and tag)
+
+$ git bundle verify endo-ai-rag-20260907-night.bundle
+e82caa111f4027cba2ef96c05e7b52c58227eda6 HEAD
+The bundle records a complete history.
+The bundle uses this hash algorithm: sha1
+```
+
+Tag `night-20260907-end` at `e82caa1`. The 2026-09-06 bundle and both
+`db-20260906-night/` and `db-20260907-preA/` are unchanged and remain the
+restore points for tonight's writes.
 
 ---
 
