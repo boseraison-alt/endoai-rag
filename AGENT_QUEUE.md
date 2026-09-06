@@ -220,6 +220,46 @@ Opening instruction for the agent session:
     sufficient. Scoping each hit to its ENCLOSING FUNCTION let a mutation
     survive, because one justified site vouched for an unjustified neighbour.
     Scope to the site.)
+37. **When two mechanisms write the same column, the one that runs most often
+    decides what it means. Before trusting a column, list its writers.**
+    (Origin: 2026-09-06. `level_key` has two writers. The pubtype backfill
+    stores the paper's DESIGN; live write-back stored `eff_level`, documented
+    in `endo_ai.py` as "the tier this paper was retrieved under" — a fact about
+    the QUERY. Write-back runs on every live query; the backfill runs when
+    somebody runs it. So the column's de facto meaning became "which query
+    found this", and nine IADT consensus guidelines sat at level1 and level2
+    with evidence scores and impact factors because they answered a level2
+    lane's query. The batch author and I both reasoned from the backfill and
+    forgot the write-back. Remedy shipped the same night: `level_key_source`
+    records WHICH writer set the key, per row, so the question is answerable
+    by query instead of by reading two files and guessing.)
+
+---
+
+## §1b STOP CONDITIONS — how to read one when it fires
+
+**A manifest PMID matching a row in a study tier means the PMID is wrong OR
+the row's tier is wrong. Compare the row's title against the manifest before
+deciding which. Quarantine the manifest record ONLY if the titles disagree.**
+
+This replaces the earlier form — *"stop if any row in {cochrane, level1,
+level2} is marked for reclassification, because the PMID is wrong on our
+side"* — which named one of the two causes and prescribed the remedy for it.
+
+It fired on 2026-09-06. Nine rows matched, all IADT trauma guidelines. Every
+one was checked against its stored row: correct accession, correct journal
+(*Dental Traumatology*), title matching the manifest. **The PMIDs were right
+and our banding was wrong**, so the prescribed remedy — quarantine the manifest
+record and null its PMID — would have discarded nine accessions verified on
+PubMed and left nine consensus guidelines sitting on the evidence ladder. The
+stop rule was correct to stop the batch and wrong about why.
+
+**And a "more than N rows" stop condition counts rows that CHANGE, not rows
+touched.** The same dry run reported "will RECLASSIFY existing 61", of which 52
+were idempotent re-applications of records already ingested and 9 actually
+changed tier. Reading 61 as the count of changes overstates the blast radius
+by a factor of seven and invites a stop on a batch that is doing almost
+nothing.
 
 ---
 
@@ -2019,6 +2059,94 @@ explained after.
 - **A46c** Commit prediction and outcome together with `baseline_v6`, keeping `v5`.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
+
+### A52 — NIGHT 2026-09-06: overturned premises, and the instrument-error log
+
+#### Overturned premises
+
+**(a) The batch author's stop rule: "a level1/level2 match means the PMID is
+wrong on our side."**
+
+*Killed by:* nine matched rows, every one checked against its stored row —
+correct accession, *Dental Traumatology*, title matching the manifest.
+
+*Why it was wrong:* a match in a study tier has two possible causes and the
+rule named one. Either the manifest's PMID is wrong, or the row's TIER is
+wrong. Comparing titles distinguishes them in a minute. The prescribed
+remedy — quarantine the manifest record, null its PMID — is written for the
+first cause and is destructive under the second: it would have thrown away
+nine verified accessions and left nine consensus guidelines on the evidence
+ladder carrying scores and impact factors. Rewritten as §1b.
+
+**(b) My own P3, from 2026-09-05: "these guidelines will be sitting at
+`guideline` or `level5`."**
+
+*Killed by:* all nine sat at `level1` and `level2`.
+
+*The generalisation, now rule 37:* `level_key` has two writers and I reasoned
+from the wrong one. The pubtype backfill stores the paper's design; live
+write-back stores the lane it was retrieved under. Write-back runs on every
+live query and the backfill runs when somebody runs it, so **the frequent
+writer decides what the column means** — and what it meant was "which query
+found this". A guideline that answers a level2 lane's query is stored as
+level2.
+
+**(c) My own prediction, 2026-09-06: "the batch's `guideline 55 → 94` cannot
+be right under any definition."**
+
+*Killed by:* the applied run. 55 → 94 exactly.
+
+*Why it was wrong:* I subtracted the five withdrawn/draft records as though
+they were among the 30 new inserts. They were already-quarantined rows, so the
+quarantined total never moved — 19 before, 19 after. Separately I added 1 for
+PMID 17367451, which was already inside the 30. Wrong by class on the first
+and by count on the second. The census (51 → 81) and raw (74 → 113)
+predictions were both right, which is what made the third look safe.
+
+#### Instrument errors — five in one night, each caught before it was reported
+
+**1. "79% → 3% empty" was recall reported as precision.** The 2026-09-05
+measurement counted whether the guideline lane returned *something*. It never
+asked whether what came back was the right document. Measured properly on
+2026-09-06: while that number improved, the lane was admitting a feline
+veterinary dental guideline into 13 of 32 pools and a paediatric brain-tumour
+radiotherapy guideline into 11. **A count of results is not evidence about
+relevance; only a check of the results is.**
+
+**2. A stored-answer sweep that returned a clean zero because it never looked
+in `answers/`.** It scanned `query_cache` (20 rows) and
+`eval/logs/case_answers/` (17 files) and reported 0 of 9 PMIDs cited. The
+corpus it missed holds 170 files and contains the one citation the batch said
+was there.
+
+**3. An off-domain judge that convicted the AHA infective-endocarditis
+guideline.** The definition is an AND — outside dentistry AND does not address
+oral or dental care — and the judge only tested the first half. That guideline
+is entirely about antibiotic prophylaxis before *dental* procedures, and its
+successor is a record in this project's own manifest. Then the fix over-swung
+and *exonerated* the vascular-surgery guideline, because bare `oral` matched
+"temp**oral**" and `root canal` matched "sacral **root canals**".
+
+**4. A confinement proof that measured PubMed instead of the change.**
+Comparing returned pools across two arms reported 61 changed study-lane pools,
+which reads as a leak. Running the *identical build twice* also produced 61.
+The relevance sort is unstable at the retmax cutoff. The deterministic question
+— are the query strings byte-identical? — answered 0 of 256.
+
+**5. A pubtype matrix computed from an exception handler.** The fetch called
+`_merge_corrections_and_registries` with `{pmid: {}}`; that function mutates a
+dict the esummary pass has already filled and died on `KeyError: 'has_erratum'`
+for every chunk. The failure was caught and printed per chunk, and the run
+still emitted "197 undecidable, disagreement rate 33.3%" — a headline computed
+off three surviving rows.
+
+**And one test that failed to fail.** `test_the_derived_tier_replaces_the_lane`
+asserted that `tier_from_pubtypes(` *appears* in `fetch_papers` between two
+landmarks. It does — even wrapped in `if False:`. The mutation check passed all
+ten tests. A test that reads the source certifies that the code was written,
+not that it runs. Replaced with tests that drive the real path.
+
+---
 
 ### A48 — OVERNIGHT 2026-09-04: three more overturned premises, all instrument errors
 
