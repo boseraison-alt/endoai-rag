@@ -1,0 +1,47 @@
+{
+ "probe3-retreat-implant": {
+  "question": "Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?",
+  "guideline_pool": [
+   "AAO-CPG-2023",
+   "AAE-CASEDIFFICULTY-2022"
+  ],
+  "raw_gl_markers": [
+   "AAE-CASEDIFFICULTY-2022",
+   "AAE-CASEDIFFICULTY-2022",
+   "AAE-CASEDIFFICULTY-2022"
+  ],
+  "raw_pmid_slot_slugs": [],
+  "served_gl_markers_left": [],
+  "served_pmid_slot_slugs": [],
+  "rendered_guideline_citations": [
+   "[AAE \u2014 Endodontic Case Difficulty Assessment Form and Guidelines (2022; current; US)]",
+   "[AAE \u2014 Endodontic Case Difficulty Assessment Form and Guidelines (2022; current; US)]",
+   "[AAE \u2014 Endodontic Case Difficulty Assessment Form and Guidelines (2022; current; US)]"
+  ]
+ },
+ "retreatment-vs-microsurgery": {
+  "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+  "guideline_pool": [
+   "FDSRCS-PERIRADICULAR-2020",
+   "AAO-CPG-2023",
+   "BES-CBCT-REPORTING-2021",
+   "ESE-S3-2023",
+   "AAE-TREATMENTSTANDARDS-2018"
+  ],
+  "raw_gl_markers": [
+   "FDSRCS-PERIRADICULAR-2020",
+   "AAE-TREATMENTSTANDARDS-2018",
+   "FDSRCS-PERIRADICULAR-2020",
+   "AAE-TREATMENTSTANDARDS-2018"
+  ],
+  "raw_pmid_slot_slugs": [],
+  "served_gl_markers_left": [],
+  "served_pmid_slot_slugs": [],
+  "rendered_guideline_citations": [
+   "[FDSRCS \u2014 Periradicular Surgery (2020; current; UK)]",
+   "[AAE \u2014 Treatment Standards White Paper (with 2019 Executive Summary) (2018; current; US)]",
+   "[FDSRCS \u2014 Periradicular Surgery (2020; current; UK)]",
+   "[AAE \u2014 Treatment Standards White Paper (with 2019 Executive Summary) (2018; current; US)]"
+  ]
+ }
+}

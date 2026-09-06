@@ -1,0 +1,76 @@
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 9e42482+dirty (imported 2026-09-06T08:27:21)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+==============================================================================
+ITEM B SYNTHESIS — probe3-retreat-implant
+==============================================================================
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  [search_terms] capped to 3 AND-groups, dropped: (implant* OR "implant-supported restoration" OR "dental impl | (molar* OR "posterior tooth" OR "posterior teeth")
+  Smart search terms: '("tooth extraction" OR "dental extraction" OR exodontia) AND ("failed endodontic treatment" OR "retreatment failure" OR "root canal failure" OR "treatment outcome") AND (decision* OR "treatment planning" OR prognosis OR comparison OR outcome*)'
+  [search_terms] capped to 3 AND-groups, dropped: ("tooth extraction" OR "tooth removal")
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14937.19it/s]
+  Embedding model ready.
+  [rag] 8 queries -> 403 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]   11 paper(s) mention ['tooth extraction', 'dental extraction', 'exodontia']
+    [rag_gate:coverage]   37 paper(s) mention ['failed endodontic treatment', 'retreatment failure', 'root canal failure', 'treatment outcome']
+    [rag_gate:coverage]  127 paper(s) mention ['decision*', 'treatment planning', 'prognosis', 'comparison']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 82 clear the evidence floor 0.6; dropped 118 (best dropped 0.600)
+  [PRISMA dedup] review PMID 27759881 (2016) chosen by relevance; 67 reference(s) known; 1 of 17 older primary studies verified as cited by it
+  guideline pool: 2  ['AAO-CPG-2023', 'AAE-CASEDIFFICULTY-2022']
+
+Asking Claude: 'Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?'
+============================================================
+  Cost: $1.4317 (68444 in / 5400 out)
+  [GL] rendered 3 guideline citation(s)
+  Evidence mapping: passed=True score=95 cited=17 fabricated=0 unattributed=2 gaps=0
+  [citation_support] 1 of 32 claim-citation pairs flagged as not supported
+  GL markers the model wrote          3  ['AAE-CASEDIFFICULTY-2022']
+  guideline ids in a PMID slot (raw)  0  []
+  --- after finalise_answer_text ---
+  guideline ids in a PMID slot        0   <-- MUST BE 0
+  unrendered GL markers left          0   <-- MUST BE 0
+  rendered guideline citations        3
+      [AAE — Endodontic Case Difficulty Assessment Form and Guidelines (2022; current; US)]
+      [AAE — Endodontic Case Difficulty Assessment Form and Guidelines (2022; current; US)]
+      [AAE — Endodontic Case Difficulty Assessment Form and Guidelines (2022; current; US)]
+
+==============================================================================
+ITEM B SYNTHESIS — retreatment-vs-microsurgery
+==============================================================================
+  Smart search terms: '("nonsurgical retreatment" OR "conventional retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic microsurgery" OR "surgical retreatment" OR "apicoectomy" OR "apical surgery") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "treatment failure" OR "periapical lesion")'
+  [rag] 8 queries -> 405 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]    6 paper(s) mention ['nonsurgical retreatment', 'conventional retreatment', 'orthograde retreatment']
+    [rag_gate:coverage]   26 paper(s) mention ['apical microsurgery', 'endodontic microsurgery', 'surgical retreatment', 'apicoectomy']
+    [rag_gate:coverage]   46 paper(s) mention ['persistent apical periodontitis', 'refractory apical periodontitis', 'treatment failure', 'periapical lesion']
+  [rag_gate] -> LIBRARY
+  [cap] level1: 89 above the floor, keeping the 25 most relevant; dropped 64, best dropped similarity 0.673 (PMID 19567310)
+  [cap] level3a: 41 above the floor, keeping the 25 most relevant; dropped 16, best dropped similarity 0.648 (PMID 16934623)
+  [PRISMA dedup] review PMID 27759881 (2016) chosen by relevance; 67 reference(s) known; 0 of 16 older primary studies verified as cited by it
+  guideline pool: 5  ['FDSRCS-PERIRADICULAR-2020', 'AAO-CPG-2023', 'BES-CBCT-REPORTING-2021', 'ESE-S3-2023', 'AAE-TREATMENTSTANDARDS-2018']
+
+Asking Claude: 'Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis'
+============================================================
+  Cost: $1.7041 (90760 in / 4570 out)
+  [GL] rendered 4 guideline citation(s)
+  Evidence mapping: passed=True score=100 cited=21 fabricated=0 unattributed=1 gaps=0
+  [citation_support] all 27 claim-citation pairs OK
+  GL markers the model wrote          4  ['AAE-TREATMENTSTANDARDS-2018', 'FDSRCS-PERIRADICULAR-2020']
+  guideline ids in a PMID slot (raw)  0  []
+  --- after finalise_answer_text ---
+  guideline ids in a PMID slot        0   <-- MUST BE 0
+  unrendered GL markers left          0   <-- MUST BE 0
+  rendered guideline citations        4
+      [FDSRCS — Periradicular Surgery (2020; current; UK)]
+      [AAE — Treatment Standards White Paper (with 2019 Executive Summary) (2018; current; US)]
+      [FDSRCS — Periradicular Surgery (2020; current; UK)]
+      [AAE — Treatment Standards White Paper (with 2019 Executive Summary) (2018; current; US)]
+
+  wrote eval/reports/night9_item_b_syntheses.json
+  VERDICT: PASS — no guideline id in a PMID slot on either answer

@@ -4138,10 +4138,25 @@ def format_paper_context_line(paper: dict) -> str:
             else "NOT SCORED")
     else:
         scored_part = f"Evidence Score: {score}/100"
+    # ITEM B, 2026-09-07 — TELL THE MODEL THE KEY IT MUST USE, ON THE LINE.
+    #
+    # A guideline PubMed does not index has no accession, so its library key
+    # is its manifest id. The prompt asks for `[[PMID:n]]`, and the model
+    # complied the only way it could: `[[PMID:ACP-ASYMPTOMATIC-EXTRACTION-
+    # 2016]]`. That renders raw on the page (the browser replaces
+    # `[[PMID:(\d+)]]` only) and asserts an accession that does not exist.
+    #
+    # The instruction goes HERE, on the row itself, rather than only in the
+    # prompt preamble: a rule stated once at the top applies to a block the
+    # model is reading 40 lines later, and the failure mode is exactly a
+    # per-row choice.
+    key = str(paper.get("pmid") or "")
+    cite_as = ("" if key.isdigit()
+               else f" | cite as [[GL:{key}]]")
     return (
         f"\nPMID: {paper['pmid']} | Authors: {auth} | Year: {paper.get('year')} | "
         f"Citations: {paper.get('citations', 0)} | {ss} | {fu} | "
-        f"{scored_part}{format_provenance_badges(paper)}\n"
+        f"{scored_part}{format_provenance_badges(paper)}{cite_as}\n"
     )
 
 
@@ -7019,6 +7034,25 @@ _PMID_RE          = re.compile(r"\[\[PMID:\s*(" + _PMID_ID_PAT + r")\s*\]\]")
 # The bibliographic key shape used ONLY in the final numbered reference list
 # (`[PMID: 12345678]`). Same two id shapes, single brackets.
 _REF_PMID_RE      = re.compile(r"\[PMID:\s*(" + _PMID_ID_PAT + r")\s*\]")
+
+# ── A49 phase 1a, item B (2026-09-07) — THE GUIDELINE CITATION FORM ──────
+#
+# THE DEFECT, observed. ~44 guideline rows are citeable under a NON-NUMERIC
+# key (AAE position statements, SDCEP, NICE, CGDent — real documents PubMed
+# does not index, so no PMID exists). The prompt asks for `[[PMID:n]]`, so the
+# model does the only thing it can and writes `[[PMID:ACP-ASYMPTOMATIC-
+# EXTRACTION-2016]]` — seen in state 2 of probe 3 on 2026-09-06, 1 of 38
+# citations. A slug in a PMID slot is wrong twice over: the browser's
+# `[[PMID:(\d+)]]` replacer leaves it RAW on the page, and it asserts a PubMed
+# accession that does not exist.
+#
+# So guidelines get their own marker. `[[GL:id]]` is a different shape for a
+# different kind of source, which is the same reasoning that keeps guidelines
+# off the tier ladder: a specialty's stated position is not a study, and
+# pretending it has an accession is the bibliographic form of the same
+# category error.
+_GL_ID_PAT = r"[A-Za-z][A-Za-z0-9._-]{1,63}"
+_GL_RE = re.compile(r"\[\[GL:\s*(" + _GL_ID_PAT + r")\s*\]\]")
 _HEADING_RE       = re.compile(r"^(#{2,4})\s+(.+?)\s*$", re.MULTILINE)
 
 # A period inside an abbreviation is not a sentence end. Each lookbehind is
@@ -8263,6 +8297,170 @@ def rewrite_redirected_citations(answer: str, mapping=None):
     return out, rewrites
 
 
+_GL_RENDER_MAP = None
+
+
+def _gl_render_map():
+    """{key: guideline fields} for every CITEABLE non-numeric row.
+
+    Keyed by the row's `pmid` column, because that is the key a citation
+    resolves against and the key `_known_synthetic_keys` returns. For manifest
+    records it equals `guideline_id`; the two grandfathered pre-manifest AAE
+    rows (`AAE-PS-vital-pulp`, `AAE-PS-diagnosis`) carry an empty
+    `guideline_id`, so keying on that would make them unrenderable.
+
+    Quarantined rows are excluded, which is what makes a `[[GL:id]]` naming a
+    quarantined record behave exactly like a `[[PMID:n]]` naming one: G2 drops
+    it. No new path.
+    """
+    global _GL_RENDER_MAP
+    if _GL_RENDER_MAP is None:
+        try:
+            from rag import get_conn
+            conn = get_conn()
+            cur = conn.cursor()
+            try:
+                cur.execute("""
+                    SELECT pmid, COALESCE(guideline_org,''), title,
+                           year, COALESCE(guideline_status,''),
+                           COALESCE(guideline_jurisdiction,''),
+                           COALESCE(guideline_url,''),
+                           COALESCE(abstract,'')
+                    FROM endo_papers_rag
+                    WHERE pmid !~ '^[0-9]+$'
+                      AND COALESCE(quarantine_reason,'') = ''
+                """)
+                _GL_RENDER_MAP = {
+                    r[0]: {"org": r[1], "title": r[2] or "", "year": r[3],
+                           "status": r[4], "juris": r[5], "url": r[6],
+                           "has_text": bool((r[7] or "").strip())}
+                    for r in cur.fetchall()}
+            finally:
+                cur.close()
+                conn.close()
+        except Exception as e:
+            print(f"  [GL] render map unavailable: {e}")
+            return {}
+    return _GL_RENDER_MAP
+
+
+def _reset_gl_render_map():
+    """Test hook."""
+    global _GL_RENDER_MAP
+    _GL_RENDER_MAP = None
+
+
+def _gl_short_title(title: str) -> str:
+    """A guideline's title, trimmed to the part that identifies it.
+
+    Guideline titles carry the organisation and the document type twice over
+    ("AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed
+    Tomography in Endodontics 2025 Update"). The rendered citation already
+    names the organisation, so the leading boilerplate is dropped rather than
+    repeated.
+    """
+    t = (title or "").strip()
+    t = re.sub(r"^(?:AAE|ESE|ADA|AAP|ACP|AAOM|AAOMR|AAOP|AAOMP|IADT|NICE|"
+               r"SDCEP|CGDent|BES|FDSRCS|AAPD|AHA|IFEA|COCHRANE|EFCD|ORCA|"
+               r"ASDA|AAO)\b[\s,/&-]*", "", t, flags=re.I)
+    t = re.sub(r"^(?:and\s+\w+\s+)?(?:Joint\s+)?(?:Clinical\s+)?"
+               r"(?:Practice\s+)?(?:Position\s+Statement|Guidelines?|"
+               r"Policy|Recommendations?|Consensus\s+\w+|Statement)\s*:?\s*",
+               "", t, flags=re.I)
+    # The boilerplate often ends in a preposition that belonged to it —
+    # "AAE Position Statement ON Vital Pulp Therapy" left "on Vital Pulp
+    # Therapy", which reads as a fragment rather than a title.
+    t = re.sub(r"^(?:on|for|regarding|about)\s+", "", t, flags=re.I)
+    t = t.strip(" :;-")
+    t = t or (title or "").strip()
+    if len(t) > 70:
+        # Cut at a word boundary. A title chopped mid-word ("endodontic
+        # manag") looks like a data defect in the one field whose job is to
+        # let a clinician recognise the document.
+        cut = t[:70].rsplit(" ", 1)[0].rstrip(" ,;:-")
+        t = (cut or t[:70]) + "…"
+    return t
+
+
+def render_gl_citations(answer: str, mapping=None):
+    """Render `[[GL:id]]` as `Org — short title (year; status; jurisdiction)`.
+
+    LAST in the finaliser, on purpose. Every detector between G2 and here
+    counts a `[[GL:id]]` as an attribution (`_ANY_CITATION_RE`), so rendering
+    it earlier would make correctly-sourced prose look uncited and get it
+    quarantined.
+    """
+    if not answer:
+        return answer or "", 0
+    mapping = _gl_render_map() if mapping is None else mapping
+    n = 0
+
+    def _sub(m):
+        nonlocal n
+        rec = mapping.get(m.group(1).strip())
+        if not rec:
+            return m.group(0)          # G2 removes unknown ids; not our job
+        n += 1
+        bits = [b for b in (str(rec.get("year") or "").strip(),
+                            rec.get("status") or "",
+                            rec.get("juris") or "") if b]
+        detail = " (%s)" % "; ".join(bits) if bits else ""
+        org = (rec.get("org") or "").strip()
+        title = _gl_short_title(rec.get("title"))
+        head = ("%s — %s" % (org, title)) if org else title
+        # BRACKETED, because an unbracketed rendering is not distinguishable
+        # from prose. Measured on the real case: the stored sentence
+        # "...foundational to the AAE classification of apical periodontitis
+        # [[PMID:AAE-PS-diagnosis]]." rendered as "...apical periodontitis
+        # Endodontic Diagnosis (2009)." — a title dropped mid-sentence, which
+        # reads as a garbled clause rather than a citation. It bites hardest
+        # on the two grandfathered rows that carry no organisation, where
+        # there is no "AAE — " prefix to signal a source at all.
+        #
+        # Square brackets match the reference list's own `[PMID: n]`
+        # convention, so a clinician reads one citation shape throughout.
+        return "[%s%s]" % (head, detail)
+
+    out = _GL_RE.sub(_sub, answer)
+    if n:
+        print("  [GL] rendered %d guideline citation(s)" % n)
+    return out, n
+
+
+def rewrite_pmid_slot_guidelines(answer: str, known=None):
+    """`[[PMID:<known guideline id>]]` -> `[[GL:<id>]]`, counted.
+
+    The prompt now asks for `[[GL:id]]`, but a model handed 44 slug-keyed rows
+    will still occasionally reach for the PMID form, and every STORED answer
+    predates the instruction entirely. Rewriting is what makes those resolve
+    instead of rendering raw on the page.
+
+    THE COUNT IS THE INSTRUMENT. If it stays high on freshly synthesised
+    answers after the prompt change, the prompt is not landing — and the
+    report has to say so rather than showing a clean rendered output that the
+    rewrite manufactured.
+    """
+    if not answer:
+        return answer or "", []
+    known = _known_synthetic_keys() if known is None else known
+    if not known:
+        return answer, []
+    rewrites = []
+
+    def _sub(m):
+        ident = m.group(1).strip()
+        if ident.isdigit() or ident not in known:
+            return m.group(0)
+        rewrites.append(ident)
+        return "[[GL:%s]]" % ident
+
+    out = _PMID_RE.sub(_sub, answer)
+    if rewrites:
+        print("  [GL] rewrote %d guideline citation(s) out of the PMID slot: %s"
+              % (len(rewrites), ", ".join(sorted(set(rewrites)))))
+    return out, rewrites
+
+
 def drop_unresolvable_citations(answer: str, known=None):
     """Remove citation markers whose id names nothing. Returns (text, dropped)."""
     if not answer:
@@ -8282,6 +8480,12 @@ def drop_unresolvable_citations(answer: str, known=None):
 
     out = _PMID_RE.sub(_check, answer)
     out = _REF_PMID_RE.sub(_check, out)
+    # ITEM B — the GL marker goes through the SAME gate, deliberately. An
+    # unknown guideline id is dropped and counted exactly like an unknown
+    # PMID, and a quarantined record is absent from `known`, so "a [[GL:id]]
+    # naming a quarantined or superseded record" needs no new path: it is
+    # already the behaviour.
+    out = _GL_RE.sub(_check, out)
     if dropped:
         # Removing a marker leaves the space that preceded it stranded in
         # front of the sentence's punctuation — "...mineralisation ." — and a
@@ -8327,6 +8531,10 @@ def finalise_answer_text(answer: str):
     # Both paths reach here, so a stored answer citing the old key is repaired
     # at serve time without rewriting a single stored row.
     answer, _redir = rewrite_redirected_citations(answer)
+    # ITEM B — a guideline id written into the PMID slot becomes a GL marker,
+    # BEFORE G2. Otherwise G2 sees a non-numeric id it does not recognise as a
+    # PMID and the citation is dropped instead of rendered.
+    answer, _glrw = rewrite_pmid_slot_guidelines(answer)
     # G2 — before every downstream reader, so a citation that resolves to
     # nothing cannot reach the bibliography, the support checker, a slide or a
     # rendered pill. The claim it was attached to becomes unattributed, which
@@ -8348,7 +8556,12 @@ def finalise_answer_text(answer: str):
     # re-rendering the same stored curriculum does not stack notices.
     answer = render_numeric_conflict_notice(answer)
     # Last, so it counts the quarantined content the step above just created.
-    return ensure_uncited_half(answer), blocks
+    answer = ensure_uncited_half(answer)
+    # ITEM B — GL markers render to text absolutely last, AFTER every detector
+    # and the banner have counted them as attributions. Rendering earlier
+    # makes a guideline-cited sentence look unsourced and gets it quarantined.
+    answer, _gl = render_gl_citations(answer)
+    return answer, blocks
 
 
 def _strip_quarantine_blocks(answer: str) -> str:
@@ -8536,7 +8749,14 @@ def _check_quarantine_reframe(answer: str) -> list:
 # form. `[PMID 27759881]` (no colon) is what the browser copy path emits.
 _ANY_CITATION_RE = re.compile(
     r"\[\[PMID:\s*" + _PMID_ID_PAT + r"\s*\]\]"
-    r"|\[PMID:?\s*" + _PMID_ID_PAT + r"\s*\]",
+    r"|\[PMID:?\s*" + _PMID_ID_PAT + r"\s*\]"
+    # ITEM B, 2026-09-07 — a guideline citation IS an attribution. Without
+    # this, every claim cited only by `[[GL:id]]` counts as unattributed, the
+    # banner over-reports, and the quarantine pass wraps correctly-sourced
+    # prose. The marker is rendered to text at the very END of the finaliser
+    # for exactly this reason: every detector in between must still be able to
+    # see it.
+    r"|\[\[GL:\s*" + _GL_ID_PAT + r"\s*\]\]",
     re.IGNORECASE)
 
 # ── what makes a claim DIRECTIVE ──
@@ -9666,6 +9886,8 @@ You MUST NEVER output a bare PMID number anywhere in the body of your response (
 Double brackets, the literal prefix "PMID:" (uppercase, no space), the digit string immediately after the colon, double brackets to close. Multiple co-citations are space-separated, each fully wrapped: [[PMID:12345678]] [[PMID:23456789]].
 
 This is a clinical-safety requirement: the UI parses these markers to render click-through citation pills so the clinician can verify each source. Any other format — bare numbers, single brackets like [PMID: 12345], parentheses, superscripts, "ref 1", "Smith et al. 2024 (12345678)" — will fail to render as a verifiable pill. The clinician will not be able to inspect the evidence behind your claim and your response is unsafe.
+
+GUIDELINES USE A DIFFERENT MARKER. Many specialty guidelines (AAE and ESE position statements, SDCEP, NICE, CGDent) are not indexed in PubMed and have no PMID at all. Each such source's line in the evidence block ends with `cite as [[GL:<id>]]` — use that marker exactly as shown, and never put a guideline id inside a PMID marker. Papers are cited `[[PMID:12345678]]`, guidelines are cited `[[GL:AAE-VPT-2021]]`, and the two forms are never mixed or interchanged.
 
 EXCEPTION (and ONLY this exception): the final numbered REFERENCES list at the bottom of the response uses single brackets `[PMID: 12345678]` as a bibliographic key. This is intentional and the parser distinguishes it from inline markers. Do not use `[PMID: N]` anywhere except inside that final numbered list.
 ═══════════════════════════════════════════════════════════════
