@@ -308,6 +308,28 @@ def setup_table():
             # what makes that question answerable per row instead of by
             # reading two files and guessing.
             ("level_key_source",       "TEXT DEFAULT ''"),
+            # A49 phase 1, item A (2026-09-07) — RE-KEYING, not deletion.
+            #
+            # A manifest record whose PMID was unknown is keyed by its slug and
+            # INSERTED, because the ingest dedupes by PMID and a record with no
+            # PMID cannot dedupe against anything. When the accession is later
+            # verified, the same document is in the library twice: once by
+            # slug and once by PMID. That is how COCHRANE-CD005296 came to sit
+            # at the `guideline` rung with a NULL score while PMID 36512807
+            # sat at `cochrane` scoring 73.7 — one Cochrane review, two rows,
+            # two tiers.
+            #
+            # The slug row is RETIRED, never removed: `quarantine_reason`
+            # takes it out of retrieval and `redirect_to` names the row that
+            # replaced it, so a stored citation of the slug still resolves.
+            # Nullable rather than DEFAULT '' because "points at nothing" and
+            # "points at row X" are the only two states, and an empty string
+            # would make a third that reads as both.
+            #
+            # 11 `unconfirmed_pmid` records remain. Each will hit this path as
+            # its accession is verified, which is why the ingest does this
+            # generally rather than patching two rows.
+            ("redirect_to",            "TEXT"),
         ):
             cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""

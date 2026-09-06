@@ -165,6 +165,11 @@ def tier_census(cur):
     return {r["level_key"]: r["n"] for r in cur.fetchall()}
 
 
+def a_keyed_by_pmid(g):
+    """True when this record's library key is its PMID rather than its slug."""
+    return bool(g.get("pmid") and g.get("confidence") == "confirmed")
+
+
 def alt_keys(g):
     """A guideline's OTHER accessions — co-publications, not duplicates.
 
@@ -190,7 +195,11 @@ def plan(cur, guidelines):
     """Decide, per manifest record, what will happen. No writes."""
     keys = [key_for(g) for g in guidelines]
     keys += [a for g in guidelines for a in alt_keys(g)]
-    cur.execute("SELECT pmid, level_key, score, impact_factor, title "
+    # Item A — the manifest IDs too, so a row left behind under the old slug
+    # key can be found. Without these the re-key step silently never fires.
+    keys += [str(g["id"]).strip() for g in guidelines]
+    cur.execute("SELECT pmid, level_key, score, impact_factor, title, "
+                "COALESCE(quarantine_reason,'') AS quarantine_reason "
                 "FROM endo_papers_rag WHERE pmid = ANY(%s)", (keys,))
     existing = {r["pmid"]: dict(r) for r in cur.fetchall()}
 
@@ -214,6 +223,49 @@ def plan(cur, guidelines):
                              if status in SUPERSEDED_STATUS else "",
         }
         actions.append(act)
+
+        # ITEM A (2026-09-07) — RE-KEYING. General, not a two-row patch.
+        #
+        # This record is now keyed by a PMID. If a row still exists under its
+        # MANIFEST ID, that row is the same document under the old key, left
+        # behind from when the accession was unknown. It is retired: taken out
+        # of retrieval by `quarantine_reason`, pointed at its replacement by
+        # `redirect_to`, and stripped of `guideline_id` so that
+        # `test_no_duplicate_guideline_ids` holds — two rows carrying one
+        # guideline id is exactly the duplicate being retired.
+        #
+        # 11 `unconfirmed_pmid` records remain in the manifest. Each will
+        # arrive here as its accession is verified, which is why this is a
+        # step in the ingest rather than a migration script run twice.
+        if a_keyed_by_pmid(g):
+            slug = str(g["id"]).strip()
+            srow = existing.get(slug)
+            # AN ALREADY-QUARANTINED ROW IS TERMINAL. It has been retired
+            # once, by an earlier mechanism, with its own reason string.
+            #
+            # `ESE-QG-2006` is the case that made this necessary: the A2 audit
+            # quarantined it as `duplicate_of:17180780` and cleared its
+            # guideline_id. Re-retiring it would overwrite that reason with
+            # "re-keyed: this document is 17180780" and break two tests that
+            # pin the exact string -- destroying the A2 audit's provenance to
+            # record the same fact in different words. Without this guard the
+            # dry run retires 3 rows, not the 2 predicted.
+            if srow and (srow.get("quarantine_reason") or "").strip():
+                continue
+            if slug != k and srow:
+                actions.append({
+                    "id": g["id"], "key": slug, "org": g.get("org"),
+                    "status": status, "confidence": g.get("confidence"),
+                    "keyed_by": "manifest id (RETIRED)",
+                    "action": "retire",
+                    "is_study": is_study_not_guideline(g),
+                    "was_level_key": srow.get("level_key"),
+                    "was_score": srow.get("score"),
+                    "was_impact_factor": srow.get("impact_factor"),
+                    "quarantine": "re-keyed: this document is %s" % k,
+                    "redirect_to": k,
+                    "superseded_by": "",
+                })
 
         # ITEM E — the co-published copies. Only ones ALREADY IN THE TABLE are
         # touched: an alt_pmid absent from the library is a document we do not
@@ -247,6 +299,21 @@ def write(cur, guidelines, actions):
         g = by_id[a["id"]]
         k = a["key"]
         text = pointer_text(g)
+        if a["action"] == "retire":
+            # ITEM A — retire the slug row. NOT deleted: the row keeps its
+            # text and its history, `quarantine_reason` takes it out of
+            # retrieval, and `redirect_to` lets a stored citation of the old
+            # key still resolve to the row that replaced it. `guideline_id` is
+            # cleared because two rows carrying one guideline id IS the
+            # duplicate.
+            cur.execute("""
+                UPDATE endo_papers_rag SET
+                    quarantine_reason = %s,
+                    redirect_to = %s,
+                    guideline_id = ''
+                WHERE pmid = %s
+            """, (a["quarantine"], a["redirect_to"], a["key"]))
+            continue
         vec = rag.embed(embed_text(g))
         if a["action"] == "enrich":
             # Metadata only. level_key, score and impact_factor untouched:
@@ -326,6 +393,8 @@ def main():
           % sum(1 for a in actions if a["action"] == "enrich"))
     print("  will INSERT new             %d"
           % sum(1 for a in actions if a["action"] == "insert"))
+    print("  will RETIRE re-keyed slugs  %d   (quarantined + redirect_to)"
+          % sum(1 for a in actions if a["action"] == "retire"))
     print("  keyed by manifest id        %d   (never emitted as [PMID:N])"
           % sum(1 for a in actions if a["keyed_by"] == "manifest id"))
     print("  quarantined on ingest       %d   (withdrawn / draft)"
@@ -352,7 +421,17 @@ def main():
                   % (a["key"], a["id"][:24], a["was_level_key"], a["was_score"]))
         print()
 
-    q = [a for a in actions if a["quarantine"]]
+    ret = [a for a in actions if a["action"] == "retire"]
+    if ret:
+        print("  RETIRED — a row still keyed by the manifest id, whose")
+        print("  document is now in the library under a verified PMID:")
+        for a in ret:
+            print("    %-24s was level_key=%-10s score=%-6s -> redirect_to %s"
+                  % (a["key"][:24], a["was_level_key"], a["was_score"],
+                     a["redirect_to"]))
+        print()
+
+    q = [a for a in actions if a["quarantine"] and a["action"] != "retire"]
     if q:
         print("  QUARANTINED ON INGEST:")
         for a in q:
