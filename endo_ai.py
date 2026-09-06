@@ -1136,6 +1136,26 @@ def admit_flagship_guidelines(evidence: dict, question: str) -> dict:
     for r in rows:
         r["similarity"] = None
         r["admitted_as"] = "flagship"
+        # A ROW ADMITTED HERE MUST BE SHAPED LIKE EVERY OTHER SCORED ROW.
+        # The first version selected only the guideline columns, and
+        # `_build_evidence_context` raised `KeyError: 'citations'` on the
+        # key-papers panel — a row that reaches the pool by a different door
+        # still has to satisfy everything downstream reads. Defaults match what
+        # `rag_results_to_scored` produces for a guideline: no sample size, no
+        # follow-up, no impact factor, and no score, because a guideline is not
+        # on the study-design ladder.
+        r.setdefault("citations", 0)
+        r.setdefault("sample_size", None)
+        r.setdefault("followup_months", None)
+        r.setdefault("impact_factor", None)
+        r.setdefault("is_curated", True)
+        r.setdefault("medline_indexed", False)
+        r.setdefault("has_erratum", False)
+        r.setdefault("has_retraction", False)
+        r.setdefault("superseded_by", "")
+        r.setdefault("quarantine_reason", "")
+        r.setdefault("coi_status", "no_statement")
+        r.setdefault("registry", "")
         scored.append(r)
     block["scored"] = scored
     ids_list = list(block.get("ids") or [])
