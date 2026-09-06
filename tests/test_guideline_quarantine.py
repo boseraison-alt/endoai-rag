@@ -41,11 +41,14 @@ QUARANTINED = [
 ]
 
 # A2 verified four records as naming real documents and kept them citeable.
-# THREE of those four still are. See QUARANTINED_LATER below for the fourth —
-# the A2 verdict on it was correct and was superseded by a different question.
-VERIFIED = [
-    "AAE-PS-diagnosis", "AAE-PS-vital-pulp",
-]
+# NONE of the four still is. All four are in QUARANTINED_LATER below: the A2
+# verdict was correct on every one of them, and a different question
+# superseded it in every case.
+#
+# That is the finding, and it is worth more than the list: "does this record
+# name a real document?" and "is this ROW needed?" are different questions,
+# and the A2 pass was only ever asking the first.
+VERIFIED = []
 
 # SUPERSEDED A2 VERDICT, recorded rather than edited away (rule 24).
 #
@@ -79,11 +82,64 @@ QUARANTINED_LATER = {
     "ESE-QG-2006": ("duplicate_of:17180780",
                     "A2-verified as real; item 3 found the verified PMID row "
                     "for the same document already present"),
+    # 2026-09-07. The LAST TWO of the four, and the first retired for what
+    # their text IS rather than for redundancy alone.
+    #
+    # `ingest_aae_guidelines.py` says of its own records: "Summaries are
+    # condensed from the official documents." They are model-written
+    # paraphrases stored as source text, so `verify_citation_support` was
+    # checking clinical claims against a model's words — a hole directly under
+    # the grounding guarantee, and one no amount of verifying the DOCUMENT
+    # could close, because the document was never the problem.
+    #
+    # They could not be retired before 2026-09-07, and that is the substance
+    # rather than the timing: each duplicates a manifest record that was
+    # itself a bare pointer until that day, so retiring the paraphrase would
+    # have replaced text with no text. AAE-VPT-2021 now carries the AAE's own
+    # words, fetched through a browser session because aae.org returns 403 to
+    # everything else. The exchange is a paraphrase for the document.
+    #
+    # AAE-DIAGNOSIS-2009 is still a pointer, so that one trades a paraphrase
+    # for "position not quoted — read at <url>". That is the right direction
+    # anyway: an honest absence beats an unverifiable summary a support
+    # checker will treat as a source.
+    #
+    # Redirect targets are the manifest's own. Its note on AAE-DIAGNOSIS-2009
+    # reads: "'AAE-PS-diagnosis]' leaking into Case citation slots resolves to
+    # AAE-DIAGNOSIS-2009."
+    "AAE-PS-vital-pulp": (
+        "re-keyed: this document is AAE-VPT-2021; the text stored here was a "
+        "model-written summary, not the document's own words",
+        "A2-verified as real; 2026-09-07 found its stored text was a "
+        "model-written paraphrase and the same document now carries the AAE's "
+        "own words under AAE-VPT-2021"),
+    "AAE-PS-diagnosis": (
+        "re-keyed: this document is AAE-DIAGNOSIS-2009; the text stored here "
+        "was a model-written summary, not the document's own words",
+        "A2-verified as real; 2026-09-07 found its stored text was a "
+        "model-written paraphrase and the manifest names AAE-DIAGNOSIS-2009 "
+        "as what this key resolves to"),
 }
 
 # Real, PubMed-indexed guidelines that also sit at level_key='guideline'.
 # They were never in scope and this is the guard that says so.
 REAL_PMID_GUIDELINES = ["28436043", "31668170", "36942472", "37772327", "39578680"]
+
+# THE CONTROL ARM, and it needs one now that VERIFIED is empty.
+#
+# Three tests below use a citeable slug row to prove the quarantine clause is
+# not TOO BROAD — that it removes the quarantined rows and nothing else. They
+# used VERIFIED for that, and when the last two A2-verified records were
+# retired on 2026-09-07 the control became an empty set: `got & set(VERIFIED)`
+# is then vacuously falsy, and the "too broad" assertion could never fail for
+# the right reason again (rule 4).
+#
+# The replacement is deliberately the two RETIREMENT TARGETS. They are the
+# documents those retired citations now resolve to, so if the clause ever
+# swallowed them the retirement would have broken the 32 stored answers it was
+# supposed to repair — which makes them the most load-bearing control
+# available, not merely a convenient one.
+CITEABLE_CONTROL = ["AAE-VPT-2021", "AAE-DIAGNOSIS-2009"]
 
 
 def _db():
@@ -160,8 +216,13 @@ class TestTheRowsAreMarked:
             conn.close()
         assert n == 12, f"only {n} of 12 quarantined rows still carry their text"
 
-    @pytest.mark.parametrize("slug", VERIFIED)
-    def test_the_verified_records_are_untouched_by_A2(self, slug):
+    @pytest.mark.parametrize("slug", CITEABLE_CONTROL)
+    def test_a_citeable_guideline_row_is_untouched_by_the_quarantine(self, slug):
+        """RETARGETED 2026-09-07. This was parametrized on VERIFIED, which is
+        now empty — a zero-parameter test does not run at all and proves
+        nothing (rule 4). It now uses the two rows the retired slugs redirect
+        to: if the quarantine ever swallowed THOSE, the retirement would have
+        broken the 32 stored answers it repaired."""
         conn = _db()
         cur = conn.cursor()
         try:
@@ -226,13 +287,17 @@ class TestNoAnswerCanCiteOne:
         assert known is not None, "gate disabled — DB unreachable"
         assert slug not in known
 
-    @pytest.mark.parametrize("slug", VERIFIED)
-    def test_a_verified_slug_still_resolves(self, slug, fresh_key_cache):
+    @pytest.mark.parametrize("slug", CITEABLE_CONTROL)
+    def test_a_citeable_slug_still_resolves(self, slug, fresh_key_cache):
+        """RETARGETED 2026-09-07, same reason: VERIFIED is empty and a
+        zero-parameter test is not a test. These two are what
+        AAE-PS-vital-pulp and AAE-PS-diagnosis now redirect to, so a citation
+        of either retired key resolves only if these still do."""
         known = E._known_synthetic_keys()
         assert known is not None
         assert slug in known, (
-            f"{slug} stopped resolving. A2 verified it against a real "
-            f"document and the batch requires those to keep working.")
+            f"{slug} stopped resolving — every citation of the slug that "
+            f"redirects to it now resolves to nothing.")
 
     @pytest.mark.parametrize("slug", sorted(QUARANTINED_LATER))
     def test_the_later_quarantine_reaches_the_citation_gate_too(
@@ -254,11 +319,18 @@ class TestNoAnswerCanCiteOne:
         assert "AAE-PS-antibiotics" not in out
         assert "AAE-PS-antibiotics" in dropped
 
-    def test_a_citation_to_a_verified_record_survives(self, fresh_key_cache):
+    def test_a_citation_to_a_citeable_record_survives(self, fresh_key_cache):
+        """The control for the test above: G2 must drop the quarantined key and
+        NOT this one, or it is a gate that drops everything.
+
+        RETARGETED 2026-09-07. It cited AAE-PS-diagnosis, which is now retired
+        — so the test would have been asserting that a RETIRED key survives
+        the gate, which is the opposite of what the gate is for.
+        AAE-DIAGNOSIS-2009 is the row that key now redirects to."""
         text = ("Pulp status is assessed before treatment "
-                "[[PMID:AAE-PS-diagnosis]].")
+                "[[PMID:AAE-DIAGNOSIS-2009]].")
         out, dropped = E.drop_unresolvable_citations(text)
-        assert "AAE-PS-diagnosis" in out
+        assert "AAE-DIAGNOSIS-2009" in out
         assert dropped == []
 
     def test_the_drop_is_loud(self, fresh_key_cache, capsys):
@@ -280,8 +352,9 @@ class TestNoAnswerCanCiteOne:
         assert "AAE-PS-obturation" not in served, (
             "a quarantined citation survived the finaliser every answer "
             "path goes through")
-        assert "AAE-PS-vital-pulp" in served, (
-            "the finaliser also dropped a VERIFIED record")
+        assert "AAE-VPT-2021" in served, (
+            "the finaliser also dropped a citeable record — and this one is "
+            "the row AAE-PS-vital-pulp now redirects to")
 
 
 # ── the retrieval layer ──────────────────────────────────
@@ -312,12 +385,14 @@ class TestNoQuarantinedRowEntersAPool:
         turn. Invisible, and only on follow-ups."""
         import rag
         rows = rag.search_by_pmids("vital pulp therapy",
-                                   QUARANTINED + VERIFIED)
+                                   QUARANTINED + CITEABLE_CONTROL)
         got = {r["pmid"] for r in rows}
         assert not (got & set(QUARANTINED)), (
             f"follow-up seeding re-admitted {sorted(got & set(QUARANTINED))}")
-        assert got & set(VERIFIED), (
-            "the verified records stopped seeding too — the clause is too broad")
+        assert got & set(CITEABLE_CONTROL), (
+            "citeable guideline rows stopped seeding too — the clause is too "
+            "broad. These two are what the retired slugs redirect to, so "
+            "losing them breaks every stored answer the retirement repaired.")
 
 
 # ── reversibility ────────────────────────────────────────

@@ -72,12 +72,25 @@ class TestTheRenderedCitation:
         assert n == 0 and UNKNOWN in out
 
     def test_a_row_with_no_org_still_renders(self):
-        """The two grandfathered pre-manifest AAE rows carry an empty
-        guideline_id and no org. They must not render as ' — title'."""
-        out, n = E.render_gl_citations("X [[GL:AAE-PS-vital-pulp]].")
+        """A row with no organisation must not render as ' — title'.
+
+        DRIVEN THROUGH AN EXPLICIT MAPPING since 2026-09-07. The fixture used
+        to be AAE-PS-vital-pulp, one of the two grandfathered pre-manifest rows
+        that carried no org — and both were retired that day, leaving ZERO
+        citeable rows with an empty org. Pointing the test at a live row again
+        would mean waiting for the defect to reappear before it could be
+        caught; `render_gl_citations` takes its mapping as a parameter, so the
+        shape can be exercised directly.
+        """
+        mapping = {"NO-ORG-2020": {"org": "", "title": "Vital Pulp Therapy",
+                                   "year": 2020, "status": "current",
+                                   "juris": "", "url": "", "has_text": False}}
+        out, n = E.render_gl_citations("X [[GL:NO-ORG-2020]].", mapping)
         assert n == 1
-        assert not out.strip().startswith("X  —"), out
-        assert "Vital Pulp" in out
+        assert "—" not in out.split("]")[0], (
+            "an org-less row rendered a dangling em dash: %r" % out)
+        assert "Vital Pulp Therapy" in out
+        assert "[GL:NO-ORG-2020 · Vital Pulp Therapy (2020; current)]" in out, out
 
     def test_a_long_title_is_cut_at_a_word_boundary(self):
         out, _n = E.render_gl_citations("X [[GL:ESE-TRAUMA-2021]].")

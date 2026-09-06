@@ -56,6 +56,14 @@ ROOT = Path(__file__).parent.parent
 # A2 verified against a real document (AAE-VPT-2021), so it carries the same
 # property the fixture was built for. The quarantined case has its own test in
 # `TestAQuarantinedCitationNeverReachesAServedAnswer` below.
+#
+# 2026-09-07: AAE-PS-vital-pulp was RETIRED (its stored text was a
+# model-written paraphrase) with `redirect_to = AAE-VPT-2021`, so the stored
+# citation now RESOLVES THROUGH the redirect. The fixture keeps the old key in
+# the stored answer — that is the realistic input, and 10 stored answers look
+# exactly like this — and the expectations name the key it resolves to. The
+# property under test is unchanged: a synthetic key in a stored answer reaches
+# the served answer and the bibliography.
 PRE_STAGE1_ANSWER = (
     "## CLINICAL RECOMMENDATION\n\n"
     "Apical surgery is low-risk for major bleeding [[PMID:27759881]], and the "
@@ -73,7 +81,9 @@ PRE_STAGE1_ANSWER = (
 
 PRE_STAGE1_PAPERS = [
     {"pmid": "27759881", "score": 73.3, "level_key": "cochrane"},
-    {"pmid": "AAE-PS-vital-pulp", "score": 90.0, "level_key": "guideline"},
+    # the payload carries the RESOLVED key: the served answer cites what the
+    # redirect points at, and the bibliography is built from the served text
+    {"pmid": "AAE-VPT-2021", "score": 90.0, "level_key": "guideline"},
     {"pmid": "35762859", "score": 80.9, "level_key": "level1"},
     {"pmid": "2084204", "score": 74.0, "level_key": "classic"},      # never cited
     {"pmid": "38243912", "score": 73.9, "level_key": "level3a"},     # never cited
@@ -183,7 +193,7 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         assert "cited_pmids" in body, (
             "the History route serves papers without saying which were cited, "
             "so the bibliography falls back to the whole retrieval pool")
-        assert set(body["cited_pmids"]) == {"27759881", "AAE-PS-vital-pulp", "35762859"}
+        assert set(body["cited_pmids"]) == {"27759881", "AAE-VPT-2021", "35762859"}
         assert "(IF:" not in body["answer"], "the stored answer was served unrendered"
         assert re.search(r"\d+ claims? not from the evidence base", body["answer"])
 
@@ -197,7 +207,7 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
         body = client.get("/learn_history/20260101_000000_q.json").get_json()
         assert "cited_pmids" in body
-        assert set(body["cited_pmids"]) == {"27759881", "AAE-PS-vital-pulp", "35762859"}
+        assert set(body["cited_pmids"]) == {"27759881", "AAE-VPT-2021", "35762859"}
         assert "(IF:" not in body["answer"]
         assert (endo_ai._QUARANTINE_HEADER in body["answer"]
                 or endo_ai._QUARANTINE_INLINE_MARK in body["answer"])
@@ -271,8 +281,8 @@ class TestAQuarantinedCitationNeverReachesAServedAnswer:
             "a stored answer served a citation to a record A2 could not "
             "verify — there is no 2021 AAE CBCT statement")
         assert "AAE-PS-cbct" not in set(body.get("cited_pmids") or [])
-        assert "AAE-PS-diagnosis" in body["answer"], (
-            "the verified record was dropped too — the gate is too broad")
+        assert "AAE-DIAGNOSIS-2009" in body["answer"], (
+            "the citeable record was dropped too — the gate is too broad")
 
     def test_the_learn_history_route_drops_it(self, client, tmp_path, monkeypatch):
         import app as app_mod
@@ -283,7 +293,7 @@ class TestAQuarantinedCitationNeverReachesAServedAnswer:
         monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
         body = client.get("/learn_history/20260101_000000_q.json").get_json()
         assert "AAE-PS-cbct" not in body["answer"]
-        assert "AAE-PS-diagnosis" in body["answer"]
+        assert "AAE-DIAGNOSIS-2009" in body["answer"]
 
     def test_the_stored_row_is_not_rewritten(self):
         """Reversible: the drop happens at read time, so clearing

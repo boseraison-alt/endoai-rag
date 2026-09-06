@@ -321,9 +321,23 @@ class TestItem3TheSlugIdSplit:
             "and not redirected to a citeable row: %s" % missing)
         # The redirect is the whole safety property, so it is asserted, not
         # merely tolerated: every retired original must still be reachable.
+        #
+        # NOT "the target is a PMID" — that was this test's own over-specific
+        # assertion, written when the only redirects were Cochrane slug -> PMID.
+        # On 2026-09-07 AAE-PS-diagnosis was retired to AAE-DIAGNOSIS-2009, a
+        # slug-keyed manifest record, and the assertion failed on a redirect
+        # that is entirely correct. Reachability is what matters, and the loop
+        # above already establishes it.
+        #
+        # What IS worth asserting is that the chain is one hop: a redirect
+        # whose target is itself redirected would resolve to nothing, because
+        # `rewrite_redirected_citations` rewrites once and does not follow.
         for slug, target in redirected:
-            assert target.isdigit(), (
-                "%s redirects to %r, which is not a PMID" % (slug, target))
+            hop = _q("""SELECT COALESCE(redirect_to,'')
+                        FROM endo_papers_rag WHERE pmid = %s""", (target,))
+            assert hop and not hop[0][0].strip(), (
+                "%s redirects to %s, which is itself redirected — the rewrite "
+                "resolves one hop only" % (slug, target))
 
     def test_every_citeable_slug_row_names_a_real_manifest_record(self):
         """The other half of the same guard, and the half a count cannot give.

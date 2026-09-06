@@ -58,26 +58,52 @@ class TestEveryStoredGuidelineTextDeclaresItsSource:
         assert rows == [], (
             "guideline rows with text and no abstract_source: %s" % rows)
 
-    def test_the_only_model_written_summaries_are_the_two_known_ones(self):
-        """THE HOLE THIS MAKES VISIBLE, rather than closes.
+    def test_no_citeable_row_carries_a_model_written_summary(self):
+        """THE HOLE, NOW CLOSED — and pinned as a property, not a name list.
 
         `ingest_aae_guidelines.py` says of its own records: "Summaries are
         condensed from the official documents." They are paraphrases stored as
-        source text, so `verify_citation_support` checks claims against a
-        model's words — the hole the handover names directly.
+        source text, so `verify_citation_support` was checking claims against a
+        model's words — a hole directly under the grounding guarantee.
 
-        The A2 audit kept these two citeable because they name REAL documents,
-        and quarantining them would remove two real guidelines to fix a
-        labelling problem. So they are labelled `model_summary_legacy`:
-        countable, findable, and impossible to add to silently. RB decides
-        between re-fetching and quarantining; a THIRD one appearing is a
-        regression this test catches the day it happens.
+        This test used to assert the two known ids by name, which made the hole
+        VISIBLE while leaving it open. Both are now retired (2026-09-07):
+
+            AAE-PS-vital-pulp  -> AAE-VPT-2021        (AAE's own text)
+            AAE-PS-diagnosis   -> AAE-DIAGNOSIS-2009
+
+        so the assertion is the property that matters — **no citeable row
+        anywhere carries a model-written summary**. A name list would pass
+        again the moment a third one appeared under a different id; this
+        cannot. Retired rows keep their label and their text, which is what
+        makes the retirement reversible.
         """
-        rows = _q("""SELECT pmid FROM endo_papers_rag
+        rows = _q("""SELECT pmid, LEFT(COALESCE(abstract,''), 50)
+                     FROM endo_papers_rag
                      WHERE abstract_source = 'model_summary_legacy'
+                       AND COALESCE(quarantine_reason,'') = ''
                      ORDER BY pmid""")
-        assert [r[0] for r in rows] == ["AAE-PS-diagnosis",
-                                        "AAE-PS-vital-pulp"], rows
+        assert rows == [], (
+            "citeable rows whose stored text is a model-written summary: %s"
+            % rows)
+
+    def test_the_retired_paraphrase_rows_still_resolve(self):
+        """Retired, not deleted. 10 stored answers cite AAE-PS-vital-pulp and
+        22 cite AAE-PS-diagnosis; each must still reach a citeable row, or the
+        retirement broke 32 answers to fix 2 rows."""
+        rows = _q("""SELECT pmid, redirect_to
+                     FROM endo_papers_rag
+                     WHERE abstract_source = 'model_summary_legacy'""")
+        assert rows, "no model_summary_legacy rows at all — nothing checked"
+        for pmid, redirect in rows:
+            assert redirect, "%s was retired with no redirect_to" % pmid
+            target = _q("""SELECT COALESCE(quarantine_reason,'')
+                           FROM endo_papers_rag WHERE pmid = %s""", (redirect,))
+            assert target, "%s redirects to %s, which does not exist" % (
+                pmid, redirect)
+            assert not target[0][0].strip(), (
+                "%s redirects to %s, which is itself quarantined"
+                % (pmid, redirect))
 
     def test_no_new_paraphrase_can_be_stored_as_org_page(self):
         """`org_page` means the document's own words, fetched and hashed. A row
