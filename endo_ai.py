@@ -8184,6 +8184,85 @@ def _known_synthetic_keys():
     return _KNOWN_SYNTHETIC_KEYS
 
 
+_REDIRECT_MAP = None
+
+
+def _redirect_map():
+    """{retired key: the key that replaced it}, from `redirect_to`.
+
+    ITEM A, 2026-09-07. A manifest record whose accession was unknown is keyed
+    by its slug and inserted; when the accession is later verified the same
+    document is in the library twice. The slug row is retired — quarantined,
+    with `redirect_to` naming its replacement.
+
+    Without this rewrite the retire would silently BREAK stored citations.
+    `COCHRANE-CD005296` is quarantined, so `_known_synthetic_keys` excludes it,
+    so G2 would drop `[[PMID:COCHRANE-CD005296]]` and the claim it was attached
+    to would go unattributed — a correct behaviour for a record that names
+    nothing, and the wrong one for a record that names a document we still
+    hold under a better key.
+
+    Fails OPEN, like `_known_synthetic_keys`: no rewriting is worse than
+    dropping every citation because the library blinked.
+    """
+    global _REDIRECT_MAP
+    if _REDIRECT_MAP is None:
+        try:
+            from rag import get_conn
+            conn = get_conn()
+            cur = conn.cursor()
+            try:
+                cur.execute("SELECT pmid, redirect_to FROM endo_papers_rag "
+                            "WHERE COALESCE(redirect_to, '') <> ''")
+                _REDIRECT_MAP = {r[0]: r[1] for r in cur.fetchall()}
+            finally:
+                cur.close()
+                conn.close()
+        except Exception as e:
+            print(f"  [redirect] map unavailable, rewriting disabled: {e}")
+            return {}
+    return _REDIRECT_MAP
+
+
+def _reset_redirect_map():
+    """Test hook, mirroring `_reset_sr_refs_cache`."""
+    global _REDIRECT_MAP
+    _REDIRECT_MAP = None
+
+
+def rewrite_redirected_citations(answer: str, mapping=None):
+    """Point citations of a retired key at the row that replaced it.
+
+    Runs BEFORE G2, because a retired key is a quarantined key and G2's whole
+    job is to drop those. Returns (text, rewrites) where `rewrites` is a list
+    of (old, new) so the count can be reported per answer.
+    """
+    if not answer:
+        return answer or "", []
+    mapping = _redirect_map() if mapping is None else mapping
+    if not mapping:
+        return answer, []
+    rewrites = []
+
+    def _sub(m):
+        ident = m.group(1).strip()
+        target = mapping.get(ident)
+        if not target:
+            return m.group(0)
+        rewrites.append((ident, target))
+        return m.group(0).replace(ident, target)
+
+    out = _PMID_RE.sub(_sub, answer)
+    out = _REF_PMID_RE.sub(_sub, out)
+    if rewrites:
+        import collections
+        tally = collections.Counter("%s -> %s" % r for r in rewrites)
+        print("  [redirect] rewrote %d citation(s) of a re-keyed record: %s"
+              % (len(rewrites),
+                 ", ".join("%s x%d" % (k, v) for k, v in tally.most_common())))
+    return out, rewrites
+
+
 def drop_unresolvable_citations(answer: str, known=None):
     """Remove citation markers whose id names nothing. Returns (text, dropped)."""
     if not answer:
@@ -8242,6 +8321,12 @@ def finalise_answer_text(answer: str):
     Returns `(answer, quarantined_blocks)`.
     """
     answer = strip_impact_factor(answer)
+    # ITEM A — re-keyed records, BEFORE G2. A retired slug row is quarantined,
+    # so G2 would drop a citation of it; rewriting first turns
+    # `[[PMID:COCHRANE-CD005296]]` into `[[PMID:36512807]]`, which resolves.
+    # Both paths reach here, so a stored answer citing the old key is repaired
+    # at serve time without rewriting a single stored row.
+    answer, _redir = rewrite_redirected_citations(answer)
     # G2 — before every downstream reader, so a citation that resolves to
     # nothing cannot reach the bibliography, the support checker, a slide or a
     # rendered pill. The claim it was attached to becomes unattributed, which
