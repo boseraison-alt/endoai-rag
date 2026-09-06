@@ -233,6 +233,40 @@ Opening instruction for the agent session:
     forgot the write-back. Remedy shipped the same night: `level_key_source`
     records WHICH writer set the key, per row, so the question is answerable
     by query instead of by reading two files and guessing.)
+38. **Any A/B measured on live pools reports the same-build, same-day noise
+    floor beside the delta. Where the change is in query construction, compare
+    QUERY STRINGS, which are deterministic.** (Origin: 2026-09-06. A
+    confinement proof compared returned pools across two arms and reported 61
+    of 256 study-lane pools changed, which reads as a leak. Running the
+    IDENTICAL build twice also produced 61 — PubMed's relevance sort is not
+    stable at the retmax cutoff, so the measurement was of PubMed, not of the
+    change. Asked deterministically instead: 0 of 256 query strings differed.
+    2026-09-07 found the same class one layer up — three runs of one probe,
+    same build, minutes apart, returned guideline pools of 5, 5 and 6 with
+    three different memberships, because `generate_search_terms` is
+    non-deterministic and every similarity moves with the boolean it writes.
+    A pool-membership delta below that floor says nothing.)
+39. **A test asserting a count — or any literal — that an AUTHORISED write
+    necessarily changes is repaired to an identity assertion, with the fixture
+    taken from the pre-write dump and both harms mutation-checked. That is a
+    repair, not a block. Re-pinning the new count is forbidden.** (Origin:
+    2026-09-06, `test_the_remaining_slug_rows_are_left_alone` asserted
+    `COUNT(*) == 30` on citeable slug rows and the authorised ingest made it
+    46. Nothing was lost; both harms the test named REMOVE rows. Re-pinning at
+    46 would have repeated the mistake one number along: a batch that
+    quarantined one original and added one invented slug would hold the count
+    at 46 and pass.
+    Extended 2026-09-07 from "count" to "any literal". The same night,
+    `test_an_unparseable_identifier_is_emitted_as_given_and_loses_the_noun`
+    asserted an exact supersession string that RB's own manifest edit
+    reordered. A hard-coded string over data an authorised write may change is
+    a count proxy in another costume; it was repaired by DERIVING the
+    expectation from the same manifest the function reads and asserting the two
+    properties the test is named for. And
+    `test_the_remaining_slug_rows_are_left_alone` itself needed a second repair
+    when item A retired two of its own fixtures — repaired again by following
+    `redirect_to`, because the invariant it has always meant is "no document
+    leaves the library", not "this slug is citeable".)
 
 ---
 
@@ -2059,6 +2093,74 @@ explained after.
 - **A46c** Commit prediction and outcome together with `baseline_v6`, keeping `v5`.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
+
+### A53 — NIGHT 2026-09-07: overturned premises, and five more instrument errors
+
+#### Overturned premises
+
+**(a) The advisory session's "guidelines were forced to level1" — retracted,
+and the retraction was itself wrong by half.**
+
+The claim was that `ingest_aae_guidelines.py` forced guidelines to `level1`.
+It was retracted as wrong. The retraction was half wrong: the ingest is not the
+only writer that does it. `scripts/backfill_pubmed_metadata.py::PUBTYPE_TO_LEVEL`
+maps `practice guideline`, `guideline` and `consensus development conference`
+to **level1** — it was written before the `guideline` tier existed. That is a
+THIRD writer of `level_key`, alongside the pubtype backfill and live
+write-back, and rule 37 was written after finding only two of them.
+
+**(b) 2026-09-06 B3: `DOMAIN_NOUNS` predicted as a subset of
+`_COVERAGE_GENERIC` (40 terms), built as a superset (82).** Predicting a subset
+was the same misreading of `_COVERAGE_GENERIC` that caused the regression in
+the first place: it does not enumerate the domain, it enumerates words with no
+discriminating power.
+
+**(c) 2026-09-07, item C: "the guideline block is a top-k problem."** The cap of
+4 does cut eligible rows on 8 of 32 questions. But the dominant effect is that
+`generate_search_terms` is non-deterministic and every similarity moves with the
+boolean it writes. Three runs of probe 3, same build, minutes apart: ESE-S3-2023
+absent from the KNN; then similarity 0.6089 rank 4; then 0.5748 rank 5. Raising
+the cap fixes the 19 rows k was cutting and does not fix the variance.
+
+#### Instrument errors — five more, each caught before it reached a number
+
+**1. A stored-answer sweep counted the `pages` field as a citation.** Cochrane
+article numbers ARE the journal's page field, so `"pages": "CD005296"` sits
+inside the papers-JSON of the surviving PMID row. Counting those four as
+citations of the row being RETIRED would have overstated the blast radius
+fourfold. The real answer is 0.
+
+**2. A fetch harness reported 403 on all eight rows it tried**, which would have
+been "the publishers block automated fetching". The headers were the problem:
+User-Agent and Accept only. With a full browser header set NICE, SDCEP, CGDent,
+gov.uk and IADT all return 200.
+
+**3. The same harness advertised `Accept-Encoding: br` in an environment with
+no brotli**, so servers sent brotli and `requests` returned undecoded bytes.
+One page "succeeded" with 75 words of mojibake and was filed as
+`no_extractable_text` — blaming the document for my header.
+
+**4. An admission measurement embedded the raw question** and ranked guideline
+rows against that one vector. Production calls `multi_query_search`, which KNNs
+once per generated boolean AND the question and keeps the best similarity per
+PMID. The wrong instrument reported "median eligible above floor = 0" and
+"ESE-S3-2023 is not above the floor at all" for rows that were demonstrably
+reaching pools the night before. (Rule 33.)
+
+**5. A synthesis harness counted markers in what `ask_clinical_question`
+returns and called them "raw".** That function finalises internally, so the GL
+markers were already rendered and the PMID-slot slugs already rewritten. It
+reported "GL markers the model wrote: 0" beside "rendered guideline citations:
+1" — two numbers that cannot both be true, which is what gave it away. The
+finaliser is now wrapped and its INPUT recorded.
+
+**And two of my own changes broke things the suite caught**, neither a count
+proxy: rendering `[[GL:id]]` to bare text broke idempotence (the archive routes
+re-render on every read, so the second pass saw an uncited claim), and it
+dropped the guideline out of `assemble_bibliography` entirely — cited in the
+prose, absent from the references.
+
+---
 
 ### A52 — NIGHT 2026-09-06: overturned premises, and the instrument-error log
 
