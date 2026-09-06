@@ -957,6 +957,125 @@ SR_TIER_KEYS         = ("cochrane", "level1")
 PRIMARY_TIER_KEYS    = ("level2", "level3a", "level3b", "level3", "level4")
 
 
+def flagship_guidelines_for(question: str) -> list:
+    """Manifest ids of `flagship: true` records whose scope the question hits.
+
+    ITEM C, 2026-09-07. A flagship guideline is the one a specialty would name
+    if asked "what is your position on endodontics" — ESE-S3-2023 is the only
+    record carrying the flag today. Its embedding covers the whole field, so
+    on any SPECIFIC question it loses to any narrow document, and it sits on
+    the wrong side of the similarity floor by a hair.
+
+    MEASURED, three runs of probe 3, same question, minutes apart:
+
+        run 1   absent from the KNN entirely
+        run 2   similarity 0.6089, rank 4
+        run 3   similarity 0.5748, rank 5
+
+    The floor is 0.55. A document that answers the question does not stop
+    answering it because `generate_search_terms` produced a different boolean
+    that minute, and a clinician asking about failed retreatment should not
+    see the European S3 guideline on treating pulpal and apical disease only
+    two runs in three.
+
+    SCOPE INTERSECTION IS THE GUARD, and it is what keeps this from being a
+    floor weakening dressed as a rule. A flagship is admitted only where the
+    question's own domain nouns hit its declared `scope[]`. It cannot appear
+    on a question outside its subject, and no row without the manifest flag is
+    reached at all. RB owns the flag; nothing here adds one.
+    """
+    global _MANIFEST_BY_ID
+    if _MANIFEST_BY_ID is None:
+        _guideline_supersession_notice("")
+    q = (question or "").lower()
+    if not q:
+        return []
+    out = []
+    for gid, rec in (_MANIFEST_BY_ID or {}).items():
+        if not rec.get("flagship"):
+            continue
+        if (rec.get("status") or "").lower() != "current":
+            continue
+        scope = [str(s).lower().strip() for s in (rec.get("scope") or []) if s]
+        # A scope term counts as hit when the question names it, or when the
+        # question's own domain vocabulary does — `DOMAIN_NOUNS` is item B's
+        # list, built from the eval questions' own generated term groups.
+        hit = any(s and s in q for s in scope)
+        if not hit:
+            for s in scope:
+                if _DOMAIN_NOUN_RE.search(s) and _DOMAIN_NOUN_RE.search(q):
+                    for m in _DOMAIN_NOUN_RE.finditer(s):
+                        if m.group(0).lower() in q:
+                            hit = True
+                            break
+                if hit:
+                    break
+        if hit:
+            out.append(gid)
+    return out
+
+
+def admit_flagship_guidelines(evidence: dict, question: str) -> dict:
+    """Ensure a scope-matched flagship guideline is in the guideline block.
+
+    ADDITIVE. It adds at most one row per flagship record, only where the
+    question hits the record's declared scope, only for a CURRENT record, and
+    only when the row is citeable. It removes nothing and reorders nothing.
+
+    This is the one place a similarity floor is bypassed, and it is bypassed
+    for a named, manifest-flagged, scope-matched document rather than lowered
+    for everything — the floor still governs every other row in the block.
+    """
+    ids = flagship_guidelines_for(question)
+    if not ids:
+        return evidence
+    block = evidence.get("guideline") or {}
+    scored = list(block.get("scored") or [])
+    have = {(p.get("guideline_id") or "").strip() for p in scored}
+    have |= {str(p.get("pmid") or "").strip() for p in scored}
+    missing = [g for g in ids if g not in have]
+    if not missing:
+        return evidence
+    try:
+        from rag import get_conn
+        conn = get_conn()
+        cur = conn.cursor()
+        try:
+            cur.execute("""
+                SELECT pmid, title, abstract, authors, year, journal,
+                       level_key, score, guideline_id, guideline_org,
+                       guideline_status, guideline_jurisdiction, guideline_url
+                FROM endo_papers_rag
+                WHERE guideline_id = ANY(%s)
+                  AND COALESCE(quarantine_reason,'') = ''
+                  AND COALESCE(superseded_by,'') = ''
+            """, (missing,))
+            cols = [d[0] for d in cur.description]
+            rows = [dict(zip(cols, r)) for r in cur.fetchall()]
+        finally:
+            cur.close()
+            conn.close()
+    except Exception as e:
+        print(f"  [flagship] lookup failed, admitting nothing: {e}")
+        return evidence
+    if not rows:
+        return evidence
+    for r in rows:
+        r["similarity"] = None
+        r["admitted_as"] = "flagship"
+        scored.append(r)
+    block["scored"] = scored
+    ids_list = list(block.get("ids") or [])
+    ids_list += [str(r["pmid"]) for r in rows
+                 if str(r["pmid"]) not in set(map(str, ids_list))]
+    block["ids"] = ids_list
+    evidence["guideline"] = block
+    print("  [flagship] admitted %d scope-matched flagship guideline(s): %s"
+          % (len(rows), ", ".join(r.get("guideline_id") or r["pmid"]
+                                  for r in rows)))
+    return evidence
+
+
 def _manifest_primary_pmid(guideline_id: str) -> str:
     """The accession the manifest keys a guideline by, '' if unknown.
 
@@ -6231,6 +6350,21 @@ Where they DIVERGE, that divergence is a finding and belongs in the answer:
 guidelines lag the literature by years by construction, so "the AAE position
 (2021) says X; the 2026 trial evidence says Y" is information the clinician
 needs, not a contradiction to resolve away.
+
+HOW TO WRITE THAT BLOCK (item C, 2026-09-07):
+Give ONE LINE PER GUIDELINE — organisation, document, year, status,
+jurisdiction — before you say anything about what it recommends.
+Where the block holds guidelines from MORE THAN ONE SPECIALTY on the same
+question, state each specialty's position SEPARATELY and from its own stored
+text. Never merge them into "guideline bodies agree" or "the guidelines
+recommend": two specialties can hold different positions on one question and
+both be current, and collapsing them into one sentence hides the disagreement
+a clinician most needs to see.
+A record whose stored text is a POINTER — its line says so — is listed as
+"position not quoted — pointer record; read at <url>". You must NOT state what
+such a document recommends. You have not been shown its text, and writing its
+position from your own knowledge is the failure this instruction exists to
+prevent.
 """
 
 # Item 1c, 2026-09-06. The A/B toggle for the DERIVED heading set: False
@@ -6298,19 +6432,38 @@ MAX_PAPERS_KEPT  = 25   # default hard cap so one tier can't drown out others
 # own cap, so a slot here can never be taken from level1 or anything above it.
 # Learn gets the larger share because a curriculum's anatomy module is the
 # thing this item exists to feed.
+# ── THE GUIDELINE QUOTA (item C, 2026-09-07) ─────────────────────────────
+#
+# `guideline` was 4 on the live path and 25 on the library route
+# (`app.RELEVANCE_GATE['max_per_tier']`), and the two builders disagreeing is
+# itself the defect: the same question answered by different routes saw a
+# different set of specialty positions, with nothing saying so.
+#
+# A guideline block is not a ranked shortlist. Every OTHER quota here bounds
+# competition inside a rung — 18 Level I papers compete for the same claim.
+# Guidelines do not compete: two bodies with different positions on one
+# question are both true, and showing one of them is the divergence failure
+# A49 exists to remove. So the block admits every CURRENT guideline above the
+# similarity floor, bounded only to stop a pathological pool.
+#
+# MEASURED before changing: on 8 of 32 questions the cap of 4 cut an eligible
+# guideline, 19 rows in total. Median eligible above the floor is 2, so on most
+# questions the bound never binds and this changes nothing.
+GUIDELINE_BLOCK_CAP = 25
+
 MODE_TIER_QUOTAS = {
     "review": {
         "cochrane": 10, "level1": 18, "level2": 14,
         "level3a": 10, "level3b": 6, "level3": 8,
         "level4": 4,   "level5": 4,
-        "guideline": 4,
+        "guideline": GUIDELINE_BLOCK_CAP,
         "observational": 6,
     },
     "learn": {
         "cochrane": 8,  "level1": 10, "level2": 8,
         "level3a": 6,  "level3b": 4,  "level3": 6,
         "level4": 6,   "level5": 25,   # narrative-rich tier promoted
-        "guideline": 6,
+        "guideline": GUIDELINE_BLOCK_CAP,
         "observational": 10,
     },
     # case discussion uses the same balance as review
@@ -6318,7 +6471,7 @@ MODE_TIER_QUOTAS = {
         "cochrane": 10, "level1": 18, "level2": 14,
         "level3a": 10, "level3b": 6, "level3": 8,
         "level4": 4,   "level5": 4,
-        "guideline": 4,
+        "guideline": GUIDELINE_BLOCK_CAP,
         "observational": 6,
     },
 }
@@ -6542,6 +6695,11 @@ def build_evidence_base(topic, mode: str = "review"):
     # once. Placed after the SR dedup because the two are independent: that one
     # works on PMIDs and cannot see a document with three of them.
     collapse_guideline_copies(evidence)
+
+    # ITEM C — a scope-matched flagship guideline is admitted regardless of
+    # rank. After the collapse so it cannot create a duplicate, and before the
+    # summary so `total_scored` counts it.
+    admit_flagship_guidelines(evidence, topic)
 
     # synthesis_order = strict tier hierarchy (Cochrane → L1 → L2 → L3a → L3b → L4 → L5)
     # all_scored      = legacy flat-by-score list (retained for status panels / downstream code)

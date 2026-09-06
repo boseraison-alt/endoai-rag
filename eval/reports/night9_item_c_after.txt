@@ -1,0 +1,157 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 01a4b66+dirty (imported 2026-09-06T09:06:19)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+==============================================================================
+ITEM C — GUIDELINE ADMISSION,  ARM = AFTER
+==============================================================================
+  similarity floor                       0.55
+  live / curriculum cap (MODE_TIER_QUOTAS)  25
+  library route cap (RAG_GATE max_per_tier) 25
+  current non-quarantined guideline rows in the library: 79
+
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR "Er:YAG" OR "Nd:YAG" OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm OR steriliz*)'
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14505.85it/s]
+  Embedding model ready.
+  [rag] 2 queries -> 552 distinct papers (best similarity kept per PMID)
+[ 1/32] laser-root-canal-disinfection-live           above_floor=0   admitted@k=0   gap=0
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND ("root canal" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)'
+  [rag] 2 queries -> 543 distinct papers (best similarity kept per PMID)
+[ 2/32] laser-root-canal-disinfection-library        above_floor=0   admitted@k=0   gap=0
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("single-visit" OR "single visit" OR "one-visit" OR "one visit" OR "same-day" OR SVT) AND ("multiple-visit" OR "multi-visit" OR "conventional treatment" OR staged) AND (necrotic OR "pulp necrosis" OR "apical periodontitis" OR periapical)'
+  [rag] 2 queries -> 597 distinct papers (best similarity kept per PMID)
+[ 3/32] single-vs-multiple-visit                     above_floor=2   admitted@k=2   gap=0
+        ESE-S3-2023                        rank 2   sim 0.564  ADMITTED
+  [search_terms] capped to 3 AND-groups, dropped: ("irreversible pulpitis" OR pulpitis)
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR Biodentine OR "calcium silicate") AND (pulpotomy OR "vital pulp therapy") AND ("permanent teeth" OR "mature teeth")'
+  [rag] 2 queries -> 575 distinct papers (best similarity kept per PMID)
+[ 4/32] mta-vs-biodentine-pulpotomy                  above_floor=3   admitted@k=3   gap=0
+        ESE-S3-2023                        rank 3   sim 0.594  ADMITTED
+  Smart search terms: '("sodium hypochlorite" OR NaOCl OR "sodium hypochlorite concentration" OR "chlorine release" OR hypochlorite) AND ("root canal treatment" OR "endodontic treatment" OR "primary tooth" OR "primary teeth" OR "deciduous tooth" OR "deciduous teeth") AND (concentration OR "low concentration" OR "high concentration" OR dilution OR efficacy OR outcome* OR success OR healing)'
+  [rag] 2 queries -> 542 distinct papers (best similarity kept per PMID)
+[ 5/32] naocl-concentration                          above_floor=0   admitted@k=0   gap=0
+  Smart search terms: '(CBCT OR "cone beam computed tomography" OR "cone-beam CT" OR CBCT) AND ("periapical radiograph*" OR "intraoral radiograph*" OR "conventional radiograph*") AND ("apical periodontitis" OR "periapical lesion*" OR "periapical pathology" OR "apical pathology")'
+  [rag] 2 queries -> 548 distinct papers (best similarity kept per PMID)
+[ 6/32] cbct-vs-periapical                           above_floor=6   admitted@k=6   gap=0
+  Smart search terms: '("calcium silicate" OR bioceramic* OR "bioactive ceramic" OR AH Plus OR "epoxy resin" OR gutta-percha OR "zinc oxide eugenol") AND ("root canal" OR endodontic*) AND (seal* OR "apical seal" OR leakage OR "microbial leakage" OR outcome*)'
+  [rag] 2 queries -> 511 distinct papers (best similarity kept per PMID)
+[ 7/32] bioceramic-vs-resin-sealer                   above_floor=1   admitted@k=1   gap=0
+  Smart search terms: '("nonsurgical retreatment" OR "conservative retreatment" OR "orthograde retreatment") AND ("apical microsurgery" OR "endodontic surgery" OR "periapical surgery" OR "apicoectomy" OR "surgical retreatment") AND ("persistent apical periodontitis" OR "refractory apical periodontitis" OR "chronic apical periodontitis" OR "apical pathosis" OR "periapical lesion")'
+  [rag] 2 queries -> 535 distinct papers (best similarity kept per PMID)
+[ 8/32] retreatment-vs-microsurgery                  above_floor=3   admitted@k=3   gap=0
+        ESE-S3-2023                        rank 2   sim 0.575  ADMITTED
+  Smart search terms: '("vital pulp therapy" OR "pulp capping" OR "direct pulp capping" OR DPC) AND ("cariously exposed" OR "carious exposure" OR "caries exposure") AND ("mature permanent teeth" OR "permanent teeth" OR "adult teeth")'
+  [rag] 2 queries -> 463 distinct papers (best similarity kept per PMID)
+[ 9/32] direct-pulp-capping                          above_floor=6   admitted@k=6   gap=0
+        ESE-TRAUMA-2021                    rank 5   sim 0.632  ADMITTED
+        ESE-S3-2023                        rank 6   sim 0.578  ADMITTED
+  [search_terms] capped to 3 AND-groups, dropped: ("root canal" OR endodontic*)
+  Smart search terms: '("postoperative pain" OR "post-operative pain" OR "post operative pain" OR "pain after" OR "endodontic pain") AND (NSAID* OR "nonsteroidal anti-inflammatory" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR meloxicam OR preemptive OR preventive) AND (placebo OR control OR RCT OR "randomized controlled trial")'
+  [rag] 2 queries -> 491 distinct papers (best similarity kept per PMID)
+[10/32] preemptive-nsaid                             above_floor=1   admitted@k=1   gap=0
+  [search_terms] capped to 3 AND-groups, dropped: ("necrotic" OR "pulp necrosis" OR "non-vital" OR "devital*")
+  Smart search terms: '("regenerative endodontic*" OR "revascularization" OR "regeneration" OR "apexogenesis" OR "apexification") AND ("immature tooth" OR "immature teeth" OR "open apex" OR "incomplete root formation" OR "permanent tooth" OR "young permanent") AND ("success" OR "survival" OR "outcome*" OR "healing" OR "treatment outcome")'
+  [rag] 2 queries -> 519 distinct papers (best similarity kept per PMID)
+[11/32] regenerative-immature                        above_floor=2   admitted@k=2   gap=0
+  Smart search terms: '("cracked tooth" OR "tooth crack" OR "crack propagation" OR "crack extent" OR "crack length" OR "crack depth" OR "vertical root fracture" OR VRF) AND ("root canal" OR "root canal treatment" OR "root canal therapy" OR endodontic* OR RCT) AND (prognosis OR "treatment outcome" OR "clinical outcome" OR "long-term success" OR survival OR longevity OR "fracture resistance")'
+  [rag] 2 queries -> 540 distinct papers (best similarity kept per PMID)
+[12/32] cracked-tooth-prognosis                      above_floor=2   admitted@k=2   gap=0
+        IADT-FRACTURES-LUXATIONS-2020      rank 1   sim 0.559  ADMITTED
+        ESE-TRAUMA-2021                    rank 2   sim 0.552  ADMITTED
+  Smart search terms: '(photodynamic therapy OR PDT OR aPDT OR "antimicrobial photodynamic" OR methylene blue OR toluidine blue OR rose bengal) AND ("primary molar*" OR "deciduous molar*" OR "primary tooth" OR "primary teeth" OR "baby tooth" OR "baby teeth") AND (necrotic OR necros* OR "pulp death" OR "pulpal death")'
+  [rag] 2 queries -> 560 distinct papers (best similarity kept per PMID)
+[13/32] apdt-primary-molars                          above_floor=0   admitted@k=0   gap=0
+  Smart search terms: '(bisphosphonate* OR antiresorptive* OR "medication-related osteonecrosis" OR MRONJ OR "bisphosphonate-related osteonecrosis" OR BRONJ OR denosumab OR zoledronic acid OR alendronate OR risedronate OR pamidronate OR ibandronate) AND ("root canal" OR endodontic* OR "pulp treatment" OR "endodontic treatment") AND (management OR treatment OR complication* OR risk OR outcome* OR protocol*)'
+  [rag] 2 queries -> 584 distinct papers (best similarity kept per PMID)
+[14/32] bisphosphonates                              above_floor=7   admitted@k=7   gap=0
+  Smart search terms: '("root canal" OR endodontic* OR "pulp treatment") AND (pregnan* OR "pregnant patient*" OR gestation* OR trimester*) AND (timing OR "treatment timing" OR "emergency treatment" OR "elective treatment" OR "local anesthetic*" OR "anesthetic choice" OR lidocain* OR prilocain* OR articain* OR bupivacain*)'
+  [rag] 2 queries -> 568 distinct papers (best similarity kept per PMID)
+[15/32] pregnancy                                    above_floor=1   admitted@k=1   gap=0
+  [search_terms] capped to 3 AND-groups, dropped: (irrigat* OR activation)
+  Smart search terms: '(laser* OR "photodynamic therapy" OR aPDT OR PIPS OR SWEEPS OR "passive ultrasonic irrigation" OR PUI OR ultrasonic*) AND ("root canal" OR endodontic* OR intracanal) AND ("periapical healing" OR "periapical lesion*" OR "apical periodontitis" OR "healing outcome*" OR radiographic)'
+  [rag] 2 queries -> 624 distinct papers (best similarity kept per PMID)
+[16/32] pips-vs-ultrasonic                           above_floor=3   admitted@k=3   gap=0
+  Smart search terms: '("intentional replantation" OR "intentional reimplantation" OR "surgical replantation" OR "tooth replantation") AND ("root canal" OR endodontic* OR periapical) AND (extraction OR "surgical removal" OR exodontia OR "unavoidable extraction")'
+  [rag] 2 queries -> 592 distinct papers (best similarity kept per PMID)
+[17/32] intentional-replantation                     above_floor=1   admitted@k=1   gap=0
+  [search_terms] capped to 3 AND-groups, dropped: ("silver diamine fluoride" OR SDF)
+  Smart search terms: '("pulp" OR "pulpal" OR "vital*") AND ("deep caries" OR "deep carious lesion*" OR "caries proximity") AND ("adult*" OR "permanent teeth" OR "mature teeth")'
+  [rag] 2 queries -> 580 distinct papers (best similarity kept per PMID)
+[18/32] sdf-pulp-outcomes                            above_floor=2   admitted@k=2   gap=0
+  [search_terms] capped to 3 AND-groups, dropped: ("in vivo" OR clinical OR human*) | (irrigat* OR activation)
+  Smart search terms: '(sonic* OR ultrasonic* OR "passive ultrasonic irrigation" OR PUI OR "sonic activation" OR SAF OR "self-adjusting file") AND ("root canal" OR endodontic* OR intracanal) AND (bacterial* OR biofilm* OR disinfect* OR antimicrobial*)'
+  [rag] 2 queries -> 443 distinct papers (best similarity kept per PMID)
+[19/32] sonic-vs-ultrasonic                          above_floor=0   admitted@k=0   gap=0
+  Smart search terms: '("dens invaginatus" OR "dens in dente" OR "gestant odontoma" OR invaginated tooth) AND (management OR treatment OR therap* OR clinical OR case report*) AND (type III OR classification OR morpholog*)'
+  [rag] 2 queries -> 403 distinct papers (best similarity kept per PMID)
+[20/32] dens-invaginatus                             above_floor=0   admitted@k=0   gap=0
+  Smart search terms: '(diabetes OR "diabetic patients" OR hyperglycemia) AND ("root canal" OR endodontic* OR "apical periodontitis") AND (healing OR outcome* OR success OR prognosis OR "periapical healing")'
+  [rag] 2 queries -> 530 distinct papers (best similarity kept per PMID)
+[21/32] diabetes-outcomes                            above_floor=2   admitted@k=2   gap=0
+        ESE-S3-2023                        rank 1   sim 0.608  ADMITTED
+  Smart search terms: '(tooth OR teeth OR dental OR molar) AND (pain OR ache OR discomfort OR sensitivity OR "acute pain") AND (diagnosis OR etiology OR cause)'
+  [rag] 2 queries -> 580 distinct papers (best similarity kept per PMID)
+[22/32] case-opening-sparse                          above_floor=1   admitted@k=1   gap=0
+  [search_terms] capped to 3 AND-groups, dropped: ("periapical lesion" OR "periapical radiolucency" OR "apical
+  Smart search terms: '(retreatment OR "re-treatment" OR "nonsurgical endodontic retreatment" OR NSER) AND ("MB2" OR "second mesiobuccal canal" OR "MB canal anatomy" OR "mesiobuccal canals") AND (success OR outcome* OR healing OR resolution OR efficacy)'
+  [rag] 2 queries -> 688 distinct papers (best similarity kept per PMID)
+[23/32] case-opening-full                            above_floor=2   admitted@k=2   gap=0
+        ESE-S3-2023                        rank 2   sim 0.567  ADMITTED
+  Smart search terms: '("immature tooth" OR "immature teeth" OR "immature root" OR "open apex" OR "incomplete root formation" OR apexogenesis OR apexification OR "young permanent tooth" OR "young permanent teeth") AND ("root canal" OR endodontic* OR pulp OR pulpal)'
+  [rag] 2 queries -> 594 distinct papers (best similarity kept per PMID)
+[24/32] review-followup-immature-teeth               above_floor=2   admitted@k=2   gap=0
+  Smart search terms: '("sodium hypochlorite" OR NaOCl OR "hypochlorite concentration") AND ("primary teeth" OR "primary dentition" OR "deciduous teeth" OR "baby teeth") AND ("root canal treatment" OR "root canal therapy" OR endodontic*)'
+  [rag] 2 queries -> 558 distinct papers (best similarity kept per PMID)
+[25/32] review-newtopic-reset                        above_floor=0   admitted@k=0   gap=0
+  Smart search terms: '("root canal" OR endodontic* OR pulp) AND (necrosis OR necrotic OR "pulp death" OR "pulp necrosis") AND (trauma OR traumatic OR idiopathic OR "developmental anomaly" OR "dens invaginatus" OR "dens evaginatus" OR resorption OR "internal resorption" OR "external resorption")'
+  [rag] 2 queries -> 646 distinct papers (best similarity kept per PMID)
+[26/32] necrotic-virgin-tooth-young-adult-diagnostic above_floor=3   admitted@k=3   gap=0
+        ESE-TRAUMA-2021                    rank 2   sim 0.554  ADMITTED
+  Smart search terms: '(extraction OR "root canal treatment" OR endodontic* OR RCT) AND (periapical lesion* OR periapical pathology OR apical periodontitis) AND (osteoporosis OR bisphosphonate* OR alendronate OR "medication-related osteonecrosis" OR MRONJ OR "bisphosphonate-related osteonecrosis")'
+  [rag] 2 queries -> 532 distinct papers (best similarity kept per PMID)
+[27/32] bisphosphonate-extraction-vs-rct-treatment   above_floor=9   admitted@k=9   gap=0
+  Smart search terms: '("cold test*" OR vitality OR sensitivity OR responsiveness) AND ("periapical lesion*" OR "periapical radiolucency" OR "apical periodontitis") AND (necrosis OR necrotic OR "pulp death" OR devitali*)'
+  [rag] 2 queries -> 625 distinct papers (best similarity kept per PMID)
+[28/32] dens-evaginatus-premolar-diagnostic          above_floor=2   admitted@k=2   gap=0
+  Smart search terms: '("dens evaginatus" OR "enamel projection" OR "occlusal tubercle") AND ("pulp necrosis" OR "pulp death" OR "pulp vitality" OR "vital pulp" OR "pulp preservation") AND (prevent* OR manag* OR treat* OR therap*)'
+  [rag] 2 queries -> 517 distinct papers (best similarity kept per PMID)
+[29/32] dens-evaginatus-prevention-followup          above_floor=5   admitted@k=5   gap=0
+        ESE-S3-2023                        rank 2   sim 0.603  ADMITTED
+  [search_terms] capped to 3 AND-groups, dropped: ("closed apex" OR "mature apex" OR "root complete") | (replant* OR reimplant* OR reposition*)
+  Smart search terms: '(avulsed OR avulsion OR luxated OR exarticulated OR traumatized OR trauma) AND ("maxillary central incisor" OR "permanent tooth" OR "anterior tooth" OR incisor*) AND ("extra-oral" OR "extraoral" OR "dry time" OR "storage time" OR prognosis OR outcome* OR survival OR healing)'
+  [rag] 2 queries -> 580 distinct papers (best similarity kept per PMID)
+[30/32] probe1-avulsion                              above_floor=2   admitted@k=2   gap=0
+        IADT-AVULSION-2020                 rank 1   sim 0.642  ADMITTED
+        IADT-FRACTURES-LUXATIONS-2020      rank 2   sim 0.567  ADMITTED
+  [search_terms] capped to 3 AND-groups, dropped: ("mature tooth" OR "permanent tooth" OR premolar)
+  Smart search terms: '("crown fracture" OR "coronal fracture" OR "complicated fracture") AND ("pulp exposure" OR "pulp capping" OR "direct pulp capping" OR vitality OR "pulp vitality") AND (management OR treatment OR therape* OR prognosis)'
+  [rag] 2 queries -> 526 distinct papers (best similarity kept per PMID)
+[31/32] probe2-crown-fracture                        above_floor=2   admitted@k=2   gap=0
+  Smart search terms: '("tooth extraction" OR exodontia OR "dental implant*") AND ("failed endodontic treatment" OR "retreatment failure" OR "root canal failure") AND (decision* OR treatment planning OR prognosis OR outcome* OR success rate*)'
+  [rag] 2 queries -> 616 distinct papers (best similarity kept per PMID)
+[32/32] probe3-retreat-implant                       above_floor=12  admitted@k=12  gap=0
+        AAE-TRAUMA-2026                    rank 2   sim 0.615  ADMITTED
+        AAE-TREATMENTSTANDARDS-2018        rank 5   sim 0.587  ADMITTED
+        ACP-ASYMPTOMATIC-EXTRACTION-2016   rank 6   sim 0.579  ADMITTED
+        ESE-S3-2023                        rank 8   sim 0.570  ADMITTED
+        ESE-TRAUMA-2021                    rank 9   sim 0.565  ADMITTED
+        IADT-FRACTURES-LUXATIONS-2020      rank 11  sim 0.556  ADMITTED
+        IADT-AVULSION-2020                 rank 12  sim 0.555  ADMITTED
+
+==============================================================================
+RESULT
+==============================================================================
+  questions measured                      32
+  questions where k CUTS an eligible row  0  (0%)
+  total eligible rows cut by k            0
+  median eligible above floor             2
+
+  ESE-S3-2023 (the only flagship: true record) on probe 3:
+    rank 8 of 12 above the floor, similarity 0.570, ADMITTED at k=25
+
+  wrote eval/reports/night9_item_c_after.json

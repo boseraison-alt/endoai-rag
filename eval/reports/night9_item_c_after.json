@@ -1,0 +1,472 @@
+{
+ "floor": 0.55,
+ "live_k": 25,
+ "library_k": 25,
+ "guideline_rows": 79,
+ "rows": [
+  {
+   "id": "laser-root-canal-disinfection-live",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "laser-root-canal-disinfection-library",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "single-vs-multiple-visit",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "ADA-ANTIBIOTICS-PAIN-SWELLING-2019",
+    "ESE-S3-2023"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 2,
+     "similarity": 0.564,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "mta-vs-biodentine-pulpotomy",
+   "eligible_above_floor": 3,
+   "admitted_live_k": 3,
+   "gap": 0,
+   "top": [
+    "AAPD-VPT-PRIMARY-2024",
+    "AAE-VPT-2021",
+    "ESE-S3-2023"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 3,
+     "similarity": 0.5938,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "naocl-concentration",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "cbct-vs-periapical",
+   "eligible_above_floor": 6,
+   "admitted_live_k": 6,
+   "gap": 0,
+   "top": [
+    "ESE-CBCT-2019",
+    "AAE-AAOMR-CBCT-2025",
+    "ADA-AAOMR-PATIENT-SELECTION-2026",
+    "BES-CBCT-REPORTING-2021",
+    "ACP-IMPLANT-IMAGING-2016",
+    "AAE-PS-diagnosis"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "bioceramic-vs-resin-sealer",
+   "eligible_above_floor": 1,
+   "admitted_live_k": 1,
+   "gap": 0,
+   "top": [
+    "AAPD-VPT-PRIMARY-2024"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "retreatment-vs-microsurgery",
+   "eligible_above_floor": 3,
+   "admitted_live_k": 3,
+   "gap": 0,
+   "top": [
+    "FDSRCS-PERIRADICULAR-2020",
+    "ESE-S3-2023",
+    "AAE-PS-diagnosis"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 2,
+     "similarity": 0.5752,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "direct-pulp-capping",
+   "eligible_above_floor": 6,
+   "admitted_live_k": 6,
+   "gap": 0,
+   "top": [
+    "AAE-VPT-2021",
+    "AAPD-VPT-PRIMARY-2024",
+    "AAPD-VPT-PERMANENT-2025",
+    "AAE-PS-vital-pulp",
+    "ESE-TRAUMA-2021",
+    "ESE-S3-2023"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 6,
+     "similarity": 0.5781,
+     "admitted_at_live_k": true
+    },
+    "ESE-TRAUMA-2021": {
+     "rank": 5,
+     "similarity": 0.6322,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "preemptive-nsaid",
+   "eligible_above_floor": 1,
+   "admitted_live_k": 1,
+   "gap": 0,
+   "top": [
+    "ADA-ACUTE-PAIN-ADULTS-2024"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "regenerative-immature",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "ESE-REVITALISATION-2016",
+    "AAE-REGENERATIVE-2025"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "cracked-tooth-prognosis",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "IADT-FRACTURES-LUXATIONS-2020",
+    "ESE-TRAUMA-2021"
+   ],
+   "watch": {
+    "ESE-TRAUMA-2021": {
+     "rank": 2,
+     "similarity": 0.5516,
+     "admitted_at_live_k": true
+    },
+    "IADT-FRACTURES-LUXATIONS-2020": {
+     "rank": 1,
+     "similarity": 0.5588,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "apdt-primary-molars",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "bisphosphonates",
+   "eligible_above_floor": 7,
+   "admitted_live_k": 7,
+   "gap": 0,
+   "top": [
+    "SDCEP-MRONJ-2017",
+    "AAE-MRONJ-2026",
+    "AAOMP-BISPHOSPHONATE-ONJ-2006",
+    "ACP-MRONJ-2016",
+    "AAOM-CPS-ANTIRESORPTIVE-2019",
+    "AAOMS-MRONJ-2022"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "pregnancy",
+   "eligible_above_floor": 1,
+   "admitted_live_k": 1,
+   "gap": 0,
+   "top": [
+    "AAE-VPT-2021"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "pips-vs-ultrasonic",
+   "eligible_above_floor": 3,
+   "admitted_live_k": 3,
+   "gap": 0,
+   "top": [
+    "AAE-PS-diagnosis",
+    "AAE-DIAGNOSIS-2009",
+    "AAO-CPG-2023"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "intentional-replantation",
+   "eligible_above_floor": 1,
+   "admitted_live_k": 1,
+   "gap": 0,
+   "top": [
+    "ESE-EXTRUSION-REPLANT-2021"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "sdf-pulp-outcomes",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "AAE-VPT-2021",
+    "AAPD-VPT-PRIMARY-2024"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "sonic-vs-ultrasonic",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "dens-invaginatus",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "diabetes-outcomes",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "ESE-S3-2023",
+    "AAE-PS-diagnosis"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 1,
+     "similarity": 0.6076,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "case-opening-sparse",
+   "eligible_above_floor": 1,
+   "admitted_live_k": 1,
+   "gap": 0,
+   "top": [
+    "AAOP-GUIDELINES-2023"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "case-opening-full",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "FDSRCS-PERIRADICULAR-2020",
+    "ESE-S3-2023"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 2,
+     "similarity": 0.5667,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "review-followup-immature-teeth",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "ESE-REVITALISATION-2016",
+    "AAE-VPT-2021"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "review-newtopic-reset",
+   "eligible_above_floor": 0,
+   "admitted_live_k": 0,
+   "gap": 0,
+   "top": [],
+   "watch": {}
+  },
+  {
+   "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+   "eligible_above_floor": 3,
+   "admitted_live_k": 3,
+   "gap": 0,
+   "top": [
+    "ESE-RESORPTION-2023",
+    "ESE-TRAUMA-2021",
+    "AAE-DIAGNOSIS-2009"
+   ],
+   "watch": {
+    "ESE-TRAUMA-2021": {
+     "rank": 2,
+     "similarity": 0.5543,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "bisphosphonate-extraction-vs-rct-treatment",
+   "eligible_above_floor": 9,
+   "admitted_live_k": 9,
+   "gap": 0,
+   "top": [
+    "ACP-MRONJ-2016",
+    "AAOMP-BISPHOSPHONATE-ONJ-2006",
+    "AAE-MRONJ-2026",
+    "AAE-PS-diagnosis",
+    "SDCEP-MRONJ-2017",
+    "AAOM-CPS-ANTIRESORPTIVE-2019"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "dens-evaginatus-premolar-diagnostic",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "AAE-PS-diagnosis",
+    "AAE-DIAGNOSIS-2009"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "dens-evaginatus-prevention-followup",
+   "eligible_above_floor": 5,
+   "admitted_live_k": 5,
+   "gap": 0,
+   "top": [
+    "AAE-PS-diagnosis",
+    "ESE-S3-2023",
+    "AAE-VPT-2021",
+    "AAE-DIAGNOSIS-2009",
+    "AAE-PS-vital-pulp"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 2,
+     "similarity": 0.6027,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "probe1-avulsion",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "IADT-AVULSION-2020",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ],
+   "watch": {
+    "IADT-AVULSION-2020": {
+     "rank": 1,
+     "similarity": 0.6425,
+     "admitted_at_live_k": true
+    },
+    "IADT-FRACTURES-LUXATIONS-2020": {
+     "rank": 2,
+     "similarity": 0.5665,
+     "admitted_at_live_k": true
+    }
+   }
+  },
+  {
+   "id": "probe2-crown-fracture",
+   "eligible_above_floor": 2,
+   "admitted_live_k": 2,
+   "gap": 0,
+   "top": [
+    "AAE-VPT-2021",
+    "AAE-DIAGNOSIS-2009"
+   ],
+   "watch": {}
+  },
+  {
+   "id": "probe3-retreat-implant",
+   "eligible_above_floor": 12,
+   "admitted_live_k": 12,
+   "gap": 0,
+   "top": [
+    "AAE-CASEDIFFICULTY-2022",
+    "AAE-TRAUMA-2026",
+    "AAO-CPG-2023",
+    "BES-CBCT-REPORTING-2021",
+    "AAE-TREATMENTSTANDARDS-2018",
+    "ACP-ASYMPTOMATIC-EXTRACTION-2016"
+   ],
+   "watch": {
+    "ESE-S3-2023": {
+     "rank": 8,
+     "similarity": 0.5698,
+     "admitted_at_live_k": true
+    },
+    "AAE-TREATMENTSTANDARDS-2018": {
+     "rank": 5,
+     "similarity": 0.5866,
+     "admitted_at_live_k": true
+    },
+    "AAE-TRAUMA-2026": {
+     "rank": 2,
+     "similarity": 0.6145,
+     "admitted_at_live_k": true
+    },
+    "ESE-TRAUMA-2021": {
+     "rank": 9,
+     "similarity": 0.5649,
+     "admitted_at_live_k": true
+    },
+    "ACP-ASYMPTOMATIC-EXTRACTION-2016": {
+     "rank": 6,
+     "similarity": 0.5794,
+     "admitted_at_live_k": true
+    },
+    "IADT-AVULSION-2020": {
+     "rank": 12,
+     "similarity": 0.5552,
+     "admitted_at_live_k": true
+    },
+    "IADT-FRACTURES-LUXATIONS-2020": {
+     "rank": 11,
+     "similarity": 0.5557,
+     "admitted_at_live_k": true
+    }
+   }
+  }
+ ]
+}

@@ -179,13 +179,13 @@ def compare():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--state", default="")
+    ap.add_argument("--state", default="")  # any label; 2 and 3 are the 2026-09-06 states
     ap.add_argument("--compare", action="store_true")
     args = ap.parse_args()
     if args.compare:
         return compare()
-    if args.state not in ("2", "3"):
-        raise SystemExit("--state 2|3, or --compare")
+    if not args.state:
+        raise SystemExit("--state <label>, or --compare")
     run(args.state)
     return 0
 
