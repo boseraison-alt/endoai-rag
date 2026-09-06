@@ -63,36 +63,47 @@ FLAGSHIP_WATCH = ["ESE-S3-2023", "AAE-TREATMENTSTANDARDS-2018",
                   "IADT-AVULSION-2020", "IADT-FRACTURES-LUXATIONS-2020"]
 
 
-def guideline_rows_above_floor(question, floor):
-    """Every CURRENT, non-quarantined guideline row above the similarity floor,
-    ranked. This is the ELIGIBLE set — what admission is choosing from."""
-    vec = rag.embed(question)
-    conn = rag.get_conn()
-    cur = conn.cursor()
-    try:
-        cur.execute("""
-            SELECT pmid, COALESCE(guideline_id,''), COALESCE(guideline_org,''),
-                   COALESCE(guideline_status,''), title,
-                   1 - (embedding <=> %s::vector) AS similarity
-            FROM endo_papers_rag
-            WHERE level_key = 'guideline'
-              AND COALESCE(quarantine_reason,'') = ''
-              AND COALESCE(superseded_by,'') = ''
-              AND embedding IS NOT NULL
-            ORDER BY similarity DESC
-        """, (vec,))
-        rows = cur.fetchall()
-    finally:
-        cur.close()
-        conn.close()
+def guideline_rows_above_floor(question, floor, terms=None):
+    """Every CURRENT, non-quarantined guideline row above the similarity floor.
+
+    MEASURED THE WAY PRODUCTION RETRIEVES, and the first version was not.
+
+    It embedded the raw question and ranked guideline rows against that one
+    vector. Production does not do that: the library route calls
+    `app.multi_query_search(question, generated_terms, limit=100)`, which KNNs
+    once per query string — the clinician's question AND every generated
+    boolean — and keeps the BEST similarity per PMID. The docstring on that
+    function exists because the coupling matters: a well-formed boolean embeds
+    FURTHER from prose than a sloppy one, and Cochrane CD005296 was rank 11 for
+    the query that missed it.
+
+    Measuring against the question alone reported "median eligible above floor
+    = 0" and "ESE-S3-2023 is not above the floor at all" — while the same rows
+    were demonstrably reaching real pools the night before. The instrument was
+    wrong, not the corpus (rule 33: apply a detector the way production applies
+    it).
+    """
+    from app import multi_query_search
+    hits = multi_query_search(question, terms or [], limit=400)
     out = []
-    for pmid, gid, org, status, title, sim in rows:
+    for r in hits:
+        if (r.get("level_key") or "") != "guideline":
+            continue
+        if (r.get("quarantine_reason") or "").strip():
+            continue
+        if (r.get("superseded_by") or "").strip():
+            continue
+        status = (r.get("guideline_status") or "")
         if status in ("superseded", "withdrawn", "draft",
                       "superseded_in_content"):
             continue
-        out.append({"pmid": pmid, "guideline_id": gid, "org": org,
-                    "status": status, "title": (title or "")[:80],
-                    "similarity": round(float(sim), 4)})
+        out.append({"pmid": str(r.get("pmid") or ""),
+                    "guideline_id": r.get("guideline_id") or "",
+                    "org": r.get("guideline_org") or "",
+                    "status": status,
+                    "title": (r.get("title") or "")[:80],
+                    "similarity": round(float(r.get("similarity") or 0), 4)})
+    out.sort(key=lambda x: -x["similarity"])
     return out
 
 
@@ -116,11 +127,8 @@ def main():
             raise SystemExit("cannot read the shipped similarity floor: %s" % ex)
 
     live_k = E._tier_cap("review", "guideline")
-    try:
-        import app
-        lib_k = (app.RAG_GATE or {}).get("max_per_tier")
-    except Exception as ex:
-        lib_k = "unavailable (%s)" % ex
+    import app
+    lib_k = app.RELEVANCE_GATE["max_per_tier"]
 
     print("=" * 78)
     print("ITEM C — GUIDELINE ADMISSION,  ARM = %s" % args.arm.upper())
@@ -141,7 +149,11 @@ def main():
 
     rows = []
     for i, (cid, q) in enumerate(cases, 1):
-        elig = guideline_rows_above_floor(q, floor)
+        try:
+            terms = [E.generate_search_terms(q)]
+        except Exception:
+            terms = []
+        elig = guideline_rows_above_floor(q, floor, terms)
         above = [r for r in elig if r["similarity"] >= floor]
         admitted_live = above[:live_k] if isinstance(live_k, int) else above
         gap = len(above) - len(admitted_live)
