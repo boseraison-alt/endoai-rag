@@ -73,14 +73,86 @@ class TestTheBlockIsNotATopK:
 
 class TestTheFlagshipRule:
 
-    def test_ese_s3_is_the_only_flagship_and_this_test_owns_no_flags(self):
-        """RB owns the flag. Nothing in the code adds one, and if a second
-        record gains one this test says so rather than silently widening the
-        rule's blast radius."""
+    # ── THE FLAG SET IS PINNED BY PROPERTY, NOT BY NAME (2026-09-07) ──────
+    #
+    # This class used to assert `flags == ["ESE-S3-2023"]`. RB then flagged
+    # AAE-TREATMENTSTANDARDS-2018 and BES-GOODPRACTICE-2022 — the two records
+    # this batch had listed as candidates — and the assertion failed. It failed
+    # doing its job: it made an addition visible instead of silent.
+    #
+    # Rule 39 forbids re-pinning the new list. A name list of three would go
+    # stale the same way, and would say nothing about whether the fourth flag
+    # is SAFE. What makes a flagship safe is not its name:
+    #
+    #   * it is CURRENT — a flagship bypasses the similarity floor, so a
+    #     superseded one would be force-fed into pools it can no longer earn
+    #   * it has a non-empty `scope[]` — scope intersection is the only guard
+    #     on that bypass, and a record with no scope would match nothing, or
+    #     with a widened rule, everything
+    #   * its jurisdiction is UNIQUE among flagships — the design rule behind
+    #     the three: one whole-specialty guideline per jurisdiction (ESE/EU,
+    #     AAE/US, BES/UK). Two US flagships would mean a US clinician is force-
+    #     fed two competing whole-specialty positions on every question in
+    #     their scope, which is the divergence display working as noise.
+    #
+    # Those three properties are what the next addition has to satisfy, and
+    # asserting them keeps it exactly as visible as RB's was.
+
+    def test_no_flag_is_written_anywhere_in_the_code(self):
+        """RB owns the flag. It comes from the manifest and from nowhere
+        else — nothing in the engine may set, infer or default one."""
+        import glob
+        offenders = []
+        for path in (glob.glob("*.py") + glob.glob("scripts/*.py")):
+            src = open(path, encoding="utf-8", errors="replace").read()
+            for pat in ('"flagship":', "'flagship':", '["flagship"]',
+                        "['flagship']", "flagship=True", 'flagship" : '):
+                if pat in src:
+                    # reading the flag is fine; writing or assigning is not
+                    for line in src.splitlines():
+                        if pat in line and ("=" in line.split(pat)[0][-3:]
+                                            or pat.endswith(":")):
+                            if ".get(" in line or "rec.get" in line:
+                                continue
+                            offenders.append("%s: %s" % (path, line.strip()))
+        assert not offenders, (
+            "the code appears to write a flagship flag: %s" % offenders)
+
+    def test_every_flagship_is_current(self):
+        """A flagship bypasses the similarity floor. A superseded one would be
+        force-fed into pools it can no longer earn a place in."""
         import json
         man = json.load(open("data/guidelines_seed.json", encoding="utf-8"))
-        flags = sorted(g["id"] for g in man["guidelines"] if g.get("flagship"))
-        assert flags == ["ESE-S3-2023"], flags
+        bad = [(g["id"], g.get("status"))
+               for g in man["guidelines"]
+               if g.get("flagship") and (g.get("status") or "") != "current"]
+        assert not bad, "flagship records that are not current: %s" % bad
+
+    def test_every_flagship_declares_a_scope(self):
+        """Scope intersection is the ONLY guard on the floor bypass."""
+        import json
+        man = json.load(open("data/guidelines_seed.json", encoding="utf-8"))
+        bad = [g["id"] for g in man["guidelines"]
+               if g.get("flagship") and not (g.get("scope") or [])]
+        assert not bad, "flagship records with no scope[]: %s" % bad
+
+    def test_one_flagship_per_jurisdiction(self):
+        """The design rule behind the three: one whole-specialty guideline per
+        jurisdiction. Two in the same jurisdiction would force-feed a clinician
+        two competing whole-specialty positions on every in-scope question."""
+        import json
+        from collections import Counter
+        man = json.load(open("data/guidelines_seed.json", encoding="utf-8"))
+        flags = [g for g in man["guidelines"] if g.get("flagship")]
+        assert flags, "no flagship records at all — this test proves nothing"
+        by_j = Counter((g.get("jurisdiction") or "").strip() for g in flags)
+        dupes = {j: n for j, n in by_j.items() if n > 1}
+        assert not dupes, (
+            "more than one flagship in a jurisdiction: %s (%s)"
+            % (dupes, [(g["id"], g.get("jurisdiction")) for g in flags]))
+        assert "" not in by_j, (
+            "a flagship with no jurisdiction: %s"
+            % [g["id"] for g in flags if not (g.get("jurisdiction") or "").strip()])
 
     def test_a_scope_matching_question_selects_it(self):
         assert "ESE-S3-2023" in E.flagship_guidelines_for(PROBE3), (
@@ -117,8 +189,46 @@ class TestTheFlagshipRule:
                                         "score": None}]}}
         out = E.admit_flagship_guidelines(ev, PROBE3)
         gids = [p.get("guideline_id") for p in out["guideline"]["scored"]]
-        assert "AAE-VPT-2021" in gids
-        assert len(gids) == 2
+        # ASSERTED AS A SUPERSET, NOT A COUNT (rule 39). This said
+        # `len(gids) == 2`, and RB flagging two more records made it 3 — a
+        # count that an authorised manifest change necessarily moves. What the
+        # test is named for is that the rule ADDS and never removes.
+        assert "AAE-VPT-2021" in gids, "the pre-existing row was removed"
+        assert len(gids) >= 2, gids
+        assert len(gids) == len(set(gids)), "a row was duplicated: %s" % gids
+
+    def test_the_admitted_row_reaches_the_prompt_not_just_the_pool(self):
+        """`_build_evidence_context` renders `block["text"]`, and both builders
+        build that text in the tier loop BEFORE admission runs. A row appended
+        only to `scored` would be counted in the summary, appear in the
+        bibliography, and never be shown to the model."""
+        ev = {"guideline": {"ids": [], "scored": [], "text": "",
+                            "source": "rag"}}
+        out = E.admit_flagship_guidelines(ev, PROBE3)
+        text = out["guideline"]["text"]
+        assert "37772327" in text, (
+            "the flagship row is in the pool but not in the text the model "
+            "reads: %r" % text[:200])
+        ctx = E._build_evidence_context(out)
+        assert "37772327" in ctx, "it does not survive into the evidence context"
+
+    def test_a_block_created_here_declares_a_source(self):
+        """Without one the block reads as source None, and a library-pinned
+        answer reports its sources as {None, 'rag'}."""
+        ev = {}
+        out = E.admit_flagship_guidelines(ev, PROBE3)
+        assert out.get("guideline", {}).get("source") == "rag"
+
+    def test_the_admitted_row_carries_a_sortable_score(self):
+        """`build_synthesis_order` sorts on `p.get("score", 0)`. A literal None
+        raises TypeError there; `rag_results_to_scored` coalesces NULL to 0.0
+        for exactly this reason, and this row skipped that path."""
+        ev = {"guideline": {"ids": [], "scored": [], "text": ""}}
+        out = E.admit_flagship_guidelines(ev, PROBE3)
+        row = next(p for p in out["guideline"]["scored"]
+                   if p.get("guideline_id") == "ESE-S3-2023")
+        assert isinstance(row.get("score"), (int, float)), row.get("score")
+        E.build_synthesis_order(out)   # must not raise
 
     def test_the_admitted_row_is_marked_as_a_flagship_admission(self):
         """It did not earn its place on similarity, and the row says so rather

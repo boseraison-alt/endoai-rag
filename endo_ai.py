@@ -1073,7 +1073,14 @@ def flagship_guidelines_for(question: str) -> list:
         # A scope term counts as hit when the question names it, or when the
         # question's own domain vocabulary does — `DOMAIN_NOUNS` is item B's
         # list, built from the eval questions' own generated term groups.
-        hit = any(s and s in q for s in scope)
+        #
+        # AT A WORD BOUNDARY. Substring matching admitted BES-GOODPRACTICE-2022
+        # to probe 3 because its scope carries `treatment` and the question says
+        # "failed root canal RETREATMENT" — the UK whole-specialty guideline
+        # force-fed onto a question that never named its subject. Scope
+        # intersection is the only guard on the similarity-floor bypass, so it
+        # has to match words, not fragments.
+        hit = any(s and re.search(r"\b%s\b" % re.escape(s), q) for s in scope)
         if not hit:
             for s in scope:
                 if _DOMAIN_NOUN_RE.search(s) and _DOMAIN_NOUN_RE.search(q):
@@ -1144,6 +1151,24 @@ def admit_flagship_guidelines(evidence: dict, question: str) -> dict:
         # `rag_results_to_scored` produces for a guideline: no sample size, no
         # follow-up, no impact factor, and no score, because a guideline is not
         # on the study-design ladder.
+        # `score` and `source` complete the same lesson the `citations`
+        # KeyError taught: a row admitted through a different door still has to
+        # be shaped like every other scored row.
+        #
+        # score: `rag_results_to_scored` coalesces a NULL score to 0.0 so
+        # downstream sorts do not raise, and this row skipped that. It reached
+        # `build_synthesis_order`'s `sorted(..., key=p.get("score", 0))` as a
+        # literal None and raised
+        # `TypeError: '<' not supported between 'float' and 'NoneType'`.
+        # Rendering is unaffected: `format_paper_context_line` prints
+        # "NOT SCORED" on `level_key == 'guideline'` regardless of the number.
+        #
+        # source: the row IS read out of the library table, so 'rag' is the
+        # truthful value. Leaving it unset made a library-pinned answer report
+        # sources {None, 'rag'} and fail the route-pinning assertion.
+        if r.get("score") is None:
+            r["score"] = 0.0
+        r.setdefault("source", "rag")
         r.setdefault("citations", 0)
         r.setdefault("sample_size", None)
         r.setdefault("followup_months", None)
@@ -1162,6 +1187,21 @@ def admit_flagship_guidelines(evidence: dict, question: str) -> dict:
     ids_list += [str(r["pmid"]) for r in rows
                  if str(r["pmid"]) not in set(map(str, ids_list))]
     block["ids"] = ids_list
+    # THE ROW HAS TO REACH THE PROMPT, not just the pool.
+    #
+    # `_build_evidence_context` renders `block["text"]`, and both builders
+    # build that text in the tier loop — BEFORE this function runs. A row
+    # appended only to `scored` would be counted in `_summary`, appear in the
+    # bibliography, and never be shown to the model: a flagship guideline
+    # admitted and then invisible, which is the failure this whole item exists
+    # to remove, one layer further in.
+    block["text"] = (block.get("text") or "") + "".join(
+        format_paper_context_line(r) for r in rows)
+    # A block created here (there was no guideline block at all) needs a
+    # source, or it reads as None and a library-pinned answer reports its
+    # sources as {None, 'rag'}. These rows are read out of the library table,
+    # so 'rag' is the truthful value.
+    block.setdefault("source", "rag")
     evidence["guideline"] = block
     print("  [flagship] admitted %d scope-matched flagship guideline(s): %s"
           % (len(rows), ", ".join(r.get("guideline_id") or r["pmid"]
