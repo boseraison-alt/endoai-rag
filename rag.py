@@ -288,6 +288,26 @@ def setup_table():
             ("guideline_jurisdiction", "TEXT DEFAULT ''"),
             ("guideline_url",          "TEXT DEFAULT ''"),
             ("guideline_confidence",   "TEXT DEFAULT ''"),
+            # A49 item C (2026-09-06) — WHERE `level_key` CAME FROM.
+            #
+            # Two mechanisms write that column and they mean different things:
+            # the pubtype backfill writes the paper's DESIGN, live write-back
+            # used to write the LANE it was retrieved under. Write-back runs
+            # far more often, so the lane won, and "which query found this"
+            # became the column's de facto meaning. Nine IADT consensus
+            # guidelines sat at level1/level2 with scores because they answered
+            # a level2 lane's query.
+            #
+            # `pubtype:practice guideline` / `journal:cochrane` mean derived;
+            # `lane:level2` means the fallback fired and nothing better was
+            # available. Empty means the row predates this column and is
+            # treated as NOT derived, so a derivation may still correct it.
+            #
+            # Standing rule 37: when two mechanisms write the same column, the
+            # one that runs most often decides what it means. This column is
+            # what makes that question answerable per row instead of by
+            # reading two files and guessing.
+            ("level_key_source",       "TEXT DEFAULT ''"),
         ):
             cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""
@@ -388,13 +408,46 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                          citations, level_key, score, embedding,
                          medline_indexed, has_erratum, has_retraction,
                          registry, coi_flag, coi_funder, coi_status,
-                         superseded_by)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                         superseded_by, level_key_source)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     ON CONFLICT (pmid) DO UPDATE SET
                         citations       = EXCLUDED.citations,
                         score           = EXCLUDED.score,
-                        level_key       = COALESCE(NULLIF(EXCLUDED.level_key,''),
-                                                   endo_papers_rag.level_key),
+                        -- ITEM C (2026-09-06). THE DERIVED WRITER WINS.
+                        -- `level_key` has two writers: the pubtype backfill,
+                        -- which stores the paper's DESIGN, and this one, which
+                        -- used to store `eff_level` — the tier the paper was
+                        -- RETRIEVED UNDER. This path runs on every live query
+                        -- and the backfill runs when somebody runs it, so this
+                        -- one decided what the column meant, and what it meant
+                        -- was "which query found this". Nine IADT consensus
+                        -- guidelines became level1/level2 studies that way.
+                        --
+                        -- endo_ai now derives the tier from publication types
+                        -- where it can and marks the result in
+                        -- `level_key_source`. A LANE key must never overwrite
+                        -- a key that was derived; a derived key may overwrite
+                        -- anything.
+                        level_key       = CASE
+                            WHEN COALESCE(NULLIF(EXCLUDED.level_key,''),'') = ''
+                                THEN endo_papers_rag.level_key
+                            WHEN EXCLUDED.level_key_source LIKE 'lane:%%'
+                                 AND COALESCE(endo_papers_rag.level_key_source,'')
+                                     NOT LIKE 'lane:%%'
+                                 AND COALESCE(endo_papers_rag.level_key_source,'')
+                                     <> ''
+                                THEN endo_papers_rag.level_key
+                            ELSE EXCLUDED.level_key
+                        END,
+                        level_key_source = CASE
+                            WHEN EXCLUDED.level_key_source LIKE 'lane:%%'
+                                 AND COALESCE(endo_papers_rag.level_key_source,'')
+                                     NOT LIKE 'lane:%%'
+                                 AND COALESCE(endo_papers_rag.level_key_source,'')
+                                     <> ''
+                                THEN endo_papers_rag.level_key_source
+                            ELSE EXCLUDED.level_key_source
+                        END,
                         medline_indexed = EXCLUDED.medline_indexed,
                         has_erratum     = EXCLUDED.has_erratum,
                         has_retraction  = EXCLUDED.has_retraction,
@@ -420,6 +473,9 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                     bool(p.get("has_coi")), p.get("coi_funder", "") or "",
                     p.get("coi_status", "no_statement") or "no_statement",
                     p.get("superseded_by", "") or "",
+                    # Item C. Empty when the caller predates the guard, which
+                    # the ON CONFLICT arm treats as "not derived".
+                    p.get("level_key_source", "") or "",
                 ))
                 conn.commit()
                 written += 1

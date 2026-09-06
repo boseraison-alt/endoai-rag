@@ -104,20 +104,35 @@ def derive(pubtypes, journal, table):
 
 
 def fetch_pubtypes(pmids):
-    """{pmid: [publication types]} through the repo's own PubMed client."""
+    """{pmid: [publication types]} through the repo's own PubMed client.
+
+    USES `_fetch_pubtypes_and_abstracts`, NOT `_merge_corrections_and_registries`.
+    The first version called the latter with `{pmid: {}}` and every chunk died
+    on `KeyError: 'has_erratum'` — that function MUTATES a metadata dict the
+    esummary pass has already populated and assumes its keys exist. The failure
+    was caught per-chunk and printed, and the run still produced a matrix:
+    197 of 200 rows came back "(no type)" and the headline read
+    "disagreement rate 33.3%" off three rows.
+
+    That number would have been reported as a corpus finding. It was an
+    exception handler. The undecidable count is now asserted against the
+    sample size instead of being printed and passed over.
+    """
     out = {}
-    B = 200
+    B = 100
     for i in range(0, len(pmids), B):
         chunk = pmids[i:i + B]
-        meta = {p: {} for p in chunk}
         try:
-            E._merge_corrections_and_registries(chunk, meta)
+            recs = E._fetch_pubtypes_and_abstracts(chunk)
         except Exception as ex:
             print("    pubtype fetch failed for a chunk: %s" % ex)
+            recs = {}
         for p in chunk:
-            out[p] = (meta.get(p) or {}).get("pubtypes", []) or []
-        print("    fetched publication types %d/%d" % (min(i + B, len(pmids)),
-                                                       len(pmids)))
+            out[p] = (recs.get(p) or {}).get("publication_types", []) or []
+        got = sum(1 for p in chunk if out.get(p))
+        print("    fetched publication types %d/%d  (%d of this chunk's %d "
+              "carry any)" % (min(i + B, len(pmids)), len(pmids), got,
+                              len(chunk)))
     return out
 
 
@@ -259,9 +274,18 @@ def main():
     print("   %-12s %-14s %4d" % ("(no type)", "-", undecidable))
     print("\n   agree %d   disagree %d   undecidable %d   (n=%d)"
           % (agree, disagree, undecidable, len(sample)))
-    if agree + disagree:
+    # RULE 34, ENFORCED RATHER THAN REMEMBERED. A rate computed off a handful
+    # of decidable rows is a statement about the fetch, not about the corpus.
+    decidable = agree + disagree
+    if decidable < 0.5 * len(sample):
+        print("   *** NOT REPORTING A RATE. Only %d of %d sampled rows could"
+              % (decidable, len(sample)))
+        print("       be decided, so the fetch failed rather than the corpus")
+        print("       being untyped. Fix the fetch before believing anything")
+        print("       below this line.")
+    else:
         print("   disagreement rate on decidable rows: %.1f%%"
-              % (100.0 * disagree / (agree + disagree)))
+              % (100.0 * disagree / decidable))
 
     print("\n   ROWS CARRYING A GUIDELINE PUBLICATION TYPE BUT BANDED ON THE")
     print("   STUDY LADDER (the mis-banding, in the sample): %d"

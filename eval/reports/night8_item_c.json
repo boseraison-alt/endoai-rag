@@ -1,0 +1,81 @@
+{
+ "sample_size": 200,
+ "seed": 20260906,
+ "agree": 114,
+ "disagree": 42,
+ "undecidable": 44,
+ "guideline_typed_on_ladder": [],
+ "cited": [],
+ "matrix": {
+  "level5": {
+   "level4": 4,
+   "level3": 5,
+   "level1": 3,
+   "level5": 3,
+   "observational": 1,
+   "classic": 1,
+   "guideline": 1
+  },
+  "level1": {
+   "level1": 84,
+   "level2": 4,
+   "level3a": 1
+  },
+  "level3a": {
+   "invitro": 8,
+   "classic": 3,
+   "level2": 5,
+   "level3a": 5
+  },
+  "level4": {
+   "level4": 16,
+   "level3a": 2,
+   "classic": 2,
+   "level3": 2
+  },
+  "cochrane": {
+   "cochrane": 2
+  },
+  "guideline": {
+   "guideline": 3
+  },
+  "level2": {
+   "level2": 1
+  }
+ },
+ "matrix_repo_mapping": {
+  "level5": {
+   "level4": 4,
+   "level3": 5,
+   "level1": 3,
+   "level5": 3,
+   "observational": 1,
+   "classic": 1,
+   "guideline": 1
+  },
+  "level1": {
+   "level1": 84,
+   "level2": 4,
+   "guideline": 3,
+   "level3a": 1
+  },
+  "level3a": {
+   "invitro": 8,
+   "classic": 3,
+   "level2": 5,
+   "level3a": 5
+  },
+  "level4": {
+   "level4": 16,
+   "level3a": 2,
+   "classic": 2,
+   "level3": 2
+  },
+  "cochrane": {
+   "cochrane": 2
+  },
+  "level2": {
+   "level2": 1
+  }
+ }
+}

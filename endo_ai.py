@@ -5121,6 +5121,102 @@ ENDO_DOMAIN_FILTER = (
     'OR "pulp therapy"[tiab] OR "pulp capping"[tiab])'
 )
 
+# ── WHAT WRITE-BACK SHOULD STORE IN `level_key` (item C, 2026-09-06) ─────
+#
+# Two mechanisms write this column. The pubtype backfill writes the paper's
+# DESIGN. Live write-back writes `eff_level` -- "the tier this paper was
+# retrieved under", i.e. WHICH QUERY FOUND IT. Write-back runs on every live
+# query and the backfill runs when somebody runs it, so write-back decides what
+# the column means, and what it means is not a tier.
+#
+# That is how nine IADT consensus guidelines became level1/level2 studies with
+# scores: they answered a level2 lane's query, so they were stored as level2.
+# Measured on a 200-row random sample fetched live on 2026-09-06: of 156 rows
+# whose design could be derived from publication types, 42 disagree with the
+# stored tier -- 26.9%.
+#
+# NOTE WHICH LANE IS THE DOOR, because it is not the obvious one. The only lane
+# whose filter contains a guideline publication type is the GUIDELINE lane, by
+# design. Neither level1 (`randomized controlled trial[pt] OR systematic
+# review[pt] OR meta-analysis[pt]`) nor level2 (`controlled clinical trial[pt]
+# OR prospective studies[mh] OR comparative study[pt]`) does -- and those are
+# the two lanes that admitted the nine. There is no pubtype door. The door is
+# that the lane is stored at all.
+#
+# GUIDELINE TYPES MAP TO `guideline`, NOT `level1`, and this is where the
+# repo's existing mapping is itself part of the defect:
+# `scripts/backfill_pubmed_metadata.py::PUBTYPE_TO_LEVEL` sends `practice
+# guideline`, `guideline` and `consensus development conference` to `level1`.
+# It was written before the `guideline` tier existed. Deriving with it would
+# put a consensus guideline at the top of the evidence ladder -- the same
+# category error running the other way.
+#
+# `consensus statement` IS IN THIS SET AND WAS NOT IN THE FIRST VERSION.
+# The fixture the batch named -- the real fetched record for PMID 32475015 --
+# is what caught it. Its publication types are ["Journal Article", "Review",
+# "Consensus Statement"], not "Practice Guideline", so the first mapping
+# derived NOTHING for it and the guard would have left the exact row this item
+# exists for still banded by its lane. Fetched for all nine:
+#
+#   22230724 22409417 22583659 17511833 17635351   Practice Guideline
+#   32475015 32460393 32458553                     Consensus Statement
+#   32472740                                       Journal Article, Review only
+#
+# The last one is NOT derivable and is deliberately left that way -- see the
+# `review` note in `tier_from_pubtypes`. The guard reaches 8 of the 9.
+_GUIDELINE_PUBTYPES = frozenset({
+    "practice guideline", "guideline",
+    "consensus statement",
+    "consensus development conference",
+    "consensus development conference, nih",
+})
+
+_PUBTYPE_TO_TIER = (
+    ("practice guideline", "guideline"),
+    ("guideline", "guideline"),
+    ("consensus statement", "guideline"),
+    ("consensus development conference", "guideline"),
+    ("consensus development conference, nih", "guideline"),
+    ("meta-analysis", "level1"),
+    ("systematic review", "level1"),
+    ("randomized controlled trial", "level1"),
+    ("controlled clinical trial", "level2"),
+    ("clinical trial, phase iv", "level2"),
+    ("clinical trial, phase iii", "level2"),
+    ("clinical trial", "level2"),
+    ("multicenter study", "level2"),
+    ("observational study", "level3a"),
+    ("comparative study", "level3a"),
+    ("evaluation study", "level3b"),
+    ("case reports", "level4"),
+    ("editorial", "level5"),
+    ("comment", "level5"),
+    ("letter", "level5"),
+)
+
+
+def tier_from_pubtypes(pubtypes, journal: str = "") -> tuple:
+    """(tier, why) derived from PubMed's own publication types, or (None, '').
+
+    `review` IS DELIBERATELY ABSENT from the mapping. NLM does not reliably tag
+    society guidelines in dental journals: the IADT trauma guidelines
+    (PMID 32472740) carry only ["Journal Article", "Review"], and a bare
+    `Review` would demote them to level5 -- expert opinion. That is the
+    non-demotion guard `scripts/reclassify_by_pubtype.py` already documents,
+    and honouring it here means a `Review`-only record derives NOTHING and
+    falls through to the lane, which is the current behaviour and no worse.
+    """
+    if "cochrane" in (journal or "").lower():
+        return "cochrane", "journal:cochrane"
+    low = {str(p).strip().lower() for p in (pubtypes or [])}
+    if not low:
+        return None, ""
+    for tag, tier in _PUBTYPE_TO_TIER:
+        if tag in low:
+            return tier, "pubtype:%s" % tag
+    return None, ""
+
+
 # PubMed's own animal exclusion, ANDed into the guideline lane only. See the
 # long note at its use site in `fetch_papers`. Floor-preserving by
 # construction: it drops records MeSH-indexed as animal-only and leaves
@@ -5399,6 +5495,22 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
             # ended up at Level I scoring 67.
             is_book   = bool(meta.get("is_book"))
             eff_level = "level5" if is_book else level_key
+            # ITEM C — DERIVE THE TIER BEFORE FALLING BACK TO THE LANE.
+            # `eff_level` was the lane, always, and the lane is "which query
+            # found this". Publication types are already in `meta` from the
+            # efetch pass, so the design is available here at no extra call.
+            # Order: a guideline publication type wins outright; then any
+            # derivable design; only then the lane.
+            level_source = "lane:%s" % eff_level
+            if not is_book:
+                _derived, _why = tier_from_pubtypes(
+                    meta.get("pubtypes"), meta.get("journal", "") or "")
+                if _derived:
+                    if _derived != eff_level:
+                        print(f"    [tier] PMID {pmid}: lane said {eff_level}, "
+                              f"{_why} says {_derived} — storing the design")
+                    eff_level = _derived
+                    level_source = _why
 
             paper_is_review = is_review_design(eff_level, paper_text)
             sample_size     = extract_sample_size(paper_text, eff_level)
@@ -5466,6 +5578,11 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
                 # (eff_level, not level_key: book records are overridden to
                 # level5 regardless of the tier the search ran under.)
                 "level_key":       eff_level,
+                # ITEM C — where that key CAME FROM, so the writer can refuse
+                # to overwrite a derived tier with a lane guess. "pubtype:..."
+                # or "journal:cochrane" means derived; "lane:..." means the
+                # fallback fired.
+                "level_key_source": level_source,
                 "is_reference_text": is_book,
                 # THE PAPER ITSELF. Found by item 2 (2026-09-05): the library
                 # path's `rag_results_to_scored` carries title and abstract and

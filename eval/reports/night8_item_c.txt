@@ -1,0 +1,80 @@
+==============================================================================
+ITEM C — WRITE-BACK STORES THE LANE, NOT THE DESIGN
+==============================================================================
+
+1. EVERY LANE'S PUBMED FILTER STRING
+   cochrane       "Cochrane Database Syst Rev"[jour]
+   level1         randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]
+   level2         controlled clinical trial[pt] OR prospective studies[mh] OR comparative study[pt]
+   level3a        retrospective studies[pt] OR cohort studies[mh] OR longitudinal studies[mh]
+   level3b        case-control studies[pt] OR case-control studies[mh]
+   level4         case series[pt] OR case reports[pt]
+   guideline      practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]
+                  ^^ CONTAINS a guideline publication type: consensus development conference, guideline, practice guideline
+   level5         review[pt] OR editorial[pt] OR comment[pt] OR letter[pt]
+   observational  cross-sectional studies[mh] OR observational study[pt] OR "cone-beam computed tomography"[mh] OR "imaging, three-dimensional"[mh] OR "anatomy and histology"[sh] OR "sensitivity and specificity"[mh]
+
+   DOOR: guideline (consensus development conference, guideline, practice guideline)
+
+   THE NINE — the lane each was admitted under
+     32472740   admitted by lane level1    now guideline   IADT-INTRO-2020
+     32475015   admitted by lane level2    now guideline   IADT-FRACTURES-LUXATIONS-2020
+     32460393   admitted by lane level2    now guideline   IADT-AVULSION-2020
+     32458553   admitted by lane level2    now guideline   IADT-PRIMARY-2020
+     22230724   admitted by lane level2    now guideline   IADT-FRACTURES-LUXATIONS-2012
+     22409417   admitted by lane level2    now guideline   IADT-AVULSION-2012
+     22583659   admitted by lane level2    now guideline   IADT-PRIMARY-2012
+     17511833   admitted by lane level2    now guideline   IADT-AVULSION-2007
+     17635351   admitted by lane level2    now guideline   IADT-PRIMARY-2007
+     -> IADT-INTRO-2020 (32472740) was admitted by the LEVEL1 lane:
+        randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]
+     -> the other eight by the LEVEL2 lane:
+        controlled clinical trial[pt] OR prospective studies[mh] OR comparative study[pt]
+
+2. DERIVED vs STORED
+   publication types stored per row? NO
+   -> the schema has no pubtype column (31 columns, checked).
+      So this is measured on a RANDOM SAMPLE fetched live
+      through the repo's own PubMed client, and NOT
+      extrapolated beyond one decimal.
+   numeric-PMID citeable rows in table: 3370
+   SAMPLE SIZE: 200 (seed 20260906)
+    fetched publication types 100/200  (98 of this chunk's 100 carry any)
+    fetched publication types 200/200  (100 of this chunk's 100 carry any)
+
+   (derived_fixed -> stored) MATRIX, n=200
+   derived      stored ->
+   cochrane     cochrane          2
+   guideline    guideline         3
+   level1       level1           84
+   level1       level2            4   <-- disagrees
+   level1       level3a           1   <-- disagrees
+   level2       level2            1
+   level3a      invitro           8   <-- disagrees
+   level3a      level2            5   <-- disagrees
+   level3a      level3a           5
+   level3a      classic           3   <-- disagrees
+   level4       level4           16
+   level4       level3a           2   <-- disagrees
+   level4       classic           2   <-- disagrees
+   level4       level3            2   <-- disagrees
+   level5       level3            5   <-- disagrees
+   level5       level4            4   <-- disagrees
+   level5       level1            3   <-- disagrees
+   level5       level5            3
+   level5       observational     1   <-- disagrees
+   level5       classic           1   <-- disagrees
+   level5       guideline         1   <-- disagrees
+   (no type)    -                44
+
+   agree 114   disagree 42   undecidable 44   (n=200)
+   disagreement rate on decidable rows: 26.9%
+
+   ROWS CARRYING A GUIDELINE PUBLICATION TYPE BUT BANDED ON THE
+   STUDY LADDER (the mis-banding, in the sample): 0
+
+3. MIS-BANDED ROWS CITED BY STORED ANSWERS
+   stored answers scanned: 207
+   of the 0 mis-banded sample rows, cited by an answer: 0
+
+  wrote eval/reports/night8_item_c.json
