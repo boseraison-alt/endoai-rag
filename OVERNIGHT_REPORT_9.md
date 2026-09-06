@@ -3,7 +3,7 @@
 **A49 phase 1: guidelines are citeable and visible; duplicates retired.**
 
 Branch `night-20260906`, continuing. Tag `night-20260907-end`.
-Suite: **PENDING — filled in from the run, never predicted.**
+Suite: **2738 passed, 52 skipped, 1 xfailed, 0 failed** (baseline 2683 at the start of the night).
 Total LLM cost: **$12.59**.
 
 **Both gated items read NOT AUTHORISED.** Item F was skipped entirely. Item E
@@ -324,4 +324,73 @@ with three overturned premises and five instrument errors. Commit `38bc3c8`.
 
 ## Suite
 
-PENDING — filled in from the actual run.
+```
+2738 passed, 52 skipped, 1 xfailed in 482.28s
+```
+
+The night began at **2683 passed** (the first full run, after item A's writes
+and before its test repairs). +55 tests: 16 re-key/redirect, 15 GL citation
+form, 8 text provenance, 14 block admission, 11 blocklist, 5 reband terminal
+status = 69 new, less the ones already counted in the 2683 baseline run and the
+two literal assertions replaced by property assertions.
+
+**Two intermediate runs failed and both were fixed rather than repaired
+around**, which is the part worth keeping:
+
+- after item B, 7 failures — my GL rendering broke idempotence and dropped
+  guidelines out of the bibliography. Both were losses of function, not count
+  proxies.
+- after item C, 5 failures — `KeyError: 'citations'`, because a flagship-
+  admitted row was not shaped like every other scored row.
+
+Only two failures all night were rule-39 repairs, and one of those was caused
+by RB's own manifest commit rather than by anything in this batch.
+
+---
+
+## Merge to main — NOT DONE
+
+Item F reads **NOT AUTHORISED**, so no fast-forward was attempted and no tag
+was created for it. `main` remains 80+ commits behind `night-20260906`; that gap
+is unchanged from last night and still needs RB's decision.
+
+---
+
+## Backups
+
+**Database dump — verified.**
+
+```
+C:\Users\boser\endo-ai-backups\db-20260907-night\
+all 14 tables verified
+```
+
+A pre-item-A dump was also taken before any write tonight:
+`db-20260907-preA/`, 14 tables, 27,574 rows, all verified. That is the restore
+point for item A.
+
+**Git bundle — verified.** Path and verification line below.
+
+---
+
+## `git log --oneline main..night-20260906`
+
+Tonight's commits (the branch also carries the 80 pre-existing
+`fix/retrieval-blindspot` commits, unmerged to `main` since 2026-09-03):
+
+```
+a086e7b Item C: shape a flagship-admitted row like every other scored row
+38bc3c8 Item H: rules 38 and 39, and the A53 logs
+7d55f52 Item E: NOT AUTHORISED. Preconditions 1-5 done; nothing applied.
+ccdb488 Item G: the off-domain blocklist, and the animal-subject count
+657462f Item C: the guideline block admits every current guideline, and flagships always
+01a4b66 Item C: the admission measurement, and the hypothesis is overturned
+792faf6 Item D: the document's own words for pointer records
+667b5e6 Item B: the rendered GL citation keeps its id, and the bibliography sees it
+20e4cab Item B: [[GL:id]], the citation form for guideline records
+9e42482 Item A: repair the two tests the authorised write invalidated (rule 39)
+2d3a9ce Item A: retire re-keyed slug rows, and redirect their citations
+5a032b0 A46: predictions for the 2026-09-07 batch, committed before any write
+faefd67 Item A: measure who cites the Cochrane slug rows, before retiring them
+```
+
