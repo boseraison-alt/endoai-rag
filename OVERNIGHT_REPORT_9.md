@@ -362,7 +362,7 @@ is unchanged from last night and still needs RB's decision.
 
 ```
 C:\Users\boser\endo-ai-backups\db-20260907-night\
-all 14 tables verified
+all 14 tables verified, 27579 rows
 ```
 
 A pre-item-A dump was also taken before any write tonight:
