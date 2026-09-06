@@ -956,6 +956,91 @@ PRISMA_BUFFER_YEARS  = 2     # SRs typically include studies up to N years befor
 SR_TIER_KEYS         = ("cochrane", "level1")
 PRIMARY_TIER_KEYS    = ("level2", "level3a", "level3b", "level3", "level4")
 
+
+def _manifest_primary_pmid(guideline_id: str) -> str:
+    """The accession the manifest keys a guideline by, '' if unknown.
+
+    Shares `_MANIFEST_BY_ID` with `_guideline_supersession_notice` but does not
+    depend on that function having run first — it fills the same cache.
+    """
+    global _MANIFEST_BY_ID
+    if _MANIFEST_BY_ID is None:
+        _guideline_supersession_notice("")      # populates the cache
+    rec = (_MANIFEST_BY_ID or {}).get(str(guideline_id or "")) or {}
+    return str(rec.get("pmid") or "").strip()
+
+
+def collapse_guideline_copies(evidence: dict) -> dict:
+    """One document, one row — even when it has three PubMed accessions.
+
+    ITEM E, 2026-09-06. `42017497` and `42014635` are the SAME EFCD-ESE-ORCA
+    deep-caries guideline, co-published in the International Endodontic Journal
+    and Clinical Oral Investigations, and the manifest keys it by a THIRD
+    accession, `42018467` (Caries Research). Verified against PubMed: identical
+    titles, all three typed `Practice Guideline`, three journals, three PMIDs.
+
+    Both copies reached the same pool on 2026-09-06 and were presented as two
+    independent guidelines agreeing with each other. That is the one thing a
+    clinician reading an evidence base must never be shown: unanimity
+    manufactured by counting one document twice.
+
+    PRISMA dedup could not see it. Every dedup path in this file works on
+    PMIDs, and these are three different PMIDs for one document. The identity
+    that survives co-publication is the MANIFEST ID, so that is what this
+    collapses on.
+
+    The survivor is the manifest primary where it is present, otherwise the
+    first copy seen in tier order — never an arbitrary one, because which copy
+    survives decides which journal and which DOI a clinician is sent to.
+    Rows carrying no `guideline_id` are untouched.
+    """
+    by_gid, order = {}, []
+    for tier_key, block in (evidence or {}).items():
+        if not isinstance(block, dict):
+            continue
+        for p in (block.get("scored") or []):
+            gid = (p.get("guideline_id") or "").strip()
+            if not gid:
+                continue
+            if gid not in by_gid:
+                by_gid[gid] = []
+                order.append(gid)
+            by_gid[gid].append(p)
+
+    survivors, dropped = {}, 0
+    for gid in order:
+        copies = by_gid[gid]
+        if len(copies) < 2:
+            continue
+        want = _manifest_primary_pmid(gid)
+        primary = next((c for c in copies
+                        if want and str(c.get("pmid") or "").strip() == want),
+                       None)
+        keep = primary or copies[0]
+        survivors[gid] = keep
+        for c in copies:
+            if c is not keep:
+                c["_collapsed_copy_of"] = str(keep.get("pmid") or "")
+                dropped += 1
+
+    if not dropped:
+        return evidence
+
+    for tier_key, block in (evidence or {}).items():
+        if not isinstance(block, dict) or "scored" not in block:
+            continue
+        kept = [p for p in (block.get("scored") or [])
+                if not p.get("_collapsed_copy_of")]
+        if len(kept) != len(block.get("scored") or []):
+            block["scored"] = kept
+            if block.get("ids"):
+                keep_ids = {str(p.get("pmid")) for p in kept}
+                block["ids"] = [i for i in block["ids"] if str(i) in keep_ids]
+
+    print(f"  [guideline dedup] collapsed {dropped} co-published copy/copies "
+          f"of {len(survivors)} document(s) to one row each")
+    return evidence
+
 # PubMed's reference linkage, cached per PMID. Built here rather than in a
 # script because A26 (backward citation chasing) needs exactly this call — RB's
 # instruction was to build it once and use it for both.
@@ -6319,6 +6404,12 @@ def build_evidence_base(topic, mode: str = "review"):
     # cosine similarity either. Item 2: without it this path nominates by year
     # while the library path nominates by relevance.
     flag_superseded_by_review(evidence, question=topic)
+
+    # ITEM E — collapse co-published copies of one guideline BEFORE the summary
+    # is built, so `total_scored` and `synthesis_order` both count the document
+    # once. Placed after the SR dedup because the two are independent: that one
+    # works on PMIDs and cannot see a document with three of them.
+    collapse_guideline_copies(evidence)
 
     # synthesis_order = strict tier hierarchy (Cochrane → L1 → L2 → L3a → L3b → L4 → L5)
     # all_scored      = legacy flat-by-score list (retained for status panels / downstream code)

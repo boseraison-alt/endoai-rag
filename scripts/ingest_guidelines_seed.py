@@ -165,9 +165,31 @@ def tier_census(cur):
     return {r["level_key"]: r["n"] for r in cur.fetchall()}
 
 
+def alt_keys(g):
+    """A guideline's OTHER accessions — co-publications, not duplicates.
+
+    ITEM E, 2026-09-06. A guideline co-published in two or three journals gets
+    a separate PubMed record for each, and the manifest keys the document by
+    one of them. `42018467` (Caries Res), `42017497` (Int Endod J) and
+    `42014635` (Clin Oral Investig) are one EFCD-ESE-ORCA deep-caries
+    guideline; two of the three reached the same retrieval pool and were shown
+    as two independent guidelines agreeing with each other.
+
+    The manifest has carried `alt_pmid` on six records for exactly this reason
+    since it was written, and this ingest ignored the field entirely.
+
+    A co-publication is NOT quarantined. It is a legitimate copy of a real
+    document, and a stored answer citing it must keep resolving; it is enriched
+    with the same guideline identity so that `collapse_guideline_copies` can
+    recognise it as the same document at retrieval time.
+    """
+    return [str(a).strip() for a in (g.get("alt_pmid") or []) if str(a).strip()]
+
+
 def plan(cur, guidelines):
     """Decide, per manifest record, what will happen. No writes."""
     keys = [key_for(g) for g in guidelines]
+    keys += [a for g in guidelines for a in alt_keys(g)]
     cur.execute("SELECT pmid, level_key, score, impact_factor, title "
                 "FROM endo_papers_rag WHERE pmid = ANY(%s)", (keys,))
     existing = {r["pmid"]: dict(r) for r in cur.fetchall()}
@@ -192,6 +214,30 @@ def plan(cur, guidelines):
                              if status in SUPERSEDED_STATUS else "",
         }
         actions.append(act)
+
+        # ITEM E — the co-published copies. Only ones ALREADY IN THE TABLE are
+        # touched: an alt_pmid absent from the library is a document we do not
+        # hold, and inserting it would create the second row this item exists
+        # to prevent. Never quarantined -- see `alt_keys`.
+        for a in alt_keys(g):
+            row = existing.get(a)
+            if not row:
+                continue
+            actions.append({
+                "id": g["id"], "key": a, "org": g.get("org"),
+                "status": status, "confidence": g.get("confidence"),
+                "keyed_by": "alt_pmid (co-publication)",
+                "action": "enrich" if is_study_not_guideline(g)
+                          else "reclassify",
+                "is_study": is_study_not_guideline(g),
+                "was_level_key": row.get("level_key"),
+                "was_score": row.get("score"),
+                "was_impact_factor": row.get("impact_factor"),
+                "quarantine": "",
+                "superseded_by": (g.get("superseded_by") or "")
+                                 if status in SUPERSEDED_STATUS else "",
+                "is_copublication": True,
+            })
     return actions, existing
 
 
@@ -320,6 +366,32 @@ def main():
         for a in s:
             print("    %-24s -> %s" % (a["id"], a["superseded_by"]))
         print()
+
+    # ITEM E — co-publications. Reported with the INPUT counted first, so a
+    # zero here is readable: "the manifest names N alternates and M of them are
+    # in the table" is a finding; a bare "0 co-publications" is not.
+    all_alts = [(a, g["id"]) for g in guidelines for a in alt_keys(g)]
+    cop = [a for a in actions if a.get("is_copublication")]
+    print("  CO-PUBLICATIONS (alt_pmid)")
+    print("    alternates named by the manifest   %d across %d record(s)"
+          % (len(all_alts), len({gid for _a, gid in all_alts})))
+    print("    of those present in the table      %d" % len(cop))
+    if cop:
+        for a in cop:
+            print("      %-10s -> %-30s was level_key=%-9s score=%s"
+                  % (a["key"], a["id"][:30], a["was_level_key"],
+                     a["was_score"]))
+    else:
+        print("      none. Every alternate accession is absent from the")
+        print("      library, so this ingest has nothing to enrich. The")
+        print("      co-publication defect is therefore a RETRIEVAL-POOL")
+        print("      problem, not a library one: both copies reach a live")
+        print("      pool without either being stored. That is what")
+        print("      endo_ai.collapse_guideline_copies fixes.")
+    for a, gid in all_alts:
+        if not any(c["key"] == a for c in cop):
+            print("      absent: %-10s (%s)" % (a, gid))
+    print()
 
     unconf = [a for a in actions if a["confidence"] == "unconfirmed_pmid"]
     print("  UNCONFIRMED PMID — keyed by manifest id, %d records:" % len(unconf))
