@@ -1,0 +1,76 @@
+==============================================================================
+ITEM D — THE DOCUMENT'S OWN WORDS  (APPLY)
+==============================================================================
+  pointer rows with a URL: 47
+  time box: 25 minutes
+
+  [ 1/47] 26320105                       FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [ 2/47] 41412684                       FAIL http_403               https://www.sciencedirect.com/science/articl
+  [ 3/47] AAE-ANTIBIOTICS-2017           FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 4/47] AAE-CASEDIFFICULTY-2022        FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 5/47] AAE-DIAGNOSIS-2009             FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [ 6/47] AAE-MICROSCOPES-2020           FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 7/47] AAE-MRONJ-2026                 FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [ 8/47] AAE-REGENERATIVE-2025          FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 9/47] AAE-SINUSITIS-2018             FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [10/47] AAE-TRAUMA-2026                FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [11/47] AAE-TREATMENTSTANDARDS-2018    FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [12/47] AAE-VPT-2021                   FAIL http_403               https://www.aae.org/wp-content/uploads/2021/
+  [13/47] AAO-CPG-2023                   OK   first_300_words        94 words
+  [14/47] 16383047                       FAIL no_extractable_text    https://doi.org/10.14219/jada.archive.2005.0
+  [15/47] 20516097                       FAIL no_extractable_text    https://doi.org/10.14219/jada.archive.2010.0
+  [16/47] 27181443                       FAIL bot_blocked            https://www.aaom.com/clinical-practice-state
+  [17/47] 27601350                       FAIL bot_blocked            https://www.aaom.com/clinical-practice-state
+  [18/47] 27765326                       FAIL bot_blocked            https://www.aaom.com/clinical-practice-state
+  [19/47] 30084358                       FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2017.08.005
+  [20/47] 30084362                       FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2017.07.011
+  [21/47] AAOM-CPS-ANTIRESORPTIVE-2019   FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2018.08.021
+  [22/47] 17899726                       FAIL http_403               https://pubmed.ncbi.nlm.nih.gov/17899726/
+  [23/47] 35963768                       FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2022.06.007
+  [24/47] 37530694                       FAIL http_403               https://jada.ada.org/article/S0002-8177(23)0
+  [25/47] AAOP-GUIDELINES-2023           FAIL no_extractable_text    https://www.quintessence-publishing.com/usa/
+  [26/47] ACP-ASYMPTOMATIC-EXTRACTION-20 FAIL bot_blocked            https://www.prosthodontics.org/about-acp/pos
+  [27/47] ACP-DENTAL-IMPLANTS-2019       FAIL bot_blocked            https://www.prosthodontics.org/about-acp/pos
+  [28/47] ACP-IMPLANT-IMAGING-2016       FAIL bot_blocked            https://www.prosthodontics.org/about-acp/pos
+  [29/47] ACP-MRONJ-2016                 FAIL bot_blocked            https://www.prosthodontics.org/about-acp/pos
+  [30/47] ACP-POSTERIOR-SINGLE-TOOTH-201 FAIL bot_blocked            https://www.prosthodontics.org/about-acp/pos
+  [31/47] ACP-RADIOGRAPHS-MARGINS-2019   FAIL bot_blocked            https://www.prosthodontics.org/about-acp/pos
+  [32/47] 41500761                       FAIL http_403               https://jada.ada.org/article/S0002-8177(25)0
+  [33/47] 42569978                       FAIL http_403               https://jada.ada.org/article/S0002-8177(26)0
+  [34/47] 33170952                       FAIL http_403               https://onlinelibrary.wiley.com/doi/abs/10.1
+  [35/47] 42018467                       FAIL http_403               https://karger.com/cre/article/doi/10.1159/0
+  [36/47] 32383274                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [37/47] 17180780                       FAIL http_403               https://onlinelibrary.wiley.com/doi/full/10.
+  [38/47] 26990236                       FAIL http_403               https://onlinelibrary.wiley.com/doi/full/10.
+  [39/47] 30664240                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [40/47] 31301231                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [41/47] 34378217                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [42/47] ESE-ECR-2018                   FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [43/47] ESE-EXTRUSION-REPLANT-2021     FAIL http_403               https://onlinelibrary.wiley.com/doi/full/10.
+  [44/47] ESE-TRAUMA-2021                FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [45/47] GDC-STANDARDS-2013             OK   first_300_words        243 words
+  [46/47] 17367451                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [47/47] IFEA-INTERNAL-RESORPTION-2025  FAIL http_403               https://journals.lww.com/eddt/fulltext/2025/
+
+==============================================================================
+BY ORGANISATION
+==============================================================================
+  org           fetched   failed  reasons
+  AAE                 0       12  http_403
+  AAO                 1        0  
+  AAOM                0        8  bot_blocked, no_extractable_text
+  AAOMP               0        1  http_403
+  AAOMR               0        2  http_403, no_extractable_text
+  AAOP                0        1  no_extractable_text
+  ACP                 0        6  bot_blocked
+  ADA                 0        2  http_403
+  BES                 0        1  http_403
+  EFCD                0        1  http_403
+  EFP                 0        1  http_403
+  ESE                 0        8  http_403
+  GDC                 1        0  
+  IADT                0        1  http_403
+  IFEA                0        1  http_403
+  TOTAL               2       45
+
+  APPLIED.

@@ -1,0 +1,111 @@
+==============================================================================
+ITEM D — THE DOCUMENT'S OWN WORDS  (APPLY)
+==============================================================================
+  pointer rows with a URL: 72
+  time box: 25 minutes
+
+  [ 1/72] 26320105                       FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [ 2/72] 41412684                       FAIL http_403               https://www.sciencedirect.com/science/articl
+  [ 3/72] AAE-ANTIBIOTICS-2017           FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 4/72] AAE-CASEDIFFICULTY-2022        FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 5/72] AAE-DIAGNOSIS-2009             FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [ 6/72] AAE-MICROSCOPES-2020           FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 7/72] AAE-MRONJ-2026                 FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [ 8/72] AAE-REGENERATIVE-2025          FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [ 9/72] AAE-SINUSITIS-2018             FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [10/72] AAE-TRAUMA-2026                FAIL http_403               https://www.jendodon.com/article/S0099-2399(
+  [11/72] AAE-TREATMENTSTANDARDS-2018    FAIL http_403               https://www.aae.org/specialty/wp-content/upl
+  [12/72] AAE-VPT-2021                   FAIL http_403               https://www.aae.org/wp-content/uploads/2021/
+  [13/72] AAO-CPG-2023                   FAIL no_extractable_text    https://www2.aaoinfo.org/practice-management
+  [14/72] 16383047                       FAIL no_extractable_text    https://doi.org/10.14219/jada.archive.2005.0
+  [15/72] 20516097                       FAIL no_extractable_text    https://doi.org/10.14219/jada.archive.2010.0
+  [16/72] 27181443                       FAIL no_extractable_text    https://www.aaom.com/clinical-practice-state
+  [17/72] 27601350                       FAIL no_extractable_text    https://www.aaom.com/clinical-practice-state
+  [18/72] 27765326                       FAIL no_extractable_text    https://www.aaom.com/clinical-practice-state
+  [19/72] 30084358                       FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2017.08.005
+  [20/72] 30084362                       FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2017.07.011
+  [21/72] AAOM-CPS-ANTIRESORPTIVE-2019   FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2018.08.021
+  [22/72] 16702591                       OK   first_300_words        299 words
+  [23/72] 17899726                       FAIL http_403               https://pubmed.ncbi.nlm.nih.gov/17899726/
+  [24/72] AAOMP-EXCISED-TISSUE-2013      OK   first_300_words        254 words
+  [25/72] 35963768                       FAIL no_extractable_text    https://doi.org/10.1016/j.oooo.2022.06.007
+  [26/72] 37530694                       FAIL http_403               https://jada.ada.org/article/S0002-8177(23)0
+  [27/72] 35300956                       OK   marked:abstract        295 words
+  [28/72] AAOP-GUIDELINES-2023           FAIL no_extractable_text    https://www.quintessence-publishing.com/usa/
+  [29/72] 29926946                       OK   first_300_words        129 words
+  [30/72] 41121563                       OK   marked:abstract        298 words
+  [31/72] 26743797                       OK   first_300_words        49 words
+  [32/72] ACP-ASYMPTOMATIC-EXTRACTION-20 FAIL no_extractable_text    https://www.prosthodontics.org/about-acp/pos
+  [33/72] ACP-DENTAL-IMPLANTS-2019       FAIL no_extractable_text    https://www.prosthodontics.org/about-acp/pos
+  [34/72] ACP-IMPLANT-IMAGING-2016       FAIL no_extractable_text    https://www.prosthodontics.org/about-acp/pos
+  [35/72] ACP-MRONJ-2016                 FAIL no_extractable_text    https://www.prosthodontics.org/about-acp/pos
+  [36/72] ACP-PARAMETERS-OF-CARE-2020    OK   first_300_words        299 words
+  [37/72] ACP-POSTERIOR-SINGLE-TOOTH-201 FAIL no_extractable_text    https://www.prosthodontics.org/about-acp/pos
+  [38/72] ACP-RADIOGRAPHS-MARGINS-2019   FAIL no_extractable_text    https://www.prosthodontics.org/about-acp/pos
+  [39/72] 37380250                       OK   first_300_words        278 words
+  [40/72] 38325969                       OK   first_300_words        274 words
+  [41/72] 41500761                       FAIL http_403               https://jada.ada.org/article/S0002-8177(25)0
+  [42/72] 42569978                       FAIL http_403               https://jada.ada.org/article/S0002-8177(26)0
+  [43/72] ADA-SEDATION-GA-2016           OK   first_300_words        295 words
+  [44/72] ADA-SEDATION-GA-2025           OK   first_300_words        296 words
+  [45/72] ADA-SEDATION-TEACHING-2025     OK   first_300_words        296 words
+  [46/72] 29334501                       OK   first_300_words        50 words
+  [47/72] ASDA-PARAMETERS-OF-CARE-2018   OK   first_300_words        299 words
+  [48/72] 33170952                       FAIL http_403               https://onlinelibrary.wiley.com/doi/abs/10.1
+  [49/72] BES-GOODPRACTICE-2022          OK   first_300_words        298 words
+  [50/72] CGDENT-ANTIMICROBIAL-2020      OK   first_300_words        74 words
+  [51/72] CGDENT-RADIOGRAPHY-SELECTION-2 OK   first_300_words        103 words
+  [52/72] DHSC-DBOH-2021                 OK   first_300_words        99 words
+  [53/72] 42018467                       FAIL http_403               https://karger.com/cre/article/doi/10.1159/0
+  [54/72] 32383274                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [55/72] 17180780                       FAIL http_403               https://onlinelibrary.wiley.com/doi/full/10.
+  [56/72] 26990236                       FAIL http_403               https://onlinelibrary.wiley.com/doi/full/10.
+  [57/72] 30664240                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [58/72] 31301231                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [59/72] 34378217                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [60/72] ESE-ECR-2018                   FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [61/72] ESE-EXTRUSION-REPLANT-2021     FAIL http_403               https://onlinelibrary.wiley.com/doi/full/10.
+  [62/72] ESE-TRAUMA-2021                FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [63/72] FDSRCS-PERIRADICULAR-2020      OK   marked:introduction    298 words
+  [64/72] GDC-STANDARDS-2013             FAIL no_extractable_text    https://www.gdc-uk.org/standards-guidance/st
+  [65/72] 17367451                       FAIL http_403               https://onlinelibrary.wiley.com/doi/10.1111/
+  [66/72] 38363702                       OK   first_300_words        299 words
+  [67/72] IFEA-INTERNAL-RESORPTION-2025  FAIL http_403               https://journals.lww.com/eddt/fulltext/2025/
+  [68/72] NICE-CG64-IE-2008              OK   marked:recommendations 299 words
+  [69/72] SDCEP-ACUTE-DENTAL-2026        OK   first_300_words        273 words
+  [70/72] SDCEP-ANTICOAGULANTS-2022      OK   first_300_words        288 words
+  [71/72] SDCEP-DRUG-PRESCRIBING         OK   first_300_words        61 words
+  [72/72] SDCEP-MRONJ-2017               OK   first_300_words        285 words
+
+==============================================================================
+BY ORGANISATION
+==============================================================================
+  org           fetched   failed  reasons
+  AAE                 0       12  http_403
+  AAO                 0        1  no_extractable_text
+  AAOM                0        8  no_extractable_text
+  AAOMP               2        1  http_403
+  AAOMR               0        2  http_403, no_extractable_text
+  AAOMS               1        0  
+  AAOP                0        1  no_extractable_text
+  AAP                 1        0  
+  AAPD                1        0  
+  ACP                 2        6  no_extractable_text
+  ADA                 5        2  http_403
+  ASA                 1        0  
+  ASDA                1        0  
+  BES                 1        1  http_403
+  CGDENT              2        0  
+  DHSC                1        0  
+  EFCD                0        1  http_403
+  EFP                 0        1  http_403
+  ESE                 0        8  http_403
+  FDSRCS              1        0  
+  GDC                 0        1  no_extractable_text
+  IADT                1        1  http_403
+  IFEA                0        1  http_403
+  NICE                1        0  
+  SDCEP               4        0  
+  TOTAL              25       47
+
+  APPLIED.

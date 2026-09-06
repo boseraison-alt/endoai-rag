@@ -330,6 +330,35 @@ def setup_table():
             # its accession is verified, which is why the ingest does this
             # generally rather than patching two rows.
             ("redirect_to",            "TEXT"),
+            # A49 phase 1b, item D (2026-09-07) — WHERE A GUIDELINE'S TEXT
+            # CAME FROM.
+            #
+            # A `pmid: null` guideline row is a POINTER: org, title, year,
+            # status, URL, and no text at all. A model handed a pointer cannot
+            # state the document's position from it, and on 2026-09-06 one
+            # stated a position from its own memory instead — caught by the
+            # citation-support checker, which is the right detector firing on
+            # the wrong-shaped input.
+            #
+            # Storing the ORGANISATION'S OWN summary verbatim is not
+            # paraphrase and is allowed. A model-written summary is not, and
+            # never becomes allowed: `verify_citation_support` checking a
+            # claim against a paraphrase is a hole directly under the
+            # grounding guarantee.
+            #
+            # So every stored abstract has to say where it came from.
+            # `abstract_source` is the discriminator — 'org_page' means the
+            # body's own words, fetched; empty means PubMed, as before.
+            # `abstract_sha256` is over the STORED text, so a later check can
+            # tell "the page moved" from "the text was edited".
+            ("abstract_source",        "TEXT DEFAULT ''"),
+            ("abstract_fetched",       "TEXT DEFAULT ''"),
+            ("abstract_sha256",        "TEXT DEFAULT ''"),
+            ("abstract_url",           "TEXT DEFAULT ''"),
+            # Why a pointer stayed a pointer: login-gated, JS-only, 404,
+            # timeout. Recorded rather than retried blindly, because the
+            # reasons differ in what would fix them.
+            ("fetch_failed",           "TEXT DEFAULT ''"),
         ):
             cur.execute(f"ALTER TABLE endo_papers_rag ADD COLUMN IF NOT EXISTS {_col} {_type};")
         cur.execute("""
