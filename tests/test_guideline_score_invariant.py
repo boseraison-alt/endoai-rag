@@ -246,15 +246,77 @@ class TestItem3TheSlugIdSplit:
         assert rows == [], (
             "rows exist under unconfirmed accessions: %s" % rows)
 
+    # The 30 slug-keyed guideline rows that were citeable before the
+    # 2026-09-06 seed-extension ingest, read out of the verified backup dump
+    # `db-20260905-2305/endo_papers_rag.csv.gz`. Real rows, not invented.
+    ORIGINAL_SLUG_ROWS = (
+        "AAE-ANTIBIOTICS-2017", "AAE-CASEDIFFICULTY-2022", "AAE-DIAGNOSIS-2009",
+        "AAE-MICROSCOPES-2020", "AAE-MRONJ-2026", "AAE-PS-diagnosis",
+        "AAE-PS-vital-pulp", "AAE-REGENERATIVE-2013", "AAE-REGENERATIVE-2025",
+        "AAE-SINUSITIS-2018", "AAE-TRAUMA-2026", "AAE-TREATMENTSTANDARDS-2018",
+        "AAE-VPT-2021", "BES-GOODPRACTICE-2022", "CGDENT-ANTIMICROBIAL-2020",
+        "CGDENT-RADIOGRAPHY-SELECTION-2018", "COCHRANE-CD004969",
+        "COCHRANE-CD005296", "DHSC-DBOH-2021", "ESE-ECR-2018",
+        "ESE-EXTRUSION-REPLANT-2021", "ESE-TRAUMA-2021",
+        "FDSRCS-PERIRADICULAR-2020", "GDC-STANDARDS-2013",
+        "IFEA-INTERNAL-RESORPTION-2025", "NICE-CG64-IE-2008",
+        "SDCEP-ACUTE-DENTAL-2026", "SDCEP-ANTICOAGULANTS-2022",
+        "SDCEP-DRUG-PRESCRIBING", "SDCEP-MRONJ-2017",
+    )
+
     def test_the_remaining_slug_rows_are_left_alone(self):
         """Item 3c: they need a non-PMID citation form, which is A49 phase 1's
         guidelines table. Leaving them is the decision, so it is pinned —
-        otherwise a later batch might read the silence as permission."""
-        n = _q("""SELECT COUNT(*) FROM endo_papers_rag
-                  WHERE level_key = 'guideline'
-                    AND COALESCE(quarantine_reason,'') = ''
-                    AND pmid !~ '^[0-9]+$'""")[0][0]
-        assert n == 30, (
-            "expected the 30 non-re-keyable slug rows to remain citeable, "
-            "found %d — either they were re-keyed (inventing accessions) or "
-            "quarantined (removing real documents from the library)" % n)
+        otherwise a later batch might read the silence as permission.
+
+        PINNED BY IDENTITY, NOT BY COUNT, since 2026-09-06.
+
+        This assertion used to read `COUNT(*) == 30`, and the authorised
+        seed-extension ingest broke it by inserting 16 further slug-keyed
+        records (ADA sedation 2016/2025, the ACP specialty positions, ASDA and
+        AAOM parameters of care) — 30 -> 46. Nothing was lost: diffed against
+        the pre-ingest backup, 0 of the original 30 went missing.
+
+        The count form could not survive an authorised insert, and it was also
+        WEAKER than what the docstring claims to guard. Both harms it names —
+        re-keying to an invented accession, and quarantining a real document —
+        REMOVE a row, so a batch that quarantined one original while adding one
+        new record would have kept the count at 30 and passed. Identity
+        catches that; the count never could. Re-pinning at 46 would have
+        repeated the mistake one number along.
+        """
+        rows = _q("""SELECT pmid FROM endo_papers_rag
+                     WHERE level_key = 'guideline'
+                       AND COALESCE(quarantine_reason,'') = ''
+                       AND pmid !~ '^[0-9]+$'""")
+        citeable = {r[0] for r in rows}
+        missing = sorted(set(self.ORIGINAL_SLUG_ROWS) - citeable)
+        assert not missing, (
+            "these non-re-keyable slug rows are no longer citeable: %s — "
+            "either they were re-keyed (inventing accessions) or quarantined "
+            "(removing real documents from the library)" % missing)
+
+    def test_every_citeable_slug_row_names_a_real_manifest_record(self):
+        """The other half of the same guard, and the half a count cannot give.
+
+        Identity-pinning the original 30 stops rows being REMOVED. This stops
+        rows being INVENTED: every slug-keyed guideline row that is citeable
+        must correspond to an id in `data/guidelines_seed.json`. A slug that
+        names no manifest record is exactly the defect the A2 audit had to
+        quarantine twelve rows for (`ESE-QG-2023`, a plausible identifier for
+        a document that does not exist).
+        """
+        import json as _json
+        man = _json.load(open("data/guidelines_seed.json", encoding="utf-8"))
+        known = {str(g["id"]) for g in man["guidelines"]}
+        rows = _q("""SELECT pmid FROM endo_papers_rag
+                     WHERE level_key = 'guideline'
+                       AND COALESCE(quarantine_reason,'') = ''
+                       AND pmid !~ '^[0-9]+$'""")
+        # The two pre-manifest AAE rows kept citeable by the A2 audit, which
+        # verified them against real documents by hand. Named, not silently
+        # excluded.
+        GRANDFATHERED = {"AAE-PS-diagnosis", "AAE-PS-vital-pulp"}
+        unknown = sorted({r[0] for r in rows} - known - GRANDFATHERED)
+        assert not unknown, (
+            "citeable slug rows naming no manifest record: %s" % unknown)

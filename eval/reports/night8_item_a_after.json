@@ -1,0 +1,89 @@
+{
+ "corpora": {
+  "query_cache": 20,
+  "answers/": 170,
+  "eval/logs/case_answers/": 17,
+  "eval/logs/curricula/": 0
+ },
+ "total_citations": 1,
+ "with_score": 1,
+ "with_if": 1,
+ "findings": [
+  {
+   "pmid": "17511833",
+   "guideline_id": "IADT-AVULSION-2007",
+   "was_tier": "level2",
+   "was_score": 38.1,
+   "citations": []
+  },
+  {
+   "pmid": "17635351",
+   "guideline_id": "IADT-PRIMARY-2007",
+   "was_tier": "level2",
+   "was_score": 38.1,
+   "citations": []
+  },
+  {
+   "pmid": "22230724",
+   "guideline_id": "IADT-FRACTURES-LUXATIONS-2012",
+   "was_tier": "level2",
+   "was_score": 37.0,
+   "citations": []
+  },
+  {
+   "pmid": "22409417",
+   "guideline_id": "IADT-AVULSION-2012",
+   "was_tier": "level2",
+   "was_score": 38.1,
+   "citations": []
+  },
+  {
+   "pmid": "22583659",
+   "guideline_id": "IADT-PRIMARY-2012",
+   "was_tier": "level2",
+   "was_score": 38.1,
+   "citations": []
+  },
+  {
+   "pmid": "32458553",
+   "guideline_id": "IADT-PRIMARY-2020",
+   "was_tier": "level2",
+   "was_score": 47.0,
+   "citations": []
+  },
+  {
+   "pmid": "32460393",
+   "guideline_id": "IADT-AVULSION-2020",
+   "was_tier": "level2",
+   "was_score": 47.0,
+   "citations": []
+  },
+  {
+   "pmid": "32472740",
+   "guideline_id": "IADT-INTRO-2020",
+   "was_tier": "level1",
+   "was_score": 54.8,
+   "citations": []
+  },
+  {
+   "pmid": "32475015",
+   "guideline_id": "IADT-FRACTURES-LUXATIONS-2020",
+   "was_tier": "level2",
+   "was_score": 47.0,
+   "citations": [
+    {
+     "corpus": "answers/",
+     "where": "answers\\answer_20260426_223750.txt",
+     "line": "8. [PMID: 32475015] Bourguignon C, Cohenca N, Lauridsen E et al. \u2014 IADT guidelines for management of traumatic dental injuries. Dental Traumatology (IF: 3.0), 2020. (Score: 48.3/100)",
+     "heading": "Level V \u2014 Expert Opinion",
+     "score_rendered": [
+      "48.3"
+     ],
+     "if_rendered": [
+      "3.0"
+     ]
+    }
+   ]
+  }
+ ]
+}

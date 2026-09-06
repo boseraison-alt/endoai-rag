@@ -1,0 +1,3958 @@
+[
+ {
+  "id": "laser-root-canal-disinfection-live",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic*",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 50,
+  "off_domain": 2,
+  "query": "(root canal OR endodontic*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1532530",
+    "title": "Dental care for the pediatric cardiac patient.",
+    "journal": "Journal (Canadian Dental Association)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "20796048",
+    "title": "Accreditation of postgraduate speciality training programmes in Endodontology. Minimum criteria for training Specialists in Endodontology within Europe.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "11762493",
+    "title": "Undergraduate curriculum guidelines for endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "laser-root-canal-disinfection-library",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic* OR intracanal",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 50,
+  "off_domain": 2,
+  "query": "(root canal OR endodontic* OR intracanal) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22937908",
+    "title": "Oral health care for patients with epidermolysis bullosa--best clinical practice guidelines.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "11762493",
+    "title": "Undergraduate curriculum guidelines for endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "single-vs-multiple-visit",
+  "n_groups": 3,
+  "chosen": "single-visit OR one-visit OR single visit OR one visit OR same-day OR same day",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 0,
+  "total_hits": 0,
+  "off_domain": 0,
+  "query": "(single-visit OR one-visit OR single visit OR one visit OR same-day OR same day) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": []
+ },
+ {
+  "id": "mta-vs-biodentine-pulpotomy",
+  "n_groups": 3,
+  "chosen": "mta OR mineral trioxide aggregate OR biodentine OR calcium silicate",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 7,
+  "total_hits": 7,
+  "off_domain": 0,
+  "query": "(mta OR mineral trioxide aggregate OR biodentine OR calcium silicate) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42014635",
+    "title": "Deep caries management: EFCD-ESE-ORCA S3-level clinical practice guideline.",
+    "journal": "Clinical oral investigations",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "naocl-concentration",
+  "n_groups": 3,
+  "chosen": "efficacy OR outcome* OR success OR disinfect* OR antibacterial",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 30,
+  "off_domain": 2,
+  "query": "(efficacy OR outcome* OR success OR disinfect* OR antibacterial) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1532530",
+    "title": "Dental care for the pediatric cardiac patient.",
+    "journal": "Journal (Canadian Dental Association)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18754537",
+    "title": "[Prevention of endocarditis: changes in the recommendations].",
+    "journal": "Revue belge de medecine dentaire",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "cbct-vs-periapical",
+  "n_groups": 3,
+  "chosen": "cbct OR cone beam computed tomography OR cone-beam ct OR cbct",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 7,
+  "total_hits": 7,
+  "off_domain": 0,
+  "query": "(cbct OR cone beam computed tomography OR cone-beam ct OR cbct) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38976094",
+    "title": "Developing evidence-based clinical imaging guidelines for the diagnosis of vertically fractured teeth.",
+    "journal": "Oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21237439",
+    "title": "Use of cone-beam computed tomography in endodontics Joint Position Statement of the American Association of Endodontists and the American Academy of Oral and Maxillofacial Radiology.",
+    "journal": "Oral surgery, oral medicine, oral pathology, oral radiology, and endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41500761",
+    "title": "American Dental Association and American Academy of Oral and Maxillofacial Radiology patient selection for dental radiography and cone-beam computed tomography: Clinical recommendations.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "bioceramic-vs-resin-sealer",
+  "n_groups": 3,
+  "chosen": "outcome* OR efficacy OR success OR periapical OR healing OR treatment outcome* OR prognosis",
+  "has_domain_noun": true,
+  "domain_noun": "apical",
+  "pool": 20,
+  "total_hits": 38,
+  "off_domain": 2,
+  "query": "(outcome* OR efficacy OR success OR periapical OR healing OR treatment outcome* OR prognosis) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15238966",
+    "title": "Clinical practice guideline on emergency management of acute apical periodontitis (AAP) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15241873",
+    "title": "Clinical practice guideline on treatment of acute apical abscess (AAA) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "retreatment-vs-microsurgery",
+  "n_groups": 3,
+  "chosen": "persistent apical periodontitis OR refractory apical periodontitis OR symptomatic apical periodontitis OR treatment outcome OR success rate OR prognosis",
+  "has_domain_noun": true,
+  "domain_noun": "periodontitis",
+  "pool": 19,
+  "total_hits": 19,
+  "off_domain": 2,
+  "query": "(persistent apical periodontitis OR refractory apical periodontitis OR symptomatic apical periodontitis OR treatment outcome OR success rate OR prognosis) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17511833",
+    "title": "Guidelines for the management of traumatic dental injuries. II. Avulsion of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18754537",
+    "title": "[Prevention of endocarditis: changes in the recommendations].",
+    "journal": "Revue belge de medecine dentaire",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "7995643",
+    "title": "Consensus report of the European Society of Endodontology on quality guidelines for endodontic treatment.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22409417",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 2. Avulsion of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "24284533",
+    "title": "National guidelines for the prevention and clinical management of dental trauma in individuals during their developmental age.",
+    "journal": "Annali di igiene : medicina preventiva e di comunita",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "10875694",
+    "title": "Parameter on acute periodontal diseases. American Academy of Periodontology.",
+    "journal": "Journal of periodontology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "20718877",
+    "title": "UK National Clinical Guidelines in Paediatric Dentistry: treatment of traumatically intruded permanent incisor teeth in children.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "direct-pulp-capping",
+  "n_groups": 3,
+  "chosen": "vital pulp therapy OR pulp capping OR direct pulp capping OR pulpotomy OR partial pulpotomy",
+  "has_domain_noun": true,
+  "domain_noun": "pulp",
+  "pool": 16,
+  "total_hits": 16,
+  "off_domain": 0,
+  "query": "(vital pulp therapy OR pulp capping OR direct pulp capping OR pulpotomy OR partial pulpotomy) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "36653076",
+    "title": "Bioactive Restorative Materials.",
+    "journal": "International dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179372",
+    "title": "Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "16541910",
+    "title": "Guideline on pulp therapy for primary and young permanent teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "19216417",
+    "title": "Guideline on pulp therapy for primary and young permanent teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42014635",
+    "title": "Deep caries management: EFCD-ESE-ORCA S3-level clinical practice guideline.",
+    "journal": "Clinical oral investigations",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15656447",
+    "title": "Guideline on pulp therapy for primary and young permanent teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "16939452",
+    "title": "Pulp therapy for primary molars.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "11310120",
+    "title": "UK National Clinical Guidelines in Paediatric Dentistry. The pulp treatment of the primary dentition.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "preemptive-nsaid",
+  "n_groups": 3,
+  "chosen": "nsaid* OR nonsteroidal anti-inflammatory OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR preventive",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 22,
+  "off_domain": 2,
+  "query": "(nsaid* OR nonsteroidal anti-inflammatory OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR preventive) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1532530",
+    "title": "Dental care for the pediatric cardiac patient.",
+    "journal": "Journal (Canadian Dental Association)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22937908",
+    "title": "Oral health care for patients with epidermolysis bullosa--best clinical practice guidelines.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38976094",
+    "title": "Developing evidence-based clinical imaging guidelines for the diagnosis of vertically fractured teeth.",
+    "journal": "Oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22041409",
+    "title": "Managing the care of patients receiving antiresorptive therapy for prevention and treatment of osteoporosis: executive summary of recommendations from the American Dental Association Council on Scientific Affairs.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18754537",
+    "title": "[Prevention of endocarditis: changes in the recommendations].",
+    "journal": "Revue belge de medecine dentaire",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42014635",
+    "title": "Deep caries management: EFCD-ESE-ORCA S3-level clinical practice guideline.",
+    "journal": "Clinical oral investigations",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22503659",
+    "title": "Prescription of antibiotics for oral and dental care.",
+    "journal": "Medecine et maladies infectieuses",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "regenerative-immature",
+  "n_groups": 3,
+  "chosen": "success OR survival OR outcome* OR efficacy OR healing OR treatment outcome",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 24,
+  "off_domain": 2,
+  "query": "(success OR survival OR outcome* OR efficacy OR healing OR treatment outcome) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22041409",
+    "title": "Managing the care of patients receiving antiresorptive therapy for prevention and treatment of osteoporosis: executive summary of recommendations from the American Dental Association Council on Scientific Affairs.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18754537",
+    "title": "[Prevention of endocarditis: changes in the recommendations].",
+    "journal": "Revue belge de medecine dentaire",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17511833",
+    "title": "Guidelines for the management of traumatic dental injuries. II. Avulsion of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "cracked-tooth-prognosis",
+  "n_groups": 3,
+  "chosen": "prognosis OR treatment outcome* OR clinical outcome* OR success* OR failure* OR survival OR longevity",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 28,
+  "off_domain": 2,
+  "query": "(prognosis OR treatment outcome* OR clinical outcome* OR success* OR failure* OR survival OR longevity) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18754537",
+    "title": "[Prevention of endocarditis: changes in the recommendations].",
+    "journal": "Revue belge de medecine dentaire",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "apdt-primary-molars",
+  "n_groups": 3,
+  "chosen": "photodynamic therapy OR pdt OR apdt OR antimicrobial photodynamic OR photochemical disinfection",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 0,
+  "total_hits": 0,
+  "off_domain": 0,
+  "query": "(photodynamic therapy OR pdt OR apdt OR antimicrobial photodynamic OR photochemical disinfection) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": []
+ },
+ {
+  "id": "bisphosphonates",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic* OR pulp treatment OR apical surgery OR apicoectomy",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 58,
+  "off_domain": 2,
+  "query": "(root canal OR endodontic* OR pulp treatment OR apical surgery OR apicoectomy) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179372",
+    "title": "Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "pregnancy",
+  "n_groups": 3,
+  "chosen": "local anesthetic* OR local anaesthetic* OR lidocaine OR prilocaine OR articaine OR bupivacaine OR epinephrine OR adrenaline OR vasoconstricto*",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 1,
+  "total_hits": 1,
+  "off_domain": 0,
+  "query": "(local anesthetic* OR local anaesthetic* OR lidocaine OR prilocaine OR articaine OR bupivacaine OR epinephrine OR adrenaline OR vasoconstricto*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "pips-vs-ultrasonic",
+  "n_groups": 3,
+  "chosen": "laser* OR photodynamic therapy OR apdt OR pips OR sweeps OR laser-activated irrigation",
+  "has_domain_noun": true,
+  "domain_noun": "irrigation",
+  "pool": 3,
+  "total_hits": 3,
+  "off_domain": 0,
+  "query": "(laser* OR photodynamic therapy OR apdt OR pips OR sweeps OR laser-activated irrigation) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "intentional-replantation",
+  "n_groups": 3,
+  "chosen": "outcome* OR success* OR prognosis OR survival OR complication*",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 30,
+  "off_domain": 2,
+  "query": "(outcome* OR success* OR prognosis OR survival OR complication*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22937908",
+    "title": "Oral health care for patients with epidermolysis bullosa--best clinical practice guidelines.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "7995643",
+    "title": "Consensus report of the European Society of Endodontology on quality guidelines for endodontic treatment.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18376426",
+    "title": "[Apical tooth root resection guideline].",
+    "journal": "Mund-, Kiefer- und Gesichtschirurgie : MKG",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "sdf-pulp-outcomes",
+  "n_groups": 3,
+  "chosen": "pulp OR pulpal OR vital* OR vitality OR pulp cap*",
+  "has_domain_noun": true,
+  "domain_noun": "pulp",
+  "pool": 20,
+  "total_hits": 34,
+  "off_domain": 0,
+  "query": "(pulp OR pulpal OR vital* OR vitality OR pulp cap*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "36653076",
+    "title": "Bioactive Restorative Materials.",
+    "journal": "International dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179372",
+    "title": "Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931467",
+    "title": "Guideline on Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931449",
+    "title": "Policy on Stem Cells.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "sonic-vs-ultrasonic",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic* OR intracanal",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 50,
+  "off_domain": 2,
+  "query": "(root canal OR endodontic* OR intracanal) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1532530",
+    "title": "Dental care for the pediatric cardiac patient.",
+    "journal": "Journal (Canadian Dental Association)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "20796048",
+    "title": "Accreditation of postgraduate speciality training programmes in Endodontology. Minimum criteria for training Specialists in Endodontology within Europe.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "11762493",
+    "title": "Undergraduate curriculum guidelines for endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "dens-invaginatus",
+  "n_groups": 3,
+  "chosen": "manag* OR treat* OR therap* OR surgical OR orthodontic* OR restor*",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 61,
+  "off_domain": 4,
+  "query": "(manag* OR treat* OR therap* OR surgical OR orthodontic* OR restor*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "36653076",
+    "title": "Bioactive Restorative Materials.",
+    "journal": "International dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41042489",
+    "title": "Best clinical practise guidance for the use of antibiotics in children: an EAPD policy document.",
+    "journal": "European archives of paediatric dentistry : official journal of the European Academy of Paediatric Dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15238966",
+    "title": "Clinical practice guideline on emergency management of acute apical periodontitis (AAP) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15241873",
+    "title": "Clinical practice guideline on treatment of acute apical abscess (AAA) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "16541911",
+    "title": "Guideline on management of acute dental trauma.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   }
+  ]
+ },
+ {
+  "id": "diabetes-outcomes",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic* OR apical periodontitis OR periapical",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 62,
+  "off_domain": 4,
+  "query": "(root canal OR endodontic* OR apical periodontitis OR periapical) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15238966",
+    "title": "Clinical practice guideline on emergency management of acute apical periodontitis (AAP) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15241873",
+    "title": "Clinical practice guideline on treatment of acute apical abscess (AAA) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "case-opening-sparse",
+  "n_groups": 3,
+  "chosen": "tooth OR teeth OR dental OR molar",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 67,
+  "off_domain": 3,
+  "query": "(tooth OR teeth OR dental OR molar) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "36653076",
+    "title": "Bioactive Restorative Materials.",
+    "journal": "International dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41042489",
+    "title": "Best clinical practise guidance for the use of antibiotics in children: an EAPD policy document.",
+    "journal": "European archives of paediatric dentistry : official journal of the European Academy of Paediatric Dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "16541911",
+    "title": "Guideline on management of acute dental trauma.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "case-opening-full",
+  "n_groups": 3,
+  "chosen": "periapical* OR apical lesion* OR apical radiolucency OR periapical pathology",
+  "has_domain_noun": true,
+  "domain_noun": "apical",
+  "pool": 20,
+  "total_hits": 20,
+  "off_domain": 2,
+  "query": "(periapical* OR apical lesion* OR apical radiolucency OR periapical pathology) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "15238966",
+    "title": "Clinical practice guideline on emergency management of acute apical periodontitis (AAP) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18376426",
+    "title": "[Apical tooth root resection guideline].",
+    "journal": "Mund-, Kiefer- und Gesichtschirurgie : MKG",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38976094",
+    "title": "Developing evidence-based clinical imaging guidelines for the diagnosis of vertically fractured teeth.",
+    "journal": "Oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "10875694",
+    "title": "Parameter on acute periodontal diseases. American Academy of Periodontology.",
+    "journal": "Journal of periodontology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18754537",
+    "title": "[Prevention of endocarditis: changes in the recommendations].",
+    "journal": "Revue belge de medecine dentaire",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "15241873",
+    "title": "Clinical practice guideline on treatment of acute apical abscess (AAA) in adults.",
+    "journal": "Evidence-based dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "review-followup-immature-teeth",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic* OR intracanal",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 50,
+  "off_domain": 2,
+  "query": "(root canal OR endodontic* OR intracanal) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "21739834",
+    "title": "AAE and AAOMR joint position statement. Use of cone-beam-computed tomography in endodontics.",
+    "journal": "Pennsylvania dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1532530",
+    "title": "Dental care for the pediatric cardiac patient.",
+    "journal": "Journal (Canadian Dental Association)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22937908",
+    "title": "Oral health care for patients with epidermolysis bullosa--best clinical practice guidelines.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "review-newtopic-reset",
+  "n_groups": 3,
+  "chosen": "primary teeth OR deciduous teeth OR baby teeth OR pediatric* OR child*",
+  "has_domain_noun": false,
+  "domain_noun": "",
+  "pool": 20,
+  "total_hits": 34,
+  "off_domain": 2,
+  "query": "(primary teeth OR deciduous teeth OR baby teeth OR pediatric* OR child*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179372",
+    "title": "Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1532530",
+    "title": "Dental care for the pediatric cardiac patient.",
+    "journal": "Journal (Canadian Dental Association)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931467",
+    "title": "Guideline on Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931449",
+    "title": "Policy on Stem Cells.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41500761",
+    "title": "American Dental Association and American Academy of Oral and Maxillofacial Radiology patient selection for dental radiography and cone-beam computed tomography: Clinical recommendations.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17511833",
+    "title": "Guidelines for the management of traumatic dental injuries. II. Avulsion of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+  "n_groups": 3,
+  "chosen": "traumatic injury OR trauma OR mechanical injury OR luxation OR intrusion OR extrusion OR crown fracture OR root fracture OR dentin exposure OR enamel fracture",
+  "has_domain_noun": true,
+  "domain_noun": "luxation",
+  "pool": 17,
+  "total_hits": 17,
+  "off_domain": 1,
+  "query": "(traumatic injury OR trauma OR mechanical injury OR luxation OR intrusion OR extrusion OR crown fracture OR root fracture OR dentin exposure OR enamel fracture) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "16541911",
+    "title": "Guideline on management of acute dental trauma.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "7995643",
+    "title": "Consensus report of the European Society of Endodontology on quality guidelines for endodontic treatment.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38976094",
+    "title": "Developing evidence-based clinical imaging guidelines for the diagnosis of vertically fractured teeth.",
+    "journal": "Oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17511833",
+    "title": "Guidelines for the management of traumatic dental injuries. II. Avulsion of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22503659",
+    "title": "Prescription of antibiotics for oral and dental care.",
+    "journal": "Medecine et maladies infectieuses",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22409417",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 2. Avulsion of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "24284533",
+    "title": "National guidelines for the prevention and clinical management of dental trauma in individuals during their developmental age.",
+    "journal": "Annali di igiene : medicina preventiva e di comunita",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "9558551",
+    "title": "Treatment of avulsed permanent teeth in children. UK National Guidelines in Paediatric Dentistry. Royal College of Surgeons, Faculty of Dental Surgery.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "20718877",
+    "title": "UK National Clinical Guidelines in Paediatric Dentistry: treatment of traumatically intruded permanent incisor teeth in children.",
+    "journal": "International journal of paediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "bisphosphonate-extraction-vs-rct-treatment",
+  "n_groups": 3,
+  "chosen": "extraction OR root canal treatment OR endodontic* OR rct",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 53,
+  "off_domain": 2,
+  "query": "(extraction OR root canal treatment OR endodontic* OR rct) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37634915",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in children: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh School of Dental Medicine, and the Center for Integrative Global Oral Health at the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "38325969",
+    "title": "Evidence-based clinical practice guideline for the pharmacologic management of acute dental pain in adolescents, adults, and older adults: A report from the American Dental Association Science and Research Institute, the University of Pittsburgh, and the University of Pennsylvania.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "dens-evaginatus-premolar-diagnostic",
+  "n_groups": 3,
+  "chosen": "pulp vitality OR cold test* OR thermal test* OR vitality test*",
+  "has_domain_noun": true,
+  "domain_noun": "pulp",
+  "pool": 4,
+  "total_hits": 4,
+  "off_domain": 0,
+  "query": "(pulp vitality OR cold test* OR thermal test* OR vitality test*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42014635",
+    "title": "Deep caries management: EFCD-ESE-ORCA S3-level clinical practice guideline.",
+    "journal": "Clinical oral investigations",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "dens-evaginatus-prevention-followup",
+  "n_groups": 3,
+  "chosen": "pulp necrosis OR pulp death OR pulp vitality OR vital pulp",
+  "has_domain_noun": true,
+  "domain_noun": "necrosis",
+  "pool": 12,
+  "total_hits": 12,
+  "off_domain": 0,
+  "query": "(pulp necrosis OR pulp death OR pulp vitality OR vital pulp) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "31668170",
+    "title": "Evidence-based clinical practice guideline on antibiotic use for the urgent management of pulpal- and periapical-related dental pain and intraoral swelling: A report from the American Dental Association.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42014635",
+    "title": "Deep caries management: EFCD-ESE-ORCA S3-level clinical practice guideline.",
+    "journal": "Clinical oral investigations",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "probe-avulsion-40min",
+  "n_groups": 3,
+  "chosen": "prognosis OR outcome* OR healing OR root resorption OR survival OR success*",
+  "has_domain_noun": true,
+  "domain_noun": "resorption",
+  "pool": 20,
+  "total_hits": 28,
+  "off_domain": 2,
+  "query": "(prognosis OR outcome* OR healing OR root resorption OR survival OR success*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29268916",
+    "title": "The Society for Vascular Surgery practice guidelines on the care of patients with an abdominal aortic aneurysm.",
+    "journal": "Journal of vascular surgery",
+    "off_domain": true,
+    "reason": "issuing journal 'Journal of vascular surgery' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17446442",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis, and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Circulation",
+    "off_domain": true,
+    "reason": "issuing journal 'Circulation' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "32462471",
+    "title": "Orthodontic radiology: development of a clinical practice guideline.",
+    "journal": "La Radiologia medica",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179355",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17545263",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "18167394",
+    "title": "Prevention of infective endocarditis: guidelines from the American Heart Association: a guideline from the American Heart Association Rheumatic Fever, Endocarditis and Kawasaki Disease Committee, Council on Cardiovascular Disease in the Young, and the Council on Clinical Cardiology, Council on Cardiovascular Surgery and Anesthesia, and the Quality of Care and Outcomes Research Interdisciplinary Working Group.",
+    "journal": "Journal of the American Dental Association (1939)",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "32074887",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "22230724",
+    "title": "International Association of Dental Traumatology guidelines for the management of traumatic dental injuries: 1. Fractures and luxations of permanent teeth.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "7995643",
+    "title": "Consensus report of the European Society of Endodontology on quality guidelines for endodontic treatment.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29070150",
+    "title": "Use of Vital Pulp Therapies in Primary Teeth with Deep Caries Lesions.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42017497",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "probe-crown-fracture-6h",
+  "n_groups": 3,
+  "chosen": "pulpotomy OR pulp capping OR direct pulp capping OR endodontic* OR root canal",
+  "has_domain_noun": true,
+  "domain_noun": "pulpotomy",
+  "pool": 20,
+  "total_hits": 55,
+  "off_domain": 2,
+  "query": "(pulpotomy OR pulp capping OR direct pulp capping OR endodontic* OR root canal) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "36653076",
+    "title": "Bioactive Restorative Materials.",
+    "journal": "International dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179372",
+    "title": "Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "1397429",
+    "title": "Restoration of endodontically treated teeth.",
+    "journal": "Dental clinics of North America",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ },
+ {
+  "id": "probe-retreat-implant",
+  "n_groups": 3,
+  "chosen": "root canal OR endodontic* OR retreatment",
+  "has_domain_noun": true,
+  "domain_noun": "root canal",
+  "pool": 20,
+  "total_hits": 50,
+  "off_domain": 2,
+  "query": "(root canal OR endodontic* OR retreatment) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt]",
+  "rows": [
+   {
+    "pmid": "42018467",
+    "title": "Deep Caries Management: EFCD-ESE-ORCA S3-Level Clinical Practice Guideline.",
+    "journal": "Caries research",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "37772327",
+    "title": "Treatment of pulpal and apical disease: The European Society of Endodontology (ESE) S3-level clinical practice guideline.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17180780",
+    "title": "Quality guidelines for endodontic treatment: consensus report of the European Society of Endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "26990236",
+    "title": "European Society of Endodontology position statement: Revitalization procedures.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41319038",
+    "title": "2025 FelineVMA feline oral health and dental care guidelines.",
+    "journal": "Journal of feline medicine and surgery",
+    "off_domain": true,
+    "reason": "non-human subject population: 'feline' in the title"
+   },
+   {
+    "pmid": "41121563",
+    "title": "Guideline for Use of Vital Pulp Therapy in Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29729847",
+    "title": "SIOPE - Brain tumor group consensus guideline on craniospinal target volume delineation for high-precision radiotherapy.",
+    "journal": "Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology",
+    "off_domain": true,
+    "reason": "issuing journal 'Radiotherapy and oncology : journal of the European Society for Therapeutic Radiology and Oncology' is outside dentistry / oral medicine / head-and-neck, and the title does not address oral or dental care"
+   },
+   {
+    "pmid": "28436043",
+    "title": "European Society of Endodontology position statement: the use of antibiotics in endodontics.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "40217051",
+    "title": "Endodontic S3-level clinical practice guidelines: the European Society of Endodontology process and recommendations.",
+    "journal": "British dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41407481",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Oral surgery, oral medicine, oral pathology and oral radiology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "29179383",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931479",
+    "title": "Guidelines for the Management of Traumatic Dental Injuries: 2. Avulsion of Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "17803487",
+    "title": "New emphasis in the treatment of dental trauma: avulsion and luxation.",
+    "journal": "Dental traumatology : official publication of International Association for Dental Traumatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27511031",
+    "title": "[Formulation of guidelines for microscopic endodontics suitable for the situation of China].",
+    "journal": "Zhonghua kou qiang yi xue za zhi = Zhonghua kouqiang yixue zazhi = Chinese journal of stomatology",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "41412684",
+    "title": "AAE and AAOMR Joint Position Statement: Use of Cone-Beam Computed Tomography in Endodontics 2025 Update.",
+    "journal": "Journal of endodontics",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "34553383",
+    "title": "Outcome measures to assess the effectiveness of endodontic treatment for pulpitis and apical periodontitis for use in the development of European Society of Endodontology S3-level clinical practice guidelines: A consensus-based development.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "39629524",
+    "title": "Revised consensus guidelines for the use of cone-beam computed tomography/ digital volume tomography.",
+    "journal": "Swiss dental journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "11762493",
+    "title": "Undergraduate curriculum guidelines for endodontology.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "27931467",
+    "title": "Guideline on Pulp Therapy for Primary and Immature Permanent Teeth.",
+    "journal": "Pediatric dentistry",
+    "off_domain": false,
+    "reason": ""
+   },
+   {
+    "pmid": "7995643",
+    "title": "Consensus report of the European Society of Endodontology on quality guidelines for endodontic treatment.",
+    "journal": "International endodontic journal",
+    "off_domain": false,
+    "reason": ""
+   }
+  ]
+ }
+]
