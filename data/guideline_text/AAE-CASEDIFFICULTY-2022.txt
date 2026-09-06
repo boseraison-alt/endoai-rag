@@ -1,0 +1,162 @@
+[[PAGE 1]]
+Access additional resources at aae.orgAAE Endodontic Case Difficulty
+Assessment Form and Guidelines
+Patient Information
+Full Name
+Street Address Suite/Apt
+City State/Country Zip
+Phone
+Email
+Guidelines for Using the AAE Endodontic Case Difficulty Assessment Form
+The AAE designed the Endodontic Case Difficulty Assessment Form for use in endodontic curricula. The Assessment Form makes case selection
+more efficient, more consistent and easier to document. Dentists may also choose to use the Assessment Form to help with referral decision making
+and record keeping.
+Conditions listed in this form should be considered potential risk factors that may complicate treatment and adversely affect the outcome. Levels of
+difficulty are sets of conditions that may not be controllable by the dentist. Risk factors can influence the ability to provide care at a consistently
+predictable level and impact the appropriate provision of care and quality assurance.
+The Assessment Form enables a practitioner to assign a level of difficulty to a particular case.
+Consider using cone beam computed tomography (CBCT) for assessing moderate and high difficulty cases.
+Levels of Difficulty
+LOW DIFFICULTY
+Preoperative condition indicates routine complexity (uncomplicated). These types of cases would exhibit only those factors listed in the LOW
+DIFFICULTY category. Achieving a favorable treatment outcome should be attainable by a competent practitioner with limited experience.
+MODERATE DIFFICULTY
+Preoperative condition is complicated, exhibiting one or two factors listed in the MODERATE DIFFICULTY category. Achieving a favorable treatment
+outcome may be challenging for a competent, experienced practitioner.
+HIGH DIFFICULTY
+Preoperative condition is exceptionally complicated, exhibiting three or more factors listed in the MODERATE DIFFICULTY category or at least one
+in the HIGH DIFFICULTY category. Achieving a favorable treatment outcome may be challenging for even the most experienced practitioner with an
+extensive history of favorable outcomes.
+Review your assessment of each case to determine the level of difficulty. If the level of difficulty exceeds your experience and comfort, you might
+consider referral to an endodontist.
+Disposition
+Treat in Office: Yes No
+Refer Patient to:
+Date
+Criteria and Subcriteria LOW DIFFICULTY MODERATE DIFFICULTY HIGH DIFFICULTY
+A. PATIENT CONSIDERATIONS
+MEDICAL HISTORY No medical problem (ASA Class 1 or 2*) One or more medical problem
+(ASA Class 3*)
+Complex medical history/serious illness/
+disability (ASA Class 4*)
+ANESTHESIA No history of anesthesia problems Vasoconstrictor intolerance Difficulty achieving and/or maintaining
+anesthesia
+PATIENT DISPOSITION Cooperative and compliant Anxious but cooperative Uncooperative
+ABILITY TO OPEN MOUTH No limitation Slight limitation in opening Significant limitation in opening
+GAG REFLEX None Gags occasionally with radiographs/
+treatment
+Extreme gag reflex which has
+compromised past dental care
+EMERGENCY CONDITION Minimum pain or swelling Moderate pain or swelling Severe pain or swelling
+[[PAGE 2]]
+B. DIAGNOSTIC AND TREATMENT CONSIDERATIONS
+DIAGNOSIS Signs and symptoms consistent with
+recognized pulpal and periapical conditions
+Extensive differential diagnosis of usual
+signs and symptoms required
+Confusing and complex signs and
+symptoms: difficult diagnosis
+History of chronic oral/facial pain
+RADIOGRAPHIC DIFFICULTIES Minimal difficulty obtaining/interpreting
+radiographs
+Moderate difficulty obtaining/interpreting
+radiographs (e.g., high floor of mouth,
+narrow or low palatal vault, presence of tori)
+Extreme difficulty obtaining/interpreting
+radiographs (e.g., superimposed
+anatomical structures)
+POSITION IN THE ARCH –
+TOOTH TYPE
+Anterior/premolar 1st molar 2nd or 3rd molar
+POSITION IN THE ARCH –
+INCLINATION
+Slight inclination (<10°) Moderate inclination (10-30°) Extreme inclination (>30°)
+POSITION IN THE ARCH –
+ROTATION
+Slight rotation (<10°) Moderate rotation (10-30°) Extreme rotation (>30°)
+TOOTH ISOLATION Routine rubber dam placement Simple pretreatment modification required
+for rubber dam isolation
+Extensive pretreatment modification
+required for rubber dam isolation
+CROWN MORPHOLOGY Normal original crown morphology Full coverage restoration
+Porcelain restoration
+Bridge abutment
+Moderate deviation from normal tooth/root
+form (e.g., taurodontism microdens)
+Teeth with extensive coronal destruction
+Restoration does not reflect original
+anatomy/alignment
+Significant deviation from normal tooth/
+root form (e.g., fusion dens in dente)
+CANAL MORPHOLOGY Slight or no curvature (<10°)
+Closed apex (<1 mm in diameter)
+Moderate curvature (10-30°)
+Crown axis differs moderately from root
+axis.
+Apical opening 1-1.5 mm in diameter
+C-shaped morphology
+Extreme curvature (>30°) or S-shaped
+curve
+Mandibular premolar or anterior with 2
+roots
+Maxillary premolar with 3 roots
+Canal divides in the middle or apical third
+Very long tooth (>25 mm)
+Other anomalies such as radix ento/para
+molaris
+Open apex (>1.5 mm in diameter)
+RADIOGRAPHIC APPEARANCE
+OF CANAL(S)
+Canal(s) and chamber visible and not
+reduced in size
+Canal(s) and chamber visible but reduced
+in size
+Pulp stones
+Indistinct canal path
+Canal(s) and chamber not visible
+PROXIMITY OF THE ROOT APICES
+TO VITAL STRUCTURES SUCH AS
+THE IAN OR MENTAL FORAMEN
+Vital structures 5 or more millimeters from
+apices
+3-5 millimeters <3 millimeters
+RESORPTION No resorption evident Minimal apical resorption Extensive apical resorption
+Internal resorption
+External resorption
+C. ADDITIONAL CONSIDERATIONS
+TRAUMA HISTORY No history of trauma, or
+Uncomplicated crown fracture of mature or
+immature teeth
+Complicated crown fracture of mature teeth
+Subluxation
+Complicated crown fracture of immature
+teeth
+Horizontal root fracture
+Alveolar fracture
+Intrusive, extrusive or lateral luxation
+Avulsion
+ENDODONTIC
+TREATMENT HISTORY
+No previous treatment Previous access without complications Previous access with complications (e.g.,
+perforation, non-negotiated canal, ledge,
+separated instrument)
+Previous surgical or nonsurgical
+endodontic treatment completed
+PERIODONTAL-ENDODONTIC
+CONDITION
+None or mild periodontal disease or
+concurrent moderate periodontal disease
+Combined endodontic/periodontic lesion Concurrent severe periodontal disease
+Cracked teeth with periodontal
+complications
+Root amputation prior to endodontic
+treatment
+Criteria and Subcriteria LOW DIFFICULTY MODERATE DIFFICULTY HIGH DIFFICULTY
+The contribution of the Canadian Academy of Endodontics and others to the development of this form is gratefully acknowledged. The AAE Endodontic Case Difficulty Assessment Form is designed to aid the practitioner in
+determining appropriate case disposition. The American Association of Endodontists neither expressly nor implicitly warrants any positive results associated with the use of this form. This form may be reproduced but may
+not be amended or altered in any way. © American Association of Endodontists, 180 N. Stetson Ave., Suite 1500, Chicago, IL 60601; Phone: 800-872-3636 or 312-266-7255; Fax: 866-451-9020 or 312-266-9867;
+E-mail: info@aae.org; Website: aae.org
+*American Society of Anesthesiologists (ASA) Classification System Class 1: No systemic illness. Patient healthy. Class 2: Patient with mild degree of systemic illness, but without functional restrictions, e.g., well-controlled
+hypertension. Class 3: Patient with severe degree of systemic illness which limits activities, but does not immobilize the patient. Class 4: Patient with severe systemic illness that immobilizes and is sometimes life threatening.
+Class 5: Patient will not survive more than 24 hours whether or not surgical intervention takes place. www.asahq.org/clinical/physicalstatus.htm
+Access additional resources at aae.org

@@ -1,0 +1,10 @@
+{
+ "id": "AAE-TREATMENTSTANDARDS-2018",
+ "url": "https://www.aae.org/specialty/wp-content/uploads/sites/2/2018/04/TreatmentStandards_WhitePaper_v1.pdf",
+ "fetched_at": "2026-09-06T18:49:01Z",
+ "method": "chrome_pdfjs_text",
+ "method_detail": "PDF fetched inside RB's Chrome session (same-origin fetch from aae.org), text layer extracted with pdf.js 3.11.174 getTextContent(); page breaks marked [[PAGE n]]; the PDF's own running heads are the text layer's, kept verbatim; transferred to the repo programmatically (no retyping)",
+ "sha256": "501c64bd327cbab8b8ade605e31e0bb33d2f49416c8c2419dd06cf8b69b703a5",
+ "trimmed": "nothing removed",
+ "body_starts_with": "Endodontics is the branch of dentistry that is\nconcerned with the morphology"
+}

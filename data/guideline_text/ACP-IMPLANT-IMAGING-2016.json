@@ -1,0 +1,9 @@
+{
+ "id": "ACP-IMPLANT-IMAGING-2016",
+ "url": "https://www.prosthodontics.org/about-acp/position-statement-diagnostic-imaging-treatment-planning-surgical-prosthodontic-aspects-implant-dentistry/",
+ "fetched_at": "2026-09-06T16:19:03Z",
+ "method": "chrome_dom_text",
+ "sha256": "0ac28e2b28783aafc3d695ca8a9e313d50bc8e3511890e5882827912825db16e",
+ "trimmed": "site navigation and footer removed; body verbatim",
+ "body_starts_with": "The advent of the dental implant revolutionized the field of dentistry"
+}

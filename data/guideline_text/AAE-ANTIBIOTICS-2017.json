@@ -1,0 +1,10 @@
+{
+ "id": "AAE-ANTIBIOTICS-2017",
+ "url": "https://www.aae.org/specialty/wp-content/uploads/sites/2/2017/06/aae_systemic-antibiotics.pdf",
+ "fetched_at": "2026-09-06T18:49:01Z",
+ "method": "chrome_pdfjs_text",
+ "method_detail": "PDF fetched inside RB's Chrome session (same-origin fetch from aae.org), text layer extracted with pdf.js 3.11.174 getTextContent(); page breaks marked [[PAGE n]]; the PDF's own running heads are the text layer's, kept verbatim; transferred to the repo programmatically (no retyping)",
+ "sha256": "df55c4f50f82bea81f515c3efb667dfa964fcb79df763c9a4f8f4c033c90ca0a",
+ "trimmed": "nothing removed",
+ "body_starts_with": "The spectrum of endodontic pathosis includes many conditions for which"
+}

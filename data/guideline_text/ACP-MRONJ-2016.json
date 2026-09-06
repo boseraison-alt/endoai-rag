@@ -1,0 +1,9 @@
+{
+ "id": "ACP-MRONJ-2016",
+ "url": "https://www.prosthodontics.org/about-acp/position-statement-medication-related-osteonecrosis-of-the-jaw/",
+ "fetched_at": "2026-09-06T16:12:53Z",
+ "method": "chrome_dom_text",
+ "sha256": "c6df118f47dcb85e5d47c66e315873be3e7208f92309f3444decfebcff4bde79",
+ "trimmed": "site navigation and footer removed; body verbatim",
+ "body_starts_with": "The American College of Prosthodontists agrees with the recommendation for the term"
+}

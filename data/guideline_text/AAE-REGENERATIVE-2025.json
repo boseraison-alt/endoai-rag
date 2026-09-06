@@ -1,0 +1,10 @@
+{
+ "id": "AAE-REGENERATIVE-2025",
+ "url": "https://www.aae.org/specialty/wp-content/uploads/sites/2/2025/06/RegenerativeEndo_PositionStatement_FINAL.pdf",
+ "fetched_at": "2026-09-06T18:49:01Z",
+ "method": "chrome_pdfjs_text",
+ "method_detail": "PDF fetched inside RB's Chrome session (same-origin fetch from aae.org), text layer extracted with pdf.js 3.11.174 getTextContent(); page breaks marked [[PAGE n]]; the PDF's own running heads are the text layer's, kept verbatim; transferred to the repo programmatically (no retyping)",
+ "sha256": "cb1d936320dd75a8918d515a032c151297dc6e1a4c718021c7d7f54b05b17d5e",
+ "trimmed": "nothing removed",
+ "body_starts_with": "Regenerative endodontics (revascularization/\npulpal regeneration) is within the scope of"
+}

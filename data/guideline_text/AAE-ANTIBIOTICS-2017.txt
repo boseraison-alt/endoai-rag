@@ -1,0 +1,679 @@
+[[PAGE 1]]
+AAE Guidance on the Use of Systemic Antibiotics in Endodontics | Page 1
+AAE Position Statement
+INTRODUCTION
+The spectrum of endodontic pathosis includes many conditions for which
+dentists and endodontists determine that it is appropriate to prescribe
+antibiotics. Some of these conditions involve purely an inflammatory
+reaction, and some involve various stages of infection. This infection may
+be localized to the pulp and periapical tissues, and it may be spreading
+to regional lymph nodes, or systemically. This document is intended to
+present the available evidence related to prescribing antibiotics, highlight
+appropriate clinical recommendations and identify gaps in knowledge for
+which personal judgment is the best guide for assessing risks and benefits in
+this practice.
+This document is not intended to be an exhaustive systematic review on
+the subject. It will also not address the systemic or topical application of
+antibiotics following traumatic injuries to teeth (which are addressed in
+other AAE guidelines), and the use of antibiotics as intracanal medicaments.
+Finally, this document is not intended to present new knowledge in the field.
+Overall risks and benefits of prescribing systemic antibiotics
+Antibiotics are an important class of drugs. Clearly, the benefits of correct use
+of antibiotics include the resolution of infection, prevention of the spread of
+disease and minimization of serious complications of disease. Up to 50% of all
+antibiotics are prescribed or used incorrectly. Risks associated with the use of
+antibiotics include nausea, vomiting, diarrhea and stomach cramps because of
+the disturbances of the gut microflora.
+A particular concern to the use of oral antibiotics is the development of
+Clostridium difficile infection. C. difficile was responsible for almost half a
+million infections and was associated with approximately 29,000 deaths
+in 2011 (1). Among the antibiotics prescribed for endodontic infections,
+clindamycin, amoxicillin, cephalosporins are commonly associated with C.
+difficile infection, whereas macrolides and metronidazole are less commonly
+so (2). Other side effects include the development of yeast infections in the
+mouth or vagina, again resulting from an imbalance in the body’s normal flora.
+Antibiotics can also cause allergic reactions ranging from rash, skin reactions,
+Stevens-Johnson syndrome to breathing difficulty and anaphylaxis.
+About This Document
+This paper is designed to
+provide scientifically based
+guidance to clinicians
+regarding the use of antibiotics
+in endodontic treatment.
+Thank you to the Special
+Committee on Antibiotic Use in
+Endodontics: Ashraf F. Fouad,
+Chair, B. Ellen Byrne, Anibal R.
+Diogenes, Christine M. Sedgley
+and Bruce Y. Cha.
+©2017
+Distribution Information
+AAE members may reprint
+this position statement for
+distribution to patients or
+referring dentists.
+AAE Guidance on
+the Use of Systemic
+Antibiotics in
+Endodontics
+The guidance in this
+statement is not intended
+to substitute for a clinician’s
+independent judgment in
+light of the conditions and
+needs of a specific patient.
+[[PAGE 2]]
+Access additional resources at www.aae.org
+Antibiotics are essential medications but their overuse and
+misuse are creating resistant bacteria that are not susceptible
+to any antibiotics. Each year at least two million people in the
+U.S. become infected with multidrug resistant bacteria and
+23,000 deaths have been attributed to these infections (3, 4).
+Use of adjunctive antibiotics in addition to adequate
+debridement and surgical drainage
+The key to successful management of infection of endodontic
+origin is adequate debridement of the infected root canal
+and drainage for both soft and hard tissue. The objectives
+for treatment of infections of endodontic origin are removal
+of the pathogenic microorganisms, their by-products, and
+pulpal debris from the infected root canal system that caused
+the periapical pathosis and establishment of conditions
+favorable for the lesion to resolve. In addition to adequate
+debridement of the root canal system, localized soft tissue
+swelling of endodontic origin should be incised and drained
+concurrently. Studies have shown that adjunctive antibiotics
+are not effective in preventing or ameliorating signs and
+symptoms in cases with irreversible pulpitis, symptomatic
+apical periodontitis, or localized acute apical abscess, when
+adequate local debridement, medication and incision for
+drainage, if indicated, have been achieved (5-11).
+When using adjunctive antibiotics in addition to adequate
+debridement and surgical drainage, such as in cases with
+spreading infections, the practitioner should use the shortest
+effective course of antibiotics, minimize the use of broad-
+spectrum antibiotics and monitor the patient closely.
+Use of antibiotics in the absence of adequate debridement
+and surgical drainage
+As noted before, there is evidence from randomized clinical
+trials and systematic reviews to indicate that supplemental
+antibiotics following adequate debridement and drainage in
+cases of localized endodontic infections is ineffective (5-8). It
+is also the standard of care to prescribe primary or adjunctive
+antibiotics in conjunction with local debridement and surgical
+drainage for patients who have spreading infections, and to
+monitor their progress closely as these prescriptions are made
+empirically and may be ineffective or insufficient for adequate
+treatment.
+However, the literature is not clear on indications, efficacy
+or duration of antibiotics for cases in which the practitioner
+is not able to render local debridement and drainage at the
+time of patient presentation, or in cases that are complex and
+the efficacy of local treatment may not be completed. In these
+cases, it is not known whether systemic antibiotic therapy
+would provide sufficient relief of symptoms and prevention
+of spread of infection to warrant a prescription, since
+etiology of the infection may not have been fully addressed.
+Furthermore, the answer to these questions may not be
+feasible to determine through objective research in the future,
+as the necessary study design may be considered unethical to
+patients.
+The literature contains many studies that may not reach
+contemporary design standards that eliminate bias in research,
+and much anecdotal evidence that promote prescription of
+antibiotics for the patient’s comfort and to alleviate their
+apprehension (12-14). Likewise, there are several surveys that
+show that both general dentists and endodontists routinely
+prescribe antibiotics for patients with dental pain (15, 16).
+This leads to the question of whether prescribing antibiotics
+for patients in these situations is appropriate, warranted and
+defensible from a medico-legal perspective.
+This controversy is somewhat similar to that surrounding
+the need for, and efficacy of, prophylactic antibiotics in
+cases where there is little evidence to their efficacy. An
+example of this would be to prevent late prosthetic joint
+infection following a dental appointment. However, what
+is different here is the concern about patient comfort and
+fear of spreading of the infection systemically. The issue is
+further complicated by the fact that many patients perceive
+improvement in their condition after taking antibiotics, at least
+in part due to a strong placebo effect that antibiotics may have
+(17).
+Ultimately, dentists and endodontists must weigh the benefits
+and risks of antibiotics, as previously stated, and make an
+informed decision with their patients on the appropriateness
+of using antibiotics in these cases. One strategy that may be
+useful is to educate the patient about the signs and symptoms
+of a spreading infection and give the patient a “stand-by”
+antibiotics prescription. The patient would only fill the
+prescription and call the prescriber’s office, if he/she perceives
+this type of infection to be occurring, prior to receiving
+definitive care.
+[[PAGE 3]]
+AAE Guidance on the Use of Systemic Antibiotics in Endodontics | Page 3
+Comparison of the efficacy of different types, dosage and
+duration of antibiotics
+The therapeutic use of antibiotics relies on achieving at least
+the minimal inhibitory concentration (MIC) of the drug, against
+sensitive microorganisms in the site of infection. In the case of
+advanced endodontic infections, the dental pulp tissue after
+succumbing to liquefaction necrosis is no longer vascularized,
+and orally administered drugs are unable to reach the site of
+infection. Therefore, the drug distribution is restricted to the
+surrounding vascularized tissues. However, in cases of apical
+abscess, the presence of pus limits vascular supply, and contain
+cellular debris and proteins that can bind and sequester
+antibiotics making these drugs less effective in the absence of
+adequate drainage (18).
+Thus, antibiotics should only be used as adjuvant therapies
+in cases with evidence of systemic involvement (fever,
+malaise, cellulitis and/or lymphadenopathies) following
+adequate endodontic disinfection and abscess drainage if
+swelling is present (8, 19). In addition, patients who are
+immunocompromised or have predisposing conditions such as
+previous endocarditis should be medicated as a prophylactic
+measure. It is important to note that administration of
+antibiotics in the absence of the above-mentioned reasons has
+no evidence of therapeutic benefit (6, 9). Lastly, in the cases
+of a therapeutic indication, the choice of the antibiotic agent,
+dosage and duration is typically made in an empirical fashion.
+Penicillin VK and amoxicillin, both beta-lactam antibiotics,
+are the first line of antibiotics chosen as adjunct therapeutic
+agents in endodontics in the United States of America and
+Europe (20-22). These drugs act by binding and inhibiting the
+activity of several bacterial proteins called penicillin binding
+proteins (PBP) involved in the synthesis of the peptidoglycan
+cell wall in susceptible both gram-positive and gram-negative
+bacteria (23). These drugs have been found to be highly
+effective against isolates from infected root canal systems that
+are composed primarily of facultative and obligate anaerobes
+(24-26, 35).
+Amoxicillin demonstrates greater efficacy and therapeutic
+value because:
+1. It has broader spectrum and is more effective than
+penicillin VK against certain gram-negative anaerobes due
+to better microbial penetration;
+2. It is more readily absorbed from the gastrointestinal (GI)
+tract than penicillin VK, which is poorly absorbed and its
+accumulation in the GI tract is associated with depletion of
+commensal flora and digestive disturbances;
+3. Its absorption is not impaired by food reaching peak
+plasma levels within 2 hours of ingestion;
+4. Only approximately 20% of absorbed amoxicillin is
+protein-bound in the plasma, being more readily available;
+5. It has significantly greater half-life than penicillin VK
+requiring doses to be taken 2-3 times a day as opposed to
+4 times daily for penicillin VK (23, 27, 28).
+The recommended dose regimen for amoxicillin is 500 mg
+three times a day (with or without a loading dose of 1,000 mg)
+for adults. Although these doses are well established based on
+pharmacokinetic studies and designed to establish maximum
+effective doses in the plasma, there is far less evidence to
+support the duration of treatment. Most practitioners usually
+prescribe antibiotics in courses of 3 to 7 days (15, 29).
+Interestingly, some evidence suggests that perhaps shorter
+courses (2-3 days) may be successfully used as adjuvant
+therapies (30, 31). The decision of using antibiotics for
+longer periods (7 to 10 days) is largely based on studies and
+clinical practice of treating infections whose etiology is not
+fully identified or the treatment of bloodstream infections in
+hospitalized patients.
+This clinical indication and use of antibiotics differ from the
+endodontic use as an adjunct therapy to limit the spread and
+the systemic manifestation of the infection following adequate
+surgical debridement and establishment of drainage. Moreover,
+therapies lasting 7 days with amoxicillin have been shown to
+increase the population of resistant strains (32). It is estimated
+that approximately 30% of severe dento-alveolar infections
+have strains resistant to penicillin-like drugs (33). Increased
+presence of resistance strains has been associated with over-
+prescription of this class of drugs.
+This indiscriminate antibiotic use has selected strains that
+possess many resistance mechanisms against beta-lactam
+antibiotics. These include:
+1. constitutive expression of high molecular weight
+penicillin-binding proteins (PBP) that have lower affinity
+to beta-lactam antibiotics;
+2. expression of beta-lactamase (also known as penicillinase)
+enzymes and
+3. drug efflux pumps, particularly in certain gram-positive
+strains (34).
+[[PAGE 4]]
+Access additional resources at www.aae.org
+For this reason, if symptoms are not improved after
+endodontic debridement and/or drainage, amoxicillin may be
+combined with clavulanic acid (125 mg bid or tid), which is
+a beta-lactamase inhibitor and increases the susceptibility of
+penicillin resistant strains.
+This combination has been shown to be effective against 100%
+of cultivable endodontic bacteria, increasing the spectrum of
+amoxicillin in persistent infections (25, 35, 36). However, the
+use of amoxicillin/clavulanic acid combinations should not be
+done indiscriminately as there are potentially significant side
+effects that include gastrointestinal and hepatic disturbances
+(37).
+Although penicillin and amoxicillin are the most prescribed
+antibiotics, they have a side effect profile that ranges
+from gastrointestinal disturbances, hepatic toxicity to
+severe anaphylactic allergic reactions. It is estimated that
+approximately 8% of the population using health care in
+the U.S. have allergic reactions to penicillin (38). There is
+well-reported cross-reactivity of penicillin allergy with
+cephalosporins (39), with a total prevalence of 1% of the
+American population taking antibiotics being also allergic to
+cephalosporins (38).
+In susceptible patients, immunoglobulin E (IgE) against
+breakdown products of penicillin is readily detected in patients
+with a history of penicillin allergic reactions (40). Anaphylactic
+types of reactions are the most severe manifestation of
+allergy to beta-lactam antibiotics but are the least prevalent
+(41). Thus, these drugs should be avoided in patients with
+a previous history of hypersensitivity, or discontinued
+in patients without a history but with presentation of
+hypersensitivity, to avoid life-threatening anaphylactic
+reactions.
+Clindamycin is the first drug of choice for patients with a
+history of hypersensitivity to penicillin drugs. This drug
+is a lincosamide antibiotic that acts by binding to the 50S
+ribosomal subunit, suppressing protein synthesis (42).
+Therefore, its effects are mainly bacteriostatic, although
+bactericidal effects can be achieved with therapeutic doses.
+It has been shown to be effective against 75% of cultivable
+endodontic pathogens (35, 36, 43). It has very good spectrum,
+with coverage against both facultative and obligate anaerobic
+bacteria.
+Clindamycin is readily absorbed after oral administration,
+which is not impaired by concomitant food consumption,
+reaching peak plasma levels in 1 hour (9 μg/ml after a loading
+dose of 600 mg in adults). The drug is widely distributed in
+the body, including bone (44). The recommended dosage for
+infections of endodontic origin is 600 mg as a loading dose
+followed by 300 mg every 6 hours, whereas in children, this
+dose must be adjusted to 10-30mg/Kg (dose/ body weight)
+divided into 4 equal doses.
+Similar to other antibiotics used as adjuvants in endodontic
+therapy, there is no agreement on the duration of the
+treatment and the perceived therapeutic benefit. Also,
+prolonged use of this antibiotic will increase the likelihood of
+untoward effects and selection of resistant bacterial strains.
+Despite its excellent pharmacokinetics and moderate
+effectiveness against endodontic pathogens, its use can be
+associated with significant side effects. Gastrointestinal
+disturbances are the most common side effect with an
+approximately eight-fold increased risk of developing C.
+difficile infection than the use of penicillin (45) that can evolve
+into pseudomembranous colitis, a potentially fatal disease.
+Thus, administration of this drug must be discontinued
+upon the first signs of this disease (i.e. diarrhea with fever,
+abdominal pain, mucus and blood in the stool) and the patient
+referred to a primary care physician for treatment that may
+involve prescription of metronidazole orally or intravenously.
+Caution should be employed when prescribing this
+medication for patients with history of clindamycin-associated
+pseudomembranous colitis (46). Thus, patients with a history
+of penicillin allergy and severe gastrointestinal reactions to
+clindamycin require alternative antibiotics such as macrolides,
+quinolones or tetracyclines. Unfortunately, endodontic
+pathogens have lesser susceptibility to these alternative
+antibiotics with increased prevalence of resistant strains (28,
+35, 43).
+[[PAGE 5]]
+AAE Guidance on the Use of Systemic Antibiotics in Endodontics | Page 5
+Indications for performing culture and sensitivity tests
+As noted, antibiotics are prescribed empirically by
+practitioners. Occasionally, despite adequate local
+debridement and antibiotic coverage, the treatment is
+ineffective and the patient’s condition deteriorates. The
+patient may have unusual species of virulent bacteria,
+multidrug resistant bacteria and/or fungal infection. He/
+she may also have immune deficiency, uncontrolled diabetes,
+penicillin allergy and/or a history of C. difficile infection. In
+these situations, culture and sensitivity testing may assist
+the practitioner in selecting the appropriate antibiotic. It
+is generally recognized, however, that most oral bacterial
+species are commensal organisms, that about half of them
+are not cultivable, and that the effectiveness of antibiotics is
+variable in polymicrobial infections. Therefore, this testing
+may only provide additional guidance to the practitioner, in
+conjunction with surgical debridement.
+Signs and Symptoms Possible Condition Management
+Strategies
+Continued pain and/or
+swelling
+Bacterial resistance to
+antibiotic or presence
+in inaccessible areas
+Supplementing
+antibiotic regimen with
+another oral drug such
+as Metronidazole
+Trismus, dyspnea and
+dysphagia
+Spread to poorly
+vascularized fascial
+spaces such as
+submandibular,
+sublingual, masseteric,
+parapharyngeal and
+retropharyngeal spaces
+Hospitalization,
+culture and sensitivity,
+together with IV
+antibiotics
+Vision problems,
+headache
+Cavernous sinus
+involvement
+Hospitalization,
+culture and sensitivity,
+together with IV
+antibiotics
+Fever over 102°F,
+malaise, lethargy and
+increased erythrocyte
+sedimentation rate
+Massive systemic
+involvement, potential
+septic shock
+Hospitalization,
+culture and sensitivity,
+together with IV
+antibiotics
+Table: Unfavorable response to empirically prescribed
+antibiotics following root canal debridement, and incision for
+drainage.
+Aspiration of a purulent fluid is the optimal sampling
+method, and is achieved using a 16 or 18-gauge needle.
+This is taken promptly to the microbiological laboratory to
+promote growth of strict anaerobes (47). The use of swabs
+to sample more superficial infections is less effective, due
+to the possibility of contamination or death of anaerobes.
+Optimally, these swabs should be promptly stored in pre-
+reduced transport media, such as Liquid Dental Transport
+Medium (Anaerobe Systems, Morgan Hill, CA). Culture and
+sensitivity testing is a slow process, which typically takes
+three to six days. Due to the urgency of the situation, deeper
+drainage and debridement may be indicated, and the patient
+is started on other antibiotics or multiple drugs, until the
+test results are obtained.
+Studies show that beta-lactam antibiotics are the optimal
+drugs for endodontic pathogens, and that there is very
+little bacterial resistance to amoxicillin with clavulanic acid
+(25, 35, 36, 48). These studies have demonstrated more
+resistance to clindamycin, which has typically been the
+drug of choice for penicillin-allergic patients. Therefore, in
+penicillin-allergic patients, other drugs such as moxifloxacin
+or azithromycin should be considered (49, 50).
+Prophylactic use of antibiotics for endodontic surgery
+Prophylactic use of antibiotics to prevent postoperative
+infections is common in general and oral surgery. Factors
+involved in the decision of whether to prescribe prophylactic
+antibiotics, and whether to provide one preoperative dose
+or a prolonged course, include the type and site of surgery,
+the morbidity associated with potential infection, and the
+systemic health of the patient. One randomized clinical
+trial compared giving 256 patients undergoing endodontic
+surgery either preoperative 600 mg tablet of clindamycin
+or placebo (51). The results were that four patients in the
+placebo group and two in the clindamycin group developed
+postoperative infection, and this difference was not
+statistically significant. However, the average surgical time
+in this study was only about 30 minutes in both groups,
+and the overall number of infections was low. There are no
+data available for endodontic surgery that may take a longer
+period or are performed in practices that have higher rates
+of postoperative infections.
+[[PAGE 6]]
+Access additional resources at www.aae.org
+Nevertheless, there is evidence that antibiotic prophylaxis
+may reduce postoperative infection following exodontia
+and surgical osteotomy extraction (52, 53). In addition,
+there is one study that showed that peri-operative
+antibiotic prophylaxis significantly reduced the incidence of
+bisphosphonate-related osteonecrosis of the jaw, in multiple
+myeloma patients on IV bisphosphonates undergoing dental
+surgery (54).
+In cases where the biopsy result indicates periapical
+actinomycosis infection, it does not appear that antibiotic
+treatment is indicated, as the surgical procedure is
+associated with curettage of the infected tissues in these
+cases (55).
+Association between adjunctive antibiotics and periapical
+healing
+The effect of perioperative antibiotics on long term healing
+of nonsurgical and surgical endodontics has not been
+sufficiently studied. One study compared the healing
+of apical periodontitis in 62 patients who underwent
+nonsurgical root canal treatment (56). There was no
+difference between the penicillin and the control groups
+in healing. A more recent endodontic prospective cohort
+study showed no association between the use of long-
+term antibiotics and nonsurgical treatment or retreatment
+outcome (57).
+REFERENCES
+1. Lessa FC, Mu Y, Bamberg WM, Beldavs ZG, Dumyati GK,
+Dunn JR, et al. Burden of Clostridium difficile infection in
+the United States. N Engl J Med 2015;372:825-34.
+2. Leffler DA, Lamont JT. Clostridium difficile infection. N
+Engl J Med 2015;372:1539-48.
+3. Dellit TH, Owens RC, McGowan JE, Jr., Gerding DN,
+Weinstein RA, Burke JP, et al. Infectious Diseases Society
+of America and the Society for Healthcare Epidemiology
+of America guidelines for developing an institutional
+program to enhance antimicrobial stewardship. Clin
+Infect Dis 2007;44:159-77.
+4. Fridkin SK, Cleveland AA, See I, Lynfield R. Emerging
+Infections Program as Surveillance for Antimicrobial
+Drug Resistance. Emerg Infect Dis 2015;21:1578-81.
+5. Cope A, Francis N, Wood F, Mann MK, Chestnutt IG.
+Systemic antibiotics for symptomatic apical periodontitis
+and acute apical abscess in adults. Cochrane Database
+Syst Rev 2014;6:CD010136.
+6. Fouad AF, Rivera EM, Walton RE. Penicillin as a
+supplement in resolving the localized acute apical
+abscess. Oral Surg Oral Med Oral Pathol Oral Radiol
+Endod 1996;81:590-5.
+7. Henry M, Reader A, Beck M. Effect of penicillin
+on postoperative endodontic pain and swelling in
+symptomatic necrotic teeth. J Endod 2001;27:117-23.
+8. Matthews DC, Sutherland S, Basrani B. Emergency
+management of acute apical abscesses in the permanent
+dentition: a systematic review of the literature. J Can
+Dent Assoc 2003;69:660.
+9. Walton RE, Chiappinelli J. Prophylactic penicillin:
+effect on posttreatment symptoms following root canal
+treatment of asymptomatic periapical pathosis. J Endod
+1993;19:466-70.
+10. Nagle D, Reader A, Beck M, Weaver J. Effect of systemic
+penicillin on pain in untreated irreversible pulpitis.
+Oral Surg Oral Med Oral Pathol Oral Radiol Endod
+2000;90:636-40.
+11. Pickenpaugh L, Reader A, Beck M, Meyers WJ, Peterson
+LJ. Effect of prophylactic amoxicillin on endodontic flare-
+up in asymptomatic, necrotic teeth. J Endod 2001;27:53-
+6.
+12. Abbott AA, Koren LZ, Morse DR, Sinai IH, Doo RS, Furst
+ML. A prospective randomized trial on efficacy of
+antibiotic prophylaxis in asymptomatic teeth with pulpal
+necrosis and associated periapical pathosis. Oral Surg
+Oral Med Oral Pathol 1988;66:722-33.
+13. Fouad AF. Are antibiotics effective for endodontic use?
+an evidence-based review. Endodontic Topics 2002;3:52-
+66.
+14. Morse DR, Furst ML, Belott RM, Lefkowitz RD, Spritzer
+IB, Sideman BH. Infectious flare-ups and serious
+sequelae following endodontic treatment: a prospective
+randomized trial on efficacy of antibiotic prophylaxis in
+cases of asymptomatic pulpal-periapical lesions. Oral
+Surg Oral Med Oral Pathol 1987;64:96-109.
+15. Segura-Egea JJ, Velasco-Ortega E, Torres-Lagares D,
+Velasco-Ponferrada MC, Monsalve-Guil L, Llamas-
+Carreras JM. Pattern of antibiotic prescription in the
+management of endodontic infections amongst Spanish
+oral surgeons. Int Endod J 2010;43:342-50.
+[[PAGE 7]]
+AAE Guidance on the Use of Systemic Antibiotics in Endodontics | Page 7
+16. Yingling NM, Byrne BE, Hartwell GR. Antibiotic use by
+members of the American Association of Endodontists
+in the year 2000: report of a national survey. J Endod
+2002;28:396-404.
+17. Tilburt JC, Emanuel EJ, Kaptchuk TJ, Curlin FA, Miller
+FG. Prescribing “placebo treatments”: results of national
+survey of US internists and rheumatologists. BMJ
+2008;337:a1938.
+18. Konig C, Simmen HP, Blaser J. Bacterial concentrations
+in pus and infected peritoneal fluid--implications
+for bactericidal activity of antibiotics. J Antimicrob
+Chemother 1998;42:227-32.
+19. Aminoshariae A, Kulild JC. Evidence-based
+recommendations for antibiotic usage to treat
+endodontic infections and pain: A systematic review
+of randomized controlled trials. J Am Dent Assoc
+2016;147:186-91.
+20. Segura-Egea JJ, Gould K, Sen BH, Jonasson P, Cotti E,
+Mazzoni A, et al. Antibiotics in Endodontics: a review. Int
+Endod J 2016.
+21. Mainjot A, D’Hoore W, Vanheusden A, Van
+Nieuwenhuysen JP. Antibiotic prescribing in dental
+practice in Belgium. Int Endod J 2009;42:1112-7.
+22. Rodriguez-Nunez A, Cisneros-Cabello R, Velasco-Ortega
+E, Llamas-Carreras JM, Torres-Lagares D, Segura-Egea JJ.
+Antibiotic use by members of the Spanish Endodontic
+Society. J Endod 2009;35:1198-203.
+23. Wright AJ. The penicillins. Mayo Clin Proc 1999;74:290-
+307.
+24. Pinheiro ET, Gomes BP, Ferraz CC, Teixeira FB, Zaia AA,
+Souza Filho FJ. Evaluation of root canal microorganisms
+isolated from teeth with endodontic failure and their
+antimicrobial susceptibility. Oral Microbiol Immunol
+2003;18:100-3.
+25. Baumgartner JC, Xia T. Antibiotic susceptibility of
+bacteria associated with endodontic abscesses. J Endod
+2003;29:44-7.
+26. Khemaleelakul S, Baumgartner JC, Pruksakorn S.
+Identification of bacteria in acute endodontic infections
+and their antimicrobial susceptibility. Oral Surg Oral
+Med Oral Pathol Oral Radiol Endod 2002;94:746-55.
+27. Barr WH, Zola EM, Candler EL, Hwang SM, Tendolkar
+AV, Shamburek R, et al. Differential absorption of
+amoxicillin from the human small and large intestine.
+Clin Pharmacol Ther 1994;56:279-85.
+28. Fouad AF. Systemic Antibiotics in Endodontic Infections.
+In: Fouad AF, editor. Endodontic Microbiology. Second
+ed.: Wiley-Blackwell; 2017: 269-85.
+29. Palmer N, Martin M. An investigation of antibiotic
+prescribing by general dental practitioners: a pilot study.
+Prim Dent Care 1998;5:11-4.
+30. Lewis MA, McGowan DA, MacFarlane TW. Short-course
+high-dosage amoxycillin in the treatment of acute dento-
+alveolar abscess. Br Dent J 1986;161:299-302.
+31. Martin MV, Longman LP, Hill JB, Hardy P. Acute
+dentoalveolar infections: an investigation of the duration
+of antibiotic therapy. Br Dent J 1997;183:135-7.
+32. Lacey RW, Lord VL, Howson GL, Luxton DE, Trotter
+IS. Double-blind study to compare the selection of
+antibiotic resistance by amoxicillin or cephradine in the
+commensal flora. Lancet 1983;2:529-32.
+33. Kim MK, Chuang SK, August M. Antibiotic Resistance in
+Severe Orofacial Infections. J Oral Maxillofac Surg 2016.
+34. Nikaido H. Antibiotic resistance caused by gram-negative
+multidrug efflux pumps. Clin Infect Dis 1998;27 Suppl
+1:S32-41.
+35. Jungermann GB, Burns K, Nandakumar R, Tolba
+M, Venezia RA, Fouad AF. Antibiotic resistance in
+primary and persistent endodontic infections. J Endod
+2011;37:1337-44.
+36. Poeschl PW, Crepaz V, Russmueller G, Seemann R,
+Hirschl AM, Ewers R. Endodontic pathogens causing
+deep neck space infections: clinical impact of different
+sampling techniques and antibiotic susceptibility. J
+Endod 2011;37:1201-5.
+37. Salvo F, Polimeni G, Moretti U, Conforti A, Leone R, Leoni
+O, et al. Adverse drug reactions related to amoxicillin
+alone and in association with clavulanic acid: data from
+spontaneous reporting in Italy. J Antimicrob Chemother
+2007;60:121-6.
+38. Macy E. Penicillin and beta-lactam allergy: epidemiology
+and diagnosis. Curr Allergy Asthma Rep 2014;14:476.
+[[PAGE 8]]
+Access additional resources at www.aae.org
+39. Delafuente JC, Panush RS, Caldwell JR. Penicillin and
+cephalosporin immunogenicity in man. Ann Allergy
+1979;43:337-40.
+40. Sanz ML, Garcia BE, Prieto I, Tabar A, Oehling A. Specific
+IgE determination in the diagnosis of beta-lactam
+allergy. J Investig Allergol Clin Immunol 1996;6:89-93.
+41. Albin S, Agarwal S. Prevalence and characteristics of
+reported penicillin allergy in an urban outpatient adult
+population. Allergy Asthma Proc 2014;35:489-94.
+42. Reusser F. Effect of lincomycin and clindamycin on
+peptide chain initiation. Antimicrob Agents Chemother
+1975;7:32-7.
+43. Skucaite N, Peciuliene V, Vitkauskiene A, Machiulskiene
+V. Susceptibility of endodontic pathogens to antibiotics
+in patients with symptomatic apical periodontitis. J
+Endod 2010;36:1611-6.
+44. Nicholas P, Meyers BR, Levy RN, Hirschman SZ.
+Concentration of clindamycin in human bone.
+Antimicrob Agents Chemother 1975;8:220-1.
+45. Brown KA, Khanafer N, Daneman N, Fisman DN. Meta-
+analysis of antibiotics and the risk of community-
+associated Clostridium difficile infection. Antimicrob
+Agents Chemother 2013;57:2326-32.
+46. Buffie CG, Jarchum I, Equinda M, Lipuma L, Gobourne
+A, Viale A, et al. Profound alterations of intestinal
+microbiota following a single dose of clindamycin results
+in sustained susceptibility to Clostridium difficile-
+induced colitis. Infect Immun 2012;80:62-73.
+47. Poeschl PW, Spusta L, Russmueller G, Seemann R,
+Hirschl A, Poeschl E, et al. Antibiotic susceptibility and
+resistance of the odontogenic microbiological spectrum
+and its clinical impact on severe deep space head and
+neck infections. Oral Surg Oral Med Oral Pathol Oral
+Radiol Endod 2010;110:151-6.
+48. Montagner F, Castilho Jacinto R, Correa Signoretti FG,
+Scheffer de Mattos V, Grecca FS, Gomes BP. Beta-lactamic
+resistance profiles in Porphyromonas, Prevotella, and
+Parvimonas species isolated from acute endodontic
+infections. J Endod 2014;40:339-44.
+49. Cachovan G, Boger RH, Giersdorf I, Hallier O, Streichert
+T, Haddad M, et al. Comparative efficacy and safety
+of moxifloxacin and clindamycin in the treatment of
+odontogenic abscesses and inflammatory infiltrates:
+a phase II, double-blind, randomized trial. Antimicrob
+Agents Chemother 2011;55:1142-7.
+50. Adriaenssen CF. Comparison of the efficacy, safety and
+tolerability of azithromycin and co-amoxiclav in the
+treatment of acute periapical abscesses. Journal of
+International Medical Research 1998;26:257-65.
+51. Lindeboom JA, Frenken JW, Valkenburg P, van den Akker
+HP. The role of preoperative prophylactic antibiotic
+administration in periapical endodontic surgery:
+a randomized, prospective double-blind placebo-
+controlled study. Int Endod J 2005;38:877-81.
+52. Moreno-Drada JA, Garcia-Perdomo HA. Effectiveness of
+Antimicrobial Prophylaxis in Preventing the Spread of
+Infection as a Result of Oral Procedures: A Systematic
+Review and Meta-Analysis. J Oral Maxillofac Surg
+2016;74:1313-21.
+53. Marcussen KB, Laulund AS, Jorgensen HL, Pinholt EM. A
+Systematic Review on Effect of Single-Dose Preoperative
+Antibiotics at Surgical Osteotomy Extraction of Lower
+Third Molars. J Oral Maxillofac Surg 2016;74:693-703.
+54. Montefusco V, Gay F, Spina F, Miceli R, Maniezzo M,
+Teresa Ambrosini M, et al. Antibiotic prophylaxis
+before dental procedures may reduce the incidence
+of osteonecrosis of the jaw in patients with multiple
+myeloma treated with bisphosphonates. Leuk
+Lymphoma 2008;49:2156-62.
+55. Rush JR, Sulte HR, Cohen DM, Makkawy H. Course of
+infection and case outcome in individuals diagnosed
+with microbial colonies morphologically consistent with
+Actinomyces species. J Endod 2002;28:613-8.
+56. Ranta H, Haapasalo M, Ranta K, Kontiainen S, Kerosuo
+E, Valtonen V, et al. Bacteriology of odontogenic apical
+periodontitis and effect of penicillin treatment. Scand J
+Infect Dis 1988;20:187-92.
+57. Ng YL, Mann V, Gulabivala K. A prospective study of
+the factors affecting outcomes of nonsurgical root
+canal treatment: part 1: periapical health. Int Endod J
+2011;44:583-609.

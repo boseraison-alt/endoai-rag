@@ -1,0 +1,76 @@
+POSITION STATEMENT
+The Use of Dental Radiographs in Evaluation of Prosthetic Margins – Tooth-Supported Fixed Prostheses
+
+Position Statement of the American College of Prosthodontists
+
+Generally speaking, precise marginal fit is preferred for both single and multi-unit tooth-supported fixed dental prostheses (FDPs). Historic and current guidelines suggest that a wide range of marginal misfit (6 to 120 µm) is considered acceptable. Unfortunately, there is no clinical evidence-based consensus regarding marginal gap size.1-3 Although an “adequate marginal fit” has never been clearly defined, there is data to suggest that overhanging restorations and readily detectable open margins (clinically and/or radiographically) may increase the risk of secondary dental caries, cause detriment to surrounding periodontal tissues, and perhaps have a negative effect on the esthetic result of anterior restorations.4-8
+
+Marginal fit aside, prosthodontic patients are often at high risk for dental caries.6 Several risk factors have been identified, including existing or recent history of caries,9 medium or high levels of Streptococcus mutans and Lactobacillus,9,10 heavily restored dentition,11 use of removable dental prostheses,12 and many others. Marginal gap size between tooth and restoration has been positively correlated with the development of secondary caries.5,8-16 However, data to support this is limited with a lack of consensus, and has only been closely studied for amalgam, composite, and glass ionomer restorations.8,17-19
+
+Overhanging dental restorations can hinder oral hygiene, have associated plaque accumulation, and cause physical irritation, leading to gingival inflammation and potential periodontal destruction. In a cross-over study, overhanging dental restorations were associated with increased gingival inflammation and periodontal probing depths without clinical attachment loss.4 Furthermore, overhanging dental restorations were microbiologically correlated with increased proportions of Gram-negative anaerobic bacteria and black-pigmented Bacteroides.4 Although undetectable radiographically, roughly only 50% of subgingival crown and FDP margins remain subgingival after 5 years.20 This suggests that crown margins, especially when overhanging, may have a detrimental effect on periodontal health and/or clinical attachment loss.4,20,21
+
+Different detection methods have been proposed for the identification of misfit in dental prostheses and restorations. These procedures include the use of dental explorers, radiographs, and impression materials.1,2,22,23 However, significant limitations occur, especially when the restoration margin is located interproximally and/or subgingivally.2 The evidence available to support the use of any certain technique to detect marginal misfit is low- to moderate-quality at best and is very limited.1,22
+
+Regardless of the limitations of each respective method, impression making, radiographic evaluation, and exploration all have some capability at measuring marginal defects. Impression making may be more capable of measuring a smaller gap size than using a dental explorer. Radiographic limitations also exist. At greater than 15° of deviation from orthogonal projection of the x-ray tube, a gap size of 0.15 mm is undetectable. Using a combination of techniques is recommended. Most practically, the use of a dental explorer and intraoral imaging are the most commonly used methods at the time of both single- and multi-unit FDP delivery.
+
+It is the position of the American College of Prosthodontists that the following clinical recommendations be considered regarding the use of dental radiographs in the evaluation of prosthetic margins for tooth-supported FDPs:
+
+At this time, for both single- and multi-unit FDPs, no conclusive guidelines exist for an acceptable marginal gap size or gap size range; however, minimizing gap size may reduce the risk of secondary caries.
+Overhanging dental restorations have been correlated with gingival inflammation and negative effects on periodontal health.
+A combination of both clinical and intraoral radiographic evaluation of restoration margins is recommended.
+More data is needed to support the use of radiographs after delivery of single- and multi-unit FDPs in relation to prevention of irreversible complications such as extensive caries and tooth loss.
+
+References
+
+1. Assif D, Antopolski B, Helft M, et al: Comparison of methods of clinical evaluation of the marginal fit of complete cast gold crowns. J Prosthet Dent 1985;54:20-24
+
+2. Christensen GJ: Marginal fit of gold inlay castings. J Prosthet Dent 1966;16:297-3053.
+
+3. Mounajjed R, M Layton D, Azar B: The marginal fit of E.max Press and E.max CAD lithium disilicate restorations: A critical review. Dental Mater J 2016;35:835-844
+
+4. Lang NP, Kiel RA, Anderhalden K: Clinical and microbiological effects of subgingival restorations with overhanging or clinically perfect margins. J Clin Periodontol 1983;10:563-578
+
+5. Totiam P, González-Cabezas C, Fontana MR, et al: A new in vitro model to study the relationship of gap size and secondary caries. Caries Res 2007;41:467-473
+
+6. Featherstone JD, Singh S, Curtis DA: Caries risk assessment and management for the prosthodontics patient. J Prosthodont 2011;20:2-9
+
+7. Cenci MS, Pereira-Cenci T, Cury JA, et al: Relationship between gap size and dentine secondary caries formation assessed in a microcosm biofilm model. Caries Res 2009;43:97-102
+
+8. Ferracane JL: Models of caries formation around dental composite restorations. J Dent Res 2017;96:364-371
+
+9. Zero DT, Fontana M, Lennon AM: Clinical applications and outcomes of using indicators of risk in caries management. J Dent Educ 2001;65:1126-1132
+
+10. Miyamoto T, Morgano SM, Kumagai T, et al: Treatment history of teeth in relation to the longevity of the teeth and their restorations: outcomes of teeth treated and maintained for 15 years. J Prosthet Dent 2007;97:150- 156
+
+11. Brennan DS, Spencer AJ, Roberts-Thomson KF: Caries experience among 45-54 year olds in Adelaide, South Australia. Aust Dent J 2007;52:122-127
+
+12. Yeung AL, Lo EC, Chow TW, et al: Oral health status of patients 5-6 years after placement of cobaltchromium removable partial dentures. J Oral Rehabil 2000;27:183-189
+
+13. Jorgensen KD, Wakumoto S: Occlusal amalgam fillings: marginal defects and secondary caries. Odontol Tidskr 1968;76:43-54
+
+14. Goldberg J, Tanzer J, Munster E, et al: Cross-sectional clinical evaluation of recurrent enamel caries, restoration marginal integrity, and oral hygiene status. J Am Dent 1981;102:635-641
+
+15. Derand T, Birkhed D, Edwardsson S: Secondary caries related to various marginal gaps around amalgam restorations in vitro. Swed Dent J 1991;15:133-138
+
+16. Hodges DJ, Mangum FI, Ward MT: Relationship between gap width and recurrent caries beneath occlusal margins of amalgam restorations. Community Dent Oral Epidemiol 1995;23:200-204
+
+17. Kidd EAM, O’Hara JW: The caries status of occlusal amalgam restorations with marginal defects. J Dent Res 1990;69:1275-1277
+
+18. Pimenta LA, Navarro MF, Consolaro A: Secondary caries around amalgam restorations. J Prosthet Dent 1995;74:219-222
+
+19. Rezwani-Kaminski T, Kamann W, Gaengler P: Secondary caries susceptibility of teeth with long-term performing composite restorations. J Oral Rehabil 2002;29:1131-1138
+
+20. Valderhaug J, Birkeland JM: Periodontal considtion in patients 5 years following insertion of fixed prostheses. J Oral Rehabil 1976;3:237-243
+
+21. Waerhaug J: The interdental brush and its place in operative and crown and bridge dentistry. J Oral Rehabil 1976;3:107-113
+
+22. Liedke GS, Spin-Neto R, da Silveira HE, et al: Radiographic diagnosis of dental restoration misfit: a systematic review. J Oral Rehabil 2014 Dec;41:957-967
+
+23. Liedke GS, Spin-Neto R, Vizzotto MB, et al: Diagnostic accuracy of conventional and digital radiography for detecting misfit between the tooth and restoration in metal-restored teeth. J Prosthet Dent 2015;113:39-47
+
+Authors
+Andrew R. Chapokas, DMD, MSD, FACP
+Omaid K. Ahmad, BDS, MDentSc, FACP
+
+Approved ACP Board of Directors: Feb. 28, 2016
+Revisions approved by ACP Board of Directors June 8, 2019

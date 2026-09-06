@@ -1,0 +1,9 @@
+{
+ "id": "ACP-DENTAL-IMPLANTS-2019",
+ "url": "https://www.prosthodontics.org/about-acp/position-statement-dental-implants/",
+ "fetched_at": "2026-09-06T16:12:53Z",
+ "method": "chrome_dom_text",
+ "sha256": "3102dc827cb2a732777781a68215142dbd9c18f2c568a149d9977be5ef56785a",
+ "trimmed": "site navigation and footer removed; body verbatim",
+ "body_starts_with": "Placement of dental implants is a procedure, not a"
+}

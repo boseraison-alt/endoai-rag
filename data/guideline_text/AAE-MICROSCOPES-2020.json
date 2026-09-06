@@ -1,0 +1,10 @@
+{
+ "id": "AAE-MICROSCOPES-2020",
+ "url": "https://www.aae.org/specialty/wp-content/uploads/sites/2/2020/04/UseOfMicroscopes_PositionStatement_v2.pdf",
+ "fetched_at": "2026-09-06T18:49:01Z",
+ "method": "chrome_pdfjs_text",
+ "method_detail": "PDF fetched inside RB's Chrome session (same-origin fetch from aae.org), text layer extracted with pdf.js 3.11.174 getTextContent(); page breaks marked [[PAGE n]]; the PDF's own running heads are the text layer's, kept verbatim; transferred to the repo programmatically (no retyping)",
+ "sha256": "60d711105d983b77793807eead735a30992ab42198ec5b06cb6ef0152e3cdae6",
+ "trimmed": "nothing removed",
+ "body_starts_with": "The AAE is dedicated to excellence in the art\nand science of endodontics"
+}

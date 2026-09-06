@@ -1,0 +1,119 @@
+POSITION STATEMENT
+Diagnostic Imaging in the Treatment Planning, Surgical, and Prosthodontic Aspects of Implant Dentistry
+
+Position Statement of the American College of Prosthodontists
+
+The advent of the dental implant revolutionized the field of dentistry. Implants are prostheses considered for replacement of teeth. Diagnostic treatment planning is crucial to achieving optimal success in oral rehabilitation, and this is not possible without diagnostic imaging.
+
+Several types of imaging are available, ranging from conventional intraoral periapical radiographs to panoramic tomography to crosssectional imaging, which involves multi-detector computed tomography (MDCT) and cone beam computed tomography (CBCT).1 Several national and international professional organizations have published guidelines for the use of cross-sectional imaging, especially the use of CBCT in the preoperative planning and postoperative follow-up for dental implants.2-8 Most published national and international guidelines on implant dentistry do not offer evidence-based action statements developed from a rigorous systematic review approach.9 Instead, they provide recommendations that are consensus-based, or derived from a limited methodological approach with only partial retrieval and/or analysis of the literature, or contain generalized or non-case-specific statements.9
+
+The purpose of this position statement is to make recommendations in light of the current literature and existing guidelines on the role of diagnostic imaging, especially cross-sectional CBCT imaging in preand post-implant imaging and assessment.
+
+The authors reviewed the pertinent literature and guidelines using PUBMED for the studies published addressing the current subject. The following topics will be addressed in this statement:
+
+1) Imaging for preoperative implant treatment planning.
+
+2) Imaging for postoperative implant care.
+
+IMAGING FOR PREOPERATIVE IMPLANT TREATMENT PLANNING
+
+A comprehensive evaluation of the oral cavity begins with a detailed medical and dental history, and a dental hard and soft tissue clinical examination. This is followed by conventional imaging such as twodimensional imaging (intraoral periapical and panoramic radiography), followed by cross-sectional imaging using MDCT or CBCT
+
+Radiation dose considerations are important; ALARA (as low as reasonably achievable) principles are recommended and should be followed. Conventional imaging involves the minimal dose as compared to advanced imaging.10 The radiation dose of different CBCT scanners varies11-13 but is considered less than MDCT.10,14
+
+The selection for radiographic imaging depends on the amount of residual alveolar ridge atrophy; this includes the bone quality, bone quantity, remaining bone height, bone width, and available bone volume. The residual alveolar ridge topography needs to be understood and addressed rather carefully, as the positioning of an implant is crucial for prosthetic treatment planning.8,15-17
+
+The identification of vital anatomic landmarks and their relation or vicinity to the future implant site/s is a crucial factor. Potential implant sites need to be safely identified.
+
+Important landmarks in the maxillofacial region are:
+
+In the maxilla: Nasal floor, naso-palatine canal, anterior superior alveolar canal, maxillary sinus and related structures, posterior superior alveolar canal, maxillary tuberosity, pterygoid plates.
+
+In the mandible:18,19 Lingual foramen, incisive canal,20 genial tubercles, inferior alveolar nerve canal, mental foramina, retromolar foramen, sublingual fossa (lingual undercut),19 mylohyoid undercut, lingula of ascending ramus.
+
+In the zygomatic region: Orbital floor, infraorbital foramen, zygomatic bone.5
+
+The American Academy of Oral and Maxillofacial Radiology (AAOMR) published multiple guidelines for implant and cross-sectional imaging in 2000 and 2012.7,8 They provided literature based clinical guidance recommendations for CBCT imaging. They presented eleven recommendations covering these topics, and stated that panoramic and intraoral imaging should be used for initial evaluation, and not to use CBCT for these initial evaluations. After the initial radiographic exam, cross-sectional imaging is recommended to be used for an implant site assessment. CBCT imaging is the current method of choice because it provides the greatest diagnostic yield at an acceptable radiation dose risk. CBCT should be considered for pre- and post-graft, bone reconstruction, and augmentation procedures. The field of view (FOV) should be limited to the region of interest (ROI).8
+
+The European Association for Osseointegration (EAO) published guidelines in 20024 and updated them in 2012.5 They recommended not taking cross-sectional images if the clinical assessment of implant sites indicates sufficient bone width, and the conventional radiographic examination reveals the relevant anatomical boundaries and adequate bone height and space.
+
+If the clinical examination and conventional radiography have failed to adequately demonstrate relevant anatomical boundaries or the location of important anatomical structures, cross sectional imaging is advised. The EAO recommended the use of cross-sectional imaging in all extensive graft, augmentation, zygomatic, and computer-guided surgery.5 The Academy of Osseointegration (AO) published guidelines in 200721 and 2010.2 The AO endorsed the use of CT imaging proposed by the EAO and also advised review of SEDENTEXCT (revised in 2011) project of CBCT use.6 AO and EAO stressed not to use a large FOV inappropriately.
+
+The International Congress of Oral Implantologists (ICOI) made recommendations in a consensus report in 2012.3 They said the decision for use of CBCT must be based on patient history, examination, and individualized need, and the benefit must outweigh the potential risk. They recommended that CBCT be used as an imaging alternative for computer-aided implant planning. The planning may include implant placement in an esthetic zone, pre- and post-grafting/augmentation procedures, post-implant complications,3 and history or suspected trauma to the jaw.
+
+IMAGING FOR POSTOPERATIVE IMPLANT CARE
+
+Postoperative imaging for implant placement allows better confirmation and accurate implant placement. Imaging after 3 to 5 years and beyond can be used to assess the bone-implant interface and marginal peri-implant bone height.
+
+Conventional periapical and/or panoramic radiographs for postoperative assessment of implants are recommended.
+
+CBCT for postoperative care is only recommended if the patient is symptomatic. This can include evaluation of post-implant complications, such as acute rhinosinusitis, neurosensory impairment, osteomyelitis, implant mobility, altered sensation, and/or pain and discomfort. Cross-sectional imaging (mainly CBCT) may be indicated if implant retrieval is anticipated.
+
+CONCLUSIONS
+
+The following recommendations are made in light of a literature review and existing guidelines. It is the position of the American College of Prosthodontists that:
+
+1) Conventional panoramic and/or intraoral periapical imaging is recommended for initial diagnostic evaluation. CBCT is not recommended for routine initial examination.
+
+2) Cross-sectional imaging (CBCT is preferable over CT due to its significantly lower radiation dose) is recommended for preoperative implant assessment.
+
+3) The rationale for CBCT imaging must be justified based on clinical evaluation.
+
+4) CBCT imaging should be used for the esthetic zone, pre- and post-bone grafting, sinus augmentation, pterygoid plate, and zygomatic implants.
+
+5) The region of interest (ROI) should be imaged using a field of view (FOV) no larger than necessary.
+
+6) CBCT is recommended to be used for the evaluation of postoperative complications such as postoperative neurosensory impairment, acute rhino-sinusitis, and implant mobility.
+
+References
+
+1. Mozzo P, Procacci C, Tacconi A, et al: A new volumetric CT machine for dental imaging based on the conebeam technique: preliminary results. Eur Radiol 1998;8:1558-1564
+
+2. Academy of Osseointegration: 2010 Guidelines of the Academy of Osseointegration for the provision of dental implants and associated patient care. Int J Oral Maxillofac Implants 2010;25:620-627
+
+3. Benavides E, Rios HF, Ganz SD, et al: Use of cone beam computed tomography in implant dentistry: the International Congress of Oral Implantologists consensus report. Implant Dent 2012;21:78-86
+
+4. Harris D, Buser D, Dula K, et al: E.A.O. guidelines fof the use of diagnostic imaging in implant dentistry. A consensus workshop organized by the European Association for Osseointegration in Trinity College Dublin. Clin Oral Implants Res 2002;13:566-570
+
+5. Harris D, Horner K, Gröndahl K, et al: E.A.O. guidelines for the use of diagnostic imaging in implant dentistry 2011. A consensus workshop organized by the European Association for Osseointegration at the Medical University of Warsaw. Clin Oral Implants Res 2012;23:1243-1253
+
+6. Horner K: Justification and referral criteria. In SEDENTEX CT Project (ed): Radiation Protection: Cone Beam CT for Dental and Maxillofacial Radiology. Evidence Based Guidelines, 2011. Manchester, UK, SEDENTEX CT, 2011, pp. 30-80. Available online at http://www.sedentexct.eu/files/guidelines_final.pdf. Accessed February 3, 2016
+
+7. Tyndall DA, Brooks SL: Selection criteria for dental implant site imaging: a position paper of the American Academy of Oral and Maxillofacial radiology. Oral Surg Oral Med Oral Pathol Oral Radiol Endod 2000;89:630-637
+
+8. Tyndall DA, Price JB, Tetradis S, et al: Position statement of the American Academy of Oral and Maxillofacial Radiology on selection criteria for the use of radiology in dental implantology with emphasis on cone beam computed tomography. Oral Surg Oral Med Oral Pathol Oral Radiol 2012;113:817-826
+
+9. Bornstein MM, Scarfe WC, Vaughn VM, et al: Cone beam computed tomography in implant dentistry: a systematic review focusing on guidelines, indications, and radiation dose risks. Int J Oral Maxillofac Implants 2014;29 Suppl:55-77
+
+10. Scarfe WC, Farman AG, Sukovic P: Clinical applications of cone-beam computed tomography in dental practice. J Can Dent Assoc 2006;72::75-80
+
+11. Ludlow JB, Davies-Ludlow LE, Brooks SL, et al: Dosimetry of 3 CBCT devices for oral and maxillofacial radiology: CB Mercuray, NewTom 3G and i-CAT. Dentomaxillofac Radiol 2006;35:219-226
+
+12. Ludlow JB, Ivanovic M: Comparative dosimetry of dental CBCT devices and 64-slice CT for oral and maxillofacial radiology. Oral Surg Oral Med Oral Pathol Oral Radiol Endod 2008;106:106-114
+
+13. Okano T, Harata Y, Sugihara Y, et al: Absorbed and effective doses from cone beam volumetric imaging for implant planning. Dentomaxillofac Radiol 2009;38:79-85
+
+14. Loubele M, Guerrero ME, Jacobs R, et al: A comparison of jaw dimensional and quality assessments of bone characteristics with cone-beam CT, spiral tomography, and multi-slice spiral CT. Int J Oral Maxillofac Implants 2007;22:446-454
+
+15. Mercier P, Lafontant R: Residual alveolar ridge atrophy: classification and influence of facial morphology. J Prosthet Dent 1979;41:90-100
+
+16. Seibert JS, Salama H: Alveolar ridge preservation and reconstruction. Periodontol 2000 1996;11:69-84
+
+17. Tallgren A: The continuing reduction of the residual alveolar ridges in complete denture wearers: a mixedlongitudinal study covering 25 years. J Prosthet Dent 1972;27:120-132
+
+18. Lofthag-Hansen S, Grondahl K, Ekestubbe A: Cone-beam CT for preoperative implant planning in the posterior mandible: visibility of anatomic landmarks. Clin Implant Dent Relat Res 2009;11: 246-255
+
+19. Quirynen M, Mraiwa N, van Steenberghe D, et al: Morphology and dimensions of the mandibular jaw bone in the interforaminal region in patients requiring implants in the distal areas. Clin Oral Implants Res, 2003;14:280-285
+
+20. Jacobs R, Mraiwa N, vanSteenberghe D, et al: Appearance, location, course, and morphology of the mandibular incisive canal: an assessment on spiral CT scan. Dentomaxillofac Radiol 2002; 31:322-327
+
+21. No authors listed: State of the Science on Implant Dentistry. Consensus conference proceedings, August 3- 6, 2006. Int J Oral Maxillofac Implants 2007;22 Suppl:7-226
+
+Authors
+Omaid K. Ahmad, BDS, MDentSc, FACP
+Andrew R. Chapokas, DMD, MSD, FACP
+
+Approved ACP Board of Directors:
+Feb. 28, 2016
+Reaffirmed ACP Board of Directors:
+Feb. 24, 2019

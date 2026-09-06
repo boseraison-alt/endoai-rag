@@ -1,0 +1,11 @@
+{
+ "id": "AAE-VPT-2021",
+ "url": "https://www.aae.org/wp-content/uploads/2021/05/VitalPulpTherapy_PositionStatement_v2.pdf",
+ "fetched_at": "2026-09-06T16:28:44Z",
+ "method": "chrome_pdfjs_text",
+ "method_detail": "PDF fetched inside RB's Chrome session (same-origin fetch from aae.org), text layer extracted with pdf.js 3.11.174 getTextContent(); page breaks marked [[PAGE n]]; the PDF's own running heads (e.g. 'Position S tatement') are the text layer's, kept verbatim",
+ "sha256": "23d53aff95744120c102e0362b9bdc39917e3c1fb07bd4458e8afe24d2f71e2d",
+ "trimmed": "nothing removed",
+ "body_starts_with": "The American Association of Endodontists is\ndedicated to excellence",
+ "summary_section": "Summary (page 4): 'The primary goal of VPT procedures is the creation of optimal conditions for pulp tissue repair and preservation.' through 'warranted.'"
+}

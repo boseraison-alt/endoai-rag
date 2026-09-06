@@ -1,0 +1,9 @@
+{
+ "id": "ACP-ASYMPTOMATIC-EXTRACTION-2016",
+ "url": "https://www.prosthodontics.org/about-acp/position-statement-extractions-of-asymptomatic-natural-teeth-to-facilitate-prosthodontic-treatment/",
+ "fetched_at": "2026-09-06T16:11:16Z",
+ "method": "chrome_dom_text",
+ "sha256": "b4d9ab5136ec52a60b51a0fdc61c5d11ab287e9f2afc098cb12b81efa595bb59",
+ "trimmed": "site navigation and footer removed; body verbatim",
+ "body_starts_with": "Extractions of natural teeth that are commonly performed"
+}

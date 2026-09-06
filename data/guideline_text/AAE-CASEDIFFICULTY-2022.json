@@ -1,0 +1,10 @@
+{
+ "id": "AAE-CASEDIFFICULTY-2022",
+ "url": "https://www.aae.org/specialty/wp-content/uploads/sites/2/2022/01/CaseDifficultyAssessmentFormFINAL2022.pdf",
+ "fetched_at": "2026-09-06T18:49:01Z",
+ "method": "chrome_pdfjs_text",
+ "method_detail": "PDF fetched inside RB's Chrome session (same-origin fetch from aae.org), text layer extracted with pdf.js 3.11.174 getTextContent(); page breaks marked [[PAGE n]]; the PDF's own running heads are the text layer's, kept verbatim; transferred to the repo programmatically (no retyping)",
+ "sha256": "8198fb8f90d3e22236fa33ff9b7a5f974bd3b49dd5f45d7b07c02b0f34c0ecf7",
+ "trimmed": "nothing removed",
+ "body_starts_with": "Guidelines for Using the AAE Endodontic Case Difficulty Assessment Form"
+}

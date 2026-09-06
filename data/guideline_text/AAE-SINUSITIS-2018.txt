@@ -1,0 +1,891 @@
+[[PAGE 1]]
+Page 1Position Statement
+AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+Introduction
+The American Association of Endodontists is
+dedicated to excellence in endodontics and
+promoting the highest standards of patient care.
+This following position statement is intended
+to define and outline Maxillary Sinusitis of
+Endodontic Origin (MSEO), deliver guidelines
+for its diagnosis and appropriate treatment, and
+provide a standard for all dental and medical
+practitioners who undertake the responsibility of
+managing patients with this condition.
+The relationship between dental infections
+and sinus disease is widely recognized in both
+the dental and medical literature. Despite
+extensive scientific recognition and reported high
+prevalence, periapical infection manifesting in
+the maxillary sinus remains under-appreciated
+and frequently goes undiagnosed by dentists,
+otolaryngologists, and radiologists alike, with
+its sequelae often misdiagnosed as sinogenic
+sinusitis. Recognition of MSEO is critical as failure
+to identify and properly manage the endodontic
+source pathology will result in the persistence
+of sinus disease, the failure of medical sinus
+therapies, and the potential advancement to more
+serious or even life-threatening cranio-facial
+infections.
+Incidence and Recognition
+The pathological extension of dental disease
+into the maxillary sinus is well documented in
+the dental and medical literature and was first
+referred to by Bauer in 1943 as maxillary sinusitis
+of dental origin (MSDO).1 Numerous investigators
+since have discovered that this is a prevalent
+and common disease process.2-23,25 Abrahams et
+al.2 have reported that infections of maxillary
+posterior teeth show maxillary sinus pathology
+in 60% of the cases, while Mattila3 found sinus
+mucosal hyperplasia present in approximately
+80% of teeth with periapical osteitis. Obayashi
+et al.4 found maxillary sinus mucosal changes in
+71.3% of patients with infections originating in
+the maxillary canines, premolars and molars.
+While it has often been quoted and generally
+accepted that dental infections account for
+approximately 10 to 12% of all cases of maxillary
+sinusitis,5-9 the primary source for this figure
+provides no epidemiological data to support
+it.5,10 More recent literature strongly supports
+the conclusion that the incidence of MSDO, also
+termed odontogenic sinusitis, is likely much
+higher, particularly in chronic cases. Melen et
+al.11
+, in a study of 198 patients with 244 cases
+of chronic bacterial maxillary sinusitis, found
+a dental etiology in 40.6% of the cases. Maillet
+et al.12 reviewed 82 cone beam computed
+tomography (CBCT) scans that had findings
+consistent with maxillary sinusitis for evidence of
+a dental pathology and concluded that over 50%
+of these cases were of dental etiology. Bomeli et
+al.13 found that the more severe the sinus disease,
+the more likely it was to be associated with dental
+pathology, with up to 86% of severely affected
+maxillary sinuses having a dental etiology for
+the infection. Matsumoto et al.14 found that 72%
+of unilateral sinusitis cases had an odontogenic
+source.
+Despite the reported high prevalence of MSDO,
+and the persistence of sinus disease if the
+odontogenic source remains, this condition
+frequently goes unrecognized by radiologists,
+dentists, and otolaryngologists - Ear, Nose and
+Throat (ENT) specialists.15 In two separate
+case series evaluating odontogenic sinusitis,
+Maxillary Sinusitis of
+Endodontic Origin
+[[PAGE 2]]
+Position StatementPage 2AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+approximately two-thirds of the identifiable
+dental pathology went unreported by radiologists
+on sinus computed tomography (CT) scans.16,17
+It was also found that routine general dental
+examination using periapical radiographs failed
+to diagnose odontogenic maxillary sinusitis in
+86% of the cases.16 Melen et al.11 similarly reported
+that 56 out of 99 (55%) odontogenic maxillary
+sinusitis cases were missed on routine dental
+examination and dental radiography.
+Although the medical literature provides ample
+studies and review articles regarding the high
+prevalence of odontogenic sinusitis with the
+specific recommendation for dental or endodontic
+examination and treatment, published guidelines
+for the management of sinusitis rarely address the
+need to rule out or treat a potential odontogenic
+source. The current Clinical Practice Guidelines for
+the Management of Adult Rhinosinusitis, published
+by The American Academy of Otolaryngology
+– Head and Neck Surgery Foundation, makes
+no mention of the potential for an odontogenic
+cause for sinusitis, nor does it make any
+recommendation for a dental or endodontic
+examination to rule out or treat an odontogenic
+source for sinusitis.24 Out of 85 sinusitis
+guidelines, published between 1998 and 2010,
+only eleven mentioned an odontogenic cause for
+sinusitis and only three gave a recommendation
+for a dental examination.16 None of the published
+sinusitis guidelines made the recommendation to
+refer to endodontic specialists, who are uniquely
+trained and equipped to diagnose and treat
+odontogenic infections.
+Presentation and Definitions
+Inflammatory responses of the maxillary
+sinus to dental infection can present with
+varied symptoms, clinical progression, and
+radiographic presentations. Odontogenic sinus
+infections may produce only a minimal, often
+asymptomatic local reaction in the antral floor
+periosteum and/or mucosa for months or even
+years.25 However, a pathologically altered
+mucosa is impaired and less resistant than
+an intact one to infection, and is a pathogenic
+factor in the progression to rhinosinusitis.26,27
+Depending on dental pathogenicity, anatomic
+factors, the extent of mucosal edema, and sinus
+ostial patency, periradicular inflammation
+may progress beyond the antral floor causing a
+partial or total obstruction of the maxillary sinus
+with symptoms and radiographic presentation
+common to sinogenic sinusitis. The condition
+can further ascend to involve the nasal cavity,
+ethmoid, and frontal sinuses, and in rare, severe
+cases can spread via the maxillary sinus causing
+orbital cellulitis, blindness, meningitis, subdural
+empyema, brain abscess and life-threatening
+cavernous sinus thrombosis.4,28-31
+The terms MSDO, odontogenic sinusitis,
+odontogenic rhinosinusitis, and odontogenic
+maxillary sinusitis are all used synonymously in
+the current literature to describe various levels
+of mucosal inflammation and symptoms, caused
+by multiple odontogenic etiologies, including
+periodontal disease, endodontic disease, root
+fractures, dental implants, dental extractions,
+oro-antral fistulae, and iatrogenic causes such
+as extruded dental materials, displaced teeth
+and foreign bodies.2,6,7,25,32-35 While these are all
+odontogenic sources for sinusitis, it is important
+to distinguish these etiologies from maxillary
+sinusitis of endodontic origin (MSEO), as
+they each require markedly different clinical
+treatments. Furthermore, combining these very
+different etiologies under a single term can create
+confusion that may impede understanding of the
+disease processes and potential post-treatment
+management. MSEO is a new term, coined with
+this document, and refers specifically to sinusitis
+secondary to periradicular disease of endodontic
+origin, excluding sinusitis secondary to other
+dental etiologies. Previously termed “the endo-
+antral syndrome” by Seldon,18-20 MSEO requires
+an accurate diagnosis of the condition followed by
+appropriate endodontic treatment or extraction
+to remove the source of endodontic pathogens
+associated with the periapical disease and
+secondary sinus infection.
+[[PAGE 3]]
+Position StatementPage 3AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+Diagnosis of MSEO
+1. Dental and Sinonasal History and Symptoms
+Diagnosis of MSEO begins with a thorough
+medical and dental history. The clinician
+must recognize that patients with MSEO may
+experience a wide variation of dental and
+sinonasal symptoms including no symptoms.
+Common sinonasal symptoms include congestion,
+rhinorrhea, retrorhinorrhea, facial pain, and foul
+odor.36,37 Typical endodontic symptoms such as
+thermal pain, periapical sensitivity, swelling, and/
+or draining intraoral sinus tract are often not
+present with MSEO. Thermal pain is not typically
+present because source teeth for MSEO are either
+necrotic or have failing endodontic therapy.
+Periapical tenderness is typically absent in
+MSEO because periapical infection is essentially
+draining into the sinus via fistula, eliminating
+pressure. For this same reason, swelling or
+intraoral sinus tracts rarely form. There are
+of course no absolutes, as multi-rooted teeth
+have the potential for both sinus and intraoral
+presentations.
+Patients with primary sinonasal symptoms and
+without localized dental pain will typically first
+seek care from their primary care physician
+or ENT specialist who may misdiagnose and
+treat MSEO as a primary sinus infection since
+dental infections are easily overlooked during
+routine ENT examinations.15,16,37 Physicians
+must always be aware that a lack of dental
+symptoms or complaint does not rule out dental
+etiology for sinusitis, and recognize that current
+clinical guidelines for the medical management
+of rhinosinusitis do not offer guidance in this
+area.24 Physicians must also recognize that
+lack of sinonasal symptoms does not rule out
+a dental etiology for mucosal abnormalities or
+sinus obstruction. Rhinosinusitis is defined as
+symptomatic inflammation of the paranasal
+sinuses and nasal cavity, and therefore
+management of rhinosinusitis is based primarily
+on patient symptoms rather than imaging
+findings.24 Considering this, mucosal changes
+and periradicular findings seen on imaging that
+are not coupled with patient symptoms may
+be dismissed as incidental, to the detriment
+of patients exhibiting dental abscesses and/or
+associated periapical mucositis. If periapical
+findings are noted on sinus CT imaging, or sinus
+floor mucosal changes appear to have potential
+dental etiology, these patients should be referred
+to an endodontist for evaluation to rule out or
+resolve any dental pathology, even if the patient is
+dentally asymptomatic.17
+Findings that should raise the suspicion of
+MSEO are a history of repeated episodes of
+unilateral maxillary sinus infections, particularly
+when associated with a patent sinus ostium
+or previously unsuccessful sinus surgery.17 A
+cooperative relationship between endodontists
+and ENT specialists is imperative for diagnosing
+MSEO and distinguishing it from sinogenic
+sinusitis. Endodontists should keep sinonasal
+disease in mind when diagnosing and treating
+MSEO, and should not attempt to make a final
+diagnosis of non-odontogenic sinus disease, nor
+offer treatment that is outside the scope of dental
+practice.
+2. Radiographic Examination
+While periapical radiographs are the most
+widely used imaging modality in endodontics,
+the posterior maxilla presents significant and
+unique interpretation challenges when using
+conventional 2-D imaging.38 Anatomic structures
+such as the zygomatic and palatal processes,
+maxillary sinus cortical floor, and buccal cortical
+plate are often superimposed onto the dental
+roots, obscuring or concealing periradicular
+inflammatory changes. Visualizing the apices of
+the maxillary posterior teeth is further obscured
+when maxillary sinus mucosal thickening is
+present. Conventional periapical radiographs
+also do not consistently reveal mucosal soft tissue
+changes or air-fluid levels in the sinus, which are
+of great diagnostic value in MSEO.39
+Limited field CBCT imaging has been shown
+to significantly improve the ability to detect
+odontogenic sources for sinusitis. In a study by
+Low et al.40
+, comparing periapical radiography
+and CBCT for preoperative diagnosis in 74
+posterior maxillary teeth consecutively referred
+[[PAGE 4]]
+Position StatementPage 4AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+for apical surgery, CBCT revealed 34% more
+lesions than periapical radiography, as well as
+significantly more expansion of lesions into the
+maxillary sinus, sinus membrane thickening,
+and untreated canals. The same investigation
+also showed that with the use of CBCT imaging,
+mucosal changes associated with dental infections
+were found with a prevalence of 77%, compared
+to only 19% using conventional radiographs.
+Lofthag-Hansen et al.39 compared CBCT and
+intraoral radiography for the diagnosis of
+periapical pathology and found that thickening
+of the mucous membrane of the maxillary sinus
+was identified more than four times as often with
+CBCT imaging than with periapical radiographs,
+and all observers agreed that in 70% of the cases
+CBCT provided clinically relevant information not
+found in the periapical radiographs. Shahbazian
+et al.41
+, examining 145 dental records, found
+that periapical radiography could only identify
+approximately 40% of apical periodontitis on
+posterior maxillary teeth, and 3% of all apical
+infections extending into the sinus that were seen
+on CBCT. They also concluded that periapical
+radiographs are not adequate in observing the
+anatomical relationship between maxillary
+molars and the sinus floor.
+Periapical inflammation is often responsible for
+distinct maxillary sinus radiographic changes
+that differ significantly from typical periradicular
+radiolucencies observed in alveolar bone.42
+Two unique radiographic findings associated
+with periradicular inflammation of the sinus
+mucoperiosteum are periapical osteoperiostitis
+and periapical mucositis.43 Both conditions
+can progress further to a partial or total sinus
+obstruction.
+Periapical Osteoperiostitis (PAO)
+The presence of apical periodontitis adjacent
+to the maxillary sinus cortical floor will often
+expand the sinus periosteum, displace it upward
+into the sinus, and subsequently induce a
+periosteal reaction that continues to deposit a
+thin layer of new bone on the inner periphery
+of the periosteum as it expands. This reactive
+osteogenesis, termed periapical osteoperiostitis
+(PAO), forms a thin, hard-tissue dome on the sinus
+floor and presents on radiographs and CT images
+as a radiopaque “halo” appearance.43 (Fig 1) If
+the inflammatory process continues, the bone
+deposits can become thicker and expand deeper
+into the maxillary sinus. PAO lesions may or may
+not be symptomatic and may be accompanied by
+varying degrees of adjacent mucosal edema and
+sinus fluid levels, particularly if a perforation
+occurs in the periosteum and osseous tissue.44,45
+Figure 1. Periapical osteoperiostitis. A. Periapical radiograph of the
+posterior left maxilla. Clinical exam confirmed a necrotic maxillary
+left second molar, however any periapical and sinus abnormalities are
+obscured by the zygoma. B. CBCT image of the same necrotic left
+maxillary second molar displaying an osteoperiostitis or “halo” lesion
+(arrow) with associated mucosal edema of the left maxillary sinus.
+Periapical Mucositis (PAM)
+It is not uncommon for the root apices of
+maxillary posterior teeth to project through
+the maxillary sinus cortical floor and directly
+contact the antral mucosa, or for periapical
+abscesses to perforate the sinus cortical floor and
+periosteum. Symptomatic or asymptomatic apical
+periodontitis in direct contact with or adjacent
+to the antral mucosa will typically produce a
+localized mucosal tissue edema termed periapical
+mucositis (PAM), which appears on CT imaging
+as a mucosal thickening or dome-shaped soft
+tissue expansion in the floor of the sinus directly
+adjacent to the infected root apex.43 (Figs 2 and
+3) Periradicular inflammation from dental roots
+not directly adjacent to the sinus mucosa can also
+cause PAM without any evident inflammatory
+bone resorption via extension of inflammatory
+mediators through bone marrow, blood vessels,
+and lymphatics.1
+[[PAGE 5]]
+Position StatementPage 5AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+Because there is often no evident osseous
+destruction or PAO halo, PAM is more difficult
+to recognize radiographically than typical
+endodontic lesions and may be misinterpreted
+as an insignificant or incidental finding. Mucosal
+edema on the sinus floor and particularly dome-
+shaped mucosal swellings directly over dental
+root apices should raise the suspicion of a dental
+etiology. Clinicians should be mindful, however,
+that PAM may have a similar appearance to
+mucous retention cysts, antral polyps, mucosal
+thickening caused by periodontal disease,
+and sinogenic mucosal thickening. As with
+all endodontic diagnoses, a determination of
+etiology cannot be made based on radiographic
+examination alone. Careful endodontic clinical
+examination of pulpal status is imperative
+to distinguish PAM from other mucosal
+abnormalities.
+Figure 2. Periapical mucositis. A. Periapical radiograph of the posterior
+left maxilla. Clinical exam confirmed a necrotic maxillary left second
+molar. B. CBCT image reveals mucosal edema on the floor of the left
+maxillary sinus (arrow) with no evident osseous lesion. C. Periapical
+radiograph following endodontic treatment of the second molar. D.
+3-month post-operative CBCT image showing full resolution of the
+mucosal edema.
+Figure 3. Periapical mucositis. A. Periapical radiograph of a failing root
+canal therapy of the maxillary second bicuspid. B. CBCT image of the
+apical periodontitis perforating the antral cortical floor and associated
+periosteum causing a localized, dome-shaped inflammatory edema of
+the sinus mucosal tissue (arrow).
+Sinus Obstruction from MSEO
+Full or partial sinus obstruction is very evident
+on sinus CT imaging, but may be more difficult to
+recognize as having an endodontic etiology. (Fig
+4) Careful radiographic examination for evidence
+of PAO is helpful in making this determination
+but, as seen with PAM lesions, periapical
+radiolucencies or osseous changes do not always
+exist. A history of unilateral sinus obstruction,
+particularly if recurrent and/or associated with
+a patent infundibulum is a strong indicator for
+possible MSEO. Clinical endodontic examination,
+however, is essential to confirm or rule out a
+potential endodontic source.17
+Figure 4. MSEO sinus obstruction. A. Coronal CT image of a fully
+obstructed right maxillary sinus (large arrow). The patient had
+experienced recurrent right maxillary sinus infections and nasal
+congestion for more than four years with no resolution despite multiple
+antibiotic regimens and adjunctive sinus treatments. An associated
+periapical osteoperiostitis lesion is evident over the palatal root apex
+of the necrotic right maxillary first molar (small arrow). B. 3-month
+postoperative coronal CT image showing full resolution of the maxillary
+rhinosinusitis following endodontic therapy of the maxillary first molar.
+No other sinus treatment was performed, nor antibiotics administered.
+[[PAGE 6]]
+Position StatementPage 6AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+3. Clinical Examination
+When diagnosing a possible endodontic etiology
+in patients with rhinosinusitis, the clinician
+must perform a thorough clinical endodontic
+examination to evaluate for any pulpal necrosis
+and periapical disease, while carefully evaluating
+all prior endodontic treatments for possible
+failure in the suspected quadrant. Endodontic
+evaluation of pulpal and periapical tissues
+includes thermal testing, electric pulp vitality
+testing, percussion, palpation, periodontal probing
+and mobility tests. A healthy vital pulp will not
+contribute to any periradicular or odontogenic
+sinus inflammation. While an inflamed vital
+pulp with root apices proximal to the sinus floor
+may generate enough inflammatory mediators
+to induce minor sinus mucosal changes, it is
+unlikely to contribute to any significant sinonasal
+disease or sinonasal symptoms.45 For a periapical
+infection to occur, microorganisms must be
+present.46 Only those teeth with an infected
+necrotic pulp or failing endodontic treatment
+will generate MSEO. When examining maxillary
+posterior teeth with existing root canal treatment,
+one must carefully examine for any untreated
+or sub-optimally filled canals, inadequate core
+restorations, or leaking coronal restorations that
+may provide evidence of endodontic failure and a
+bacterial source for MSEO.4
+Treatment of MSEO
+Successful management of MSEO, as with any
+infection of endodontic origin, is focused on
+removing the nidus of infection and preventing
+reinfection. The objectives for treatment of MSEO
+are removal of the pathogenic microorganisms,
+their by-products, and pulpal debris from the
+infected root canal system that are causing
+the sinus infection. Appropriate treatment
+options include non-surgical root canal therapy,
+periradicular surgery when indicated, intentional
+replantation, or extraction of the infected tooth.
+Patients should be informed of all treatment
+options and the prognosis of each option, to
+include risks of no treatment.
+Clinicians performing endodontic treatment in
+the posterior maxillary dentition should have
+extensive knowledge of maxillary root canal
+anatomy, the necessary armamentarium, and
+requisite clinical skill considering the anatomic
+complexities and challenges in this region.
+Endodontists are specialists in managing complex
+root canal systems, and maxillary molars
+typically have the most complex anatomy in
+the dentition. Inadequate root canal treatment,
+particularly missed mesio-buccal canal systems,
+is a common cause of endodontic failure in
+maxillary molars.48-51 The close anatomic
+proximity of maxillary molar root apices to the
+floor of the maxillary sinus can lead to persistent
+or progressive MSEO if canals are left untreated
+or root canal failure occurs in these teeth.
+Clinicians should realize that persistent sinus
+infection following endodontic treatment may be
+due to deficiencies in endodontic or restorative
+treatment, or due to periodontal disease52,53
+, and
+should critically evaluate these potential sources
+of sinusitis prior to concluding that other forms of
+medical or surgical intervention are indicated.
+Use of systemic antibiotics to manage MSEO
+should follow the guidelines set forth in the AAE
+Guidance on the Use of Systemic Antibiotics in
+Endodontics.54 Apart from spreading infections,
+antibiotic therapy is unwarranted in the
+treatment of MSEO and utterly ineffective as
+a definitive solution. While antibiotic therapy
+may offer temporary relief of symptoms by
+improving sinus clearing, and may be indicated
+for rapidly spreading infections, their sole use is
+inappropriate without definitive debridement
+and disinfection of the root canal system. In cases
+of MSEO, antibiotic therapy should not be used
+in lieu of endodontic treatment or removal of the
+infected root canal system.
+Similarly, surgical intervention of the maxillary
+sinus that is focused strictly on removing
+diseased sinus tissue and establishing drainage
+is inadequate if the endodontic component
+is neglected. Although these procedures are
+performed with the goal of re-establishing sinus
+aeration and drainage, and may provide relief
+of some symptoms, it is well documented that
+[[PAGE 7]]
+Position StatementPage 7AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+neglecting the dental etiology and focusing
+only on medical and surgical therapies of the
+ostiomeatal complex (OMC) will not resolve
+MSEO.15,55-57 The dental literature provides
+numerous case reports showing full resolution of
+MSEO following endodontic treatment.2,16,19-22,58-62
+It should be noted, however, that thorough dental
+treatment alone may not resolve all cases of
+MSEO, therefore clinical and radiological follow-
+up is essential as concomitant management of
+the associated rhinosinusitis by an ENT specialist
+may be necessary in some cases.15,37,59,60,63-66
+Tomamatsu60 et al. evaluated 39 patients with
+MSEO associated with full unilateral maxillary
+sinus obstruction who underwent initial
+treatment of endodontic therapy or extraction.
+Twenty patients showed full resolution of
+maxillary sinus obstruction and sinusitis
+symptoms without requiring sinus surgery. The
+remaining 19 patients required adjunctive sinus
+surgery which resolved the sinusitis. The primary
+finding in this study was that the non-effective
+group displayed a significantly narrower aperture
+width of the OMC, suggesting it may be a predictor
+of the effectiveness of initial dental treatment
+of MSEO. In contrast to earlier studies that
+recommend contemporaneous dental treatment
+and sinus surgery for management of all cases
+of odontogenic sinusitis67-69
+, the Tomamatsu
+study strongly supports the AAE’s position
+for managing MSEO by treating the primary
+endodontic infection first, followed by clinical
+and radiological assessment, and then proceeding
+with additional sinus surgical procedures only
+for recalcitrant cases, even in cases of total
+sinus obstruction. Contemporaneous dental
+and surgical sinus treatment with appropriate
+antibiotics should only be considered in severely
+acute cases requiring immediate drainage.
+Collectively, the literature strongly supports
+the need for a collaborative effort and open
+referral relationship between the ENT surgeon
+and the endodontic specialist to achieve the best
+outcomes for patients with MSEO. Directions for
+future research may include the incidence and
+progression of sinus disease in MSEO, specific
+pathological alterations to sinus mucosal tissues
+induced by endodontic disease, and potential
+indicators for adjunctive antibiotic use, medical
+treatments, or surgical sinus treatment following
+endodontic therapy in the management of MSEO.
+Conclusion
+It is important to recognize that MSEO is
+fundamentally an endodontic infection
+manifesting in the maxillary sinus. This
+condition is different from sinogenic sinusitis,
+with an entirely different pathogenesis and
+treatment regimen. Although the symptoms
+and radiographic signs of MSEO may mimic
+sinogenic sinusitis and lead patients to first seek
+care from their primary care physicians or ENT
+specialists, medical treatment will not resolve
+MSEO if the endodontic source is overlooked.
+MSEO is also frequently overlooked in general
+dental practice due to a lack of dental symptoms
+and an obscured or atypical radiographic
+presentation. The increased availability of in-
+office CBCT has increased clinicians’ recognition
+and ability to diagnose MSEO. Clinical endodontic
+examination, however, remains essential for
+correct diagnosis. Endodontists are uniquely
+trained and equipped to diagnose and properly
+manage endodontic disease that manifests in the
+maxillary sinus. Improved communication and
+referral relationships between ENT surgeons and
+endodontic specialists are essential to provide
+appropriate patient care when managing MSEO.
+[[PAGE 8]]
+Position StatementPage 8AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+References
+1. Bauer WH. Maxillary sinusitis of dental
+origin. Am J Orthod Oral Surg 1943;29:133-51.
+2. Abrahams JJ, Glassberg RM. Dental disease: a
+frequently unrecognized cause of maxillary
+sinus abnormalities? Am J Roentenol
+1996;166:1219-23.
+3. Mattila K. Roentgenological investigations of
+the relationship between periapical lesions
+and conditions of the mucous membrane of
+the maxillary sinuses. Acta Odontolog Scand
+1965;23:42-6.
+4. Obayashi, N., Ariji, Y., Goto, M. et al. Spread
+of odontogenic infection originating in the
+maxillary teeth: computerized tomographic
+assessment. Oral Surg Oral Med Oral Pathol
+Oral Radiol Endod 2004;98:223–31.
+5. Maloney PL, Doku HC. Maxillary sinusitis
+of odontogenic origin. J Can Dent Assoc
+1968;34:591-603.
+6. Kretzschmar DP, Kretzschmar JL.
+Rhinosinusitis: Review from a dental
+perspective. Oral Surg Oral Med Oral Pathol
+Oral Radiol Endod 2003;96:128-35.
+7. Mehra P, Murad H. Maxillary sinus disease
+of odontogenic origin. Otolarngol Clin North
+Am 2004;37:347-64.
+8. Cymerman JJ, Cymerman DH, O’Dwyer RS.
+Evaluation of odontogenic maxillary sinusitis
+using cone-beam computed tomography:
+three case reports. J Endod 2011;37:1465-9.
+9. Lanza DC, Kennedy DW. Adult rhinosinusitis
+defined. Otolaryngol Head Neck Surg
+1997;117:1-7.
+10. Fleming, WE. The effect of chronic pyogenic
+infections on the maxillary sinus. Qld Dent J
+1954;6:78-82.
+11. Melen I, Lindahl L, Andreasson L,
+Rundcrantz H. Chronic maxillary sinusitis.
+Definition, diagnosis and relation to
+dental infections and nasal polyposis. Acta
+Otolaryngol 1986;101:320-7.
+12. Maillet M, Bowles WR, McClanahan,
+SL. Cone-Beam computed tomography
+evaluation of maxillary sinusitis. J Endod
+2011;37:753-57.
+13. Bomelli SR, Branstetter BF, Ferguson, BF.
+Frequency of a dental source for acute
+maxillary sinusitis, Laryngoscope 2009;
+119(3):580-84.
+14. Matsumoto Y, Ikeda T, Yokoi H, et al.
+Association between odontogenic infections
+and unilateral sinus opacification. Auris
+Nasus Larynx 2015;42:288-93.
+15. Patel NA, Ferguson BJ. Odontogenic sinusitis:
+an ancient but under-appreciated cause of
+maxillary sinusitis. Curr Opin Otoloaryngol
+Head Neck Surg 2012;20:24-8.
+16. Longhini AB, Ferguson BJ. Clinical aspects
+of odontogenic maxillary sinusitis: a case
+series. Int Forum Allergy Rhinol 2011;1:409–
+15.
+17. Pokorny A, Tataryn R. Clinical and radiologic
+findings in a case series of maxillary sinusitis
+of dental origin. Int Forum Allergy Rhinol
+2013;3:973-9.
+18. Seldon HS, August DS. Maxillary sinus
+involvement – an endodontic complication.
+Oral Surg Oral Med Oral Pathol Oral Radiol
+Endod 1970;30:117-22.
+19. Seldon HS. The interrelationship between
+the maxillary sinus and endodontics. Oral
+Surg Oral Med Oral Pathol Oral Radiol Endod
+1974;38:623-9.
+20. Seldon HS. The endo-antral syndrome.
+J Endod 1977;3:462-4.
+21. Nenzen B, Welander U. The effect of
+conservative root canal therapy on local
+mucosal hyperplasia in the maxillary sinus.
+Odontol Revy 1967;18:295-302.
+22. Dodd RB, Dodds RN, Hocomb JB. An
+endodontically induced maxillary sinusitis.
+J Endod 1984;10:504-6.
+[[PAGE 9]]
+Position StatementPage 9AAE Position Statement– Maxillary Sinusitis of Endodontic Origin
+23. Bertrand B, Rombaux P, Eloy P, Reychler
+H. Sinusitis of dental origin. Acta
+Otorhinolaryngol Belg 1997;51;315-22.
+24. Rosenfeld RM, Piccirillo JF, Chandrasekhar
+SS, et al. Clinical practice guideline (update):
+Adult sinusitis executive summary.
+Otolaryngol Head Neck Surg 2015;152:598–
+609.
+25. Legert KG, Zimmerman M, Stierna
+P. Sinusitis of odontogenic origin:
+pathophysiological implications of early
+treatment. Acta Otolaryngol 2004;124:655-63.
+26. Lindahl L, Melen I, Ekedahl C, Holm SE.
+Chronic maxillary sinusitis. Differential
+diagnosis and genesis. Acta Otolaryngol
+1982;93:147-50.
+27. Kondrashev PA, Lodochkina OE, Opryshko
+ON. Microbiological spectrum of causative
+agents of rhinogenic and odontogenic
+chronic sinusitis and mucociliary activity of
+mucosal epithelium in the nasal cavity. Vestn
+Otorinolaringol 2010;4:45-7.
+28. Eufinger H, Machtens E. Purulent
+pansinusitis, orbital cellulitis and rhinogenic
+intracranial complications. J Cranio
+Maxillofac Surg 2001;29:111-7.
+29. Wagenmann M, Naclerio RM. Complications
+of sinusitis. J Allergy Clin Immunol
+1992;90:552-4.
+30. Gold RS, Sager E. Pansinusitis, orbital
+cellulitis, and blindness as sequelae of
+delayed treatment of dental abscess. J Oral
+Surg 1974;32:40-3.
+31. Park CH, Jee DH, La TY. A case of
+odontogenic orbital cellulitis causing
+blindness and severe tension orbit. J Korean
+Med Sci 2013;28:340-3.
+32. De Lima CO, Devito KL, Vasconselos LR, et
+al. Correlation between endodontic infection
+and periodontal disease and their association
+with chronic sinusitis: A clinical-tomographic
+study. J Endod 2017;43:1978-83.
+33. Zirk M, Dreiseidler T, Pohl M, et al.
+Odontogenic sinusitis maxillaris: A
+retrospective study of 121 cases with surgical
+intervention. J Craniomaxillofac Surg
+2017;45:520-5.
+34. Lechian JR, Filleul O, Costa de Araujo P, et al.
+Chronic maxillary rhinosinusitis of dental
+origin: A systematic review of 674 patient
+cases. Int J Otolaryngol 2014;2014:465173.
+Epub
+35. Taschieri S, Torretta S, Corbella S, et al.
+Pathophysiology of sinusitis of odontogenic
+origin. J Investig Clin Dent 2017;8(2).
+36. Williams JW, Simel DL, Roberts L, Samsa GP.
+Clinical evaluation for sinusitis: making the
+diagnosis by history and physical evaluation.
+Ann Intern Med 1992;117:705-10.
+37. Workman AD, Granquist EJ, Adappa ND.
+Odontogenic sinusitis: developments in
+diagnosis, microbiology, and treatment. Curr
+Opin Otolaryngol Head Neck Surg 2018;26:27-
+33.
+38. Ball RL, Barbizam JV, Cohenca N.
+Intraoperative endodontic applications of
+cone-beam computed tomography. J Endod
+2013;39:548–57.
+39. Lofthag-Hansen S, Huumonen S, Grondahl
+K, et al. Limited cone-beam CT and intraoral
+radiography for the diagnosis of periapical
+pathology. Oral Surg Oral Med Oral Pathol
+Oral Radiol Endod 2007;103:114-9.
+40. Low, K.M., Dula, K., Burgin, W., and von Arx,
+T. Comparison of periapical radiography and
+limited cone-beam tomography in posterior
+maxillary teeth referred for apical surgery.
+J Endod 2008;34:557–62.
+41. Shahbazian M, Vandewoude C, Wyatt
+J, Jacobs R. Comparative assessment of
+periapical radiography and CBCT imaging
+for radiodiagnostics in posterior maxilla.
+Odontology 2015;103:97–104.
+[[PAGE 10]]
+Position StatementPage 10AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+42. Nunes CA, Guedes OA, Alencar AH, et
+al. Evaluation of periapical lesions and
+their association with maxillary sinus
+abnormalities on cone-beam computed
+tomographic images. J Endod 2016;42:42-6.
+43. Worth HM, Stoneman DW. Radiographic
+interpretation of antral mucosal changes due
+to localized dental infection. J Can Dent Assoc
+1972;38:111-6.
+44. Tataryn RW. Surgical endodontics and
+the maxillary sinus. In: Torabinejad M,
+Rubinstein R (eds). The art and science of
+contemporary surgical endodontics. Chicago,
+IL: Quintessence. 203-22.
+45. Tataryn RW. Rhinosinusitis and endodontic
+disease. In: Ingle JI, Bakland LK,
+Baumgartner JC (eds). Ingle’s Endodontics, ed
+6. Hamilton, ON: BC Decker. 626-37.
+46. Kakehashi S, Stanley HR, Fitzgerald RJ. The
+effects of surgical exposures of dental pulps
+in germ-free and conventional laboratory
+rats. Oral Surg Oral Med Oral Pathol Oral
+Radiol Endod 1965;20:340-9.
+47. Gomes AC, Nejaim Y, Silva AIV, et al.
+Influence of endodontic treatment and
+coronal restoration on status of periapical
+tissues: A cone-beam computed tomographic
+study. J Endod 2015;41:1614-8.
+48. Wolcott J, Ishley D, Kennedy W, et al.
+A 5 yr clinical investigation of second
+mesiobuccal canals in endodontically treated
+and retreated maxillary molars. J Endod
+2005;31:262-4.
+49. Cleghorn BM, Christie WH, Dong CC. Root
+and root canal morphology of the human
+permanent maxillary first molar: a literature
+review. J Endod 2006;32:813-21.
+50. Verma P, Love RM. A micro CT study of
+the mesiobuccal root canal morphology of
+the maxillary first molar tooth. Int Endod J
+2011;44:210-7.
+51. Degerness RA, Bowles WR. Dimension,
+anatomy and morphology of the mesiobuccal
+root canal system in maxillary molars.
+J Endod 2010;36:985-9.
+52. Falk H, Ericson S, Hugoson A. The effects of
+periodontal treatment on mucous membrane
+thickening in the maxillary sinus. J Clin
+Periodontol 1986;13:217-22.
+53. Engström H, Chamberlain D, Kiger R,
+Egelberg J. Radiographic evaluation of the
+effect of initial periodontal therapy on
+thickness of the maxillary sinus mucosa.
+J Periodontol 1988;59:604-8.
+54. Fouad AF, Byrne BE, Diogenes AR, et al. AAE
+Guidance on the Use of Systemic Antibiotics
+in Endodontics. Association of Endodontists
+Position Statement 2017:1-8.
+55. Cartwright S, Hopkins C. Odontogenic
+sinusitis an underappreciated diagnosis: Our
+experience. Clin Otolaryngol 2016;41:284-5.
+56. Kulacz R., Fishman G, Levine H. An
+unsuccessful sinus surgery caused by
+dental involvement within the floor of the
+maxillary sinus. Op Techniques Otolaryngol
+Head Neck Surg 2004;15:2-3.
+57. Longhini AB, Branstetter BF, Ferguson
+BJ. Unrecognized odontogenic maxillary
+sinusitis: A cause of endoscopic sinus surgery
+failure. Am J Rhinol Allergy 2010;24:296-300.
+58. Bogaerts P, Hanssens JF, Siquet JP. Healing
+of maxillary sinusitis of odontogenic
+origin following conservative endodontic
+retreatment: case reports. Acta
+Otorhinolaryngol Belg 2003;57:91-7.
+59. Wang KL, Nichols BG, Poetker DM, Loehrl
+TA. Odontogenic sinusitis: a case series
+studying diagnosis and management. Int
+Forum Allergy Rhinol 2015;5:597-601.
+60. Tomomatsu N, Uzawa N, Aragaki T, Harada
+K. Aperture width of the osteomeatal
+complex as a predictor of successful
+treatment of odontogenic maxillary sinusitis.
+Int J Oral Maxillofac Surg 2014;43:1386-90.
+61. Bendyk-Szeffer M, Lagocka R, Trusewicz M,
+et al. Perforating internal root resorption
+repaired with mineral trioxide aggregate
+caused complete resolution of odontogenic
+sinus mucositis: A case report. J Endod
+2015;41:274-8.
+[[PAGE 11]]
+The guidance in this statement is not intended to
+substitute for a clinician’s independent judgment in light
+of the conditions and needs of a specific patient.
+Access additional resources at aae.org. © 2026 American Association of Endodontists (AAE).Position Statement
+Page 11AAE Position Statement – Maxillary Sinusitis of Endodontic Origin
+62. Nurbakhsh B, Friedman S, Kulkarni GV, et
+al. Resolution of maxillary sinus mucositis
+after endodontic treatment of maxillary
+teeth with apical periodontitis: A cone-beam
+computed tomographic pilot study. J Endod
+2011;37:1504-11.
+63. Brook I. Microbiology of acute and
+chronic maxillary sinusitis associated
+with an odontogenic origin. Laryngoscope
+2005;115:823-5.
+64. Simuntis R, Kubilius R, Vaitkus S.
+Odontogenic maxillary sinusitis: a review.
+Stomatologija 2014;16:39-43.
+65. Saibene AM, Pipolo GC, Lozza P, et al.
+Redefining boundaries in odontogenic
+sinusitis: a retrospective evaluation of
+extramaxillary involvement in 315 patients.
+Int Forum Allergy Rhinol 2014;4:1020-3.
+66. Mattos JL, Ferguson BJ, Lee S. Predictive
+factors in patients undergoing endoscopic
+sinus surgery for odontogenic sinusitis. Int
+Forum Allergy Rhinol 2016;6:677-700.
+67. Bertrand B, Rombaux P, Eloy P, Reychler
+H. Sinusitis of dental origin. Acta
+Otorhinolaryngol Belg 1997;51:315-22.
+68. Costa F, Emanuelli E, Robiony M, et al.
+Endoscopic surgical treatment of chronic
+maxillary sinusitis of dental origin. J Oral
+Maxillofac Surg 2007;65:223-8.
+69. Albu S, Baciut M. Failures in endoscopic
+surgery of the maxillary sinus. Otolaryngol
+Head Neck Surg 2010;142:196-201.
+Thank you to the Special Committee to develop
+a Position Statement on Maxillary Sinusitis of
+Endodontic Origin:
+Roderick W. Tataryn, Chair
+Michael J. Lewis
+Anthony L. Horalek
+Chase G. Thompson
+Bruce Y. Cha, Board Liaison
+Alan T. Pokorny, Physician (ENT) Consultant

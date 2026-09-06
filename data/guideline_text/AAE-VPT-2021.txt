@@ -1,0 +1,762 @@
+[[PAGE 1]]
+Page 1Position S tatement
+AAE Position Statement – Vital Pulp Therapy
+Introduction
+The American Association of Endodontists is
+dedicated to excellence in the art and science
+of endodontics and to the highest standards of
+patient care. The basis for endodontic treatment
+utilizes the best available evidence from
+scientific and clinical studies in concert with the
+accumulated clinical knowledge and judgment of
+the practitioner.
+Vital pulp therapy (VPT) techniques are means of
+preserving the vitality and function of the dental
+pulp after injury resulting from trauma, caries,
+or restorative procedures. VPT procedures have
+traditionally included indirect or direct pulp
+capping, and partial or complete pulpotomy. (1)
+For years, the focus of VPT was on the
+preservation of the radicular pulp in immature
+adult teeth, so as to assure completion of root
+formation (apexogenesis). Today, the focus of
+VPT is broader; practitioners may have treatment
+options to consider other than pulpectomy or root
+canal therapy (RCT) in mature teeth, including
+teeth previously thought to have irreversibly
+inflamed pulps.
+This position statement addresses diagnostic
+considerations, caries management, pulp
+management, placement of biomaterials, and
+restoration. The intent of the authors is to
+consider vital pulp therapy from the perspective
+of the practice of specialty endodontics. However,
+this statement may be of use to any practitioner
+in assessing whether they have the appropriate
+expertise and armamentarium to perform VPT
+procedures in appropriately selected cases.
+Diagnostic Considerations for VPT
+A basic tenet for clinical dentistry is that
+treatment is recommended and performed after
+the formulation of a sound diagnosis. This has
+been considered of particular relevance when
+vital pulp therapy was to be considered.
+The current AAE diagnostic terminology assigns
+a vital pulp to one of three categories: “normal,”
+“reversible pulpitis” or “irreversible pulpitis”
+(which could be symptomatic or asymptomatic).
+(2)
+Traditionally the designation of a pulpal diagnosis
+is based upon the clinician’s consideration of a
+patient’s pain history, and appropriate clinical
+testing to assess the status of the pulp including
+the application of cold stimulus and electric pulp
+testing. These tests would be best termed pulp
+sensibility tests, as definitive tests of pulp vitality,
+such as measures of pulp oxygen tension, are not
+currently available for clinical use. (3)
+The primary provoked response to pulp
+sensibility testing, indicating more severe pulpal
+inflammation is described as an exaggerated
+and “lingering” response to cold stimulus,
+with the underlying pathomechanisms of
+c-fiber sensitization and inflammation-induced
+hypersensitivity. (4,5)
+In addition to such pulp sensibility testing,
+percussion tests may infer pulpal conditions from
+the presence of symptomatic apical periodontitis;
+with the presence of percussion pain, i.e.,
+mechanical allodynia, the pulp is considered to be
+in an irreversibly inflamed state. (6)
+Diagnostic quality intraoral radiographs of the
+suspected teeth are recommended to evaluate
+accurately the extent of root formation and other
+concomitant hard tissue changes. (7)
+Vital Pulp Therapy
+[[PAGE 2]]
+Position StatementPage 2AAE Position S tatement – V ital Pulp Therapy
+Historically, there has been a widespread belief
+that, even in aggregate, clinical test results are not
+well correlated with histologic descriptions of the
+pulpal status. (8,9)
+The viewpoint that VPT is an option only for
+cases where testing results were consistent
+with “reversible pulpitis” has recently been
+challenged. (10,11,12) Based on clinical, biological
+and theoretical considerations, the irreversibility
+of the pulpal disease has come into question.
+Histologic evidence of the progression of pulpitis
+suggests that there is no discrete boundary that
+would render a pulp beyond repair. (11) Rather,
+pulpitis may be interpreted as a temporally and
+spatially graded disease, with some suggesting the
+following terms for gradation: “initial”, “mild”,
+“moderate” and “severe pulpitis.” (10,12)
+Research is underway to understand the role
+of inflammatory mediators that better indicate
+pulpal status. (13,14) For example, point of care
+analysis could use dentinal fluid (15) (without
+pulp exposure) or pulp blood (16) (with pulp
+exposure) to determine markers associated
+with tissue degradation, such as matrix
+metalloproteinase-9.
+In the absence of clinically available molecular
+biologic tests, direct observation of the pulp
+(use of a surgical microscope is recommended)
+can give relevant information for determining
+the suitability of the case for VPT. First, a
+misdiagnosed necrotic pulp can be accurately
+identified. Secondly, direct observation of pulp
+tissue during and after achieving hemostasis
+offers additional diagnostic information about the
+condition of the pulpal tissue.17 Utilizing direct
+visualization of the pulp, it appears that even
+symptomatic pulps may be candidates for VPT.
+(18)
+Caries Management
+Complete caries removal is essential to
+eliminate infected tissues and visualize pulp
+tissue conditions under magnification when
+pulpal exposures occur. (19,20) Residual caries
+compromises necessary observations of pulpal
+inflammation levels and areas of potential
+necrosis. Accordingly, predictable management of
+vital pulp tissue should not be performed without
+complete removal of both demineralized enamel
+and infected dentin.
+Hard or firm dentin and dentin below white
+spot enamel lesions is infected by bacteria in
+both active and arrested lesions. Specifically,
+histobacteriological studies have consistently
+shown the presence of chronic inflammatory
+cell infiltrates and subclinical pulp inflammation
+where carious tissues are retained, thus
+potentially compromising pulp vitality. (21,22)
+Additionally, adhesion of bonding resins to sound
+dentin has shown higher micro-tensile bond
+strengths compared to caries-affected dentin.
+(23,24)
+The use of caries detectors or laser fluorescence
+during caries removal can be helpful adjuncts
+to assist the clinician in removing diseased
+tissues, particularly when close to the pulp cavity.
+(25,26,27) Therefore, the clinician can focus on
+complete removal of demineralized infected
+dentin, rather than avoiding pulp exposure,
+to improve the chances of pulpal repair. (28)
+Detectors can create an objective standard for all
+clinicians during caries removal without reliance
+exclusively on clinical philosophy or subjective
+judgement. (29)
+[[PAGE 3]]
+Position StatementPage 3AAE Position S tatement – V ital Pulp Therapy
+Use of Sodium Hypochlorite
+Sodium hypochlorite is an antimicrobial
+solution that provides hemostasis, disinfection
+of the dentin- pulp interface, biofilm removal,
+chemical removal of the blood clot and fibrin, and
+clearance of dentinal chips along with damaged
+cells at the mechanical exposure site. (30)
+Examination of pulp tissues after exposure
+with magnification is a critical step in pulp
+assessment. Hemorrhage must be controlled to
+allow clinical assessment of inflammatory levels
+and identify potential necrotic tissues that require
+removal before application of an appropriate
+biomaterial. Hemostasis for the pulp tissue is
+typically achieved by bathing the resected pulp
+tissue in sodium hypochlorite for 5 to 10 minutes,
+although recommended durations may vary,
+either via direct passive irrigation or on a sodium
+hypochlorite- soaked cotton pellet. (31,32,33,34,35,
+36,37,38,39,40,41,42,43,44,45)
+Although several hemostatic options are
+available, sodium hypochlorite can be used
+safely in direct contact with pulp tissue at various
+concentrations, from dilute solutions to full bottle
+strength, without compromising pulp integrity
+(30,46,47,48) Sodium hypochlorite has not been
+shown to adversely alter pulp cell recruitment,
+cytodifferentiation, and hard tissue deposition.
+(49) Sodium hypochlorite also eliminates
+composite staining, addressing an aesthetic
+concern.
+Use of Contemporary Materials in VPT
+Calcium silicate cements (CSC) have gained
+momentum for use in vital pulp therapy (VPT)
+procedures. (50,51) CSCs are a class of materials
+that include tricalcium silicates, dicalcium
+silicates, hydraulic calcium silicate cements,
+and “bioceramics.” Clinical outcomes have
+demonstrated consistent success with these
+materials and mineral trioxide aggregate
+(MTA) is one of many tricalcium silicates that is
+widely used and the most extensively studied.
+When MTA and other CSCs are used for VPT
+procedures in permanent teeth with symptomatic
+or asymptomatic irreversible pulpitis, success
+rates range from 85-100% at 1-2 years.
+(26,35,38,42,45,52,53,54) However, it is noteworthy
+that calcium hydroxide, glass ionomer cements
+(GICs) and resin- based materials trail in clinical
+outcomes and demonstrate a lower range of
+success varying from 43%-92%. (42,55,56)
+Immunomodulatory effects of the new generation
+of biomaterials provide an added and much
+needed benefit to their biocompatible, osteogenic
+and bioactive properties. (13,57,58,59,60,61,62,63,
+64,65,66,67) The formation of mineralized
+barriers using CSCs show improved quality over
+calcium hydroxide-based materials. (50,68,69,70)
+Silicate materials also possess favorable
+physicochemical characteristics that include
+high alkalinity, intratubular mineralization,
+inhibition of biofilm formation, reduction of
+robust pro- inflammatory mediators and post-
+operative pain during dental pulp procedures.
+(57,58,63,70,71) The newer generations of CSCs
+do demonstrate improved setting times (72,73,74)
+including modified compositions that reduce
+tooth discoloration. (61,71,72,73,75) The choice of
+a biomaterial must therefore be made on existing
+evidence with considerations for patient centered
+outcomes, reliable mineralized tissue formation
+and continued pulp vitality.
+[[PAGE 4]]
+Position StatementPage 4AAE Position S tatement – V ital Pulp Therapy
+Immediate Placement of Permanent
+Restorative Material
+Restoration of the teeth is a critical step in
+endodontic procedures. Immediate restoration
+should be a part of the restorative treatment plan
+for a tooth receiving VPT.
+Teeth undergoing VPT using CSCs as the primary
+sealing material and restored immediately
+with a long-term restoration have a high success
+rate. (19,41,76,77,78,79,80,81,82) Although studies
+have shown some success with delayed final
+restoration in the short to medium term (35,83),
+long-term assessments have demonstrated that a
+minimal time span (84) between placement of a
+foundational restoration (44,85) after vital pulp
+treatment is a strong predictor for successful
+outcomes. (32,33,34,36,42,43,51,52,86,87,88,89,90,
+91,92,93,94)
+Indicated advantages of immediate restoration
+include benefits in the prevention of
+microleakage, protection of the biomaterial
+layer, reduction of post-operative sensitivity and
+thermal conductivity, and establishment of a
+foundation for cuspal coverage restoration should
+it be required. No negative impacts of restoring
+the teeth immediately have been indicated.
+An appropriate waiting period is recommended
+prior to additional tooth preparation for definitive
+(cuspal coverage) restoration. A practitioner,
+using professional judgment and clinical
+expertise, should consider absence of signs and
+symptoms and susceptibility of the tooth to
+fracture to assess whether the tooth is ready for a
+definitive restoration after completion of VPT.
+Summary
+The primary goal of VPT procedures is the
+creation of optimal conditions for pulp tissue
+repair and preservation. The amount of pulp
+tissue removed or retained is dependent on
+tissue viability assessments based on access for
+visualization to evaluate hemorrhage control and
+clinical tissue appearance. (86)
+A pretreatment diagnosis of irreversible pulpitis
+is not necessarily an indication for pulpectomy, as
+more conservative treatment could be considered.
+(35,43,44,95,96)
+Procedural decisions for the amount of pulp
+tissue retention or removal should be based
+on operator assessments, clinical judgement,
+overall treatment plan, and the patient’s general
+oral and systemic health status. Authors would
+encourage additional clinical trials to assess
+long-term outcomes of vital pulp therapy and the
+development of chairside techniques utilizing
+biomarkers to assess pulpal viability. A review
+of the endodontic diagnostic terminology used
+to classify the severity of pulpal disease is also
+warranted.
+[[PAGE 5]]
+Position StatementPage 5AAE Position S tatement – V ital Pulp Therapy
+References
+1. American Association of Endodontists.
+Glossary of Endodontic Terms. Tenth Edition.
+2020.
+2. Levin L, Law AS, Holland GR, et al.
+Identify and define all diagnostic terms for
+pulpal health and disease states. J Endod.
+2009;35:1645-1657.
+3. Chen E, Abbott PV. Dental pulp testing: a
+review. Int J Dent. 2009;v2009.
+4. Hargreaves K, Swift JQ. Mechanisms and
+management of pain due to inflammation.
+Northwest Dent. 1991;70:47-49.
+5. Diogenes A, Henry MA. Pain pathways and
+mechanisms of the pulpdentin complex.
+In: Hargreaves KM, Goodis HE, Tay FR, eds.
+Seltzer’s and Bender’s dental pulp. 2nd ed.
+Hannover Park, Il: Quintessence Publ.; 2012.
+6. Owatz CB, Khan AA, Schindler WG, et al.
+The incidence of mechanical allodynia in
+patients with irreversible pulpitis. J Endod.
+2007;33:552- 556.
+7. McDonald RE, Avery DR, Dean JA. Treatment
+of deep caries, vital pulp exposure, and
+pulpless teeth. In: Dean JA, Avery DR,
+McDonald RE, eds. McDonald and Avery’s
+dentistry of the child and adolescent. 9th ed.
+St. Louis, MO: Mosby/ Elsevier; 2011.
+8. Baume LJ. Diagnosis of diseases of the pulp.
+Oral Surg Oral Med, Oral Pathol. 1970;29:102-
+116.
+9. Dummer PMH, Hicks R, Huws. Clinical signs
+and symptoms in pulp disease. Int Endod J.
+1980;13:27-35.
+10. Rechenberg D-K, Zehnder M. Call for a
+review of diagnostic nomenclature and
+terminology used in endodontics. Int Endod J.
+2020; in press.
+11. Ricucci D, Siqueira JF Jr, Li Y, Tay FR.
+Vital pulp therapy: histopathology and
+histobacteriology- based guidelines to treat
+teeth with deep caries and pulp exposure.
+J Dent. 2019;86:41- 52.
+12. Wolters WJ, Duncan HF, Tomson PL, et al.
+Minimally invasive endodontics: a new
+diagnostic system for assessing pulpitis and
+subsequent treatment needs. Int Endod J.
+2017;50:825-829.
+13. Rechenberg D-K, Galicia JC, Peters OA.
+Biological markers for pulpal inflammation:
+a systematic review. PLOS One. 2016;29.
+14. Zanini M, Meyer E, Simon S. Pulp
+inflammation diagnosis from clinical to
+inflammatory mediators: a systematic
+review. J Endod. 2017;43:1033-1051.
+15. Zehnder M, Wegehaupt F, Attin T. A
+first study on the usefulness of matrix
+metalloproteinase 9 from dentinal fluid
+to indicate pulp inflammation. J Endod.
+2011;37:17-20.
+16. Mente J, Petrovic J, Gehrig H, et al. A
+prospective clinical pilot study on the level
+of matrix metalloproteinase-9 in dental
+pulpal blood as a marker for the state of
+inflammation in the pulp tissue. J Endod.
+2016;42:190-197.
+17. Bogen G, Dammaschke T, Chandler N. Vital
+pulp therapy. In: Berman L, Hargreaves KM,
+eds. Pathways of the pulp. 12th ed. St. Louis,
+MO: Elsevier; 2021.
+18. Lin LM et al. Vital pulp therapy of mature
+permanent teeth with irreversible pulpitis
+from the perspective of pulp biology. Aust
+Endod J. 2020;46:154-165.
+19. Asgary S, Hassanizadeh R, Torabzadeh H,
+Eghbal MJ. Treatment outcomes of 4 vital
+pulp therapies in mature molars. J Endod.
+2018;44:529-535.
+20. Matsuo T, Nakanishi T, Shimizu H et al.
+A clinical study of direct pulp capping
+applied to carious-exposed pulps. J Endod.
+1996;22:551.
+[[PAGE 6]]
+Position StatementPage 6AAE Position S tatement – V ital Pulp Therapy
+21. Ricucci D, Siqueira JF Jr, Rôças IN, Lipski
+M, Shiban A, Tay FR. Pulp and dentine
+responses to selective caries excavation: a
+histological and histobacteriological human
+study. J Dent. 2020 Sep;100:103430. doi:
+10.1016/j. jdent.2020.103430. Epub 2020 Jul
+13. PMID:32673638.
+22. Ricucci D, Siqueira JF Jr. Bacteriologic status
+of non-cavitated proximal enamel caries
+lesions. a histologic and histobacteriologic
+study. J Dent. 2020 Sep;100:103422. doi:
+10.1016/j. jdent.2020.103422. Epub 2020 Jun
+29. PMID:32615236.
+23. Nakajima M, Sano H, Burrow MF, Tagami J,
+Yoshiyama M, Ebisu S, Ciucchi B, Russell CM,
+Pashley DH. Tensile bond strength and SEM
+evaluation of caries-affected dentin using
+dentin adhesives. J Dent Res. 1995;74:1679-
+1688.
+24. Yoshiyama M, Tay FR, Torii Y, Nishitani Y,
+Doi J, Itou K, Ciucchi B, Pashley DH. Resin
+adhesion to carious dentin. Am J Dent.
+2003;16:47-52.
+25. Hosoya Y, Taguchi T, Tay FR. Evaluation
+of a new caries detecting dye for primary
+and permanent carious dentin. J Dent.
+2007;35:137- 143.
+26. Neves Ade A, Coutinho E, De Munck J, Van
+Meerbeek B. Caries-removal effectiveness
+and minimal-invasiveness potential of
+caries-excavation techniques: a micro-CT
+investigation. J Dent. 2011;39:154-62.
+27. Sadasiva K, Kumar KS, Rayar S, Shamini S,
+Unnikrishnan M, Kandaswamy D. Evaluation
+of the efficacy of visual, tactile method,
+caries 26 detector dye, and laser fluorescence
+in removal of dental caries and confirmation
+by culture and polymerase chain reaction:
+an in vivo study. J Pharm Bioallied Sci.
+2019;11(Suppl 2):S146-S150.
+28. Langeland K. Management of the inflamed
+pulp associated with deep carious lesion.
+J Endod. 1981;7:169.
+29. T Fusayama. Two layers of carious dentin:
+diagnosis and treatment. Oper Dent. 1979;
+4:63-70
+30. Hafez AA, Cox CF, Tarim B et al. An in vivo
+evaluation of hemorrhage control using
+sodium hypochlorite and direct capping
+with a one- or two-component adhesive
+system in exposed nonhuman primate pulps.
+Quintessence Int. 2002;33:261-272.
+31. Cho S-Y et al. Prognostic factors for clinical
+outcomes according to time after direct pulp
+capping. J Endod. 2013;39(3):327-331.
+32. Jang Y et al. A randomized controlled study
+of the use of proroot mineral trioxide
+aggregate and endocem as direct pulp
+capping materials: 3-month versus 1-year
+outcomes. J Endod. 2015;41(8):1201-1206.
+33. Kang CM et al. A randomized controlled
+trial of various MTA materials for partial
+pulpotomy in permanent teeth. J Dent.
+2017;60:8-13.
+34. Kundzina R et al. Capping carious exposures
+in adults: a randomized controlled trial
+investigating mineral trioxide aggregate
+versus calcium hydroxide. Int Endod J.
+2017;50(10):924-932.
+35. Linsuwanont P, Wimonsutthikul K,
+Pothimoke U, Santiwong B. Treatment
+outcomes of mineral trioxide aggregate
+pulpotomy in vital permanent teeth with
+carious pulp exposure: the retrospective
+study. J Endod. 2017;43(2):225-230.
+36. Linu S et al. Treatment outcome following
+direct pulp capping using bioceramic
+materials in mature permanent teeth with
+carious exposure: a pilot retrospective study.
+J Endod. 2017;43(10):1635-1639.
+37. Parinyaprom N et al. Outcomes of direct
+pulp capping by using either proroot
+mineral trioxide aggregate or Biodentine™ in
+permanent teeth with carious pulp exposure
+in 6- to 18-year-old patients: a randomized
+controlled trial. J Endod. 2018;44(3):341-348.
+[[PAGE 7]]
+Position StatementPage 7AAE Position S tatement – V ital Pulp Therapy
+38. Qudeimat MA, Alyahya A, Hasan AA. Mineral
+trioxide aggregate pulpotomy for permanent
+molars with clinical signs indicative of
+irreversible pulpitis: a preliminary study.
+Int Endod J. 2017;50(2):126-134.
+39. Suhag K et al. Success of direct pulp capping
+using mineral trioxide aggregate and
+calcium hydroxide in mature permanent
+molars with pulps exposed during carious
+tissue removal: 1-year follow-up. J Endod.
+2019;45(7):840-847.
+40. Taha NA, Abdelkhader SZ. Outcome of
+full pulpotomy using Biodentine™ in
+adult patients with symptoms indicative
+of irreversible pulpitis. Int Endod J.
+2018;51(8):819-828.
+41. Taha NA, Abdulkhader SZ. Full pulpotomy
+with Biodentine™ in symptomatic young
+permanent teeth with carious exposure.
+J Endod. 2018;44(6):932-937.
+42. Taha NA, Khazali MA. Partial pulpotomy
+in mature permanent teeth with clinical
+signs indicative of irreversible pulpitis:
+a randomized clinical trial. J Endod.
+2017;43(9):1417-1421.
+43. Taha NA, Ahmad MB, Ghanim A. Assessment
+of mineral trioxide aggregate pulpotomy
+in mature permanent teeth with carious
+exposures. Int Endod J. 2017;50(2):117-125.
+44. Tan SY, Yu VSH, Lim KC, Tan BCK, Neo
+CLJ, Shen L, Messer HH. Long-term pulpal
+and restorative outcomes of pulpotomy
+in mature permanent teeth. J Endod.
+2020;46:383-390.
+45. Uesrichai N, Nirunsittirat A, Chuveera P,
+Srisuwan T, Sastraruji T, Chompu-Inwai
+P. Partial pulpotomy with two bioactive
+cements in permanent teeth of 6- to 18-year-
+old patients with signs and symptoms
+indicative of irreversible pulpitis: a
+noninferiority randomized controlled trial.
+Int Endod J. 2019;52(6):749-759.
+46. Demir T, Cehreli ZC. Clinical and
+radiographic evaluation of adhesive pulp
+capping in primary molars following
+hemostasis with 1.25% sodium hypochlorite:
+2-year results. Am J Dent. 2007;20:182-188.
+47. Tang HM, Nordbö H, Bakland LK. Pulpal
+response to prolonged dentinal exposure
+to sodium hypochlorite. Int Endod J.
+2000;33:505- 508.
+48. Witherspoon DE. Vital pulp therapy with
+new materials: new directions and treatment
+perspectives—permanent teeth. J Endod.
+2008;34:S25-28.
+49. Bogen G, Kim JS, Bakland LK. Direct pulp
+capping with mineral trioxide aggregate:
+an observational study. J Am Dent Assoc.
+2008;139:305-315.
+50. Bakland LK, Andreasen JO. Will mineral
+trioxide aggregate replace calcium hydroxide
+in treating pulpal and periodontal healing
+complications subsequent to dental trauma?
+a review. Dental Traumatology: Official
+Publication of International Association for
+Dental Traumatology. 2012;28(1):25-32.
+51. Parirokh M, Torabinejad M, Dummer
+PMH. Mineral trioxide aggregate and other
+bioactive endodontic cements: an updated
+overview – part I: vital pulp therapy.
+Int Endod J. 2018;51(2):177-205.
+52. Asgary S, Eghbal MJ, Bagheban AA.
+Long- term outcomes of pulpotomy in
+permanent teeth with irreversible pulpitis:
+A multi- center randomized controlled trial.
+Am J Dent. 2017;30(3):151-155.
+53. Caliskan MK. Pulpotomy of carious vital
+teeth with periapical involvement.
+Int Endod J. 1995;28(3):172-176.
+54. Caliskan MK. Success of pulpotomy in the
+management of hyperplastic pulpitis.
+Int Endod J. 1993;26(2):142-148.
+[[PAGE 8]]
+Position StatementPage 8AAE Position S tatement – V ital Pulp Therapy
+55. Bergenholtz G. Evidence for bacterial
+causation of adverse pulpal responses in
+resin-based dental restorations. Critical
+Reviews in Oral Biology and Medicine:
+an Official Publication of the American
+Association of Oral Biologists. 2000;11(4):
+467-480.
+56. de Souza Costa CA, do Nascimento AB,
+Teixeira HM. Response of human pulps
+following acid conditioning and application
+of a bonding agent in deep cavities. Dental
+Materials: Official Publication of the Academy
+of Dental Materials. 2002;18(7):543-551.
+57. Asgary S, Shahabi S, Jafarzadeh T, Amini
+S, Kheirieh S. The properties of a new
+endodontic material. J Endod. 2008;34(8):
+990-993.
+58. Byers MR, Narhi MV. Dental injury models:
+experimental tools for understanding
+neuroinflammatory interactions and
+polymodal nociceptor functions. Crit Rev
+Oral Biol Med. 1999;10(1):4-39.
+59. Ding S-J, Kao C-T, Chen C-L, Shie M-Y, Huang
+T-H. Evaluation of human osteosarcoma cell
+line genotoxicity effects of mineral trixoide
+aggregate and calcium silicate cements.
+J Endod. 2010;36(7):1158-1162.
+60. Faraco IM Jr, Holland R. Response of the
+pulp of dogs to capping with mineral trioxide
+aggregate or a calcium hydroxide cement.
+Dent Traumatol. 2001;17(4):163-166.
+61. Kohli MR, Yamaguchi M, Setzer FC,
+Karabucak B. Spectrophotometric analysis
+of coronal tooth discoloration induced
+by various bioceramic cements and
+other endodontic materials. J Endod.
+2015;41(11):1862-1866.
+62. Luo Z, Li D, Kohli MR, Yu Q, Kim S, He W-X.
+Effect of Biodentine™ on the proliferation,
+migration and adhesion of human dental
+pulp stem cells. J Dent. 2014;42(4):490-497.
+63. Moinzadeh AT, Aznar Portoles C, Schembri
+Wismayer P, Camilleri J. Bioactivity potential
+of EndoSequence BC RRM putty. J Endod.
+2016;42(4):615-621.
+64. Opačić-Galić V, Petrović V, Živković S,
+Jokanović V, Nikolić B, Knežević-Vukčević
+J, et al. New nanostructural biomaterials
+based on active silicate systems and
+hydroxyapatite: characterization and
+genotoxicity in human peripheral blood
+lymphocytes. Int Endod J. 2013;46(6):506-516.
+65. Paranjpe A, Smoot T, Zhang H, Johnson
+JD. Direct contact with mineral trioxide
+aggregate activates and differentiates human
+dental pulp cells. J Endod. 2011;37(12):1691-
+1695.
+66. Rao A, Rao A, Shenoy R. Mineral trioxide
+aggregate–a review. The Journal of Clinical
+Pediatric Dentistry. 2009;34(1):1-7.
+67. Wongwatanasanti N, Jantarat J,
+Sritanaudomchai H, Hargreaves KM. Effect
+of bioceramic materials on proliferation
+and odontoblast differentiation of human
+stem cells from the apical papilla. J Endod.
+2018;44(8):1270-1275.
+68. Alsalleeh F, Chung N, Stephenson L.
+Antifungal activity of endosequence root
+repair material and mineral trioxide
+aggregate. J Endod. 2014;40(11):1815-1819.
+69. Huang TH, Yang CC, Ding SJ, Yeng M, Kao
+CT, Chou MY. Inflammatory cytokines
+reaction elicited by root-end filling materials.
+J Biomed Mater Res B Appl Biomater.
+2005;73(1):123-128.
+70. Yoo JS, Chang SW, Oh SR, Perinpanayagam
+H, Lim SM, Yoo YJ, Oh YR, Woo SB, Han
+SH, Zhu Q, Kum KY. Bacterial entombment
+by intratubular mineralization following
+orthograde mineral trioxide aggregate
+obturation: a scanning electron microscopy
+study. Int J Oral Sci. 2014 Dec;6(4):227-232.
+71. Steffen R, van Waes H. Understanding
+mineral trioxide aggregate/Portland-
+cement: a review of literature and
+background factors. Eur Arch Paediatr Dent.
+2009;10(2):93-97.
+[[PAGE 9]]
+Position StatementPage 9AAE Position S tatement – V ital Pulp Therapy
+72. Camilleri J, Cutajar A, Mallia B. Hydration
+characteristics of zirconium oxide replaced
+Portland cement for use as a root-end filling
+material. Dental Materials. 2011;27(8):
+845-854.
+73. Siboni F, Taddei P, Prati C, Gandolfi MG.
+Properties of NeoMTA Plus and MTA Plus
+cements for endodontics. Int Endod J.
+2017;50(S2):e83-e94.
+74. Torabinejad M, Parirokh M, Dummer
+PMH. Mineral trioxide aggregate and
+other bioactive endodontic cements: an
+updated overview– part II: other clinical
+applications and complications. Int Endod J.
+2018;51(3):284-317.
+75. Aly MM, Taha SEE, El Sayed MA, Youssef
+R, Omar HM. Clinical and radiographic
+evaluation of Biodentine™ and mineral
+trioxide aggregate in revascularization of
+non-vital immature permanent anterior
+teeth (randomized clinical study). Int J
+Paediatr Dent. 2019;29(4):464-473.
+76. Barrieshi-Nusair KM, Qudeimat MA. A
+prospective clinical study of mineral
+trioxide aggregate for partial pulpotomy in
+cariously exposed permanent teeth. J Endod.
+2006;32(8):731-735.
+77. Brizuela C et al. Direct pulp capping with
+calcium hydroxide, mineral trioxide
+aggregate, and Biodentine™ in permanent
+young teeth with caries: a randomized
+clinical trial. J Endod. 2017;43(11):1776-1780.
+78. Chailertvanitkul P et al. Randomized
+control trial comparing calcium hydroxide
+and mineral trioxide aggregate for
+partial pulpotomies in cariously exposed
+pulps of permanent molars. Int Endod J.
+2014;47(9):835-842.
+79. Harms CS, Schafer E, Dammaschke T. Clinical
+evaluation of direct pulp capping using a
+calcium silicate cement-treatment outcomes
+over an average period of 2.3 years. Clinical
+Oral Investigations. 2019;23(9):3491-3499.
+80. Hilton TJ et al. Comparison of CaOH with
+MTA for direct pulp capping: a PBRN
+randomized clinical trial. J Dent Res.
+2013;92(7 Suppl):16S- 22S.
+81. Mente J et al. Mineral trioxide aggregate or
+calcium hydroxide direct pulp capping: an
+analysis of the clinical treatment outcome.
+J Endod. 2010;36(5):806-813.
+82. Qudeimat MA, Barrieshi-Nusair KM,
+Owais AI. Calcium hydroxide vs mineral
+trioxide aggregates for partial pulpotomy
+of permanent molars with deep caries.
+European Archives of Paediatric Dentistry:
+Official Journal of the European Academy of
+Paediatric Dentistry. 2007;8(2):99-104.
+83. Marques MS, Wesselink PR, Shemesh H.
+Outcome of direct pulp capping with mineral
+trioxide aggregate: a prospective study.
+J Endod. 2015;41(7):1026-1031.
+84. Mente J et al. Treatment outcome of mineral
+trioxide aggregate or calcium hydroxide
+direct pulp capping: long-term results.
+J Endod. 2014;40(11):1746-1751.
+85. Demarco FF et al. Influence of the
+restoration quality on the success of
+pulpotomy treatment: a preliminary
+retrospective study. J Appl Oral Sci.
+2005;13(1):72-77.
+86. Alqaderi HE, Al-Mutawa SA, Qudeimat MA,
+MTA pulpotomy as an alternative to root
+canal treatment in children’s permanent
+teeth in a dental public health setting. J Dent.
+2014;42(11):1390-1395.
+87. Asgary S, Eghbal MJ. Treatment outcomes
+of pulpotomy in permanent molars with
+irreversible pulpitis using biomaterials: a
+multi-center randomized controlled trial.
+Acta Odontol Scand. 2013;71(1):130-136.
+88. Asgary S et al. Five-year results of vital
+pulp therapy in permanent molars with
+irreversible pulpitis: a non-inferiority
+multicenter randomized clinical trial.
+Clin Oral Investig. 2014.
+[[PAGE 10]]
+The guidance in this statement is not intended to
+substitute for a clinician’s independent judgment in light
+of the conditions and needs of a specific patient.
+Access additional resources at aae.org. © 2021 American Association of Endodontists (AAE).Position S tatement
+Page 10AAE Position S tatement – V ital Pulp Therapy
+89. Asgary S et al. One-year results of vital
+pulp therapy in permanent molars with
+irreversible pulpitis: an ongoing multicenter,
+randomized, non-inferiority clinical trial.
+Clin Oral Investig. 2013;17(2):431-439.
+90. Asgary S, Eghbal MJ, Ghoddusi J. Two-year
+results of vital pulp therapy in permanent
+molars with irreversible pulpitis: an ongoing
+multicenter randomized clinical trial. Clin
+Oral Investig. 2014;18(2):635-641.
+91. Caliskan MK, P. Guneri P. Prognostic factors
+in direct pulp capping with mineral trioxide
+aggregate or calcium hydroxide: 2- to 6-year
+follow-up. Clinical Oral Investigations. 2017;
+21(1):357-367.
+92. El-Meligy OAS, Avery DR. Comparison of
+mineral trioxide aggregate and calcium
+hydroxide as pulpotomy agents in young
+permanent teeth (apexogenesis). Pediatric
+Dentistry. 2006;28(5):399-404.
+93. Galani M et al. Comparative evaluation
+of postoperative pain and success rate
+after pulpotomy and root canal treatment
+in cariously exposed mature permanent
+molars: a randomized controlled trial.
+J Endod. 2017; 43(12):1953-1962.
+94. Nosrat A, Seifi A, Asgary S. Pulpotomy
+in caries-exposed immature permanent
+molars using calcium-enriched mixture
+cement or mineral trioxide aggregate: a
+randomized clinical trial. Int J Paediatr Dent.
+2013;23(1):56- 63.
+95. Ricucci D, Loghin S, Siqueira JF Jr.
+Correlation between clinical and histologic
+pulp diagnoses. J Endod. 2014;40:1932-1939.
+96. Krastl G, Galler K, Dammaschke T, Schäfer
+E. Is pulpotomy a valid treatment option for
+irreversible pulpitis? Dtsch Zahnärztl Z Int.
+2021;3:80-87.

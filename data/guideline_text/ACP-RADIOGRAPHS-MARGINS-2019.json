@@ -1,0 +1,9 @@
+{
+ "id": "ACP-RADIOGRAPHS-MARGINS-2019",
+ "url": "https://www.prosthodontics.org/about-acp/position-statement-the-use-of-dental-radiographs-in-evaluation-of-prosthetic-margins-tooth-supported/",
+ "fetched_at": "2026-09-06T16:19:03Z",
+ "method": "chrome_dom_text",
+ "sha256": "ac5af576c54761a1b40437f6732feb717b9185418155a572b3293cb7b4861eb9",
+ "trimmed": "site navigation and footer removed; body verbatim",
+ "body_starts_with": "Generally speaking, precise marginal fit is preferred"
+}
