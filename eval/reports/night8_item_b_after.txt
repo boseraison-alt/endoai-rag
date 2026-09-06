@@ -1,0 +1,130 @@
+==============================================================================
+ITEM B — GUIDELINE LANE PRECISION,  ARM = AFTER
+==============================================================================
+  NOTE: shipped DOMAIN_NOUNS differs from this script's candidate list
+        only in shipped: ['additional canal', 'apical development', 'apical lesion', 'apical microsurgery', 'apical pathology', 'apical periodontitis', 'apical radiolucency', 'apical surgery', 'avuls', 'blunderbuss apex', 'bronj', 'canal sealer', 'caries', 'carious', 'chlorhexidine', 'complicated fracture', 'coronal fracture', 'cracked tooth', 'dens evaginatous', 'dens in dente', 'dentin', 'dentine', 'devitalis', 'devitaliz', 'edta', 'enamel fracture', 'extrusion', 'hypochlorite', 'immature teeth', 'immature tooth', 'incomplete root formation', 'intrusion', 'mesiobuccal', 'missed canal', 'mronj', 'naocl', 'necrotic', 'odontodystrophy', 'open apex', 'osteonecrosis', 'pulp therapy', 're-treatment', 'regenerat', 'reimplant', 'replant', 'revascular', 'revitali', 'tooth crack', 'traumatic injury', 'vital pulp']
+        only in script : ['apical', 'avulsed', 'avulsion', 'endodontically', 'necrotic pulp', 'post-treatment disease', 'pulp capping', 'replantation', 'replanted', 'revascularisation', 'revascularization', 'revitalisation', 'revitalization', 'root canals']
+  domain-noun list: 82 terms, source: endo_ai.DOMAIN_NOUNS (shipped)
+  additional canal, apexification, apexogenesis, apical development, apical lesion, apical microsurgery, apical pathology, apical periodontitis, apical radiolucency, apical surgery, apicectomy, apicoectomy, avuls, blunderbuss apex, bronj, canal sealer, caries, carious, chlorhexidine, complicated fracture, coronal fracture, cracked tooth, crown fracture, dens evaginatous, dens evaginatus, dens in dente, dens invaginatus, dental trauma, dentin, dentine, devitalis, devitaliz, edta, enamel fracture, endodontic, endodontics, extrusion, hypochlorite, immature teeth, immature tooth, incomplete root formation, intracanal, intrusion, irrigant, irrigation, luxation, mesiobuccal, missed canal, mronj, naocl, necrosis, necrotic, obturation, odontodystrophy, odontogenic, open apex, osteonecrosis, perforation, periapical, periodontitis, periradicular, pulp, pulp cap, pulp therapy, pulpal, pulpectomy, pulpitis, pulpotomy, re-treatment, regenerat, reimplant, replant, resorption, retreatment, revascular, revitali, root canal, root fracture, tooth crack, traumatic dental injur, traumatic injury, vital pulp
+
+  term groups: 32 from cache, 0 newly generated (eval\logs\night8_terms.json)
+  guideline lane filter: practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]
+
+[ 1/32] laser-root-canal-disinfection-live       groups=3  domain_noun=True   pool=20  off=1
+        chose: root canal OR endodontic*
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[ 2/32] laser-root-canal-disinfection-library    groups=3  domain_noun=True   pool=20  off=1
+        chose: root canal OR endodontic* OR intracanal
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[ 3/32] single-vs-multiple-visit                 groups=3  domain_noun=True   pool=6   off=0
+        chose: necrotic OR vital status OR pulp necrosis
+[ 4/32] mta-vs-biodentine-pulpotomy              groups=3  domain_noun=True   pool=13  off=0
+        chose: pulpotomy OR pulp amputation
+[ 5/32] naocl-concentration                      groups=3  domain_noun=True   pool=4   off=0
+        chose: sodium hypochlorite OR naocl OR chlorine dioxide
+[ 6/32] cbct-vs-periapical                       groups=3  domain_noun=True   pool=9   off=0
+        chose: apical periodontitis OR periapical lesion* OR periapical pathology OR apical pathology
+[ 7/32] bioceramic-vs-resin-sealer               groups=3  domain_noun=True   pool=2   off=0
+        chose: root canal sealer* OR canal sealer* OR root canal filling OR root canal obturation OR gutta percha
+[ 8/32] retreatment-vs-microsurgery              groups=3  domain_noun=True   pool=20  off=0
+        chose: apical microsurgery OR endodontic surgery OR periapical surgery OR surgical retreatment
+[ 9/32] direct-pulp-capping                      groups=3  domain_noun=True   pool=16  off=0
+        chose: vital pulp therapy OR pulp capping OR direct pulp capping OR pulpotomy OR partial pulpotomy
+[10/32] preemptive-nsaid                         groups=3  domain_noun=True   pool=7   off=0
+        chose: postoperative pain OR post-operative pain OR post operative pain OR endodontic pain OR pain after treatment
+[11/32] regenerative-immature                    groups=3  domain_noun=True   pool=5   off=0
+        chose: immature tooth OR immature teeth OR open apex OR blunderbuss apex OR apexogenesis OR apexification
+[12/32] cracked-tooth-prognosis                  groups=3  domain_noun=True   pool=1   off=0
+        chose: cracked tooth OR tooth crack* OR vertical root fracture OR vrf OR longitudinal root fracture
+[13/32] apdt-primary-molars                      groups=3  domain_noun=True   pool=12  off=0
+        chose: necrotic pulp OR pulp necrosis OR pulpectomy OR primary molar endodontic*
+[14/32] bisphosphonates                          groups=3  domain_noun=True   pool=20  off=1
+        chose: root canal OR endodontic* OR pulp treatment OR apical surgery OR apicoectomy
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+    [guideline_lane] no domain noun in any group; ANDing the two longest non-qualifier groups
+[15/32] pregnancy                                groups=3  domain_noun=False  pool=0   off=0
+        chose: (local anesthetic* OR local anaesthetic* OR lidocaine OR prilocaine OR articaine OR bupivacaine OR epinephrine
+[16/32] pips-vs-ultrasonic                       groups=3  domain_noun=True   pool=20  off=0
+        chose: periapical healing OR periapical lesion* OR apical periodontitis OR treatment outcome* OR healing outcome*
+[17/32] intentional-replantation                 groups=3  domain_noun=True   pool=2   off=0
+        chose: intentional replantation OR intentional reimplantation OR surgical extraction OR coronectomy alternative
+[18/32] sdf-pulp-outcomes                        groups=3  domain_noun=True   pool=8   off=0
+        chose: deep caries OR deep carious lesion* OR extensive caries OR near pulp OR proximal to pulp
+[19/32] sonic-vs-ultrasonic                      groups=3  domain_noun=True   pool=20  off=1
+        chose: root canal OR endodontic* OR intracanal
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[20/32] dens-invaginatus                         groups=3  domain_noun=True   pool=0   off=0
+        chose: dens invaginatus OR dens in dente OR invaginated odontodystrophy OR gestant odontodystrophy
+[21/32] diabetes-outcomes                        groups=3  domain_noun=True   pool=20  off=1
+        chose: root canal OR endodontic* OR apical periodontitis OR periapical
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+    [guideline_lane] no domain noun in any group; ANDing the two longest non-qualifier groups
+[22/32] case-opening-sparse                      groups=3  domain_noun=False  pool=8   off=0
+        chose: (tooth OR teeth OR dental OR molar) AND (pain OR ache OR discomfort OR sensitivity)
+[23/32] case-opening-full                        groups=3  domain_noun=True   pool=20  off=0
+        chose: periapical* OR apical lesion* OR apical radiolucency OR periapical pathology
+[24/32] review-followup-immature-teeth           groups=3  domain_noun=True   pool=10  off=0
+        chose: immature teeth OR immature tooth OR open apex OR blunderbuss apex OR incomplete root formation OR apexogenesis
+[25/32] review-newtopic-reset                    groups=3  domain_noun=True   pool=4   off=0
+        chose: sodium hypochlorite OR naocl OR sodium chloride OR bleach
+[26/32] necrotic-virgin-tooth-young-adult-diagno groups=3  domain_noun=True   pool=16  off=0
+        chose: traumatic injury OR trauma OR mechanical injury OR luxation OR intrusion OR extrusion OR crown fracture OR roo
+[27/32] bisphosphonate-extraction-vs-rct-treatme groups=3  domain_noun=True   pool=0   off=0
+        chose: periapical lesion* OR periapical pathology OR periapical radioluency
+[28/32] dens-evaginatus-premolar-diagnostic      groups=3  domain_noun=True   pool=9   off=0
+        chose: periapical lesion* OR periapical radiolucency OR apical periodontitis OR symptomatic apical periodontitis
+[29/32] dens-evaginatus-prevention-followup      groups=3  domain_noun=True   pool=12  off=0
+        chose: pulp necrosis OR pulp death OR pulp vitality OR vital pulp
+[30/32] probe-avulsion-40min                     groups=3  domain_noun=True   pool=12  off=0
+        chose: avuls* OR tooth avulsion OR replant* OR tooth replantation OR reimplant*
+[31/32] probe-crown-fracture-6h                  groups=3  domain_noun=True   pool=20  off=1
+        chose: pulpotomy OR pulp capping OR direct pulp capping OR endodontic* OR root canal
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+[32/32] probe-retreat-implant                    groups=3  domain_noun=True   pool=20  off=1
+        chose: root canal OR endodontic* OR retreatment
+        OFF-DOMAIN  29729847  SIOPE - Brain tumor group consensus guideline on craniospinal target v
+                    journal: Radiother Oncol
+                    reason : issuing journal 'Radiother Oncol' is outside dentistry / oral medicine / head-and-neck, and the docu
+
+==============================================================================
+RESULT — ARM AFTER
+==============================================================================
+  questions measured                         32
+  chosen group CONTAINS a domain noun        30  (target >= 30)
+  chosen group contains NONE                 2
+      no domain noun: pregnancy                                chose (local anesthetic* OR local anaesthetic* OR lidocaine OR pri
+      no domain noun: case-opening-sparse                      chose (tooth OR teeth OR dental OR molar) AND (pain OR ache OR dis
+  guideline-lane pool EMPTY                  3  (9%, target <= 15%)
+  OFF-DOMAIN guideline rows in any pool      7  (target 0)
+  questions with >=1 off-domain row          7  ['laser-root-canal-disinfection-live', 'laser-root-canal-disinfection-library', 'bisphosphonates', 'sonic-vs-ultrasonic', 'diabetes-outcomes', 'probe-crown-fracture-6h', 'probe-retreat-implant']
+  cross-specialty rows KEPT (not off-domain) 8
+      17446442  Prevention of infective endocarditis: guidelines from the Am
+                cross-specialty but DOES address dental care: 10 unambiguous dental mentions in its own abstract (dental, gingival, oral mucosa, periapical, teeth)
+      29268916  The Society for Vascular Surgery practice guidelines on the 
+                cross-specialty but DOES address dental care: 5 unambiguous dental mentions in its own abstract (dental, gingival, oral mucosa, periapical, teeth)
+
+  WATCHLIST — appearances across the 32 pools
+    17446442  AHA infective endocarditis 2007 (superseded by AHA-IE-2021)  4 pools  off_domain=False
+              retreatment-vs-microsurgery, pips-vs-ultrasonic, diabetes-outcomes, case-opening-full
+    29268916  Society for Vascular Surgery, abdominal aortic aneurysm     4 pools  off_domain=False
+              retreatment-vs-microsurgery, pips-vs-ultrasonic, diabetes-outcomes, case-opening-full
+    29729847  SIOPE paediatric brain-tumour craniospinal radiotherapy     7 pools  off_domain=True
+              laser-root-canal-disinfection-live, laser-root-canal-disinfection-library, bisphosphonates, sonic-vs-ultrasonic, diabetes-outcomes, probe-crown-fracture-6h ...
+    41319038  FelineVMA feline dental guidelines (veterinary)             0 pools  off_domain=False
+
+  AVULSION PROBE — the lane's final PubMed query string:
+    (avuls* OR tooth avulsion OR replant* OR tooth replantation OR reimplant*) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR "dental pulp"[MeSH] OR "periapical diseases"[MeSH] OR endodontic*[tiab] OR "root canal"[tiab] OR "root canals"[tiab] OR "dental pulp"[tiab] OR pulpitis[tiab] OR "periapical"[tiab] OR "pulp therapy"[tiab] OR "pulp capping"[tiab]) NOT "Retracted Publication"[pt] NOT (animals[mh] NOT humans[mh])
+
+  wrote eval/reports/night8_item_b_after.json
