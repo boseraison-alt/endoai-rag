@@ -1,0 +1,1998 @@
+{
+ "b1": [
+  {
+   "pmid": "10321189",
+   "from": "classic",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "10530266",
+   "from": "classic",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "11475947",
+   "from": "level3",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "15185801",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "24407553",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "25571947",
+   "from": "level3",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "27434920",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "29455471",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:meta-analysis"
+  },
+  {
+   "pmid": "29609572",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "30444709",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "31050927",
+   "from": "level3a",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "31301436",
+   "from": "level3a",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "31306506",
+   "from": "level3a",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "32176431",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:meta-analysis"
+  },
+  {
+   "pmid": "32585263",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "34045632",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "34378269",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "35267110",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "35294790",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:systematic review"
+  },
+  {
+   "pmid": "36375202",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:observational study"
+  },
+  {
+   "pmid": "36421046",
+   "from": "level3a",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "36533889",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "36641741",
+   "from": "level3",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:observational study"
+  },
+  {
+   "pmid": "37010205",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37085142",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:observational study"
+  },
+  {
+   "pmid": "37154002",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37355163",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37470399",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "37612879",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37746745",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37885117",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "37893558",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37924021",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "37968968",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:meta-analysis"
+  },
+  {
+   "pmid": "38013016",
+   "from": "level3a",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "38403667",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "38512015",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "38622629",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "38795077",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "38804663",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "38829548",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "38957911",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39026272",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "3908643",
+   "from": "classic",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39231718",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:meta-analysis"
+  },
+  {
+   "pmid": "39319904",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39503145",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39523312",
+   "from": "level3",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39538161",
+   "from": "level3",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "39553722",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "39690774",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39704628",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "39704629",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "39707926",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "39917708",
+   "from": "level3",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "39962452",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40120797",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40317970",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "40335983",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40407835",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40464528",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "40466763",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:observational study"
+  },
+  {
+   "pmid": "40653154",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40691703",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40713650",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:meta-analysis"
+  },
+  {
+   "pmid": "40739139",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40835176",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40843632",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40859457",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "40931202",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "40995720",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "41085390",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:observational study"
+  },
+  {
+   "pmid": "41152831",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "41193688",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "41276245",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "41277643",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "41379411",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "41383164",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "41436629",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "41454423",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "41466242",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "41545543",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:observational study"
+  },
+  {
+   "pmid": "41808105",
+   "from": "level3",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "41942971",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "42091938",
+   "from": "level2",
+   "to": "level1",
+   "why": "b1:both-writers-agree:pubtype:randomized controlled trial"
+  },
+  {
+   "pmid": "42241134",
+   "from": "level3a",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  },
+  {
+   "pmid": "42260197",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "42412227",
+   "from": "level3b",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "42497401",
+   "from": "level2",
+   "to": "level3a",
+   "why": "b1:both-writers-agree:pubtype:comparative study"
+  },
+  {
+   "pmid": "7660318",
+   "from": "classic",
+   "to": "level2",
+   "why": "b1:both-writers-agree:pubtype:clinical trial"
+  },
+  {
+   "pmid": "8699518",
+   "from": "classic",
+   "to": "level2",
+   "why": "b1:both-writers-agree:pubtype:controlled clinical trial"
+  },
+  {
+   "pmid": "9823141",
+   "from": "classic",
+   "to": "level4",
+   "why": "b1:both-writers-agree:pubtype:case reports"
+  }
+ ],
+ "b2": [
+  {
+   "pmid": "20647107",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: artificial canal"
+  },
+  {
+   "pmid": "38350801",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38934748",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "20518930",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "21948118",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "39604933",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39733128",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36596331",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39851601",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "36563708",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "39917655",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36856884",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39917707",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "2919065",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "40651903",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41494731",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39667753",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "34338339",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37740425",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "31328384",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "32987169",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38678244",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41692102",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "36984434",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "11806644",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "18081808",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "16776759",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "24192536",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "28068186",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "21787505",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "23137292",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: Ex vivo"
+  },
+  {
+   "pmid": "33103954",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "19186418",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42420971",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41432813",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "40449882",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "40565094",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "41833582",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "40611068",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "34737843",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "40705445",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42649529",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "23611397",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "34318781",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38563466",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "37286503",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41651276",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "40444563",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "21787500",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41682655",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "41867637",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "10758689",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "11307260",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "32847665",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37264364",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "11469295",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "11471644",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "26275599",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted molars"
+  },
+  {
+   "pmid": "35762556",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: Ex vivo"
+  },
+  {
+   "pmid": "35692144",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "39548003",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "2095534",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "2098464",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29561949",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39243036",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29888490",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "17714465",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "41331196",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "31587303",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "32667513",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "33340080",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "33417064",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "34370019",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "34698940",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41538498",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "40280404",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: Ex vivo"
+  },
+  {
+   "pmid": "29988207",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29047120",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "34980828",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "35206217",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "35430959",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35735636",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39218288",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "20661607",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted premolars"
+  },
+  {
+   "pmid": "31189792",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "12184416",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "23937401",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37013741",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "19134042",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted premolar"
+  },
+  {
+   "pmid": "41249622",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "10726537",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42163172",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "17326785",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: root segments"
+  },
+  {
+   "pmid": "22339985",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "22486805",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "26038661",
+   "from": "level3",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "27185740",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "3301914",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "28729785",
+   "from": "level3",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36661351",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36826199",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29199771",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29199772",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36906530",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29292570",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36932445",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "6932094",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41810922",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: bovine teeth"
+  },
+  {
+   "pmid": "30712410",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37574536",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "40437497",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35988128",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "7673842",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "38683234",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "35665985",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "38112919",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39661212",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "40349908",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29450937",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "15287544",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41052564",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "21112536",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "7751067",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35657117",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41096795",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "32602945",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39709405",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41803838",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35305029",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35326909",
+   "from": "level3",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38657726",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37039940",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35682452",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "29690959",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "18081807",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "21946476",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36220913",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42168985",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "40597984",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "41685845",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41026563",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "40484224",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "27542693",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "22414841",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "19716727",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38374511",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "31622387",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "32871761",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "30362542",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "30554288",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37704917",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "9206431",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37732467",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37762786",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "21732954",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human incisors"
+  },
+  {
+   "pmid": "14977306",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "37073937",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "19125978",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: simulated canal"
+  },
+  {
+   "pmid": "42569474",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39617835",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "41045156",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "42144610",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human premolars"
+  },
+  {
+   "pmid": "39489638",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41772537",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41291585",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42026785",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "31920058",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "8698454",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "18155496",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "9206435",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "9274082",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "9377197",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "35139409",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "9587321",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "20647098",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "27421989",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41765174",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "22515904",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "38538855",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "41501783",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "24939310",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "17916068",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "23321244",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38896639",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "21895700",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "33821811",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42466196",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29728541",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29101548",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "21419297",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "41520867",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "16776756",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "38879492",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42032095",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41111243",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41654893",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41045165",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: Extracted Premolar"
+  },
+  {
+   "pmid": "42087154",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "41685839",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "40995721",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted premolars"
+  },
+  {
+   "pmid": "40111730",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "19801244",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "42015091",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29372445",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "41063168",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39792250",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "35174355",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: Ex vivo"
+  },
+  {
+   "pmid": "17368342",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38847052",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "42061702",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "22794223",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In vitro"
+  },
+  {
+   "pmid": "22414842",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "20630302",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "36567909",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "20726913",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted teeth"
+  },
+  {
+   "pmid": "20951301",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted human teeth"
+  },
+  {
+   "pmid": "42654388",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39893616",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "23240919",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "22414827",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "30074002",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: extracted premolar"
+  },
+  {
+   "pmid": "40098184",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "34595903",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "108377",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "31027424",
+   "from": "level2",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "7876425",
+   "from": "classic",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39543538",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "21504540",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "38652209",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: ex vivo"
+  },
+  {
+   "pmid": "19029083",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "39005095",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "29895270",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "21180797",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  },
+  {
+   "pmid": "26067942",
+   "from": "level1",
+   "to": "invitro",
+   "why": "b2:population:bench subject: In Vitro"
+  },
+  {
+   "pmid": "38959874",
+   "from": "level3a",
+   "to": "invitro",
+   "why": "b2:population:bench subject: in vitro"
+  }
+ ],
+ "before": {
+  "classic": 272,
+  "cochrane": 43,
+  "guideline": 90,
+  "invitro": 191,
+  "level1": 1833,
+  "level2": 407,
+  "level3": 307,
+  "level3a": 579,
+  "level3b": 67,
+  "level4": 195,
+  "level5": 169,
+  "observational": 30,
+  "retracted": 16
+ },
+ "after": {
+  "classic": 250,
+  "cochrane": 43,
+  "guideline": 90,
+  "invitro": 426,
+  "level1": 1708,
+  "level2": 347,
+  "level3": 297,
+  "level3a": 558,
+  "level3b": 57,
+  "level4": 208,
+  "level5": 169,
+  "observational": 30,
+  "retracted": 16
+ }
+}

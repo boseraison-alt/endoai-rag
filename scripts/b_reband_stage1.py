@@ -142,7 +142,19 @@ def main():
                            WHERE pmid = %s""",
                         (m["to"], m["why"], m["pmid"]))
         conn.commit()
-    after = census(cur)
+        after = census(cur)
+    else:
+        # THE DRY RUN PREDICTS THE DELTA rather than reporting zero.
+        #
+        # It read the census twice without writing anything in between, so it
+        # printed `+0` for every tier — true, and useless. The standing rule is
+        # "dry-run every DB write with delta by tier, and applied == dry run",
+        # which requires the dry run to state what the apply WILL do. Simulated
+        # from the move list, so the two runs are comparable line for line.
+        after = dict(before)
+        for m in moves:
+            after[m["from"]] = after.get(m["from"], 0) - 1
+            after[m["to"]] = after.get(m["to"], 0) + 1
 
     print()
     print("  CENSUS DELTA")
