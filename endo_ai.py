@@ -1009,6 +1009,106 @@ def _reset_off_domain_blocklist():
     _OFF_DOMAIN_BLOCKLIST = None
 
 
+# ── NO NON-CURRENT GUIDELINE REACHES A POOL, BY ANY PATH (2026-09-09) ─────
+#
+# MEASURED before it was written: on 28 of 31 questions the guideline block
+# carried at least one superseded document. Five distinct rows, every one of
+# them superseded, led by `IADT-AVULSION-2012` (22 questions) and `ESE-QG-2006`
+# (21) — the latter quarantined by A2 *and* superseded by the manifest.
+#
+# THE PATH, established by asking each of the three separately rather than
+# guessing from the row's shape:
+#
+#   library union            NONE — `rag.search` already excludes them
+#   admit_scoped_guidelines  NONE — it filters on manifest status == current
+#   THE LIVE GUIDELINE LANE  17180780, 17511833, 22409417
+#
+# The lane queries PubMed and scores what comes back. A superseded IADT 2012
+# guideline is a real, indexed, unretracted PubMed record; nothing about it
+# looks wrong to a query, and the lane has no reason to consult a manifest or a
+# `quarantine_reason` column, because those are facts about OUR library and the
+# lane is not reading our library.
+#
+# So the check goes where every path passes: applied to the scored pool, like
+# `drop_off_domain` directly below, rather than added to the one lane that
+# happens to leak today. Two of A49's hard gates are at stake — withdrawn is
+# never citeable, superseded is excluded from retrieval — and the damage is
+# done in the CONTEXT the model reads, before anything renders.
+_NON_CURRENT_GUIDELINES = None
+CURRENT_GUIDELINE_STATUSES = frozenset({"current", "current_but_stale"})
+
+
+def non_current_guideline_keys():
+    """{pmid or manifest id} for every guideline row that must never be served.
+
+    A row qualifies if its status is not current, OR it carries a
+    `quarantine_reason`, OR it names a `superseded_by`. Three independent
+    facts, stored in three places, any one of which is disqualifying —
+    `ESE-QG-2006` carries two of them and reached 21 pools anyway.
+    """
+    global _NON_CURRENT_GUIDELINES
+    if _NON_CURRENT_GUIDELINES is None:
+        try:
+            from rag import get_conn
+            conn = get_conn()
+            cur = conn.cursor()
+            try:
+                cur.execute("""
+                    SELECT pmid, COALESCE(guideline_id,'')
+                    FROM endo_papers_rag
+                    WHERE level_key = 'guideline'
+                      AND (LOWER(COALESCE(guideline_status,'')) NOT IN
+                               ('current', 'current_but_stale')
+                           OR COALESCE(quarantine_reason,'') <> ''
+                           OR COALESCE(superseded_by,'') <> '')
+                """)
+                keys = set()
+                for pmid, gid in cur.fetchall():
+                    if pmid:
+                        keys.add(str(pmid).strip())
+                    if gid:
+                        keys.add(str(gid).strip())
+                _NON_CURRENT_GUIDELINES = keys
+            finally:
+                cur.close()
+                conn.close()
+        except Exception as e:
+            print("  [guideline_status] map unavailable, guard disabled: %s" % e)
+            return set()
+    return _NON_CURRENT_GUIDELINES
+
+
+def _reset_non_current_guidelines():
+    """Test hook."""
+    global _NON_CURRENT_GUIDELINES
+    _NON_CURRENT_GUIDELINES = None
+
+
+def drop_non_current_guidelines(scored_papers: list, lane: str = "") -> list:
+    """Remove superseded / withdrawn / draft / quarantined guidelines, loudly.
+
+    APPLIED TO EVERY LANE, for the same reason `drop_off_domain` is: the leak
+    was in the guideline lane, but a superseded guideline that reaches a
+    level1 or level5 pool by another route is the same document making the
+    same claim, and a guideline-lane-only guard would leave that open.
+    """
+    bad = non_current_guideline_keys()
+    if not bad or not scored_papers:
+        return scored_papers
+    kept, dropped = [], []
+    for p in scored_papers:
+        pid = str((p or {}).get("pmid") or "").strip()
+        gid = str((p or {}).get("guideline_id") or "").strip()
+        if (pid and pid in bad) or (gid and gid in bad):
+            dropped.append(gid or pid)
+        else:
+            kept.append(p)
+    if dropped:
+        print("  [guideline_status] dropped %d non-current guideline(s) from "
+              "%s: %s" % (len(dropped), lane or "a pool", ", ".join(dropped)))
+    return kept
+
+
 def drop_off_domain(scored_papers: list, lane: str = "") -> list:
     """Remove blocklisted documents from a pool, loudly.
 
@@ -6486,6 +6586,10 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
         # ITEM G — the off-domain blocklist, before the quality cut so a
         # blocklisted row can never occupy a slot in any lane.
         scored_papers = drop_off_domain(scored_papers, level_key)
+        # 2026-09-09: the live lane is where the superseded guidelines got
+        # in. Applied to every lane, beside the blocklist, for the same
+        # reason that one is.
+        scored_papers = drop_non_current_guidelines(scored_papers, level_key)
         kept = _apply_quality_threshold(scored_papers, mode=mode, tier_key=level_key)
         if len(kept) < len(scored_papers):
             print(f"    [quality] kept {len(kept)} of {len(scored_papers)} papers above threshold (mode={mode}, tier={level_key})")

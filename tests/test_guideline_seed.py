@@ -303,6 +303,43 @@ class TestStatusIsEnforced:
         for (pmid,) in sup:
             assert pmid not in got, f"superseded {pmid} reached the pool"
 
+    def test_the_union_path_is_covered_too(self):
+        """EXTENDED 2026-09-09. The test above exercises `rag.search` — the
+        library KNN — and that is the only path it ever covered. Item A added
+        a second (the library union) and the live lanes were always a third,
+        and the 2026-09-09 measurement found the leak in the third: 28 of 31
+        questions carried a superseded guideline, every one of them admitted by
+        the LIVE guideline lane, while this test passed throughout.
+
+        The union is built on `multi_query_search`, which is built on
+        `rag.search`, so it inherits that exclusion — but "inherits" is an
+        argument, and this asserts it.
+        """
+        from app import multi_query_search
+        rows = multi_query_search(
+            "quality guidelines for endodontic treatment",
+            ["(quality guidelines) AND (endodontic treatment)"], limit=200)
+        got = {str(r.get("pmid")) for r in rows}
+        sup = query("SELECT pmid FROM endo_papers_rag "
+                    "WHERE COALESCE(superseded_by,'') <> ''")
+        assert sup, "no superseded rows to test against (rule 34)"
+        for (pmid,) in sup:
+            assert str(pmid) not in got, (
+                f"superseded {pmid} reached the union's candidate set")
+
+    def test_the_live_lane_is_covered_by_the_guard(self):
+        """The path the leak was actually on. The live lane fetches from
+        PubMed and cannot know our supersession, so the guard is what stops it;
+        this asserts the guard would reject the rows the lane returned —
+        17180780, 17511833 and 22409417 were the measured three."""
+        import endo_ai as _E
+        measured = [{"pmid": "17180780", "guideline_id": "ESE-QG-2006"},
+                    {"pmid": "17511833", "guideline_id": "IADT-AVULSION-2007"},
+                    {"pmid": "22409417", "guideline_id": "IADT-AVULSION-2012"}]
+        assert _E.drop_non_current_guidelines(measured, "live-lane") == [], (
+            "the guard does not reject the rows the live guideline lane was "
+            "measured returning")
+
 
 class TestUnconfirmedPmidsAreNeverEmitted:
     """Ten manifest records have a verified DOI and journal but an

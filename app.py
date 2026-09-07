@@ -1431,6 +1431,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review, collapse_guideline_copies,
         admit_scoped_guidelines, drop_off_domain, snowball_from_reviews,
+        drop_non_current_guidelines,
         _pubmed_audit_log,
         label_and_expand,
     )
@@ -1490,6 +1491,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         # helping a question pass the coverage gate would be the same
         # document doing damage one layer earlier.
         rag_results = drop_off_domain(rag_results, 'library')
+        rag_results = drop_non_current_guidelines(rag_results, 'library')
 
         # Coverage test, not just a count: enough genuinely-similar papers, and
         # at least one high-tier design among them. A library that answers with
@@ -1815,6 +1817,7 @@ def _build_live_evidence(job_id, question, evidence, all_scored, smart_topic,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review, collapse_guideline_copies,
         admit_scoped_guidelines, drop_off_domain, snowball_from_reviews,
+        drop_non_current_guidelines,
         _pubmed_audit_log,
         label_and_expand,
     )
@@ -2140,6 +2143,7 @@ def _build_live_evidence(job_id, question, evidence, all_scored, smart_topic,
         lib_rows = multi_query_search(question, search_terms or [smart_topic],
                                       limit=100)
         lib_rows = drop_off_domain(lib_rows, "library")
+        lib_rows = drop_non_current_guidelines(lib_rows, "library-union")
         seen_pmids = {str(p.get("pmid")) for p in all_scored}
         fresh = [r for r in lib_rows
                  if str(r.get("pmid")) not in seen_pmids
@@ -2341,6 +2345,7 @@ def build_differential_evidence(job_id: str, case_description: str,
         # (no similarity) fall back to exactly the score order used before.
         # ITEM G — the off-domain blocklist, on this builder too.
         bucket = drop_off_domain(bucket, tier)
+        bucket = drop_non_current_guidelines(bucket, tier)
         bucket = cap_by_relevance(bucket, max_per_tier, tier)
         bucket.sort(key=lambda x: x.get("score") or 0, reverse=True)
         evidence[tier] = {
