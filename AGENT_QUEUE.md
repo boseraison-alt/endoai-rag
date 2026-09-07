@@ -2147,6 +2147,58 @@ explained after.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
 
+### A59 — NEXT BATCH: two items carried out of 2026-09-09
+
+#### A59a — the specialty renderer, three defects. FOUND-NOT-FIXED, **HIGH**
+
+`endo_ai.render_specialty_block` renders the admitted guidelines from data, in
+jurisdiction order, and passes its own tests. It was **never wired** — A55 built
+it and nothing called it for a day. Wired on 2026-09-09 for item E and reverted
+the same night, because on a real answer it produced three defects:
+
+1. **It rendered a superseded guideline as an entry.** `ESE-QG-2006`, status
+   *superseded*, listed beside current documents. **This is the clinical
+   hazard**, and it is the same class item 3 closed everywhere else.
+2. **It mis-attached the model's position sentences.** They are lifted by
+   matching the ORGANISATION, and six of the 32 admitted rows were ESE — so the
+   ESE 2023 S3 recommendation was attached to the ESE 2006 superseded document.
+3. **Its header citations were dropped by G2**, leaving the section
+   unattributed — which also cost it the evidence-mapping retry, so the model's
+   own section won and the log reported a section the served answer did not
+   contain.
+
+**The four conditions for wiring it, all four required:**
+
+- never render a row that is not `current` or `current_but_stale` — reuse
+  `drop_non_current_guidelines`, do not write a second status check;
+- key position sentences by DOCUMENT, not by organisation;
+- emit citations G2 resolves, so the section is attributed;
+- the rendered section must PASS evidence-mapping validation rather than lose
+  to the retry — measure that before wiring, not after.
+
+#### A59b — a hold-back that lives in one script is not a hold-back
+
+A55 held `41555359` (F7) back from a manual ingest: a meta-analysis of **bench
+outcomes** — sealing ability, marginal adaptation — that the pubtype writer
+bands `level1`, at the top of the human clinical ladder. Item A then ran the
+live lanes over 32 questions and **write-back ingested it at `level1` anyway**.
+The live path has no knowledge of a decision recorded in a script it does not
+call.
+
+**The rule belongs in the write-back path**, which is the one every route
+passes through, and it is a NEW AXIS rather than an extension of B2. B2 is a
+POPULATION rule — "this study's subjects were bench specimens". F7's subjects
+are studies; it is correctly read as a systematic review. What disqualifies it
+is its OUTCOMES.
+
+Proposed and **to be measured before it is written**: a review or meta-analysis
+whose reported outcomes are bench measures only — sealing ability, microleakage,
+push-out bond strength, fracture resistance, marginal adaptation — is not human
+clinical evidence whatever its publication type says. Measure the population
+first: how many rows would move, and hand-adjudicate a sample, because this is
+the third rule in three days written from a single example and the other two
+both over-fired on their first draft.
+
 ### A58 — NIGHT 2026-09-09: the advisory session's premises, overturned
 
 #### Overturned premises (advisory session)
@@ -2176,6 +2228,27 @@ either.** Every reband design before 2026-09-08 picked a writer on plausibility.
 Thirty rows read by hand reversed the choice.
 
 #### Instrument errors
+
+**5b. The `AND (NOT ...)` PubMed artefact.** A diagnosis of why bare-query hits
+were absent from the assembled pool reported "97 of 155 are retracted (63%)".
+PubMed returns NOTHING for a parenthesised clause beginning with NOT — it
+answers `outputmessages: ['NOT', 'No items found.']` — so every in-domain PMID
+failed a check that could not pass. Found by asking the clause about a PMID
+known not to be retracted. The corrected form is `(uids) NOT ...`, and it also
+uncovered the 22 library rows the false bucket had been hiding.
+
+**9. The suite was writing into the production answer archive.** Two stub
+answers reached `answers/`, and `test_review_context.real_answer` — which reads
+the most recent REAL answer — then failed on another test's output, in a
+directory holding 171 genuine ones. `conftest` now redirects it, as it already
+did for four audit logs.
+
+**10. A leak measurement read a stale result file twice.** A `nohup ... &` run
+died when its tool call returned, so the report file still held the PRE-FIX
+numbers and read as "still leaking" after the fix. The guard was in fact firing,
+which a single-question run showed directly. Any harness whose result is a file
+must be read together with that file's mtime, or a fixed defect reads as an open
+one.
 
 **6. A blanket `except Exception` around the new live path hid two of my own
 bugs within an hour**, both `NameError`s from the function split, both found by
