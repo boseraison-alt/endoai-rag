@@ -53,6 +53,19 @@
     "expect.route=library, one expected PMID, 18 pool-size expectations -- are",
     "REPORTED BY NAME in OVERNIGHT_REPORT_11 rather than tuned to pass.",
     "",
+    "expect.route WAS ALSO CHANGED, library -> live, on those 14 cases, and",
+    "only on those. That criterion is the routing pin wearing a different hat:",
+    "leaving it would have made v8's pass count describe the architecture",
+    "change rather than the answers. The report lists the 14 by name and gives",
+    "the count both ways. Their recorded baseline.route values are NOT touched",
+    "-- those record what was measured on a past run, and rewriting them would",
+    "falsify history.",
+    "",
+    "WHAT WAS DELIBERATELY NOT CHANGED: single-vs-multiple-visit still expects",
+    "PMID 36512807, and all 18 pool-size min_papers values stand. Those are",
+    "real criteria and the live lanes plus the library union are expected to",
+    "meet them. If one does not, that is a finding, not a number to move.",
+    "",
     "The original warning still holds for anything pinned LIVE, and is why the",
     "11 live pins stay: a case without a pin measures whichever path the",
     "library happens to favour that day, and write-back moves that line under",
@@ -239,7 +252,7 @@
       "question": "Use of lasers in root canal disinfection",
       "mode": "learn",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 25,
         "min_sr": 1,
         "min_rct": 1,
@@ -285,7 +298,7 @@
       "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -323,7 +336,7 @@
       "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -353,7 +366,7 @@
       "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -379,7 +392,7 @@
       "question": "CBCT versus periapical radiography for detecting apical periodontitis",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -411,7 +424,7 @@
       "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -474,7 +487,7 @@
       "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -501,7 +514,7 @@
       "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -528,7 +541,7 @@
       "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -692,7 +705,7 @@
       "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -786,7 +799,7 @@
       "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -851,7 +864,7 @@
       "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
       "mode": "review",
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 12,
         "min_sr": 1,
         "cochrane_papers_must_be_cochrane_journal": true,
@@ -958,7 +971,7 @@
         ]
       },
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 5,
         "evidence_must_mention": [
           "laser"
@@ -1006,7 +1019,7 @@
         ]
       },
       "expect": {
-        "route": "library",
+        "route": "live",
         "min_papers": 10,
         "evidence_must_mention": [
           "hypochlorite"
