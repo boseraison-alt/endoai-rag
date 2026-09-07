@@ -1532,6 +1532,18 @@ def snowball_from_reviews(evidence: dict, question: str = "") -> dict:
                                        rec.get("journal", ""))
         if not tier:
             continue          # its design is not derivable; assert nothing
+        # A FOURTH PATH INTO A POOL (2026-09-09). Snowballing admits rows
+        # DIRECTLY from a review's reference list — it does not go through
+        # `fetch_papers` and it does not go through the union, so neither of
+        # those guards reaches it. The leak fix took the guideline block from
+        # 28 questions to 1, and the one survivor was `ESE-DEEPCARIES-2019`,
+        # superseded_in_content, arriving here.
+        #
+        # A reference list is exactly where a superseded guideline would be:
+        # the review cited the version that was current when it was written.
+        if drop_non_current_guidelines(
+                [{"pmid": pmid, "guideline_id": ""}], "snowball") == []:
+            continue
         block = evidence.setdefault(
             tier, {"text": "", "ids": [], "scored": [], "source": "snowball"})
         year = _safe_year_or_none(rec.get("year"))

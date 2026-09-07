@@ -1,289 +1,171 @@
 {
  "offending_rows": {
-  "22230724": {
-   "gid": "IADT-FRACTURES-LUXATIONS-2012",
-   "why": "status=superseded, superseded_by=IADT-FRACTURES-LUXATIONS-2020",
-   "title": "International Association of Dental Traumatology guidelines "
-  },
-  "17180780": {
-   "gid": "ESE-QG-2006",
-   "why": "status=superseded, superseded_by=ESE-S3-2023",
-   "title": "Quality guidelines for endodontic treatment: consensus repor"
-  },
-  "17511833": {
-   "gid": "IADT-AVULSION-2007",
-   "why": "status=superseded, superseded_by=IADT-AVULSION-2020",
-   "title": "Guidelines for the management of traumatic dental injuries. "
-  },
   "30664240": {
    "gid": "ESE-DEEPCARIES-2019",
    "why": "status=superseded_in_content, superseded_by=EFCD-ESE-ORCA-DEEPCARIES-2026",
    "title": "European Society of Endodontology position statement: manage"
-  },
-  "22409417": {
-   "gid": "IADT-AVULSION-2012",
-   "why": "status=superseded, superseded_by=IADT-AVULSION-2020",
-   "title": "International Association of Dental Traumatology guidelines "
   }
  },
  "per_question": [
   {
    "id": "laser-root-canal-disinfection-live",
-   "n_block": 26,
-   "offending": [
-    "17180780"
-   ]
+   "n_block": 17,
+   "offending": []
   },
   {
    "id": "single-vs-multiple-visit",
-   "n_block": 32,
-   "offending": [
-    "17180780",
-    "22409417",
-    "17511833"
-   ]
+   "n_block": 31,
+   "offending": []
   },
   {
    "id": "mta-vs-biodentine-pulpotomy",
-   "n_block": 20,
+   "n_block": 23,
    "offending": []
   },
   {
    "id": "naocl-concentration",
-   "n_block": 31,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724"
-   ]
+   "n_block": 30,
+   "offending": []
   },
   {
    "id": "cbct-vs-periapical",
-   "n_block": 29,
+   "n_block": 28,
    "offending": []
   },
   {
    "id": "bioceramic-vs-resin-sealer",
-   "n_block": 25,
-   "offending": [
-    "17180780",
-    "22409417",
-    "17511833"
-   ]
+   "n_block": 22,
+   "offending": []
   },
   {
    "id": "retreatment-vs-microsurgery",
-   "n_block": 28,
-   "offending": [
-    "17180780",
-    "22409417",
-    "17511833"
-   ]
+   "n_block": 23,
+   "offending": []
   },
   {
    "id": "direct-pulp-capping",
-   "n_block": 31,
+   "n_block": 21,
    "offending": [
-    "17180780",
-    "22409417",
-    "22230724",
     "30664240"
    ]
   },
   {
    "id": "preemptive-nsaid",
-   "n_block": 31,
-   "offending": [
-    "17180780"
-   ]
+   "n_block": 28,
+   "offending": []
   },
   {
    "id": "regenerative-immature",
-   "n_block": 24,
-   "offending": [
-    "22409417",
-    "22230724",
-    "17511833"
-   ]
+   "n_block": 11,
+   "offending": []
   },
   {
    "id": "cracked-tooth-prognosis",
-   "n_block": 32,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724"
-   ]
+   "n_block": 31,
+   "offending": []
   },
   {
    "id": "apdt-primary-molars",
    "n_block": 26,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724",
-    "17511833"
-   ]
+   "offending": []
   },
   {
    "id": "bisphosphonates",
-   "n_block": 33,
-   "offending": [
-    "17180780"
-   ]
+   "n_block": 24,
+   "offending": []
   },
   {
    "id": "pregnancy",
-   "n_block": 33,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724"
-   ]
+   "n_block": 31,
+   "offending": []
   },
   {
    "id": "pips-vs-ultrasonic",
-   "n_block": 18,
-   "offending": [
-    "22409417"
-   ]
+   "n_block": 10,
+   "offending": []
   },
   {
    "id": "intentional-replantation",
    "n_block": 13,
-   "offending": [
-    "22409417",
-    "17511833"
-   ]
+   "offending": []
   },
   {
    "id": "sdf-pulp-outcomes",
    "n_block": 26,
-   "offending": [
-    "22230724",
-    "17511833"
-   ]
+   "offending": []
   },
   {
    "id": "sonic-vs-ultrasonic",
-   "n_block": 25,
-   "offending": [
-    "17180780",
-    "22409417",
-    "17511833"
-   ]
+   "n_block": 24,
+   "offending": []
   },
   {
    "id": "dens-invaginatus",
-   "n_block": 27,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724",
-    "17511833"
-   ]
+   "n_block": 28,
+   "offending": []
   },
   {
    "id": "diabetes-outcomes",
    "n_block": 28,
-   "offending": [
-    "17180780",
-    "22409417",
-    "17511833"
-   ]
+   "offending": []
   },
   {
    "id": "case-opening-sparse",
    "n_block": 25,
-   "offending": [
-    "17180780"
-   ]
+   "offending": []
   },
   {
    "id": "case-opening-full",
-   "n_block": 19,
+   "n_block": 27,
    "offending": []
   },
   {
    "id": "review-followup-immature-teeth",
-   "n_block": 30,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724",
-    "17511833"
-   ]
+   "n_block": 16,
+   "offending": []
   },
   {
    "id": "review-newtopic-reset",
    "n_block": 18,
-   "offending": [
-    "22409417"
-   ]
+   "offending": []
   },
   {
    "id": "necrotic-virgin-tooth-young-adult-diagnostic",
-   "n_block": 19,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724",
-    "17511833"
-   ]
+   "n_block": 24,
+   "offending": []
   },
   {
    "id": "bisphosphonate-extraction-vs-rct-treatment",
-   "n_block": 24,
-   "offending": [
-    "22409417",
-    "17511833"
-   ]
+   "n_block": 32,
+   "offending": []
   },
   {
    "id": "dens-evaginatus-premolar-diagnostic",
    "n_block": 15,
-   "offending": [
-    "22409417",
-    "17511833"
-   ]
+   "offending": []
   },
   {
    "id": "dens-evaginatus-prevention-followup",
-   "n_block": 28,
-   "offending": [
-    "17180780"
-   ]
+   "n_block": 29,
+   "offending": []
   },
   {
    "id": "probe1-avulsion",
-   "n_block": 30,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724",
-    "17511833"
-   ]
+   "n_block": 27,
+   "offending": []
   },
   {
    "id": "probe2-crown-fracture",
-   "n_block": 33,
-   "offending": [
-    "17180780",
-    "22409417",
-    "22230724"
-   ]
+   "n_block": 29,
+   "offending": []
   },
   {
    "id": "probe3-retreat-implant",
-   "n_block": 31,
-   "offending": [
-    "17180780",
-    "22409417"
-   ]
+   "n_block": 30,
+   "offending": []
   }
  ],
  "by_path": {
-  "?": 70,
   "snowball": 1
  }
 }

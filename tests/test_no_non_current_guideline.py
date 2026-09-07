@@ -160,3 +160,26 @@ class TestEveryPathIsGuarded:
             % src.count("drop_non_current_guidelines("))
         assert 'drop_non_current_guidelines(lib_rows, "library-union")' in src, (
             "item A's union is unguarded")
+
+    def test_snowballing_is_guarded(self):
+        """THE FOURTH PATH, and the one the first fix missed.
+
+        Snowballing admits rows DIRECTLY from a review's reference list — not
+        through `fetch_papers`, not through the union — so neither of those
+        guards reaches it. The first fix took the guideline block from 28
+        questions to 1, and the survivor was `ESE-DEEPCARIES-2019`
+        (superseded_in_content) arriving here. A reference list is exactly
+        where a superseded guideline lives: the review cited the version that
+        was current when it was written.
+        """
+        import inspect
+        src = inspect.getsource(E.snowball_from_reviews)
+        assert "drop_non_current_guidelines" in src, (
+            "snowballing can still admit a superseded guideline")
+
+    def test_the_snowball_survivor_is_disqualified(self):
+        """The row that survived the first fix, by name."""
+        assert "30664240" in E.non_current_guideline_keys()
+        assert E.drop_non_current_guidelines(
+            [{"pmid": "30664240", "guideline_id": "ESE-DEEPCARIES-2019"}],
+            "snowball") == []
