@@ -1,6 +1,26 @@
 # OVERNIGHT REPORT 11 — batch 2026-09-09
 
-<!-- PUSH STATUS GOES HERE, FIRST LINE, before anything else. -->
+> ## PUSH BLOCKED — 24 commits, main and 1 tag exist only on this machine
+>
+> `git push origin night-20260906` was **denied by this session's permission
+> classifier**, not by the remote. Nothing was attempted a second time and no
+> workaround was used, per the batch's standing instruction.
+>
+> **Not pushed:** branch `night-20260906` (24 commits ahead of
+> `origin/night-20260906`), `main` (fast-forwarded locally to `f139b46`, 24
+> ahead of `origin/main`), and tag `night-20260909-end`.
+>
+> Everything below is complete and verified locally: suite **2911 passed**,
+> bundle verifies, main fast-forwards cleanly. The only outstanding action is
+> the push, and it is one RB can run directly:
+>
+> ```
+> git push --all && git push --tags
+> ```
+>
+> The bundle at `eval/reports/endo-ai-rag-20260909-night.bundle` is a complete,
+> verified copy of this history and is **untracked** (see the bundle note under
+> Item F), so it will not travel with that push — copy it off separately.
 
 **Routing is live by default.** The library is a contributor on every question
 and the sole source only when PubMed fails: 87 of 87 case-runs routed live, on
