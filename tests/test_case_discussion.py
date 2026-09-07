@@ -41,7 +41,13 @@ class TestCaseGetsTheFullEvidenceEngine:
     def test_case_mode_is_exempt_from_the_early_stop(self):
         """The other half: the builder must actually honour mode='case'."""
         import app
+        # The live lanes moved into `_build_live_evidence` when item A
+        # wrapped them for the library-only fallback (2026-09-09); the
+        # property is about the LIVE PATH, so read both halves.
         src = inspect.getsource(app.build_evidence_base_with_progress)
+        _live = getattr(app, "_build_live_evidence", None)
+        if _live is not None:
+            src += inspect.getsource(_live)
         assert 'mode == "review"' in src, (
             "the early stop must be scoped to review; if it fires on any mode "
             "the case sweep is lost again")

@@ -559,7 +559,22 @@ def retrieval(monkeypatch):
     monkeypatch.setattr(endo_ai, "fetch_cochrane", _live)
     monkeypatch.setattr(endo_ai, "fetch_papers", _live)
 
-    def _run(library_rows, seed_rows=(), prior_pmids=None):
+    def _run(library_rows, seed_rows=(), prior_pmids=None,
+             force_route="library"):
+        """`force_route` defaults to "library" as of 2026-09-09.
+
+        These tests are about how the THREAD reaches the library assembly —
+        which context block is built, which seeds are offered, what the cap
+        does. They were written when the library was the default route, so the
+        live path here is a tripwire that proves it was not taken.
+
+        Item A made live the route for every question, which fires that
+        tripwire on every call and turned nine context tests into
+        `_Reached: live PubMed path`. Pinning the route restores what they were
+        written to measure, using the supported mechanism rather than a stub.
+        The one test that IS about routing passes `force_route=None` and keeps
+        the tripwire.
+        """
         monkeypatch.setattr(app_mod, "multi_query_search",
                             lambda *a, **k: [dict(r) for r in library_rows])
         monkeypatch.setattr(rag, "search_by_pmids",
@@ -567,7 +582,8 @@ def retrieval(monkeypatch):
                                               if r["pmid"] in set(pmids)])
         return app_mod.build_evidence_base_with_progress(
             "job-does-not-exist", FOLLOW_UP, mode="review",
-            context_block=CONTEXT, prior_pmids=list(prior_pmids or []))
+            context_block=CONTEXT, prior_pmids=list(prior_pmids or []),
+            force_route=force_route)
 
     return _run
 
@@ -619,8 +635,20 @@ class TestSeedsDoNotDecideTheRoute:
         import app as app_mod
         assert len(SEED_ROWS) + 4 >= app_mod.RELEVANCE_GATE["min_relevant"], \
             "the fixture no longer reaches the gate it is testing"
+        # `force_route=None` KEEPS THE TRIPWIRE: this is the one test in the
+        # file that is about the ROUTE, so it must not pin one. The tripwire
+        # firing is the assertion — the live path was entered.
+        #
+        # Since 2026-09-09 it would fire for a thin library and a full one
+        # alike, because live is the route for every question. The property it
+        # names — "seeds carried from the previous answer never buy a thin
+        # topic the library route" — is now guaranteed by construction rather
+        # than by ordering, and this test is what would notice if the library
+        # route were ever restored as a default with the seeding left ahead
+        # of it.
         with pytest.raises(_Reached):
-            retrieval(_thin_library(), SEED_ROWS, SEED_PMIDS)
+            retrieval(_thin_library(), SEED_ROWS, SEED_PMIDS,
+                      force_route=None)
 
     def test_a_covering_library_stays_local(self, retrieval):
         evidence = retrieval(_covering_library(), [], [])
@@ -689,14 +717,30 @@ def client(monkeypatch):
     monkeypatch.setattr(rag, "search", lambda *a, **k: [dict(r) for r in rows])
     monkeypatch.setattr(rag, "search_by_pmids", lambda q, p: [])
 
-    # A routing mistake in this fixture must fail loudly, not quietly issue
-    # real PubMed queries from the test suite.
+    # THE LIVE LANES RETURN NOTHING; THEY NO LONGER RAISE (2026-09-09).
+    #
+    # This used to raise AssertionError("the library gate routed LIVE"),
+    # because routing live was a fixture mistake worth failing loudly on. Item
+    # A inverted that premise: live IS the route for every question now, so the
+    # guard fired on every call, the job errored, and four tests about the
+    # conversation thread failed with an empty prompt list.
+    #
+    # These are not routing tests. They still must never touch NCBI, which is
+    # what stubbing the lanes achieves — returning empty instead of raising
+    # lets the real path run to completion and the library union supply the
+    # papers, so the thread assertions measure what they were written to
+    # measure.
     def _no_network(*a, **k):
-        raise AssertionError("the library gate routed LIVE — this test would "
-                             "have hit NCBI")
+        return ("", [], [])
 
-    monkeypatch.setattr(endo_ai, "fetch_cochrane", _no_network)
+    monkeypatch.setattr(endo_ai, "fetch_cochrane", lambda *a, **k: None)
     monkeypatch.setattr(endo_ai, "fetch_papers", _no_network)
+    monkeypatch.setattr(endo_ai, "fetch_untyped_recent", _no_network,
+                        raising=False)
+    monkeypatch.setattr(endo_ai, "generate_multi_search_terms",
+                        lambda q, p, context_block="": [p], raising=False)
+    monkeypatch.setattr(endo_ai, "label_and_expand", lambda q, t: t,
+                        raising=False)
     monkeypatch.setattr(rag, "get_cached_abstracts_bulk", lambda pmids: {})
     monkeypatch.setattr(app_mod, "get_cached_answer", lambda *a, **k: None,
                         raising=False)

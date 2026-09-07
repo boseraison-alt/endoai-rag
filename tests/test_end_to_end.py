@@ -173,6 +173,30 @@ def client(monkeypatch):
     monkeypatch.setattr(endo_ai, "_get_api_key", lambda: "test-key")
     monkeypatch.setattr(endo_ai, "LIBRARY_WRITE_BACK", False)
 
+    # ── THE LIVE LANES ARE STUBBED (2026-09-09, item A) ───────────────────
+    #
+    # Routing went live-by-default, so these tests — whose fixture stubbed the
+    # LIBRARY and left PubMed alone — began making real network calls on every
+    # question and timing out against `_run`'s 10-second budget. Nine of them
+    # failed as "job did not finish", which reads like a hang and was a route
+    # change.
+    #
+    # They are not routing tests; their identity is "a question reaches an
+    # answer end to end with every external dependency stubbed", and PubMed is
+    # now one of those dependencies. Stubbing the lanes empty also makes them
+    # exercise the NEW architecture honestly: the live lanes return nothing,
+    # and every paper in the answer arrives through the library union, which is
+    # exactly the path item A added and the one most worth having covered.
+    monkeypatch.setattr(endo_ai, "fetch_cochrane", lambda *a, **k: None)
+    monkeypatch.setattr(endo_ai, "fetch_papers", lambda *a, **k: ("", [], []))
+    monkeypatch.setattr(endo_ai, "fetch_untyped_recent",
+                        lambda *a, **k: ("", [], []))
+    monkeypatch.setattr(endo_ai, "generate_multi_search_terms",
+                        lambda *a, **k: ["single visit versus multiple visit"])
+    monkeypatch.setattr(endo_ai, "label_and_expand", lambda q, terms: terms)
+    monkeypatch.setattr(endo_ai, "snowball_from_reviews",
+                        lambda *a, **k: None, raising=False)
+
     app_mod.app.config["TESTING"] = True
     return app_mod.app.test_client()
 

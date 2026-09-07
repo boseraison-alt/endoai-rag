@@ -46,9 +46,27 @@ APP = (ROOT / "app.py").read_text(encoding="utf-8")
 
 
 def _live_path_body():
-    i = APP.index("def build_evidence_base_with_progress(")
-    j = APP.index("\ndef ", i + 1)
-    return APP[i:j]
+    """The live path's source — BOTH functions it now spans.
+
+    REPAIRED TO IDENTITY 2026-09-09 (rule 39). This sliced from
+    `build_evidence_base_with_progress` to the next top-level `def`, which was
+    the whole live path until item A split the PubMed lanes into
+    `_build_live_evidence` so they could be wrapped in one try/except. Ten
+    assertions here then failed for having found the wrong half of a function
+    that had simply moved.
+
+    The identity these tests assert on is "the live path", not "the body of
+    that one function", so the locator follows the delegation instead of a
+    slice: both functions, concatenated, surviving either being reordered.
+    """
+    import inspect
+
+    import app as _app
+    out = [inspect.getsource(_app.build_evidence_base_with_progress)]
+    live = getattr(_app, "_build_live_evidence", None)
+    if live is not None:
+        out.append(inspect.getsource(live))
+    return "\n".join(out)
 
 
 class TestTheLivePathDerivesItsLanes:

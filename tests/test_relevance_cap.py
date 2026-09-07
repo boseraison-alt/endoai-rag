@@ -312,10 +312,25 @@ class TestTheAuthorityGuaranteeIsGone:
         assert not hasattr(app_mod, "ensure_authoritative")
 
     def test_the_retrieval_path_no_longer_calls_it(self):
-        src = (Path(__file__).parent.parent / "app.py").read_text(encoding="utf-8")
-        body = src[src.index("def build_evidence_base_with_progress("):]
-        body = body[:body.index("    # ── Full PubMed fallback")]
-        assert "ensure_authoritative" not in body
+        """REPAIRED TO IDENTITY 2026-09-09 (rule 39).
+
+        This sliced the router's source from its `def` to the literal comment
+        `# ── Full PubMed fallback`, which item A renamed when live stopped
+        being the fallback and became the route. The slice then raised
+        `ValueError: substring not found` — a test failing on a comment.
+
+        The property was never "it is absent from the first half of that
+        function". It is "the retrieval path does not call it", so assert that
+        of the whole path, which is both stronger and has no literal left to go
+        stale.
+        """
+        import inspect
+
+        src = inspect.getsource(app_mod.build_evidence_base_with_progress)
+        live = getattr(app_mod, "_build_live_evidence", None)
+        if live is not None:
+            src += inspect.getsource(live)
+        assert "ensure_authoritative" not in src
 
     def test_why_it_went_is_written_down_where_it_used_to_be(self):
         """A guarantee that cannot fire is worse than none because it gets

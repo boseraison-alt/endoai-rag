@@ -143,7 +143,13 @@ class TestEarlyStop:
         and editorials supply; stopping early would strip exactly that."""
         import inspect
         import app
+        # The live lanes moved into `_build_live_evidence` when item A
+        # wrapped them for the library-only fallback (2026-09-09); the
+        # property is about the LIVE PATH, so read both halves.
         src = inspect.getsource(app.build_evidence_base_with_progress)
+        _live = getattr(app, "_build_live_evidence", None)
+        if _live is not None:
+            src += inspect.getsource(_live)
         assert 'mode == "review"' in src, \
             "early stop is not gated on Review mode"
 

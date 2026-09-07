@@ -7,6 +7,8 @@ Background threading so long PubMed fetches don't block the page.
 import os
 import sys
 import uuid
+
+import requests   # LIVE_OUTAGE_ERRORS, below, is built from its exceptions
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -1333,11 +1335,58 @@ RELEVANCE_GATE = {
 }
 
 
+LIBRARY_FALLBACK_LOG = "eval/logs/library_fallback.jsonl"
+
+# WHAT COUNTS AS "THE LIVE PATH FAILED" — deliberately NOT `Exception`.
+#
+# The fallback exists for one anticipated failure: PubMed is unreachable. A
+# blanket `except Exception` around 380 lines turns every programming error in
+# the live path into a silent downgrade to library-only evidence, and it did so
+# twice within an hour of being written on 2026-09-09 — first swallowing a
+# `NameError` from the imports the function split left behind, then a second
+# `NameError` in the library union. Both were found by reading the fallback log,
+# not by anything failing.
+#
+# So an outage falls back and a bug propagates. A bug that breaks the answer is
+# visible and gets fixed; a bug that quietly serves a thinner evidence base is
+# how the coverage gate went a year serving 27 of 32 questions from a library
+# missing 80% of the literature.
+LIVE_OUTAGE_ERRORS = (
+    requests.exceptions.RequestException,   # HTTP, DNS, connection, read timeout
+    TimeoutError,
+    ConnectionError,
+    OSError,                                # socket-level failures
+)
+
+
+def _log_library_fallback(question, reason):
+    """Every library-only fallback, with why. Item A, 2026-09-09.
+
+    Live-by-default makes the library the emergency route rather than the
+    normal one, and an emergency route nobody counts is how the old gate came
+    to serve 27 of 32 questions from a library missing 80% of the literature
+    without anyone noticing. If this file grows, the live path is unreliable
+    and that is a fact worth having.
+    """
+    import json as _json
+    from datetime import datetime as _dt
+    try:
+        os.makedirs(os.path.dirname(LIBRARY_FALLBACK_LOG), exist_ok=True)
+        with open(LIBRARY_FALLBACK_LOG, "a", encoding="utf-8") as fh:
+            fh.write(_json.dumps({"ts": _dt.now().isoformat(),
+                                  "question": question[:300],
+                                  "reason": str(reason)[:400]}) + "\n")
+    except Exception:
+        pass                       # a log failure must never break an answer
+    print(f"  [rag_gate] LIBRARY-ONLY FALLBACK — the live path failed: {reason}")
+
+
 def build_evidence_base_with_progress(job_id: str, question: str,
                                       force_route: str = None,
                                       mode: str = "review",
                                       context_block: str = "",
-                                      prior_pmids: list = None) -> dict:
+                                      prior_pmids: list = None,
+                                      _fallback: bool = False) -> dict:
     """
     RAG-first evidence pipeline.
     Searches the full library without level_key filter (level_key is empty
@@ -1487,14 +1536,38 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         covers_intersection = (not _cov_groups
                                or intersection >= MIN_INTERSECTION_PAPERS)
 
-        library_covers_question = (
+        # ── LIVE BY DEFAULT (2026-09-09, item A) ──────────────────────────
+        #
+        # The gate below is computed in full and logged in full, and then it
+        # does not decide the route. Every question runs the live lanes; the
+        # library joins by the union a few lines down, so nothing the library
+        # knows is lost and nothing it lacks is trusted.
+        #
+        # WHY THE DECISION WAS REMOVED RATHER THAN TUNED. A55 measured all 27
+        # LIBRARY-routed questions of the 32-question set missing live papers —
+        # a median of 80% of what the live path fetches — and the correlation
+        # between the gate's best available signal (the concept intersection)
+        # and how much was missing was r = -0.22. A gate cannot choose well
+        # between two options when it cannot tell them apart, and the cost of
+        # its two errors is not symmetric: an unnecessary live run costs
+        # $0.006 and 40-75 s, a wrongly-withheld one costs a clinician the
+        # papers that answer their question.
+        #
+        # It is still COMPUTED because it is the fallback: if the live path
+        # raises or times out, `library_only_fallback` below serves the library
+        # rather than nothing, and this is the decision that says whether that
+        # is safe to do. Every such fallback is logged with its reason.
+        gate_says_library = (
             len(rag_results) >= MIN_RAG_RESULTS
             and len(relevant) >= MIN_RAG_RELEVANT
             and has_high_tier
             and not topic_is_stale
             and covers_concepts
             and covers_intersection
-        ) if force_route != "library" else True
+        )
+        # force_route="library" still pins the library path, for eval cases
+        # that exist to measure what the library alone returns.
+        library_covers_question = (force_route == "library")
         # force_route="library" holds the library path even when coverage is
         # thin, so a library-mode eval case measures what the library actually
         # returns instead of quietly becoming a live-path case.
@@ -1521,7 +1594,13 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         if not _cov_groups:
             print("    [rag_gate:coverage] no discriminating concept in the query "
                   "— condition abstains")
-        print(f"  [rag_gate] -> {'LIBRARY' if library_covers_question else 'LIVE PUBMED'}")
+        # THE GATE'S VERDICT IS STILL PRINTED, because it is the fallback
+        # decision and because a silently-removed gate is worse than a bad one:
+        # anyone reading a log needs to see what the old router WOULD have done.
+        print(f"  [rag_gate] would-have-routed="
+              f"{'LIBRARY' if gate_says_library else 'LIVE'} | "
+              f"actual=LIVE (live-by-default, 2026-09-09)"
+              + ("  [force_route=library]" if force_route == "library" else ""))
 
         if library_covers_question:
             # ── Prior-exchange seeding (Review conversation memory) ──
@@ -1665,7 +1744,64 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             }
             return evidence
 
-    # ── Full PubMed fallback ──────────────────────────────
+    # ── THE LIVE PATH — now the route for every question ──────────────────
+    #
+    # WRAPPED, because live-by-default makes PubMed a hard dependency of every
+    # answer. If it raises or times out, the library is still a real evidence
+    # base and serving it beats serving nothing — but only as a declared
+    # emergency, logged with its reason, never as a silent preference. That
+    # distinction is the whole of item A: the library is a contributor, and the
+    # sole source only when there is no alternative.
+    #
+    # `_fallback` stops the recursion at one hop: if the library route itself
+    # fails there is nothing further to fall back to and the caller should see
+    # the real exception.
+    try:
+        return _build_live_evidence(
+            job_id, question, evidence, all_scored, smart_topic, mode,
+            context_block, force_route)
+    except LIVE_OUTAGE_ERRORS as live_error:
+        if _fallback or force_route == "live":
+            raise
+        _log_library_fallback(question, live_error)
+        return build_evidence_base_with_progress(
+            job_id, question, force_route="library", mode=mode,
+            context_block=context_block, prior_pmids=prior_pmids,
+            _fallback=True)
+
+
+def _build_live_evidence(job_id, question, evidence, all_scored, smart_topic,
+                         mode, context_block, force_route):
+    """The live PubMed lanes, plus the library union. Split out of
+    `build_evidence_base_with_progress` on 2026-09-09 so the whole of it can be
+    wrapped in one try/except without indenting 380 lines.
+
+    THE IMPORTS ARE REPEATED HERE, NOT HOISTED. The caller's are function-scoped
+    and the split left this half without them; the first run raised
+    `name 'generate_multi_search_terms' is not defined`, the new fallback
+    caught it, served the library, and logged the reason — working exactly as
+    designed and masking a plain bug in the process. That is the standing cost
+    of a fallback, and the reason every one of them is logged loudly rather
+    than swallowed.
+    """
+    from endo_ai import (
+        generate_multi_search_terms,
+        fetch_cochrane, fetch_papers,
+        tier_query_lanes, fetch_untyped_recent, PROVISIONAL_KEY,
+        _tier_cap, TIER_FETCH_DEPTH,
+        COCHRANE_TERM,
+        detect_outliers, apply_currency_tags,
+        build_synthesis_order, TIER_LABEL, TIER_ORDER,
+        flag_superseded_by_review, collapse_guideline_copies,
+        admit_scoped_guidelines, drop_off_domain, snowball_from_reviews,
+        _pubmed_audit_log,
+        label_and_expand,
+    )
+    from rag import rag_results_to_scored
+
+    # Function-local in the caller; the union below caps exactly as the
+    # library route does, so it must read the same number.
+    MAX_RAG_PAPERS_PER_TIER = RELEVANCE_GATE["max_per_tier"]
     # Generate multiple search terms for broader coverage (Feature 6)
     update_job(job_id, message="Generating multi-angle search terms...", progress=12)
     # The live path resolves an elliptical follow-up the same way the library
@@ -1962,6 +2098,72 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     # `question=` is what stops this path nominating by YEAR while the library
     # branch 300 lines up nominates by RELEVANCE — item 2. Without it the two
     # branches of the SAME function pick a different review on 27 of 29
+    # ── THE LIBRARY JOINS BY UNION (2026-09-09, item A) ───────────────────
+    #
+    # Live is now the route for every question, so the library's rows have to
+    # arrive here or they are lost. They arrive through the SAME union the
+    # library route always used — `multi_query_search` KNNs once per generated
+    # boolean and once for the question, keeping the best similarity per PMID.
+    #
+    # THE COMMENT THIS REPLACES SAID NOT TO DO THIS, and it was right about the
+    # danger: "injecting library rows past fetch_papers would be a gate bypass
+    # on exactly the path that has the least other protection". So they are not
+    # injected past the floors — `apply_evidence_floor` and the similarity floor
+    # are applied here exactly as the library route applies them, and a PMID the
+    # live lanes already returned keeps the LIVE row, which carries fresh
+    # metadata the stored row may not.
+    #
+    # Nothing the library knows is lost; nothing it lacks is trusted.
+    library_joined = 0
+    try:
+        lib_rows = multi_query_search(question, search_terms or [smart_topic],
+                                      limit=100)
+        lib_rows = drop_off_domain(lib_rows, "library")
+        seen_pmids = {str(p.get("pmid")) for p in all_scored}
+        fresh = [r for r in lib_rows
+                 if str(r.get("pmid")) not in seen_pmids
+                 and float(r.get("similarity") or 0)
+                 >= RELEVANCE_GATE["similarity_floor"]]
+        fresh = apply_evidence_floor(fresh)
+        if fresh:
+            # BUCKETED THE WAY THE LIBRARY ROUTE BUCKETS, deliberately: by
+            # study design, retracted excluded twice, an unlabelled row placed
+            # in the WEAKEST tier rather than guessed upward, and each tier
+            # capped by relevance before being ordered by score. A shortcut
+            # here would be the two builders disagreeing about what a clinician
+            # sees, by route — which is the class of defect items C and E of
+            # 2026-09-07 were opened to remove.
+            scored_lib = rag_results_to_scored(fresh)
+            by_tier_u = {}
+            for p in scored_lib:
+                tier = (p.get("level_key") or "").strip()
+                if tier == "retracted" or p.get("has_retraction"):
+                    continue
+                if tier not in TIER_ORDER:
+                    tier = "level5"
+                p["source"] = "library-union"
+                by_tier_u.setdefault(tier, []).append(p)
+            for tier in TIER_ORDER:
+                bucket = by_tier_u.get(tier)
+                if not bucket:
+                    continue
+                bucket = cap_by_relevance(bucket, MAX_RAG_PAPERS_PER_TIER, tier)
+                bucket.sort(key=lambda x: x["score"], reverse=True)
+                slot = evidence.setdefault(
+                    tier, {"text": "", "ids": [], "scored": [],
+                           "source": "library-union"})
+                slot["text"] = (slot.get("text") or "") + _scored_to_text(
+                    bucket, TIER_LABEL.get(tier, tier.upper()))
+                slot["ids"] = list(slot.get("ids") or []) + [p["pmid"]
+                                                             for p in bucket]
+                slot["scored"] = list(slot.get("scored") or []) + bucket
+                all_scored.extend(bucket)
+                library_joined += len(bucket)
+        print(f"  [union] library contributed {library_joined} row(s) the live "
+              f"lanes did not return (from {len(lib_rows)} candidates)")
+    except Exception as e:
+        print(f"  [union] library union skipped: {e}")
+
     # questions, and the blind panel preferred the relevance pick 23 times.
     flag_superseded_by_review(evidence, question=question)
     # A54 — snowball AFTER the PRISMA pass: it reuses that

@@ -238,7 +238,14 @@ class TestTheConditionIsActuallyWiredIntoTheGate:
 
     def _gate_expression(self):
         src = (ROOT / "app.py").read_text(encoding="utf-8")
-        i = src.index("library_covers_question = (")
+        # REPAIRED TO IDENTITY 2026-09-09 (rule 39). Item A made routing
+        # live-by-default, so `library_covers_question` is no longer the
+        # expression these conditions feed. They now feed
+        # `gate_says_library`, which decides whether the LIBRARY-ONLY
+        # FALLBACK is safe to take when the live path fails -- still a
+        # real decision, and one that must break if a condition is
+        # deleted. That is what this test has always been for.
+        i = src.index("gate_says_library = (")
         j = src.index("if force_route", i)
         return src[i:j]
 
@@ -271,8 +278,14 @@ class TestTheGateSaysWhatItDecided:
     class this whole batch keeps finding."""
 
     def test_every_condition_reports_its_own_verdict(self):
+        # REPAIRED TO IDENTITY 2026-09-09 (rule 39). The end anchor was the
+        # literal `-> {'LIBRARY'` from the old route line, which item A
+        # replaced with `would-have-routed=`. The slice raised ValueError — a
+        # test failing on a log string, not on a missing verdict. Anchored on
+        # the gate's own decision variable instead, which is what the block is
+        # about and cannot be reworded without changing the code it checks.
         src = (ROOT / "app.py").read_text(encoding="utf-8")
-        block = src[src.index("[rag_gate] hits="):src.index("-> {'LIBRARY'")]
+        block = src[src.index("[rag_gate] hits="):src.index("would-have-routed")]
         for condition in ("hits=", "relevant=", "high_tier=", "newest=", "concepts>="):
             assert condition in block, "the gate log does not report %s" % condition
         assert "_v(" in block, "the log states values without a pass/fail verdict"

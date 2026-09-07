@@ -354,12 +354,18 @@ def run_case_with_synthesis(case):
     pinned = case.get("force_route")
 
     def _pinned_builder(job_id, question, force_route=None, mode="review",
-                        context_block="", prior_pmids=None):
+                        context_block="", prior_pmids=None, _fallback=False):
         # Eval cases are single questions with no thread, so these are always
         # empty in practice — but they are forwarded rather than dropped, so a
         # future conversational case measures the real builder's behaviour.
+        #
+        # `_fallback` (2026-09-09, item A) marks the one-hop library-only retry
+        # taken when the live path fails. It MUST be forwarded: swallowing it
+        # would let the retry recurse, and a harness that silently differs from
+        # the builder is how an eval stops measuring the product.
         return original(job_id, question, force_route=pinned, mode=mode,
-                        context_block=context_block, prior_pmids=prior_pmids)
+                        context_block=context_block, prior_pmids=prior_pmids,
+                        _fallback=_fallback)
 
     app_mod.build_evidence_base_with_progress = _pinned_builder
     app_mod.get_cached_answer = lambda *a, **k: None

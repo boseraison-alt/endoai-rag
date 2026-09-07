@@ -15004,12 +15004,24 @@ Return only the letter text, no extra commentary."""
 
 
 # ── SAVE ANSWERS ─────────────────────────────────────────
+# Where served answers are archived. A MODULE-LEVEL PATH so the test suite can
+# redirect it, exactly as `_EVMAP_LOG_PATH` and the three other audit trails are
+# redirected in `tests/conftest.py`.
+#
+# It was a hard-coded "answers" until 2026-09-09, when two 715-byte stub answers
+# written by the suite landed in the production archive and were then picked up
+# by `test_review_context.real_answer`, which reads the MOST RECENT stored
+# answer — so a test fixture consumed another test's output and failed on it.
+# 173 real answers sit in that directory; a test run must not add a 174th.
+_ANSWERS_DIR = "answers"
+
+
 def save_answer(question, answer, evidence):
-    if not os.path.exists("answers"):
-        os.makedirs("answers")
+    if not os.path.exists(_ANSWERS_DIR):
+        os.makedirs(_ANSWERS_DIR)
 
     timestamp    = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename     = f"answers/answer_{timestamp}.txt"
+    filename     = os.path.join(_ANSWERS_DIR, f"answer_{timestamp}.txt")
     total_papers = sum(len(v["ids"]) for k, v in evidence.items()
                        if k != "_summary" and "ids" in v)
     summary      = evidence.get("_summary", {})

@@ -48,6 +48,18 @@ PROBE3 = ("Mature molar with a failed root canal retreatment. The patient asks "
           "for extraction and an implant. How should this be decided?")
 
 
+def _scope_terms(gid):
+    """The scope vocabulary of a manifest record, matched the way `rule_b`
+    matches it. Shared by the two tests below so the example and the rule can
+    never drift apart."""
+    rec = M.manifest().get(gid, {})
+    terms = set()
+    for t in E._scope_terms_with_synonyms(rec.get("scope")):
+        terms |= {w for w in t.lower().split() if len(w) > 2}
+        terms.add(t.lower())
+    return terms
+
+
 class TestTheQuestionsDomainNouns:
 
     def test_a_trauma_question_names_its_subject(self):
@@ -76,10 +88,22 @@ class TestTheThresholdIsWhatItClaims:
         assert "IADT-FRACTURES-LUXATIONS-2020" in M.rule_b(PROBE2, need=2)
 
     def test_one_shared_term_does_not(self):
-        """ESE-TRAUMA-2021 shares only `pulp`. Under the batch's >= 2 rule it
-        is not admitted — which is why the probe cannot reach 3/3."""
-        assert "ESE-TRAUMA-2021" not in M.rule_b(PROBE2, need=2)
-        assert "ESE-TRAUMA-2021" in M.rule_b(PROBE2, need=1)
+        """A document sharing exactly ONE domain noun is admitted at need=1 and
+        not at need=2.
+
+        RE-EXAMPLED 2026-09-07 (rule 39). This used `ESE-TRAUMA-2021` on
+        probe 2, which shared only `pulp` — until RB widened the trauma scopes
+        in `3224b76` so both trauma guidelines name crown fracture. That was
+        the manifest correction this repo's own 2026-09-08 report asked for, so
+        the example was fixed, not the property.
+
+        `ESE-S3-2023` on probe 3 shares exactly `retreatment`. The precondition
+        is asserted rather than assumed, so the next manifest edit that moves it
+        fails here loudly instead of quietly testing nothing.
+        """
+        assert len(M.domain_nouns_in(PROBE3) & _scope_terms("ESE-S3-2023")) == 1
+        assert "ESE-S3-2023" not in M.rule_b(PROBE3, need=2)
+        assert "ESE-S3-2023" in M.rule_b(PROBE3, need=1)
 
     def test_the_threshold_is_actually_consulted(self):
         """MUTATION CHECK, by running the rule at both thresholds rather than
@@ -89,12 +113,25 @@ class TestTheThresholdIsWhatItClaims:
             "applied")
 
     def test_zero_shared_terms_is_never_admitted_at_any_threshold(self):
-        """AAE-TRAUMA-2026 declares avulsion, luxation and root fracture — not
-        crown fracture. No scope rule can admit it for probe 2, and this is
-        why the done-when as written is unreachable: the WATCH list asks for a
-        document whose own manifest says it is not about this question."""
+        """A document sharing NO domain noun cannot be admitted by scope at any
+        threshold — the case where a watch list asks for a document whose own
+        manifest says it is not about the question.
+
+        RE-EXAMPLED 2026-09-07 (rule 39). This used `AAE-TRAUMA-2026` on
+        probe 2, whose scope was `avulsion, luxation, root fracture` and did not
+        name crown fracture. RB corrected that scope in `3224b76`; it now shares
+        two terms and IS admitted, which is the outcome the 2026-09-08 report
+        argued for.
+
+        `ACP-ASYMPTOMATIC-EXTRACTION-2016` on probe 3 is the surviving case, and
+        it is a vocabulary gap rather than a scope error: it says "failing
+        endodontic treatment" where the question says "failed root canal
+        retreatment".
+        """
+        gid = "ACP-ASYMPTOMATIC-EXTRACTION-2016"
+        assert not (M.domain_nouns_in(PROBE3) & _scope_terms(gid))
         for need in (1, 2, 3):
-            assert "AAE-TRAUMA-2026" not in M.rule_b(PROBE2, need=need)
+            assert gid not in M.rule_b(PROBE3, need=need)
 
 
 class TestNothingRetiredIsEverAdmitted:

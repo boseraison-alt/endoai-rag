@@ -111,7 +111,10 @@ class TestTheIntersectionItself:
         """A helper nothing calls is the defect rule 14 exists for."""
         src = open(os.path.join(os.path.dirname(os.path.dirname(
             os.path.abspath(__file__))), "app.py"), encoding="utf-8").read()
-        i = src.index("library_covers_question = (")
+        # REPAIRED TO IDENTITY 2026-09-09 (rule 39): the conditions moved
+        # from the routing decision to the fallback decision when item A
+        # made routing live-by-default. See test_coverage_gate.py.
+        i = src.index("gate_says_library = (")
         j = src.index(")", src.index("force_route", i))
         assert "covers_intersection" in src[i:j + 200], (
             "the intersection is computed but not part of the decision")

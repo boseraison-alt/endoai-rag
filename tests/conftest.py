@@ -80,6 +80,12 @@ def _audit_logs_stay_out_of_the_repo(tmp_path_factory):
     # than after a test run had polluted the production record — which is what
     # happened to each of the four below.
     endo_ai._TERM_DEGRADE_LOG_PATH = str(d / "term_degradation.jsonl")
+    # The served-answer archive is the fifth. Two stub answers from a
+    # suite run reached `answers/` on 2026-09-09 and were then read back
+    # by `test_review_context.real_answer`, whose whole job is to pick
+    # up the most recent REAL answer — a test failing on another test's
+    # output, in a directory holding 173 genuine ones.
+    endo_ai._ANSWERS_DIR = str(d / "answers")
 
     # The fourth, found in `case-v3` by noticing a stray `c.md` in `git status`
     # twice. The eval harness saves every case answer it generates so an
