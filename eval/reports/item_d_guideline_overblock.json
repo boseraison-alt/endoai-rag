@@ -1,0 +1,24 @@
+{
+ "block_set": 45,
+ "over_blocked": {},
+ "unknown": {},
+ "drop_events": {
+  "ESE-QG-2006": 147,
+  "IADT-AVULSION-2012": 158,
+  "IADT-AVULSION-2007": 173,
+  "AAE-MRONJ-2026": 81,
+  "IADT-FRACTURES-LUXATIONS-2012": 80,
+  "COCHRANE-CD005296": 80,
+  "AAE-VPT-2021": 34,
+  "30664240": 3,
+  "COCHRANE-CD004969": 9,
+  "AAE-TRAUMA-2026": 3,
+  "ESE-EXTRUSION-REPLANT-2021": 4,
+  "ESE-DEEPCARIES-2019": 1,
+  "ESE-TRAUMA-2021": 3,
+  "AAE-ANTIBIOTICS-2017": 1,
+  "ESE-ECR-2018": 1
+ },
+ "events_correct": 563,
+ "events_overblock": 215
+}

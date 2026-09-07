@@ -1038,6 +1038,88 @@ _NON_CURRENT_GUIDELINES = None
 CURRENT_GUIDELINE_STATUSES = frozenset({"current", "current_but_stale"})
 
 
+_GUIDELINE_POINTER_RE = re.compile(r"^\s*(?:re-keyed|duplicate_of)\b[:\s]*(.*)",
+                                   re.I)
+# The stub's reason is prose on one side and a bare key on the other:
+#   "re-keyed: this document is 36512807"   ->  36512807
+#   "duplicate_of:30664240"                 ->  30664240
+_POINTER_TARGET_RE = re.compile(r"([0-9]{5,9}|[A-Z][A-Z0-9-]{5,})\s*$")
+
+
+def _pointer_target(quarantine_reason):
+    """The key a forwarding stub points at, or None if it is not a stub."""
+    m = _GUIDELINE_POINTER_RE.match(quarantine_reason or "")
+    if not m:
+        return None
+    t = _POINTER_TARGET_RE.search(m.group(1).strip())
+    return t.group(1) if t else None
+
+
+def _disqualified_keys(rows, lookup_rows=()):
+    """Rows -> the set of keys that must never be served.
+
+    `rows` are the guideline rows, each of which can contribute keys.
+    `lookup_rows` only resolve forwarding pointers and contribute nothing.
+
+    They are separate because a re-keyed guideline does not necessarily land
+    on the guideline ladder: `COCHRANE-CD005296` re-keys to PMID 36512807,
+    whose row is banded `cochrane`. Resolving pointers against the guideline
+    rows alone left that target unfindable, and an unresolvable pointer is
+    treated as disqualifying — so the fix's first version still blocked the
+    two Cochrane reviews it was written to release. Scanning every row instead
+    is not an option: an ordinary paper has no `guideline_status`, so a blank
+    status would disqualify the entire library.
+    """
+    def rec(row, emits):
+        pmid, gid, status, quar, sup = row
+        r = {"pmid": str(pmid or "").strip(), "gid": str(gid or "").strip(),
+             "status": (status or "").strip(), "quar": quar or "",
+             "sup": sup or "", "emits": emits}
+        r["target"] = _pointer_target(r["quar"])
+        # Disqualified on its OWN facts, ignoring any forwarding pointer.
+        r["bad_own"] = bool(
+            r["status"] not in CURRENT_GUIDELINE_STATUSES
+            or r["sup"]
+            or (r["quar"] and r["target"] is None))
+        return r
+
+    by_key, recs = {}, []
+    for row in rows:
+        recs.append(rec(row, True))
+    for row in lookup_rows:
+        recs.append(rec(row, False))
+    for r in recs:
+        for k in (r["pmid"], r["gid"]):
+            if k:
+                by_key.setdefault(k, []).append(r)
+
+    def bad(rec, seen):
+        if rec["bad_own"]:
+            return True
+        if not rec["target"]:
+            return False
+        # Follow the forwarding address. `seen` stops a stub cycle from
+        # recursing; an unresolvable target is treated as disqualifying,
+        # because a pointer into nothing is not evidence that the document is
+        # fine.
+        key = rec["target"]
+        if key in seen:
+            return True
+        seen = seen | {key}
+        targets = by_key.get(key)
+        if not targets:
+            return True
+        return any(bad(t, seen) for t in targets)
+
+    keys = set()
+    for r in recs:
+        if r["emits"] and bad(r, {r["pmid"], r["gid"]} - {""}):
+            for k in (r["pmid"], r["gid"]):
+                if k:
+                    keys.add(k)
+    return keys
+
+
 def non_current_guideline_keys():
     """{pmid or manifest id} for every guideline row that must never be served.
 
@@ -1045,6 +1127,26 @@ def non_current_guideline_keys():
     `quarantine_reason`, OR it names a `superseded_by`. Three independent
     facts, stored in three places, any one of which is disqualifying —
     `ESE-QG-2006` carries two of them and reached 21 pools anyway.
+
+    EXCEPT that one quarantine reason is not a verdict. When a document is
+    re-keyed from its manifest slug to its real PMID the old row stays behind
+    as a forwarding stub:
+
+        pmid='COCHRANE-CD005296'  status='current'
+        quarantine_reason='re-keyed: this document is 36512807'
+
+    Read as a disqualification that stub put its own SLUG into this set, and
+    the guard then dropped the only row carrying that slug — the current,
+    re-keyed document itself. The v8 baseline caught it: 215 of 778 drop
+    events (28%) were current guidelines, `COCHRANE-CD005296` 80 times, and
+    `AAE-TRAUMA-2026` — the document item E's probe watches — three times.
+
+    A POINTER IS NOT A DOCUMENT. `re-keyed:` and `duplicate_of:` are
+    forwarding addresses, so a stub is disqualified exactly when the document
+    it points AT is disqualified. That keeps every genuine block: the
+    `ESE-PS-VPT-2019` stub says `duplicate_of:30664240`, and 30664240 is
+    `superseded_in_content`, so its slug stays blocked and a row arriving
+    under the old key is still refused.
     """
     global _NON_CURRENT_GUIDELINES
     if _NON_CURRENT_GUIDELINES is None:
@@ -1053,22 +1155,36 @@ def non_current_guideline_keys():
             conn = get_conn()
             cur = conn.cursor()
             try:
+                # EVERY guideline row, not just the disqualified ones: a stub's
+                # verdict depends on a row the old WHERE clause filtered out.
                 cur.execute("""
-                    SELECT pmid, COALESCE(guideline_id,'')
+                    SELECT pmid, COALESCE(guideline_id,''),
+                           LOWER(COALESCE(guideline_status,'')),
+                           COALESCE(quarantine_reason,''),
+                           COALESCE(superseded_by,'')
                     FROM endo_papers_rag
                     WHERE level_key = 'guideline'
-                      AND (LOWER(COALESCE(guideline_status,'')) NOT IN
-                               ('current', 'current_but_stale')
-                           OR COALESCE(quarantine_reason,'') <> ''
-                           OR COALESCE(superseded_by,'') <> '')
                 """)
-                keys = set()
-                for pmid, gid in cur.fetchall():
-                    if pmid:
-                        keys.add(str(pmid).strip())
-                    if gid:
-                        keys.add(str(gid).strip())
-                _NON_CURRENT_GUIDELINES = keys
+                rows = cur.fetchall()
+                # Resolve forwarding pointers wherever their target is banded.
+                # A re-keyed guideline can land on any ladder — CD005296 lands
+                # on `cochrane` — and these rows resolve pointers only; they
+                # never contribute keys of their own.
+                targets = sorted({t for t in (_pointer_target(r[3])
+                                              for r in rows) if t})
+                lookup = ()
+                if targets:
+                    cur.execute("""
+                        SELECT pmid, COALESCE(guideline_id,''),
+                               LOWER(COALESCE(guideline_status,'')),
+                               COALESCE(quarantine_reason,''),
+                               COALESCE(superseded_by,'')
+                        FROM endo_papers_rag
+                        WHERE level_key <> 'guideline'
+                          AND (pmid = ANY(%s) OR guideline_id = ANY(%s))
+                    """, (targets, targets))
+                    lookup = cur.fetchall()
+                _NON_CURRENT_GUIDELINES = _disqualified_keys(rows, lookup)
             finally:
                 cur.close()
                 conn.close()

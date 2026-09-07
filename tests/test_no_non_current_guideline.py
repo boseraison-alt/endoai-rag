@@ -183,3 +183,152 @@ class TestEveryPathIsGuarded:
         assert E.drop_non_current_guidelines(
             [{"pmid": "30664240", "guideline_id": "ESE-DEEPCARIES-2019"}],
             "snowball") == []
+
+
+# ── the over-block the v8 baseline found ─────────────────────────────────────
+# The guard above shipped reading `quarantine_reason <> ''` as disqualifying.
+# One quarantine reason is not a verdict: when a document is re-keyed from its
+# manifest slug to its real PMID, the old row stays behind as a forwarding stub
+# carrying `re-keyed: this document is <pmid>` — and status `current`. Read as
+# a disqualification, the stub put its own SLUG into the block set, and the
+# guard then dropped the only row carrying that slug: the current document.
+#
+# The v8 baseline measured the cost: 215 of 778 drop events (28%) were current
+# guidelines. `COCHRANE-CD005296` — PMID 36512807, the row
+# `single-vs-multiple-visit` pins with must_include_pmid — was blocked 80
+# times, and `AAE-TRAUMA-2026`, the document item E's crown-fracture probe
+# watches, three times.
+#
+# These run on FIXTURES, not the database. The over-block existed for hours in
+# a guard whose tests all passed, because every one of them asked the database
+# what it thought rather than asking the rule what it does.
+ROW = ("pmid", "gid", "status", "quar", "sup")
+
+
+def row(pmid, gid="", status="current", quar="", sup=""):
+    return (pmid, gid, status, quar, sup)
+
+
+class TestAPointerIsNotADocument:
+
+    def test_a_rekey_stub_does_not_block_its_own_slug(self):
+        """The defect, minimally: stub alone, target current and elsewhere."""
+        rows = [row("COCHRANE-CD005296", "",
+                    quar="re-keyed: this document is 36512807")]
+        lookup = [row("36512807", "COCHRANE-CD005296")]
+        keys = E._disqualified_keys(rows, lookup)
+        assert "COCHRANE-CD005296" not in keys, (
+            "the forwarding stub blocked the current document it points at")
+        assert "36512807" not in keys
+
+    def test_the_target_may_live_on_another_ladder(self):
+        """CD005296 re-keys onto `cochrane`, not `guideline`. The first fix
+        looked for targets among the guideline rows only, could not find it,
+        and treated the unresolvable pointer as disqualifying — so it still
+        blocked the two Cochrane reviews it was written to release."""
+        rows = [row("COCHRANE-CD005296", "",
+                    quar="re-keyed: this document is 36512807")]
+        assert "COCHRANE-CD005296" in E._disqualified_keys(rows, []), (
+            "an unresolvable pointer must stay blocked — a pointer into "
+            "nothing is not evidence the document is fine")
+        assert "COCHRANE-CD005296" not in E._disqualified_keys(
+            rows, [row("36512807", "COCHRANE-CD005296")])
+
+    def test_a_stub_pointing_at_a_superseded_document_still_blocks(self):
+        """THE OTHER HALF, and the one that makes this safe. The
+        `ESE-PS-VPT-2019` stub says `duplicate_of:30664240`, and 30664240 is
+        superseded_in_content — so the old slug must stay refused."""
+        rows = [row("ESE-PS-VPT-2019", "", status="",
+                    quar="duplicate_of:30664240"),
+                row("30664240", "ESE-DEEPCARIES-2019",
+                    status="superseded_in_content",
+                    sup="EFCD-ESE-ORCA-DEEPCARIES-2026")]
+        keys = E._disqualified_keys(rows)
+        assert "ESE-PS-VPT-2019" in keys
+        assert "30664240" in keys
+        assert "ESE-DEEPCARIES-2019" in keys
+
+    def test_a_current_stub_pointing_at_a_superseded_document_blocks(self):
+        """Status `current` on the stub must not rescue it: the stub is not
+        the document, so the target's supersession is what counts."""
+        rows = [row("OLD-SLUG-2001", "", status="current",
+                    quar="re-keyed: this document is 17180780"),
+                row("17180780", "ESE-QG-2006", status="superseded",
+                    sup="ESE-S3-2023")]
+        assert "OLD-SLUG-2001" in E._disqualified_keys(rows)
+
+    def test_a_real_quarantine_is_still_a_verdict(self):
+        """Only the two forwarding forms are pointers. Everything else in
+        `quarantine_reason` disqualifies exactly as before."""
+        for reason in ("withdrawn: the publisher has retracted it",
+                       "no_such_document: A2: no AAE document",
+                       "wrong_year: A2: stored as 2021",
+                       "draft: not a published guideline"):
+            keys = E._disqualified_keys([row("X-2020", "", quar=reason)])
+            assert "X-2020" in keys, "%r stopped disqualifying" % reason
+
+    def test_status_and_supersession_still_disqualify_alone(self):
+        assert "A" in E._disqualified_keys([row("A", "", status="superseded")])
+        assert "B" in E._disqualified_keys([row("B", "", status="withdrawn")])
+        assert "C" in E._disqualified_keys([row("C", "", sup="D-2025")])
+        assert "E" in E._disqualified_keys([row("E", "", status="")])
+
+    def test_a_clean_current_row_is_never_blocked(self):
+        """The control arm. Without it every assertion here could be passing
+        because the function blocks nothing at all."""
+        assert E._disqualified_keys([row("37772327", "ESE-S3-2023")]) == set()
+
+    def test_a_pointer_cycle_terminates_and_blocks(self):
+        """Two stubs pointing at each other must not recurse forever, and an
+        unresolvable chain is disqualifying rather than silently clean."""
+        rows = [row("SLUG-A", "", quar="re-keyed: this document is SLUG-B"),
+                row("SLUG-B", "", quar="re-keyed: this document is SLUG-A")]
+        keys = E._disqualified_keys(rows)
+        assert "SLUG-A" in keys and "SLUG-B" in keys
+
+    def test_the_pointer_parser_reads_both_stored_forms(self):
+        assert E._pointer_target(
+            "re-keyed: this document is 36512807") == "36512807"
+        assert E._pointer_target("duplicate_of:30664240") == "30664240"
+        assert E._pointer_target(
+            "re-keyed: this document is AAE-TRAUMA-2026") == "AAE-TRAUMA-2026"
+        assert E._pointer_target("withdrawn: the publisher pulled it") is None
+        assert E._pointer_target("") is None
+        assert E._pointer_target(None) is None
+
+
+class TestTheNineReleasedRows:
+    """By name, against the live database. These are the documents the guard
+    was blocking, and each one is current."""
+
+    RELEASED = ["AAE-MRONJ-2026", "AAE-TRAUMA-2026", "AAE-VPT-2021",
+                "ACP-PARAMETERS-OF-CARE-2020", "COCHRANE-CD004969",
+                "COCHRANE-CD005296", "ESE-ECR-2018",
+                "ESE-EXTRUSION-REPLANT-2021", "ESE-TRAUMA-2021"]
+
+    @pytest.mark.skipif(not rag.DATABASE_URL, reason="DATABASE_URL not set")
+    def test_none_of_the_nine_is_blocked(self):
+        E._reset_non_current_guidelines()
+        keys = E.non_current_guideline_keys()
+        assert keys, "empty block set would make this pass vacuously"
+        still = [k for k in self.RELEASED if k in keys]
+        assert not still, "still blocking current guideline(s): %s" % still
+
+    @pytest.mark.skipif(not rag.DATABASE_URL, reason="DATABASE_URL not set")
+    def test_the_pinned_cochrane_review_survives_the_guard(self):
+        """PMID 36512807 is `single-vs-multiple-visit`'s must_include_pmid and
+        the batch named it as a criterion to leave alone. The guard was
+        dropping the library's copy of it 80 times across the v8 runs."""
+        kept = E.drop_non_current_guidelines(
+            [{"pmid": "36512807", "guideline_id": "COCHRANE-CD005296"}],
+            "test")
+        assert len(kept) == 1
+
+    @pytest.mark.skipif(not rag.DATABASE_URL, reason="DATABASE_URL not set")
+    def test_the_five_leaked_rows_are_still_blocked(self):
+        """Item 3's whole point, re-asserted after loosening the rule."""
+        E._reset_non_current_guidelines()
+        keys = E.non_current_guideline_keys()
+        for pmid in ("22409417", "17180780", "17511833", "22230724",
+                     "30664240"):
+            assert pmid in keys, "%s came back" % pmid

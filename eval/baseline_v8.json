@@ -1,0 +1,3563 @@
+{
+ "_README": "v8 \u2014 the first baseline taken with routing LIVE BY DEFAULT (2026-09-09). Every `force_route: library` pin was removed from questions.json before this ran, and 14 `expect.route` values were flipped library->live because that criterion was the routing pin wearing a different hat. Every other criterion \u2014 the 36512807 expectation, every min_papers floor \u2014 was left untouched, so a case failing one of those is a FINDING, not a tuning target. RETRIEVAL-ONLY: answer-level assertions (must_contain, banner, modules_non_empty) were NOT evaluated, exactly as in v7, which is what makes the two comparable.",
+ "label": "v8",
+ "routing_mode": "live-default",
+ "commit": "c331f77",
+ "n_runs": 3,
+ "mode": [
+  "RETRIEVAL-ONLY"
+ ],
+ "runs": [
+  {
+   "log": "v8_run1.log",
+   "imported": "2026-09-07T13:25:38",
+   "passed": 24,
+   "n": 29,
+   "term_cache_hits": 27
+  },
+  {
+   "log": "v8_run2.log",
+   "imported": "2026-09-07T13:59:52",
+   "passed": 23,
+   "n": 29,
+   "term_cache_hits": 29
+  },
+  {
+   "log": "v8_run3.log",
+   "imported": "2026-09-07T14:34:51",
+   "passed": 23,
+   "n": 29,
+   "term_cache_hits": 29
+  }
+ ],
+ "route_readings": {
+  "inferred": {
+   "live": 87
+  },
+  "recorded": {
+   "live": 87
+  },
+  "disagreements": 0,
+  "fallback_log": "C:\\Users\\boser\\endo-ai-rag\\eval\\logs\\library_fallback.jsonl last written 2026-09-07T07:56:18; first run imported 2026-09-07T13:25:38",
+  "fell_back_during_runs": false
+ },
+ "failed_3_of_3": [
+  "apdt-primary-molars",
+  "intentional-replantation",
+  "pregnancy",
+  "sdf-pulp-outcomes"
+ ],
+ "failed_intermittently": [
+  "bisphosphonates",
+  "case-opening-full",
+  "dens-invaginatus",
+  "retreatment-vs-microsurgery"
+ ],
+ "cases": {
+  "apdt-primary-molars": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    false,
+    false,
+    false
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 35,
+     "level2": 6,
+     "level3a": 11,
+     "level3": 3,
+     "level3b": 2,
+     "level4": 8,
+     "invitro": 15,
+     "guideline": 26,
+     "level5": 11,
+     "observational": 5
+    },
+    {
+     "level1": 35,
+     "level2": 6,
+     "level3a": 8,
+     "level3": 3,
+     "level3b": 1,
+     "level4": 8,
+     "invitro": 13,
+     "guideline": 26,
+     "level5": 14,
+     "observational": 8
+    },
+    {
+     "level1": 35,
+     "level2": 9,
+     "level3a": 13,
+     "level3": 3,
+     "level3b": 1,
+     "level4": 7,
+     "invitro": 11,
+     "guideline": 21,
+     "level5": 27,
+     "observational": 10
+    }
+   ],
+   "papers": {
+    "runs": [
+     122,
+     122,
+     137
+    ],
+    "min": 122,
+    "max": 137
+   },
+   "esearch_hits": {
+    "runs": [
+     227,
+     285,
+     437
+    ],
+    "min": 227,
+    "max": 437
+   },
+   "esearch_queries": {
+    "runs": [
+     101,
+     101,
+     101
+    ],
+    "min": 101,
+    "max": 101
+   },
+   "esearch_empty": {
+    "runs": [
+     59,
+     56,
+     59
+    ],
+    "min": 56,
+    "max": 59
+   },
+   "hits_per_query": {
+    "runs": [
+     2.2,
+     2.8,
+     4.3
+    ],
+    "min": 2.2,
+    "max": 4.3
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     54,
+     52,
+     53
+    ],
+    "min": 52,
+    "max": 54
+   },
+   "failing_criteria": [
+    "56/101 queries (55%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "59/101 queries (58%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "esearch returned 2.2 hits/query < 5 (227 over 101 queries) \u2014 the laser regression's real signature",
+    "esearch returned 2.8 hits/query < 5 (285 over 101 queries) \u2014 the laser regression's real signature",
+    "esearch returned 4.3 hits/query < 5 (437 over 101 queries) \u2014 the laser regression's real signature"
+   ]
+  },
+  "bioceramic-vs-resin-sealer": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 43,
+     "classic": 1,
+     "level2": 22,
+     "level3a": 30,
+     "level3": 18,
+     "level4": 5,
+     "invitro": 25,
+     "guideline": 12,
+     "level5": 5,
+     "provisional": 10
+    },
+    {
+     "level1": 43,
+     "classic": 1,
+     "level2": 19,
+     "level3a": 20,
+     "level3": 16,
+     "level4": 3,
+     "invitro": 25,
+     "guideline": 14,
+     "level5": 2,
+     "provisional": 10
+    },
+    {
+     "level1": 43,
+     "classic": 1,
+     "level2": 11,
+     "level3a": 20,
+     "level3": 16,
+     "level4": 4,
+     "invitro": 25,
+     "guideline": 13,
+     "level5": 4,
+     "provisional": 10
+    }
+   ],
+   "papers": {
+    "runs": [
+     171,
+     153,
+     147
+    ],
+    "min": 147,
+    "max": 171
+   },
+   "esearch_hits": {
+    "runs": [
+     937,
+     867,
+     745
+    ],
+    "min": 745,
+    "max": 937
+   },
+   "esearch_queries": {
+    "runs": [
+     32,
+     29,
+     35
+    ],
+    "min": 29,
+    "max": 35
+   },
+   "esearch_empty": {
+    "runs": [
+     9,
+     6,
+     11
+    ],
+    "min": 6,
+    "max": 11
+   },
+   "hits_per_query": {
+    "runs": [
+     29.3,
+     29.9,
+     21.3
+    ],
+    "min": 21.3,
+    "max": 29.9
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     111,
+     93,
+     96
+    ],
+    "min": 93,
+    "max": 111
+   }
+  },
+  "bisphosphonate-extraction-vs-rct-treatment": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 43,
+     "classic": 1,
+     "level2": 23,
+     "level3a": 31,
+     "level3": 3,
+     "level3b": 1,
+     "level4": 11,
+     "invitro": 3,
+     "guideline": 27,
+     "level5": 7,
+     "observational": 7
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 1,
+     "level2": 17,
+     "level3a": 35,
+     "level3": 4,
+     "level3b": 8,
+     "level4": 12,
+     "guideline": 38,
+     "level5": 8,
+     "observational": 7
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 3,
+     "level2": 31,
+     "level3a": 35,
+     "level3": 10,
+     "level3b": 9,
+     "level4": 11,
+     "invitro": 1,
+     "guideline": 38,
+     "level5": 7,
+     "observational": 9
+    }
+   ],
+   "papers": {
+    "runs": [
+     157,
+     174,
+     198
+    ],
+    "min": 157,
+    "max": 198
+   },
+   "esearch_hits": {
+    "runs": [
+     435,
+     520,
+     740
+    ],
+    "min": 435,
+    "max": 740
+   },
+   "esearch_queries": {
+    "runs": [
+     76,
+     72,
+     82
+    ],
+    "min": 72,
+    "max": 82
+   },
+   "esearch_empty": {
+    "runs": [
+     31,
+     12,
+     16
+    ],
+    "min": 12,
+    "max": 31
+   },
+   "hits_per_query": {
+    "runs": [
+     5.7,
+     7.2,
+     9.0
+    ],
+    "min": 5.7,
+    "max": 9.0
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     80,
+     85,
+     103
+    ],
+    "min": 80,
+    "max": 103
+   }
+  },
+  "bisphosphonates": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    false
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 32,
+     "classic": 3,
+     "level2": 9,
+     "level3a": 11,
+     "level3": 2,
+     "level3b": 1,
+     "level4": 1,
+     "invitro": 1,
+     "guideline": 33,
+     "level5": 3
+    },
+    {
+     "cochrane": 1,
+     "level1": 40,
+     "classic": 3,
+     "level2": 9,
+     "level3a": 18,
+     "level3": 1,
+     "level3b": 1,
+     "level4": 1,
+     "invitro": 1,
+     "guideline": 33,
+     "level5": 4
+    },
+    {
+     "cochrane": 2,
+     "level1": 37,
+     "classic": 3,
+     "level2": 12,
+     "level3a": 19,
+     "level3": 3,
+     "level3b": 5,
+     "level4": 6,
+     "invitro": 1,
+     "guideline": 33,
+     "level5": 8,
+     "observational": 6
+    }
+   ],
+   "papers": {
+    "runs": [
+     96,
+     112,
+     135
+    ],
+    "min": 96,
+    "max": 135
+   },
+   "esearch_hits": {
+    "runs": [
+     265,
+     213,
+     444
+    ],
+    "min": 213,
+    "max": 444
+   },
+   "esearch_queries": {
+    "runs": [
+     37,
+     42,
+     90
+    ],
+    "min": 37,
+    "max": 90
+   },
+   "esearch_empty": {
+    "runs": [
+     10,
+     14,
+     34
+    ],
+    "min": 10,
+    "max": 34
+   },
+   "hits_per_query": {
+    "runs": [
+     7.2,
+     5.1,
+     4.9
+    ],
+    "min": 4.9,
+    "max": 7.2
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     44,
+     62,
+     62
+    ],
+    "min": 44,
+    "max": 62
+   },
+   "failing_criteria": [
+    "esearch returned 4.9 hits/query < 5 (444 over 90 queries) \u2014 the laser regression's real signature"
+   ]
+  },
+  "case-opening-full": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    false,
+    false
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 57,
+     "classic": 5,
+     "level2": 31,
+     "level3a": 38,
+     "level3": 8,
+     "level3b": 6,
+     "level4": 11,
+     "invitro": 4,
+     "guideline": 32,
+     "level5": 8,
+     "observational": 8
+    },
+    {
+     "cochrane": 1,
+     "level1": 57,
+     "classic": 5,
+     "level2": 21,
+     "level3a": 38,
+     "level3": 3,
+     "level3b": 6,
+     "level4": 12,
+     "invitro": 3,
+     "guideline": 24,
+     "level5": 6,
+     "observational": 8
+    },
+    {
+     "cochrane": 1,
+     "level1": 57,
+     "classic": 4,
+     "level2": 13,
+     "level3a": 38,
+     "level3": 4,
+     "level3b": 3,
+     "level4": 13,
+     "invitro": 4,
+     "guideline": 28,
+     "level5": 10,
+     "observational": 7
+    }
+   ],
+   "papers": {
+    "runs": [
+     209,
+     184,
+     182
+    ],
+    "min": 182,
+    "max": 209
+   },
+   "esearch_hits": {
+    "runs": [
+     340,
+     265,
+     231
+    ],
+    "min": 231,
+    "max": 340
+   },
+   "esearch_queries": {
+    "runs": [
+     84,
+     84,
+     83
+    ],
+    "min": 83,
+    "max": 84
+   },
+   "esearch_empty": {
+    "runs": [
+     40,
+     40,
+     38
+    ],
+    "min": 38,
+    "max": 40
+   },
+   "hits_per_query": {
+    "runs": [
+     4.0,
+     3.2,
+     2.8
+    ],
+    "min": 2.8,
+    "max": 4.0
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     105,
+     86,
+     90
+    ],
+    "min": 86,
+    "max": 105
+   },
+   "failing_criteria": [
+    "clarify asked 2 question(s), expected 0-1: ['Any history of trauma to this tooth, and if so when and what type? \u2014 trauma is the commonest cause of pulp necrosis and can indicate whether this is a new failure or recurrent pathology from the original injury.', 'On probing or transillumination, is there any evidence of a crack or infraction in the tooth? \u2014 a crack would alter the prognosis and change the treatment plan from retreatment to likely extraction.']",
+    "clarify asked 2 question(s), expected 0-1: ['Any history of trauma to this tooth, and if so, when and what type? \u2014 trauma is the commonest cause of pulp necrosis and would explain the presentation, and apical status at injury time affects prognosis.', 'On probing or transillumination, any sign of a crack, infraction, or isolated deep pocket on tooth 26? \u2014 a crack changes the prognosis fundamentally and may alter the retreatment versus extraction decision despite otherwise good restorability.']",
+    "clarify re-asked facts the description already states: ['restorab'] in ['Any history of trauma to this tooth, and if so, when and what type? \u2014 trauma is the commonest cause of pulp necrosis and would explain the presentation, and apical status at injury time affects prognosis.', 'On probing or transillumination, any sign of a crack, infraction, or isolated deep pocket on tooth 26? \u2014 a crack changes the prognosis fundamentally and may alter the retreatment versus extraction decision despite otherwise good restorability.']"
+   ]
+  },
+  "case-opening-sparse": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 9,
+     "level1": 41,
+     "classic": 3,
+     "level2": 22,
+     "level3a": 35,
+     "level3": 5,
+     "level3b": 10,
+     "level4": 7,
+     "guideline": 26,
+     "level5": 6,
+     "observational": 8,
+     "provisional": 2
+    },
+    {
+     "cochrane": 9,
+     "level1": 33,
+     "classic": 5,
+     "level2": 17,
+     "level3a": 28,
+     "level3": 14,
+     "level3b": 6,
+     "level4": 12,
+     "invitro": 2,
+     "guideline": 25,
+     "level5": 4,
+     "observational": 6,
+     "provisional": 2
+    },
+    {
+     "cochrane": 10,
+     "level1": 29,
+     "classic": 3,
+     "level2": 15,
+     "level3a": 18,
+     "level3": 2,
+     "level3b": 7,
+     "level4": 15,
+     "guideline": 25,
+     "level5": 7,
+     "observational": 6,
+     "provisional": 2
+    }
+   ],
+   "papers": {
+    "runs": [
+     174,
+     163,
+     139
+    ],
+    "min": 139,
+    "max": 174
+   },
+   "esearch_hits": {
+    "runs": [
+     2078,
+     1880,
+     1539
+    ],
+    "min": 1539,
+    "max": 2078
+   },
+   "esearch_queries": {
+    "runs": [
+     74,
+     65,
+     70
+    ],
+    "min": 65,
+    "max": 74
+   },
+   "esearch_empty": {
+    "runs": [
+     12,
+     10,
+     17
+    ],
+    "min": 10,
+    "max": 17
+   },
+   "hits_per_query": {
+    "runs": [
+     28.1,
+     28.9,
+     22.0
+    ],
+    "min": 22.0,
+    "max": 28.9
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     76,
+     65,
+     40
+    ],
+    "min": 40,
+    "max": 76
+   }
+  },
+  "cbct-vs-periapical": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 2,
+     "level2": 18,
+     "level3a": 26,
+     "level3": 8,
+     "level3b": 2,
+     "level4": 4,
+     "guideline": 18,
+     "level5": 1,
+     "observational": 2,
+     "provisional": 6
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 2,
+     "level2": 21,
+     "level3a": 27,
+     "level3": 8,
+     "level3b": 2,
+     "level4": 4,
+     "guideline": 29,
+     "level5": 1,
+     "observational": 3,
+     "provisional": 6
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 2,
+     "level2": 19,
+     "level3a": 29,
+     "level3": 8,
+     "level3b": 2,
+     "level4": 5,
+     "guideline": 23,
+     "level5": 1,
+     "observational": 3,
+     "provisional": 6
+    }
+   ],
+   "papers": {
+    "runs": [
+     131,
+     147,
+     142
+    ],
+    "min": 131,
+    "max": 147
+   },
+   "esearch_hits": {
+    "runs": [
+     196,
+     224,
+     188
+    ],
+    "min": 188,
+    "max": 224
+   },
+   "esearch_queries": {
+    "runs": [
+     34,
+     26,
+     35
+    ],
+    "min": 26,
+    "max": 35
+   },
+   "esearch_empty": {
+    "runs": [
+     17,
+     3,
+     16
+    ],
+    "min": 3,
+    "max": 17
+   },
+   "hits_per_query": {
+    "runs": [
+     5.8,
+     8.6,
+     5.4
+    ],
+    "min": 5.4,
+    "max": 8.6
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     84,
+     87,
+     88
+    ],
+    "min": 84,
+    "max": 88
+   }
+  },
+  "cracked-tooth-prognosis": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 3,
+     "level1": 43,
+     "classic": 6,
+     "level2": 39,
+     "level3a": 31,
+     "level3": 4,
+     "level3b": 9,
+     "level4": 12,
+     "invitro": 6,
+     "guideline": 31,
+     "level5": 4,
+     "observational": 2,
+     "provisional": 13
+    },
+    {
+     "cochrane": 3,
+     "level1": 41,
+     "classic": 7,
+     "level2": 30,
+     "level3a": 35,
+     "level3": 4,
+     "level3b": 4,
+     "level4": 11,
+     "invitro": 5,
+     "guideline": 32,
+     "level5": 3,
+     "observational": 2,
+     "provisional": 13
+    },
+    {
+     "cochrane": 3,
+     "level1": 41,
+     "classic": 6,
+     "level2": 28,
+     "level3a": 44,
+     "level3": 2,
+     "level3b": 6,
+     "level4": 10,
+     "invitro": 5,
+     "guideline": 31,
+     "level5": 4,
+     "observational": 2,
+     "provisional": 13
+    }
+   ],
+   "papers": {
+    "runs": [
+     203,
+     190,
+     195
+    ],
+    "min": 190,
+    "max": 203
+   },
+   "esearch_hits": {
+    "runs": [
+     761,
+     696,
+     861
+    ],
+    "min": 696,
+    "max": 861
+   },
+   "esearch_queries": {
+    "runs": [
+     35,
+     29,
+     27
+    ],
+    "min": 27,
+    "max": 35
+   },
+   "esearch_empty": {
+    "runs": [
+     6,
+     3,
+     3
+    ],
+    "min": 3,
+    "max": 6
+   },
+   "hits_per_query": {
+    "runs": [
+     21.7,
+     24.0,
+     31.9
+    ],
+    "min": 21.7,
+    "max": 31.9
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     6,
+     7
+    ],
+    "min": 6,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     118,
+     103,
+     93
+    ],
+    "min": 93,
+    "max": 118
+   }
+  },
+  "dens-evaginatus-premolar-diagnostic": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 33,
+     "classic": 4,
+     "level2": 11,
+     "level3a": 14,
+     "level3": 1,
+     "level3b": 7,
+     "level4": 5,
+     "guideline": 26,
+     "level5": 6,
+     "observational": 7,
+     "provisional": 1
+    },
+    {
+     "level1": 43,
+     "classic": 3,
+     "level2": 19,
+     "level3a": 25,
+     "level3": 5,
+     "level3b": 6,
+     "level4": 9,
+     "guideline": 20,
+     "level5": 8,
+     "observational": 6,
+     "provisional": 1
+    },
+    {
+     "cochrane": 1,
+     "level1": 36,
+     "classic": 2,
+     "level2": 16,
+     "level3a": 17,
+     "level3": 3,
+     "level3b": 6,
+     "level4": 7,
+     "guideline": 20,
+     "level5": 7,
+     "observational": 6,
+     "provisional": 1
+    }
+   ],
+   "papers": {
+    "runs": [
+     115,
+     145,
+     122
+    ],
+    "min": 115,
+    "max": 145
+   },
+   "esearch_hits": {
+    "runs": [
+     307,
+     417,
+     941
+    ],
+    "min": 307,
+    "max": 941
+   },
+   "esearch_queries": {
+    "runs": [
+     77,
+     83,
+     88
+    ],
+    "min": 77,
+    "max": 88
+   },
+   "esearch_empty": {
+    "runs": [
+     35,
+     39,
+     22
+    ],
+    "min": 22,
+    "max": 39
+   },
+   "hits_per_query": {
+    "runs": [
+     4.0,
+     5.0,
+     10.7
+    ],
+    "min": 4.0,
+    "max": 10.7
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     40,
+     74,
+     40
+    ],
+    "min": 40,
+    "max": 74
+   }
+  },
+  "dens-evaginatus-prevention-followup": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 3,
+     "level2": 23,
+     "level3a": 25,
+     "level3": 3,
+     "level3b": 8,
+     "level4": 20,
+     "invitro": 1,
+     "guideline": 28,
+     "level5": 7,
+     "observational": 8
+    },
+    {
+     "level1": 43,
+     "classic": 4,
+     "level2": 25,
+     "level3a": 22,
+     "level3": 3,
+     "level3b": 6,
+     "level4": 20,
+     "invitro": 1,
+     "guideline": 28,
+     "level5": 8,
+     "observational": 8
+    },
+    {
+     "level1": 35,
+     "classic": 3,
+     "level2": 19,
+     "level3a": 21,
+     "level3": 4,
+     "level3b": 3,
+     "level4": 19,
+     "invitro": 1,
+     "guideline": 28,
+     "level5": 9,
+     "observational": 8
+    }
+   ],
+   "papers": {
+    "runs": [
+     170,
+     168,
+     150
+    ],
+    "min": 150,
+    "max": 170
+   },
+   "esearch_hits": {
+    "runs": [
+     763,
+     766,
+     367
+    ],
+    "min": 367,
+    "max": 766
+   },
+   "esearch_queries": {
+    "runs": [
+     79,
+     88,
+     92
+    ],
+    "min": 79,
+    "max": 92
+   },
+   "esearch_empty": {
+    "runs": [
+     25,
+     39,
+     45
+    ],
+    "min": 25,
+    "max": 45
+   },
+   "hits_per_query": {
+    "runs": [
+     9.7,
+     8.7,
+     4.0
+    ],
+    "min": 4.0,
+    "max": 9.7
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     80,
+     80,
+     78
+    ],
+    "min": 78,
+    "max": 80
+   }
+  },
+  "dens-invaginatus": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    false,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 3,
+     "level1": 32,
+     "classic": 4,
+     "level2": 19,
+     "level3a": 19,
+     "level3": 8,
+     "level3b": 4,
+     "level4": 11,
+     "guideline": 26,
+     "level5": 2,
+     "observational": 2,
+     "provisional": 4
+    },
+    {
+     "cochrane": 3,
+     "level1": 22,
+     "classic": 5,
+     "level2": 12,
+     "level3a": 10,
+     "level3": 5,
+     "level3b": 3,
+     "level4": 14,
+     "guideline": 26,
+     "level5": 4,
+     "provisional": 4
+    },
+    {
+     "cochrane": 3,
+     "level1": 27,
+     "classic": 4,
+     "level2": 19,
+     "level3a": 22,
+     "level3": 3,
+     "level3b": 7,
+     "level4": 10,
+     "invitro": 1,
+     "guideline": 25,
+     "level5": 4,
+     "provisional": 4
+    }
+   ],
+   "papers": {
+    "runs": [
+     134,
+     108,
+     129
+    ],
+    "min": 108,
+    "max": 134
+   },
+   "esearch_hits": {
+    "runs": [
+     914,
+     827,
+     1018
+    ],
+    "min": 827,
+    "max": 1018
+   },
+   "esearch_queries": {
+    "runs": [
+     33,
+     32,
+     30
+    ],
+    "min": 30,
+    "max": 33
+   },
+   "esearch_empty": {
+    "runs": [
+     12,
+     17,
+     9
+    ],
+    "min": 9,
+    "max": 17
+   },
+   "hits_per_query": {
+    "runs": [
+     27.7,
+     25.8,
+     33.9
+    ],
+    "min": 25.8,
+    "max": 33.9
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     66,
+     40,
+     62
+    ],
+    "min": 40,
+    "max": 66
+   },
+   "failing_criteria": [
+    "17/32 queries (53%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin"
+   ]
+  },
+  "diabetes-outcomes": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 4,
+     "level2": 19,
+     "level3a": 30,
+     "level3": 3,
+     "level4": 1,
+     "invitro": 2,
+     "guideline": 29,
+     "level5": 1
+    },
+    {
+     "level1": 43,
+     "classic": 4,
+     "level2": 23,
+     "level3a": 32,
+     "level3": 3,
+     "level4": 1,
+     "invitro": 2,
+     "guideline": 23,
+     "level5": 1
+    },
+    {
+     "cochrane": 4,
+     "level1": 43,
+     "classic": 5,
+     "level2": 32,
+     "level3a": 33,
+     "level3": 3,
+     "level3b": 4,
+     "level4": 1,
+     "invitro": 3,
+     "guideline": 28,
+     "level5": 4
+    }
+   ],
+   "papers": {
+    "runs": [
+     133,
+     132,
+     160
+    ],
+    "min": 132,
+    "max": 160
+   },
+   "esearch_hits": {
+    "runs": [
+     192,
+     738,
+     666
+    ],
+    "min": 192,
+    "max": 738
+   },
+   "esearch_queries": {
+    "runs": [
+     38,
+     43,
+     40
+    ],
+    "min": 38,
+    "max": 43
+   },
+   "esearch_empty": {
+    "runs": [
+     14,
+     14,
+     9
+    ],
+    "min": 9,
+    "max": 14
+   },
+   "hits_per_query": {
+    "runs": [
+     5.1,
+     17.2,
+     16.6
+    ],
+    "min": 5.1,
+    "max": 17.2
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     69,
+     68,
+     88
+    ],
+    "min": 68,
+    "max": 88
+   }
+  },
+  "direct-pulp-capping": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 50,
+     "classic": 1,
+     "level2": 15,
+     "level3a": 30,
+     "level3": 5,
+     "level3b": 4,
+     "level4": 3,
+     "invitro": 1,
+     "guideline": 19,
+     "level5": 5,
+     "provisional": 2
+    },
+    {
+     "level1": 49,
+     "classic": 2,
+     "level2": 15,
+     "level3a": 25,
+     "level3": 5,
+     "level3b": 6,
+     "level4": 5,
+     "invitro": 3,
+     "guideline": 20,
+     "level5": 5,
+     "observational": 2,
+     "provisional": 2
+    },
+    {
+     "cochrane": 1,
+     "level1": 50,
+     "classic": 1,
+     "level2": 21,
+     "level3a": 29,
+     "level3": 6,
+     "level3b": 7,
+     "level4": 9,
+     "invitro": 1,
+     "guideline": 19,
+     "level5": 7,
+     "provisional": 2
+    }
+   ],
+   "papers": {
+    "runs": [
+     136,
+     139,
+     153
+    ],
+    "min": 136,
+    "max": 153
+   },
+   "esearch_hits": {
+    "runs": [
+     196,
+     332,
+     259
+    ],
+    "min": 196,
+    "max": 332
+   },
+   "esearch_queries": {
+    "runs": [
+     38,
+     43,
+     41
+    ],
+    "min": 38,
+    "max": 43
+   },
+   "esearch_empty": {
+    "runs": [
+     18,
+     15,
+     23
+    ],
+    "min": 15,
+    "max": 23
+   },
+   "hits_per_query": {
+    "runs": [
+     5.2,
+     7.7,
+     6.3
+    ],
+    "min": 5.2,
+    "max": 7.7
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     81,
+     90,
+     98
+    ],
+    "min": 81,
+    "max": 98
+   }
+  },
+  "intentional-replantation": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    false,
+    false,
+    false
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 2,
+     "level1": 32,
+     "classic": 3,
+     "level2": 22,
+     "level3a": 36,
+     "level3": 6,
+     "level3b": 5,
+     "level4": 18,
+     "invitro": 5,
+     "guideline": 18,
+     "level5": 13,
+     "observational": 7
+    },
+    {
+     "cochrane": 2,
+     "level1": 30,
+     "classic": 3,
+     "level2": 20,
+     "level3a": 36,
+     "level3": 6,
+     "level3b": 6,
+     "level4": 25,
+     "invitro": 2,
+     "guideline": 33,
+     "level5": 14,
+     "observational": 6
+    },
+    {
+     "cochrane": 1,
+     "level1": 26,
+     "classic": 5,
+     "level2": 16,
+     "level3a": 31,
+     "level3": 8,
+     "level3b": 4,
+     "level4": 25,
+     "invitro": 7,
+     "guideline": 13,
+     "level5": 21,
+     "observational": 5
+    }
+   ],
+   "papers": {
+    "runs": [
+     167,
+     183,
+     162
+    ],
+    "min": 162,
+    "max": 183
+   },
+   "esearch_hits": {
+    "runs": [
+     362,
+     308,
+     50
+    ],
+    "min": 50,
+    "max": 362
+   },
+   "esearch_queries": {
+    "runs": [
+     99,
+     87,
+     99
+    ],
+    "min": 87,
+    "max": 99
+   },
+   "esearch_empty": {
+    "runs": [
+     50,
+     46,
+     81
+    ],
+    "min": 46,
+    "max": 81
+   },
+   "hits_per_query": {
+    "runs": [
+     3.7,
+     3.5,
+     0.5
+    ],
+    "min": 0.5,
+    "max": 3.7
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     102,
+     104,
+     121
+    ],
+    "min": 102,
+    "max": 121
+   },
+   "failing_criteria": [
+    "46/87 queries (53%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "50/99 queries (51%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "81/99 queries (82%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "esearch returned 0.5 hits/query < 5 (50 over 99 queries) \u2014 the laser regression's real signature",
+    "esearch returned 3.5 hits/query < 5 (308 over 87 queries) \u2014 the laser regression's real signature",
+    "esearch returned 3.7 hits/query < 5 (362 over 99 queries) \u2014 the laser regression's real signature"
+   ]
+  },
+  "laser-root-canal-disinfection-library": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "level2": 13,
+     "level3a": 16,
+     "level3": 5,
+     "level3b": 4,
+     "level4": 7,
+     "invitro": 24,
+     "guideline": 24,
+     "level5": 27,
+     "observational": 10,
+     "provisional": 5
+    },
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "level2": 13,
+     "level3a": 16,
+     "level3": 5,
+     "level3b": 3,
+     "level4": 6,
+     "invitro": 25,
+     "guideline": 23,
+     "level5": 28,
+     "observational": 10,
+     "provisional": 5
+    },
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "classic": 1,
+     "level2": 14,
+     "level3a": 17,
+     "level3": 5,
+     "level3b": 4,
+     "level4": 6,
+     "invitro": 25,
+     "guideline": 26,
+     "level5": 30,
+     "observational": 10,
+     "provisional": 5
+    }
+   ],
+   "papers": {
+    "runs": [
+     171,
+     170,
+     179
+    ],
+    "min": 170,
+    "max": 179
+   },
+   "esearch_hits": {
+    "runs": [
+     1022,
+     1034,
+     992
+    ],
+    "min": 992,
+    "max": 1034
+   },
+   "esearch_queries": {
+    "runs": [
+     73,
+     76,
+     77
+    ],
+    "min": 73,
+    "max": 77
+   },
+   "esearch_empty": {
+    "runs": [
+     14,
+     15,
+     31
+    ],
+    "min": 14,
+    "max": 31
+   },
+   "hits_per_query": {
+    "runs": [
+     14.0,
+     13.6,
+     12.9
+    ],
+    "min": 12.9,
+    "max": 14.0
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     72,
+     73,
+     78
+    ],
+    "min": 72,
+    "max": 78
+   }
+  },
+  "laser-root-canal-disinfection-live": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "level2": 13,
+     "level3a": 15,
+     "level3": 5,
+     "level3b": 3,
+     "level4": 6,
+     "invitro": 25,
+     "guideline": 26,
+     "level5": 28,
+     "observational": 10,
+     "provisional": 5
+    },
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "classic": 2,
+     "level2": 14,
+     "level3a": 29,
+     "level3": 5,
+     "level3b": 4,
+     "level4": 8,
+     "invitro": 25,
+     "guideline": 25,
+     "level5": 28,
+     "observational": 10,
+     "provisional": 5
+    },
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "level2": 16,
+     "level3a": 23,
+     "level3": 3,
+     "level3b": 4,
+     "level4": 7,
+     "invitro": 19,
+     "guideline": 26,
+     "level5": 28,
+     "observational": 10,
+     "provisional": 5
+    }
+   ],
+   "papers": {
+    "runs": [
+     172,
+     191,
+     177
+    ],
+    "min": 172,
+    "max": 191
+   },
+   "esearch_hits": {
+    "runs": [
+     1163,
+     1051,
+     1122
+    ],
+    "min": 1051,
+    "max": 1163
+   },
+   "esearch_queries": {
+    "runs": [
+     81,
+     71,
+     69
+    ],
+    "min": 69,
+    "max": 81
+   },
+   "esearch_empty": {
+    "runs": [
+     27,
+     24,
+     23
+    ],
+    "min": 23,
+    "max": 27
+   },
+   "hits_per_query": {
+    "runs": [
+     14.4,
+     14.8,
+     16.3
+    ],
+    "min": 14.4,
+    "max": 16.3
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     72,
+     91,
+     76
+    ],
+    "min": 72,
+    "max": 91
+   }
+  },
+  "mta-vs-biodentine-pulpotomy": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 49,
+     "level2": 18,
+     "level3a": 27,
+     "level3": 5,
+     "level3b": 4,
+     "level4": 5,
+     "invitro": 5,
+     "guideline": 24,
+     "level5": 8,
+     "provisional": 2
+    },
+    {
+     "cochrane": 1,
+     "level1": 49,
+     "level2": 18,
+     "level3a": 30,
+     "level3": 4,
+     "level3b": 2,
+     "level4": 5,
+     "invitro": 6,
+     "guideline": 16,
+     "level5": 5,
+     "provisional": 2
+    },
+    {
+     "cochrane": 1,
+     "level1": 49,
+     "level2": 20,
+     "level3a": 24,
+     "level3": 2,
+     "level3b": 1,
+     "level4": 3,
+     "invitro": 7,
+     "guideline": 22,
+     "level5": 7,
+     "provisional": 2
+    }
+   ],
+   "papers": {
+    "runs": [
+     148,
+     138,
+     138
+    ],
+    "min": 138,
+    "max": 148
+   },
+   "esearch_hits": {
+    "runs": [
+     338,
+     504,
+     441
+    ],
+    "min": 338,
+    "max": 504
+   },
+   "esearch_queries": {
+    "runs": [
+     32,
+     25,
+     28
+    ],
+    "min": 25,
+    "max": 32
+   },
+   "esearch_empty": {
+    "runs": [
+     11,
+     1,
+     4
+    ],
+    "min": 1,
+    "max": 11
+   },
+   "hits_per_query": {
+    "runs": [
+     10.6,
+     20.2,
+     15.8
+    ],
+    "min": 10.6,
+    "max": 20.2
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     86,
+     82,
+     80
+    ],
+    "min": 80,
+    "max": 86
+   }
+  },
+  "naocl-concentration": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 3,
+     "level1": 43,
+     "classic": 6,
+     "level2": 30,
+     "level3a": 28,
+     "level3": 5,
+     "level3b": 3,
+     "level4": 3,
+     "invitro": 10,
+     "guideline": 31,
+     "level5": 7,
+     "observational": 1,
+     "provisional": 3
+    },
+    {
+     "cochrane": 3,
+     "level1": 43,
+     "classic": 9,
+     "level2": 28,
+     "level3a": 27,
+     "level3": 11,
+     "level3b": 2,
+     "level4": 4,
+     "invitro": 12,
+     "guideline": 30,
+     "level5": 9,
+     "provisional": 3
+    },
+    {
+     "cochrane": 3,
+     "level1": 43,
+     "classic": 6,
+     "level2": 21,
+     "level3a": 26,
+     "level3": 6,
+     "level3b": 3,
+     "level4": 3,
+     "invitro": 15,
+     "guideline": 31,
+     "level5": 5,
+     "provisional": 3
+    }
+   ],
+   "papers": {
+    "runs": [
+     173,
+     181,
+     165
+    ],
+    "min": 165,
+    "max": 181
+   },
+   "esearch_hits": {
+    "runs": [
+     1047,
+     923,
+     687
+    ],
+    "min": 687,
+    "max": 1047
+   },
+   "esearch_queries": {
+    "runs": [
+     28,
+     33,
+     40
+    ],
+    "min": 28,
+    "max": 40
+   },
+   "esearch_empty": {
+    "runs": [
+     1,
+     4,
+     26
+    ],
+    "min": 1,
+    "max": 26
+   },
+   "hits_per_query": {
+    "runs": [
+     37.4,
+     28.0,
+     17.2
+    ],
+    "min": 17.2,
+    "max": 37.4
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     102,
+     112,
+     103
+    ],
+    "min": 102,
+    "max": 112
+   }
+  },
+  "necrotic-virgin-tooth-young-adult-diagnostic": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 2,
+     "level1": 51,
+     "classic": 3,
+     "level2": 28,
+     "level3a": 38,
+     "level3": 3,
+     "level3b": 10,
+     "level4": 12,
+     "invitro": 1,
+     "guideline": 28,
+     "level5": 12,
+     "observational": 8,
+     "provisional": 4
+    },
+    {
+     "cochrane": 2,
+     "level1": 51,
+     "classic": 4,
+     "level2": 30,
+     "level3a": 38,
+     "level3": 3,
+     "level3b": 8,
+     "level4": 12,
+     "invitro": 2,
+     "guideline": 16,
+     "level5": 12,
+     "observational": 7,
+     "provisional": 4
+    },
+    {
+     "cochrane": 1,
+     "level1": 37,
+     "classic": 6,
+     "level2": 17,
+     "level3a": 17,
+     "level3": 2,
+     "level3b": 9,
+     "level4": 7,
+     "guideline": 20,
+     "level5": 7,
+     "observational": 6,
+     "provisional": 4
+    }
+   ],
+   "papers": {
+    "runs": [
+     200,
+     189,
+     133
+    ],
+    "min": 133,
+    "max": 200
+   },
+   "esearch_hits": {
+    "runs": [
+     819,
+     1328,
+     864
+    ],
+    "min": 819,
+    "max": 1328
+   },
+   "esearch_queries": {
+    "runs": [
+     64,
+     69,
+     80
+    ],
+    "min": 64,
+    "max": 80
+   },
+   "esearch_empty": {
+    "runs": [
+     4,
+     28,
+     35
+    ],
+    "min": 4,
+    "max": 35
+   },
+   "hits_per_query": {
+    "runs": [
+     12.8,
+     19.2,
+     10.8
+    ],
+    "min": 10.8,
+    "max": 19.2
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     98,
+     94,
+     50
+    ],
+    "min": 50,
+    "max": 98
+   }
+  },
+  "pips-vs-ultrasonic": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "level2": 7,
+     "level3a": 6,
+     "level3": 1,
+     "invitro": 8,
+     "guideline": 24,
+     "level5": 2,
+     "provisional": 1
+    },
+    {
+     "cochrane": 1,
+     "level1": 41,
+     "classic": 3,
+     "level2": 7,
+     "level3a": 25,
+     "level3": 3,
+     "level3b": 1,
+     "level4": 2,
+     "invitro": 10,
+     "guideline": 14,
+     "level5": 3,
+     "provisional": 1
+    },
+    {
+     "cochrane": 1,
+     "level1": 51,
+     "classic": 1,
+     "level2": 13,
+     "level3a": 10,
+     "level3": 5,
+     "level3b": 5,
+     "level4": 5,
+     "invitro": 4,
+     "guideline": 14,
+     "level5": 7,
+     "observational": 6,
+     "provisional": 1
+    }
+   ],
+   "papers": {
+    "runs": [
+     93,
+     111,
+     123
+    ],
+    "min": 93,
+    "max": 123
+   },
+   "esearch_hits": {
+    "runs": [
+     88,
+     64,
+     104
+    ],
+    "min": 64,
+    "max": 104
+   },
+   "esearch_queries": {
+    "runs": [
+     39,
+     40,
+     89
+    ],
+    "min": 39,
+    "max": 89
+   },
+   "esearch_empty": {
+    "runs": [
+     25,
+     25,
+     59
+    ],
+    "min": 25,
+    "max": 59
+   },
+   "hits_per_query": {
+    "runs": [
+     2.3,
+     1.6,
+     1.2
+    ],
+    "min": 1.2,
+    "max": 2.3
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     45,
+     77,
+     52
+    ],
+    "min": 45,
+    "max": 77
+   }
+  },
+  "preemptive-nsaid": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 3,
+     "level2": 18,
+     "level3a": 10,
+     "level3": 2,
+     "level4": 2,
+     "guideline": 31,
+     "level5": 4,
+     "provisional": 20
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 4,
+     "level2": 13,
+     "level3a": 9,
+     "level3": 2,
+     "level4": 2,
+     "guideline": 31,
+     "level5": 4,
+     "provisional": 20
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 3,
+     "level2": 13,
+     "level3a": 6,
+     "level3": 2,
+     "level3b": 1,
+     "level4": 2,
+     "guideline": 31,
+     "level5": 2,
+     "observational": 1,
+     "provisional": 20
+    }
+   ],
+   "papers": {
+    "runs": [
+     134,
+     129,
+     125
+    ],
+    "min": 125,
+    "max": 134
+   },
+   "esearch_hits": {
+    "runs": [
+     854,
+     575,
+     491
+    ],
+    "min": 491,
+    "max": 854
+   },
+   "esearch_queries": {
+    "runs": [
+     26,
+     37,
+     35
+    ],
+    "min": 26,
+    "max": 37
+   },
+   "esearch_empty": {
+    "runs": [
+     1,
+     10,
+     2
+    ],
+    "min": 1,
+    "max": 10
+   },
+   "hits_per_query": {
+    "runs": [
+     32.8,
+     15.5,
+     14.0
+    ],
+    "min": 14.0,
+    "max": 32.8
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     58,
+     56,
+     53
+    ],
+    "min": 53,
+    "max": 58
+   }
+  },
+  "pregnancy": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    false,
+    false,
+    false
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 27,
+     "classic": 2,
+     "level2": 4,
+     "level3a": 6,
+     "level3": 2,
+     "level3b": 1,
+     "level4": 5,
+     "guideline": 31,
+     "level5": 5,
+     "observational": 3
+    },
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "classic": 3,
+     "level2": 10,
+     "level3a": 28,
+     "level3": 4,
+     "level3b": 4,
+     "level4": 8,
+     "guideline": 31,
+     "level5": 8,
+     "observational": 3
+    },
+    {
+     "cochrane": 1,
+     "level1": 35,
+     "classic": 1,
+     "level2": 8,
+     "level3a": 14,
+     "level3": 1,
+     "level3b": 2,
+     "level4": 4,
+     "guideline": 32,
+     "level5": 5,
+     "observational": 5
+    }
+   ],
+   "papers": {
+    "runs": [
+     87,
+     135,
+     108
+    ],
+    "min": 87,
+    "max": 135
+   },
+   "esearch_hits": {
+    "runs": [
+     33,
+     82,
+     188
+    ],
+    "min": 33,
+    "max": 188
+   },
+   "esearch_queries": {
+    "runs": [
+     98,
+     96,
+     92
+    ],
+    "min": 92,
+    "max": 98
+   },
+   "esearch_empty": {
+    "runs": [
+     81,
+     63,
+     42
+    ],
+    "min": 42,
+    "max": 81
+   },
+   "hits_per_query": {
+    "runs": [
+     0.3,
+     0.9,
+     2.0
+    ],
+    "min": 0.3,
+    "max": 2.0
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     45,
+     79,
+     39
+    ],
+    "min": 39,
+    "max": 79
+   },
+   "failing_criteria": [
+    "63/96 queries (66%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "81/98 queries (83%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "esearch returned 0.3 hits/query < 5 (33 over 98 queries) \u2014 the laser regression's real signature",
+    "esearch returned 0.9 hits/query < 5 (82 over 96 queries) \u2014 the laser regression's real signature",
+    "esearch returned 2.0 hits/query < 5 (188 over 92 queries) \u2014 the laser regression's real signature"
+   ]
+  },
+  "regenerative-immature": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 44,
+     "classic": 1,
+     "level2": 36,
+     "level3a": 34,
+     "level3": 4,
+     "level3b": 1,
+     "level4": 29,
+     "invitro": 4,
+     "guideline": 17,
+     "level5": 11,
+     "observational": 1,
+     "provisional": 3
+    },
+    {
+     "level1": 44,
+     "classic": 2,
+     "level2": 37,
+     "level3a": 37,
+     "level3": 5,
+     "level3b": 2,
+     "level4": 31,
+     "invitro": 6,
+     "guideline": 12,
+     "level5": 10,
+     "observational": 1,
+     "provisional": 3
+    },
+    {
+     "level1": 44,
+     "level2": 39,
+     "level3a": 39,
+     "level3": 7,
+     "level3b": 2,
+     "level4": 26,
+     "invitro": 3,
+     "guideline": 17,
+     "level5": 10,
+     "observational": 1,
+     "provisional": 3
+    }
+   ],
+   "papers": {
+    "runs": [
+     185,
+     190,
+     191
+    ],
+    "min": 185,
+    "max": 191
+   },
+   "esearch_hits": {
+    "runs": [
+     307,
+     506,
+     561
+    ],
+    "min": 307,
+    "max": 561
+   },
+   "esearch_queries": {
+    "runs": [
+     38,
+     29,
+     38
+    ],
+    "min": 29,
+    "max": 38
+   },
+   "esearch_empty": {
+    "runs": [
+     17,
+     4,
+     9
+    ],
+    "min": 4,
+    "max": 17
+   },
+   "hits_per_query": {
+    "runs": [
+     8.1,
+     17.4,
+     14.8
+    ],
+    "min": 8.1,
+    "max": 17.4
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     121,
+     126,
+     119
+    ],
+    "min": 119,
+    "max": 126
+   }
+  },
+  "retreatment-vs-microsurgery": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    false,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 37,
+     "classic": 8,
+     "level2": 29,
+     "level3a": 34,
+     "level3": 5,
+     "level3b": 9,
+     "level4": 16,
+     "invitro": 2,
+     "guideline": 15,
+     "level5": 13,
+     "observational": 6
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 7,
+     "level2": 20,
+     "level3a": 28,
+     "level3": 6,
+     "level3b": 4,
+     "level4": 6,
+     "invitro": 2,
+     "guideline": 20,
+     "level5": 9
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 6,
+     "level2": 17,
+     "level3a": 26,
+     "level3": 6,
+     "level3b": 4,
+     "level4": 14,
+     "invitro": 2,
+     "guideline": 23,
+     "level5": 9
+    }
+   ],
+   "papers": {
+    "runs": [
+     175,
+     146,
+     151
+    ],
+    "min": 146,
+    "max": 175
+   },
+   "esearch_hits": {
+    "runs": [
+     224,
+     191,
+     240
+    ],
+    "min": 191,
+    "max": 240
+   },
+   "esearch_queries": {
+    "runs": [
+     82,
+     36,
+     36
+    ],
+    "min": 36,
+    "max": 82
+   },
+   "esearch_empty": {
+    "runs": [
+     43,
+     14,
+     10
+    ],
+    "min": 10,
+    "max": 43
+   },
+   "hits_per_query": {
+    "runs": [
+     2.7,
+     5.3,
+     6.7
+    ],
+    "min": 2.7,
+    "max": 6.7
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     111,
+     104,
+     112
+    ],
+    "min": 104,
+    "max": 112
+   },
+   "failing_criteria": [
+    "43/82 queries (52%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "esearch returned 2.7 hits/query < 5 (224 over 82 queries) \u2014 the laser regression's real signature"
+   ]
+  },
+  "review-followup-immature-teeth": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 59,
+     "classic": 2,
+     "level2": 17,
+     "level3a": 29,
+     "level3": 5,
+     "level3b": 1,
+     "level4": 7,
+     "invitro": 11,
+     "guideline": 25,
+     "level5": 2,
+     "observational": 1
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 1,
+     "level2": 17,
+     "level3a": 14,
+     "level3": 3,
+     "level4": 5,
+     "invitro": 11,
+     "guideline": 25,
+     "level5": 3
+    },
+    {
+     "cochrane": 2,
+     "level1": 43,
+     "classic": 1,
+     "level2": 14,
+     "level3a": 11,
+     "level3": 2,
+     "level4": 3,
+     "invitro": 14,
+     "guideline": 25,
+     "level5": 2
+    }
+   ],
+   "papers": {
+    "runs": [
+     160,
+     123,
+     117
+    ],
+    "min": 117,
+    "max": 160
+   },
+   "esearch_hits": {
+    "runs": [
+     727,
+     771,
+     589
+    ],
+    "min": 589,
+    "max": 771
+   },
+   "esearch_queries": {
+    "runs": [
+     46,
+     46,
+     46
+    ],
+    "min": 46,
+    "max": 46
+   },
+   "esearch_empty": {
+    "runs": [
+     12,
+     9,
+     18
+    ],
+    "min": 9,
+    "max": 18
+   },
+   "hits_per_query": {
+    "runs": [
+     15.8,
+     16.8,
+     12.8
+    ],
+    "min": 12.8,
+    "max": 16.8
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     79,
+     61,
+     56
+    ],
+    "min": 56,
+    "max": 79
+   }
+  },
+  "review-newtopic-reset": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 6,
+     "level2": 10,
+     "level3a": 14,
+     "level3": 6,
+     "level3b": 2,
+     "level4": 7,
+     "invitro": 14,
+     "guideline": 17,
+     "level5": 3,
+     "observational": 1,
+     "provisional": 7
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 6,
+     "level2": 7,
+     "level3a": 11,
+     "level3": 5,
+     "level3b": 1,
+     "level4": 1,
+     "invitro": 7,
+     "guideline": 11,
+     "level5": 2,
+     "provisional": 7
+    },
+    {
+     "cochrane": 1,
+     "level1": 43,
+     "classic": 6,
+     "level2": 9,
+     "level3a": 16,
+     "level3": 7,
+     "level3b": 2,
+     "level4": 2,
+     "invitro": 18,
+     "guideline": 19,
+     "level5": 4,
+     "observational": 1,
+     "provisional": 7
+    }
+   ],
+   "papers": {
+    "runs": [
+     131,
+     102,
+     135
+    ],
+    "min": 102,
+    "max": 135
+   },
+   "esearch_hits": {
+    "runs": [
+     738,
+     682,
+     585
+    ],
+    "min": 585,
+    "max": 738
+   },
+   "esearch_queries": {
+    "runs": [
+     27,
+     28,
+     31
+    ],
+    "min": 27,
+    "max": 31
+   },
+   "esearch_empty": {
+    "runs": [
+     1,
+     1,
+     4
+    ],
+    "min": 1,
+    "max": 4
+   },
+   "hits_per_query": {
+    "runs": [
+     27.3,
+     24.4,
+     18.9
+    ],
+    "min": 18.9,
+    "max": 27.3
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     78,
+     54,
+     82
+    ],
+    "min": 54,
+    "max": 82
+   }
+  },
+  "sdf-pulp-outcomes": {
+   "force_route": "live",
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    false,
+    false,
+    false
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 1,
+     "level1": 34,
+     "classic": 1,
+     "level2": 8,
+     "level3a": 7,
+     "level3": 2,
+     "level3b": 1,
+     "level4": 1,
+     "invitro": 3,
+     "guideline": 26,
+     "level5": 1,
+     "observational": 1
+    },
+    {
+     "cochrane": 1,
+     "level1": 34,
+     "classic": 1,
+     "level2": 4,
+     "level3a": 7,
+     "level3b": 6,
+     "level4": 4,
+     "invitro": 2,
+     "guideline": 24,
+     "level5": 6
+    },
+    {
+     "cochrane": 1,
+     "level1": 36,
+     "classic": 1,
+     "level2": 7,
+     "level3a": 5,
+     "level3": 1,
+     "level3b": 1,
+     "level4": 1,
+     "invitro": 3,
+     "guideline": 27,
+     "level5": 3
+    }
+   ],
+   "papers": {
+    "runs": [
+     86,
+     89,
+     86
+    ],
+    "min": 86,
+    "max": 89
+   },
+   "esearch_hits": {
+    "runs": [
+     88,
+     91,
+     80
+    ],
+    "min": 80,
+    "max": 91
+   },
+   "esearch_queries": {
+    "runs": [
+     43,
+     93,
+     41
+    ],
+    "min": 41,
+    "max": 93
+   },
+   "esearch_empty": {
+    "runs": [
+     28,
+     65,
+     24
+    ],
+    "min": 24,
+    "max": 65
+   },
+   "hits_per_query": {
+    "runs": [
+     2.0,
+     1.0,
+     2.0
+    ],
+    "min": 1.0,
+    "max": 2.0
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     40,
+     39,
+     40
+    ],
+    "min": 39,
+    "max": 40
+   },
+   "failing_criteria": [
+    "24/41 queries (59%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "28/43 queries (65%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "65/93 queries (70%) returned nothing (max 50%) \u2014 when most queries match no records the queries are malformed, not the topic thin",
+    "esearch returned 1.0 hits/query < 5 (91 over 93 queries) \u2014 the laser regression's real signature",
+    "esearch returned 2.0 hits/query < 5 (80 over 41 queries) \u2014 the laser regression's real signature",
+    "esearch returned 2.0 hits/query < 5 (88 over 43 queries) \u2014 the laser regression's real signature"
+   ]
+  },
+  "single-vs-multiple-visit": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "level1": 43,
+     "classic": 3,
+     "level2": 19,
+     "level3a": 31,
+     "level3": 5,
+     "level3b": 2,
+     "level4": 4,
+     "invitro": 6,
+     "guideline": 29,
+     "level5": 3,
+     "provisional": 14
+    },
+    {
+     "level1": 43,
+     "classic": 5,
+     "level2": 22,
+     "level3a": 26,
+     "level3": 1,
+     "level3b": 5,
+     "level4": 5,
+     "guideline": 33,
+     "level5": 4,
+     "provisional": 14
+    },
+    {
+     "level1": 43,
+     "classic": 3,
+     "level2": 23,
+     "level3a": 27,
+     "level3": 2,
+     "level3b": 5,
+     "level4": 5,
+     "invitro": 1,
+     "guideline": 34,
+     "level5": 5,
+     "provisional": 14
+    }
+   ],
+   "papers": {
+    "runs": [
+     159,
+     158,
+     162
+    ],
+    "min": 158,
+    "max": 162
+   },
+   "esearch_hits": {
+    "runs": [
+     234,
+     298,
+     513
+    ],
+    "min": 234,
+    "max": 513
+   },
+   "esearch_queries": {
+    "runs": [
+     43,
+     40,
+     33
+    ],
+    "min": 33,
+    "max": 43
+   },
+   "esearch_empty": {
+    "runs": [
+     21,
+     25,
+     7
+    ],
+    "min": 7,
+    "max": 25
+   },
+   "hits_per_query": {
+    "runs": [
+     5.4,
+     7.5,
+     15.5
+    ],
+    "min": 5.4,
+    "max": 15.5
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     87,
+     90,
+     85
+    ],
+    "min": 85,
+    "max": 90
+   }
+  },
+  "sonic-vs-ultrasonic": {
+   "force_route": null,
+   "routes_observed": [
+    "live"
+   ],
+   "route_decisions": [
+    "live"
+   ],
+   "passed_runs": [
+    true,
+    true,
+    true
+   ],
+   "per_tier_runs": [
+    {
+     "cochrane": 2,
+     "level1": 38,
+     "classic": 2,
+     "level2": 14,
+     "level3a": 6,
+     "level3": 4,
+     "invitro": 5,
+     "guideline": 25,
+     "level5": 4,
+     "provisional": 7
+    },
+    {
+     "cochrane": 1,
+     "level1": 37,
+     "classic": 2,
+     "level2": 12,
+     "level3a": 7,
+     "level3": 4,
+     "invitro": 6,
+     "guideline": 25,
+     "level5": 5,
+     "provisional": 7
+    },
+    {
+     "cochrane": 1,
+     "level1": 32,
+     "classic": 4,
+     "level2": 14,
+     "level3a": 2,
+     "level3": 4,
+     "invitro": 14,
+     "guideline": 25,
+     "level5": 4,
+     "provisional": 7
+    }
+   ],
+   "papers": {
+    "runs": [
+     107,
+     106,
+     107
+    ],
+    "min": 106,
+    "max": 107
+   },
+   "esearch_hits": {
+    "runs": [
+     429,
+     481,
+     439
+    ],
+    "min": 429,
+    "max": 481
+   },
+   "esearch_queries": {
+    "runs": [
+     36,
+     33,
+     34
+    ],
+    "min": 33,
+    "max": 36
+   },
+   "esearch_empty": {
+    "runs": [
+     13,
+     11,
+     10
+    ],
+    "min": 10,
+    "max": 13
+   },
+   "hits_per_query": {
+    "runs": [
+     11.9,
+     14.6,
+     12.9
+    ],
+    "min": 11.9,
+    "max": 14.6
+   },
+   "search_terms": {
+    "runs": [
+     7,
+     7,
+     7
+    ],
+    "min": 7,
+    "max": 7
+   },
+   "union_rows": {
+    "runs": [
+     40,
+     40,
+     40
+    ],
+    "min": 40,
+    "max": 40
+   }
+  }
+ }
+}
