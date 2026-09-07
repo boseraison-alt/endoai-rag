@@ -1,6 +1,6 @@
 {
- "rows_total": 3435,
- "readable": 3339,
+ "rows_total": 3449,
+ "readable": 3353,
  "animal_rows": 81,
  "by_tier": {
   "invitro": 47,
@@ -12,7 +12,6 @@
   "level3a": 1
  },
  "reaching_a_pool": [
-  "14718885",
   "15025689",
   "16793468",
   "17635354",
@@ -23,7 +22,6 @@
   "25146016",
   "25517781",
   "25771743",
-  "26275599",
   "28294701",
   "36949460",
   "38407663",
@@ -33,25 +31,20 @@
   "40683315",
   "40684155",
   "41465429",
-  "41493880",
   "8245756",
   "8665319"
  ],
  "per_question": {
   "laser-root-canal-disinfection-live": [
    "22236150",
-   "26275599",
    "28294701",
    "36949460",
-   "39580417",
    "41465429"
   ],
   "laser-root-canal-disinfection-library": [
    "22236150",
-   "26275599",
    "28294701",
    "36949460",
-   "39580417",
    "41465429"
   ],
   "single-vs-multiple-visit": [],
@@ -77,9 +70,7 @@
    "40683315",
    "40684155"
   ],
-  "preemptive-nsaid": [
-   "41493880"
-  ],
+  "preemptive-nsaid": [],
   "regenerative-immature": [
    "25771743"
   ],
@@ -92,7 +83,6 @@
    "41465429"
   ],
   "bisphosphonates": [
-   "17635354",
    "19459923"
   ],
   "pregnancy": [],
@@ -113,9 +103,7 @@
    "20126907",
    "20728727"
   ],
-  "necrotic-virgin-tooth-young-adult-diagnostic": [
-   "14718885"
-  ],
+  "necrotic-virgin-tooth-young-adult-diagnostic": [],
   "bisphosphonate-extraction-vs-rct-treatment": [
    "17635354",
    "19459923"

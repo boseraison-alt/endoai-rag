@@ -210,6 +210,50 @@ def _cue_outside_exclusion_language(text: str, match) -> bool:
     return not _EXCLUSION_CONTEXT_RE.search(text[lo:hi])
 
 
+# ── THE CUE MUST BE ABOUT THIS STUDY'S OWN SUBJECTS (item E, 2026-09-08) ────
+#
+# Found by adjudicating the 11 labelled rows that sit on the HUMAN clinical
+# ladder — where a wrong label does real harm, because it tells a clinician a
+# human trial was done in animals. Two were plainly wrong and both failed the
+# same way: the species word was in a sentence that is not about this study.
+#
+#   26275599  "Evaluation of Root Canal Debridement of HUMAN MOLARS" — cue from
+#             "...has been shown to result in a higher tissue dissolution rate
+#             in a study using bovine muscle", i.e. somebody else's experiment.
+#   24331984  "Human cytomegalovirus and Epstein-Barr virus..." — cue from
+#             "Further studies, including those based on an experimental animal
+#             model, SHOULD provide more data", i.e. work not yet done.
+#
+# This is the same failure item D measured in the abstract design-extractor:
+# a cue matched in a sentence whose subject is a previous study, a registration,
+# or a recommendation. The veto is scoped to the SENTENCE holding the cue, not
+# a character window, because that is the unit the distinction lives in.
+_SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+")
+_NOT_OUR_SUBJECTS_RE = re.compile(
+    r"\b("
+    r"further (studies|research|work|investigation)"
+    r"|future (studies|research|work)"
+    r"|should (be )?(provide|investigat|evaluat|assess|conduct|explor)"
+    r"|has (previously )?been (shown|reported|demonstrated)"
+    r"|have (previously )?been (shown|reported|demonstrated)"
+    r"|(a|an|one) (previous|earlier|prior) study"
+    r"|in a study (using|of|by)"
+    r"|previous(ly)? (studies|research|reports?)"
+    r"|are (needed|warranted|required)"
+    r"|is (needed|warranted|required)"
+    r"|we recommend"
+    r")\b", re.I)
+
+
+def _cue_is_about_this_study(text: str, match) -> bool:
+    """True unless the sentence holding the cue is about someone else's work,
+    or about work that has not been done yet."""
+    start = text.rfind(".", 0, match.start()) + 1
+    end = text.find(".", match.end())
+    sentence = text[start:end if end != -1 else len(text)]
+    return not _NOT_OUR_SUBJECTS_RE.search(sentence)
+
+
 def detect_animal_subject(title: str, abstract: str, journal: str = "",
                           level_key: str = "") -> tuple:
     """Return (is_animal_subject, reason). Deliberately conservative.
@@ -246,7 +290,8 @@ def detect_animal_subject(title: str, abstract: str, journal: str = "",
         return False, "human-subject language override"
 
     for m in _ANIMAL_STRONG_RE.finditer(scrubbed):
-        if _cue_outside_exclusion_language(scrubbed, m):
+        if (_cue_outside_exclusion_language(scrubbed, m)
+                and _cue_is_about_this_study(scrubbed, m)):
             cue = " ".join(m.group(0).split())
             where = "title" if m.start() < len(title or "") else "abstract"
             return True, f"{where}: {cue[:44]}"

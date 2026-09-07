@@ -190,8 +190,25 @@ class TestTheSpeciesGuard:
             "the guard requires human indexing rather than excluding "
             "animal-only records: %r" % g)
 
-    def test_only_the_guideline_lane_gets_it(self, monkeypatch):
-        """Confinement, asserted at the unit level as well as end to end."""
+    def test_every_lane_gets_it(self, monkeypatch):
+        """WAS `test_only_the_guideline_lane_gets_it` UNTIL 2026-09-08.
+
+        The guard went on the guideline lane alone on 2026-09-06 because a
+        veterinary guideline is the most dangerous case — a real document from
+        a real body that nothing downstream will doubt — and confinement was
+        the conservative first step. Item E extended it to every lane, so this
+        test's property is inverted BY DESIGN rather than broken.
+
+        What justified the change, on the 31-question set with "zero human rows
+        lost, or revert" pre-declared: 87 records genuinely excluded, 0 of them
+        indexed `humans[mh]`. (230 more were absent from the guarded top-60 but
+        merely re-ranked; treating those as losses is what made the first
+        instrument report a false REVERT.)
+
+        The confinement assertion is not simply deleted. It is replaced by the
+        two properties that actually matter now: every lane carries the guard,
+        and the guard is still the FLOOR-PRESERVING form.
+        """
         seen = {}
 
         class _Resp:
@@ -209,10 +226,25 @@ class TestTheSpeciesGuard:
             seen.clear()
             E.fetch_papers("(pulpitis) AND (adult)", "review[pt]", lane, lane,
                            max_results=1)
-            assert not any("animals[mh]" in t for t in seen), (
-                "the species guard leaked into the %s lane" % lane)
+            assert any("animals[mh]" in t for t in seen), (
+                "the %s lane lost the species guard" % lane)
         seen.clear()
         E.fetch_papers("(pulpitis) AND (adult)", "guideline[pt]", "guideline",
                        "guideline", max_results=1)
         assert any("animals[mh]" in t for t in seen), (
             "the guideline lane did not carry the species guard")
+
+    def test_the_guard_is_still_the_floor_preserving_form(self):
+        """THE PROPERTY THAT REPLACES CONFINEMENT, and the one that made
+        extending it safe. `NOT (animals[mh] NOT humans[mh])` drops only records
+        MeSH-indexed as animal AND NOT human. Requiring `humans[mh]` instead
+        would also drop every record NLM has not yet indexed — 6-18 months of
+        new literature — which is the recall damage the hybrid MeSH-OR-tiab
+        shape of ENDO_DOMAIN_FILTER exists to avoid. Now that the guard is on
+        every lane, that distinction protects the whole corpus rather than one
+        lane's worth of it."""
+        g = E.GUIDELINE_SPECIES_GUARD
+        assert "NOT (animals[mh] NOT humans[mh])" in g
+        assert "AND humans[mh]" not in g, (
+            "the guard was tightened to REQUIRE human indexing, which drops "
+            "every record NLM has not indexed yet")

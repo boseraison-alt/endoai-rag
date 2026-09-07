@@ -27,6 +27,29 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 FIXTURE_XML_DIR = Path(__file__).parent / "fixtures" / "pubmed_xml"
 
 
+@pytest.fixture(autouse=True)
+def _term_cache_off():
+    """The search-term cache is OFF by default in tests.
+
+    Added 2026-09-08, the day the cache shipped, because it broke a test that
+    had nothing to do with caching: `test_all_four_prompts_contain_the_block`
+    drives four call sites and counts the prompts each sends, and
+    `generate_search_terms` returned a cached string without calling the model
+    at all. Three prompts, not four — and the failure depended on whether some
+    EARLIER test had warmed that cache key, so it would come and go with test
+    ordering and with the state of a shared database.
+
+    A test that wants to observe the generator must exercise the generator.
+    Any test that genuinely wants the cache sets `E.TERM_CACHE_ENABLED = True`
+    itself, which is explicit and local.
+    """
+    import endo_ai
+    prev = endo_ai.TERM_CACHE_ENABLED
+    endo_ai.TERM_CACHE_ENABLED = False
+    yield
+    endo_ai.TERM_CACHE_ENABLED = prev
+
+
 @pytest.fixture(autouse=True, scope="session")
 def _audit_logs_stay_out_of_the_repo(tmp_path_factory):
     """A test run must not append to the production audit trail.

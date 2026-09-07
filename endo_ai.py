@@ -4789,8 +4789,25 @@ def format_paper_context_line(paper: dict) -> str:
     key = str(paper.get("pmid") or "")
     cite_as = ("" if key.isdigit()
                else f" | cite as [[GL:{key}]]")
+
+    # ITEM E (2026-09-08) — WHOSE TEETH WERE THESE.
+    #
+    # 86 rows in the library report a non-human subject, and 9 of them sit on
+    # the HUMAN clinical ladder: a rat pulp-capping study at level2, a dog
+    # pulpotomy comparison at level2, a rabbit direct-capping study at level2.
+    # Nothing in this line distinguished them from a human trial, so a
+    # clinician reading "level2, n=12, 6mo follow-up" had no way to know the
+    # subjects were rats, and neither did the model writing the answer.
+    #
+    # Stated FIRST and in capitals, before the score, because the score is the
+    # thing it qualifies. "unspecified" is written when the row is an animal
+    # study whose species the text never names — an honest gap rather than a
+    # guess a reader would take as fact.
+    species = (paper.get("animal_subject") or "").strip()
+    animal = f"ANIMAL STUDY ({species}) | " if species else ""
     return (
-        f"\nPMID: {paper['pmid']} | Authors: {auth} | Year: {paper.get('year')} | "
+        f"\n{animal}PMID: {paper['pmid']} | Authors: {auth} | "
+        f"Year: {paper.get('year')} | "
         f"Citations: {paper.get('citations', 0)} | {ss} | {fu} | "
         f"{scored_part}{format_provenance_badges(paper)}{cite_as}\n"
     )
@@ -5944,7 +5961,30 @@ def fetch_papers(topic, filter_term, label, level_key, max_results=50, mode="rev
     # broadening that lived in app.py would have reached Review and Case and
     # not the curriculum, which is the divergence class this codebase has
     # spent three batches removing.
-    species_guard = ""
+    # ITEM E (2026-09-08) — THE GUARD NOW APPLIES TO EVERY LANE, NOT JUST
+    # GUIDELINES.
+    #
+    # It went on the guideline lane on 2026-09-06 because a veterinary guideline
+    # is the most dangerous case: a real document from a real body that nothing
+    # downstream will doubt. But the paper lanes had the same hole, and the
+    # library shows what came through it — 86 animal-subject rows, 9 of them on
+    # the human clinical ladder, and 48 prose claims in the stored archive that
+    # cite one without ever saying the subjects were animals.
+    #
+    # A/B on the 31-question set, with the pre-declared stop "zero human rows
+    # lost, or revert":
+    #
+    #     absent from the guarded top-60       230
+    #     genuinely excluded by the guard       87
+    #     merely re-ranked out of the window   143   <- not a loss
+    #     excluded AND indexed humans[mh]        0   <- the stop, not triggered
+    #
+    # Zero is not a hopeful reading: `NOT (animals[mh] NOT humans[mh])` excludes
+    # only records indexed animal AND NOT human, so it CANNOT drop a human row,
+    # and the measurement confirms the shipped string behaves as the algebra
+    # says. It also leaves un-indexed records alone, which is 6-18 months of new
+    # literature that requiring `humans[mh]` would have thrown away.
+    species_guard = GUIDELINE_SPECIES_GUARD
     if level_key == "guideline":
         broad = guideline_topic(topic)
         if broad != topic:
@@ -6856,6 +6896,35 @@ def render_evidence_headings() -> str:
 # under a shortened label. The instruction it carried is not lost — it moved
 # into the derived list, which states it for all twelve lanes instead of one.
 # Everything below is the wording the 2026-09-05 A/B measured, verbatim.
+# ── WHOSE TEETH WERE THESE (item E, 2026-09-08) ───────────────────────────
+#
+# 86 library rows report a non-human subject and 9 of them sit on the HUMAN
+# clinical ladder — a rat pulp-capping study at level2, a dog pulpotomy
+# comparison at level2, a rabbit direct-capping study at level2. The context
+# line now opens with ANIMAL STUDY (<species>) for those rows; this block tells
+# the model what to DO with that, because a marker the model ignores is not a
+# safeguard.
+#
+# The instruction is to carry the species into the prose, not to discard the
+# study. A dog pulpotomy study is real evidence about pulpotomy; it is simply
+# not evidence about a human premolar, and the clinician is the one who should
+# decide how far it transfers.
+ANIMAL_PROMPT_BLOCK = """
+ANIMAL STUDIES ARE LABELLED, AND THE LABEL MUST REACH THE READER:
+A context line beginning ANIMAL STUDY (species) means that study's subjects
+were not human. Do not silently present it as clinical evidence.
+When you use one, say so IN THE SENTENCE THAT CITES IT -- "in a dog model",
+"in rats" -- so a clinician never has to open the reference to discover the
+subjects were not people. Where the species is "unspecified", say
+"in an animal study".
+Do not discard it: an animal study is real evidence about a mechanism, and
+sometimes it is the only evidence there is. Say what it showed and say what it
+was done in, and let the clinician judge how far it transfers.
+Never let an animal study be the sole support for a statement about what to do
+in a human patient without saying, in that sentence, what the evidence rests on.
+"""
+
+
 GUIDELINE_PROMPT_BLOCK = """
 SPECIALTY GUIDELINES ARE A DIFFERENT AXIS, NOT A RUNG ON THE LADDER:
 The evidence may include a "Specialty Guidelines & Position Statements" block.
@@ -10669,7 +10738,7 @@ This section is what the clinician acts on, so it MUST be traceable:
 Organized by evidence level, top-down. For each level write a short paragraph (3-6 sentences) summarising what the evidence shows — do not use terse bullet points. Cite authors inline as (Author et al.) or (Author Surname). Include study design, sample size, and follow-up where relevant. Discuss agreements and disagreements between studies. Skip levels with no relevant evidence.
 
 """ + (render_evidence_headings() if LANE_HEADINGS_ENABLED else _LEGACY_EVIDENCE_HEADINGS) + """
-""" + (GUIDELINE_PROMPT_BLOCK if GUIDELINE_PROMPT_ENABLED else "") + """
+""" + (GUIDELINE_PROMPT_BLOCK if GUIDELINE_PROMPT_ENABLED else "") + ANIMAL_PROMPT_BLOCK + """
 
 ---
 

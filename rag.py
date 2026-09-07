@@ -308,6 +308,14 @@ def setup_table():
             # what makes that question answerable per row instead of by
             # reading two files and guessing.
             ("level_key_source",       "TEXT DEFAULT ''"),
+            # Item E (2026-09-08) — whose teeth were these. The species, or ""
+            # for a human study; "unspecified" when the row IS an animal study
+            # whose text never names the species, which is an honest gap rather
+            # than a guess a reader would take as fact. `animal_subject_why`
+            # keeps the cue that fired, because this classifier's whole risk is
+            # false positives and a count cannot show them.
+            ("animal_subject",         "TEXT DEFAULT ''"),
+            ("animal_subject_why",     "TEXT DEFAULT ''"),
             # A49 phase 1, item A (2026-09-07) — RE-KEYING, not deletion.
             #
             # A manifest record whose PMID was unknown is keyed by its slug and
@@ -379,6 +387,34 @@ def setup_table():
 
 # ── Store a paper ─────────────────────────────────────────
 
+def _animal_label(title: str, abstract: str, journal: str = "") -> tuple:
+    """(species, reason) for a row arriving from a live query, or ("", "").
+
+    NO `level_key` IS PASSED, deliberately. `detect_animal_subject` vetoes on
+    the protected tiers (`classic`, `cochrane`, `level1`) — a veto written for
+    a MIGRATION that moves rows between tiers, where touching a protected rung
+    is the danger. Labelling moves nothing, and a level1 systematic review of
+    rodent models is exactly the row a clinician most needs the label on.
+
+    Never raises: a classifier failure must not stop a paper being learned.
+    """
+    try:
+        from animal_species import species_from_reason
+        from animal_subjects import detect_animal_subject
+        is_animal, why = detect_animal_subject(title or "", abstract or "",
+                                               journal or "")
+        if not is_animal:
+            return "", ""
+        species = species_from_reason(why)
+        if species == "unspecified":
+            from_title = species_from_reason(title or "")
+            if from_title != "unspecified":
+                return from_title, "%s; species from title" % why
+        return species, why
+    except Exception:
+        return "", ""
+
+
 def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                             min_score: float = 50.0,
                             query_text: str = None) -> int:
@@ -448,6 +484,8 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                 vec = embed(f"{title}\n{abstract}")
             except Exception:
                 continue
+            animal_species, animal_why = _animal_label(
+                title, abstract, p.get("journal", "") or "")
 
             conn = get_conn()
             cur  = conn.cursor()
@@ -459,8 +497,9 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                          citations, level_key, score, embedding,
                          medline_indexed, has_erratum, has_retraction,
                          registry, coi_flag, coi_funder, coi_status,
-                         superseded_by, level_key_source)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                         superseded_by, level_key_source,
+                         animal_subject, animal_subject_why)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                     ON CONFLICT (pmid) DO UPDATE SET
                         citations       = EXCLUDED.citations,
                         score           = EXCLUDED.score,
@@ -527,6 +566,16 @@ def learn_from_live_results(scored_papers: list, per_pmid: dict = None,
                     # Item C. Empty when the caller predates the guard, which
                     # the ON CONFLICT arm treats as "not derived".
                     p.get("level_key_source", "") or "",
+                    # ITEM E (2026-09-08) — CLASSIFY ON ARRIVAL.
+                    #
+                    # `detect_animal_subject` existed since 2026-09-07 but only
+                    # a batch script ever called it, so the label was a fact
+                    # about the day someone ran a migration rather than a fact
+                    # about the library. Every row that arrives from a live
+                    # query now gets it here, on the same path that decides its
+                    # tier, so the 86 backfilled rows do not quietly become 86
+                    # rows plus everything since.
+                    animal_species, animal_why,
                 ))
                 conn.commit()
                 written += 1
@@ -659,6 +708,7 @@ def search(
                     quarantine_reason,
                     guideline_id, guideline_org, guideline_status,
                     guideline_jurisdiction, guideline_url, guideline_confidence,
+                    COALESCE(animal_subject,'') AS animal_subject,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE level_key = %s
@@ -706,6 +756,7 @@ def search(
                     quarantine_reason,
                     guideline_id, guideline_org, guideline_status,
                     guideline_jurisdiction, guideline_url, guideline_confidence,
+                    COALESCE(animal_subject,'') AS animal_subject,
                     1 - (embedding <=> %s::vector) AS similarity
                 FROM endo_papers_rag
                 WHERE NOT COALESCE(has_retraction, FALSE)
@@ -800,6 +851,7 @@ def search_by_pmids(query: str, pmids: list) -> list[dict]:
                 quarantine_reason,
                 guideline_id, guideline_org, guideline_status,
                 guideline_jurisdiction, guideline_url, guideline_confidence,
+                    COALESCE(animal_subject,'') AS animal_subject,
                 1 - (embedding <=> %s::vector) AS similarity
             FROM endo_papers_rag
             WHERE pmid = ANY(%s)

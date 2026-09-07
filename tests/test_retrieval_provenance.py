@@ -56,6 +56,7 @@ class TestTheGeneratorRecordsWhatItDid:
         """A pool built from a cached query and one built from a fresh call are
         not the same event, and an audit trail that cannot tell them apart
         cannot answer "was this the model's judgement, or a replay?"."""
+        E.TERM_CACHE_ENABLED = True   # conftest turns it off by default
         _stub_generator(monkeypatch, cached=GOOD)
         E.generate_search_terms(Q, mode="review")
         assert E.retrieval_provenance()["source"] == "cache"

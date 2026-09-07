@@ -159,6 +159,7 @@ class TestTheDegradedFallbackIsNeverCached:
     """
 
     def test_the_fallback_path_writes_nothing(self, monkeypatch):
+        E.TERM_CACHE_ENABLED = True   # conftest turns it off by default
         """MUTATION-CHECKED BY RUNNING THE REAL FUNCTION with a model that
         returns junk, not by reading the source for a guard."""
         writes = []
@@ -182,6 +183,7 @@ class TestTheDegradedFallbackIsNeverCached:
             "it and never retry generation")
 
     def test_a_good_query_IS_written(self, monkeypatch):
+        E.TERM_CACHE_ENABLED = True   # conftest turns it off by default
         """The control arm. Without it the test above passes for a build in
         which the cache write never happens at all."""
         writes = []
