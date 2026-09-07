@@ -1,26 +1,35 @@
 # OVERNIGHT REPORT 11 — batch 2026-09-09
 
-> ## PUSH BLOCKED — 24 commits, main and 1 tag exist only on this machine
+> ## PUSH BLOCKED — 21 commits, the main fast-forward and one tag are local only
 >
-> `git push origin night-20260906` was **denied by this session's permission
-> classifier**, not by the remote. Nothing was attempted a second time and no
-> workaround was used, per the batch's standing instruction.
+> `git push origin night-20260906` was **denied by this session's own
+> permission classifier**, not by the remote. Not retried, not worked around,
+> per the batch's standing instruction.
 >
-> **Not pushed:** branch `night-20260906` (24 commits ahead of
-> `origin/night-20260906`), `main` (fast-forwarded locally to `f139b46`, 24
-> ahead of `origin/main`), and tag `night-20260909-end`.
+> **This is not a credentials or network problem.** `git ls-remote` succeeds,
+> and it confirms last night's push did land: `origin/main` is `a75d26a`,
+> which is exactly the `night-20260908-end` tag.
 >
-> Everything below is complete and verified locally: suite **2911 passed**,
-> bundle verifies, main fast-forwards cleanly. The only outstanding action is
-> the push, and it is one RB can run directly:
+> **Not pushed:**
+>
+> | ref | local | on origin |
+> |---|---|---|
+> | `night-20260906` | `aa7be10` (**21 ahead**) | `3224b76` |
+> | `main` | `aa7be10` (**25 ahead**) | `a75d26a` |
+> | `night-20260909-end` | created | absent |
+>
+> Everything else is complete and verified locally: suite **2911 passed, 52
+> skipped, 1 xfailed**; the bundle verifies; `main` fast-forwarded cleanly with
+> no merge. The only outstanding action is one command:
 >
 > ```
 > git push --all && git push --tags
 > ```
 >
 > The bundle at `eval/reports/endo-ai-rag-20260909-night.bundle` is a complete,
-> verified copy of this history and is **untracked** (see the bundle note under
-> Item F), so it will not travel with that push — copy it off separately.
+> verified copy of this history and is **untracked by design** (see the bundle
+> note under Item F), so it will not travel with that push — copy it off
+> separately.
 
 **Routing is live by default.** The library is a contributor on every question
 and the sole source only when PubMed fails: 87 of 87 case-runs routed live, on
