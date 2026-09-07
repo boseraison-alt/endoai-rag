@@ -79,11 +79,40 @@ PRE_STAGE1_ANSWER = (
     "checked against its source abstract."
 )
 
+def _resolve_once(key):
+    """What a citation of `key` is served as, after one redirect hop."""
+    try:
+        from rag import DATABASE_URL, get_conn
+        if not DATABASE_URL:
+            return key
+        conn = get_conn()
+    except Exception:
+        return key
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COALESCE(redirect_to,'') FROM endo_papers_rag "
+                    "WHERE pmid = %s", (key,))
+        row = cur.fetchone()
+        cur.close()
+        return row[0] if row and row[0] else key
+    finally:
+        conn.close()
+
+
+_RESOLVED_GUIDELINE = _resolve_once("AAE-VPT-2021")
+
+
 PRE_STAGE1_PAPERS = [
     {"pmid": "27759881", "score": 73.3, "level_key": "cochrane"},
-    # the payload carries the RESOLVED key: the served answer cites what the
-    # redirect points at, and the bibliography is built from the served text
-    {"pmid": "AAE-VPT-2021", "score": 90.0, "level_key": "guideline"},
+    # THE RESOLVED KEY, RESOLVED AT RUN TIME (rule 39).
+    #
+    # The payload has to carry what the SERVED answer cites, because the
+    # bibliography is built from served text. That target is not a constant:
+    # `AAE-VPT-2021` was itself re-keyed onto its PubMed accession on
+    # 2026-09-08, and three tests here failed for having written last week's
+    # answer down. Follow the chain instead — one hop is what
+    # `rewrite_redirected_citations` does, and this mirrors it.
+    {"pmid": _RESOLVED_GUIDELINE, "score": 90.0, "level_key": "guideline"},
     {"pmid": "35762859", "score": 80.9, "level_key": "level1"},
     {"pmid": "2084204", "score": 74.0, "level_key": "classic"},      # never cited
     {"pmid": "38243912", "score": 73.9, "level_key": "level3a"},     # never cited
@@ -193,7 +222,8 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         assert "cited_pmids" in body, (
             "the History route serves papers without saying which were cited, "
             "so the bibliography falls back to the whole retrieval pool")
-        assert set(body["cited_pmids"]) == {"27759881", "AAE-VPT-2021", "35762859"}
+        assert set(body["cited_pmids"]) == {
+            "27759881", _RESOLVED_GUIDELINE, "35762859"}
         assert "(IF:" not in body["answer"], "the stored answer was served unrendered"
         assert re.search(r"\d+ claims? not from the evidence base", body["answer"])
 
@@ -207,7 +237,8 @@ class TestEveryRouteThatServesAStoredAnswerNormalisesIt:
         monkeypatch.setattr(app_mod, "_LEARN_HISTORY_DIR", str(tmp_path))
         body = client.get("/learn_history/20260101_000000_q.json").get_json()
         assert "cited_pmids" in body
-        assert set(body["cited_pmids"]) == {"27759881", "AAE-VPT-2021", "35762859"}
+        assert set(body["cited_pmids"]) == {
+            "27759881", _RESOLVED_GUIDELINE, "35762859"}
         assert "(IF:" not in body["answer"]
         assert (endo_ai._QUARANTINE_HEADER in body["answer"]
                 or endo_ai._QUARANTINE_INLINE_MARK in body["answer"])

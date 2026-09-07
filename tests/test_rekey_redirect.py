@@ -130,7 +130,34 @@ class TestTheFinaliserRewritesARetiredCitation:
         assert out == text and rewrites == []
 
     def test_an_unrelated_slug_is_untouched(self):
-        text = "The position says so [[PMID:AAE-VPT-2021]]."
+        """THE CONTROL IS RESOLVED, NOT NAMED (rule 39).
+
+        This was `AAE-VPT-2021` until 2026-09-08, when that record was itself
+        re-keyed onto its PubMed accession — so the "unrelated, untouched"
+        control acquired a redirect and the test failed for being right. The
+        property is "a slug with no redirect_to is left alone", so ask the
+        library for one instead of naming one that can be re-keyed next.
+        """
+        from rag import DATABASE_URL, get_conn
+        if not DATABASE_URL:
+            pytest.skip("DATABASE_URL not set")
+        conn = get_conn()
+        try:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT pmid FROM endo_papers_rag
+                WHERE level_key = 'guideline'
+                  AND COALESCE(quarantine_reason, '') = ''
+                  AND COALESCE(redirect_to, '') = ''
+                  AND pmid !~ '^[0-9]+$'
+                ORDER BY pmid LIMIT 1
+            """)
+            row = cur.fetchone()
+            cur.close()
+        finally:
+            conn.close()
+        assert row, "no un-redirected slug row to use as a control"
+        text = "The position says so [[PMID:%s]]." % row[0]
         out, rewrites = E.rewrite_redirected_citations(text)
         assert out == text and rewrites == []
 

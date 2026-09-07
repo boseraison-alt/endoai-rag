@@ -22,10 +22,78 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import endo_ai as E
 
-GL = "ACP-ASYMPTOMATIC-EXTRACTION-2016"
-GL2 = "AAE-VPT-2021"
 UNKNOWN = "ACP-NO-SUCH-DOCUMENT-2099"
 RETIRED = "COCHRANE-CD005296"          # quarantined by item A
+
+
+# THE TWO LIVE IDS ARE RESOLVED, NOT NAMED (rule 39).
+#
+# `GL2` was `AAE-VPT-2021` until 2026-09-08, when that record was re-keyed onto
+# its PubMed accession and stopped being a slug-keyed guideline at all. Two
+# tests here then failed for a reason with nothing to do with the citation form
+# they exist to check. What they actually need is "a slug-keyed guideline row
+# that is currently citeable and carries the fields the rendered form prints" —
+# so ask the library for two, in a fixed order so the suite stays deterministic.
+def _live_gl_ids(n=2):
+    try:
+        from rag import DATABASE_URL, get_conn
+        if not DATABASE_URL:
+            return []
+        conn = get_conn()
+    except Exception:
+        return []
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT guideline_id FROM endo_papers_rag
+            WHERE level_key = 'guideline'
+              AND COALESCE(quarantine_reason, '') = ''
+              AND COALESCE(redirect_to, '') = ''
+              AND pmid !~ '^[0-9]+$'
+              AND COALESCE(guideline_id, '') <> ''
+              AND COALESCE(guideline_org, '') <> ''
+              AND COALESCE(guideline_status, '') <> ''
+              AND COALESCE(guideline_jurisdiction, '') <> ''
+              AND COALESCE(year::text, '') <> ''
+            ORDER BY guideline_id
+        """)
+        out = [r[0] for r in cur.fetchall()]
+        cur.close()
+        return out[:n]
+    finally:
+        conn.close()
+
+
+_LIVE = _live_gl_ids(2)
+GL = _LIVE[0] if _LIVE else "ACP-ASYMPTOMATIC-EXTRACTION-2016"
+GL2 = _LIVE[1] if len(_LIVE) > 1 else GL
+
+
+def _fields(gid):
+    """Org, title, year, status and jurisdiction as the library holds them.
+
+    The rendered form is asserted against THESE rather than against strings
+    typed into the test: when the fixtures stopped being hard-coded, the
+    expectations had to stop being hard-coded with them, or the test just
+    swapped one stale literal for another.
+    """
+    from rag import get_conn
+    conn = get_conn()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT COALESCE(guideline_org,''), COALESCE(title,''),
+                   COALESCE(year::text,''), COALESCE(guideline_status,''),
+                   COALESCE(guideline_jurisdiction,'')
+            FROM endo_papers_rag WHERE guideline_id = %s
+              AND COALESCE(quarantine_reason,'') = ''
+            LIMIT 1
+        """, (gid,))
+        row = cur.fetchone()
+        cur.close()
+        return row
+    finally:
+        conn.close()
 
 
 @pytest.fixture(autouse=True)
@@ -62,9 +130,12 @@ class TestTheRenderedCitation:
     def test_it_names_org_title_year_status_and_jurisdiction(self):
         out, n = E.render_gl_citations("The position is clear [[GL:%s]]." % GL2)
         assert n == 1
-        assert "AAE" in out
-        assert "Vital Pulp Therapy" in out
-        assert "2021" in out and "current" in out and "US" in out
+        org, title, year, status, juris = _fields(GL2)
+        for field, label in ((org, "org"), (title, "title"), (year, "year"),
+                             (status, "status"), (juris, "jurisdiction")):
+            assert field and field in out, (
+                "the rendered citation does not name the %s (%r): %s"
+                % (label, field, out))
         assert "[[GL:" not in out, out
 
     def test_an_unknown_id_is_left_for_g2_not_rendered(self):
@@ -153,7 +224,8 @@ class TestEndToEndThroughTheFinaliser:
         out, _blocks = E.finalise_answer_text(text)
         assert "[[PMID:%s]]" % GL not in out, out
         assert "[[GL:" not in out, "the marker was not rendered: %r" % out
-        assert "ACP" in out and "2016" in out, out
+        org, _title, year, _status, _juris = _fields(GL)
+        assert org in out and year in out, out
 
     def test_a_gl_marker_counts_as_an_attribution_before_it_is_rendered(self):
         """`_ANY_CITATION_RE` must see GL, or every guideline-cited sentence

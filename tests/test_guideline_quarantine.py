@@ -139,7 +139,52 @@ REAL_PMID_GUIDELINES = ["28436043", "31668170", "36942472", "37772327", "3957868
 # swallowed them the retirement would have broken the 32 stored answers it was
 # supposed to repair — which makes them the most load-bearing control
 # available, not merely a convenient one.
-CITEABLE_CONTROL = ["AAE-VPT-2021", "AAE-DIAGNOSIS-2009"]
+# RESOLVED, NOT NAMED (rule 39).
+#
+# Naming the targets was still a literal, and on 2026-09-08 the literal went
+# stale for the second time: `AAE-VPT-2021` was itself re-keyed onto its
+# PubMed accession 34352305, so the row a retired citation resolves to moved
+# again and three tests here failed for a reason that had nothing to do with
+# the quarantine clause they check.
+#
+# The property was never "AAE-VPT-2021 stays citeable". It is "whatever a
+# retired citation resolves to stays citeable". So follow the chain and let
+# the database answer. This survives the next re-key without an edit.
+def _terminal_target(cur, key, _seen=None):
+    seen = _seen or set()
+    while key and key not in seen:
+        seen.add(key)
+        cur.execute("SELECT COALESCE(redirect_to,'') FROM endo_papers_rag "
+                    "WHERE pmid = %s", (key,))
+        row = cur.fetchone()
+        if not row or not row[0]:
+            return key
+        key = row[0]
+    return key
+
+
+def _resolve_citeable_control():
+    try:
+        from rag import DATABASE_URL, get_conn
+        if not DATABASE_URL:
+            return []
+        conn = get_conn()
+    except Exception:
+        return []
+    try:
+        cur = conn.cursor()
+        out = []
+        for retired in ("AAE-PS-vital-pulp", "AAE-PS-diagnosis"):
+            t = _terminal_target(cur, retired)
+            if t and t != retired:
+                out.append(t)
+        cur.close()
+        return out
+    finally:
+        conn.close()
+
+
+CITEABLE_CONTROL = _resolve_citeable_control()
 
 
 def _db():
@@ -290,9 +335,34 @@ class TestNoAnswerCanCiteOne:
     @pytest.mark.parametrize("slug", CITEABLE_CONTROL)
     def test_a_citeable_slug_still_resolves(self, slug, fresh_key_cache):
         """RETARGETED 2026-09-07, same reason: VERIFIED is empty and a
-        zero-parameter test is not a test. These two are what
-        AAE-PS-vital-pulp and AAE-PS-diagnosis now redirect to, so a citation
-        of either retired key resolves only if these still do."""
+        zero-parameter test is not a test. These are what AAE-PS-vital-pulp
+        and AAE-PS-diagnosis now redirect to, so a citation of either retired
+        key resolves only if these still do.
+
+        THE TWO TARGETS RESOLVE BY DIFFERENT ROUTES, and after the 2026-09-08
+        re-key they no longer share one. `AAE-DIAGNOSIS-2009` is a manifest
+        slug and resolves through the synthetic-key gate; `34352305` is a
+        PubMed accession and resolves the way every other PMID citation does —
+        as a citeable row. Asserting the slug route for both convicted the
+        PMID target for being an ordinary PMID.
+        """
+        if str(slug).isdigit():
+            conn = _db()
+            try:
+                cur = conn.cursor()
+                cur.execute("""
+                    SELECT COUNT(*) FROM endo_papers_rag
+                    WHERE pmid = %s
+                      AND COALESCE(quarantine_reason, '') = ''
+                """, (slug,))
+                assert cur.fetchone()[0] == 1, (
+                    "%s stopped being a citeable row — every citation of the "
+                    "slug that redirects to it now resolves to nothing."
+                    % slug)
+                cur.close()
+            finally:
+                conn.close()
+            return
         known = E._known_synthetic_keys()
         assert known is not None
         assert slug in known, (
@@ -352,9 +422,11 @@ class TestNoAnswerCanCiteOne:
         assert "AAE-PS-obturation" not in served, (
             "a quarantined citation survived the finaliser every answer "
             "path goes through")
-        assert "AAE-VPT-2021" in served, (
+        expected = CITEABLE_CONTROL[0] if CITEABLE_CONTROL else None
+        assert expected, "no citeable control resolved — see the note above"
+        assert expected in served, (
             "the finaliser also dropped a citeable record — and this one is "
-            "the row AAE-PS-vital-pulp now redirects to")
+            "the row AAE-PS-vital-pulp now redirects to (%s)" % expected)
 
 
 # ── the retrieval layer ──────────────────────────────────

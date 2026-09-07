@@ -313,6 +313,24 @@ def write(cur, guidelines, actions):
                     guideline_id = ''
                 WHERE pmid = %s
             """, (a["quarantine"], a["redirect_to"], a["key"]))
+            # RE-POINT ANYTHING THAT POINTED HERE. Retiring a row that is
+            # ITSELF a redirect target creates a chain, and
+            # `rewrite_redirected_citations` resolves ONE hop — so the chain
+            # resolves to a quarantined row and the citation is dropped.
+            #
+            # Real case, 2026-09-08: AAE-PS-vital-pulp was retired to
+            # AAE-VPT-2021 on 2026-09-07; resolving AAE-VPT-2021's accession by
+            # DOI then retired IT to 34352305. Without this, the 10 stored
+            # answers citing AAE-PS-vital-pulp would resolve to a quarantined
+            # row — the retirement breaking exactly what it was built to
+            # protect, one day later.
+            cur.execute("""
+                UPDATE endo_papers_rag SET redirect_to = %s
+                WHERE redirect_to = %s
+            """, (a["redirect_to"], a["key"]))
+            if cur.rowcount:
+                print("    re-pointed %d earlier redirect(s) from %s to %s"
+                      % (cur.rowcount, a["key"], a["redirect_to"]))
             continue
         vec = rag.embed(embed_text(g))
         if a["action"] == "enrich":
@@ -369,6 +387,39 @@ def write(cur, guidelines, actions):
                   g.get("jurisdiction") or "", g.get("url") or "",
                   g.get("confidence") or "", a["superseded_by"],
                   a["quarantine"]))
+
+    # THE DOCUMENT'S OWN TEXT FOLLOWS THE DOCUMENT, NOT THE KEY.
+    #
+    # Re-keying a slug to its PubMed accession moves every citation to the new
+    # row. On 2026-09-08 that stranded the AAE's own words for vital pulp
+    # therapy — fetched from aae.org through a browser session precisely
+    # because the publisher 403s everything else — on the quarantined
+    # AAE-VPT-2021, while the row that inherited its citations, 34352305, had
+    # no abstract at all. The re-key silently undid item B's whole point.
+    #
+    # This runs over EVERY redirect, not only the ones retired in this run:
+    # the defect was found after the retire had already been applied, and a
+    # pass that only healed fresh retires would have left it. Only ever fills
+    # an EMPTY target, so it is idempotent and cannot overwrite a better
+    # source; the provenance travels with the text so it stays auditable.
+    cur.execute("""
+        UPDATE endo_papers_rag AS t SET
+            abstract = s.abstract,
+            abstract_source = s.abstract_source,
+            abstract_fetched = s.abstract_fetched,
+            abstract_sha256 = s.abstract_sha256,
+            abstract_url = s.abstract_url,
+            fetch_failed = ''
+        FROM endo_papers_rag AS s
+        WHERE s.redirect_to = t.pmid
+          AND s.abstract_source IN ('org_page', 'org_page_browser', 'pubmed')
+          AND COALESCE(t.abstract_source, '') = ''
+        RETURNING t.pmid AS target, s.pmid AS retired,
+                  s.abstract_source AS src
+    """)
+    for r in cur.fetchall():
+        print("    carried %s text from the retired %s to %s"
+              % (r["src"], r["retired"], r["target"]))
 
 
 def main():

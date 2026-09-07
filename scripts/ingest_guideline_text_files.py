@@ -190,6 +190,22 @@ def main():
             print("  %-34s SHA256 MISMATCH" % gid)
             print("      sidecar %s" % meta.get("sha256"))
             print("      file    %s" % got)
+            # NAME THE CRLF CASE. It presented as all thirteen files being
+            # corrupt at once, on a clean `git status`, with nothing edited —
+            # git had checked LF bytes out as CRLF. Diagnosing that from two
+            # hex strings cost real time; the fix is `.gitattributes`, not a
+            # looser hash.
+            if hashlib.sha256(
+                    raw.replace(b"
+", b"
+")).hexdigest() == meta.get(
+                        "sha256"):
+                print("      ^ the ONLY difference is CRLF line endings. Git "
+                      "rewrote this file on checkout.")
+                print("        Fix the checkout, not the hash: .gitattributes "
+                      "carries `data/guideline_text/*.txt -text`;")
+                print("        then `rm` these files and `git checkout -- "
+                      "data/guideline_text/`.")
             mismatched += 1
             continue
 

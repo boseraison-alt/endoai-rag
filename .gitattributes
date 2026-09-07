@@ -1,0 +1,18 @@
+# data/guideline_text/ IS CONTENT-ADDRESSED. GIT MUST NOT REWRITE IT.
+#
+# Each .txt is a guideline document's own words, fetched once, and its .json
+# sidecar records the sha256 of those exact bytes. `ingest_guideline_text_files.py`
+# re-hashes the file and REFUSES on mismatch — that refusal is the guarantee
+# that what the library quotes is what the publisher published.
+#
+# On 2026-09-08 all thirteen files failed that check on a Windows working tree.
+# Nothing had been edited and `git status` was clean: git had materialised the
+# LF bytes it stores as CRLF on checkout, so every file hashed differently from
+# its sidecar while being byte-identical in the repository. The next run of the
+# ingest would have refused the entire corpus, and the obvious "fix" — hashing
+# with newlines normalised — would have quietly weakened the one check that
+# makes the provenance chain worth having.
+#
+# -text disables all end-of-line conversion for these paths in both directions.
+data/guideline_text/*.txt -text
+data/guideline_text/*.json -text

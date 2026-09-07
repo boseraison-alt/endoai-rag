@@ -1,0 +1,88 @@
+[
+ {
+  "id": "AAE-VPT-2021",
+  "doi": "10.1016/j.joen.2021.07.015",
+  "pmids": [
+   "34352305"
+  ],
+  "pubmed_title": "AAE Position Statement on Vital Pulp Therapy.",
+  "manifest_title": "AAE Position Statement on Vital Pulp Therapy",
+  "match": true
+ },
+ {
+  "id": "ESE-ECR-2018",
+  "doi": "10.1111/iej.13008",
+  "pmids": [
+   "30171768"
+  ],
+  "pubmed_title": "European Society of Endodontology position statement: External Cervical Resorption.",
+  "manifest_title": "European Society of Endodontology position statement: external cervical resorption",
+  "match": true
+ },
+ {
+  "id": "ESE-TRAUMA-2021",
+  "doi": "10.1111/iej.13543",
+  "pmids": [
+   "33934366"
+  ],
+  "pubmed_title": "European Society of Endodontology position statement: endodontic management of traumatized permanent teeth.",
+  "manifest_title": "European Society of Endodontology position statement: endodontic management of traumatized permanent teeth",
+  "match": true
+ },
+ {
+  "id": "ESE-EXTRUSION-REPLANT-2021",
+  "doi": "10.1111/iej.13456",
+  "pmids": [
+   "33501680"
+  ],
+  "pubmed_title": "European Society of Endodontology position statement: Surgical extrusion, intentional replantation and tooth autotransplantation: European Society of Endodontology developed by.",
+  "manifest_title": "European Society of Endodontology position statement: surgical extrusion, intentional replantation and tooth autotransplantation",
+  "match": true
+ },
+ {
+  "id": "AAE-TRAUMA-2026",
+  "doi": "10.1016/j.joen.2026.04.002",
+  "pmids": [
+   "41941956"
+  ],
+  "pubmed_title": "Recommended Guidelines of the American Association of Endodontists for the Treatment of Traumatic Dental Injuries.",
+  "manifest_title": "Recommended Guidelines of the American Association of Endodontists for the Treatment of Traumatic Dental Injuries",
+  "match": true
+ },
+ {
+  "id": "AAE-MRONJ-2026",
+  "doi": "10.1016/j.joen.2026.04.001",
+  "pmids": [
+   "41985837"
+  ],
+  "pubmed_title": "Endodontic Implications of Medication-Related Osteonecrosis of the Jaw.",
+  "manifest_title": "Endodontic Implications of Medication-Related Osteonecrosis of the Jaw",
+  "match": true
+ },
+ {
+  "id": "AAE-REGENERATIVE-2013",
+  "doi": "10.1016/s0099-2399(13)00231-8",
+  "pmids": [],
+  "pubmed_title": "",
+  "manifest_title": "AAE Position Statement: Scope of Endodontics - Regenerative Endodontics (2013)",
+  "match": false
+ },
+ {
+  "id": "AAOM-CPS-ANTIRESORPTIVE-2019",
+  "doi": "10.1016/j.oooo.2018.08.021",
+  "pmids": [],
+  "pubmed_title": "",
+  "manifest_title": "The American Academy of Oral Medicine clinical practice statement: dental care for the patient on antiresorptive drug therapy",
+  "match": false
+ },
+ {
+  "id": "ACP-PARAMETERS-OF-CARE-2020",
+  "doi": "10.1111/jopr.13176",
+  "pmids": [
+   "32681591"
+  ],
+  "pubmed_title": "Parameters of Care for the Specialty of Prosthodontics.",
+  "manifest_title": "Parameters of Care for the Specialty of Prosthodontics, 3rd edition",
+  "match": true
+ }
+]

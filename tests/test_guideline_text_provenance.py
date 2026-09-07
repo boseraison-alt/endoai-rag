@@ -155,15 +155,24 @@ class TestBrowserFetchedTextIsTraceableToItsFile:
     def test_every_row_matches_its_sidecar_and_its_file(self):
         import glob
         import json
-        rows = _q("""SELECT pmid, abstract, abstract_sha256, abstract_url,
-                            abstract_fetched
+        rows = _q("""SELECT COALESCE(guideline_id, ''), abstract,
+                            abstract_sha256, abstract_url, abstract_fetched
                      FROM endo_papers_rag
-                     WHERE abstract_source = 'org_page_browser'""")
+                     WHERE abstract_source = 'org_page_browser'
+                       AND COALESCE(quarantine_reason, '') = ''""")
         assert rows, ("no org_page_browser rows — the input is zero, so this "
                       "proves nothing (rule 34)")
         files = {os.path.basename(p)[:-5]
                  for p in glob.glob("data/guideline_text/*.json")}
         assert files, "no sidecars on disk"
+        # KEYED BY guideline_id, NOT BY ROW KEY (rule 39).
+        #
+        # These files are named for the manifest record. The row key is not:
+        # re-keying AAE-VPT-2021 onto its PubMed accession 34352305 moved the
+        # row and left the file where it was, and this test went looking for
+        # `34352305.txt`. The repair is to the STABLE identity — the manifest
+        # id, which is what the file was always named for — not to a second
+        # accepted filename.
         for pmid, text, sha, url, fetched in rows:
             assert pmid in files, (
                 "%s claims browser provenance with no sidecar on disk" % pmid)
@@ -180,10 +189,12 @@ class TestBrowserFetchedTextIsTraceableToItsFile:
     def test_the_stored_text_is_verbatim_from_the_file(self):
         """The whole claim. Every stored word must appear, in order, in the
         file RB fetched — no paraphrase, no reflow, no repair."""
-        rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
-                     WHERE abstract_source = 'org_page_browser'""")
+        rows = _q("""SELECT COALESCE(guideline_id, ''), abstract
+                     FROM endo_papers_rag
+                     WHERE abstract_source = 'org_page_browser'
+                       AND COALESCE(quarantine_reason, '') = ''""")
         assert rows
-        for pmid, text in rows:
+        for pmid, text in rows:      # keyed by guideline_id — see above
             src = open("data/guideline_text/%s.txt" % pmid,
                        encoding="utf-8").read()
             # Compared against the file WITH `[[PAGE n]]` lines removed, which
@@ -204,7 +215,8 @@ class TestBrowserFetchedTextIsTraceableToItsFile:
     def test_no_page_marker_survives_into_a_stored_abstract(self):
         """RB's `[[PAGE n]]` markers are the fetch's, not the document's."""
         rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
-                     WHERE abstract_source = 'org_page_browser'""")
+                     WHERE abstract_source = 'org_page_browser'
+                       AND COALESCE(quarantine_reason, '') = ''""")
         for pmid, text in rows:
             assert "[[PAGE" not in (text or ""), pmid
 
@@ -224,7 +236,8 @@ class TestBrowserFetchedTextIsTraceableToItsFile:
         FURNITURE = _re.compile(r"(Page\s?\d|Position S\s?tatement|"
                                 r"AAE Position|www\.|\.org)", _re.I)
         rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
-                     WHERE abstract_source = 'org_page_browser'""")
+                     WHERE abstract_source = 'org_page_browser'
+                       AND COALESCE(quarantine_reason, '') = ''""")
         assert rows
         bad = [p for p, t in rows if FURNITURE.search((t or "")[-80:])]
         assert not bad, "spans ending in page furniture: %s" % bad
