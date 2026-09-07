@@ -58,6 +58,24 @@ STOP_HEADS = {"references", "reference list", "bibliography"}
 _PAGE_MARKER = re.compile(r"^\s*\[\[PAGE \d+\]\]\s*$")
 
 
+def _normalise_eol(raw: bytes) -> bytes:
+    """CRLF -> LF. FOR THE DIAGNOSTIC MESSAGE ONLY, never for the hash gate.
+
+    The gate above hashes the file's EXACT bytes and refuses on mismatch; that
+    refusal is what makes "the library quotes what the publisher published"
+    a checkable claim rather than a hope. This helper exists so that when the
+    gate does refuse, it can tell the reader WHY in one line.
+
+    On 2026-09-08 all thirteen files failed the gate on a clean `git status`
+    with nothing edited: git stores them as LF and had checked them out as
+    CRLF on a Windows tree, so every file hashed differently while being
+    byte-identical in the repository. The tempting fix — normalise before
+    hashing — would have silently weakened the gate for every future run. The
+    real fix is `.gitattributes` marking `data/guideline_text/*` as `-text`.
+    """
+    return raw.replace(b"\r\n", b"\n")
+
+
 def looks_like_heading(line: str) -> bool:
     """A short, unpunctuated line — how these documents mark a section.
 
@@ -195,11 +213,8 @@ def main():
             # git had checked LF bytes out as CRLF. Diagnosing that from two
             # hex strings cost real time; the fix is `.gitattributes`, not a
             # looser hash.
-            if hashlib.sha256(
-                    raw.replace(b"
-", b"
-")).hexdigest() == meta.get(
-                        "sha256"):
+            if hashlib.sha256(_normalise_eol(raw)).hexdigest() == meta.get(
+                    "sha256"):
                 print("      ^ the ONLY difference is CRLF line endings. Git "
                       "rewrote this file on checkout.")
                 print("        Fix the checkout, not the hash: .gitattributes "
@@ -209,15 +224,33 @@ def main():
             mismatched += 1
             continue
 
+        # FOLLOW THE RE-KEY. The file is named for the MANIFEST ID, and that
+        # is not always the row's key any more: item A re-keyed six records
+        # onto their PubMed accessions, so `AAE-VPT-2021` now names a
+        # quarantined row whose citations all resolve to `34352305`.
+        #
+        # Looking up by manifest id alone would write the AAE's own words back
+        # onto the dead row and leave the live one untouched — this whole
+        # script silently becoming a no-op for exactly the records someone
+        # took the trouble to re-key. One hop, matching what
+        # `rewrite_redirected_citations` does for citations.
         cur.execute("""SELECT pmid, COALESCE(abstract_source,''),
-                              COALESCE(abstract,'')
+                              COALESCE(abstract,''), COALESCE(redirect_to,'')
                        FROM endo_papers_rag WHERE pmid = %s""", (gid,))
         row = cur.fetchone()
+        if row and row[3]:
+            target = row[3]
+            cur.execute("""SELECT pmid, COALESCE(abstract_source,''),
+                                  COALESCE(abstract,''), COALESCE(redirect_to,'')
+                           FROM endo_papers_rag WHERE pmid = %s""", (target,))
+            row = cur.fetchone()
+            if row:
+                print("  %-34s re-keyed -> %s" % (gid, target))
         if not row:
             print("  %-34s NO LIBRARY ROW" % gid)
             missing += 1
             continue
-        _pmid, src_now, abs_now = row
+        _pmid, src_now, abs_now, _redir = row
 
         # ── skip rules ──
         # Already fetched by the earlier script, or carrying a real PubMed
@@ -255,7 +288,7 @@ def main():
                     fetch_failed = ''
                 WHERE pmid = %s
             """, (span, meta.get("url", ""), meta.get("fetched_at", ""),
-                  meta.get("sha256", ""), gid))
+                  meta.get("sha256", ""), _pmid))
             conn.commit()
         updated += 1
 

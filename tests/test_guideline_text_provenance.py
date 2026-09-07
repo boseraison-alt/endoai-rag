@@ -87,14 +87,27 @@ class TestEveryStoredGuidelineTextDeclaresItsSource:
             "citeable rows whose stored text is a model-written summary: %s"
             % rows)
 
-    def test_the_retired_paraphrase_rows_still_resolve(self):
+    def test_every_retired_row_still_resolves(self):
         """Retired, not deleted. 10 stored answers cite AAE-PS-vital-pulp and
         22 cite AAE-PS-diagnosis; each must still reach a citeable row, or the
-        retirement broke 32 answers to fix 2 rows."""
+        retirement broke 32 answers to fix 2 rows.
+
+        SELECTED BY `redirect_to`, NOT BY `abstract_source` (rule 39).
+        This used `abstract_source = 'model_summary_legacy'` as its way of
+        naming the retired pair, and item F2 replaced that text with pointer
+        text — so on 2026-09-08 the selector matched nothing and the test
+        failed for having found no input rather than for a broken redirect.
+
+        The identity was never "the rows with a paraphrase"; it is "the rows
+        that were retired". Selecting on `redirect_to` says that directly, and
+        it now covers all ten retired rows instead of two — the six re-keyed by
+        item A and the two Cochrane slugs included.
+        """
         rows = _q("""SELECT pmid, redirect_to
                      FROM endo_papers_rag
-                     WHERE abstract_source = 'model_summary_legacy'""")
-        assert rows, "no model_summary_legacy rows at all — nothing checked"
+                     WHERE COALESCE(redirect_to,'') <> ''
+                     ORDER BY pmid""")
+        assert rows, "no retired rows at all — nothing checked (rule 34)"
         for pmid, redirect in rows:
             assert redirect, "%s was retired with no redirect_to" % pmid
             target = _q("""SELECT COALESCE(quarantine_reason,'')

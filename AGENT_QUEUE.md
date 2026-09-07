@@ -267,6 +267,36 @@ Opening instruction for the agent session:
     when item A retired two of its own fixtures — repaired again by following
     `redirect_to`, because the invariant it has always meant is "no document
     leaves the library", not "this slug is citeable".)
+40. **For a PMID-keyed row, the document's own text is its PubMed abstract.
+    Go there FIRST, and to the publisher only for rows PubMed cannot supply.**
+    (Origin: 2026-09-07, `fetch_guideline_text.py` went to the publisher's page
+    for all 72 pointer rows and collected 29 HTTP 403s — aae.org and Wiley
+    refuse automated fetches — while 23 of those rows carried a numeric PMID
+    whose abstract was reachable through the same efetch client that read 200
+    rows that night without a single failure. Applying the rule on 2026-09-08
+    took guideline pointers from 45 to 15. The publisher is the fallback, not
+    the source.
+    **Corollary, learned the same day: the text belongs to the DOCUMENT, not
+    to the key.** Citations follow `redirect_to`; text did not. Re-keying
+    `AAE-VPT-2021` onto its accession left the AAE's own words on the
+    quarantined row while `34352305`, which inherited every citation, had no
+    abstract at all — nothing failed, and the library quietly stopped being
+    able to quote the AAE on vital pulp therapy. Any process that moves a key
+    moves the text with it, and any process that WRITES text resolves the key
+    first: `ingest_guideline_text_files.py` now follows `redirect_to` before
+    updating, or it would silently no-op for exactly the records someone took
+    the trouble to re-key.)
+41. **Absence from a truncated ranked list is not exclusion.** When measuring
+    what a query-level filter removes, ask per record whether it survives the
+    filter. Do not diff two top-N lists. (Origin: 2026-09-08, the species-guard
+    A/B. Comparing the unguarded and guarded top-60 showed 230 "removals", of
+    which 147 were indexed `humans[mh]` — impossible, because
+    `NOT (animals[mh] NOT humans[mh])` excludes only records indexed animal AND
+    NOT human. Adding a NOT clause changes the query, and PubMed's relevance
+    ordering is a function of the query, so records that still satisfy the
+    filter get re-ranked out of the window. Asked per record: 87 genuinely
+    excluded, 143 merely re-ranked, **0** human rows lost. The bad instrument
+    returned a confident REVERT on a correct change.)
 
 ---
 
@@ -2093,6 +2123,83 @@ explained after.
 - **A46c** Commit prediction and outcome together with `baseline_v6`, keeping `v5`.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
+
+### A56 — NIGHT 2026-09-08: three overturned premises, four instrument errors
+
+#### Overturned premises
+
+**(a) "No admission rule can meet the probe done-when, because term generation
+is non-deterministic." — MINE, from 2026-09-07 item C. Overturned.**
+
+That report concluded the probes could not be satisfied because
+`generate_search_terms` was non-deterministic and every similarity moved with
+the boolean it wrote. Item C fixed the non-determinism outright — 0/10 identical
+query strings across 5 runs became 10/10 — and re-scored all three admission
+rules against a stable pool. **All three still fail 0/3.** So non-determinism
+was not the reason, or not the only one. The real reasons, now visible:
+
+- The documents never reach the pool. Probe 2's `IADT-FRACTURES-LUXATIONS-2020`
+  sits at similarity **0.526** against a 0.55 floor; the other five watched
+  documents are not in the top 100 at all.
+- In *each* probe, one watched document shares **no** domain noun with its
+  question. `AAE-TRAUMA-2026`'s manifest scope is
+  `[dental trauma, avulsion, luxation, root fracture]` and probe 2 asks about a
+  **crown** fracture — the document's own declaration says it is not about this
+  question, so the done-when is unreachable while it is watched for.
+
+**(b) "Freezing the terms will cut pool churn." — MINE, prediction 8.
+Overturned, and decisively.**
+
+I predicted the same-build residual would fall to 10–20% once term noise was
+removed, "well below the 24% (61/256) measured on 2026-09-06". Measured with
+the identical query string sent twice: **26%** (8/31 pools). PubMed's own
+ranking accounts for essentially *all* pool instability. Term generation was
+100% unstable at the string level and contributed almost nothing on top of the
+source's churn. **The noise floor for a pool A/B is ~26% and is not removable
+by anything we control.** Query-construction changes must compare query
+strings, where the floor is now genuinely zero.
+
+**(c) "Abstract extraction is wronger than pubtype, and most disagreements are
+definitional." — MINE, prediction 9. Wrong in both halves.**
+
+30 disagreements adjudicated by hand: **pubtype wrong 19/30 (63%)**, abstract
+extraction wrong 9/30 (30%), definitional 2/30 (7%) — the *smallest* bucket, not
+the largest. NLM's `Comparative Study` is a modifier, not a design, and mapping
+it to `level3a` accounts for 116 of the 180 disagreements on its own.
+
+#### Instrument errors
+
+**1. I reproduced instrument error #4 from this file verbatim.** Measuring rule
+(a), I embedded the raw question and ranked guideline rows against that single
+vector, and got "median above floor = 0" — the *identical* symptom recorded the
+day before. Production calls `multi_query_search`, which KNNs once per generated
+boolean *and* once for the question and keeps the best similarity per PMID,
+precisely because a well-formed boolean embeds further from a paper's prose than
+the clinician's words. Corrected before any conclusion was drawn. The lesson
+that did not take the first time: reading the instrument-error log is not the
+same as checking the instrument.
+
+**2. The species-guard A/B diffed two truncated ranked lists** and reported 147
+lost human rows for a filter that cannot exclude a human row. See rule 41.
+
+**3. A shell heredoc silently ate two backslashes** and left literal BACKSPACE
+bytes (`\x08`) inside a regex — `r"\x08%s\x08"` where `r"\b%s\b"` was written.
+Invisible to `grep`, rendered by `inspect.getsource` as an innocuous substring
+match, and the function returned `"unspecified"` for every input while looking
+correct in every view of it. Found only by dumping `co_consts`. It happened
+three more times the same night, breaking `ingest_guideline_text_files.py` at
+parse time and twice more besides. **This is exactly why the standing
+instruction is to use the file tools for multi-line content**, and each
+recurrence cost more than using them would have.
+
+**4. The animal classifier labelled two HUMAN papers** — "…of HUMAN MOLARS"
+labelled bovine from a sentence about *someone else's* bovine-muscle experiment,
+and a human systematic review labelled from "Further studies … should provide
+more data". Same failure the abstract design-extractor makes: a cue matched in a
+sentence whose subject is not this study. Found by adjudicating, by hand, only
+the rows on the human clinical ladder — the subset where a wrong label actually
+harms a clinician. A sentence-scope veto now covers previous work, future work
+and recommendations.
 
 ### A53 — NIGHT 2026-09-07: overturned premises, and five more instrument errors
 
