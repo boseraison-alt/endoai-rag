@@ -45,12 +45,21 @@
     "(This said \"inert until a synthesis mode exists\"; the synthesis modes exist",
     "and do enforce them. Corrected 2026-09-03.)",
     "",
-    "ALWAYS SET force_route. A case without it measures whichever path the",
+    "force_route: SUPERSEDED FOR THE LIBRARY PIN, 2026-09-09. Routing is now",
+    "live by default and the library is a contributor, never the sole source,",
+    "so 18 cases that pinned force_route=library were measuring an architecture",
+    "the product no longer has. The pins are removed; the cases are otherwise",
+    "untouched, and the criteria that depended on that route -- 14 x",
+    "expect.route=library, one expected PMID, 18 pool-size expectations -- are",
+    "REPORTED BY NAME in OVERNIGHT_REPORT_11 rather than tuned to pass.",
+    "",
+    "The original warning still holds for anything pinned LIVE, and is why the",
+    "11 live pins stay: a case without a pin measures whichever path the",
     "library happens to favour that day, and write-back moves that line under",
-    "you: the laser case was written for a live search-term bug, then the fixed",
+    "you. The laser case was written for a live search-term bug, then the fixed",
     "run wrote 196 papers into the library and the same case silently began",
     "testing the library path instead. A topic worth testing on both paths gets",
-    "two cases, one pinned each way.",
+    "two cases.",
     "",
     "ROUTES ARE MEASURED, NOT ASSUMED. eval/probe_routes.py runs each question",
     "through the real coverage gate and reports where the measurement disagrees",
@@ -229,7 +238,6 @@
       "id": "laser-root-canal-disinfection-library",
       "question": "Use of lasers in root canal disinfection",
       "mode": "learn",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 25,
@@ -276,7 +284,6 @@
       "id": "single-vs-multiple-visit",
       "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -315,7 +322,6 @@
       "id": "mta-vs-biodentine-pulpotomy",
       "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -346,7 +352,6 @@
       "id": "naocl-concentration",
       "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -373,7 +378,6 @@
       "id": "cbct-vs-periapical",
       "question": "CBCT versus periapical radiography for detecting apical periodontitis",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -406,7 +410,6 @@
       "id": "bioceramic-vs-resin-sealer",
       "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -470,7 +473,6 @@
       "id": "direct-pulp-capping",
       "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -498,7 +500,6 @@
       "id": "preemptive-nsaid",
       "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -526,7 +527,6 @@
       "id": "regenerative-immature",
       "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -691,7 +691,6 @@
       "id": "pips-vs-ultrasonic",
       "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -786,7 +785,6 @@
       "id": "sonic-vs-ultrasonic",
       "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -852,7 +850,6 @@
       "id": "diabetes-outcomes",
       "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
       "mode": "review",
-      "force_route": "library",
       "expect": {
         "route": "library",
         "min_papers": 12,
@@ -947,7 +944,6 @@
       "id": "review-followup-immature-teeth",
       "question": "What about in immature teeth?",
       "mode": "review",
-      "force_route": "library",
       "context": {
         "exchanges": [
           {
@@ -996,7 +992,6 @@
       "id": "review-newtopic-reset",
       "question": "What is the evidence for sodium hypochlorite concentration in primary root canal treatment?",
       "mode": "review",
-      "force_route": "library",
       "context": {
         "exchanges": [
           {
@@ -1037,7 +1032,6 @@
       "id": "necrotic-virgin-tooth-young-adult-diagnostic",
       "question": "20-year-old, necrotic tooth, no restoration, no caries — what could the cause be?",
       "mode": "case",
-      "force_route": "library",
       "expect": {
         "case_intent": "diagnostic",
         "min_papers": 40,
@@ -1137,7 +1131,6 @@
       "id": "bisphosphonate-extraction-vs-rct-treatment",
       "question": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
       "mode": "case",
-      "force_route": "library",
       "expect": {
         "case_intent": "treatment",
         "min_papers": 25,
@@ -1185,7 +1178,6 @@
       "id": "dens-evaginatus-premolar-diagnostic",
       "question": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
       "mode": "case",
-      "force_route": "library",
       "expect": {
         "case_intent": "diagnostic",
         "min_papers": 40,
@@ -1280,7 +1272,6 @@
       "id": "dens-evaginatus-prevention-followup",
       "question": "oh i do see a possible dens evaginatu sin tooth #20. Is there anything a dentist can do to present pulp necrosis from setting in?",
       "mode": "case",
-      "force_route": "library",
       "prior_turns": [
         {
           "role": "user",
