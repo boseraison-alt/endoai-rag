@@ -488,6 +488,28 @@ events**, which looks exactly like a clean result. It now resolves `%TEMP%` and
 **refuses to report counts from logs it could not read.** A default that cannot
 be found must never read as a zero.
 
+### The bundle verifies, and it is compounding
+
+```
+eval/reports/endo-ai-rag-20260909-night.bundle    35,004,486 bytes
+git bundle verify: "The bundle records a complete history."   HEAD cff6ff9
+```
+
+**It is deliberately NOT committed**, and that is a change from last night.
+`eval/reports/endo-ai-rag-20260908-night.bundle` (5.8 MB) **is** tracked, which
+means each night's backup is committed into the repository it backs up and is
+then packed into the next night's bundle. `.git` is already 82 MB; the largest
+tracked blobs are two DB dumps (11.3 MB, 9.0 MB) and that bundle. Committing
+tonight's 35 MB would make tomorrow's roughly 70 MB — GitHub's warning
+threshold — and the night after that would exceed the 100 MB hard limit and
+**fail the push**.
+
+A backup stored inside the thing it backs up is also not much of a backup.
+Left on disk, verified, uncommitted; removing the tracked one or adding a
+`*.bundle` ignore rule is a backup-policy decision and belongs to RB, not to
+this batch. Alternative rejected: committing it as last night did, which works
+tonight and breaks within two nights.
+
 ### One instrument left deliberately inconsistent
 
 `scripts/measure_guideline_block_leak.py` still defines an offending row by the
