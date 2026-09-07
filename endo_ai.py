@@ -9146,6 +9146,113 @@ def _reset_redirect_map():
     _REDIRECT_MAP = None
 
 
+# ── THE SPECIES REACHES THE READER (item C, 2026-09-09) ───────────────────
+#
+# 86 library rows report a non-human subject. Measured across the stored
+# archive on 2026-09-08: 209 documents, 60 citations of one of those rows, 53
+# of them prose claims, and **48 of those never say the subjects were animals**
+# anywhere in the citing sentence. A clinician reading them would have to open
+# the reference to discover the finding came from a rat.
+#
+# The 2026-09-08 fix was upstream — a context-line marker and a prompt telling
+# the model to name the species in the sentence that cites it. That changes
+# what Curo writes NEXT. It does nothing for what it has already written, and
+# `answers/` holds 171 answers that are served again on every archive read.
+#
+# So the label is applied at RENDER time, in the finaliser every path goes
+# through, fresh and cached alike. Stored text is not rewritten — the same
+# principle as the redirect rewrite directly above: the archive is a record of
+# what was said, and it is corrected on the way out, not in place.
+_ANIMAL_MAP = None
+_ANIMAL_RENDERED = " (animal study: %s)"
+# Already-labelled sentences are left alone. The upstream fix means new answers
+# name the species themselves, and appending a second label would produce
+# "in a dog model [[PMID:n]] (animal study: dog)".
+_ANIMAL_ALREADY_RE = re.compile(
+    r"\b(animal|animals|in vivo model|dog|dogs|canine|beagle|rat|rats|mouse|"
+    r"mice|murine|monkey|monkeys|primate|primates|macaque|baboon|bovine|cow|"
+    r"cows|cattle|calf|calves|pig|pigs|porcine|swine|minipig|sheep|ovine|lamb|"
+    r"rabbit|rabbits|cat|cats|feline|ferret|ferrets|horse|equine|guinea pig|"
+    r"hamster|preclinical|pre-clinical)\b", re.I)
+
+
+def _animal_map():
+    """{pmid: species} for every row carrying `animal_subject`."""
+    global _ANIMAL_MAP
+    if _ANIMAL_MAP is None:
+        try:
+            from rag import get_conn
+            conn = get_conn()
+            cur = conn.cursor()
+            try:
+                cur.execute("SELECT pmid, animal_subject FROM endo_papers_rag "
+                            "WHERE COALESCE(animal_subject, '') <> ''")
+                _ANIMAL_MAP = {r[0]: r[1] for r in cur.fetchall()}
+            finally:
+                cur.close()
+                conn.close()
+        except Exception as e:
+            print(f"  [animal] map unavailable, labelling disabled: {e}")
+            return {}
+    return _ANIMAL_MAP
+
+
+def _reset_animal_map():
+    """Test hook."""
+    global _ANIMAL_MAP
+    _ANIMAL_MAP = None
+
+
+def label_animal_citations(answer: str, mapping=None):
+    """Append `(animal study: <species>)` to citations of animal-subject rows.
+
+    Sentence-scoped: a claim whose sentence ALREADY names a species or says
+    "animal study" is left alone, so the upstream prompt fix and this do not
+    both fire on the same sentence.
+
+    Returns (text, n_labelled).
+    """
+    amap = mapping if mapping is not None else _animal_map()
+    if not amap or not answer:
+        return answer, 0
+
+    n = 0
+    out, pos = [], 0
+    # Sentence by sentence, because "does this sentence already say it?" is the
+    # question, and a citation's sentence is the unit a reader takes it in.
+    for m in re.finditer(r"[^.!?]*[.!?]|[^.!?]+$", answer):
+        sentence = m.group(0)
+        if not sentence.strip():
+            continue
+        cited = [p for p in _extract_cited_pmids(sentence) if p in amap]
+        if not cited or _ANIMAL_ALREADY_RE.search(sentence):
+            continue
+        species = []
+        for p in cited:
+            s = amap[p]
+            if s not in species:
+                species.append(s)
+        label = _ANIMAL_RENDERED % ", ".join(species)
+        # Before the terminal punctuation, so the sentence still reads as one.
+        body = sentence.rstrip()
+        tail = ""
+        if body and body[-1] in ".!?":
+            body, tail = body[:-1], body[-1]
+        out.append((m.start(), m.end(), body + label + tail))
+        n += 1
+
+    if not n:
+        return answer, 0
+    parts = []
+    for start, end, replacement in out:
+        parts.append(answer[pos:start])
+        parts.append(replacement)
+        pos = end
+    parts.append(answer[pos:])
+    print("  [animal] labelled %d citation(s) of an animal-subject row" % n)
+    return "".join(parts), n
+
+
 def rewrite_redirected_citations(answer: str, mapping=None):
     """Point citations of a retired key at the row that replaced it.
 
@@ -9530,6 +9637,13 @@ def finalise_answer_text(answer: str):
     # and the banner have counted them as attributions. Rendering earlier
     # makes a guideline-cited sentence look unsourced and gets it quarantined.
     answer, _gl = render_gl_citations(answer)
+    # ITEM C (2026-09-09) — the species, appended to the sentence that cites an
+    # animal-subject row. LAST, and after `render_gl_citations`, for the same
+    # reason that one is last: every detector, the quarantine pass and the
+    # banner must have finished counting citations before the text around them
+    # changes. It appends prose and removes nothing, so nothing downstream can
+    # mistake a labelled claim for an unsourced one.
+    answer, _an = label_animal_citations(answer)
     return answer, blocks
 
 

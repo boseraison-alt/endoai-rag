@@ -66,6 +66,26 @@ def corpora():
     return out
 
 
+RENDERED = "--rendered" in sys.argv
+
+
+def _maybe_render(text):
+    """Item C: measure the text as SERVED, not as stored.
+
+    Stored answers are never rewritten — the archive is a record of what was
+    said. The species label is applied by the finaliser on the way out, so the
+    only honest "after" number is the one taken from rendered text.
+    """
+    if not RENDERED:
+        return text
+    try:
+        import endo_ai as _E
+        out = _E.finalise_answer_text(text)
+        return out[0] if isinstance(out, tuple) else out
+    except Exception:
+        return text
+
+
 def main():
     conn = rag.get_conn()
     cur = conn.cursor()
@@ -92,6 +112,7 @@ def main():
     def scan(label, ident, text):
         nonlocal cited_total, docs
         docs += 1
+        text = _maybe_render(text)
         for sent in sentences(text):
             for m in CITE.finditer(sent):
                 pmid = m.group(1) or m.group(2)
