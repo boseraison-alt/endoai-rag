@@ -1,0 +1,415 @@
+{
+ "floor": 0.55,
+ "runs": 3,
+ "verdict": {
+  "a": {
+   "median": 1,
+   "max": 7,
+   "mean": 1.4,
+   "bad": [],
+   "size_ok": true,
+   "probes": {
+    "probe2-crown-fracture": 0,
+    "probe3-retreat-implant": 0
+   },
+   "passes": false
+  },
+  "b": {
+   "median": 0,
+   "max": 3,
+   "mean": 0.3,
+   "bad": [],
+   "size_ok": true,
+   "probes": {
+    "probe2-crown-fracture": 0,
+    "probe3-retreat-implant": 0
+   },
+   "passes": false
+  },
+  "c": {
+   "median": 1,
+   "max": 7,
+   "mean": 1.6,
+   "bad": [],
+   "size_ok": true,
+   "probes": {
+    "probe2-crown-fracture": 0,
+    "probe3-retreat-implant": 0
+   },
+   "passes": false
+  },
+  "b1": {
+   "median": 2,
+   "max": 10,
+   "mean": 3.8,
+   "bad": [],
+   "size_ok": true
+  }
+ },
+ "ship": null,
+ "per_question": [
+  {
+   "id": "laser-root-canal-disinfection-live",
+   "question": "Use of lasers in root canal disinfection",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "single-vs-multiple-visit",
+   "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "mta-vs-biodentine-pulpotomy",
+   "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+   "a": [
+    "AAPD-VPT-PRIMARY-2024"
+   ],
+   "b": [
+    "ESE-S3-2023"
+   ],
+   "c": [
+    "AAPD-VPT-PRIMARY-2024",
+    "ESE-S3-2023"
+   ]
+  },
+  {
+   "id": "naocl-concentration",
+   "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "cbct-vs-periapical",
+   "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+   "a": [
+    "AAE-AAOMR-CBCT-2025",
+    "ACP-IMPLANT-IMAGING-2016",
+    "ADA-AAOMR-PATIENT-SELECTION-2026",
+    "BES-CBCT-REPORTING-2021",
+    "ESE-CBCT-2019"
+   ],
+   "b": [
+    "ESE-S3-2023"
+   ],
+   "c": [
+    "AAE-AAOMR-CBCT-2025",
+    "ACP-IMPLANT-IMAGING-2016",
+    "ADA-AAOMR-PATIENT-SELECTION-2026",
+    "BES-CBCT-REPORTING-2021",
+    "ESE-CBCT-2019",
+    "ESE-S3-2023"
+   ]
+  },
+  {
+   "id": "bioceramic-vs-resin-sealer",
+   "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "retreatment-vs-microsurgery",
+   "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+   "a": [
+    "AAO-CPG-2023",
+    "FDSRCS-PERIRADICULAR-2020"
+   ],
+   "b": [
+    "AAE-TREATMENTSTANDARDS-2018",
+    "ESE-S3-2023",
+    "FDSRCS-PERIRADICULAR-2020"
+   ],
+   "c": [
+    "AAE-TREATMENTSTANDARDS-2018",
+    "AAO-CPG-2023",
+    "ESE-S3-2023",
+    "FDSRCS-PERIRADICULAR-2020"
+   ]
+  },
+  {
+   "id": "direct-pulp-capping",
+   "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
+   "a": [
+    "AAE-VPT-2021",
+    "AAPD-VPT-PERMANENT-2025",
+    "AAPD-VPT-PRIMARY-2024"
+   ],
+   "b": [],
+   "c": [
+    "AAE-VPT-2021",
+    "AAPD-VPT-PERMANENT-2025",
+    "AAPD-VPT-PRIMARY-2024"
+   ]
+  },
+  {
+   "id": "preemptive-nsaid",
+   "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
+   "a": [
+    "ADA-ACUTE-PAIN-ADULTS-2024"
+   ],
+   "b": [],
+   "c": [
+    "ADA-ACUTE-PAIN-ADULTS-2024"
+   ]
+  },
+  {
+   "id": "regenerative-immature",
+   "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
+   "a": [
+    "AAE-VPT-2021",
+    "ESE-REVITALISATION-2016"
+   ],
+   "b": [],
+   "c": [
+    "AAE-VPT-2021",
+    "ESE-REVITALISATION-2016"
+   ]
+  },
+  {
+   "id": "cracked-tooth-prognosis",
+   "question": "Cracked tooth prognosis after root canal treatment by crack extent",
+   "a": [
+    "AAE-TRAUMA-2026"
+   ],
+   "b": [],
+   "c": [
+    "AAE-TRAUMA-2026"
+   ]
+  },
+  {
+   "id": "apdt-primary-molars",
+   "question": "Antimicrobial photodynamic therapy as an adjunct in primary molars with necrotic pulps",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "bisphosphonates",
+   "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+   "a": [
+    "AAE-MRONJ-2026",
+    "AAOM-CPS-ANTIRESORPTIVE-2019",
+    "AAOM-CPS-CTX-ONJ-2017",
+    "AAOMP-BISPHOSPHONATE-ONJ-2006",
+    "AAOMS-MRONJ-2022",
+    "ACP-MRONJ-2016",
+    "SDCEP-MRONJ-2017"
+   ],
+   "b": [],
+   "c": [
+    "AAE-MRONJ-2026",
+    "AAOM-CPS-ANTIRESORPTIVE-2019",
+    "AAOM-CPS-CTX-ONJ-2017",
+    "AAOMP-BISPHOSPHONATE-ONJ-2006",
+    "AAOMS-MRONJ-2022",
+    "ACP-MRONJ-2016",
+    "SDCEP-MRONJ-2017"
+   ]
+  },
+  {
+   "id": "pregnancy",
+   "question": "Root canal treatment in pregnancy timing and local anesthetic choice",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "pips-vs-ultrasonic",
+   "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "intentional-replantation",
+   "question": "Intentional replantation for teeth unsuitable for surgery",
+   "a": [
+    "ESE-EXTRUSION-REPLANT-2021"
+   ],
+   "b": [],
+   "c": [
+    "ESE-EXTRUSION-REPLANT-2021"
+   ]
+  },
+  {
+   "id": "sdf-pulp-outcomes",
+   "question": "Silver diamine fluoride and pulp outcomes in deep carious lesions in adult teeth",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "sonic-vs-ultrasonic",
+   "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "dens-invaginatus",
+   "question": "Dens invaginatus type III management",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "diabetes-outcomes",
+   "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
+   "a": [
+    "ESE-S3-2023"
+   ],
+   "b": [
+    "ESE-S3-2023"
+   ],
+   "c": [
+    "ESE-S3-2023"
+   ]
+  },
+  {
+   "id": "case-opening-sparse",
+   "question": "Tooth 36 hurts.",
+   "a": [
+    "AAOP-GUIDELINES-2023"
+   ],
+   "b": [],
+   "c": [
+    "AAOP-GUIDELINES-2023"
+   ]
+  },
+  {
+   "id": "case-opening-full",
+   "question": "62-year-old female, well-controlled type 2 diabetes, no other medical history, no bisphosphonates. Tooth 26, previously root treated 8 years ago, now tender to percussion for 3 weeks. Periapical radiograph and CBCT show a 6mm periapical radiolucency on the MB root with an untreated MB2. Tooth is non-vital (previously treated), restorable with an adequate ferrule and existing crown is sound. No sinus tract. Patient has taken amoxicillin from her GP with partial relief.",
+   "a": [
+    "FDSRCS-PERIRADICULAR-2020"
+   ],
+   "b": [],
+   "c": [
+    "FDSRCS-PERIRADICULAR-2020"
+   ]
+  },
+  {
+   "id": "review-followup-immature-teeth",
+   "question": "What about in immature teeth?",
+   "a": [
+    "AAE-VPT-2021",
+    "ESE-REVITALISATION-2016"
+   ],
+   "b": [],
+   "c": [
+    "AAE-VPT-2021",
+    "ESE-REVITALISATION-2016"
+   ]
+  },
+  {
+   "id": "review-newtopic-reset",
+   "question": "What is the evidence for sodium hypochlorite concentration in primary root canal treatment?",
+   "a": [],
+   "b": [],
+   "c": []
+  },
+  {
+   "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+   "question": "20-year-old, necrotic tooth, no restoration, no caries \u2014 what could the cause be?",
+   "a": [
+    "IADT-AVULSION-2020",
+    "IADT-FRACTURES-LUXATIONS-2020",
+    "IADT-INTRO-2020",
+    "IADT-PRIMARY-2020"
+   ],
+   "b": [],
+   "c": [
+    "IADT-AVULSION-2020",
+    "IADT-FRACTURES-LUXATIONS-2020",
+    "IADT-INTRO-2020",
+    "IADT-PRIMARY-2020"
+   ]
+  },
+  {
+   "id": "bisphosphonate-extraction-vs-rct-treatment",
+   "question": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
+   "a": [
+    "AAE-MRONJ-2026",
+    "AAOM-CPS-ANTIRESORPTIVE-2019",
+    "AAOMP-BISPHOSPHONATE-ONJ-2006",
+    "ACP-MRONJ-2016",
+    "SDCEP-MRONJ-2017"
+   ],
+   "b": [],
+   "c": [
+    "AAE-MRONJ-2026",
+    "AAOM-CPS-ANTIRESORPTIVE-2019",
+    "AAOMP-BISPHOSPHONATE-ONJ-2006",
+    "ACP-MRONJ-2016",
+    "SDCEP-MRONJ-2017"
+   ]
+  },
+  {
+   "id": "dens-evaginatus-premolar-diagnostic",
+   "question": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
+   "a": [
+    "AAE-DIAGNOSIS-2009"
+   ],
+   "b": [],
+   "c": [
+    "AAE-DIAGNOSIS-2009"
+   ]
+  },
+  {
+   "id": "dens-evaginatus-prevention-followup",
+   "question": "oh i do see a possible dens evaginatu sin tooth #20. Is there anything a dentist can do to present pulp necrosis from setting in?",
+   "a": [
+    "AAE-DIAGNOSIS-2009"
+   ],
+   "b": [
+    "ESE-TRAUMA-2021"
+   ],
+   "c": [
+    "AAE-DIAGNOSIS-2009",
+    "ESE-TRAUMA-2021"
+   ]
+  },
+  {
+   "id": "probe1-avulsion",
+   "question": "Avulsed maxillary central incisor with a closed apex, replanted after 40 minutes of extra-oral dry time. How should it be managed and what is the prognosis?",
+   "a": [
+    "AAE-TRAUMA-2026",
+    "IADT-AVULSION-2020"
+   ],
+   "b": [],
+   "c": [
+    "AAE-TRAUMA-2026",
+    "IADT-AVULSION-2020"
+   ]
+  },
+  {
+   "id": "probe2-crown-fracture",
+   "question": "Complicated crown fracture with pulp exposure in a mature premolar, 6 hours old. What is the management?",
+   "a": [
+    "AAPD-VPT-PRIMARY-2024"
+   ],
+   "b": [
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ],
+   "c": [
+    "AAPD-VPT-PRIMARY-2024",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ]
+  },
+  {
+   "id": "probe3-retreat-implant",
+   "question": "Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?",
+   "a": [
+    "ESE-TRAUMA-2021"
+   ],
+   "b": [],
+   "c": [
+    "ESE-TRAUMA-2021"
+   ]
+  }
+ ]
+}

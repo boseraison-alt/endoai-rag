@@ -1,0 +1,300 @@
+{
+ "retmax": 50,
+ "n": 31,
+ "differ_set": 8,
+ "differ_order_only": 4,
+ "rows": [
+  {
+   "id": "laser-root-canal-disinfection-live",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "single-vs-multiple-visit",
+   "n": 18,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "mta-vs-biodentine-pulpotomy",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "naocl-concentration",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "cbct-vs-periapical",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "bioceramic-vs-resin-sealer",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "retreatment-vs-microsurgery",
+   "n": 12,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "direct-pulp-capping",
+   "n": 48,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "preemptive-nsaid",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "regenerative-immature",
+   "n": 50,
+   "same_set": true,
+   "same_order": false,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "cracked-tooth-prognosis",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "26949763"
+   ],
+   "only_b": [
+    "37753855"
+   ]
+  },
+  {
+   "id": "apdt-primary-molars",
+   "n": 4,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "bisphosphonates",
+   "n": 50,
+   "same_set": true,
+   "same_order": false,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "pregnancy",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "pips-vs-ultrasonic",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "intentional-replantation",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "sdf-pulp-outcomes",
+   "n": 17,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "sonic-vs-ultrasonic",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "32553876"
+   ],
+   "only_b": [
+    "29980946"
+   ]
+  },
+  {
+   "id": "dens-invaginatus",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "diabetes-outcomes",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "39258791"
+   ],
+   "only_b": [
+    "31293042"
+   ]
+  },
+  {
+   "id": "case-opening-sparse",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "case-opening-full",
+   "n": 26,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "review-followup-immature-teeth",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "27623497"
+   ],
+   "only_b": [
+    "39815035"
+   ]
+  },
+  {
+   "id": "review-newtopic-reset",
+   "n": 50,
+   "same_set": true,
+   "same_order": false,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "bisphosphonate-extraction-vs-rct-treatment",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "26490005"
+   ],
+   "only_b": [
+    "38303840"
+   ]
+  },
+  {
+   "id": "dens-evaginatus-premolar-diagnostic",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "28712634"
+   ],
+   "only_b": [
+    "38577008"
+   ]
+  },
+  {
+   "id": "dens-evaginatus-prevention-followup",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "11853241",
+    "18571000",
+    "21752188",
+    "22298555",
+    "25500929",
+    "39169363",
+    "9796478"
+   ],
+   "only_b": [
+    "19125982",
+    "20666755",
+    "2206654",
+    "28578893",
+    "35439891",
+    "35801344",
+    "40330900"
+   ]
+  },
+  {
+   "id": "probe1-avulsion",
+   "n": 50,
+   "same_set": false,
+   "same_order": false,
+   "only_a": [
+    "17803489"
+   ],
+   "only_b": [
+    "10825838"
+   ]
+  },
+  {
+   "id": "probe2-crown-fracture",
+   "n": 50,
+   "same_set": true,
+   "same_order": false,
+   "only_a": [],
+   "only_b": []
+  },
+  {
+   "id": "probe3-retreat-implant",
+   "n": 50,
+   "same_set": true,
+   "same_order": true,
+   "only_a": [],
+   "only_b": []
+  }
+ ]
+}

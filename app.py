@@ -854,7 +854,16 @@ def run_question(job_id: str, question: str, mode: str = "review",
         papers  = summary.get("all_scored", [])
 
         save_answer(question, answer, evidence)
-        save_query_cache(cache_key, answer, papers, context_hash=ctx_hash)
+        # THE QUERY THAT BUILT THIS POOL, stored beside the answer (item C).
+        # Read from the thread-local the generator wrote, on this worker
+        # thread, so it is this question's query and not a neighbour's.
+        try:
+            import endo_ai as _E
+            _prov = _E.retrieval_provenance()
+        except Exception:
+            _prov = None
+        save_query_cache(cache_key, answer, papers, context_hash=ctx_hash,
+                         retrieval_provenance=_prov or None)
         write_citation_audit(question, answer, mode)
         # A21b — a curriculum joins the thread too, so a follow-up to it is
         # answered over the evidence it was built from rather than rebuilding

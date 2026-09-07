@@ -1,0 +1,160 @@
+{
+ "tag": "after",
+ "runs": 5,
+ "model": "claude-haiku-4-5-20251001",
+ "identical_rate": 1.0,
+ "same_group_rate": 1.0,
+ "mean_group_jaccard": 1.0,
+ "rows": [
+  {
+   "question": "Use of lasers in root canal disinfection",
+   "outputs": [
+    "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND (\"root canal\" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)",
+    "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND (\"root canal\" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)",
+    "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND (\"root canal\" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)",
+    "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND (\"root canal\" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)",
+    "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode) AND (\"root canal\" OR endodontic*) AND (disinfect* OR antibacterial OR biofilm)"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+   "outputs": [
+    "(\"single-visit\" OR \"one-visit\" OR \"single appointment\" OR \"same-day\" OR \"single session\") AND (\"multiple-visit\" OR \"multi-visit\" OR \"multiple appointment*\" OR \"multi-session\") AND (necrotic OR \"pulp necrosis\" OR \"vital pulp\")",
+    "(\"single-visit\" OR \"one-visit\" OR \"single appointment\" OR \"same-day\" OR \"single session\") AND (\"multiple-visit\" OR \"multi-visit\" OR \"multiple appointment*\" OR \"multi-session\") AND (necrotic OR \"pulp necrosis\" OR \"vital pulp\")",
+    "(\"single-visit\" OR \"one-visit\" OR \"single appointment\" OR \"same-day\" OR \"single session\") AND (\"multiple-visit\" OR \"multi-visit\" OR \"multiple appointment*\" OR \"multi-session\") AND (necrotic OR \"pulp necrosis\" OR \"vital pulp\")",
+    "(\"single-visit\" OR \"one-visit\" OR \"single appointment\" OR \"same-day\" OR \"single session\") AND (\"multiple-visit\" OR \"multi-visit\" OR \"multiple appointment*\" OR \"multi-session\") AND (necrotic OR \"pulp necrosis\" OR \"vital pulp\")",
+    "(\"single-visit\" OR \"one-visit\" OR \"single appointment\" OR \"same-day\" OR \"single session\") AND (\"multiple-visit\" OR \"multi-visit\" OR \"multiple appointment*\" OR \"multi-session\") AND (necrotic OR \"pulp necrosis\" OR \"vital pulp\")"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+   "outputs": [
+    "(MTA OR \"mineral trioxide aggregate\" OR Biodentine OR \"calcium silicate\" OR \"silicate-based\") AND (pulpotomy OR \"vital pulp therapy\" OR \"pulp amputation\") AND (\"permanent teeth\" OR \"mature teeth\" OR \"adult teeth\")",
+    "(MTA OR \"mineral trioxide aggregate\" OR Biodentine OR \"calcium silicate\" OR \"silicate-based\") AND (pulpotomy OR \"vital pulp therapy\" OR \"pulp amputation\") AND (\"permanent teeth\" OR \"mature teeth\" OR \"adult teeth\")",
+    "(MTA OR \"mineral trioxide aggregate\" OR Biodentine OR \"calcium silicate\" OR \"silicate-based\") AND (pulpotomy OR \"vital pulp therapy\" OR \"pulp amputation\") AND (\"permanent teeth\" OR \"mature teeth\" OR \"adult teeth\")",
+    "(MTA OR \"mineral trioxide aggregate\" OR Biodentine OR \"calcium silicate\" OR \"silicate-based\") AND (pulpotomy OR \"vital pulp therapy\" OR \"pulp amputation\") AND (\"permanent teeth\" OR \"mature teeth\" OR \"adult teeth\")",
+    "(MTA OR \"mineral trioxide aggregate\" OR Biodentine OR \"calcium silicate\" OR \"silicate-based\") AND (pulpotomy OR \"vital pulp therapy\" OR \"pulp amputation\") AND (\"permanent teeth\" OR \"mature teeth\" OR \"adult teeth\")"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
+   "outputs": [
+    "(\"sodium hypochlorite\" OR NaOCl OR \"sodium hypochlorite concentration\") AND (concentration* OR \"low concentration\" OR \"high concentration\" OR dosage OR potency) AND (efficacy OR outcome* OR success OR effectiveness OR disinfect*)",
+    "(\"sodium hypochlorite\" OR NaOCl OR \"sodium hypochlorite concentration\") AND (concentration* OR \"low concentration\" OR \"high concentration\" OR dosage OR potency) AND (efficacy OR outcome* OR success OR effectiveness OR disinfect*)",
+    "(\"sodium hypochlorite\" OR NaOCl OR \"sodium hypochlorite concentration\") AND (concentration* OR \"low concentration\" OR \"high concentration\" OR dosage OR potency) AND (efficacy OR outcome* OR success OR effectiveness OR disinfect*)",
+    "(\"sodium hypochlorite\" OR NaOCl OR \"sodium hypochlorite concentration\") AND (concentration* OR \"low concentration\" OR \"high concentration\" OR dosage OR potency) AND (efficacy OR outcome* OR success OR effectiveness OR disinfect*)",
+    "(\"sodium hypochlorite\" OR NaOCl OR \"sodium hypochlorite concentration\") AND (concentration* OR \"low concentration\" OR \"high concentration\" OR dosage OR potency) AND (efficacy OR outcome* OR success OR effectiveness OR disinfect*)"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+   "outputs": [
+    "(CBCT OR \"cone beam computed tomography\" OR \"cone-beam CT\" OR CBCT) AND (\"periapical radiograph*\" OR \"periapical radiography\" OR \"intraoral radiograph*\" OR \"conventional radiograph*\") AND (\"apical periodontitis\" OR \"periapical lesion*\" OR \"periapical pathology\" OR \"apical pathology\")",
+    "(CBCT OR \"cone beam computed tomography\" OR \"cone-beam CT\" OR CBCT) AND (\"periapical radiograph*\" OR \"periapical radiography\" OR \"intraoral radiograph*\" OR \"conventional radiograph*\") AND (\"apical periodontitis\" OR \"periapical lesion*\" OR \"periapical pathology\" OR \"apical pathology\")",
+    "(CBCT OR \"cone beam computed tomography\" OR \"cone-beam CT\" OR CBCT) AND (\"periapical radiograph*\" OR \"periapical radiography\" OR \"intraoral radiograph*\" OR \"conventional radiograph*\") AND (\"apical periodontitis\" OR \"periapical lesion*\" OR \"periapical pathology\" OR \"apical pathology\")",
+    "(CBCT OR \"cone beam computed tomography\" OR \"cone-beam CT\" OR CBCT) AND (\"periapical radiograph*\" OR \"periapical radiography\" OR \"intraoral radiograph*\" OR \"conventional radiograph*\") AND (\"apical periodontitis\" OR \"periapical lesion*\" OR \"periapical pathology\" OR \"apical pathology\")",
+    "(CBCT OR \"cone beam computed tomography\" OR \"cone-beam CT\" OR CBCT) AND (\"periapical radiograph*\" OR \"periapical radiography\" OR \"intraoral radiograph*\" OR \"conventional radiograph*\") AND (\"apical periodontitis\" OR \"periapical lesion*\" OR \"periapical pathology\" OR \"apical pathology\")"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
+   "outputs": [
+    "(\"calcium silicate\" OR bioceramic* OR \"epoxy resin\" OR AH Plus OR \"AH-Plus\" OR Gutta Flow OR \"Gutta-Flow\" OR BC Sealer OR \"BC-Sealer\" OR iRoot OR MTA Fillapex OR Totalfill) AND (\"root canal sealer*\" OR \"canal sealer*\" OR \"root canal filling\" OR \"gutta-percha\" OR obturation) AND (outcome* OR efficacy OR success OR periapical OR \"healing\" OR \"treatment outcome*\" OR comparison OR versus)",
+    "(\"calcium silicate\" OR bioceramic* OR \"epoxy resin\" OR AH Plus OR \"AH-Plus\" OR Gutta Flow OR \"Gutta-Flow\" OR BC Sealer OR \"BC-Sealer\" OR iRoot OR MTA Fillapex OR Totalfill) AND (\"root canal sealer*\" OR \"canal sealer*\" OR \"root canal filling\" OR \"gutta-percha\" OR obturation) AND (outcome* OR efficacy OR success OR periapical OR \"healing\" OR \"treatment outcome*\" OR comparison OR versus)",
+    "(\"calcium silicate\" OR bioceramic* OR \"epoxy resin\" OR AH Plus OR \"AH-Plus\" OR Gutta Flow OR \"Gutta-Flow\" OR BC Sealer OR \"BC-Sealer\" OR iRoot OR MTA Fillapex OR Totalfill) AND (\"root canal sealer*\" OR \"canal sealer*\" OR \"root canal filling\" OR \"gutta-percha\" OR obturation) AND (outcome* OR efficacy OR success OR periapical OR \"healing\" OR \"treatment outcome*\" OR comparison OR versus)",
+    "(\"calcium silicate\" OR bioceramic* OR \"epoxy resin\" OR AH Plus OR \"AH-Plus\" OR Gutta Flow OR \"Gutta-Flow\" OR BC Sealer OR \"BC-Sealer\" OR iRoot OR MTA Fillapex OR Totalfill) AND (\"root canal sealer*\" OR \"canal sealer*\" OR \"root canal filling\" OR \"gutta-percha\" OR obturation) AND (outcome* OR efficacy OR success OR periapical OR \"healing\" OR \"treatment outcome*\" OR comparison OR versus)",
+    "(\"calcium silicate\" OR bioceramic* OR \"epoxy resin\" OR AH Plus OR \"AH-Plus\" OR Gutta Flow OR \"Gutta-Flow\" OR BC Sealer OR \"BC-Sealer\" OR iRoot OR MTA Fillapex OR Totalfill) AND (\"root canal sealer*\" OR \"canal sealer*\" OR \"root canal filling\" OR \"gutta-percha\" OR obturation) AND (outcome* OR efficacy OR success OR periapical OR \"healing\" OR \"treatment outcome*\" OR comparison OR versus)"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+   "outputs": [
+    "(\"nonsurgical retreatment\" OR \"conventional retreatment\" OR \"orthograde retreatment\") AND (\"apical microsurgery\" OR \"endodontic surgery\" OR \"periapical surgery\" OR \"apicoectomy\" OR \"surgical retreatment\") AND (\"persistent apical periodontitis\" OR \"refractory apical periodontitis\" OR \"treatment failure\" OR \"apical pathology\")",
+    "(\"nonsurgical retreatment\" OR \"conventional retreatment\" OR \"orthograde retreatment\") AND (\"apical microsurgery\" OR \"endodontic surgery\" OR \"periapical surgery\" OR \"apicoectomy\" OR \"surgical retreatment\") AND (\"persistent apical periodontitis\" OR \"refractory apical periodontitis\" OR \"treatment failure\" OR \"apical pathology\")",
+    "(\"nonsurgical retreatment\" OR \"conventional retreatment\" OR \"orthograde retreatment\") AND (\"apical microsurgery\" OR \"endodontic surgery\" OR \"periapical surgery\" OR \"apicoectomy\" OR \"surgical retreatment\") AND (\"persistent apical periodontitis\" OR \"refractory apical periodontitis\" OR \"treatment failure\" OR \"apical pathology\")",
+    "(\"nonsurgical retreatment\" OR \"conventional retreatment\" OR \"orthograde retreatment\") AND (\"apical microsurgery\" OR \"endodontic surgery\" OR \"periapical surgery\" OR \"apicoectomy\" OR \"surgical retreatment\") AND (\"persistent apical periodontitis\" OR \"refractory apical periodontitis\" OR \"treatment failure\" OR \"apical pathology\")",
+    "(\"nonsurgical retreatment\" OR \"conventional retreatment\" OR \"orthograde retreatment\") AND (\"apical microsurgery\" OR \"endodontic surgery\" OR \"periapical surgery\" OR \"apicoectomy\" OR \"surgical retreatment\") AND (\"persistent apical periodontitis\" OR \"refractory apical periodontitis\" OR \"treatment failure\" OR \"apical pathology\")"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
+   "outputs": [
+    "(\"vital pulp therapy\" OR \"pulp capping\" OR \"direct pulp capping\" OR DPC) AND (\"cariously exposed\" OR \"carious exposure\" OR \"caries exposure\") AND (\"mature permanent teeth\" OR \"permanent teeth\" OR \"adult teeth\")",
+    "(\"vital pulp therapy\" OR \"pulp capping\" OR \"direct pulp capping\" OR DPC) AND (\"cariously exposed\" OR \"carious exposure\" OR \"caries exposure\") AND (\"mature permanent teeth\" OR \"permanent teeth\" OR \"adult teeth\")",
+    "(\"vital pulp therapy\" OR \"pulp capping\" OR \"direct pulp capping\" OR DPC) AND (\"cariously exposed\" OR \"carious exposure\" OR \"caries exposure\") AND (\"mature permanent teeth\" OR \"permanent teeth\" OR \"adult teeth\")",
+    "(\"vital pulp therapy\" OR \"pulp capping\" OR \"direct pulp capping\" OR DPC) AND (\"cariously exposed\" OR \"carious exposure\" OR \"caries exposure\") AND (\"mature permanent teeth\" OR \"permanent teeth\" OR \"adult teeth\")",
+    "(\"vital pulp therapy\" OR \"pulp capping\" OR \"direct pulp capping\" OR DPC) AND (\"cariously exposed\" OR \"carious exposure\" OR \"caries exposure\") AND (\"mature permanent teeth\" OR \"permanent teeth\" OR \"adult teeth\")"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
+   "outputs": [
+    "(\"postoperative pain\" OR \"post-operative pain\" OR \"post operative pain\" OR \"endodontic pain\" OR \"post-treatment pain\") AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (NSAID* OR \"nonsteroidal anti-inflammatory\" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR prophylactic)",
+    "(\"postoperative pain\" OR \"post-operative pain\" OR \"post operative pain\" OR \"endodontic pain\" OR \"post-treatment pain\") AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (NSAID* OR \"nonsteroidal anti-inflammatory\" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR prophylactic)",
+    "(\"postoperative pain\" OR \"post-operative pain\" OR \"post operative pain\" OR \"endodontic pain\" OR \"post-treatment pain\") AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (NSAID* OR \"nonsteroidal anti-inflammatory\" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR prophylactic)",
+    "(\"postoperative pain\" OR \"post-operative pain\" OR \"post operative pain\" OR \"endodontic pain\" OR \"post-treatment pain\") AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (NSAID* OR \"nonsteroidal anti-inflammatory\" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR prophylactic)",
+    "(\"postoperative pain\" OR \"post-operative pain\" OR \"post operative pain\" OR \"endodontic pain\" OR \"post-treatment pain\") AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (NSAID* OR \"nonsteroidal anti-inflammatory\" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR prophylactic)"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  },
+  {
+   "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
+   "outputs": [
+    "(\"regenerative endodontic*\" OR \"revascularization\" OR \"revitalization\" OR \"apical papilla\" OR \"stem cell\" OR \"tissue engineering\") AND (\"immature tooth\" OR \"immature teeth\" OR \"open apex\" OR \"incomplete root formation\" OR \"necrotic pulp\") AND (success OR survival OR outcome* OR efficacy OR \"clinical outcome*\" OR prognosis)",
+    "(\"regenerative endodontic*\" OR \"revascularization\" OR \"revitalization\" OR \"apical papilla\" OR \"stem cell\" OR \"tissue engineering\") AND (\"immature tooth\" OR \"immature teeth\" OR \"open apex\" OR \"incomplete root formation\" OR \"necrotic pulp\") AND (success OR survival OR outcome* OR efficacy OR \"clinical outcome*\" OR prognosis)",
+    "(\"regenerative endodontic*\" OR \"revascularization\" OR \"revitalization\" OR \"apical papilla\" OR \"stem cell\" OR \"tissue engineering\") AND (\"immature tooth\" OR \"immature teeth\" OR \"open apex\" OR \"incomplete root formation\" OR \"necrotic pulp\") AND (success OR survival OR outcome* OR efficacy OR \"clinical outcome*\" OR prognosis)",
+    "(\"regenerative endodontic*\" OR \"revascularization\" OR \"revitalization\" OR \"apical papilla\" OR \"stem cell\" OR \"tissue engineering\") AND (\"immature tooth\" OR \"immature teeth\" OR \"open apex\" OR \"incomplete root formation\" OR \"necrotic pulp\") AND (success OR survival OR outcome* OR efficacy OR \"clinical outcome*\" OR prognosis)",
+    "(\"regenerative endodontic*\" OR \"revascularization\" OR \"revitalization\" OR \"apical papilla\" OR \"stem cell\" OR \"tissue engineering\") AND (\"immature tooth\" OR \"immature teeth\" OR \"open apex\" OR \"incomplete root formation\" OR \"necrotic pulp\") AND (success OR survival OR outcome* OR efficacy OR \"clinical outcome*\" OR prognosis)"
+   ],
+   "exact": true,
+   "same_groups": true,
+   "mean_group_jaccard": 1.0,
+   "distinct_strings": 1,
+   "distinct_groupsets": 1
+  }
+ ]
+}

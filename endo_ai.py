@@ -6,6 +6,8 @@ import sys
 import re
 import json
 import unicodedata
+import hashlib
+import threading
 from datetime import datetime
 
 # Force UTF-8 output on Windows so emoji/Unicode in print() never raises UnicodeEncodeError
@@ -4036,28 +4038,12 @@ def _clean_single_query(raw: str) -> str:
     return best
 
 
-def generate_search_terms(question, context_block: str = ""):
-    client = anthropic.Anthropic(api_key=_get_api_key())
-    # Routed to Haiku 2026-04-27 — was Opus. Reason: single-string structured generation
-    # (PubMed query, ≤10 words). Called on EVERY retrieval; the cheapest model is the right one.
-    # max_tokens raised 200 → 400: OR-group queries run ~60-80 tokens and a
-    # truncated one is an unbalanced-paren query PubMed silently reinterprets.
-    message = _invoke_claude(client, function_name="generate_search_terms",
-        model=MODELS["structured_fast"],
-        max_tokens=400,
-        # TEMPERATURE 0, ADDED 2026-09-08. No temperature was passed, so the
-        # API default applied to the one call every retrieval depends on.
-        # Measured across 10 real eval questions x 5 runs: 0/10 produced the
-        # same query twice, mean pairwise AND-group Jaccard 0.135. Two runs of
-        # the same build were searching PubMed for different things, which is
-        # why the 2026-09-06 "confinement proof" measured 61/256 pools changed
-        # against an IDENTICAL build (rule 38) and why A54 saw one probe
-        # return three different guideline pools.
-        temperature=0,
-        messages=[{
-            "role": "user",
-            "content": _with_context(context_block,
-                f"""Convert this clinical endodontic question into a PubMed BOOLEAN query.
+# THE PROMPT, LIFTED OUT OF THE CALL so the cache can hash what the model is
+# actually asked. `{lexicon}` and `{question}` are filled at call time and a
+# conversation context block may be prepended by `_with_context`; all three are
+# inside the hash, so any of them changing retires the affected cache entries
+# instead of silently serving terms from a prompt that no longer exists.
+_TERM_PROMPT_TEMPLATE = """Convert this clinical endodontic question into a PubMed BOOLEAN query.
 Return ONLY the query — no explanation, no surrounding quotes, no extra text.
 
 PubMed ANDs bare words together, so a string like "laser irradiation power
@@ -4074,15 +4060,124 @@ Rules:
 - include BOTH abbreviation and expansion for any technique or material
 - do NOT add [pt] publication-type filters or endodontics domain terms; both are
   appended automatically and duplicating them only narrows the result set
-{lexicon_offer_block()}
+{lexicon}
 Question: {question}
 
-PubMed boolean query:""",
-                note="The question may be elliptical (\"what about in immature teeth?\"). "
-                     "Resolve it against the earlier exchange first, then write the query "
-                     "for the RESOLVED question — it must carry the topic of the earlier "
-                     "question AND the new qualifier.")
-        }]
+PubMed boolean query:"""
+
+
+# What the last call to `generate_search_terms` on this thread produced. Read
+# by the answer paths so a stored answer can record the query that built its
+# pool -- see `retrieval_provenance`.
+#
+# THREAD-LOCAL, NOT A MODULE DICT. Curo serves concurrent requests and the
+# curriculum builder runs a ThreadPoolExecutor; a shared dict would let one
+# question's query string be recorded as another question's provenance -- a
+# wrong audit trail, which is worse than none, because it looks authoritative.
+_TERM_PROVENANCE_TLS = threading.local()
+
+
+def _term_provenance():
+    d = getattr(_TERM_PROVENANCE_TLS, "d", None)
+    if d is None:
+        d = {}
+        _TERM_PROVENANCE_TLS.d = d
+    return d
+
+
+def retrieval_provenance():
+    """The query string that built the current thread's retrieval pool.
+
+    Returned as a copy: a caller storing this alongside an answer must not hold
+    a reference that the next question on this thread will overwrite.
+    """
+    return dict(_term_provenance())
+
+
+def _normalise_question(q):
+    """The cache's notion of "the same question".
+
+    Deliberately shallow: case and whitespace only, plus trailing punctuation.
+    Anything cleverer — stemming, stopword removal, synonym folding — would
+    make two clinically different questions share a cached query, and a wrong
+    pool served silently is far worse than a cache miss.
+    """
+    return " ".join((q or "").split()).strip().lower().rstrip("?.!").strip()
+
+
+def _term_cache_key(question, prompt_text, mode=""):
+    """sha256(mode, prompt-version, normalised question).
+
+    `prompt_text` is the FULLY RENDERED prompt with the question elided, so the
+    hash moves when the template moves, when `lexicon_offer_block()` changes,
+    and when a conversation context block is attached — all three change what
+    the model is asked, and none of them is visible in the question alone. A
+    cache keyed on the question only would keep serving terms built by a prompt
+    that no longer exists, most damagingly right after someone improved it.
+    """
+    norm = _normalise_question(question)
+    elided = (prompt_text or "").replace(question or "", "<QUESTION>")
+    payload = "\x1f".join([
+        "v1", mode or "",
+        hashlib.sha256(elided.encode("utf-8")).hexdigest(),
+        norm,
+    ])
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest(), norm
+
+
+# Set by tests and by the variance harness to measure the generator itself
+# rather than the cache in front of it.
+TERM_CACHE_ENABLED = os.environ.get("CURO_TERM_CACHE", "1") != "0"
+
+
+def generate_search_terms(question, context_block: str = "", mode: str = ""):
+    client = anthropic.Anthropic(api_key=_get_api_key())
+    # Routed to Haiku 2026-04-27 — was Opus. Reason: single-string structured generation
+    # (PubMed query, ≤10 words). Called on EVERY retrieval; the cheapest model is the right one.
+    # max_tokens raised 200 → 400: OR-group queries run ~60-80 tokens and a
+    # truncated one is an unbalanced-paren query PubMed silently reinterprets.
+    prompt = _with_context(context_block, _TERM_PROMPT_TEMPLATE.format(
+        lexicon=lexicon_offer_block(), question=question),
+        note="The question may be elliptical (\"what about in immature teeth?\"). "
+             "Resolve it against the earlier exchange first, then write the query "
+             "for the RESOLVED question — it must carry the topic of the earlier "
+             "question AND the new qualifier.")
+
+    # THE CACHE IS CHECKED BEFORE THE MODEL, AND KEYED ON THE PROMPT.
+    # See `_term_cache_key`. A hit returns the exact query string a previous
+    # run of THIS prompt produced for THIS question, which is what makes a
+    # stored answer's pool re-derivable rather than merely re-guessable.
+    cache_key, question_norm = _term_cache_key(question, prompt, mode)
+    if TERM_CACHE_ENABLED:
+        try:
+            import rag
+            hit = rag.get_cached_terms(cache_key)
+        except Exception:
+            hit = None
+        if hit:
+            _term_provenance().update({
+                "cache_key": cache_key, "question_norm": question_norm,
+                "mode": mode, "terms": hit, "source": "cache",
+                "model": MODELS["structured_fast"]})
+            print("  [search_terms] cache hit %s" % cache_key[:12])
+            return hit
+
+    if TERM_CACHE_ENABLED:
+        print("  [search_terms] cache miss %s" % cache_key[:12])
+
+    message = _invoke_claude(client, function_name="generate_search_terms",
+        model=MODELS["structured_fast"],
+        max_tokens=400,
+        # TEMPERATURE 0, ADDED 2026-09-08. No temperature was passed, so the
+        # API default applied to the one call every retrieval depends on.
+        # Measured across 10 real eval questions x 5 runs: 0/10 produced the
+        # same query twice, mean pairwise AND-group Jaccard 0.135. Two runs of
+        # the same build were searching PubMed for different things, which is
+        # why the 2026-09-06 "confinement proof" measured 61/256 pools changed
+        # against an IDENTICAL build (rule 38) and why A54 saw one probe
+        # return three different guideline pools.
+        temperature=0,
+        messages=[{"role": "user", "content": prompt}]
     )
     log_llm_call("generate_search_terms", MODELS["structured_fast"],
                  message.usage, mode="shared")
@@ -4114,6 +4209,27 @@ PubMed boolean query:""",
                               "no usable primary query after retry", question)
         search_string = question
     print(f"  Smart search terms: '{search_string}'")
+
+    # CACHE ONLY A QUERY THE GENERATOR ACTUALLY PRODUCED.
+    #
+    # The degraded fallback above is the RAW QUESTION, not a query. Storing it
+    # would freeze a known-bad retrieval in place and, worse, hide it: the next
+    # run would hit the cache, print nothing, and never re-attempt generation.
+    # `_log_term_degradation` counts those runs; the cache must not remember
+    # them.
+    degraded = (search_string == question)
+    _term_provenance().update({
+        "cache_key": cache_key, "question_norm": question_norm, "mode": mode,
+        "terms": search_string, "source": "degraded" if degraded else "model",
+        "model": MODELS["structured_fast"]})
+    if TERM_CACHE_ENABLED and not degraded:
+        try:
+            import rag
+            rag.cache_terms(cache_key, question, question_norm, search_string,
+                            mode=mode, prompt_sha=cache_key,
+                            model=MODELS["structured_fast"])
+        except Exception as e:
+            print(f"  [search_terms] cache write skipped: {e}")
     return search_string
 
 # ── TERM-GENERATION DEGRADATION, COUNTED ──────────────────

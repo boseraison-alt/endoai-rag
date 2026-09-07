@@ -948,6 +948,13 @@ def setup_query_cache():
             ALTER TABLE query_cache
             ADD COLUMN IF NOT EXISTS context_hash TEXT DEFAULT '';
         """)
+        # Item C, 2026-09-08: the query string that built this answer's pool.
+        # Nullable — the 100+ answers stored before it exists have no honest
+        # value to put here, and inventing one would be worse than a NULL.
+        cur.execute("""
+            ALTER TABLE query_cache
+            ADD COLUMN IF NOT EXISTS retrieval_provenance TEXT;
+        """)
         cur.execute("""
             CREATE INDEX IF NOT EXISTS query_cache_emb_idx
             ON query_cache
@@ -1384,6 +1391,106 @@ def get_cached_answer(question: str, threshold: float = 0.92,
 # When the UI clicks a [[PMID:N]] pill, /api/abstract serves from this
 # table instantly instead of waiting on a live eutils round-trip.
 
+# ── SEARCH-TERM CACHE (item C, 2026-09-08) ──────────────────────────────────
+#
+# WHAT THIS IS FOR, given that temperature 0 already made the generator
+# reproducible on the day this was written. Measured across 10 eval questions
+# x 5 runs: 0/10 identical before, 10/10 after. Temperature 0 fixes
+# reproducibility TODAY. It does not make it durable or auditable:
+#
+#   - "temperature 0" is near-deterministic in a served model, not guaranteed,
+#     and says nothing across a model version change. The cache pins the exact
+#     query string a stored answer was actually built from.
+#   - it makes the query an ARTEFACT. A stored answer can name the term groups
+#     that produced it, so a pool can be re-derived a year later instead of
+#     re-guessed. That is what `retrieval_provenance` reads.
+#   - it removes one Haiku call from every retrieval.
+#
+# THE KEY INCLUDES A HASH OF THE PROMPT. A cache keyed on the question alone
+# would keep serving terms built by a prompt that no longer exists — silently,
+# and most damagingly right after someone improves the prompt. Changing the
+# prompt changes the key, so old entries are simply never read again.
+def setup_term_cache():
+    """Create search_term_cache. Safe to run multiple times."""
+    conn = get_conn()
+    cur = conn.cursor()
+    try:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS search_term_cache (
+                cache_key     TEXT PRIMARY KEY,
+                question      TEXT NOT NULL,
+                question_norm TEXT NOT NULL,
+                mode          TEXT NOT NULL DEFAULT '',
+                prompt_sha    TEXT NOT NULL DEFAULT '',
+                model         TEXT NOT NULL DEFAULT '',
+                terms         TEXT NOT NULL,
+                created_at    TIMESTAMP DEFAULT NOW(),
+                hit_count     INTEGER DEFAULT 0
+            );
+        """)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        print(f"Term cache setup warning: {e}")
+    finally:
+        cur.close()
+        conn.close()
+
+
+def get_cached_terms(cache_key: str):
+    """Return the cached query string, or None. Increments hit_count."""
+    if not DATABASE_URL or not cache_key:
+        return None
+    conn = get_conn()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("SELECT terms FROM search_term_cache WHERE cache_key = %s;",
+                    (cache_key,))
+        row = cur.fetchone()
+        if not row:
+            return None
+        cur.execute("UPDATE search_term_cache SET hit_count = hit_count + 1 "
+                    "WHERE cache_key = %s;", (cache_key,))
+        conn.commit()
+        return row["terms"]
+    except Exception:
+        conn.rollback()
+        return None
+    finally:
+        cur.close()
+        conn.close()
+
+
+def cache_terms(cache_key: str, question: str, question_norm: str,
+                terms: str, mode: str = "", prompt_sha: str = "",
+                model: str = ""):
+    """Store a generated query string. Never overwrites: an entry is a record
+    of what a given prompt produced, and rewriting it would erase the very
+    provenance the cache exists to keep."""
+    if not DATABASE_URL or not cache_key or not terms:
+        return False
+    conn = get_conn()
+    cur = conn.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO search_term_cache
+                (cache_key, question, question_norm, mode, prompt_sha,
+                 model, terms)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (cache_key) DO NOTHING;
+        """, (cache_key, question, question_norm, mode, prompt_sha, model,
+              terms))
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        print(f"Term cache write warning: {e}")
+        return False
+    finally:
+        cur.close()
+        conn.close()
+
+
 def setup_abstract_cache():
     """Create abstract_cache table. Safe to run multiple times."""
     conn = get_conn()
@@ -1558,13 +1665,21 @@ def bulk_cache_abstracts(entries: list) -> int:
 
 
 def save_query_cache(question: str, answer: str, papers: list,
-                     context_hash: str = ""):
+                     context_hash: str = "", retrieval_provenance=None):
     """Store a completed question+answer in the cache.
 
     `context_hash` must be the SAME fingerprint the lookup will present — an
     answer stored under a context and looked up without one (or under a
     different one) is simply never found again, which is the safe direction but
     also a permanently cold cache. app.py computes it once per job.
+
+    `retrieval_provenance` (item C, 2026-09-08) records the QUERY STRING that
+    built this answer's pool, and the cache key it came from. Until this
+    existed, a stored answer named its papers but not how they were found, and
+    the generator produced a different query on every run — measured 0/10
+    reproducible — so nothing about a stored pool could be re-derived. Passing
+    None keeps the old behaviour; the column is nullable for the 100+ answers
+    stored before it.
     """
     if not DATABASE_URL:
         return
@@ -1578,9 +1693,11 @@ def save_query_cache(question: str, answer: str, papers: list,
     try:
         cur.execute("""
             INSERT INTO query_cache (question_text, question_embedding, answer,
-                                     papers, context_hash)
-            VALUES (%s, %s, %s, %s, %s);
-        """, (question, q_vec, answer, json.dumps(papers), (context_hash or "")))
+                                     papers, context_hash, retrieval_provenance)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        """, (question, q_vec, answer, json.dumps(papers), (context_hash or ""),
+              json.dumps(retrieval_provenance) if retrieval_provenance
+              else None))
         conn.commit()
     except Exception as e:
         conn.rollback()
