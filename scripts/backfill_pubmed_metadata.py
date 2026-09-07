@@ -44,10 +44,27 @@ BATCH_SIZE = 200
 SLEEP_S    = 0.4   # ~2.5 req/s — safe without an API key
 
 # PubMed publication type -> evidence level, highest evidence first.
+# ── GUIDELINE PUBTYPES NO LONGER MAP TO level1 (B3, 2026-09-09) ───────────
+#
+# This table was written before the `guideline` tier existed, so it sent
+# `practice guideline`, `guideline`, `consensus development conference` and
+# `consensus statement` to **level1** — the top of the human evidence ladder.
+# That is how nine IADT consensus guidelines came to outrank every trial in the
+# library, and it is the category error A49 exists to undo: a specialty's
+# stated position is not a study design and carries no evidence score.
+#
+# The manifest decides. A guideline pubtype whose PMID has a manifest record is
+# a known document and becomes `guideline`. One WITHOUT a record is not
+# silently banded at all — it is held back and written to
+# `eval/reports/manifest_candidates.md` for a human to verify and add, because
+# the alternative is guessing, and guessing upward is what this table did.
+GUIDELINE_PUBTYPES = ("practice guideline", "guideline",
+                      "consensus development conference",
+                      "consensus statement")
+
 PUBTYPE_TO_LEVEL = [
     ("meta-analysis", "level1"), ("systematic review", "level1"),
-    ("randomized controlled trial", "level1"), ("practice guideline", "level1"),
-    ("guideline", "level1"), ("consensus development conference", "level1"),
+    ("randomized controlled trial", "level1"),
     ("controlled clinical trial", "level2"), ("clinical trial, phase iv", "level2"),
     ("clinical trial, phase iii", "level2"), ("clinical trial", "level2"),
     ("multicenter study", "level2"),
@@ -59,14 +76,86 @@ PUBTYPE_TO_LEVEL = [
 ]
 
 
-def infer_level(pubtypes: list, journal: str) -> tuple:
+_MANIFEST_PMIDS = None
+
+
+def _manifest_pmids():
+    """PMIDs the guideline manifest already knows. Loaded once."""
+    global _MANIFEST_PMIDS
+    if _MANIFEST_PMIDS is None:
+        import json
+        from pathlib import Path
+        try:
+            seed = (Path(__file__).resolve().parent.parent
+                    / "data" / "guidelines_seed.json")
+            recs = json.loads(seed.read_text(encoding="utf-8"))["guidelines"]
+            _MANIFEST_PMIDS = {str(g["pmid"]).strip() for g in recs
+                               if g.get("pmid")}
+        except Exception:
+            _MANIFEST_PMIDS = set()
+    return _MANIFEST_PMIDS
+
+
+def infer_level(pubtypes: list, journal: str, pmid: str = "") -> tuple:
+    """(level_key, why). `None` means "do not band this row" — never a guess.
+
+    Returns the sentinel `("__manifest_candidate__", tag)` for a guideline
+    pubtype with no manifest record: the caller must NOT write it, and should
+    record it for a human instead. See the note on GUIDELINE_PUBTYPES.
+    """
     if "cochrane" in (journal or "").lower():
         return "cochrane", "journal:cochrane"
     lowered = [str(p).strip().lower() for p in (pubtypes or [])]
+    for tag in GUIDELINE_PUBTYPES:
+        if tag in lowered:
+            if str(pmid or "").strip() in _manifest_pmids():
+                return "guideline", "manifest:%s" % tag
+            return "__manifest_candidate__", tag
     for tag, level in PUBTYPE_TO_LEVEL:
         if tag in lowered:
             return level, tag
     return None, None
+
+
+def _write_manifest_candidates(rows: list) -> None:
+    """B3. Guideline pubtypes with no manifest record, for a human to verify.
+
+    Written on BOTH exits — dry run and apply — because the point is the list,
+    not the write. A dry run that discovers 40 unrecorded guidelines and then
+    throws the list away has done the expensive part and kept none of it.
+    """
+    from pathlib import Path as _P
+    out = _P(__file__).resolve().parent.parent / "eval" / "reports" / \
+        "manifest_candidates.md"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# Manifest candidates — guideline pubtypes with no manifest record",
+        "",
+        "These carry a PubMed guideline or consensus publication type and are",
+        "**not in `data/guidelines_seed.json`**. Until 2026-09-09 the backfill",
+        "banded them at `level1` — the top of the human evidence ladder — which",
+        "is how nine IADT consensus guidelines came to outrank every trial in",
+        "the library.",
+        "",
+        "They are now banded at nothing. A guideline is what a body has stated,",
+        "and the manifest is where this system records which body stated what;",
+        "a document nobody has verified into the manifest cannot be given that",
+        "standing by a publication-type string. Verify each against its primary",
+        "source and add it, or leave it unbanded.",
+        "",
+        "| PMID | year | journal | pubtype | title |",
+        "|---|---|---|---|---|",
+    ]
+    for r in sorted(rows, key=lambda x: str(x.get("year") or ""), reverse=True):
+        lines.append("| %s | %s | %s | `%s` | %s |" % (
+            r.get("pmid", ""), r.get("year", ""),
+            (r.get("journal") or "")[:40], r.get("pubtype", ""),
+            (r.get("title") or "").replace("|", "\\|")[:110]))
+    lines.append("")
+    lines.append("**%d candidate(s).**" % len(rows))
+    out.write_text("\n".join(lines), encoding="utf-8")
+    print("[pubmed] %d guideline pubtype(s) held for the manifest -> %s"
+          % (len(rows), out))
 
 
 def _merge_update_relations(ids: list, metadata: dict) -> None:
@@ -260,6 +349,9 @@ def main() -> int:
         info = fetch_all([r["pmid"] for r in rows])
 
         counts, tag_counts, registries = Counter(), Counter(), Counter()
+        # B3: guideline pubtypes with no manifest record, held back for a
+        # human rather than banded. Written out at the end of the run.
+        manifest_candidates = []
         updates, retracted, superseded = [], [], []
         for r in rows:
             s = info.get(r["pmid"])
@@ -270,8 +362,22 @@ def main() -> int:
             # level_key: only fill when missing; never overwrite a known one
             level = r.get("level_key") or ""
             if not level:
-                inferred, tag = infer_level(s["pubtypes"], s.get("journal") or r.get("journal") or "")
-                if inferred:
+                inferred, tag = infer_level(
+                    s["pubtypes"], s.get("journal") or r.get("journal") or "",
+                    pmid=r.get("pmid") or "")
+                if inferred == "__manifest_candidate__":
+                    # B3. A guideline pubtype with no manifest record is NOT
+                    # banded — not level1, not guideline, not anything. It is
+                    # held back for a human to verify and add to the manifest.
+                    manifest_candidates.append({
+                        "pmid": r.get("pmid") or "",
+                        "title": (r.get("title") or "")[:160],
+                        "journal": s.get("journal") or r.get("journal") or "",
+                        "year": r.get("year") or "",
+                        "pubtype": tag,
+                    })
+                    counts["guideline pubtype held for the manifest"] += 1
+                elif inferred:
                     level = inferred
                     tag_counts[f"{tag}  ->  {inferred}"] += 1
                     counts["level_key inferred"] += 1
@@ -335,6 +441,7 @@ def main() -> int:
 
         print(f"\n[pubmed] rows to update: {len(updates)}")
         if not args.apply:
+            _write_manifest_candidates(manifest_candidates)
             print("\n[pubmed] DRY RUN — re-run with --apply to write.")
             return 0
 
@@ -370,6 +477,7 @@ def main() -> int:
             WHERE pmid = %s;
         """, updates, page_size=500)
         conn.commit()
+        _write_manifest_candidates(manifest_candidates)
         print(f"\n[pubmed] APPLIED — {len(updates)} rows updated.")
         print("[pubmed] NEXT: python scripts/rescore_library.py --apply")
         return 0

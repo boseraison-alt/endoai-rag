@@ -1138,7 +1138,7 @@ third change on the citation-support metric in one batch.
   but anything imported lazily inside a function is not, and the failure would
   be silent and unreproducible. Done carelessly once during `dl-quality-v1`;
   the generation survived, which is luck rather than a guarantee.
-- **A `` written through a shell heredoc arrives as 0x08, a BACKSPACE.** The
+- **A `\b` written through a shell heredoc arrives as 0x08, a BACKSPACE.** The
   regex compiles, runs, and matches nothing — a filter that never fires. It
   happened to `_PARAM_AGENT_HEAD` in `dl-quality-v1` and survived two repair
   attempts. Build any regex line with `chr(92)` so no backslash literal passes

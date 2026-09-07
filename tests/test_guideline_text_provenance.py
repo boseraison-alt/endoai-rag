@@ -247,7 +247,13 @@ class TestBrowserFetchedTextIsTraceableToItsFile:
         """
         import re as _re
         FURNITURE = _re.compile(r"(Page\s?\d|Position S\s?tatement|"
-                                r"AAE Position|www\.|\.org)", _re.I)
+                                # `\bwww\.` and `\.org\b` were written here through a shell
+                                # heredoc and arrived as two literal BACKSPACE
+                                # bytes, so those two alternatives have never
+                                # matched anything and this assertion has been
+                                # partly vacuous while passing. Found 2026-09-09
+                                # by tests/test_no_control_bytes.py (rule 42).
+                                r"AAE Position|\bwww\.|\.org\b)", _re.I)
         rows = _q("""SELECT pmid, abstract FROM endo_papers_rag
                      WHERE abstract_source = 'org_page_browser'
                        AND COALESCE(quarantine_reason, '') = ''""")

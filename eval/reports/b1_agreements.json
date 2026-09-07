@@ -1,0 +1,554 @@
+[
+ {
+  "pmid": "10321189",
+  "from": "classic",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "10530266",
+  "from": "classic",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "11475947",
+  "from": "level3",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "15185801",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "24407553",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "25571947",
+  "from": "level3",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "27434920",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "29455471",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:meta-analysis"
+ },
+ {
+  "pmid": "29609572",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "30444709",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "31050927",
+  "from": "level3a",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "31301436",
+  "from": "level3a",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "31306506",
+  "from": "level3a",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "32176431",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:meta-analysis"
+ },
+ {
+  "pmid": "32585263",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "34045632",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "34378269",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "35267110",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "35294790",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:systematic review"
+ },
+ {
+  "pmid": "36375202",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:observational study"
+ },
+ {
+  "pmid": "36421046",
+  "from": "level3a",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "36533889",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "36641741",
+  "from": "level3",
+  "to": "level3a",
+  "why": "pubtype:observational study"
+ },
+ {
+  "pmid": "37010205",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37085142",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:observational study"
+ },
+ {
+  "pmid": "37154002",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37355163",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37470399",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "37612879",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37746745",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37885117",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "37893558",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37924021",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "37968968",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:meta-analysis"
+ },
+ {
+  "pmid": "38013016",
+  "from": "level3a",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "38403667",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "38512015",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "38622629",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "38795077",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "38804663",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "38829548",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "38957911",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39026272",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "3908643",
+  "from": "classic",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39231718",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:meta-analysis"
+ },
+ {
+  "pmid": "39319904",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39503145",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39523312",
+  "from": "level3",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39538161",
+  "from": "level3",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "39553722",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "39690774",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39704628",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "39704629",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "39707926",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "39917708",
+  "from": "level3",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "39962452",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40120797",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40317970",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "40335983",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40407835",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40464528",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "40466763",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:observational study"
+ },
+ {
+  "pmid": "40653154",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40691703",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40713650",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:meta-analysis"
+ },
+ {
+  "pmid": "40739139",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40835176",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40843632",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40859457",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "40931202",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "40995720",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "41085390",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:observational study"
+ },
+ {
+  "pmid": "41152831",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "41193688",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "41276245",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "41277643",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "41379411",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "41383164",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "41436629",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "41454423",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "41466242",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "41545543",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:observational study"
+ },
+ {
+  "pmid": "41808105",
+  "from": "level3",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "41942971",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "42091938",
+  "from": "level2",
+  "to": "level1",
+  "why": "pubtype:randomized controlled trial"
+ },
+ {
+  "pmid": "42241134",
+  "from": "level3a",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ },
+ {
+  "pmid": "42260197",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "42412227",
+  "from": "level3b",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "42497401",
+  "from": "level2",
+  "to": "level3a",
+  "why": "pubtype:comparative study"
+ },
+ {
+  "pmid": "7660318",
+  "from": "classic",
+  "to": "level2",
+  "why": "pubtype:clinical trial"
+ },
+ {
+  "pmid": "8699518",
+  "from": "classic",
+  "to": "level2",
+  "why": "pubtype:controlled clinical trial"
+ },
+ {
+  "pmid": "9823141",
+  "from": "classic",
+  "to": "level4",
+  "why": "pubtype:case reports"
+ }
+]

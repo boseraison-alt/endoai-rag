@@ -298,6 +298,29 @@ Opening instruction for the agent session:
     excluded, 143 merely re-ranked, **0** human rows lost. The bad instrument
     returned a confident REVERT on a correct change.)
 
+42. **Code and data files are written with the Write or Edit tools, never
+    through a shell heredoc.** (Origin: 2026-09-08 and 2026-09-09, the same
+    failure four times. A heredoc consumes backslashes, so `r"\b%s\b"` reaches
+    the file as `r"\x08%s\x08"` — two literal BACKSPACE bytes. `grep` cannot
+    see them, `inspect.getsource` renders the line as an innocuous substring
+    match, and the function returns the same wrong answer for every input while
+    looking correct in every view of it. `species_from_reason` did exactly that
+    and was found only by dumping the code object's constants.
+    The cheap variant — `"\n"` arriving as a real newline inside a string
+    literal — broke three files at parse time and cost minutes; the expensive
+    one ran.
+    `tests/test_no_control_bytes.py` enforces it, and it earned its place on
+    the day it was written: it found two MORE backspaces nobody knew about,
+    one of them in `tests/test_guideline_text_provenance.py`, where `\bwww\.`
+    and `\.org\b` had never matched anything and a passing assertion had been
+    partly vacuous since the day it was written.)
+
+**Rule 41, extended 2026-09-09:** any harness that reads a ranked list must
+state its window size beside the count. The retmax-window artefact appeared
+twice in one night — the second time *after* rule 41 was written for the first
+— and in both cases the number was reported without the window that produced
+it, which is what made it look like a result.
+
 ---
 
 ## §1b STOP CONDITIONS — how to read one when it fires
@@ -2123,6 +2146,53 @@ explained after.
 - **A46c** Commit prediction and outcome together with `baseline_v6`, keeping `v5`.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
+
+### A58 — NIGHT 2026-09-09: the advisory session's premises, overturned
+
+#### Overturned premises (advisory session)
+
+**(a) "Only an editorial will match the ACP DOI."** The supplement is indexed:
+`32681591`, *J Prosthodont* 2020;29(S1):3-147, no authors — 145 pages, which is
+the document. The 2026-09-08 batch held the write back because the premise was
+pre-declared; RB accepted the evidence and keyed the record in `3224b76`. The
+editorial (`32633458`) stays in the manifest note as the citation trap.
+
+**(b) "The trauma probe's done-when is unreachable because of the matcher, or
+because of term variance."** Neither. `AAE-TRAUMA-2026` was scoped
+`[dental trauma, avulsion, luxation, root fracture]` and probe 2 asks about a
+**crown** fracture, so no scope rule could admit it — the manifest was wrong,
+not the code. With the scopes corrected, all three probe-2 documents now share
+two domain nouns with the question. **Measured here, not argued.**
+
+**(c) "The reband should trust the publication type."** The 2026-09-08
+adjudication measured the pubtype writer wrong on **63%** of the disagreements
+against the abstract reader's 30% — the less reliable of the two by a factor of
+two. B2 acts on that: on the POPULATION axis the abstract is authoritative by
+design, because "sixty extracted human molars" is fact extraction rather than
+judgement.
+
+**Generalisation: when two writers disagree, adjudicate a sample before choosing
+either.** Every reband design before 2026-09-08 picked a writer on plausibility.
+Thirty rows read by hand reversed the choice.
+
+#### Instrument errors
+
+**6. A blanket `except Exception` around the new live path hid two of my own
+bugs within an hour**, both `NameError`s from the function split, both found by
+reading the fallback log rather than by anything failing. Narrowed to genuine
+outage conditions: an outage falls back, a bug propagates.
+
+**7. The B2 population rule fired on a Cochrane review of otitis media**, whose
+background says bacteria adhere to nasopharyngeal cells "in vitro". Two
+independent signals agreed and both were wrong. What settles it is what a
+Cochrane review *is* — a systematic review of clinical trials — so a bench cue
+in its text is necessarily about the studies it reviews.
+
+**8. The suite was writing into the production answer archive.** Two stub
+answers reached `answers/`, and `test_review_context.real_answer` — which reads
+the most recent REAL answer — then failed on another test's output, in a
+directory holding 171 genuine ones. `conftest` now redirects it, as it already
+did for four audit logs.
 
 ### A57 — A55: the advisory session's A54 diagnosis was wrong by class
 

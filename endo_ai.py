@@ -5789,6 +5789,80 @@ def question_coverage(groups: list, candidates: list) -> list:
     return out
 
 
+# ── THE POPULATION RULE (B2, 2026-09-09) ──────────────────────────────────
+#
+# A paper whose abstract states a BENCH subject never sits on the clinical
+# ladder, whatever PubMed's publication type says. Population is fact
+# extraction — "sixty extracted human molars" is not a matter of opinion — and
+# the 2026-09-08 adjudication measured the pubtype writer wrong on 63% of the
+# disagreements against the abstract reader's 30%. On this one axis the
+# abstract is authoritative by design.
+#
+# It is deliberately a CONJUNCTION of two independent signals, because a single
+# regex over an abstract is exactly the instrument that has misfired three times
+# in this codebase in two days:
+#
+#   1. a bench cue that is about THIS study, not about background mechanism or
+#      somebody else's experiment, and
+#   2. `extract_stated_design` independently reading the design as `invitro`.
+#
+# Measured before it was written: 224 rows carry a bench cue while sitting on
+# the clinical ladder, and requiring both signals removes the ones that should
+# be removed. The case that made the conjunction necessary is PMID 27486835 —
+# a Cochrane review of clinical trials of xylitol for otitis media, whose
+# background says bacteria adhere to nasopharyngeal cells "in vitro". A cue
+# match alone would have moved a Cochrane review to `invitro`.
+_BENCH_CUE_RE = re.compile(
+    r"\b(in vitro|ex vivo"
+    r"|extracted (human )?(teeth|tooth|molars?|premolars?|incisors?)"
+    r"|root segments|resin block|simulated canal|artificial (canal|fin)"
+    r"|typodont|bovine (teeth|incisors?|dentin))\b", re.I)
+
+# A cue inside one of these sentences is about the field, not about this study.
+_BENCH_CUE_NOT_OURS_RE = re.compile(
+    r"\b(previous(ly)?|earlier|prior|other) (studies|work|research|reports?)"
+    r"|has (previously )?been (shown|reported|demonstrated)"
+    r"|have (previously )?been (shown|reported|demonstrated)"
+    r"|in a study (using|of|by)"
+    r"|further (studies|research|work)|future (studies|research)"
+    r"|are (needed|warranted|required)|is (needed|warranted|required)"
+    r"|unlike|whereas|in contrast to", re.I)
+
+# `cochrane` is protected for a reason of KIND, not of caution. A Cochrane
+# review is a systematic review of clinical trials by definition, so a bench cue
+# in its text is necessarily about the studies it reviews rather than about
+# itself. PMID 27486835 — "Xylitol for preventing acute otitis media in
+# children" — survived BOTH signals above, because its background says bacteria
+# adhere to nasopharyngeal cells "in vitro" and the design reader then read the
+# whole record as bench. Two independent signals agreed and both were wrong;
+# what actually settles it is what a Cochrane review IS.
+BENCH_PROTECTED_LEVELS = frozenset({"guideline", "invitro", "retracted",
+                                    "cochrane"})
+
+
+def bench_population_override(title: str, abstract: str,
+                              level_key: str = "") -> tuple:
+    """(should_move_to_invitro, reason). Bench rows only — animal rows are
+    LABELLED where they are, per the 2026-09-08 decision, and this never moves
+    one."""
+    if level_key in BENCH_PROTECTED_LEVELS:
+        return False, "not on the clinical ladder"
+    text = "%s\n%s" % (title or "", abstract or "")
+    for m in _BENCH_CUE_RE.finditer(text):
+        start = text.rfind(".", 0, m.start()) + 1
+        end = text.find(".", m.end())
+        sentence = text[start:end if end != -1 else len(text)]
+        if _BENCH_CUE_NOT_OURS_RE.search(sentence):
+            continue
+        design = extract_stated_design(abstract or "", title or "") or {}
+        if (design.get("rung") or "") != "invitro":
+            return False, ("cue %r but the design reader says %r — one signal "
+                           "is not enough" % (m.group(0),
+                                              design.get("rung") or "none"))
+        return True, "bench subject: %s" % m.group(0)
+    return False, "no self-referential bench cue"
+
+
 def question_intersection(groups: list, candidates: list) -> int:
     """How many candidates mention a term from EVERY concept group.
 
