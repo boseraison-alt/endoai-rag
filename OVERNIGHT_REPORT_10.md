@@ -287,3 +287,39 @@ exactly this, and each recurrence cost more than following it would have.
 5. **48 stored claims** cite an animal study without saying so. The forward fix
    is shipped; the archive is not rewritten.
 6. **The ~26% pool-noise floor** bounds what any retrieval A/B can ever show.
+
+---
+
+# Addendum — 2026-09-07
+
+**Two of the six "Open for RB" items above are closed**, both by commit
+`3224b76` (RB, advisory session), and both went the way the evidence pointed.
+
+**Open item 2 — `AAE-TRAUMA-2026` on probe 2's watch list — closed.** The
+report argued the crown-fracture done-when was unreachable because the
+document's own manifest scope (`dental trauma, avulsion, luxation, root
+fracture`) did not name crown fractures, so no scope rule could admit it. RB
+confirmed the diagnosis and fixed it at the source: `AAE-TRAUMA-2026` and
+`ESE-TRAUMA-2021` now carry the full injury spectrum — crown fracture,
+crown-root fracture, intrusion, extrusion, replantation and the endodontic
+sequelae. **The manifest was wrong, not the matcher.**
+
+That means item C change 4's verdict — *"no admission rule met the bar, ship
+nothing"* — was scored against a manifest that has since been corrected, and
+rule (b) deserves re-scoring rather than standing as written. It is re-run as
+**item E of the 2026-09-09 batch**; see `OVERNIGHT_REPORT_11.md` for whether
+`AAE-TRAUMA-2026` and `IADT-FRACTURES-LUXATIONS-2020` are now admitted by scope
+on 3 of 3 runs.
+
+**Open item 1 — `ACP-PARAMETERS-OF-CARE-2020` → 32681591 — closed.** The batch
+had pre-declared that a DOI search would find only an editorial, so the write
+was held back and the evidence reported. RB accepted it: the record is now
+keyed by **32681591**, the 145-page supplement (*J Prosthodont* 2020;29(S1):3-147,
+no authors), and the editorial `32633458` is kept in the manifest note as the
+citation trap it is. `unconfirmed_pmid` drops from 5 to 4.
+
+The remaining four items — the ~26% pool-noise floor, the 48 unlabelled animal
+citations, and the two lab studies at `level1` (`28068207`, `36862198`) — are
+addressed by items C and B of the 2026-09-09 batch. The architecture question
+raised in `eval/reports/a55_report.md` is answered by that batch's item A:
+**routing goes live by default.**
