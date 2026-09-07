@@ -1,0 +1,391 @@
+{
+ "decidable": 272,
+ "disagree": 180,
+ "sample": [
+  {
+   "n": 1,
+   "pmid": "1940735",
+   "journal": "Journal of endodontics",
+   "title": "The solvent effects of calcium hydroxide irrigating solution on bovine pulp tissue",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "The solvent effects of calcium hydroxide irrigating solution (used alone and in combination with sodium hypochlorite) on bovine pulp tissue were studied."
+   ]
+  },
+  {
+   "n": 2,
+   "pmid": "2015993",
+   "journal": "Dental materials : official publication of the Academy of Dental Materials",
+   "title": "Comparison of wet and dry finishing of resin composites with aluminum oxide discs",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": []
+  },
+  {
+   "n": 3,
+   "pmid": "2098464",
+   "journal": "Journal of endodontics",
+   "title": "Clinical evaluation of five electronic root canal length measuring instruments",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "A previous in vitro study has shown high accuracy, but no clinically significant differences in a group of five electronic root canal length measuring instruments."
+   ]
+  },
+  {
+   "n": 4,
+   "pmid": "7561651",
+   "journal": "Journal of endodontics",
+   "title": "Scanning electron microscopic evaluation of root-end preparations",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": []
+  },
+  {
+   "n": 5,
+   "pmid": "7642327",
+   "journal": "International endodontic journal",
+   "title": "Sealability of the Trifecta technique in the presence or absence of a smear layer.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "The aim of this in vitro study was to assess the sealability of a recently introduced thermoplasticized gutta-percha technique (Trifecta, Hygenic Corp., OH, USA) in the presence or absence of a smear layer."
+   ]
+  },
+  {
+   "n": 6,
+   "pmid": "7673842",
+   "journal": "Journal of endodontics",
+   "title": "Radiovisiography versus conventional radiography for detection of small instruments in endodontic length determination. Part 1. In vitro evaluation",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "In this in vitro investigation, radiovisiography was compared with conventional radiographs viewed with x2 magnification."
+   ]
+  },
+  {
+   "n": 7,
+   "pmid": "7751067",
+   "journal": "International endodontic journal",
+   "title": "Ultrasonic root-end preparation, Part 2. Microleakage of EBA root-end fillings",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "The effect of three methods of root-end preparation, following apical resection, on the apical seal of root-end fillings, was studied in vitro."
+   ]
+  },
+  {
+   "n": 8,
+   "pmid": "8665319",
+   "journal": "Oral surgery, oral medicine, oral pathology, oral radiology, and endodontics",
+   "title": "Healing of apical periodontitis in dogs after apicoectomy and retrofilling with various filling materials.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "animal",
+   "abstract_label": "animal study",
+   "quotes": [
+    "STUDY DESIGN: The pulps of mandibular premolars in seven beagle dogs were infected; this resulted in periapical lesions.",
+    "After 6 months the dogs were killed."
+   ]
+  },
+  {
+   "n": 9,
+   "pmid": "8670024",
+   "journal": "Archives of oral biology",
+   "title": "Effect of inferior alveolar nerve axotomy on immune cells and nerve fibres in young rat molars",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "animal",
+   "abstract_label": "animal study",
+   "quotes": [
+    "The effect of axotomy on CD43+, CD4+, CD11b+ and I-A antigen-expressing cells in both the distal segment of the cut inferior alveolar nerve and in the first molar pulp of young rats was evaluated.",
+    "Due to the almost unchanged number and distribution of immunocompetent cells in the pulp after axotomy, the young rat molar pulp may represent a suitable and useful experimental model to study neuro-immune interactions."
+   ]
+  },
+  {
+   "n": 10,
+   "pmid": "16499632",
+   "journal": "Dent Traumatol",
+   "title": "Traumatic intrusion of permanent teeth. Part 2. A clinical study of the effect of preinjury and injury factors, such as sex, age, stage of root development, tooth location, and extent of injury including number of intruded teeth on 140 intruded permanent teeth.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "level2",
+   "abstract_label": "clinical trial (non-randomised) or prospective study",
+   "quotes": [
+    "A prospective study of 140 intruded permanent teeth was done to evaluate the following healing complications: pulp necrosis (PN), root resorption (surface, inflammatory and replacement resorption) (RR) and defects in marginal periodontal healing (MA)."
+   ]
+  },
+  {
+   "n": 11,
+   "pmid": "20813556",
+   "journal": "Oral surgery, oral medicine, oral pathology, oral radiology, and endodontics",
+   "title": "Endodontic flare-ups: a prospective study.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "level2",
+   "abstract_label": "clinical trial (non-randomised) or prospective study",
+   "quotes": [
+    "The objective of this prospective clinical study was to evaluate the incidence of flare-ups (pain and/or swelling requiring endodontic interappointment and emergency treatment) and identify the risk factors associated with their occurrence in patients who received endodontic treatment from June 2006 to June 2007 at the endodontics clinic of the S\u00e3o Paulo Dental Association (APCD), Jardim Paulista branch, S\u00e3o Paulo, Brazil."
+   ]
+  },
+  {
+   "n": 12,
+   "pmid": "9198442",
+   "journal": "Journal of endodontics",
+   "title": "Lateral condensation of small, curved root canals: comparison of two types of accessory cones",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "observational",
+   "abstract_label": "cross-sectional / observational",
+   "quotes": [
+    "Cross-sectional outs were made at the 2-mm and the 4-mm apical levels."
+   ]
+  },
+  {
+   "n": 13,
+   "pmid": "34275184",
+   "journal": "Dent Traumatol",
+   "title": "The association of inadequate lip coverage and malocclusion with dental trauma in Brazilian children and adolescents - A systematic review and meta-analysis.",
+   "pubtype_says": "level1",
+   "pubtype_why": "pubtype:meta-analysis",
+   "abstract_says": "protocol",
+   "abstract_label": "study protocol (no results reported)",
+   "quotes": [
+    "MATERIAL AND METHODS: The review protocol was registered in the PROSPERO database (CRD42020156290) and the bibliographic search was performed in nine electronic databases until July 2020.",
+    "The meta-analyses were stratified by dentition stage and age range using fixed or random effects, odds ratio (OR) as the effect measure, and 95% confidence interval."
+   ]
+  },
+  {
+   "n": 14,
+   "pmid": "21915706",
+   "journal": "Head and neck pathology",
+   "title": "Glandular odontogenic cyst: analysis of 46 cases with special emphasis on microscopic criteria for diagnosis.",
+   "pubtype_says": "level2",
+   "pubtype_why": "pubtype:multicenter study",
+   "abstract_says": "level3a",
+   "abstract_label": "retrospective study",
+   "quotes": [
+    "The purpose of this multicenter retrospective study is to further define the clinical, radiographic, and microscopic features of GOC, to determine which microscopic features may be helpful for diagnosis in problematic cases, to determine the most appropriate treatment, and to determine if GOC and CMEC share a histopathologic spectrum."
+   ]
+  },
+  {
+   "n": 15,
+   "pmid": "28068207",
+   "journal": "Photomedicine and laser surgery",
+   "title": "The Effect of Diode Laser on Planktonic Enterococcus faecalis in Infected Root Canals in an Ex Vivo Model.",
+   "pubtype_says": "level1",
+   "pubtype_why": "pubtype:randomized controlled trial",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": []
+  },
+  {
+   "n": 16,
+   "pmid": "8530996",
+   "journal": "Journal of oral and maxillofacial surgery : official journal of the American Association of Oral and Maxillofacial Surgeons",
+   "title": "Oral surgery in anticoagulated patients without reducing the dose of oral anticoagulant: a prospective randomized study",
+   "pubtype_says": "level1",
+   "pubtype_why": "pubtype:randomized controlled trial",
+   "abstract_says": "level2",
+   "abstract_label": "clinical trial (non-randomised) or prospective study",
+   "quotes": [
+    "PATIENTS AND METHODS: A prospective, randomized study compared bleeding complications with six perioperative schedules in 92 patients chronically treated with acenocoumarol."
+   ]
+  },
+  {
+   "n": 17,
+   "pmid": "18215667",
+   "journal": "Journal of endodontics",
+   "title": "Treatment outcome in endodontics: the Toronto study--phases 3 and 4: orthograde retreatment.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "unclear",
+   "abstract_label": "randomisation stated without human subjects",
+   "quotes": [
+    "Suggested significance of number of treatment sessions in teeth with radiolucency requires validation from randomized controlled trials."
+   ]
+  },
+  {
+   "n": 18,
+   "pmid": "22322495",
+   "journal": "Med Oral Patol Oral Cir Bucal",
+   "title": "Antimicrobial activity and enterococcus faecalis biofilm formation on chlorhexidine varnishes.",
+   "pubtype_says": "level3b",
+   "pubtype_why": "pubtype:evaluation study",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "OBJECTIVE: To evaluate, in vitro, the antimicrobial activity and biofilm formation of three chlorhexidine varnishes in four E."
+   ]
+  },
+  {
+   "n": 19,
+   "pmid": "30135248",
+   "journal": "Science translational medicine",
+   "title": "Deciduous autologous tooth stem cells regenerate dental pulp after implantation into injured teeth.",
+   "pubtype_says": "level1",
+   "pubtype_why": "pubtype:randomized controlled trial",
+   "abstract_says": "animal",
+   "abstract_label": "animal study",
+   "quotes": [
+    "We show that implantation of autologous tooth stem cells from deciduous teeth regenerated dental pulp with an odontoblast layer, blood vessels, and nerves in two animal models.",
+    "These results prompted us to enroll 40 patients with pulp necrosis after traumatic dental injuries in a randomized, controlled clinical trial."
+   ]
+  },
+  {
+   "n": 20,
+   "pmid": "38591808",
+   "journal": "Oral diseases",
+   "title": "Osteoradionecrosis incidence in pre-radiation teeth extractions: A prospective study.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:observational study",
+   "abstract_says": "protocol",
+   "abstract_label": "study protocol (no results reported)",
+   "quotes": [
+    "AIMS: To evaluate osteoradionecrosis (ORN) incidence in a cohort of patients undergoing tooth extraction (TE) before radiotherapy (RT) for head and neck cancers.",
+    "METHODS: The study protocol was approved by the Ethics Committee of Universit\u00e0 Cattolica del Sacro Cuore (ID-2132) and registered at clinicaltrials.gov (ID: NCT04009161).",
+    "This study proposes a decision-making algorithm for TE and outlines a straightforward surgical protocol."
+   ]
+  },
+  {
+   "n": 21,
+   "pmid": "25963721",
+   "journal": "Clinical oral investigations",
+   "title": "A comparison between two negative pressure irrigation techniques in simulated immature tooth: an ex vivo study.",
+   "pubtype_says": "level4",
+   "pubtype_why": "pubtype:case reports",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": [
+    "OBJECTIVES: This ex vivo study evaluated the irrigation efficacy of a new apical negative pressure system (ANP) in canals with simulated immature teeth, by comparing it to EndoVac (EV) system in terms of smear layer (SL) removal and irrigation extrusion."
+   ]
+  },
+  {
+   "n": 22,
+   "pmid": "28650788",
+   "journal": "The Journal of clinical pediatric dentistry",
+   "title": "Comparison of the Antimicrobial Efficacy of the EndoVac System and Conventional Needle Irrigation in Primary Molar Root Canals.",
+   "pubtype_says": "level2",
+   "pubtype_why": "pubtype:controlled clinical trial",
+   "abstract_says": "invitro",
+   "abstract_label": "in vitro / bench study",
+   "quotes": []
+  },
+  {
+   "n": 23,
+   "pmid": "29336883",
+   "journal": "Journal of endodontics",
+   "title": "Long-term Prognosis of Pulpal Status of Traumatized Teeth Exhibiting Contradictory Results between Pulp Sensibility Test and Ultrasound Doppler Flowmetry: A Retrospective Study.",
+   "pubtype_says": "level4",
+   "pubtype_why": "pubtype:case reports",
+   "abstract_says": "level3a",
+   "abstract_label": "retrospective study",
+   "quotes": [
+    "INTRODUCTION: In this retrospective study, we investigated long-term (over 3\u00a0years) follow-up results of teeth that exhibited contradictory results between the pulp sensibility test (thermal or electric pulp test) and ultrasound Doppler flowmetry (UDF) until 1\u00a0year after trauma to inspect the prognosis of the pulp.",
+    "Cases with follow-up records of more than 3\u00a0years after trauma were finally included, and a retrospective chart review was performed."
+   ]
+  },
+  {
+   "n": 24,
+   "pmid": "29984369",
+   "journal": "The journal of adhesive dentistry",
+   "title": "Direct and Indirect Restorations for Endodontically Treated Teeth: A Systematic Review and Meta-analysis, IAAD 2017 Consensus Conference Paper.",
+   "pubtype_says": "guideline",
+   "pubtype_why": "pubtype:consensus statement",
+   "abstract_says": "level1",
+   "abstract_label": "systematic review",
+   "quotes": [
+    "PURPOSE: The primary objective of this systematic review was to compare treatment outcomes of direct and indirect permanent restorations in endodontically treated teeth, and provide clinical suggestions for restoring teeth after endodontic treatment.",
+    "MATERIALS AND METHODS: Electronic databases (Medline, EMBASE, CENTRAL) and gray literature were screened for articles in English that reported on prospective and retrospective clinical studies of direct or indirect restorations after endodontic treatment with an observation period of at least 3 years.",
+    "The quality of included studies and risk of bias were assessed using Cochrane Collaboration's tool for RCTs (randomized controlled trials), the Newcastle-Ottawa Scale for cohort studies, and the Agency for Healthcare Research and Quality (AHRQ) methodology checklist for cross-sectional studies."
+   ]
+  },
+  {
+   "n": 25,
+   "pmid": "36862198",
+   "journal": "Clinical oral investigations",
+   "title": "Fatigue performance of endodontically treated molars reinforced with different fiber systems.",
+   "pubtype_says": "level1",
+   "pubtype_why": "pubtype:randomized controlled trial",
+   "abstract_says": "unclear",
+   "abstract_label": "randomisation stated without human subjects",
+   "quotes": []
+  },
+  {
+   "n": 26,
+   "pmid": "38481211",
+   "journal": "BMC oral health",
+   "title": "Correlation between pulp sensibility and magnetic resonance signal intensity following regenerative endodontic procedures in mature necrotic teeth- a retrospective cohort study.",
+   "pubtype_says": "level1",
+   "pubtype_why": "pubtype:randomized controlled trial",
+   "abstract_says": "level3a",
+   "abstract_label": "retrospective study",
+   "quotes": [
+    "METHODOLOGY: This retrospective cohort study included eighteen adult patients who experienced tooth necrosis in mature maxillary anterior teeth recruited from the outpatient clinic, Conservative Dentistry Department, Faculty of Dentistry, Alexandria University, Alexandria, Egypt from July 2017 until December 2018 with 12 months of follow-up."
+   ]
+  },
+  {
+   "n": 27,
+   "pmid": "39487671",
+   "journal": "Dent Traumatol",
+   "title": "Appropriate Terminology for the Time Elapsed From Avulsion of a Permanent Tooth to Replantation: A Scoping Review and Delphi Consensus.",
+   "pubtype_says": "guideline",
+   "pubtype_why": "pubtype:consensus statement",
+   "abstract_says": "level5",
+   "abstract_label": "scoping review",
+   "quotes": []
+  },
+  {
+   "n": 28,
+   "pmid": "40755177",
+   "journal": "British journal of clinical pharmacology",
+   "title": "Combination vs. single-drug nonprescription analgesics for acute pain management: A narrative review.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "level5",
+   "abstract_label": "narrative review",
+   "quotes": []
+  },
+  {
+   "n": 29,
+   "pmid": "41637255",
+   "journal": "Brazilian dental journal",
+   "title": "Cone beam computed tomography vs. Periapical Radiograph: Diagnostic accuracy in endo and periodontal lesions.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "(none)",
+   "abstract_label": "cross-sectional / observational",
+   "quotes": []
+  },
+  {
+   "n": 30,
+   "pmid": "42175523",
+   "journal": "Australian endodontic journal : the journal of the Australian Society of Endodontology Inc",
+   "title": "Spin and Methodological Quality of Systematic Reviews and Meta-Analyses Comparing Single- and Multiple-Visit Endodontic Treatment: A Meta-Research Study.",
+   "pubtype_says": "level3a",
+   "pubtype_why": "pubtype:comparative study",
+   "abstract_says": "level1",
+   "abstract_label": "systematic review",
+   "quotes": [
+    "This study evaluated the methodological quality and presence of spin in systematic reviews with meta-analyses comparing single-visit and multiple-visit endodontic treatment, and investigated factors associated.",
+    "Systematic reviews of randomised clinical trials were included without restrictions on language or publication year.",
+    "Narrative reviews, reviews without meta-analysis, non-randomised or non-clinical studies, and conference abstracts were excluded."
+   ]
+  }
+ ]
+}
