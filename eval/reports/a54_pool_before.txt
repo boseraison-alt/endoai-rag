@@ -1,0 +1,72 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 3c52d22 (imported 2026-09-06T20:19:46)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic" OR "calcium silicate") AND (apicoectomy OR "apical surgery" OR "periapical surgery" OR "surgical endodontic*") AND ("retrograde filling" OR "retrograde fill*" OR "apical seal*" OR "apical plug")'
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14760.10it/s]
+  Embedding model ready.
+  [rag] 8 queries -> 367 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]  118 paper(s) mention ['mta', 'mineral trioxide aggregate', 'bioceramic*', 'bioactive ceramic']
+    [rag_gate:coverage]   28 paper(s) mention ['apicoectomy', 'apical surgery', 'periapical surgery', 'surgical endodontic*']
+    [rag_gate:coverage]   31 paper(s) mention ['retrograde filling', 'retrograde fill*', 'apical seal*', 'apical plug']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 64 clear the evidence floor 0.6; dropped 136 (best dropped 0.600)
+  [PRISMA dedup] review PMID 33340080 (2021) chosen by relevance; 25 reference(s) known; 1 of 15 older primary studies verified as cited by it
+  [flagship] admitted 2 scope-matched flagship guideline(s): AAE-TREATMENTSTANDARDS-2018, ESE-S3-2023
+==============================================================================
+A54 — POOL AND PRECISION,  ARM = BEFORE
+==============================================================================
+  question: MTA versus bioceramic as retrograde filling after apicoectomy
+  papers in the pool: 66
+  by tier: {'classic': 1, 'cochrane': 2, 'guideline': 2, 'invitro': 5, 'level1': 22, 'level2': 5, 'level3': 6, 'level3a': 5, 'level3b': 1, 'level4': 12, 'level5': 5}
+
+  FIXTURES IN THE POOL
+    F1  31078325   absent
+    F2  27986096   absent
+    F3  34499889   absent
+    F4  38430316   absent
+    F5  42634020   absent
+    F6  42004800   absent
+    F7  41555359   absent
+    F8  38849637   absent
+    -> 0 of 8 present
+
+  PRECISION — does the paper name the question's subject at all?
+    on topic             30
+    OFF TOPIC            36
+    no text to judge      0
+    off-topic share     55% of the 66 judgeable
+
+  OFF-TOPIC PAPERS (first 25)
+    cochrane      26403154   Single crowns versus conventional fillings for the restoration of root-fille
+    level1        38963396   Clinical and radiographic success rate of the root canal filling materials u
+    level1        41235564   Evaluation of clinical and radiographic outcome of premixed injectable miner
+    level1        34854987   Outcomes of root canal therapy or full pulpotomy using two endodontic biomat
+    level1        28822564   Regenerative Endodontic Treatment or Mineral Trioxide Aggregate Apical Plug 
+    level1        27599002   Comparison of the Apical Sealing Ability of Calcium Silicate-Based Sealer an
+    level1        25467231   MTA versus Ca(OH)2 in apexification of non-vital immature permanent teeth: a
+    level1        26911724   Comparison of mineral trioxide aggregate and calcium hydroxide for apexifica
+    level1        22838228   Apexification of anterior teeth: a comparative evaluation of mineral trioxid
+    level1        15858300   Mineral trioxide aggregate as a pulpotomy agent in primary molars: an in viv
+    level2        40691703   Clinical and radiographic evaluation of premixed bioceramic putty as an apic
+    level3a       39171602   Comparative Evaluation of Success of NeoPutty Mineral Trioxide Aggregate ® w
+    level3a       39261778   Evaluation of apically extruded debris during root canal filling material re
+    level3        40142636   Retrieval of AH Plus Bioceramic and Ceraseal Versus AH Plus in Endodontic Re
+    level3        36833161   The Endodontic Space.
+    level3        32726858   Mineral Trioxide Aggregate Applications in Endodontics: A Review.
+    level3        29567927   Regeneration and Repair in Endodontics-A Special Issue of the Dentistry Jour
+    level3b       37085142   The Effect of Mineral Trioxide Aggregate Obturation Levels on the Outcome of
+    level4        36370128   Clinical outcomes of non-surgical root canal obturations using NeoMTA: A ret
+    level4        39827364   Perforating Internal Root Resorption Sealed with Single-Cone Technique Using
+    level4        37358584   Apexification with a bioceramic reparative cement: a case report.
+    level4        27805884   Root Canal Filling after Revascularization/Revitalization.
+    level4        23780353   Apical barrier formation after incomplete orthograde MTA apical plug placeme
+    level4        19840502   Treatment options for teeth with open apices and apical periodontitis.
+    level4        14977312   MTA for obturation of mandibular central incisors with open apices: case rep
+
+  wrote eval/reports/a54_pool_before.json

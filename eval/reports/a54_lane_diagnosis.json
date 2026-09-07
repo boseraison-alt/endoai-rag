@@ -1,0 +1,123 @@
+{
+ "question": "MTA versus bioceramic as retrograde filling after apicoectomy",
+ "terms": "(MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")",
+ "lane_query": {
+  "cochrane": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (\"Cochrane Database Syst Rev\"[jour]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "level1": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (randomized controlled trial[pt] OR systematic review[pt] OR meta-analysis[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "level2": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (controlled clinical trial[pt] OR prospective studies[mh] OR comparative study[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "level3a": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (retrospective studies[pt] OR cohort studies[mh] OR longitudinal studies[mh]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "level3b": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (case-control studies[pt] OR case-control studies[mh]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "level4": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (case series[pt] OR case reports[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "guideline": "(apicoectomy OR apical surgery OR surgical endodontics OR periapical surgery) AND (practice guideline[pt] OR guideline[pt] OR consensus development conference[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt] NOT (animals[mh] NOT humans[mh])",
+  "level5": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (review[pt] OR editorial[pt] OR comment[pt] OR letter[pt]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]",
+  "observational": "((MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic*\" OR \"calcium silicate\") AND (apicoectomy OR \"apical surgery\" OR \"surgical endodontics\" OR \"periapical surgery\") AND (\"retrograde filling\" OR \"retrograde seal*\" OR \"apical plug\" OR \"root-end filling\")) AND (cross-sectional studies[mh] OR observational study[pt] OR \"cone-beam computed tomography\"[mh] OR \"imaging, three-dimensional\"[mh] OR \"anatomy and histology\"[sh] OR \"sensitivity and specificity\"[mh]) AND (endodontics[MeSH] OR \"dental pulp\"[MeSH] OR \"periapical diseases\"[MeSH] OR endodontic*[tiab] OR \"root canal\"[tiab] OR \"root canals\"[tiab] OR \"dental pulp\"[tiab] OR pulpitis[tiab] OR \"periapical\"[tiab] OR \"pulp therapy\"[tiab] OR \"pulp capping\"[tiab]) NOT \"Retracted Publication\"[pt] NOT \"Retraction of Publication\"[pt]"
+ },
+ "rows": {
+  "F1": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "no",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no",
+   "_topic_alone": 0,
+   "_domain_alone": 1,
+   "_level1_filter_alone": 1
+  },
+  "F2": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "no",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no",
+   "_topic_alone": 0,
+   "_domain_alone": 1,
+   "_level1_filter_alone": 1
+  },
+  "F3": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "MATCH",
+   "level3b": "MATCH",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "MATCH"
+  },
+  "F4": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "no",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no",
+   "_topic_alone": 0,
+   "_domain_alone": 1,
+   "_level1_filter_alone": 1
+  },
+  "F5": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "MATCH",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no"
+  },
+  "F6": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "no",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no",
+   "_topic_alone": 1,
+   "_domain_alone": 1,
+   "_level1_filter_alone": 0
+  },
+  "F7": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "no",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no",
+   "_topic_alone": 0,
+   "_domain_alone": 1,
+   "_level1_filter_alone": 1
+  },
+  "F8": {
+   "cochrane": "no",
+   "level1": "no",
+   "level2": "no",
+   "level3a": "no",
+   "level3b": "no",
+   "level4": "no",
+   "guideline": "no",
+   "level5": "no",
+   "observational": "no",
+   "_topic_alone": 0,
+   "_domain_alone": 1,
+   "_level1_filter_alone": 0
+  }
+ }
+}

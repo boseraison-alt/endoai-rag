@@ -1,0 +1,85 @@
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate") AND (apicoectomy OR "apical surgery" OR "surgical endodontics" OR "periapical surgery") AND ("retrograde filling" OR "retrograde seal*" OR "apical plug" OR "root-end filling")'
+==============================================================================
+A54 — FIXTURE x LANE DIAGNOSIS
+==============================================================================
+  question: MTA versus bioceramic as retrograde filling after apicoectomy
+  FROZEN TERMS (eval\logs\a54_terms.json):
+    (MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate") AND (apicoectomy OR "apical surgery" OR "surgical endodontics" OR "periapical surgery") AND ("retrograde filling" OR "retrograde seal*" OR "apical plug" OR "root-end filling")
+
+  AND-GROUPS the generator produced: 3
+    g0: mta | mineral trioxide aggregate | bioceramic* | bioactive ceramic* | calcium silicate
+    g1: apicoectomy | apical surgery | surgical endodontics | periapical surgery
+    g2: retrograde filling | retrograde seal* | apical plug | root-end filling
+
+  LANE QUERIES — does the SUBJECT group appear alongside the
+  MATERIAL group, or does any lane run the material alone?
+    cochrane       topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    level1         topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    level2         topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    level3a        topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    level3b        topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    level4         topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    guideline      topic = apicoectomy OR apical surgery OR surgical endodontics OR periapical surgery
+    level5         topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+    observational  topic = MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic*" OR "calcium silicate"
+
+  F1  PMID 31078325
+      lanes that MATCH: NONE
+      topic terms alone      : DOES NOT MATCH
+      domain filter alone    : passes
+      level1 pubtype filter  : matches
+
+  F2  PMID 27986096
+      lanes that MATCH: NONE
+      topic terms alone      : DOES NOT MATCH
+      domain filter alone    : passes
+      level1 pubtype filter  : matches
+
+  F3  PMID 34499889
+      lanes that MATCH: ['level3a', 'level3b', 'observational']
+
+  F4  PMID 38430316
+      lanes that MATCH: NONE
+      topic terms alone      : DOES NOT MATCH
+      domain filter alone    : passes
+      level1 pubtype filter  : matches
+
+  F5  PMID 42634020
+      lanes that MATCH: ['level3a']
+
+  F6  PMID 42004800
+      lanes that MATCH: NONE
+      topic terms alone      : matches
+      domain filter alone    : passes
+      level1 pubtype filter  : not a level1 design
+
+  F7  PMID 41555359
+      lanes that MATCH: NONE
+      topic terms alone      : DOES NOT MATCH
+      domain filter alone    : passes
+      level1 pubtype filter  : matches
+
+  F8  PMID 38849637
+      lanes that MATCH: NONE
+      topic terms alone      : DOES NOT MATCH
+      domain filter alone    : passes
+      level1 pubtype filter  : not a level1 design
+
+==============================================================================
+TABLE — fixture x lane
+==============================================================================
+  fx   pmid      cochran level1  level2  level3a level3b level4  guideli level5  observa
+  F1   31078325  -       -       -       -       -       -       -       -       -      
+  F2   27986096  -       -       -       -       -       -       -       -       -      
+  F3   34499889  -       -       -       YES     YES     -       -       -       YES    
+  F4   38430316  -       -       -       -       -       -       -       -       -      
+  F5   42634020  -       -       -       YES     -       -       -       -       -      
+  F6   42004800  -       -       -       -       -       -       -       -       -      
+  F7   41555359  -       -       -       -       -       -       -       -       -      
+  F8   38849637  -       -       -       -       -       -       -       -       -      
+
+  matched by at least one lane (lost to RANKING or the CAP): ['F3', 'F5']
+  matched by no lane (the QUERY cannot express them)      : ['F1', 'F2', 'F4', 'F6', 'F7', 'F8']
+
+  wrote eval/reports/a54_lane_diagnosis.json
