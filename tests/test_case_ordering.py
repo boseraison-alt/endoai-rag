@@ -54,7 +54,15 @@ class TestTheFixtureIsPinned:
     def test_the_case_exists_and_is_a_case_turn(self):
         c = _case()
         assert c["mode"] == "case"
-        assert c["force_route"] == "library"
+        # REPAIRED TO IDENTITY 2026-09-09 (rule 39). This asserted
+        # `force_route == "library"`, which was how the fixture was pinned when
+        # the library was a route you had to ask for. RB removed that pin from
+        # all 18 library-pinned cases when routing went live by default, so the
+        # assertion failed with a KeyError on a case that is otherwise
+        # untouched. What this class is for is that the FIXTURE is the case the
+        # ordering test needs — its mode, its question, its expectations — and
+        # the route it happens to take is not one of those things.
+        assert c.get("force_route") in (None, "live", "library")
         assert "tooth #20" in c["question"]
         assert "Asian ethnicity" in c["question"]
 

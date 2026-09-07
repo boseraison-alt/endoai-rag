@@ -2256,6 +2256,7 @@ def build_differential_evidence(job_id: str, case_description: str,
                          detect_outliers, apply_currency_tags,
                          flag_superseded_by_review, collapse_guideline_copies,
                          admit_scoped_guidelines, drop_off_domain,
+                         drop_non_current_guidelines,
                          snowball_from_reviews,
                          PROVISIONAL_KEY, PROVISIONAL_MAX_ADMITTED,
                          _provisional_context_line)
