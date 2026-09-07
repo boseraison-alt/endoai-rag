@@ -3,8 +3,23 @@
 <!-- PUSH STATUS GOES HERE, FIRST LINE, before anything else. -->
 
 **Routing is live by default.** The library is a contributor on every question
-and the sole source only when PubMed fails. The batch's other headline is that
-closing one leak revealed three more paths into the same pool.
+and the sole source only when PubMed fails: 87 of 87 case-runs routed live, on
+both readings of the route.
+
+Two findings sit above the rest, and they are the same finding twice.
+
+**Closing one leak revealed three more paths into the same pool** — and then
+the guard that closed them was found, by the v8 baseline, to be blocking
+**current** guidelines: 215 of 778 drop events, including the pinned Cochrane
+review and the document item E's probe watches. A re-key leaves a forwarding
+stub behind, and the guard read a forwarding address as a verdict. Fixed,
+predicted, measured.
+
+**And the leak count was the smaller number.** Of the stored answers already
+served, **36 citing sentences name a superseded guideline and 36 of 36 carry no
+supersession notice** — because the notice fires on the context line the model
+reads, not on a sentence a clinician reads. That is item C's shape for the
+third time, and it is carried found-not-fixed.
 
 ---
 
@@ -198,7 +213,11 @@ It exercised `rag.search` only, and passed throughout all 28 questions. Extended
 to the union and to the live lane's guard.
 
 **Closed: 0 offending rows across all 31 questions**, on the run whose file
-mtime (12:59:57) proves it is the run that included the snowball guard. The
+mtime (12:59:57) proves it is the run that included the snowball guard —
+and **re-confirmed 0/31 after item D's over-block fix loosened the rule**
+(mtime 15:55:34), with `ESE-QG-2006`, `IADT-AVULSION-2012` and
+`IADT-AVULSION-2007` still being dropped in that same run. Releasing the nine
+forwarding stubs did not reopen the leak. The
 first two readings of that result were of a **stale file** — a `nohup` run had
 died when its tool call returned, and a fixed leak read as open. Recorded as
 instrument error 10, and reproduced on purpose later in the night: a
@@ -279,9 +298,9 @@ Retrieval-only, which is what v7 was and what makes the two comparable.
 
 | run | passed | imported | wall clock | term-cache hits |
 |---|---|---|---|---|
-| 1 | **24/29** | 13:25:38 | 34m 14s | 27/29 |
-| 2 | **23/29** | 13:59:52 | 34m 59s | 29/29 |
-| 3 | **23/29** | 14:34:51 | ~34m | 29/29 |
+| 1 | **24/29** | 13:25:38 | 34m 08s | 27/29 |
+| 2 | **23/29** | 13:59:52 | 34m 54s | 29/29 |
+| 3 | **23/29** | 14:34:51 | 34m 43s | 29/29 |
 
 Runs 1 and 2–3 report different commits (`e5cca30`, `c331f77`) because RB
 committed a protocol document at 13:59. The diff between them is **one
@@ -300,8 +319,11 @@ all three runs — the criterion the batch named as the one to leave alone.
 
 That result is right and its reason is worth stating, because it hid a defect:
 the live lane supplied 36512807 while the guard was silently dropping the
-**library's** copy of the same document 80 times. The expectation passed on a
-path that happened to be open.
+**library's** copy of the same document — 80 times across the baseline, and in
+this very case from three separate lanes (`library`, `cochrane`, `level1`) in
+the same run that passed. The expectation was met on a path that happened to be
+open, which is why a passing criterion is not evidence that the system is
+right.
 
 ### Failed 3 of 3 — four cases, all on query quality
 
@@ -440,6 +462,40 @@ route readings, and every failing criterion verbatim.
   `tests/test_no_control_bytes.py` enforces it, plus the CRLF corpus check.
 - **Rule 41 extended**: a harness reading a ranked list must state its window
   size beside the count.
+- **Rule 43 (new)**: a result file is read together with its **mtime**, and a
+  background run is launched through the harness, never with `nohup … &`.
+
+### Instrument errors 10 and 11, one of them reproduced on purpose
+
+**10 — the stale file.** Item 3's leak result was read twice as "still
+leaking". The `nohup` process had died when its tool call returned, so the file
+on disk predated the snowball guard: **a fixed leak read as open.** The mtime
+settled it (12:59:57), and the third reading was 0 offending rows on all 31
+questions.
+
+Later in the night I launched a re-measurement the same way again and watched
+the mechanism fire in the open: the tool reported **exit 0 in under a second**,
+because `&` returns immediately. Worse than the first time, it left an orphan
+running into the same log file as the tracked run — **two processes writing one
+file, which is not a measurement.** Both were killed and it was run once,
+cleanly. The two Flask servers, including 5003, were not touched.
+
+**11 — a default path that could not exist.** The over-block script defaulted
+its log paths to `/tmp/v8_run1.log`. Git Bash rewrites POSIX paths in
+*arguments*, but a string hardcoded in Python resolves to `C:\tmp`, which does
+not exist — so the first run read three missing files and reported **0 drop
+events**, which looks exactly like a clean result. It now resolves `%TEMP%` and
+**refuses to report counts from logs it could not read.** A default that cannot
+be found must never read as a zero.
+
+### One instrument left deliberately inconsistent
+
+`scripts/measure_guideline_block_leak.py` still defines an offending row by the
+old rule (`if quarantine_reason:`), so it now counts the nine released
+forwarding stubs as offenders while the guard does not. It was **not changed
+while its measurement was in flight** — the same reason the route derivation
+was left alone until v8 was scored. It is stricter than the guard, so a zero
+from it is still a valid zero; aligning both on one definition is the follow-up.
 
 `tests/test_no_control_bytes.py` **earned its place the day it was written**. It
 found two backspace bytes nobody knew about, and one was a live bug:

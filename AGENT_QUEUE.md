@@ -2147,6 +2147,66 @@ explained after.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
 
+### A60 — NEXT BATCH: carried out of 2026-09-09's item D and item 3
+
+#### A60a — the supersession notice fires on the wrong line. **HIGH**
+
+Measured 2026-09-09, beside item 3's leak count. Of 205 stored documents,
+**36 citing sentences name one of the five superseded rows and 36 of 36 carry
+no supersession notice as served.** `_guideline_supersession_notice` fires on
+the CONTEXT line, where the model reads it, and not on a citing sentence in a
+served answer. A clinician reading the archive sees `ESE-DEEPCARIES-2019` cited
+for what vital pulp therapy contraindicates with nothing to say it was
+replaced.
+
+**This is the third instance of one pattern**, and the pattern is now the item:
+
+| | upstream fix | stored answers |
+|---|---|---|
+| animal studies (item C) | context labelled | 48 unlabelled until the finaliser fixed it |
+| redirects | re-key applied | rewritten on the way out |
+| **superseded guidelines** | context guarded (item 3) | **36 of 36 unmarked** |
+
+Item C's remedy applies unchanged: a render-time notice in the finaliser,
+sentence-scoped, leaving a sentence that already says so alone. **Fix the class,
+not the instance** — the general rule is that any correction applied to the
+context must have a render-time counterpart, because the archive is served
+again on every read. Enumerate what else is corrected upstream only.
+
+#### A60b — `run_eval` instruments neither latency nor cost
+
+Item D was asked for median and max latency and cost per run and could not
+produce them: `run_eval` records no per-case timing and no per-case spend, so
+the only figure that exists is wall clock per run (~34 min for 29 cases). Add
+both to `measured`, print them, and carry them into the baseline file, so the
+v9 series can answer the question v8 could not. Note that a retrieval-only pass
+costs almost nothing — the term cache served 85 of 87 cases and the whole
+baseline cost two LLM calls — so the cost figure only becomes interesting in
+synthesis mode.
+
+#### A60c — the inferred route derivation is still wrong
+
+v8 printed both readings and they agreed 87/87, but **the agreement proves
+nothing**: the inferred derivation's blind spot is a question whose tiers come
+only from `library-union`, and no case-run was in that state, so the defect was
+never exercised. Replace the derivation with the router's recorded decision as
+the scored value, and keep the inferred one beside it for one baseline so the
+change is visible. `_route_decision` already exists on the evidence dict and
+already reaches `measured` — it is simply never printed or serialised, which is
+why v8's re-score had to be recovered from the router's printed statement and
+the fallback log's mtime rather than read from the stored outputs.
+
+#### A60d — four cases fail 3 of 3 on query quality, not on route
+
+`apdt-primary-molars`, `intentional-replantation`, `pregnancy` and
+`sdf-pulp-outcomes` failed all three v8 runs on the same two criteria: fewer
+than 5 esearch hits per query, and more than 50% of queries returning nothing.
+All four still assembled full pools (86–183 papers) because the library union
+carried them, which is live-by-default working as designed while the query
+generator underperforms. `pregnancy` and `sdf-pulp-outcomes` are narrow topics
+where thin PubMed yield is arguable; the other two are not. **Diagnose the
+generated booleans per query — do not move the floors.**
+
 ### A59 — NEXT BATCH: two items carried out of 2026-09-09
 
 #### A59a — the specialty renderer, three defects. FOUND-NOT-FIXED, **HIGH**
