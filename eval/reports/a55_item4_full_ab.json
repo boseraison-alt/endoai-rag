@@ -1,0 +1,214 @@
+{
+ "rows": [
+  {
+   "id": "laser-root-canal-disinfection-live",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.333
+  },
+  {
+   "id": "single-vs-multiple-visit",
+   "n_before": 18,
+   "n_after": 60,
+   "jaccard": 0.099
+  },
+  {
+   "id": "mta-vs-biodentine-pulpotomy",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.111
+  },
+  {
+   "id": "naocl-concentration",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.053
+  },
+  {
+   "id": "cbct-vs-periapical",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.739
+  },
+  {
+   "id": "bioceramic-vs-resin-sealer",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.348
+  },
+  {
+   "id": "retreatment-vs-microsurgery",
+   "n_before": 12,
+   "n_after": 47,
+   "jaccard": 0.054
+  },
+  {
+   "id": "direct-pulp-capping",
+   "n_before": 48,
+   "n_after": 57,
+   "jaccard": 0.842
+  },
+  {
+   "id": "preemptive-nsaid",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.846
+  },
+  {
+   "id": "regenerative-immature",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.69
+  },
+  {
+   "id": "cracked-tooth-prognosis",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.765
+  },
+  {
+   "id": "apdt-primary-molars",
+   "n_before": 4,
+   "n_after": 8,
+   "jaccard": 0.333
+  },
+  {
+   "id": "bisphosphonates",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.212
+  },
+  {
+   "id": "pregnancy",
+   "n_before": 60,
+   "n_after": 21,
+   "jaccard": 0.025
+  },
+  {
+   "id": "pips-vs-ultrasonic",
+   "n_before": 60,
+   "n_after": 51,
+   "jaccard": 0.168
+  },
+  {
+   "id": "intentional-replantation",
+   "n_before": 60,
+   "n_after": 21,
+   "jaccard": 0.125
+  },
+  {
+   "id": "sdf-pulp-outcomes",
+   "n_before": 17,
+   "n_after": 16,
+   "jaccard": 0.65
+  },
+  {
+   "id": "sonic-vs-ultrasonic",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.333
+  },
+  {
+   "id": "dens-invaginatus",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.053
+  },
+  {
+   "id": "diabetes-outcomes",
+   "n_before": 60,
+   "n_after": 59,
+   "jaccard": 0.062
+  },
+  {
+   "id": "case-opening-sparse",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.0
+  },
+  {
+   "id": "case-opening-full",
+   "n_before": 26,
+   "n_after": 20,
+   "jaccard": 0.211
+  },
+  {
+   "id": "review-followup-immature-teeth",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.132
+  },
+  {
+   "id": "review-newtopic-reset",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.101
+  },
+  {
+   "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.043
+  },
+  {
+   "id": "bisphosphonate-extraction-vs-rct-treatment",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.053
+  },
+  {
+   "id": "dens-evaginatus-premolar-diagnostic",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.558
+  },
+  {
+   "id": "dens-evaginatus-prevention-followup",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.176
+  },
+  {
+   "id": "probe1-avulsion",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.395
+  },
+  {
+   "id": "probe2-crown-fracture",
+   "n_before": 50,
+   "n_after": 19,
+   "jaccard": 0.03
+  },
+  {
+   "id": "probe3-retreat-implant",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.081
+  },
+  {
+   "id": "a54-retrograde",
+   "n_before": 60,
+   "n_after": 60,
+   "jaccard": 0.379
+  }
+ ],
+ "mean_jaccard": 0.28125,
+ "grew": 4,
+ "shrank": 7,
+ "a54_before": [
+  "F3",
+  "F5",
+  "F6"
+ ],
+ "a54_after": [
+  "F1",
+  "F2",
+  "F4",
+  "F5",
+  "F6",
+  "F7"
+ ],
+ "a54_pool_before": 60,
+ "a54_pool_after": 60
+}

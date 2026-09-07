@@ -2124,6 +2124,61 @@ explained after.
   Rule 13 is satisfied by the explanation, and this makes the explanation
   falsifiable rather than post-hoc.
 
+### A57 — A55: the advisory session's A54 diagnosis was wrong by class
+
+#### Overturned premises
+
+**(a) "The A54 miss was a vocabulary miss on MATERIAL names." — wrong twice
+over.** The cause was not vocabulary at all, it was **routing**: the question
+went to the LIBRARY and no PubMed lane ran, so no query could have missed
+anything. And where vocabulary did matter, it was the **procedure**, not the
+material — adding the procedure's modern names took fixture recall on that
+question from **3/8 to 6/8**, gaining exactly the four A54 predicted
+(`"endodontic microsurgery"` recovers F1, F2, F4, F7).
+
+**Generalisation, and the one worth keeping: before diagnosing a miss by query,
+confirm a query ran.** Every retrieval fix in the A54 menu was scored against a
+pool no query produced.
+
+**(b) "Snowballing from reviews recovers the fixtures."** Measured on
+2026-09-07 and rejected: choosing reviews by score pushed off-topic from 55% to
+67%. Re-targeted at `_prisma.sr_pmid`, the mechanism is kept but its yield is
+low — reviews chosen by relevance publish no reference list most of the time.
+**It must never be counted on.**
+
+**(c) "Two of A54's eight fixtures are head-to-head clinical papers." — no.**
+F7 is a meta-analysis of *sealing ability and marginal adaptation* and F8 tests
+*ninety root segments with an artificial fin*. Both are bench studies by their
+own abstracts. A54's recall target was partly the wrong target, and a question
+about what to place in a patient cannot be answered from a sealing-ability
+bench test.
+
+**(d) "The gate fails to require every concept group to clear the floor." —
+already shipped.** `app.py` has always computed
+`weakest_cov >= MIN_CONCEPT_PAPERS`. The gate was not misreading its weakest
+concept; it was reading a number that cannot answer the question asked of it.
+The missing count was the INTERSECTION.
+
+#### Instrument errors
+
+**5. The truncated-list reading, again, and it reversed the conclusion again.**
+Item 4's A/B first read fixture recall off two top-60 lists and reported
+**1/8 → 0/8, "REGRESSED"**. Asked per fixture — does this paper satisfy this
+query? — the same two queries give **3/8 → 6/8**. Both lists were full at 60;
+the fixtures had simply moved in the ranking. This is rule 41, written earlier
+the same session for the species guard, failing to be applied one item later.
+
+#### A finding that outranks the item
+
+**The library route is systematically incomplete, and the intersection barely
+predicts it.** Across the 27 LIBRARY-routed questions of the 32-question set,
+**every one** is missing live papers, a median of **80%** of what the live path
+fetches, and the correlation between the intersection and that fraction is
+**r = -0.22**. `min_intersection_papers` catches the worst cases and no more.
+The open question A55 does not settle is whether a library-first gate is the
+right architecture at all when the library holds a fifth of the relevant
+literature for the median question.
+
 ### A56 — NIGHT 2026-09-08: three overturned premises, four instrument errors
 
 #### Overturned premises
