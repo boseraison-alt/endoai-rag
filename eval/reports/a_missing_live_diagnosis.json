@@ -1,0 +1,790 @@
+{
+ "tally": {
+  "no lane's publication-type filter matched it": 73,
+  "off-domain (fails ENDO_DOMAIN_FILTER)": 52,
+  "IN THE LIBRARY but not in the pool \u2014 a real loss": 22,
+  "animal-only (species guard)": 9
+ },
+ "detail": [
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35713740",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "36500223",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "31512828",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35708474",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "37211399",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "36905280",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "32053733",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "38012605",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "27745799",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "26705856",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "36027770",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "38683025",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "38729231",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "40889701",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35006809",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35768222",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "37615967",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35770921",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "33274224",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "28258812",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "36528174",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "33511211",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "21412808",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "29235328",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "23134158",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "34699983",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "30353289",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "12398165",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35267229",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "16982278",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "26660494",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "27318625",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "33827540",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "25705785",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "38418153",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "35511289",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "32342037",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "32716697",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "laser-root-canal-disinfection-live",
+   "pmid": "24238461",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "30689457",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "36685672",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "30833126",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "35271753",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "25216204",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "35430959",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "29519974",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "29215682",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "38760763",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "34326585",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "26381904",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "29675513",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "35864436",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "18928853",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "40844201",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "36363290",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "39551812",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "36960024",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "29980946",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "35006809",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "19127027",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "38849053",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "27449386",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "29172020",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "41040625",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "33597337",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "41106219",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "30632881",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "32171875",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "35456585",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "21935518",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "40890905",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "37001714",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "29422469",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "32788488",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "39171782",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "32344451",
+   "why": "animal-only (species guard)"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "32056078",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "naocl-concentration",
+   "pmid": "35993930",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "22000453",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "35282580",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "36377178",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "17670879",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "35386547",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "16982264",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "27507627",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "25218523",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "37738369",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "30224614",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "37257031",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "39013627",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "24765264",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "18762633",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "26149210",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "30034150",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "37986277",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "29200372",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "29422476",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "35019015",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "21496653",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "19748293",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "21419288",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "26095381",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "26787022",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "28606420",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "24359138",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "25008098",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "29692851",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "41728912",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "39109343",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "32855371",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "19228214",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "39639099",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "32026295",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "39956575",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "21787510",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "33195681",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "case-opening-sparse",
+   "pmid": "27747638",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "32420442",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "32893654",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "25496589",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "38716028",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "37149873",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "34562981",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "31249189",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "28527851",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "33421151",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "31623181",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "17709068",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "28443212",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "28573052",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "27882250",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "16599329",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "34208510",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "25485158",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "31253455",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "34404646",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "33403346",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "11310112",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "23411596",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "25131644",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "36110591",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "23960512",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "29714701",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "28349653",
+   "why": "IN THE LIBRARY but not in the pool \u2014 a real loss"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "32369383",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "23374932",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "32256593",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "1736945",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "10825838",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "36697113",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "33915794",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "24883032",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "35830631",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "18644241",
+   "why": "no lane's publication-type filter matched it"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "25206120",
+   "why": "off-domain (fails ENDO_DOMAIN_FILTER)"
+  },
+  {
+   "question": "probe1-avulsion",
+   "pmid": "18479374",
+   "why": "no lane's publication-type filter matched it"
+  }
+ ]
+}

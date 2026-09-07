@@ -1,0 +1,548 @@
+{
+ "rows": [
+  {
+   "id": "laser-root-canal-disinfection-live",
+   "question": "Use of lasers in root canal disinfection",
+   "route": "LIVE",
+   "pool_after": 131,
+   "pool_before": 139,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 64,
+    "library-union": 67
+   },
+   "seconds": 86.7,
+   "spend_usd": 0.01059,
+   "live_returned": 40,
+   "missing_from_pool": 39,
+   "missing_frac": 0.975
+  },
+  {
+   "id": "single-vs-multiple-visit",
+   "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+   "route": "LIVE",
+   "pool_after": 138,
+   "pool_before": 100,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 52,
+    "library-union": 86
+   },
+   "seconds": 67.6,
+   "spend_usd": 0.01031,
+   "live_returned": 40,
+   "missing_from_pool": 29,
+   "missing_frac": 0.725
+  },
+  {
+   "id": "mta-vs-biodentine-pulpotomy",
+   "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+   "route": "LIVE",
+   "pool_after": 150,
+   "pool_before": 173,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 50,
+    "library-union": 100
+   },
+   "seconds": 60.9,
+   "spend_usd": 0.01001,
+   "live_returned": 40,
+   "missing_from_pool": 23,
+   "missing_frac": 0.575
+  },
+  {
+   "id": "naocl-concentration",
+   "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
+   "route": "LIVE",
+   "pool_after": 171,
+   "pool_before": 100,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 62,
+    "library-union": 109
+   },
+   "seconds": 82.1,
+   "spend_usd": 0.01099,
+   "live_returned": 40,
+   "missing_from_pool": 39,
+   "missing_frac": 0.975
+  },
+  {
+   "id": "cbct-vs-periapical",
+   "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+   "route": "LIVE",
+   "pool_after": 128,
+   "pool_before": 120,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "library-union": 77,
+    "live": 51
+   },
+   "seconds": 60.4,
+   "spend_usd": 0.01228,
+   "live_returned": 40,
+   "missing_from_pool": 30,
+   "missing_frac": 0.75
+  },
+  {
+   "id": "bioceramic-vs-resin-sealer",
+   "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
+   "route": "LIVE",
+   "pool_after": 171,
+   "pool_before": 121,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 49,
+    "library-union": 122
+   },
+   "seconds": 73.9,
+   "spend_usd": 0.01175,
+   "live_returned": 40,
+   "missing_from_pool": 36,
+   "missing_frac": 0.9
+  },
+  {
+   "id": "retreatment-vs-microsurgery",
+   "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+   "route": "LIVE",
+   "pool_after": 172,
+   "pool_before": 145,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "library-union": 118,
+    "live": 54
+   },
+   "seconds": 66.1,
+   "spend_usd": 0.01344,
+   "live_returned": 40,
+   "missing_from_pool": 33,
+   "missing_frac": 0.825
+  },
+  {
+   "id": "direct-pulp-capping",
+   "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
+   "route": "LIVE",
+   "pool_after": 135,
+   "pool_before": 116,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 39,
+    "library-union": 96
+   },
+   "seconds": 57.7,
+   "spend_usd": 0.01019,
+   "live_returned": 40,
+   "missing_from_pool": 28,
+   "missing_frac": 0.7
+  },
+  {
+   "id": "preemptive-nsaid",
+   "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
+   "route": "LIVE",
+   "pool_after": 111,
+   "pool_before": 126,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 46,
+    "library-union": 65
+   },
+   "seconds": 72.6,
+   "spend_usd": 0.01114,
+   "live_returned": 40,
+   "missing_from_pool": 32,
+   "missing_frac": 0.8
+  },
+  {
+   "id": "regenerative-immature",
+   "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
+   "route": "LIVE",
+   "pool_after": 165,
+   "pool_before": 135,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 41,
+    "library-union": 124
+   },
+   "seconds": 66.6,
+   "spend_usd": 0.01194,
+   "live_returned": 40,
+   "missing_from_pool": 33,
+   "missing_frac": 0.825
+  },
+  {
+   "id": "cracked-tooth-prognosis",
+   "question": "Cracked tooth prognosis after root canal treatment by crack extent",
+   "route": "LIVE",
+   "pool_after": 163,
+   "pool_before": 130,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 71,
+    "library-union": 92
+   },
+   "seconds": 77.2,
+   "spend_usd": 0.0091,
+   "live_returned": 40,
+   "missing_from_pool": 33,
+   "missing_frac": 0.825
+  },
+  {
+   "id": "apdt-primary-molars",
+   "question": "Antimicrobial photodynamic therapy as an adjunct in primary molars with necrotic pulps",
+   "route": "LIVE",
+   "pool_after": 102,
+   "pool_before": 101,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 45,
+    "library-union": 57
+   },
+   "seconds": 64.1,
+   "spend_usd": 0.0143,
+   "live_returned": 8,
+   "missing_from_pool": 5,
+   "missing_frac": 0.625
+  },
+  {
+   "id": "bisphosphonates",
+   "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+   "route": "LIVE",
+   "pool_after": 130,
+   "pool_before": 107,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "library-union": 61,
+    "live": 69
+   },
+   "seconds": 83.6,
+   "spend_usd": 0.01114,
+   "live_returned": 40,
+   "missing_from_pool": 34,
+   "missing_frac": 0.85
+  },
+  {
+   "id": "pregnancy",
+   "question": "Root canal treatment in pregnancy timing and local anesthetic choice",
+   "route": "LIVE",
+   "pool_after": 130,
+   "pool_before": 46,
+   "route_before": "LIVE",
+   "by_source": {
+    "library-union": 84,
+    "live": 46
+   },
+   "seconds": 65.5,
+   "spend_usd": 0.01068,
+   "live_returned": 21,
+   "missing_from_pool": 19,
+   "missing_frac": 0.905
+  },
+  {
+   "id": "pips-vs-ultrasonic",
+   "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
+   "route": "LIVE",
+   "pool_after": 74,
+   "pool_before": 44,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 34,
+    "library-union": 40
+   },
+   "seconds": 53.5,
+   "spend_usd": 0.01095,
+   "live_returned": 40,
+   "missing_from_pool": 31,
+   "missing_frac": 0.775
+  },
+  {
+   "id": "intentional-replantation",
+   "question": "Intentional replantation for teeth unsuitable for surgery",
+   "route": "LIVE",
+   "pool_after": 158,
+   "pool_before": 20,
+   "route_before": "LIVE",
+   "by_source": {
+    "library-union": 101,
+    "live": 57
+   },
+   "seconds": 71.7,
+   "spend_usd": 0.01008,
+   "live_returned": 21,
+   "missing_from_pool": 16,
+   "missing_frac": 0.762
+  },
+  {
+   "id": "sdf-pulp-outcomes",
+   "question": "Silver diamine fluoride and pulp outcomes in deep carious lesions in adult teeth",
+   "route": "LIVE",
+   "pool_after": 74,
+   "pool_before": 31,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 43,
+    "library-union": 31
+   },
+   "seconds": 64.1,
+   "spend_usd": 0.01214,
+   "live_returned": 16,
+   "missing_from_pool": 8,
+   "missing_frac": 0.5
+  },
+  {
+   "id": "sonic-vs-ultrasonic",
+   "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
+   "route": "LIVE",
+   "pool_after": 97,
+   "pool_before": 36,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 61,
+    "library-union": 36
+   },
+   "seconds": 69.1,
+   "spend_usd": 0.00984,
+   "live_returned": 40,
+   "missing_from_pool": 35,
+   "missing_frac": 0.875
+  },
+  {
+   "id": "dens-invaginatus",
+   "question": "Dens invaginatus type III management",
+   "route": "LIVE",
+   "pool_after": 119,
+   "pool_before": 22,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 59,
+    "library-union": 60
+   },
+   "seconds": 72.5,
+   "spend_usd": 0.0096,
+   "live_returned": 40,
+   "missing_from_pool": 38,
+   "missing_frac": 0.95
+  },
+  {
+   "id": "diabetes-outcomes",
+   "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
+   "route": "LIVE",
+   "pool_after": 136,
+   "pool_before": 141,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 69,
+    "library-union": 67
+   },
+   "seconds": 77.8,
+   "spend_usd": 0.00915,
+   "live_returned": 40,
+   "missing_from_pool": 31,
+   "missing_frac": 0.775
+  },
+  {
+   "id": "case-opening-sparse",
+   "question": "Tooth 36 hurts.",
+   "route": "LIVE",
+   "pool_after": 168,
+   "pool_before": 9,
+   "route_before": "LIVE",
+   "by_source": {
+    "live": 70,
+    "library-union": 98
+   },
+   "seconds": 84.3,
+   "spend_usd": 0.00758,
+   "live_returned": 40,
+   "missing_from_pool": 39,
+   "missing_frac": 0.975
+  },
+  {
+   "id": "case-opening-full",
+   "question": "62-year-old female, well-controlled type 2 diabetes, no other medical history, no bisphosphonates. Tooth 26, previously root treated 8 years ago, now tender to percussion for 3 weeks. Periapical radiograph and CBCT show a 6mm periapical radiolucency on the MB root with an untreated MB2. Tooth is non-vital (previously treated), restorable with an adequate ferrule and existing crown is sound. No sinus tract. Patient has taken amoxicillin from her GP with partial relief.",
+   "route": "LIVE",
+   "pool_after": 170,
+   "pool_before": 53,
+   "route_before": "LIVE",
+   "by_source": {
+    "library-union": 112,
+    "live": 58
+   },
+   "seconds": 73.4,
+   "spend_usd": 0.01254,
+   "live_returned": 20,
+   "missing_from_pool": 14,
+   "missing_frac": 0.7
+  },
+  {
+   "id": "review-followup-immature-teeth",
+   "question": "What about in immature teeth?",
+   "route": "LIVE",
+   "pool_after": 116,
+   "pool_before": 110,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 57,
+    "library-union": 59
+   },
+   "seconds": 89.1,
+   "spend_usd": 0.00785,
+   "live_returned": 40,
+   "missing_from_pool": 35,
+   "missing_frac": 0.875
+  },
+  {
+   "id": "review-newtopic-reset",
+   "question": "What is the evidence for sodium hypochlorite concentration in primary root canal treatment?",
+   "route": "LIVE",
+   "pool_after": 127,
+   "pool_before": 108,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 51,
+    "library-union": 76
+   },
+   "seconds": 98.1,
+   "spend_usd": 0.01155,
+   "live_returned": 40,
+   "missing_from_pool": 35,
+   "missing_frac": 0.875
+  },
+  {
+   "id": "necrotic-virgin-tooth-young-adult-diagnostic",
+   "question": "20-year-old, necrotic tooth, no restoration, no caries \u2014 what could the cause be?",
+   "route": "LIVE",
+   "pool_after": 132,
+   "pool_before": 101,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 35,
+    "library-union": 97
+   },
+   "seconds": 91.3,
+   "spend_usd": 0.01039,
+   "live_returned": 40,
+   "missing_from_pool": 37,
+   "missing_frac": 0.925
+  },
+  {
+   "id": "bisphosphonate-extraction-vs-rct-treatment",
+   "question": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
+   "route": "LIVE",
+   "pool_after": 169,
+   "pool_before": 150,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "library-union": 118,
+    "live": 51
+   },
+   "seconds": 111.0,
+   "spend_usd": 0.00912,
+   "live_returned": 40,
+   "missing_from_pool": 35,
+   "missing_frac": 0.875
+  },
+  {
+   "id": "dens-evaginatus-premolar-diagnostic",
+   "question": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
+   "route": "LIVE",
+   "pool_after": 101,
+   "pool_before": 10,
+   "route_before": "LIVE",
+   "by_source": {
+    "live": 45,
+    "library-union": 56
+   },
+   "seconds": 96.1,
+   "spend_usd": 0.00983,
+   "live_returned": 40,
+   "missing_from_pool": 36,
+   "missing_frac": 0.9
+  },
+  {
+   "id": "dens-evaginatus-prevention-followup",
+   "question": "oh i do see a possible dens evaginatu sin tooth #20. Is there anything a dentist can do to present pulp necrosis from setting in?",
+   "route": "LIVE",
+   "pool_after": 141,
+   "pool_before": 101,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 58,
+    "library-union": 83
+   },
+   "seconds": 83.9,
+   "spend_usd": 0.00942,
+   "live_returned": 40,
+   "missing_from_pool": 35,
+   "missing_frac": 0.875
+  },
+  {
+   "id": "probe1-avulsion",
+   "question": "Avulsed maxillary central incisor with a closed apex, replanted after 40 minutes of extra-oral dry time. How should it be managed and what is the prognosis?",
+   "route": "LIVE",
+   "pool_after": 102,
+   "pool_before": 77,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 38,
+    "library-union": 64
+   },
+   "seconds": 88.6,
+   "spend_usd": 0.01017,
+   "live_returned": 40,
+   "missing_from_pool": 39,
+   "missing_frac": 0.975
+  },
+  {
+   "id": "probe2-crown-fracture",
+   "question": "Complicated crown fracture with pulp exposure in a mature premolar, 6 hours old. What is the management?",
+   "route": "LIVE",
+   "pool_after": 171,
+   "pool_before": 123,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "library-union": 109,
+    "live": 62
+   },
+   "seconds": 95.2,
+   "spend_usd": 0.00969,
+   "live_returned": 19,
+   "missing_from_pool": 15,
+   "missing_frac": 0.789
+  },
+  {
+   "id": "probe3-retreat-implant",
+   "question": "Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?",
+   "route": "LIVE",
+   "pool_after": 177,
+   "pool_before": 159,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 75,
+    "library-union": 102
+   },
+   "seconds": 100.5,
+   "spend_usd": 0.00857,
+   "live_returned": 40,
+   "missing_from_pool": 32,
+   "missing_frac": 0.8
+  },
+  {
+   "id": "a54-retrograde",
+   "question": "MTA versus bioceramic as retrograde filling after apicoectomy",
+   "route": "LIVE",
+   "pool_after": 142,
+   "pool_before": 91,
+   "route_before": "LIBRARY",
+   "by_source": {
+    "live": 52,
+    "library-union": 90
+   },
+   "seconds": 82.1,
+   "spend_usd": 0.00912,
+   "live_returned": 40,
+   "missing_from_pool": 33,
+   "missing_frac": 0.825
+  }
+ ]
+}
