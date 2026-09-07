@@ -4045,6 +4045,15 @@ def generate_search_terms(question, context_block: str = ""):
     message = _invoke_claude(client, function_name="generate_search_terms",
         model=MODELS["structured_fast"],
         max_tokens=400,
+        # TEMPERATURE 0, ADDED 2026-09-08. No temperature was passed, so the
+        # API default applied to the one call every retrieval depends on.
+        # Measured across 10 real eval questions x 5 runs: 0/10 produced the
+        # same query twice, mean pairwise AND-group Jaccard 0.135. Two runs of
+        # the same build were searching PubMed for different things, which is
+        # why the 2026-09-06 "confinement proof" measured 61/256 pools changed
+        # against an IDENTICAL build (rule 38) and why A54 saw one probe
+        # return three different guideline pools.
+        temperature=0,
         messages=[{
             "role": "user",
             "content": _with_context(context_block,
@@ -4085,6 +4094,7 @@ PubMed boolean query:""",
         try:
             retry = _invoke_claude(client, function_name="generate_search_terms",
                 model=MODELS["structured_fast"], max_tokens=400,
+                temperature=0,   # same reason as the first call
                 messages=[{"role": "user", "content":
                     f'Return ONE PubMed boolean query for: "{question}". '
                     f'2-3 OR-groups joined by AND, quoted phrases, * stems. '

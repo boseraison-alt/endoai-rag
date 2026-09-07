@@ -90,3 +90,25 @@ removes the paraphrase text itself rather than only hiding it, which is the
 stronger reading of the standing rule. The retirement and the redirects stay.
 Predicted: **2 rows**, no change to `quarantine_reason` or `redirect_to`, and
 one test of mine needs its query repointed (rule 39).
+
+---
+
+## Item C — measured, then predicted again (2026-09-08)
+
+**Prediction 4 was right and far too generous.** I predicted "below 40%"
+identical across 5 runs. Measured on 10 real eval questions: **0/10** identical
+query strings, **0/10** identical AND-group sets, mean pairwise group Jaccard
+**0.135**, and 9 of the 10 questions produced 5 distinct queries in 5 runs.
+Retrieval in this system has never been reproducible.
+
+**Prediction 5 confirmed.** `generate_search_terms` passed no `temperature`, so
+the API default applied.
+
+**New prediction, committed before the after-measurement is run.** Temperature 0
+will raise the identical-string rate sharply but **not to 100%** — served LLM
+sampling is near-deterministic at temperature 0, not guaranteed, and batching
+can still change a token. I predict **60–90% identical strings** and mean group
+Jaccard **above 0.9**. If it reaches 100% I will say so; if it stays below 60%
+then temperature is not the dominant source and the cache is doing all the
+work, which changes what item C's cache is for — from an optimisation to the
+only thing standing between an A/B and noise.
