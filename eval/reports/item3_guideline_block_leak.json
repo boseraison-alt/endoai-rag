@@ -1,57 +1,49 @@
 {
- "offending_rows": {
-  "30664240": {
-   "gid": "ESE-DEEPCARIES-2019",
-   "why": "status=superseded_in_content, superseded_by=EFCD-ESE-ORCA-DEEPCARIES-2026",
-   "title": "European Society of Endodontology position statement: manage"
-  }
- },
+ "offending_rows": {},
  "per_question": [
   {
    "id": "laser-root-canal-disinfection-live",
-   "n_block": 17,
+   "n_block": 26,
    "offending": []
   },
   {
    "id": "single-vs-multiple-visit",
-   "n_block": 31,
+   "n_block": 33,
    "offending": []
   },
   {
    "id": "mta-vs-biodentine-pulpotomy",
-   "n_block": 23,
-   "offending": []
-  },
-  {
-   "id": "naocl-concentration",
-   "n_block": 30,
-   "offending": []
-  },
-  {
-   "id": "cbct-vs-periapical",
-   "n_block": 28,
-   "offending": []
-  },
-  {
-   "id": "bioceramic-vs-resin-sealer",
    "n_block": 22,
    "offending": []
   },
   {
+   "id": "naocl-concentration",
+   "n_block": 31,
+   "offending": []
+  },
+  {
+   "id": "cbct-vs-periapical",
+   "n_block": 22,
+   "offending": []
+  },
+  {
+   "id": "bioceramic-vs-resin-sealer",
+   "n_block": 25,
+   "offending": []
+  },
+  {
    "id": "retreatment-vs-microsurgery",
-   "n_block": 23,
+   "n_block": 16,
    "offending": []
   },
   {
    "id": "direct-pulp-capping",
-   "n_block": 21,
-   "offending": [
-    "30664240"
-   ]
+   "n_block": 17,
+   "offending": []
   },
   {
    "id": "preemptive-nsaid",
-   "n_block": 28,
+   "n_block": 25,
    "offending": []
   },
   {
@@ -61,32 +53,32 @@
   },
   {
    "id": "cracked-tooth-prognosis",
-   "n_block": 31,
+   "n_block": 32,
    "offending": []
   },
   {
    "id": "apdt-primary-molars",
-   "n_block": 26,
+   "n_block": 17,
    "offending": []
   },
   {
    "id": "bisphosphonates",
-   "n_block": 24,
+   "n_block": 33,
    "offending": []
   },
   {
    "id": "pregnancy",
-   "n_block": 31,
+   "n_block": 32,
    "offending": []
   },
   {
    "id": "pips-vs-ultrasonic",
-   "n_block": 10,
+   "n_block": 26,
    "offending": []
   },
   {
    "id": "intentional-replantation",
-   "n_block": 13,
+   "n_block": 28,
    "offending": []
   },
   {
@@ -96,42 +88,42 @@
   },
   {
    "id": "sonic-vs-ultrasonic",
-   "n_block": 24,
-   "offending": []
-  },
-  {
-   "id": "dens-invaginatus",
-   "n_block": 28,
-   "offending": []
-  },
-  {
-   "id": "diabetes-outcomes",
-   "n_block": 28,
-   "offending": []
-  },
-  {
-   "id": "case-opening-sparse",
    "n_block": 25,
    "offending": []
   },
   {
+   "id": "dens-invaginatus",
+   "n_block": 25,
+   "offending": []
+  },
+  {
+   "id": "diabetes-outcomes",
+   "n_block": 15,
+   "offending": []
+  },
+  {
+   "id": "case-opening-sparse",
+   "n_block": 26,
+   "offending": []
+  },
+  {
    "id": "case-opening-full",
-   "n_block": 27,
+   "n_block": 23,
    "offending": []
   },
   {
    "id": "review-followup-immature-teeth",
-   "n_block": 16,
+   "n_block": 24,
    "offending": []
   },
   {
    "id": "review-newtopic-reset",
-   "n_block": 18,
+   "n_block": 11,
    "offending": []
   },
   {
    "id": "necrotic-virgin-tooth-young-adult-diagnostic",
-   "n_block": 24,
+   "n_block": 15,
    "offending": []
   },
   {
@@ -146,26 +138,24 @@
   },
   {
    "id": "dens-evaginatus-prevention-followup",
-   "n_block": 29,
+   "n_block": 28,
    "offending": []
   },
   {
    "id": "probe1-avulsion",
-   "n_block": 27,
+   "n_block": 14,
    "offending": []
   },
   {
    "id": "probe2-crown-fracture",
-   "n_block": 29,
+   "n_block": 33,
    "offending": []
   },
   {
    "id": "probe3-retreat-implant",
-   "n_block": 30,
+   "n_block": 29,
    "offending": []
   }
  ],
- "by_path": {
-  "snowball": 1
- }
+ "by_path": {}
 }

@@ -1,0 +1,302 @@
+{
+ "leaked": {
+  "22409417": "IADT-AVULSION-2012",
+  "17180780": "ESE-QG-2006",
+  "17511833": "IADT-AVULSION-2007",
+  "22230724": "IADT-FRACTURES-LUXATIONS-2012",
+  "30664240": "ESE-DEEPCARIES-2019"
+ },
+ "documents": 205,
+ "cited": 36,
+ "unnoticed": 36,
+ "hits": [
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "This curriculum equips the clinician to navigate that decision systematically: from understanding the inflammatory continuum that governs pulp biology [[PMID:30664240]], through rigorous preoperative "
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "The pulp's inflammatory response exists on a spectrum from localised, reversible inflammation to diffuse, irreversible tissue destruction \u2014 and the ESE position statement frames clinical management ar"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "**Exposure Classification: Why It Drives Procedure Selection** No universally validated classification system for carious pulp exposures exists in published guidelines \u2014 the ESE position statement exp"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "- **Pulp necrosis / advanced disease:** Absent sensibility response; periapical change on radiograph; VPT is contraindicated [[PMID:30664240]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Teeth with absent response or periapical radiolucency on periapical radiograph are contraindicated for VPT [[PMID:30664240]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Uncontrolled haemorrhage beyond this point signals radicular inflammatory extension; convert to RCT [[PMID:30664240]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Decision Tree **IF** tooth responds to cold testing with brief stimulus-provoked pain only, exposure \u22641 mm, and haemostasis achieved after 2.5% NaOCl lavage **THEN** perform direct pulp capping with c"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "[[PMID:37890614]] | | **Pulp capping material** | Calcium silicate-based cement (generic: tricalcium silicate or MTA); brands: ProRoot MTA (Dentsply Sirona), Biodentine (Septodont), iRoot BP Plus (Inn"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "The ESE position statement places the pre-operative pulpal diagnosis at the centre of treatment planning for deep caries and carious exposure [[PMID:30664240]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "However, the current ESE position statement identifies irreversible pulpitis as the threshold beyond which conventional root canal treatment is indicated [[PMID:30664240]], and the available RCTs show"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "**Current standard-of-care per ESE guidelines remains root canal treatment for irreversible pulpitis; treatment of SIP with pulpotomy should be considered an evidence-informed advanced option, not yet"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Establish rubber dam isolation** Rubber dam isolation is a prerequisite cited by the ESE position statement for pulp preservation procedures [[PMID:30664240]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Decision Tree **Branch 1 \u2014 Inclusion for VPT** IF cold test is positive, no spontaneous unprovoked pain, negative percussion, and no periapical radiolucency THEN proceed with VPT; partial pulpotomy as"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "HCSC (moderate certainty; industry conflict declared \u2014 Septodont) [[PMID:40394883]] | | **Restorative material** | Bonded composite resin; place immediately same visit; each day of delay reduces succe"
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "However, current ESE guidelines still designate RCT as the standard of care for irreversible pulpitis [[PMID:30664240]], and SIP-VPT RCT data are limited by attrition and single-centre design."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Counterweight: Level V ESE expert consensus designates RCT as the SIP standard of care [[PMID:30664240]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "**RCT conversion branch:** **Anchored in:** Level V ESE position statement [[PMID:30664240]] and Level I RCT showing 7% 4-year pulp survival with uncontrolled inflammatory status [[PMID:37890614]]."
+  },
+  {
+   "corpus": "answers/",
+   "id": "answer_20260904_181327.txt",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "[PMID: 30664240] European Society of Endodontology (ESE), Duncan HF, Galler KM et al."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "This curriculum equips the clinician to navigate that decision systematically: from understanding the inflammatory continuum that governs pulp biology [[PMID:30664240]], through rigorous preoperative "
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "The pulp's inflammatory response exists on a spectrum from localised, reversible inflammation to diffuse, irreversible tissue destruction \u2014 and the ESE position statement frames clinical management ar"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "**Exposure Classification: Why It Drives Procedure Selection** No universally validated classification system for carious pulp exposures exists in published guidelines \u2014 the ESE position statement exp"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "- **Pulp necrosis / advanced disease:** Absent sensibility response; periapical change on radiograph; VPT is contraindicated [[PMID:30664240]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Teeth with absent response or periapical radiolucency on periapical radiograph are contraindicated for VPT [[PMID:30664240]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Uncontrolled haemorrhage beyond this point signals radicular inflammatory extension; convert to RCT [[PMID:30664240]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Decision Tree **IF** tooth responds to cold testing with brief stimulus-provoked pain only, exposure \u22641 mm, and haemostasis achieved after 2.5% NaOCl lavage **THEN** perform direct pulp capping with c"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "[[PMID:37890614]] | | **Pulp capping material** | Calcium silicate-based cement (generic: tricalcium silicate or MTA); brands: ProRoot MTA (Dentsply Sirona), Biodentine (Septodont), iRoot BP Plus (Inn"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "The ESE position statement places the pre-operative pulpal diagnosis at the centre of treatment planning for deep caries and carious exposure [[PMID:30664240]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "However, the current ESE position statement identifies irreversible pulpitis as the threshold beyond which conventional root canal treatment is indicated [[PMID:30664240]], and the available RCTs show"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "**Current standard-of-care per ESE guidelines remains root canal treatment for irreversible pulpitis; treatment of SIP with pulpotomy should be considered an evidence-informed advanced option, not yet"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Establish rubber dam isolation** Rubber dam isolation is a prerequisite cited by the ESE position statement for pulp preservation procedures [[PMID:30664240]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Decision Tree **Branch 1 \u2014 Inclusion for VPT** IF cold test is positive, no spontaneous unprovoked pain, negative percussion, and no periapical radiolucency THEN proceed with VPT; partial pulpotomy as"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "HCSC (moderate certainty; industry conflict declared \u2014 Septodont) [[PMID:40394883]] | | **Restorative material** | Bonded composite resin; place immediately same visit; each day of delay reduces succe"
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "However, current ESE guidelines still designate RCT as the standard of care for irreversible pulpitis [[PMID:30664240]], and SIP-VPT RCT data are limited by attrition and single-centre design."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "Counterweight: Level V ESE expert consensus designates RCT as the SIP standard of care [[PMID:30664240]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "**RCT conversion branch:** **Anchored in:** Level V ESE position statement [[PMID:30664240]] and Level I RCT showing 7% 4-year pulp survival with uncontrolled inflammatory status [[PMID:37890614]]."
+  },
+  {
+   "corpus": "query_cache",
+   "id": "id=4471",
+   "keys": [
+    "30664240"
+   ],
+   "sentence": "[PMID: 30664240] European Society of Endodontology (ESE), Duncan HF, Galler KM et al."
+  }
+ ]
+}
