@@ -1339,7 +1339,8 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         detect_outliers, apply_currency_tags,
         build_synthesis_order, TIER_LABEL, TIER_ORDER,
         flag_superseded_by_review, collapse_guideline_copies,
-        admit_flagship_guidelines, drop_off_domain, _pubmed_audit_log,
+        admit_scoped_guidelines, drop_off_domain, snowball_from_reviews,
+        _pubmed_audit_log,
         label_and_expand,
     )
     from rag import (search as rag_search, rag_results_to_scored, library_stats,
@@ -1590,13 +1591,16 @@ def build_evidence_base_with_progress(job_id: str, question: str,
             # Apply outlier detection and currency tags to RAG results
             all_scored = detect_outliers(apply_currency_tags(all_scored))
             flag_superseded_by_review(evidence, question=question)
+            # A54 — snowball AFTER the PRISMA pass: it reuses that
+            # pass's relevance nomination as the review to read.
+            snowball_from_reviews(evidence, question)
             # ITEMS C and E — the library route must assemble the guideline
             # block the same way the live builder does. It called neither of
             # these, so a co-published guideline was counted twice here and a
             # scope-matched flagship never admitted -- the two builders
             # disagreeing about what a clinician sees, by route.
             collapse_guideline_copies(evidence)
-            admit_flagship_guidelines(evidence, question)
+            admit_scoped_guidelines(evidence, question)
             avg_score = sum(p["score"] for p in all_scored) / len(all_scored) if all_scored else 0
             evidence["_summary"] = {
                 "total_scored":    len(all_scored),
@@ -1905,13 +1909,16 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     # branches of the SAME function pick a different review on 27 of 29
     # questions, and the blind panel preferred the relevance pick 23 times.
     flag_superseded_by_review(evidence, question=question)
+    # A54 — snowball AFTER the PRISMA pass: it reuses that
+    # pass's relevance nomination as the review to read.
+    snowball_from_reviews(evidence, question)
     # ITEMS C and E — the library route must assemble the guideline
     # block the same way the live builder does. It called neither of
     # these, so a co-published guideline was counted twice here and a
     # scope-matched flagship never admitted -- the two builders
     # disagreeing about what a clinician sees, by route.
     collapse_guideline_copies(evidence)
-    admit_flagship_guidelines(evidence, question)
+    admit_scoped_guidelines(evidence, question)
     avg_score = sum(p["score"] for p in all_scored) / len(all_scored) if all_scored else 0
     evidence["_summary"] = {
         "total_scored":    len(all_scored),
@@ -1966,7 +1973,8 @@ def build_differential_evidence(job_id: str, case_description: str,
     from endo_ai import (TIER_ORDER, TIER_LABEL, build_synthesis_order,
                          detect_outliers, apply_currency_tags,
                          flag_superseded_by_review, collapse_guideline_copies,
-                         admit_flagship_guidelines, drop_off_domain,
+                         admit_scoped_guidelines, drop_off_domain,
+                         snowball_from_reviews,
                          PROVISIONAL_KEY, PROVISIONAL_MAX_ADMITTED,
                          _provisional_context_line)
     # RELEVANCE_GATE is this module's, and reading it here rather than copying
@@ -2084,13 +2092,16 @@ def build_differential_evidence(job_id: str, case_description: str,
     # candidate retrieval was seeded from, so it is the right thing for the
     # nominated review to be relevant TO.
     flag_superseded_by_review(evidence, question=case_description)
+    # A54 — snowball AFTER the PRISMA pass: it reuses that
+    # pass's relevance nomination as the review to read.
+    snowball_from_reviews(evidence, case_description)
     # ITEMS C and E — the library route must assemble the guideline
     # block the same way the live builder does. It called neither of
     # these, so a co-published guideline was counted twice here and a
     # scope-matched flagship never admitted -- the two builders
     # disagreeing about what a clinician sees, by route.
     collapse_guideline_copies(evidence)
-    admit_flagship_guidelines(evidence, case_description)
+    admit_scoped_guidelines(evidence, case_description)
     avg = (sum(p["score"] for p in all_scored) / len(all_scored)
            if all_scored else 0)
     evidence["_summary"] = {

@@ -1,0 +1,74 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  Using native ffmpeg: C:\Users\boser\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-8.1-full_build\bin\ffmpeg.EXE
+Query cache table ready.
+Abstract cache table ready.
+  Serving git 0df1bc5+dirty (imported 2026-09-06T20:28:51)
+Warning: FLASK_SECRET_KEY is not set -- admin sessions disabled (the X-Admin-Token header still works).
+  [lexicon] present but not marked reviewed_by_rb — not offered to the generator (A41a)
+  Smart search terms: '(MTA OR "mineral trioxide aggregate" OR bioceramic* OR "bioactive ceramic" OR "calcium silicate") AND (apicoectomy OR "apical surgery" OR "surgical endodontic*" OR "periapical surgery") AND ("retrograde filling" OR "retrograde seal" OR "root-end filling" OR "apical plug")'
+  Loading embedding model (first run only)...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10084.58it/s]
+  Embedding model ready.
+  [rag] 8 queries -> 337 distinct papers (best similarity kept per PMID)
+  [rag_gate] hits=200>=20 PASS | relevant=200>=12 PASS | high_tier=True PASS | newest=2026 age=0y<=3 PASS | concepts>=3 PASS
+    [rag_gate:coverage]  122 paper(s) mention ['mta', 'mineral trioxide aggregate', 'bioceramic*', 'bioactive ceramic']
+    [rag_gate:coverage]   25 paper(s) mention ['apicoectomy', 'apical surgery', 'surgical endodontic*', 'periapical surgery']
+    [rag_gate:coverage]   49 paper(s) mention ['retrograde filling', 'retrograde seal', 'root-end filling', 'apical plug']
+  [rag_gate] -> LIBRARY
+  [evidence_floor] 200 cleared the routing floor; 89 clear the evidence floor 0.6; dropped 111 (best dropped 0.600)
+  [cap] level1: 35 above the floor, keeping the 25 most relevant; dropped 10, best dropped similarity 0.610 (PMID 41235564)
+  [PRISMA dedup] review PMID 29681480 (2018) chosen by relevance; 0 reference(s) known; 0 of 17 older primary studies verified as cited by it — no reference list published, no inclusion claimed
+  [snowball] 1 review(s) read, no reference list published
+  [guideline] admitted 3 scope-matched guideline(s): AAE-TREATMENTSTANDARDS-2018, FDSRCS-PERIRADICULAR-2020, ESE-S3-2023
+==============================================================================
+A54 — POOL AND PRECISION,  ARM = AFTER
+==============================================================================
+  question: MTA versus bioceramic as retrograde filling after apicoectomy
+  papers in the pool: 82
+  by tier: {'classic': 3, 'cochrane': 2, 'guideline': 3, 'invitro': 5, 'level1': 25, 'level2': 8, 'level3': 8, 'level3a': 8, 'level3b': 1, 'level4': 14, 'level5': 5}
+
+  FIXTURES IN THE POOL
+    F1  31078325   absent
+    F2  27986096   absent
+    F3  34499889   absent
+    F4  38430316   absent
+    F5  42634020   absent
+    F6  42004800   absent
+    F7  41555359   absent
+    F8  38849637   absent
+    -> 0 of 8 present
+
+  PRECISION — does the paper name the question's subject at all?
+    on topic             39
+    OFF TOPIC            43
+    no text to judge      0
+    off-topic share     52% of the 82 judgeable
+
+  OFF-TOPIC PAPERS (first 25)
+    level1        40374646   Systematic review and meta analysis of first and second generation biocerami
+    level1        42512863   Regenerative Potential of Biodentine in Complex Endodontic Conditions: A Sys
+    level1        41872366   Effect of root canal filling techniques and materials on endodontic treatmen
+    level1        39117767   Comparison of bioactive material failure rates in vital pulp treatment of pe
+    level1        38548045   Clinical and Radiographic Failure of Nonsurgical Endodontic Treatment and Re
+    level1        37254176   Success rate of permanent teeth pulpotomy using bioactive materials: A syste
+    level1        34854987   Outcomes of root canal therapy or full pulpotomy using two endodontic biomat
+    level1        28822564   Regenerative Endodontic Treatment or Mineral Trioxide Aggregate Apical Plug 
+    level1        27599002   Comparison of the Apical Sealing Ability of Calcium Silicate-Based Sealer an
+    level1        25467231   MTA versus Ca(OH)2 in apexification of non-vital immature permanent teeth: a
+    level1        22838228   Apexification of anterior teeth: a comparative evaluation of mineral trioxid
+    level1        15858300   Mineral trioxide aggregate as a pulpotomy agent in primary molars: an in viv
+    classic       1064691    Physical properties of root canal cements.
+    level2        39805491   Long-term success and survival of post-endodontic restorations without posts
+    level2        40691703   Clinical and radiographic evaluation of premixed bioceramic putty as an apic
+    level2        39487669   Non-Surgical Endodontic Management of Large Periapical Lesions After Traumat
+    level3a       39171602   Comparative Evaluation of Success of NeoPutty Mineral Trioxide Aggregate ® w
+    level3a       39261778   Evaluation of apically extruded debris during root canal filling material re
+    level3a       30444709   Contemporary endodontic treatment choices for adult patients with dens evagi
+    level3        40142636   Retrieval of AH Plus Bioceramic and Ceraseal Versus AH Plus in Endodontic Re
+    level3        36833161   The Endodontic Space.
+    level3        32726858   Mineral Trioxide Aggregate Applications in Endodontics: A Review.
+    level3        35566459   Special Issue "The State of the Art in Endodontics".
+    level3        29567927   Regeneration and Repair in Endodontics-A Special Issue of the Dentistry Jour
+    level3b       37085142   The Effect of Mineral Trioxide Aggregate Obturation Levels on the Outcome of
+
+  wrote eval/reports/a54_pool_after.json

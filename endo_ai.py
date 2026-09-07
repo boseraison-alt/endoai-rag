@@ -1030,6 +1030,56 @@ def drop_off_domain(scored_papers: list, lane: str = "") -> list:
     return kept
 
 
+# ── A54 — SCOPE SYNONYMS FOR THE SPECIALTY BLOCK ─────────────────────────
+#
+# THE MISS. On "MTA versus bioceramic as retrograde filling after
+# apicoectomy" only ESE-S3-2023 appeared, though THREE guidelines cover apical
+# surgery in three jurisdictions: ESE-S3-2023 (EU),
+# AAE-TREATMENTSTANDARDS-2018 (US) and FDSRCS-PERIRADICULAR-2020 (UK).
+#
+# The scope match is literal and word-bounded, which is right — substring
+# matching admitted a UK whole-specialty guideline to a question that said
+# "retreatment" because its scope carried "treatment". But literal matching
+# cannot know that a question saying *apicoectomy* is asking about a scope
+# that reads *periradicular surgery*. They are one subject under six names.
+#
+# So the synonyms are declared, not inferred. Each group is a set of terms
+# that name ONE clinical subject; a question naming any of them hits a scope
+# declaring any other. Nothing here widens what a scope MEANS — it records
+# that the literature spells it several ways.
+SCOPE_SYNONYMS = [
+    # apical surgery, in every spelling the manifest and the literature use
+    {"apicoectomy", "apicectomy", "apical surgery", "periapical surgery",
+     "periradicular surgery", "endodontic surgery", "surgical endodontics",
+     "endodontic microsurgery", "apical microsurgery", "root-end filling",
+     "root end filling", "retrograde filling", "root-end surgery",
+     "root end resection", "retrograde root filling"},
+    # non-surgical retreatment
+    {"retreatment", "re-treatment", "revision treatment",
+     "nonsurgical retreatment", "secondary root canal treatment"},
+    # vital pulp therapy
+    {"vital pulp therapy", "pulpotomy", "pulp capping", "direct pulp capping",
+     "partial pulpotomy", "pulp preservation"},
+    # regenerative
+    {"regenerative endodontics", "revascularisation", "revascularization",
+     "revitalisation", "revitalization", "apexogenesis"},
+]
+
+
+def _scope_terms_with_synonyms(scope):
+    """A scope list, plus every synonym of any group it touches."""
+    out = set()
+    for s in (scope or []):
+        s = str(s).lower().strip()
+        if not s:
+            continue
+        out.add(s)
+        for group in SCOPE_SYNONYMS:
+            if s in group:
+                out |= group
+    return out
+
+
 def flagship_guidelines_for(question: str) -> list:
     """Manifest ids of `flagship: true` records whose scope the question hits.
 
@@ -1069,7 +1119,7 @@ def flagship_guidelines_for(question: str) -> list:
             continue
         if (rec.get("status") or "").lower() != "current":
             continue
-        scope = [str(s).lower().strip() for s in (rec.get("scope") or []) if s]
+        scope = sorted(_scope_terms_with_synonyms(rec.get("scope")))
         # A scope term counts as hit when the question names it, or when the
         # question's own domain vocabulary does — `DOMAIN_NOUNS` is item B's
         # list, built from the eval questions' own generated term groups.
@@ -1095,18 +1145,60 @@ def flagship_guidelines_for(question: str) -> list:
     return out
 
 
-def admit_flagship_guidelines(evidence: dict, question: str) -> dict:
-    """Ensure a scope-matched flagship guideline is in the guideline block.
+def scope_matched_guidelines_for(question: str) -> list:
+    """Manifest ids of CURRENT guidelines whose declared scope the question
+    names — flagship or not.
 
-    ADDITIVE. It adds at most one row per flagship record, only where the
-    question hits the record's declared scope, only for a CURRENT record, and
+    A54. The flagship rule reaches whole-specialty positions. It does not
+    reach a guideline that is ABOUT the question's subject and happens not to
+    be its jurisdiction's flagship, and that is how
+    FDSRCS-PERIRADICULAR-2020 — the UK guideline on periradicular surgery,
+    whose declared scope names `apicoectomy`, `root-end filling` and
+    `retrograde filling` — was absent from a pool for a question about MTA
+    versus bioceramic as a retrograde filling after apicoectomy. Only
+    ESE-S3-2023 appeared.
+
+    `scope[]` is RB's declaration of what a document covers. A question that
+    names that scope should see the document; nothing here infers a scope or
+    widens what one means.
+    """
+    global _MANIFEST_BY_ID
+    if _MANIFEST_BY_ID is None:
+        _guideline_supersession_notice("")
+    q = (question or "").lower()
+    if not q:
+        return []
+    out = []
+    for gid, rec in (_MANIFEST_BY_ID or {}).items():
+        if (rec.get("status") or "").lower() != "current":
+            continue
+        for s in _scope_terms_with_synonyms(rec.get("scope")):
+            if re.search(r"\b%s\b" % re.escape(s), q):
+                out.append(gid)
+                break
+    return out
+
+
+def admit_scoped_guidelines(evidence: dict, question: str) -> dict:
+    """Ensure the guidelines this question is ABOUT are in the guideline block.
+
+    Two rules, one mechanism:
+
+      flagship      a `flagship: true` record whose scope the question hits —
+                    the whole-specialty position for a jurisdiction
+      scope-matched any CURRENT record whose declared `scope[]` the question
+                    names
+
+    ADDITIVE. It adds at most one row per record, only for CURRENT records,
     only when the row is citeable. It removes nothing and reorders nothing.
 
     This is the one place a similarity floor is bypassed, and it is bypassed
-    for a named, manifest-flagged, scope-matched document rather than lowered
-    for everything — the floor still governs every other row in the block.
+    for documents whose own manifest entry declares them to be about this
+    subject — not lowered for everything. The floor still governs every other
+    row in the block.
     """
-    ids = flagship_guidelines_for(question)
+    ids = list(dict.fromkeys(flagship_guidelines_for(question)
+                             + scope_matched_guidelines_for(question)))
     if not ids:
         return evidence
     block = evidence.get("guideline") or {}
@@ -1203,7 +1295,7 @@ def admit_flagship_guidelines(evidence: dict, question: str) -> dict:
     # so 'rag' is the truthful value.
     block.setdefault("source", "rag")
     evidence["guideline"] = block
-    print("  [flagship] admitted %d scope-matched flagship guideline(s): %s"
+    print("  [guideline] admitted %d scope-matched guideline(s): %s"
           % (len(rows), ", ".join(r.get("guideline_id") or r["pmid"]
                                   for r in rows)))
     return evidence
@@ -1220,6 +1312,172 @@ def _manifest_primary_pmid(guideline_id: str) -> str:
         _guideline_supersession_notice("")      # populates the cache
     rec = (_MANIFEST_BY_ID or {}).get(str(guideline_id or "")) or {}
     return str(rec.get("pmid") or "").strip()
+
+
+# ── A54 — SNOWBALLING FROM THE REVIEWS ALREADY IN THE POOL ───────────────
+#
+# THE MISS THIS EXISTS FOR. On "MTA versus bioceramic as retrograde filling
+# after apicoectomy" the pool held 66 papers and NONE of the head-to-head
+# trials that define the question. The two trials inside the Cochrane pooled
+# estimate the answer itself cited — Safi 2019 (31078325) and Zhou 2017
+# (27986096) — were absent from the library entirely, so no ranking, cap or
+# query change could reach them.
+#
+# But the Cochrane review that pooled them, 34647617, WAS in the pool, and
+# PubMed publishes its 74-reference list. The included studies of a review are
+# the best-curated trial list that exists for a question, and they were one
+# elink call away.
+#
+# WHY THIS AND NOT A TERM CHANGE. Measured: that question routed to the
+# LIBRARY — `[rag_gate] -> LIBRARY` — so no lane query ran at all and no
+# amount of vocabulary would have changed the pool. Snowballing reads the pool
+# it is given, so it works on either route. That is the property that decided
+# it, not novelty.
+#
+# WHAT IT DOES NOT DO. It asserts no tier. A reference is admitted as a
+# CANDIDATE and its own publication types decide its rung, exactly as a live
+# hit's would; `tier_from_pubtypes` is the same function the write-back guard
+# uses. It never promotes a paper because a review cited it — being in a
+# reference list is a fact about the review, not about the paper's design.
+# COCHRANE FIRST, THEN LEVEL1 BY SCORE, and the cap is 12 rather than 6.
+# Measured: of the first six reviews chosen purely by score on this question,
+# FIVE published no reference list PubMed can see (0 refs each) and only one
+# did. Reading more reviews is therefore cheap insurance rather than extra
+# cost, and the review that actually carries the fixtures -- the Cochrane
+# `Materials for retrograde filling in root canal therapy` -- was not in the
+# top six by score at all. A Cochrane review IS a curated trial list by
+# construction, so it is read before anything else.
+SNOWBALL_MAX_REVIEWS = 12
+SNOWBALL_MAX_ADMITTED = 25    # bound on what one question can gain
+
+
+def snowball_from_reviews(evidence: dict, question: str = "") -> dict:
+    """Admit the references of the reviews already in this pool.
+
+    Additive and deterministic: it reads `cochrane` and `level1` rows that are
+    already present, fetches their reference lists, and admits references that
+    pass the domain filter and are not already in the pool.
+    """
+    if not evidence:
+        return evidence
+    # THE REVIEW PRISMA ALREADY NOMINATED, and only that one.
+    #
+    # The first version read the top N reviews in the pool by score, and it was
+    # MEASURED AND REJECTED: it recovered no fixture reliably, because which
+    # reviews land in the pool varies run to run, and it pushed the off-topic
+    # share from 55% to 67% -- a review about apexification pulls in
+    # apexification trials, and the pool is full of those. A fix that makes the
+    # measured problem worse is not a fix.
+    #
+    # `flag_superseded_by_review` has already chosen the review most relevant
+    # to THIS question (A38c: mean similarity of the nominated review 0.674 ->
+    # 0.738 when that rule replaced newest-year). Reusing that decision gives
+    # one curated trial list chosen by relevance, rather than N chosen by
+    # score, and adds no new judgement of its own.
+    sr = (evidence.get("_prisma") or {}).get("sr_pmid")
+    if not sr or not str(sr).isdigit():
+        return evidence
+    reviews = [str(sr)]
+
+    have = set()
+    for _t, block in evidence.items():
+        if isinstance(block, dict):
+            for p in (block.get("scored") or []):
+                have.add(str(p.get("pmid") or ""))
+
+    candidates, per_review = [], {}
+    for r in reviews:
+        refs = pubmed_reference_pmids(r)
+        per_review[r] = len(refs)
+        for x in refs:
+            if x not in have and x not in candidates:
+                candidates.append(x)
+    if not candidates:
+        print("  [snowball] %d review(s) read, no reference list published"
+              % len(reviews))
+        return evidence
+
+    # The domain filter decides admission, exactly as it does for a live hit.
+    admitted = []
+    for i in range(0, len(candidates), 100):
+        chunk = candidates[i:i + 100]
+        try:
+            rr = ncbi_get(f"{NCBI_EUTILS_BASE}/esearch.fcgi",
+                          params=_ncbi_params({
+                              "db": "pubmed",
+                              "term": "(%s) AND (%s)"
+                                      % (" OR ".join("%s[uid]" % c
+                                                     for c in chunk),
+                                         ENDO_DOMAIN_FILTER),
+                              "retmode": "json", "retmax": 200}), timeout=25)
+            admitted += [str(x) for x in
+                         (rr.json().get("esearchresult", {}).get("idlist") or [])]
+        except Exception as e:
+            print(f"  [snowball] domain check failed for a chunk: {e}")
+    admitted = [a for a in admitted if a not in have][:SNOWBALL_MAX_ADMITTED]
+    if not admitted:
+        print("  [snowball] %d candidate(s), none passed the domain filter"
+              % len(candidates))
+        return evidence
+
+    recs = _fetch_pubtypes_and_abstracts(admitted)
+    added = 0
+    for pmid in admitted:
+        rec = recs.get(pmid) or {}
+        if not (rec.get("abstract") or "").strip():
+            continue          # no abstract is no evidence, as everywhere else
+        tier, why = tier_from_pubtypes(rec.get("publication_types"),
+                                       rec.get("journal", ""))
+        if not tier:
+            continue          # its design is not derivable; assert nothing
+        block = evidence.setdefault(
+            tier, {"text": "", "ids": [], "scored": [], "source": "snowball"})
+        year = _safe_year_or_none(rec.get("year"))
+        abstract = rec.get("abstract", "")
+        # SCORED THE WAY EVERY OTHER PAPER IS. A row admitted at score 0 would
+        # sort last in its own tier and be cut by the first cap it met, which
+        # would make the mechanism look like it worked while changing nothing
+        # a clinician sees. `score_paper` is the same function the live path
+        # calls; impact factor is passed as 0 because it is a forbidden signal.
+        is_rev = is_review_design(tier, abstract)
+        n = extract_sample_size(abstract, tier)
+        fu = extract_followup_period(abstract)
+        score, _bd = score_paper(tier, year, 0, n,
+                                 fu[0] if fu else None, 0, is_review=is_rev)
+        row = {
+            "pmid": pmid, "title": rec.get("title", ""),
+            "abstract": abstract,
+            "authors": rec.get("authors", ""),
+            "journal": rec.get("journal", ""),
+            "year": year,
+            "citations": 0, "sample_size": n, "followup_months":
+                (fu[0] if fu else None),
+            "impact_factor": None, "level_key": tier,
+            "level_key_source": why, "score": score, "similarity": None,
+            "admitted_as": "snowball", "source": "snowball",
+            "superseded_by": "", "quarantine_reason": "",
+            "medline_indexed": True, "has_erratum": False,
+            "has_retraction": False, "registry": "",
+            "coi_status": "no_statement",
+        }
+        block.setdefault("scored", []).append(row)
+        block.setdefault("ids", []).append(pmid)
+        block["text"] = (block.get("text") or "") + \
+            format_paper_context_line(row)
+        added += 1
+    if added:
+        print("  [snowball] %d review(s) -> %d reference(s), %d admitted "
+              "(%s)" % (len(reviews), len(candidates), added,
+                        ", ".join("%s:%d" % (r, n)
+                                  for r, n in per_review.items())))
+    return evidence
+
+
+def _safe_year_or_none(y):
+    try:
+        return int(str(y)[:4])
+    except (TypeError, ValueError):
+        return None
 
 
 def collapse_guideline_copies(evidence: dict) -> dict:
@@ -6826,6 +7084,10 @@ def build_evidence_base(topic, mode: str = "review"):
     # while the library path nominates by relevance.
     flag_superseded_by_review(evidence, question=topic)
 
+    # A54 — snowball AFTER the PRISMA pass, because it reuses that pass's own
+    # relevance nomination (`_prisma.sr_pmid`) as the review to read.
+    snowball_from_reviews(evidence, topic)
+
     # ITEM E — collapse co-published copies of one guideline BEFORE the summary
     # is built, so `total_scored` and `synthesis_order` both count the document
     # once. Placed after the SR dedup because the two are independent: that one
@@ -6835,7 +7097,7 @@ def build_evidence_base(topic, mode: str = "review"):
     # ITEM C — a scope-matched flagship guideline is admitted regardless of
     # rank. After the collapse so it cannot create a duplicate, and before the
     # summary so `total_scored` counts it.
-    admit_flagship_guidelines(evidence, topic)
+    admit_scoped_guidelines(evidence, topic)
 
     # synthesis_order = strict tier hierarchy (Cochrane → L1 → L2 → L3a → L3b → L4 → L5)
     # all_scored      = legacy flat-by-score list (retained for status panels / downstream code)

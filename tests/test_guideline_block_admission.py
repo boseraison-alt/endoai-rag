@@ -22,7 +22,7 @@ TWO RULES.
 THE TWO BUILDERS MUST AGREE. `endo_ai.build_evidence_base` and app.py's
 library and differential routes all assemble a guideline block, and before
 this item they disagreed — quota 4 against 25, and app.py called neither
-`collapse_guideline_copies` nor `admit_flagship_guidelines`.
+`collapse_guideline_copies` nor `admit_scoped_guidelines`.
 """
 import os
 import sys
@@ -68,7 +68,7 @@ class TestTheBlockIsNotATopK:
         n_super += src.count("flag_superseded_by_review(evidence, "
                              "question=case_description)")
         assert src.count("collapse_guideline_copies(evidence)") >= 3
-        assert src.count("admit_flagship_guidelines(evidence,") >= 3
+        assert src.count("admit_scoped_guidelines(evidence,") >= 3
 
 
 class TestTheFlagshipRule:
@@ -167,7 +167,7 @@ class TestTheFlagshipRule:
 
     def test_it_is_admitted_even_with_an_empty_block(self):
         ev = {"guideline": {"ids": [], "scored": []}}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         gids = [p.get("guideline_id") for p in out["guideline"]["scored"]]
         assert "ESE-S3-2023" in gids, gids
 
@@ -178,7 +178,7 @@ class TestTheFlagshipRule:
                             "scored": [{"pmid": "37772327",
                                         "guideline_id": "ESE-S3-2023",
                                         "score": None}]}}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         gids = [p.get("guideline_id") for p in out["guideline"]["scored"]]
         assert gids.count("ESE-S3-2023") == 1, gids
 
@@ -187,7 +187,7 @@ class TestTheFlagshipRule:
                             "scored": [{"pmid": "AAE-VPT-2021",
                                         "guideline_id": "AAE-VPT-2021",
                                         "score": None}]}}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         gids = [p.get("guideline_id") for p in out["guideline"]["scored"]]
         # ASSERTED AS A SUPERSET, NOT A COUNT (rule 39). This said
         # `len(gids) == 2`, and RB flagging two more records made it 3 — a
@@ -204,7 +204,7 @@ class TestTheFlagshipRule:
         bibliography, and never be shown to the model."""
         ev = {"guideline": {"ids": [], "scored": [], "text": "",
                             "source": "rag"}}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         text = out["guideline"]["text"]
         assert "37772327" in text, (
             "the flagship row is in the pool but not in the text the model "
@@ -216,7 +216,7 @@ class TestTheFlagshipRule:
         """Without one the block reads as source None, and a library-pinned
         answer reports its sources as {None, 'rag'}."""
         ev = {}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         assert out.get("guideline", {}).get("source") == "rag"
 
     def test_the_admitted_row_carries_a_sortable_score(self):
@@ -224,7 +224,7 @@ class TestTheFlagshipRule:
         raises TypeError there; `rag_results_to_scored` coalesces NULL to 0.0
         for exactly this reason, and this row skipped that path."""
         ev = {"guideline": {"ids": [], "scored": [], "text": ""}}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         row = next(p for p in out["guideline"]["scored"]
                    if p.get("guideline_id") == "ESE-S3-2023")
         assert isinstance(row.get("score"), (int, float)), row.get("score")
@@ -234,7 +234,7 @@ class TestTheFlagshipRule:
         """It did not earn its place on similarity, and the row says so rather
         than looking like an ordinary hit."""
         ev = {"guideline": {"ids": [], "scored": []}}
-        out = E.admit_flagship_guidelines(ev, PROBE3)
+        out = E.admit_scoped_guidelines(ev, PROBE3)
         row = next(p for p in out["guideline"]["scored"]
                    if p.get("guideline_id") == "ESE-S3-2023")
         assert row.get("admitted_as") == "flagship"
