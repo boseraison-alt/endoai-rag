@@ -83,3 +83,40 @@ census delta 0**, with the slug's 2,155 characters of `org_page` text carried to
     backspace incident was repaired on 2026-09-08 — and the CRLF check passes
     on this checkout because `.gitattributes` now marks the corpus `-text`.
     A zero here is only meaningful beside the file count, which is reported.
+
+---
+
+## Item 3 — superseded / withdrawn / draft / quarantined in the guideline block
+
+Committed before measuring, and before reading the admission code.
+
+**Which path I expect to be the leak, in order:**
+
+1. **The live guideline lane.** It queries PubMed and scores what comes back.
+   A superseded IADT 2012 guideline is a real, indexed, unretracted PubMed
+   record — nothing about it looks wrong to a query — and the lane has no
+   reason to consult our manifest or our `quarantine_reason` column, because
+   those are facts about OUR library and the lane is not reading our library.
+   This is where I expect most of it, and it explains the observed case:
+   `IADT-FRACTURES-LUXATIONS-2012` and `IADT-AVULSION-2012` both appeared.
+2. **`admit_scoped_guidelines`.** It filters on the MANIFEST's `status ==
+   "current"`, which would stop a superseded record — but I do not expect it
+   to check the ROW's `quarantine_reason`, which is a different fact stored in
+   a different place. `ESE-QG-2006` is quarantined by A2 *and* superseded by
+   the manifest, so it should be stopped by the status filter; if it got
+   through, the status filter is not being applied where I think it is.
+3. **Item A's union — I expect this to be CLEAN.** It goes through
+   `rag.search`, which already excludes retracted, withdrawn and superseded
+   rows. If the union is a leak, my reading of `rag.search` is wrong and that
+   is the more important finding.
+
+**Counts.** Of the 32 questions I predict **more than half** carry at least one
+non-current row in the guideline block, because both IADT 2012 documents are
+indexed and highly relevant to any trauma question. I predict the total
+distinct offending rows is **small — under 15** — and dominated by the IADT
+2012 series plus `ESE-QG-2006`.
+
+**What "closing it at the source" should mean.** Not a filter bolted on after
+assembly: the check belongs wherever a guideline row is admitted, so every
+path inherits it. If I find myself adding the same condition in three places,
+that is the wrong fix and the right one is a single admission gate.

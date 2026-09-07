@@ -1,0 +1,143 @@
+{
+ "probe": "probe2-crown-fracture",
+ "question": "Complicated crown fracture with pulp exposure in a mature premolar, 6 hours old. What is the management?",
+ "want": [
+  "AAE-TRAUMA-2026",
+  "IADT-FRACTURES-LUXATIONS-2020"
+ ],
+ "scopes": {
+  "IADT-FRACTURES-LUXATIONS-2020": [
+   "dental trauma",
+   "crown fracture",
+   "crown-root fracture",
+   "root fracture",
+   "alveolar fracture",
+   "luxation",
+   "intrusion",
+   "pulp capping",
+   "pulpotomy",
+   "root canal treatment"
+  ],
+  "AAE-TRAUMA-2026": [
+   "dental trauma",
+   "avulsion",
+   "replantation",
+   "luxation",
+   "intrusion",
+   "extrusion",
+   "crown fracture",
+   "crown-root fracture",
+   "root fracture",
+   "alveolar fracture",
+   "pulp necrosis",
+   "root canal treatment",
+   "revascularisation"
+  ],
+  "ESE-TRAUMA-2021": [
+   "dental trauma",
+   "pulp necrosis",
+   "avulsion",
+   "replantation",
+   "luxation",
+   "intrusion",
+   "crown fracture",
+   "root fracture",
+   "root canal treatment",
+   "revascularisation",
+   "resorption"
+  ]
+ },
+ "runs": [
+  {
+   "run": 1,
+   "a": [
+    "AAE-VPT-2021"
+   ],
+   "b_need2": [
+    "AAE-TRAUMA-2026",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ],
+   "b_need1": [
+    "AAE-TRAUMA-2026",
+    "AAE-TREATMENTSTANDARDS-2018",
+    "AAE-VPT-2021",
+    "AAO-CPG-2023",
+    "AAPD-VPT-PERMANENT-2025",
+    "AAPD-VPT-PRIMARY-2024",
+    "EFCD-ESE-ORCA-DEEPCARIES-2026",
+    "ESE-S3-2023",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020",
+    "IADT-INTRO-2020"
+   ],
+   "union": [
+    "AAE-TRAUMA-2026",
+    "AAE-VPT-2021",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ]
+  },
+  {
+   "run": 2,
+   "a": [
+    "AAE-VPT-2021"
+   ],
+   "b_need2": [
+    "AAE-TRAUMA-2026",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ],
+   "b_need1": [
+    "AAE-TRAUMA-2026",
+    "AAE-TREATMENTSTANDARDS-2018",
+    "AAE-VPT-2021",
+    "AAO-CPG-2023",
+    "AAPD-VPT-PERMANENT-2025",
+    "AAPD-VPT-PRIMARY-2024",
+    "EFCD-ESE-ORCA-DEEPCARIES-2026",
+    "ESE-S3-2023",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020",
+    "IADT-INTRO-2020"
+   ],
+   "union": [
+    "AAE-TRAUMA-2026",
+    "AAE-VPT-2021",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ]
+  },
+  {
+   "run": 3,
+   "a": [
+    "AAE-VPT-2021"
+   ],
+   "b_need2": [
+    "AAE-TRAUMA-2026",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ],
+   "b_need1": [
+    "AAE-TRAUMA-2026",
+    "AAE-TREATMENTSTANDARDS-2018",
+    "AAE-VPT-2021",
+    "AAO-CPG-2023",
+    "AAPD-VPT-PERMANENT-2025",
+    "AAPD-VPT-PRIMARY-2024",
+    "EFCD-ESE-ORCA-DEEPCARIES-2026",
+    "ESE-S3-2023",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020",
+    "IADT-INTRO-2020"
+   ],
+   "union": [
+    "AAE-TRAUMA-2026",
+    "AAE-VPT-2021",
+    "ESE-TRAUMA-2021",
+    "IADT-FRACTURES-LUXATIONS-2020"
+   ]
+  }
+ ],
+ "both_by_scope": 3
+}

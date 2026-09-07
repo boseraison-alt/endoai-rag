@@ -9388,6 +9388,57 @@ def _specialty_sort_key(row):
             str(row.get("year") or ""))
 
 
+_SPECIALTY_HEADING_RE = re.compile(
+    r"^[ \t]*(?:\*\*|##+\s*)?Specialty Guidelines(?:\s*&(?:amp;)?\s*Position "
+    r"Statements)?[^\n]*$", re.I | re.M)
+
+
+def replace_specialty_block(answer: str, rows, model_sentences=None):
+    """Swap the model's specialty section for the one rendered from data.
+
+    A55 ITEM 5 BUILT THE RENDERER AND NEVER WIRED IT — found on 2026-09-09 by
+    item E, which asks for the rendered section in a real answer and could not
+    get one. A renderer nothing calls is the defect rule 14 exists for, and it
+    had passed its own tests for a day.
+
+    The model's prose is not discarded: each guideline's position sentence is
+    lifted out of the section it wrote and re-attached to that guideline's row,
+    so the model still says what each body recommends and the CODE decides
+    which bodies are listed. A54's synthesis was shown three guidelines and
+    listed two; which two is not a decision a model should be making.
+
+    A no-op when the answer has no specialty section or nothing was admitted.
+    """
+    if not rows or not answer:
+        return answer, 0
+    m = _SPECIALTY_HEADING_RE.search(answer)
+    if not m:
+        return answer, 0
+    start = m.start()
+    # The section runs to the next heading of the same or higher level.
+    nxt = re.search(r"^[ \t]*(?:\*\*[A-Z]|#{2,})", answer[m.end():], re.M)
+    end = m.end() + nxt.start() if nxt else len(answer)
+    section = answer[start:end]
+
+    # Lift the model's sentence for each row: the first line mentioning that
+    # guideline's organisation, minus any leading list punctuation.
+    sentences = dict(model_sentences or {})
+    for r in rows:
+        key = str(r.get("guideline_id") or r.get("pmid") or "").strip()
+        org = (r.get("guideline_org") or "").strip()
+        if not key or key in sentences or not org:
+            continue
+        for line in section.splitlines():
+            if org.lower() in line.lower() and len(line.split()) > 6:
+                sentences[key] = re.sub(r"^[\s\-*\d.)]+", "", line).strip()
+                break
+
+    rendered = render_specialty_block(rows, sentences)
+    if not rendered:
+        return answer, 0
+    return answer[:start] + rendered + "\n\n" + answer[end:], len(rows)
+
+
 def render_specialty_block(rows, model_sentences=None):
     """The admitted guidelines, rendered from DATA — every row, always.
 
@@ -9420,8 +9471,16 @@ def render_specialty_block(rows, model_sentences=None):
         juris = (r.get("guideline_jurisdiction") or "?").strip()
         title = (r.get("title") or "").strip()
         is_pointer = str(r.get("abstract") or "").startswith("GUIDELINE RECORD")
-        head = "- **%s** (%s) — %s — *%s*, %s" % (org, juris, title, status,
-                                                  year)
+        # EVERY ROW CARRIES ITS CITATION. Without one the whole section is a
+        # block of unattributed claims: `validate_evidence_mapping` fails the
+        # answer, a retry is synthesised, and the retry — which never went
+        # through this renderer — wins. That is exactly what happened on the
+        # first wiring, and the rendered section vanished from the served
+        # answer while the log said it had been rendered.
+        cite = ("[[PMID:%s]]" % key if key.isdigit()
+                else "[[GL:%s]]" % key if key else "")
+        head = "- **%s** (%s) — %s — *%s*, %s%s" % (
+            org, juris, title, status, year, (" " + cite) if cite else "")
         out.append(head)
         sentence = (model_sentences.get(key) or "").strip()
         if is_pointer:
@@ -11176,6 +11235,30 @@ Clinical Question: {question}""",
                 f"the linked PMIDs before acting on this recommendation.\n\n"
             )
             answer = warning + answer
+
+    # A55 ITEM 5 IS *NOT* WIRED, AND THIS IS WHY (2026-09-09, item E).
+    #
+    # `replace_specialty_block` was wired here and reverted the same night. It
+    # renders every admitted guideline from data, in jurisdiction order, which
+    # is what A55 asked for and what its own tests check. Driven on a real
+    # answer it produced three defects, and the first is a clinical hazard:
+    #
+    #   1. IT RENDERED A SUPERSEDED GUIDELINE AS AN ENTRY. The admitted
+    #      guideline block for probe 2 contains `ESE-QG-2006`, status
+    #      *superseded*, and the renderer faithfully listed it beside the
+    #      current ones. A superseded guideline served without its notice is
+    #      the exact hazard the supersession machinery exists to prevent.
+    #   2. IT MIS-ATTACHED THE MODEL'S SENTENCES. Sentences are lifted from
+    #      the model's section by matching the ORGANISATION, and six of the 32
+    #      admitted rows are ESE — so the ESE 2023 S3 recommendation was
+    #      attached to the ESE 2006 superseded document.
+    #   3. The `[[PMID:n]]` markers it writes on each header line were dropped
+    #      by G2, leaving the section unattributed.
+    #
+    # Any one of those is worse than the model writing the section itself, so
+    # the model keeps writing it until the renderer filters by status, keys
+    # sentences by document rather than by body, and emits citations G2
+    # resolves. The function and its tests stay; the wiring does not.
 
     # v2 guardrail — do the cited abstracts actually SUPPORT the claims?
     # (Fabrication is already impossible past validate_evidence_mapping; this
