@@ -637,6 +637,16 @@ def run_case(case):
 
     measured = {
         "route": route,
+        # THE ROUTER'S OWN RECORDED DECISION, carried alongside the inferred
+        # one and NOT yet used for scoring. `route` above is inferred from tier
+        # `source` values and predates the library union, which added a third
+        # source it cannot classify. Recording both here means v8's stored
+        # outputs can be re-scored against the router's truth without re-running
+        # anything — re-reading stored data through a fixed instrument is not
+        # tuning; changing the data would be.
+        "route_decision": (evidence or {}).get("_route_decision"),
+        "gate_says_library": (evidence or {}).get("_gate_says_library"),
+        "fallback_reason": (evidence or {}).get("_fallback_reason"),
         "papers": len(papers),
         "per_tier": per_tier,
         "papers_kept_after_quality_filter":

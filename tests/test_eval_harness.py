@@ -558,9 +558,29 @@ class TestTheNewCasesAreWellFormed:
         have = self._cases()
         assert not [i for i in self.IDS if i not in have]
 
-    def test_every_case_pins_its_route(self):
+    def test_a_pinned_route_is_a_route_that_exists(self):
+        """REPAIRED TO IDENTITY 2026-09-09 (rule 39).
+
+        This asserted that EVERY case pins `force_route`, and the reason was
+        real: write-back rewrites what an unpinned case measures, so the laser
+        case silently stopped testing the generator it was written for.
+
+        Routing is now live by default. An unpinned case takes the live route
+        deterministically, so there is no longer a line for write-back to move
+        it across — the drift this guarded against needs two candidate routes
+        and there is one. 18 library pins were removed on RB's decision
+        because they measured an architecture the product no longer has.
+
+        What still matters is that a pin, where one exists, names a route the
+        router actually implements. `force_route="library"` still works and is
+        still honoured; nothing in the eval set uses it, and a case that adds
+        one back is making a deliberate choice this test does not block.
+        """
         for cid, case in self._cases().items():
-            assert case.get("force_route"), f"{cid} does not pin force_route"
+            fr = case.get("force_route")
+            assert fr in (None, "live", "library"), (
+                "%s pins force_route=%r, which the router does not implement"
+                % (cid, fr))
 
     def test_the_thread_cases_carry_a_thread(self):
         have = self._cases()

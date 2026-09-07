@@ -1597,6 +1597,21 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         # THE GATE'S VERDICT IS STILL PRINTED, because it is the fallback
         # decision and because a silently-removed gate is worse than a bad one:
         # anyone reading a log needs to see what the old router WOULD have done.
+        # THE ROUTER RECORDS ITS OWN DECISION (2026-09-09).
+        #
+        # `run_eval` INFERS the route from tier `source` values — "live" if any
+        # tier says pubmed. That was a reasonable proxy while there were two
+        # sources; the library union added a third (`library-union`), so a
+        # question whose tiers were filled only by the union would be scored as
+        # neither live nor library. The derivation is NOT changed here — v8 is
+        # about to run and changing the instrument mid-measurement is how a
+        # baseline stops meaning anything — but the router now records what it
+        # actually decided, so the same stored outputs can be re-scored against
+        # the truth afterwards instead of re-run.
+        evidence["_route_decision"] = (
+            "library-forced" if force_route == "library"
+            else "live")
+        evidence["_gate_says_library"] = bool(gate_says_library)
         print(f"  [rag_gate] would-have-routed="
               f"{'LIBRARY' if gate_says_library else 'LIVE'} | "
               f"actual=LIVE (live-by-default, 2026-09-09)"
@@ -1764,10 +1779,16 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         if _fallback or force_route == "live":
             raise
         _log_library_fallback(question, live_error)
-        return build_evidence_base_with_progress(
+        fallback = build_evidence_base_with_progress(
             job_id, question, force_route="library", mode=mode,
             context_block=context_block, prior_pmids=prior_pmids,
             _fallback=True)
+        # Overwrite the inner call's "library-forced": from the outside this is
+        # a live run that FAILED, which is a different event and the one the
+        # fallback log exists to count.
+        fallback["_route_decision"] = "library-fallback"
+        fallback["_fallback_reason"] = str(live_error)[:200]
+        return fallback
 
 
 def _build_live_evidence(job_id, question, evidence, all_scored, smart_topic,
