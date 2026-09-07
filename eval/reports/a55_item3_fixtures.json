@@ -1,0 +1,98 @@
+{
+ "rows": [
+  {
+   "id": "F1",
+   "pmid": "31078325",
+   "tier": "level1",
+   "why": "pubtype:randomized controlled trial",
+   "pubtypes": [
+    "Journal Article",
+    "Randomized Controlled Trial"
+   ],
+   "present": false,
+   "title": "Outcome of Endodontic Microsurgery Using Mineral Trioxide Aggregate or"
+  },
+  {
+   "id": "F2",
+   "pmid": "27986096",
+   "tier": "level1",
+   "why": "pubtype:randomized controlled trial",
+   "pubtypes": [
+    "Comparative Study",
+    "Journal Article",
+    "Randomized Controlled Trial"
+   ],
+   "present": false,
+   "title": "Comparison of Mineral Trioxide Aggregate and iRoot BP Plus Root Repair"
+  },
+  {
+   "id": "F3",
+   "pmid": "34499889",
+   "tier": "(none)",
+   "why": "",
+   "pubtypes": [
+    "Journal Article"
+   ],
+   "present": true,
+   "title": "Outcome of Periapical Surgery in Molars: A Retrospective Analysis of 4"
+  },
+  {
+   "id": "F4",
+   "pmid": "38430316",
+   "tier": "level1",
+   "why": "pubtype:randomized controlled trial",
+   "pubtypes": [
+    "Randomized Controlled Trial",
+    "Journal Article"
+   ],
+   "present": false,
+   "title": "The outcome of combined use of iRoot BP Plus and iRoot SP for root-end"
+  },
+  {
+   "id": "F5",
+   "pmid": "42634020",
+   "tier": "(none)",
+   "why": "",
+   "pubtypes": [
+    "Journal Article"
+   ],
+   "present": false,
+   "title": "Outcome and erosion of root-end filling materials following endodontic"
+  },
+  {
+   "id": "F6",
+   "pmid": "42004800",
+   "tier": "(none)",
+   "why": "",
+   "pubtypes": [
+    "Journal Article"
+   ],
+   "present": false,
+   "title": "Assessment of guided versus non-guided endodontic microsurgery with ro"
+  },
+  {
+   "id": "F7",
+   "pmid": "41555359",
+   "tier": "level1",
+   "why": "pubtype:meta-analysis",
+   "pubtypes": [
+    "Journal Article",
+    "Systematic Review",
+    "Meta-Analysis"
+   ],
+   "present": false,
+   "title": "Sealing ability and marginal adaptation of premixed versus manually mi"
+  },
+  {
+   "id": "F8",
+   "pmid": "38849637",
+   "tier": "(none)",
+   "why": "",
+   "pubtypes": [
+    "Journal Article"
+   ],
+   "present": false,
+   "title": "Efficacy of root-end filling techniques using premixed putty type bioc"
+  }
+ ]
+}

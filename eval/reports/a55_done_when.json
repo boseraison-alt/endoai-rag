@@ -1,0 +1,41 @@
+{
+ "min_intersection": 10,
+ "runs": [
+  {
+   "run": 1,
+   "route": "LIBRARY",
+   "intersection": 18,
+   "weakest": 39,
+   "pool": 101,
+   "fixtures_found": [
+    "F1",
+    "F2",
+    "F4"
+   ]
+  },
+  {
+   "run": 2,
+   "route": "LIBRARY",
+   "intersection": 18,
+   "weakest": 39,
+   "pool": 101,
+   "fixtures_found": [
+    "F1",
+    "F2",
+    "F4"
+   ]
+  },
+  {
+   "run": 3,
+   "route": "LIBRARY",
+   "intersection": 18,
+   "weakest": 39,
+   "pool": 101,
+   "fixtures_found": [
+    "F1",
+    "F2",
+    "F4"
+   ]
+  }
+ ]
+}

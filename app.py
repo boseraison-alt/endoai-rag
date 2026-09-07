@@ -101,6 +101,7 @@ except ImportError:
     print("Warning: python-pptx not installed -- run: pip install python-pptx")
 
 from endo_ai import (coverage_groups as endo_ai_coverage_groups,
+                     question_intersection as endo_ai_question_intersection,
                      question_coverage as endo_ai_question_coverage,
                      build_evidence_base, ask_clinical_question, ask_learn_question,
                      build_deep_learning_module, StreamAborted,
@@ -1297,6 +1298,38 @@ RELEVANCE_GATE = {
     # the measured distribution in `eval/reports/a1_coverage_gate.md`, not from
     # a cost target (A1c).
     "min_concept_papers": 3,
+    # A55 ITEM 2 — THE COUNT THE GATE NEVER HAD.
+    #
+    # `min_concept_papers` is applied to each concept SEPARATELY, and the gate
+    # requires the weakest to clear it. That says "the library knows about each
+    # of these subjects". It does not say "the library holds papers about this
+    # question", and the difference is not academic: the A54 question read 149
+    # papers for the material concept and 24 for the surgery concept — both far
+    # clear of 3 — while the library held 0 of the 8 head-to-head papers.
+    #
+    # CHOSEN AT 10, and honestly it is a weak instrument. Measured over the 27
+    # LIBRARY-routed questions of the 32-question set:
+    #
+    #   Pearson r between intersection and fraction-of-live-set-missing: -0.22
+    #
+    #   T      re-routed  stays   badly-covered kept   well-covered re-routed
+    #    5        14        13            9                    5
+    #   10        19         8            5                    6
+    #   15        23         4            3                    8
+    #
+    # A55 asked for the value that re-routes every question missing live papers
+    # and no question that is not. NO SUCH VALUE EXISTS: all 27 LIBRARY-routed
+    # questions are missing live papers, a median of 80% of what the live path
+    # fetches. The intersection separates the worst cases and no more.
+    #
+    # It ships anyway, at 10, because the change is ONE-DIRECTIONAL: anything
+    # failing this gate goes to the live path, which is a superset of what the
+    # library would have returned. A question re-routed unnecessarily costs
+    # ~$0.006 and 40-75 s; a question wrongly kept costs a clinician the papers
+    # that answer their question. Those are not symmetric errors and the
+    # threshold is set accordingly. 10 also re-routes the A54 question
+    # (intersection 6), which is the concrete casualty this item exists for.
+    "min_intersection_papers": 10,
 }
 
 
@@ -1368,6 +1401,7 @@ def build_evidence_base_with_progress(job_id: str, question: str,
     MAX_RAG_PAPERS_PER_TIER = RELEVANCE_GATE["max_per_tier"]
     RAG_MAX_TOPIC_AGE_YEARS = RELEVANCE_GATE["max_topic_age_yr"]
     MIN_CONCEPT_PAPERS      = RELEVANCE_GATE["min_concept_papers"]
+    MIN_INTERSECTION_PAPERS = RELEVANCE_GATE["min_intersection_papers"]
     evidence        = {}
     all_scored      = []
 
@@ -1444,12 +1478,22 @@ def build_evidence_base_with_progress(job_id: str, question: str,
         weakest_cov = min([c["hits"] for c in coverage], default=None)
         covers_concepts = (weakest_cov is None) or (weakest_cov >= MIN_CONCEPT_PAPERS)
 
+        # A55 ITEM 2 — and how many papers are about ALL of them at once.
+        #
+        # The condition above asks each concept separately. This asks the
+        # question. It abstains on a query with no discriminating concept, for
+        # the same reason `covers_concepts` does: there is nothing to intersect.
+        intersection = endo_ai_question_intersection(_cov_groups, relevant)
+        covers_intersection = (not _cov_groups
+                               or intersection >= MIN_INTERSECTION_PAPERS)
+
         library_covers_question = (
             len(rag_results) >= MIN_RAG_RESULTS
             and len(relevant) >= MIN_RAG_RELEVANT
             and has_high_tier
             and not topic_is_stale
             and covers_concepts
+            and covers_intersection
         ) if force_route != "library" else True
         # force_route="library" holds the library path even when coverage is
         # thin, so a library-mode eval case measures what the library actually
@@ -1467,7 +1511,9 @@ def build_evidence_base_with_progress(job_id: str, question: str,
               f"high_tier={has_high_tier} {_v(has_high_tier)} | "
               f"newest={newest_year} age={topic_age}y<={RAG_MAX_TOPIC_AGE_YEARS} "
               f"{_v(not topic_is_stale)} | "
-              f"concepts>={MIN_CONCEPT_PAPERS} {_v(covers_concepts)}")
+              f"concepts>={MIN_CONCEPT_PAPERS} {_v(covers_concepts)} | "
+              f"intersection={intersection}>={MIN_INTERSECTION_PAPERS} "
+              f"{_v(covers_intersection)}")
         for _c in coverage:
             print(f"    [rag_gate:coverage] {_c['hits']:>4} paper(s) mention "
                   f"{_c['terms'][:4]}"

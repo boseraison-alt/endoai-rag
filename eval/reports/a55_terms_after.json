@@ -1,0 +1,289 @@
+{
+ "laser-root-canal-disinfection-live": {
+  "question": "Use of lasers in root canal disinfection",
+  "terms": "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR Er:YAG OR Nd:YAG OR diode OR \"Nd:YAG laser\" OR \"Er:YAG laser\") AND (\"root canal\" OR endodontic* OR intracanal OR \"root canal system\") AND (disinfect* OR antibacterial OR antimicrobial OR biofilm OR steriliz* OR \"bacterial reduction\" OR \"microbial reduction\")",
+  "groups": [
+   "\"root canal\" or endodontic* or intracanal or \"root canal system\"",
+   "disinfect* or antibacterial or antimicrobial or biofilm or steriliz* or \"bacterial reduction\" or \"microbial reduction\"",
+   "laser* or \"photodynamic therapy\" or apdt or pips or sweeps or er:yag or nd:yag or diode or \"nd:yag laser\" or \"er:yag laser\""
+  ]
+ },
+ "single-vs-multiple-visit": {
+  "question": "Single-visit versus multiple-visit root canal treatment for necrotic teeth with apical periodontitis",
+  "terms": "(\"single-visit\" OR \"one-visit\" OR \"single appointment\" OR \"one appointment\" OR \"same-day\" OR monovisit) AND (\"multiple-visit\" OR \"multi-visit\" OR \"multiple appointment\" OR \"multi-appointment\" OR conventional) AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR \"root canal therapy\")",
+  "groups": [
+   "\"multiple-visit\" or \"multi-visit\" or \"multiple appointment\" or \"multi-appointment\" or conventional",
+   "\"root canal\" or endodontic* or \"root canal treatment\" or \"root canal therapy\"",
+   "\"single-visit\" or \"one-visit\" or \"single appointment\" or \"one appointment\" or \"same-day\" or monovisit"
+  ]
+ },
+ "mta-vs-biodentine-pulpotomy": {
+  "question": "MTA versus Biodentine for full pulpotomy in mature permanent teeth with irreversible pulpitis",
+  "terms": "(MTA OR \"mineral trioxide aggregate\" OR ProRoot OR Angelus OR \"white MTA\" OR \"gray MTA\") AND (Biodentine OR \"calcium silicate\" OR \"tricalcium silicate\") AND (pulpotomy OR \"pulp amputation\" OR \"coronal pulp removal\" OR \"vital pulp amputation\")",
+  "groups": [
+   "biodentine or \"calcium silicate\" or \"tricalcium silicate\"",
+   "mta or \"mineral trioxide aggregate\" or proroot or angelus or \"white mta\" or \"gray mta\"",
+   "pulpotomy or \"pulp amputation\" or \"coronal pulp removal\" or \"vital pulp amputation\""
+  ]
+ },
+ "naocl-concentration": {
+  "question": "Sodium hypochlorite concentration low versus high and outcome of primary root canal treatment",
+  "terms": "(\"root canal\" OR endodontic* OR \"primary teeth\" OR \"primary dentition\" OR deciduous) AND (concentration* OR \"low concentration\" OR \"high concentration\" OR potency OR strength) AND (efficacy OR outcome* OR success* OR effectiveness OR \"treatment outcome*\" OR prognosis)",
+  "groups": [
+   "\"root canal\" or endodontic* or \"primary teeth\" or \"primary dentition\" or deciduous",
+   "concentration* or \"low concentration\" or \"high concentration\" or potency or strength",
+   "efficacy or outcome* or success* or effectiveness or \"treatment outcome*\" or prognosis"
+  ]
+ },
+ "cbct-vs-periapical": {
+  "question": "CBCT versus periapical radiography for detecting apical periodontitis",
+  "terms": "(CBCT OR \"cone beam computed tomography\" OR \"cone-beam CT\" OR CBCT OR \"volumetric tomography\") AND (\"periapical radiograph*\" OR \"intraoral radiograph*\" OR \"conventional radiograph*\" OR \"2D radiograph*\") AND (\"apical periodontitis\" OR \"periapical periodontitis\" OR \"periapical lesion*\" OR \"apical lesion*\" OR \"periapical pathology\" OR \"apical pathology\")",
+  "groups": [
+   "\"apical periodontitis\" or \"periapical periodontitis\" or \"periapical lesion*\" or \"apical lesion*\" or \"periapical pathology\" or \"apical pathology\"",
+   "\"periapical radiograph*\" or \"intraoral radiograph*\" or \"conventional radiograph*\" or \"2d radiograph*\"",
+   "cbct or \"cone beam computed tomography\" or \"cone-beam ct\" or cbct or \"volumetric tomography\""
+  ]
+ },
+ "bioceramic-vs-resin-sealer": {
+  "question": "Calcium silicate bioceramic sealers versus epoxy resin sealers outcomes",
+  "terms": "(\"calcium silicate\" OR bioceramic* OR \"epoxy resin\" OR AH Plus OR \"AH-Plus\" OR Gutta Flow OR \"Gutta-Flow\" OR BC Sealer OR \"BC-Sealer\" OR iRoot OR \"iRoot SP\" OR TotalFill OR \"Total Fill\") AND (\"root canal sealer*\" OR \"root canal filling\" OR \"root canal obturation\" OR \"gutta-percha\" OR \"gutta percha\") AND (outcome* OR efficacy OR success* OR \"clinical outcome*\" OR \"radiographic outcome*\" OR \"periapical healing\" OR \"apical periodontitis\" OR \"treatment success\")",
+  "groups": [
+   "\"calcium silicate\" or bioceramic* or \"epoxy resin\" or ah plus or \"ah-plus\" or gutta flow or \"gutta-flow\" or bc sealer or \"bc-sealer\" or iroot or \"iroot sp\" or totalfill or \"total fill\"",
+   "\"root canal sealer*\" or \"root canal filling\" or \"root canal obturation\" or \"gutta-percha\" or \"gutta percha\"",
+   "outcome* or efficacy or success* or \"clinical outcome*\" or \"radiographic outcome*\" or \"periapical healing\" or \"apical periodontitis\" or \"treatment success\""
+  ]
+ },
+ "retreatment-vs-microsurgery": {
+  "question": "Nonsurgical retreatment versus apical microsurgery for persistent apical periodontitis",
+  "terms": "(\"nonsurgical retreatment\" OR \"root canal retreatment\" OR \"endodontic retreatment\" OR \"coronal disassembly\" OR \"gutta-percha removal\") AND (apicoectomy OR apicectomy OR \"root-end resection\" OR \"periradicular surgery\" OR \"endodontic microsurgery\" OR \"apical microsurgery\" OR \"surgical endodontics\") AND (\"apical periodontitis\" OR \"periapical periodontitis\" OR \"persistent periapical lesion\" OR \"apical pathology\" OR \"periapical pathology\")",
+  "groups": [
+   "\"apical periodontitis\" or \"periapical periodontitis\" or \"persistent periapical lesion\" or \"apical pathology\" or \"periapical pathology\"",
+   "\"nonsurgical retreatment\" or \"root canal retreatment\" or \"endodontic retreatment\" or \"coronal disassembly\" or \"gutta-percha removal\"",
+   "apicoectomy or apicectomy or \"root-end resection\" or \"periradicular surgery\" or \"endodontic microsurgery\" or \"apical microsurgery\" or \"surgical endodontics\""
+  ]
+ },
+ "direct-pulp-capping": {
+  "question": "Vital pulp therapy direct pulp capping in cariously exposed mature permanent teeth",
+  "terms": "(\"vital pulp therapy\" OR \"pulp capping\" OR \"direct pulp capping\" OR \"direct pulp cap\" OR \"calcium hydroxide pulpotomy\" OR \"partial pulpotomy\") AND (\"carious exposure\" OR \"caries exposure\" OR \"cariously exposed\" OR \"mechanical exposure\") AND (\"mature permanent teeth\" OR \"permanent teeth\" OR \"adult teeth\" OR \"mature tooth\")",
+  "groups": [
+   "\"carious exposure\" or \"caries exposure\" or \"cariously exposed\" or \"mechanical exposure\"",
+   "\"mature permanent teeth\" or \"permanent teeth\" or \"adult teeth\" or \"mature tooth\"",
+   "\"vital pulp therapy\" or \"pulp capping\" or \"direct pulp capping\" or \"direct pulp cap\" or \"calcium hydroxide pulpotomy\" or \"partial pulpotomy\""
+  ]
+ },
+ "preemptive-nsaid": {
+  "question": "Postoperative pain after root canal treatment preemptive NSAID versus placebo",
+  "terms": "(\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (\"postoperative pain\" OR \"post-operative pain\" OR \"post-treatment pain\" OR \"interappointment pain\" OR flare-up OR \"pain flare\") AND (NSAID* OR \"nonsteroidal anti-inflammatory\" OR ibuprofen OR naproxen OR indomethacin OR ketoprofen OR preemptive OR prophylactic)",
+  "groups": [
+   "\"postoperative pain\" or \"post-operative pain\" or \"post-treatment pain\" or \"interappointment pain\" or flare-up or \"pain flare\"",
+   "\"root canal\" or endodontic* or \"root canal treatment\" or rct",
+   "nsaid* or \"nonsteroidal anti-inflammatory\" or ibuprofen or naproxen or indomethacin or ketoprofen or preemptive or prophylactic"
+  ]
+ },
+ "regenerative-immature": {
+  "question": "Regenerative endodontic procedures in immature necrotic teeth success and survival",
+  "terms": "(regenerative OR \"revitalization\" OR \"revascularization\" OR \"tissue engineering\" OR \"stem cell\" OR \"apical papilla\" OR \"apical niche\") AND (\"immature tooth\" OR \"immature teeth\" OR \"open apex\" OR \"incomplete root formation\" OR \"blunderbuss apex\") AND (success* OR survival OR outcome* OR efficacy OR \"clinical outcome\" OR prognosis)",
+  "groups": [
+   "\"immature tooth\" or \"immature teeth\" or \"open apex\" or \"incomplete root formation\" or \"blunderbuss apex\"",
+   "regenerative or \"revitalization\" or \"revascularization\" or \"tissue engineering\" or \"stem cell\" or \"apical papilla\" or \"apical niche\"",
+   "success* or survival or outcome* or efficacy or \"clinical outcome\" or prognosis"
+  ]
+ },
+ "cracked-tooth-prognosis": {
+  "question": "Cracked tooth prognosis after root canal treatment by crack extent",
+  "terms": "(crack* OR fracture* OR split OR \"vertical root fracture\" OR VRF) AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (prognosis OR outcome* OR \"tooth survival\" OR longevity OR success* OR \"clinical outcome\" OR \"treatment outcome\")",
+  "groups": [
+   "\"root canal\" or endodontic* or \"root canal treatment\" or rct",
+   "crack* or fracture* or split or \"vertical root fracture\" or vrf",
+   "prognosis or outcome* or \"tooth survival\" or longevity or success* or \"clinical outcome\" or \"treatment outcome\""
+  ]
+ },
+ "apdt-primary-molars": {
+  "question": "Antimicrobial photodynamic therapy as an adjunct in primary molars with necrotic pulps",
+  "terms": "(\"photodynamic therapy\" OR aPDT OR PDT OR \"antimicrobial photodynamic\" OR \"light-activated\" OR \"photo-activated\") AND (\"primary molar*\" OR \"deciduous molar*\" OR \"baby molar*\" OR \"primary tooth\" OR \"deciduous tooth\" OR \"baby tooth\" OR pediatric) AND (\"necrotic pulp\" OR \"pulp necrosis\" OR \"non-vital\" OR \"devital*\" OR \"pulp death\")",
+  "groups": [
+   "\"necrotic pulp\" or \"pulp necrosis\" or \"non-vital\" or \"devital*\" or \"pulp death\"",
+   "\"photodynamic therapy\" or apdt or pdt or \"antimicrobial photodynamic\" or \"light-activated\" or \"photo-activated\"",
+   "\"primary molar*\" or \"deciduous molar*\" or \"baby molar*\" or \"primary tooth\" or \"deciduous tooth\" or \"baby tooth\" or pediatric"
+  ]
+ },
+ "bisphosphonates": {
+  "question": "Endodontic management in patients on bisphosphonates or antiresorptives",
+  "terms": "(bisphosphonate* OR antiresorptive* OR \"bone-modifying agent*\" OR BMA OR denosumab OR RANKL OR \"receptor activator of nuclear factor kappa-B ligand\") AND (\"root canal\" OR endodontic* OR pulp* OR periapical OR apical) AND (osteonecrosis OR \"medication-related osteonecrosis\" OR MRONJ OR \"bisphosphonate-related osteonecrosis\" OR BRONJ OR complication* OR management OR treatment OR outcome*)",
+  "groups": [
+   "\"root canal\" or endodontic* or pulp* or periapical or apical",
+   "bisphosphonate* or antiresorptive* or \"bone-modifying agent*\" or bma or denosumab or rankl or \"receptor activator of nuclear factor kappa-b ligand\"",
+   "osteonecrosis or \"medication-related osteonecrosis\" or mronj or \"bisphosphonate-related osteonecrosis\" or bronj or complication* or management or treatment or outcome*"
+  ]
+ },
+ "pregnancy": {
+  "question": "Root canal treatment in pregnancy timing and local anesthetic choice",
+  "terms": "(\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (timing OR \"treatment timing\" OR \"optimal timing\" OR \"emergency treatment\" OR \"elective treatment\") AND (\"local anesthetic*\" OR \"local anesthesia\" OR lidocaine OR prilocaine OR articaine OR bupivacaine OR \"vasoconstric*\" OR epinephrine OR adrenaline)",
+  "groups": [
+   "\"local anesthetic*\" or \"local anesthesia\" or lidocaine or prilocaine or articaine or bupivacaine or \"vasoconstric*\" or epinephrine or adrenaline",
+   "\"root canal\" or endodontic* or \"root canal treatment\" or rct",
+   "timing or \"treatment timing\" or \"optimal timing\" or \"emergency treatment\" or \"elective treatment\""
+  ]
+ },
+ "pips-vs-ultrasonic": {
+  "question": "Laser-activated irrigation PIPS SWEEPS versus ultrasonic activation periapical healing outcomes",
+  "terms": "(laser* OR \"photodynamic therapy\" OR aPDT OR PIPS OR SWEEPS OR \"laser-activated irrigation\") AND (ultrasonic* OR \"ultrasonic activation\" OR \"passive ultrasonic irrigation\" OR PUI) AND (\"periapical healing\" OR \"periapical lesion*\" OR \"apical periodontitis\" OR \"healing outcome*\" OR radiographic)",
+  "groups": [
+   "\"periapical healing\" or \"periapical lesion*\" or \"apical periodontitis\" or \"healing outcome*\" or radiographic",
+   "laser* or \"photodynamic therapy\" or apdt or pips or sweeps or \"laser-activated irrigation\"",
+   "ultrasonic* or \"ultrasonic activation\" or \"passive ultrasonic irrigation\" or pui"
+  ]
+ },
+ "intentional-replantation": {
+  "question": "Intentional replantation for teeth unsuitable for surgery",
+  "terms": "(intentional replantation OR autotransplantation OR \"tooth replantation\" OR \"dental replantation\" OR \"intentional avulsion\" OR \"surgical extrusion\") AND (\"root canal\" OR endodontic* OR periapical) AND (contraindication* OR \"surgical access\" OR \"anatomic limitation*\" OR \"difficult access\" OR \"surgical difficulty\")",
+  "groups": [
+   "\"root canal\" or endodontic* or periapical",
+   "contraindication* or \"surgical access\" or \"anatomic limitation*\" or \"difficult access\" or \"surgical difficulty\"",
+   "intentional replantation or autotransplantation or \"tooth replantation\" or \"dental replantation\" or \"intentional avulsion\" or \"surgical extrusion\""
+  ]
+ },
+ "sdf-pulp-outcomes": {
+  "question": "Silver diamine fluoride and pulp outcomes in deep carious lesions in adult teeth",
+  "terms": "(\"silver diamine fluoride\" OR SDF OR \"silver diammine fluoride\") AND (\"deep carious lesion*\" OR \"deep caries\" OR \"caries progression\" OR \"arrested caries\" OR \"carious dentin\") AND (pulp OR \"pulp vitality\" OR \"pulp status\" OR \"pulp inflammation\" OR \"pulp response\" OR \"pulpal health\" OR \"vital pulp\" OR \"pulp necrosis\")",
+  "groups": [
+   "\"deep carious lesion*\" or \"deep caries\" or \"caries progression\" or \"arrested caries\" or \"carious dentin\"",
+   "\"silver diamine fluoride\" or sdf or \"silver diammine fluoride\"",
+   "pulp or \"pulp vitality\" or \"pulp status\" or \"pulp inflammation\" or \"pulp response\" or \"pulpal health\" or \"vital pulp\" or \"pulp necrosis\""
+  ]
+ },
+ "sonic-vs-ultrasonic": {
+  "question": "Sonic versus ultrasonic irrigant activation bacterial reduction in vivo",
+  "terms": "(sonic* OR ultrasonic* OR \"passive ultrasonic irrigation\" OR PUI OR \"acoustic streaming\" OR cavitation) AND (\"root canal\" OR endodontic* OR intracanal) AND (bacterial* OR microorganism* OR biofilm OR CFU OR \"colony forming unit*\" OR antimicrobial OR disinfect*)",
+  "groups": [
+   "\"root canal\" or endodontic* or intracanal",
+   "bacterial* or microorganism* or biofilm or cfu or \"colony forming unit*\" or antimicrobial or disinfect*",
+   "sonic* or ultrasonic* or \"passive ultrasonic irrigation\" or pui or \"acoustic streaming\" or cavitation"
+  ]
+ },
+ "dens-invaginatus": {
+  "question": "Dens invaginatus type III management",
+  "terms": "(\"dens invaginatus\" OR \"dens in dente\" OR \"invaginated odontoid\" OR \"tooth within tooth\") AND (type III OR \"type 3\" OR \"class III\" OR \"class 3\" OR complex OR severe) AND (manag* OR treat* OR therap* OR surgical OR \"root canal\" OR endodontic* OR orthograd* OR retrograd*)",
+  "groups": [
+   "\"dens invaginatus\" or \"dens in dente\" or \"invaginated odontoid\" or \"tooth within tooth\"",
+   "manag* or treat* or therap* or surgical or \"root canal\" or endodontic* or orthograd* or retrograd*",
+   "type iii or \"type 3\" or \"class iii\" or \"class 3\" or complex or severe"
+  ]
+ },
+ "diabetes-outcomes": {
+  "question": "Endodontic outcomes in patients with diabetes healing of apical periodontitis",
+  "terms": "(diabetes OR diabetic OR \"glycemic control\" OR hyperglycemia) AND (\"apical periodontitis\" OR \"periapical lesion\" OR \"periapical pathology\" OR \"apical pathosis\") AND (healing OR resolution OR repair OR outcome* OR prognosis OR success)",
+  "groups": [
+   "\"apical periodontitis\" or \"periapical lesion\" or \"periapical pathology\" or \"apical pathosis\"",
+   "diabetes or diabetic or \"glycemic control\" or hyperglycemia",
+   "healing or resolution or repair or outcome* or prognosis or success"
+  ]
+ },
+ "case-opening-sparse": {
+  "question": "Tooth 36 hurts.",
+  "terms": "(tooth OR teeth OR dental OR odontogenic) AND (pain OR ache OR discomfort OR sensitivity OR tenderness) AND (36 OR \"lower right molar\" OR \"mandibular right molar\" OR \"mandibular first molar\")",
+  "groups": [
+   "36 or \"lower right molar\" or \"mandibular right molar\" or \"mandibular first molar\"",
+   "pain or ache or discomfort or sensitivity or tenderness",
+   "tooth or teeth or dental or odontogenic"
+  ]
+ },
+ "case-opening-full": {
+  "question": "62-year-old female, well-controlled type 2 diabetes, no other medical history, no bisphosphonates. Tooth 26, previously root treated 8 years ago, now tender to percussion for 3 weeks. Periapical radiograph and CBCT show a 6mm periapical radiolucency on the MB root with an untreated MB2. Tooth is non-vital (previously treated), restorable with an adequate ferrule and existing crown is sound. No sinus tract. Patient has taken amoxicillin from her GP with partial relief.",
+  "terms": "(\"root canal retreatment\" OR \"non-surgical retreatment\" OR \"endodontic retreatment\" OR \"secondary endodontic treatment\" OR \"re-treatment\" OR retreatment) AND (\"MB2\" OR \"second mesiobuccal canal\" OR \"mesiobuccal canal 2\" OR \"MB canal anatomy\" OR \"canal morphology\" OR \"anatomical variation*\") AND (\"periapical lesion*\" OR \"periapical radiolucency\" OR \"apical periodontitis\" OR \"persistent apical periodontitis\" OR \"post-treatment apical periodontitis\")",
+  "groups": [
+   "\"mb2\" or \"second mesiobuccal canal\" or \"mesiobuccal canal 2\" or \"mb canal anatomy\" or \"canal morphology\" or \"anatomical variation*\"",
+   "\"periapical lesion*\" or \"periapical radiolucency\" or \"apical periodontitis\" or \"persistent apical periodontitis\" or \"post-treatment apical periodontitis\"",
+   "\"root canal retreatment\" or \"non-surgical retreatment\" or \"endodontic retreatment\" or \"secondary endodontic treatment\" or \"re-treatment\" or retreatment"
+  ]
+ },
+ "review-followup-immature-teeth": {
+  "question": "What about in immature teeth?",
+  "terms": "(immature teeth OR \"immature tooth\" OR \"open apex\" OR \"open apices\" OR \"incomplete root formation\" OR \"incomplete root development\" OR \"blunderbuss apex\" OR apexification OR revascularization OR \"regenerative endodontic*\") AND (\"root canal\" OR endodontic*)",
+  "groups": [
+   "\"root canal\" or endodontic*",
+   "immature teeth or \"immature tooth\" or \"open apex\" or \"open apices\" or \"incomplete root formation\" or \"incomplete root development\" or \"blunderbuss apex\" or apexification or revascularization or \"regenerative endodontic*\""
+  ]
+ },
+ "review-newtopic-reset": {
+  "question": "What is the evidence for sodium hypochlorite concentration in primary root canal treatment?",
+  "terms": "(\"sodium hypochlorite\" OR NaOCl OR \"sodium hypochlorite solution\" OR \"chlorine-based\" OR \"hypochlorite irrigant*\") AND (\"root canal\" OR endodontic* OR \"primary dentin\" OR \"primary tooth\" OR \"primary teeth\" OR \"deciduous tooth\" OR \"deciduous teeth\" OR \"primary dentition\") AND (concentrat* OR \"% solution\" OR dosage OR potency OR efficacy OR antimicrobial* OR disinfect*)",
+  "groups": [
+   "\"root canal\" or endodontic* or \"primary dentin\" or \"primary tooth\" or \"primary teeth\" or \"deciduous tooth\" or \"deciduous teeth\" or \"primary dentition\"",
+   "\"sodium hypochlorite\" or naocl or \"sodium hypochlorite solution\" or \"chlorine-based\" or \"hypochlorite irrigant*\"",
+   "concentrat* or \"% solution\" or dosage or potency or efficacy or antimicrobial* or disinfect*"
+  ]
+ },
+ "necrotic-virgin-tooth-young-adult-diagnostic": {
+  "question": "20-year-old, necrotic tooth, no restoration, no caries \u2014 what could the cause be?",
+  "terms": "(necrotic* OR \"pulp necrosis\" OR \"pulpal necrosis\" OR devital*) AND (\"root canal\" OR endodontic*) AND (trauma OR \"dental trauma\" OR \"traumatic injury\" OR \"crown fracture\" OR \"root fracture\" OR luxation OR intrusion OR extrusion OR avulsion OR \"mechanical injury\" OR idiopathic OR \"no obvious cause\")",
+  "groups": [
+   "\"root canal\" or endodontic*",
+   "necrotic* or \"pulp necrosis\" or \"pulpal necrosis\" or devital*",
+   "trauma or \"dental trauma\" or \"traumatic injury\" or \"crown fracture\" or \"root fracture\" or luxation or intrusion or extrusion or avulsion or \"mechanical injury\" or idiopathic or \"no obvious cause\""
+  ]
+ },
+ "bisphosphonate-extraction-vs-rct-treatment": {
+  "question": "68-year-old with osteoporosis on alendronate, needs a decision between extraction and root canal treatment on a lower molar with a large periapical lesion",
+  "terms": "(extraction OR exodontia OR \"tooth removal\") AND (\"root canal\" OR endodontic* OR \"root canal treatment\" OR RCT) AND (alendronate OR bisphosphonate* OR \"medication-related osteonecrosis\" OR MRONJ OR \"bisphosphonate-related osteonecrosis\" OR BRONJ)",
+  "groups": [
+   "\"root canal\" or endodontic* or \"root canal treatment\" or rct",
+   "alendronate or bisphosphonate* or \"medication-related osteonecrosis\" or mronj or \"bisphosphonate-related osteonecrosis\" or bronj",
+   "extraction or exodontia or \"tooth removal\""
+  ]
+ },
+ "dens-evaginatus-premolar-diagnostic": {
+  "question": "20-year-old, no response to cold testing on tooth #20, well-defined periapical lesion, no filling, no cracks, Asian ethnicity.",
+  "terms": "(pulp* necrosis OR \"pulp death\" OR \"non-vital*\" OR devital*) AND (\"periapical lesion*\" OR \"periapical radiolucency\" OR \"apical periodontitis\" OR \"apical pathosis\") AND (cold test* OR \"vitality test*\" OR sensibility test* OR thermal test*)",
+  "groups": [
+   "\"periapical lesion*\" or \"periapical radiolucency\" or \"apical periodontitis\" or \"apical pathosis\"",
+   "cold test* or \"vitality test*\" or sensibility test* or thermal test*",
+   "pulp* necrosis or \"pulp death\" or \"non-vital*\" or devital*"
+  ]
+ },
+ "dens-evaginatus-prevention-followup": {
+  "question": "oh i do see a possible dens evaginatu sin tooth #20. Is there anything a dentist can do to present pulp necrosis from setting in?",
+  "terms": "(\"dens evaginatus\" OR \"dens evaginata\" OR \"evaginated odontoid process\" OR \"talon cusp\") AND (pulp OR pulpal OR endodontic*) AND (necrosis OR death OR devitali* OR \"pulp vitality\" OR prevention OR prophylaxis OR management OR treatment)",
+  "groups": [
+   "\"dens evaginatus\" or \"dens evaginata\" or \"evaginated odontoid process\" or \"talon cusp\"",
+   "necrosis or death or devitali* or \"pulp vitality\" or prevention or prophylaxis or management or treatment",
+   "pulp or pulpal or endodontic*"
+  ]
+ },
+ "probe1-avulsion": {
+  "question": "Avulsed maxillary central incisor with a closed apex, replanted after 40 minutes of extra-oral dry time. How should it be managed and what is the prognosis?",
+  "terms": "(avulsion OR avulsed OR luxation OR \"tooth replantation\" OR reimplantation OR replant*) AND (\"maxillary central incisor\" OR \"permanent incisor\" OR \"anterior tooth\") AND (prognosis OR outcome* OR \"healing\" OR \"root resorption\" OR \"ankylosis\" OR \"pulp necrosis\")",
+  "groups": [
+   "\"maxillary central incisor\" or \"permanent incisor\" or \"anterior tooth\"",
+   "avulsion or avulsed or luxation or \"tooth replantation\" or reimplantation or replant*",
+   "prognosis or outcome* or \"healing\" or \"root resorption\" or \"ankylosis\" or \"pulp necrosis\""
+  ]
+ },
+ "probe2-crown-fracture": {
+  "question": "Complicated crown fracture with pulp exposure in a mature premolar, 6 hours old. What is the management?",
+  "terms": "(\"crown fracture\" OR \"coronal fracture\" OR \"complicated fracture\" OR \"fracture with pulp exposure\") AND (premolar* OR \"anterior tooth\" OR \"posterior tooth\") AND (pulpotomy OR \"pulp capping\" OR \"direct pulp cap\" OR \"indirect pulp cap\" OR endodontic* OR \"root canal\" OR pulpectomy OR devitalization)",
+  "groups": [
+   "\"crown fracture\" or \"coronal fracture\" or \"complicated fracture\" or \"fracture with pulp exposure\"",
+   "premolar* or \"anterior tooth\" or \"posterior tooth\"",
+   "pulpotomy or \"pulp capping\" or \"direct pulp cap\" or \"indirect pulp cap\" or endodontic* or \"root canal\" or pulpectomy or devitalization"
+  ]
+ },
+ "probe3-retreat-implant": {
+  "question": "Mature molar with a failed root canal retreatment. The patient asks for extraction and an implant. How should this be decided?",
+  "terms": "(extraction OR exodontia OR \"tooth removal\") AND (\"root canal\" OR endodontic* OR \"retreatment\" OR \"failed endodontic\") AND (decision* OR prognosis OR outcome* OR \"treatment planning\" OR \"clinical decision\" OR comparison OR versus OR \"versus\")",
+  "groups": [
+   "\"root canal\" or endodontic* or \"retreatment\" or \"failed endodontic\"",
+   "decision* or prognosis or outcome* or \"treatment planning\" or \"clinical decision\" or comparison or versus or \"versus\"",
+   "extraction or exodontia or \"tooth removal\""
+  ]
+ },
+ "a54-retrograde": {
+  "question": "MTA versus bioceramic as retrograde filling after apicoectomy",
+  "terms": "(apicoectomy OR apicectomy OR \"root-end resection\" OR \"periradicular surgery\" OR \"endodontic microsurgery\" OR \"apical microsurgery\" OR \"apical surgery\") AND (MTA OR \"mineral trioxide aggregate\" OR bioceramic* OR \"bioactive ceramic\" OR \"calcium silicate\" OR \"resin-modified glass ionomer\" OR RMGI) AND (\"retrograde filling\" OR \"root-end filling\" OR \"apical seal\" OR \"reverse filling\")",
+  "groups": [
+   "\"retrograde filling\" or \"root-end filling\" or \"apical seal\" or \"reverse filling\"",
+   "apicoectomy or apicectomy or \"root-end resection\" or \"periradicular surgery\" or \"endodontic microsurgery\" or \"apical microsurgery\" or \"apical surgery\"",
+   "mta or \"mineral trioxide aggregate\" or bioceramic* or \"bioactive ceramic\" or \"calcium silicate\" or \"resin-modified glass ionomer\" or rmgi"
+  ]
+ }
+}

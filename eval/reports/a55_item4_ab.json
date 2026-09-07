@@ -1,0 +1,20 @@
+{
+ "compared": 32,
+ "unchanged": 0,
+ "verdict": "retrieval change \u2014 full A/B required",
+ "a54_before": [
+  "apicoectomy",
+  "root-end filling",
+  "retrograde filling"
+ ],
+ "a54_after": [
+  "apicoectomy",
+  "apicectomy",
+  "root-end resection",
+  "root-end filling",
+  "retrograde filling",
+  "periradicular surgery",
+  "endodontic microsurgery",
+  "apical microsurgery"
+ ]
+}

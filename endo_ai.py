@@ -4060,6 +4060,17 @@ Rules:
 - include BOTH abbreviation and expansion for any technique or material
 - do NOT add [pt] publication-type filters or endodontics domain terms; both are
   appended automatically and duplicating them only narrows the result set
+- when the question names a PROCEDURE, that procedure's OR-group must list every
+  name the literature publishes it under — the classical term, its variant
+  spellings, the anatomical description of the step, and the modern or
+  microscope-era name — because a paper is indexed under the name its authors
+  chose, and the last twenty years of a procedure are usually titled
+  differently from the first. Aim for six or more names in a procedure group.
+  Applied to apical surgery that means apicoectomy AND apicectomy AND
+  "root-end resection" AND "periradicular surgery" AND "endodontic
+  microsurgery" AND "apical microsurgery" — omitting the microsurgery names
+  loses most of the last decade. Do the same for whatever procedure the
+  question actually names
 {lexicon}
 Question: {question}
 
@@ -5776,6 +5787,34 @@ def question_coverage(groups: list, candidates: list) -> list:
         n = sum(1 for b in blobs if any(_term_in_text(t, b) for t in g))
         out.append({"terms": g, "hits": n})
     return out
+
+
+def question_intersection(groups: list, candidates: list) -> int:
+    """How many candidates mention a term from EVERY concept group.
+
+    A55 ITEM 2, AND THE COUNT THE COVERAGE GATE NEVER HAD. `question_coverage`
+    answers each concept SEPARATELY, and the gate then required the weakest to
+    clear a floor. On "MTA versus bioceramic as retrograde filling after
+    apicoectomy" that read 149 papers for the material concept and 24 for the
+    surgery concept, both well clear of 3 — and the library held **0 of the 8**
+    head-to-head papers. 149 papers about MTA and 24 about apical surgery can be
+    173 papers of which none is about MTA in apical surgery.
+
+    Per-concept counts say "the library knows about each of these subjects".
+    Only the intersection says "the library holds papers about this QUESTION".
+
+    Matched exactly as `question_coverage` matches, through `_term_in_text`, so
+    the two numbers are commensurable. A different matcher here would make the
+    comparison between them meaningless, which is most of its value.
+    """
+    if not groups:
+        return len(candidates or [])
+    n = 0
+    for c in (candidates or []):
+        b = ((c.get("title") or "") + " " + (c.get("abstract") or "")).lower()
+        if all(any(_term_in_text(t, b) for t in g) for g in groups):
+            n += 1
+    return n
 
 
 # ── FETCH FROM PUBMED ────────────────────────────────────
@@ -9149,6 +9188,70 @@ def _gl_short_title(title: str) -> str:
         cut = t[:70].rsplit(" ", 1)[0].rstrip(" ,;:-")
         t = (cut or t[:70]) + "…"
     return t
+
+
+SPECIALTY_SECTION_HEADING = "**Specialty Guidelines & Position Statements**"
+
+
+def _specialty_sort_key(row):
+    """Jurisdiction, then organisation, then year — a stable, declared order.
+
+    Not score order: a guideline carries no score. Not admission order either,
+    which is retrieval's accident. Jurisdiction first because that is the axis a
+    clinician reads it on — "what does MY regulator say, and what do the others
+    say?" — and it makes a missing jurisdiction visible as a gap in a list
+    rather than an absence nobody can see.
+    """
+    return ((row.get("guideline_jurisdiction") or "ZZ").upper(),
+            (row.get("guideline_org") or "ZZZ").upper(),
+            str(row.get("year") or ""))
+
+
+def render_specialty_block(rows, model_sentences=None):
+    """The admitted guidelines, rendered from DATA — every row, always.
+
+    A55 ITEM 5. A54's synthesis admitted three guidelines, showed all three to
+    the model, and the model listed two. Which two is not a decision the model
+    should be making: the LIST is data — organisation, document, year, status,
+    jurisdiction, and whether the position is quoted or only pointed at — and
+    the only part that needs a model is the sentence saying what each one
+    actually recommends.
+
+    So the list is emitted here, from the admitted rows, and the model's
+    contribution is attached per row. A row whose stored text is a POINTER gets
+    no position sentence at all — not a hedge, not a paraphrase, but an explicit
+    "position not quoted", because inventing one is the failure the whole
+    pointer mechanism exists to prevent.
+
+    `model_sentences` maps a row's key (PMID or manifest id) to the one sentence
+    the model wrote for it. Missing is fine; the row still appears.
+    """
+    rows = [r for r in (rows or []) if r]
+    if not rows:
+        return ""
+    model_sentences = model_sentences or {}
+    out = [SPECIALTY_SECTION_HEADING, ""]
+    for r in sorted(rows, key=_specialty_sort_key):
+        key = str(r.get("guideline_id") or r.get("pmid") or "").strip()
+        org = (r.get("guideline_org") or "?").strip()
+        year = r.get("year") or "?"
+        status = (r.get("guideline_status") or "?").strip()
+        juris = (r.get("guideline_jurisdiction") or "?").strip()
+        title = (r.get("title") or "").strip()
+        is_pointer = str(r.get("abstract") or "").startswith("GUIDELINE RECORD")
+        head = "- **%s** (%s) — %s — *%s*, %s" % (org, juris, title, status,
+                                                  year)
+        out.append(head)
+        sentence = (model_sentences.get(key) or "").strip()
+        if is_pointer:
+            url = (r.get("guideline_url") or "").strip()
+            out.append("  - position not quoted — pointer record%s"
+                       % (("; read it at %s" % url) if url else ""))
+        elif sentence:
+            out.append("  - %s" % sentence)
+        else:
+            out.append("  - position not summarised in this answer")
+    return "\n".join(out)
 
 
 def render_gl_citations(answer: str, mapping=None):
