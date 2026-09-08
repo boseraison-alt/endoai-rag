@@ -73,3 +73,11 @@ term_degradation.jsonl
 # the bulk is not.
 eval/reports/untyped_abstract_cache/*
 !eval/reports/untyped_abstract_cache/control_42388091.json
+
+# Backup policy (2026-09-07, RB): repo bundles and database dumps live in
+# C:\Users\boser\endo-ai-backups, never inside the repository they back up.
+# A bundle committed here is packed into the next night's bundle; .git had
+# reached 80 MB and two more nights would have exceeded GitHub's push limit.
+*.bundle
+db-*/
+eval/reports/db-*/
